@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "Globals.h"
 
-#include "Source/Imgui/imgui.h"
 #include "Source/SDL/include/SDL.h"
 #pragma comment( lib, "Source/SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "Source/SDL/libx86/SDL2main.lib" )
