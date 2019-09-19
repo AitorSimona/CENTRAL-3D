@@ -5,8 +5,6 @@
 #include "Source/glew/include/GL/glew.h"
 #include "Source/SDL\include\SDL_opengl.h"
 #include "Source/Imgui/imgui.h"
-//#include <gl/GL.h>
-//#include <gl/GLU.h>
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
