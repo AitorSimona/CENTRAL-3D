@@ -82,13 +82,10 @@
     <ClInclude Include="ModuleCamera3D.h" />
     <ClInclude Include="ModuleGui.h" />
     <ClInclude Include="ModuleRenderer3D.h" />
-    <ClInclude Include="p2List.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleSceneIntro.h" />
     <ClInclude Include="ModuleWindow.h" />
-    <ClInclude Include="p2DynArray.h" />
-    <ClInclude Include="p2Point.h" />
     <ClInclude Include="Source\glew\include\GL\eglew.h" />
     <ClInclude Include="Source\glew\include\GL\glew.h" />
     <ClInclude Include="Source\glew\include\GL\glxew.h" />
