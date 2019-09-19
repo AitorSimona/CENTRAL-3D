@@ -102,9 +102,6 @@
     <ClInclude Include="Source\Imgui\imstb_truetype.h">
       <Filter>Sources\3rd Party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Imgui\imgui_impl_opengl2.h">
-      <Filter>Sources\3rd Party\Imgui</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Imgui\imgui_impl_sdl.h">
       <Filter>Sources\3rd Party\Imgui</Filter>
     </ClInclude>
@@ -122,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="Source\glew\include\GL\wglew.h">
       <Filter>Sources\3rd Party\glew</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Imgui\imgui_impl_opengl3.h">
+      <Filter>Sources\3rd Party\Imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -185,14 +185,14 @@
     <ClCompile Include="Source\Imgui\imgui_widgets.cpp">
       <Filter>Sources\3rd Party\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Imgui\imgui_impl_opengl2.cpp">
-      <Filter>Sources\3rd Party\Imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Imgui\imgui_impl_sdl.cpp">
       <Filter>Sources\3rd Party\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Imgui\imgui_impl_opengl3.cpp">
+      <Filter>Sources\3rd Party\Imgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

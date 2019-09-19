@@ -6,7 +6,7 @@
 
 #include "Source/Imgui/imgui.h"
 #include "Source/imgui/imgui_impl_sdl.h"
-#include "Source/imgui/imgui_impl_opengl2.h"
+#include "Source/imgui/imgui_impl_opengl3.h"
 
 static bool show_demo_window = true;
 bool show_another_window = true;
@@ -35,7 +35,7 @@ bool ModuleGui::Start()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer3D->context);
-	ImGui_ImplOpenGL2_Init();
+	ImGui_ImplOpenGL3_Init();
 
 	// Setup style
 	ImGui::StyleColorsDark();
@@ -44,9 +44,9 @@ bool ModuleGui::Start()
 }
 
 update_status ModuleGui::PreUpdate(float dt)
-{
+{  
 	// Start the frame
-	ImGui_ImplOpenGL2_NewFrame();
+	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 
@@ -134,7 +134,7 @@ bool ModuleGui::CleanUp()
 {
 	bool ret = true;
 
-	ImGui_ImplOpenGL2_Shutdown();
+	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
@@ -145,5 +145,5 @@ void ModuleGui::Draw() const
 {
 	// Render
 	ImGui::Render();
-	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
