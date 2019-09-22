@@ -93,6 +93,7 @@
     <ClInclude Include="Source\glew\include\GL\wglew.h" />
     <ClInclude Include="Source\Imgui\imconfig.h" />
     <ClInclude Include="Source\Imgui\imgui.h" />
+    <ClInclude Include="Source\Imgui\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="Source\Imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="Source\Imgui\imgui_impl_sdl.h" />
     <ClInclude Include="Source\Imgui\imgui_internal.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="ModuleSceneIntro.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="Source\Imgui\imgui.cpp" />
+    <ClCompile Include="Source\Imgui\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="Source\Imgui\imgui_demo.cpp" />
     <ClCompile Include="Source\Imgui\imgui_draw.cpp" />
     <ClCompile Include="Source\Imgui\imgui_impl_opengl3.cpp" />

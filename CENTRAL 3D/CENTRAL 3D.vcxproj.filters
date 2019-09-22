@@ -40,6 +40,9 @@
     <Filter Include="Sources\3rd Party\MathGeoLib\Algorithm">
       <UniqueIdentifier>{6f1c0a8f-b2fb-4624-8df5-7ef219d7f819}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd Party\Imgui\ImGuizmo">
+      <UniqueIdentifier>{c81c6438-ce78-45c3-b22a-328e33578912}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -297,6 +300,9 @@
     <ClInclude Include="Source\MathGeoLib\include\Algorithm\Random\LCG.h">
       <Filter>Sources\3rd Party\MathGeoLib\Algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Imgui\ImGuizmo\ImGuizmo.h">
+      <Filter>Sources\3rd Party\Imgui\ImGuizmo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -451,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="Source\MathGeoLib\include\Algorithm\Random\LCG.cpp">
       <Filter>Sources\3rd Party\MathGeoLib\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Imgui\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Sources\3rd Party\Imgui\ImGuizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
