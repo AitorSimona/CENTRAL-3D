@@ -19,7 +19,7 @@ public:
 	bool CleanUp();
 
 	void Draw() const;
-
+	void DockSpace() const;
 };
 
 #endif
