@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleSceneIntro.h"
+#include "Primitive.h"
 
 #include "Math.h"
 
@@ -69,8 +70,12 @@ update_status ModuleSceneIntro::Update(float dt)
 
 	bool aabbintersection = sph1AABB.Intersects(sph2AABB);
 
-	obbintersection;
+	// Grid
+	PlaneP p(0, 1, 0, 0);
+	p.axis = true;
+	p.Render();
 
+	
 	return UPDATE_CONTINUE;
 }
 

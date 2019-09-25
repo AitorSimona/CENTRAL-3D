@@ -303,6 +303,9 @@
     <ClInclude Include="Source\Imgui\ImGuizmo\ImGuizmo.h">
       <Filter>Sources\3rd Party\Imgui\ImGuizmo</Filter>
     </ClInclude>
+    <ClInclude Include="Primitive.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -460,6 +463,9 @@
     </ClCompile>
     <ClCompile Include="Source\Imgui\ImGuizmo\ImGuizmo.cpp">
       <Filter>Sources\3rd Party\Imgui\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitive.cpp">
+      <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

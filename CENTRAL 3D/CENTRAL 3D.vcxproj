@@ -87,6 +87,7 @@
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleSceneIntro.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="Source\glew\include\GL\eglew.h" />
     <ClInclude Include="Source\glew\include\GL\glew.h" />
     <ClInclude Include="Source\glew\include\GL\glxew.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleSceneIntro.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Source\Imgui\imgui.cpp" />
     <ClCompile Include="Source\Imgui\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="Source\Imgui\imgui_demo.cpp" />

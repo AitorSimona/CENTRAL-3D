@@ -54,10 +54,12 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
-
 	//ImGuizmo::BeginFrame();
 
+
+
 	// Begin dock space
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	DockSpace();
 
 	return UPDATE_CONTINUE;
@@ -140,6 +142,7 @@ update_status ModuleGui::PostUpdate(float dt)
 {
 	// End dock space
 
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	ImGui::End();
 
 	return UPDATE_CONTINUE;
@@ -168,6 +171,7 @@ void ModuleGui::Draw() const
 		ImGui::RenderPlatformWindowsDefault();
 	}
 
+
 }
 
 void ModuleGui::DockSpace() const
@@ -179,7 +183,7 @@ void ModuleGui::DockSpace() const
 
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
 	static bool p_open = true;
 	ImGui::Begin("DockSpace Demo", &p_open, window_flags);
