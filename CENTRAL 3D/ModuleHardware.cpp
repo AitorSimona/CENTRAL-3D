@@ -41,6 +41,7 @@ const ModuleHardware::hw_info & ModuleHardware::GetInfo() const
 	const GLubyte* GPU = glGetString(GL_RENDERER);
 	const GLubyte* GPUdriver = glGetString(GL_VERSION);
 
+	// --- NVIDIA EXTENSION!!! --- 
 	GLint video_mem_budget = 0;
 	glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &video_mem_budget);
 
