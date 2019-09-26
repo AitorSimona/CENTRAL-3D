@@ -43,6 +43,9 @@
     <Filter Include="Sources\3rd Party\Imgui\ImGuizmo">
       <UniqueIdentifier>{c81c6438-ce78-45c3-b22a-328e33578912}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\VSResources">
+      <UniqueIdentifier>{6057c556-5da2-4161-a91e-ab85919a9010}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -309,6 +312,9 @@
     <ClInclude Include="ModuleHardware.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Sources\VSResources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -493,5 +499,15 @@
     <None Include="Source\MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl">
       <Filter>Sources\3rd Party\MathGeoLib\Geometry</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CENTRAL 3D.rc">
+      <Filter>Sources\VSResources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="EXE ICON.ico">
+      <Filter>Sources\VSResources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

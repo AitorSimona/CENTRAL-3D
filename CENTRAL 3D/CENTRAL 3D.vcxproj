@@ -89,6 +89,7 @@
     <ClInclude Include="ModuleSceneIntro.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="Primitive.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\glew\include\GL\eglew.h" />
     <ClInclude Include="Source\glew\include\GL\glew.h" />
     <ClInclude Include="Source\glew\include\GL\glxew.h" />
@@ -226,6 +227,12 @@
     <None Include="Source\MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
     <None Include="Source\MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="Source\MathGeoLib\include\Math\Matrix.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CENTRAL 3D.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="EXE ICON.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
