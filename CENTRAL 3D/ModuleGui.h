@@ -20,6 +20,10 @@ public:
 
 	void Draw() const;
 	void DockSpace() const;
+	void RequestBrowser(const char * url) const;
+
+private:
+	bool show_demo_window = false;
 };
 
 #endif

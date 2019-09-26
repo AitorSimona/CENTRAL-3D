@@ -10,8 +10,6 @@
 #include "Source/Imgui/imgui_internal.h"
 #include "Source/Imgui/ImGuizmo/ImGuizmo.h"
 
-static bool show_demo_window = true;
-static bool show_another_window = true;
 
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -89,10 +87,9 @@ update_status ModuleGui::Update(float dt)
 
 	}*/
 
-	if (show_another_window)
+
+	if (ImGui::BeginMainMenuBar())
 	{
-		if (ImGui::BeginMainMenuBar())
-		{
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::Button("Quit"))
@@ -101,15 +98,61 @@ update_status ModuleGui::Update(float dt)
 				}
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("View"))
+			{
+				if (ImGui::Button("Console"))
+				{
+					
+				}
+
+				if (ImGui::Button("Configuration"))
+				{
+
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Help"))
+			{
+				if (ImGui::Button("ImGui Demo"))
+				{
+					show_demo_window = !show_demo_window;
+				}
+
+				if (ImGui::Button("Documentation"))
+				{
+					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/wiki");
+				}
+
+				if (ImGui::Button("Download latest"))
+				{
+					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/releases");
+				}
+
+				if (ImGui::Button("Report a bug"))
+				{
+					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/issues");
+				}
+
+				if (ImGui::Button("About"))
+				{
+
+				}
+
+				ImGui::EndMenu();
+			}
+
+
 			ImGui::EndMainMenuBar();
-		}
+	}
 
 		//ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 		//ImGui::Text("Hello from another window!");
 		//if (ImGui::Button("Close Me"))
 		//	show_another_window = false;
 		//ImGui::End();
-	}
+	
 
 	//if (ImGui::BeginMainMenuBar())
 	//{
@@ -171,7 +214,6 @@ void ModuleGui::Draw() const
 		ImGui::RenderPlatformWindowsDefault();
 	}
 
-
 }
 
 void ModuleGui::DockSpace() const
@@ -191,4 +233,9 @@ void ModuleGui::DockSpace() const
 	ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
 	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+}
+
+void ModuleGui::RequestBrowser(const char * url) const
+{
+	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
