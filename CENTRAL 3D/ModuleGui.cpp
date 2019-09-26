@@ -10,6 +10,8 @@
 #include "Source/Imgui/imgui_internal.h"
 #include "Source/Imgui/ImGuizmo/ImGuizmo.h"
 
+#include "Source/glew/include/GL/glew.h"
+
 
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -54,11 +56,19 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui::NewFrame();
 	//ImGuizmo::BeginFrame();
 
-
-
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	DockSpace();
+
+	//const GLubyte* GPUvendor = glGetString(GL_VENDOR);
+	//const GLubyte* GPU = glGetString(GL_RENDERER);
+	//const GLubyte* driver_version = glGetString(GL_VERSION);
+
+	//GLint totalMemoryKb = 0;
+	//glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &totalMemoryKb);
+
+	//GLint currentMemoryKb = 0;
+	//glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &currentMemoryKb);
 
 	return UPDATE_CONTINUE;
 }
@@ -86,6 +96,7 @@ update_status ModuleGui::Update(float dt)
 		ImGui::EndMenuBar();
 
 	}*/
+
 
 
 	if (ImGui::BeginMainMenuBar())
