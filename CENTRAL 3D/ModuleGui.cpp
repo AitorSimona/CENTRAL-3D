@@ -70,6 +70,8 @@ update_status ModuleGui::PreUpdate(float dt)
 	//GLint currentMemoryKb = 0;
 	//glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &currentMemoryKb);
 
+	//const GLubyte* tmp = glGetString(GL_VERSION);
+
 	return UPDATE_CONTINUE;
 }
 
