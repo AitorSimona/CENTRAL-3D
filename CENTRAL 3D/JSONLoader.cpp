@@ -31,14 +31,11 @@ bool JSONLoader::Load(const char * importFile)
 		  }}
 		};*/
 
-		std::ifstream ifs;
-
-		ifs.open("TEST.json", std::ifstream::in);
+		std::ifstream ifs("TEST.json");
 
 		json j = json::parse(ifs);
 
-		ifs.close();
-
+		std::string str = j["HEY"];
 	}
 
 
@@ -49,7 +46,7 @@ bool JSONLoader::Save(const char * File)
 {
 	json jsonfile;
 
-	const unsigned char test[] = "Hello World";
+	std::string test = "Hello World";
 	jsonfile["HEY"] = test;
 
 	std::ofstream file("TEST.json");
