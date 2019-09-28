@@ -13,6 +13,7 @@
 #include "Source/glew/include/GL/glew.h"
 
 
+
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -55,6 +56,8 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	//ImGuizmo::BeginFrame();
+	const char* testt = "Hello World";
+	teest.Load(testt);
 
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)

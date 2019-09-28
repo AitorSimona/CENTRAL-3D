@@ -46,6 +46,12 @@
     <Filter Include="Sources\VSResources">
       <UniqueIdentifier>{6057c556-5da2-4161-a91e-ab85919a9010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Loaders">
+      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd Party\json">
+      <UniqueIdentifier>{8c42a9a9-a0d8-4f2e-b986-5b89e57c1712}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -315,6 +321,12 @@
     <ClInclude Include="resource.h">
       <Filter>Sources\VSResources</Filter>
     </ClInclude>
+    <ClInclude Include="JSONLoader.h">
+      <Filter>Sources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\json\json.hpp">
+      <Filter>Sources\3rd Party\json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -478,6 +490,9 @@
     </ClCompile>
     <ClCompile Include="ModuleHardware.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="JSONLoader.cpp">
+      <Filter>Sources\Loaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

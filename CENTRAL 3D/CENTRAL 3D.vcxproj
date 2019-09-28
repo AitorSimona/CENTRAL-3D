@@ -78,6 +78,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="JSONLoader.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="ModuleCamera3D.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="Source\Imgui\imstb_rectpack.h" />
     <ClInclude Include="Source\Imgui\imstb_textedit.h" />
     <ClInclude Include="Source\Imgui\imstb_truetype.h" />
+    <ClInclude Include="Source\json\json.hpp" />
     <ClInclude Include="Source\MathGeoLib\include\Algorithm\Random\LCG.h" />
     <ClInclude Include="Source\MathGeoLib\include\Geometry\AABB.h" />
     <ClInclude Include="Source\MathGeoLib\include\Geometry\AABB2D.h" />
@@ -168,6 +170,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="glmath.cpp" />
+    <ClCompile Include="JSONLoader.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="Main.cpp" />

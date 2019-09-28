@@ -2,7 +2,9 @@
 #define __MODULE_GUI_H__
 
 #include "Module.h"
+#include "JSONLoader.h"
 
+class JSONLoader;
 
 class ModuleGui : public Module
 {
@@ -24,6 +26,7 @@ public:
 
 private:
 	bool show_demo_window = false;
+	JSONLoader teest;
 };
 
 #endif
