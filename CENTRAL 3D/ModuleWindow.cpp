@@ -26,12 +26,17 @@ bool ModuleWindow::Init()
 	}
 	else
 	{
+		// --- Get Display Data ---
+		SDL_DisplayMode display;
+		SDL_GetCurrentDisplayMode(0, &display);
+
 		//Create window
-		int width = SCREEN_WIDTH * SCREEN_SIZE;
-		int height = SCREEN_HEIGHT * SCREEN_SIZE;
+		screen_width = uint(display.w * 0.75f);
+		screen_height = uint(display.h * 0.75f);
+		RefreshRate = display.refresh_rate;
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-		//Use OpenGL 2.1
+		//Use OpenGL 3.1
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
@@ -57,7 +62,7 @@ bool ModuleWindow::Init()
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, flags);
 
 		if(window == NULL)
 		{
@@ -93,4 +98,31 @@ bool ModuleWindow::CleanUp()
 void ModuleWindow::SetTitle(const char* title)
 {
 	SDL_SetWindowTitle(window, title);
+}
+
+void ModuleWindow::SetWindowWidth(uint width)
+{
+	SDL_SetWindowSize(window, width, GetWindowHeight());
+	screen_width = width;
+}
+
+void ModuleWindow::SetWindowHeight(uint height)
+{
+	SDL_SetWindowSize(window, GetWindowWidth(), height);
+	screen_height = height;
+}
+
+uint ModuleWindow::GetWindowWidth()
+{
+	return screen_width;
+}
+
+uint ModuleWindow::GetWindowHeight()
+{
+	return screen_height;
+}
+
+uint ModuleWindow::GetDisplayRefreshRate()
+{
+	return RefreshRate;
 }

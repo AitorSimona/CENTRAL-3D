@@ -6,7 +6,7 @@ Application::Application()
 	frames = 0;
 	last_frame_ms = -1;
 	last_fps = -1;
-	capped_ms = 1000 / 144; // Get Display RR!!
+	capped_ms = 1000 / 60; // Get Display RR!!
 	fps_counter = 0;
 
 	window = new ModuleWindow(this);

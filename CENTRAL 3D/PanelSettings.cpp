@@ -56,7 +56,7 @@ void PanelSettings::ApplicationNode() const
 
 	// --- Cap frames ---
 	int maxFramerate = App->GetMaxFramerate();
-	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, 144))
+	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, App->window->GetDisplayRefreshRate()))
 		App->SetMaxFramerate(maxFramerate);
 
 	ImGui::Text("Limit Framerate:");
