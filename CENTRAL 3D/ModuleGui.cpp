@@ -4,6 +4,10 @@
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
 
+#include "Panel.h"
+#include "PanelSettings.h"
+
+
 #include "Source/Imgui/imgui.h"
 #include "Source/imgui/imgui_impl_sdl.h"
 #include "Source/imgui/imgui_impl_opengl3.h"
@@ -23,7 +27,8 @@ ModuleGui::~ModuleGui()
 
 bool ModuleGui::Init()
 {
-
+	panelSettings = new PanelSettings("Settings");
+	panels.push_back(panelSettings);
 
 	return true;
 }
@@ -92,8 +97,6 @@ update_status ModuleGui::Update(float dt)
 
 	}*/
 
-
-
 	if (ImGui::BeginMainMenuBar())
 	{
 			if (ImGui::BeginMenu("File"))
@@ -114,7 +117,7 @@ update_status ModuleGui::Update(float dt)
 
 				if (ImGui::Button("Configuration"))
 				{
-
+					panelSettings->OnOff();
 				}
 				ImGui::EndMenu();
 			}
@@ -191,6 +194,12 @@ update_status ModuleGui::PostUpdate(float dt)
 {
 	// End dock space
 
+	for (uint i = 0; i < panels.size(); ++i)
+	{
+		if (panels[i]->IsEnabled())
+			panels[i]->Draw();
+	}
+
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	ImGui::End();
 
@@ -200,6 +209,9 @@ update_status ModuleGui::PostUpdate(float dt)
 bool ModuleGui::CleanUp()
 {
 	bool ret = true;
+
+	for (uint i = 0; i < panels.size(); ++i)
+		RELEASE(panels[i]);
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -257,4 +269,10 @@ bool ModuleGui::LoadEditorConfig() const
 
 
 	return true;
+}
+
+void ModuleGui::LogFPS(float fps, float ms)
+{
+	if (panelSettings != nullptr)
+		panelSettings->AddFPS(fps, ms);
 }

@@ -1,10 +1,10 @@
 #ifndef __PANEL_SETTINGS_H__
 #define __PANEL_SETTINGS_H__
 
-#define SCREEN_MIN_WIDTH 640
-#define SCREEN_MIN_HEIGHT 480
+#define FPS_LOG_SIZE 100
 
 #include "Panel.h"
+#include <vector>
 
 class Module;
 
@@ -15,9 +15,8 @@ public:
 	PanelSettings(char* name);
 	~PanelSettings();
 
+	void AddFPS(float fps, float ms);
 	bool Draw();
-
-	//void AddInput(const char* input);
 
 private:
 
@@ -25,8 +24,10 @@ private:
 	void WindowNode() const;
 	void InputNode() const;
 	void HardwareNode() const;
+
+private:
+	std::vector<float> fps_log;
+	std::vector<float> ms_log;
 };
 
 #endif
-
-// App, Window, Input , Hardware

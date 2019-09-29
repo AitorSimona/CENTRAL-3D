@@ -4,6 +4,10 @@
 #include "Module.h"
 #include "JSONLoader.h"
 
+#include <vector>
+
+class Panel;
+class PanelSettings;
 
 class ModuleGui : public Module
 {
@@ -24,9 +28,16 @@ public:
 	void RequestBrowser(const char * url) const;
 	bool LoadEditorConfig() const;
 
+	void LogFPS(float fps, float ms);
+
+public:
+
+	PanelSettings*		panelSettings = nullptr;
+
 private:
 	bool show_demo_window = false;
 
+	std::vector<Panel*> panels;
 	JSONLoader JLoader;
 };
 

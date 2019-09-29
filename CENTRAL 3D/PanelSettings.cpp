@@ -4,9 +4,15 @@
 #include "Source/mmgr/mmgr.h"
 #include <vector>
 
-PanelSettings::PanelSettings(char * name): Panel(name) {}
+PanelSettings::PanelSettings(char * name): Panel(name) , fps_log(FPS_LOG_SIZE), ms_log(FPS_LOG_SIZE)
+{
 
-PanelSettings::~PanelSettings() {}
+}
+
+PanelSettings::~PanelSettings() 
+{
+
+}
 
 bool PanelSettings::Draw()
 {
@@ -49,63 +55,57 @@ void PanelSettings::ApplicationNode() const
 	ImGui::InputText("App Name", appName, IM_ARRAYSIZE(appName));
 
 	// --- Cap frames ---
+	int maxFramerate = App->GetMaxFramerate();
+	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, 144))
+		App->SetMaxFramerate(maxFramerate);
+
+	ImGui::Text("Limit Framerate:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255,255,0,255), "%i", App->GetMaxFramerate());
 	
-	bool capFrames = App->GetCapFrames();
-	if (ImGui::Checkbox("Cap Frames", &capFrames))
-	{
-		App->SetCapFrames(capFrames);
-		if (capFrames && App->renderer3D->GetVSync())
-			App->renderer3D->SetVSync(false);
-	}
-
-	if (capFrames)
-	{
-		int maxFramerate = App->GetMaxFramerate();
-		if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, 144))
-			App->SetMaxFramerate(maxFramerate);
-	}
-
 	// --- VSync ---
 	bool vsync = App->renderer3D->GetVSync();
 	if (ImGui::Checkbox("Use VSync", &vsync))
 	{
 		App->renderer3D->SetVSync(vsync);
-		if (vsync && App->GetCapFrames())
-			App->SetCapFrames(false);
 	}
 
-	// --- Framerate ---
-	char title[20];
-	std::vector<float> framerateTrack = App->GetFramerateTrack();
-	sprintf_s(title, IM_ARRAYSIZE(title), "Framerate %.1f", framerateTrack.back());
-	ImGui::PlotHistogram("##framerate", &framerateTrack.front(), framerateTrack.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-
-	// --- Ms ---
-	std::vector<float> msTrack = App->GetMsTrack();
-	sprintf_s(title, IM_ARRAYSIZE(title), "Milliseconds %.1f", msTrack.back());
-	ImGui::PlotHistogram("##milliseconds", &msTrack.front(), msTrack.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+	// --- Framerate && Ms ---
+	char title[25];
+	sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+	ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+	sprintf_s(title, 25, "Milliseconds %0.1f", ms_log[ms_log.size() - 1]);
+	ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
 
 	// --- Memory ---
-	sMStats memStats = m_getMemoryStatistics();
-
+	sMStats stats = m_getMemoryStatistics();
+	static int speed = 0;
 	static std::vector<float> memory(100);
+	if (++speed > 20)
+	{
+		speed = 0;
+		if (memory.size() == 100)
+		{
+			for (uint i = 0; i < 100 - 1; ++i)
+				memory[i] = memory[i + 1];
 
-	for (uint i = memory.size() - 1; i > 0; --i)
-		memory[i] = memory[i - 1];
+			memory[100 - 1] = (float)stats.totalReportedMemory;
+		}
+		else
+			memory.push_back((float)stats.totalReportedMemory);
+	}
 
-	memory[0] = (float)memStats.peakActualMemory;
+	ImGui::PlotHistogram("##memory", &memory[0], memory.size(), 0, "Memory Consumption", 0.0f, (float)stats.peakReportedMemory * 1.2f, ImVec2(310, 100));
 
-	ImGui::PlotHistogram("##RAMusage", &memory.front(), memory.size(), 0, "Ram Usage", 0.0f, (float)memStats.peakReportedMemory * 1.2f, ImVec2(310, 100));
-
-	ImGui::Text("Total Reported Mem: %u", memStats.totalReportedMemory);
-	ImGui::Text("Total Actual Mem: %u", memStats.totalActualMemory);
-	ImGui::Text("Peak Reported Mem: %u", memStats.peakReportedMemory);
-	ImGui::Text("Peak Actual Mem: %u", memStats.peakActualMemory);
-	ImGui::Text("Accumulated Reported Mem: %u", memStats.accumulatedReportedMemory);
-	ImGui::Text("Accumulated Actual Mem: %u", memStats.accumulatedActualMemory);
-	ImGui::Text("Acumulated Alloc Unit Count: %u", memStats.accumulatedAllocUnitCount);
-	ImGui::Text("Total Alloc Unit Count: %u", memStats.totalAllocUnitCount);
-	ImGui::Text("Peak Alloc Unit Count: %u", memStats.peakAllocUnitCount);
+	ImGui::Text("Total Reported Mem: %u", stats.totalReportedMemory);
+	ImGui::Text("Total Actual Mem: %u", stats.totalActualMemory);
+	ImGui::Text("Peak Reported Mem: %u", stats.peakReportedMemory);
+	ImGui::Text("Peak Actual Mem: %u", stats.peakActualMemory);
+	ImGui::Text("Accumulated Reported Mem: %u", stats.accumulatedReportedMemory);
+	ImGui::Text("Accumulated Actual Mem: %u", stats.accumulatedActualMemory);
+	ImGui::Text("Accumulated Alloc Unit Count: %u", stats.accumulatedAllocUnitCount);
+	ImGui::Text("Total Alloc Unit Count: %u", stats.totalAllocUnitCount);
+	ImGui::Text("Peak Alloc Unit Count: %u", stats.peakAllocUnitCount);
 }
 
 void PanelSettings::WindowNode() const
@@ -118,5 +118,24 @@ void PanelSettings::InputNode() const
 
 void PanelSettings::HardwareNode() const
 {
+}
+
+void PanelSettings::AddFPS(float fps, float ms)
+{
+	static uint count = 0;
+
+	if (count == FPS_LOG_SIZE)
+	{
+		for (uint i = 0; i < FPS_LOG_SIZE - 1; ++i)
+		{
+			fps_log[i] = fps_log[i + 1];
+			ms_log[i] = ms_log[i + 1];
+		}
+	}
+	else
+		++count;
+
+	fps_log[count - 1] = fps;
+	ms_log[count - 1] = ms;
 }
 

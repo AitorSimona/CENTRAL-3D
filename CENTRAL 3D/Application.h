@@ -2,7 +2,6 @@
 #define __APPLICATION_H_
 
 #include <list>
-#include <vector>
 
 #include "Globals.h"
 #include "Timer.h"
@@ -17,20 +16,14 @@
 
 #include "PerfTimer.h"
 
+
 class Application
 {
 public:
 	const char* GetAppName() const;
 
-	void SetCapFrames(bool capFrames);
-	bool GetCapFrames() const;
 	void SetMaxFramerate(uint maxFramerate);
 	uint GetMaxFramerate() const;
-
-	void AddFramerateToTrack(float fps);
-	std::vector<float> GetFramerateTrack() const;
-	void AddMsToTrack(float ms);
-	std::vector<float> GetMsTrack() const;
 
 public:
 	ModuleWindow* window;
@@ -53,12 +46,8 @@ private:
 	Uint32				frames;
 	int					fps_counter;
 	int					last_fps;
-	int					capped_ms;
+	uint				capped_ms;
 	int					last_frame_ms;
-	bool				capFrames = false;
-	uint				maxFramerate = 0;
-	std::vector<float>	fpsTrack;
-	std::vector<float>	msTrack;
 
 public:
 

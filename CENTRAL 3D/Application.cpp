@@ -2,6 +2,7 @@
 
 Application::Application()
 {
+
 	frames = 0;
 	last_frame_ms = -1;
 	last_fps = -1;
@@ -70,6 +71,8 @@ bool Application::Init()
 	
 	ms_timer.Start();
 
+	SetMaxFramerate(0);
+
 	return ret;
 }
 
@@ -99,6 +102,9 @@ void Application::FinishUpdate()
 	// cap fps
 	if (capped_ms > 0 && (last_frame_ms < capped_ms))
 		SDL_Delay(capped_ms - last_frame_ms);
+
+	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
+
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
@@ -159,48 +165,18 @@ const char * Application::GetAppName() const
 	return appName;
 }
 
-void Application::SetCapFrames(bool capFrames)
-{
-	this->capFrames = capFrames;
-}
-
-bool Application::GetCapFrames() const
-{
-	return capFrames;
-}
-
 void Application::SetMaxFramerate(uint maxFramerate)
 {
-	this->maxFramerate = maxFramerate;
+	if (maxFramerate > 0)
+		capped_ms = 1000 / maxFramerate;
+	else
+		capped_ms = 0;
 }
 
 uint Application::GetMaxFramerate() const
 {
-	return this->maxFramerate;
-}
-
-void Application::AddFramerateToTrack(float fps)
-{
-	for (uint i = fpsTrack.size() - 1; i > 0; --i)
-		fpsTrack[i] = fpsTrack[i - 1];
-
-	fpsTrack[0] = fps;
-}
-
-std::vector<float> Application::GetFramerateTrack() const
-{
-	return fpsTrack;
-}
-
-void Application::AddMsToTrack(float ms)
-{
-	for (uint i = msTrack.size() - 1; i > 0; --i)
-		msTrack[i] = msTrack[i - 1];
-
-	msTrack[0] = ms;
-}
-
-std::vector<float> Application::GetMsTrack() const
-{
-	return msTrack;
+	if (capped_ms > 0)
+		return (uint)((1.0f / (float)capped_ms) * 1000.0f);
+	else
+		return 0;
 }
