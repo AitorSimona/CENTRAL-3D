@@ -89,6 +89,10 @@
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleSceneIntro.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="Panel.h" />
+    <ClInclude Include="PanelAbout.h" />
+    <ClInclude Include="PanelSettings.h" />
+    <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\glew\include\GL\eglew.h" />
@@ -164,6 +168,8 @@
     <ClInclude Include="Source\MathGeoLib\include\Math\sse_mathfun.h" />
     <ClInclude Include="Source\MathGeoLib\include\Math\TransformOps.h" />
     <ClInclude Include="Source\MathGeoLib\include\Time\Clock.h" />
+    <ClInclude Include="Source\mmgr\mmgr.h" />
+    <ClInclude Include="Source\mmgr\nommgr.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +187,10 @@
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleSceneIntro.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="Panel.cpp" />
+    <ClCompile Include="PanelAbout.cpp" />
+    <ClCompile Include="PanelSettings.cpp" />
+    <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Source\Imgui\imgui.cpp" />
     <ClCompile Include="Source\Imgui\ImGuizmo\ImGuizmo.cpp" />
@@ -221,6 +231,7 @@
     <ClCompile Include="Source\MathGeoLib\include\Math\SSEMath.cpp" />
     <ClCompile Include="Source\MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="Source\MathGeoLib\include\Time\Clock.cpp" />
+    <ClCompile Include="Source\mmgr\mmgr.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>

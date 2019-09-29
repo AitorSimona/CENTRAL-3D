@@ -45,6 +45,9 @@ bool ModuleGui::Start()
 	// Setup style
 	ImGui::StyleColorsDark();
 
+	// --- Load JSON File ---
+	ret = LoadEditorConfig();
+
 	return ret;
 }
 
@@ -56,8 +59,7 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	//ImGuizmo::BeginFrame();
-	const char* testt = "Hello World";
-	teest.Load(testt);
+
 
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
@@ -247,4 +249,12 @@ void ModuleGui::DockSpace() const
 void ModuleGui::RequestBrowser(const char * url) const
 {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+
+bool ModuleGui::LoadEditorConfig() const
+{
+   // json EditorConfig = JLoader.Load("EditorConfig.json");
+
+
+	return true;
 }

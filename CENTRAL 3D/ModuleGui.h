@@ -4,7 +4,6 @@
 #include "Module.h"
 #include "JSONLoader.h"
 
-class JSONLoader;
 
 class ModuleGui : public Module
 {
@@ -23,10 +22,12 @@ public:
 	void Draw() const;
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
+	bool LoadEditorConfig() const;
 
 private:
 	bool show_demo_window = false;
-	JSONLoader teest;
+
+	JSONLoader JLoader;
 };
 
 #endif

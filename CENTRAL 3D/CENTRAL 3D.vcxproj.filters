@@ -52,6 +52,12 @@
     <Filter Include="Sources\3rd Party\json">
       <UniqueIdentifier>{8c42a9a9-a0d8-4f2e-b986-5b89e57c1712}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Modules\EditorPanels">
+      <UniqueIdentifier>{b9ecbe23-f523-4b9d-97a3-34d6e133690c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd Party\mmgr">
+      <UniqueIdentifier>{6c326692-43bf-43ba-b73c-793c6a979038}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -110,9 +116,6 @@
     </ClInclude>
     <ClInclude Include="Source\Imgui\imgui_impl_sdl.h">
       <Filter>Sources\3rd Party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleGui.h">
-      <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\glew\include\GL\eglew.h">
       <Filter>Sources\3rd Party\glew</Filter>
@@ -327,6 +330,27 @@
     <ClInclude Include="Source\json\json.hpp">
       <Filter>Sources\3rd Party\json</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleGui.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel.h">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelAbout.h">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelSettings.h">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\mmgr\mmgr.h">
+      <Filter>Sources\3rd Party\mmgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\mmgr\nommgr.h">
+      <Filter>Sources\3rd Party\mmgr</Filter>
+    </ClInclude>
+    <ClInclude Include="PerfTimer.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -379,9 +403,6 @@
     </ClCompile>
     <ClCompile Include="Source\Imgui\imgui_impl_sdl.cpp">
       <Filter>Sources\3rd Party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleGui.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\Imgui\imgui_impl_opengl3.cpp">
       <Filter>Sources\3rd Party\Imgui</Filter>
@@ -493,6 +514,24 @@
     </ClCompile>
     <ClCompile Include="JSONLoader.cpp">
       <Filter>Sources\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleGui.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel.cpp">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelAbout.cpp">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelSettings.cpp">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\mmgr\mmgr.cpp">
+      <Filter>Sources\3rd Party\mmgr</Filter>
+    </ClCompile>
+    <ClCompile Include="PerfTimer.cpp">
+      <Filter>Sources\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

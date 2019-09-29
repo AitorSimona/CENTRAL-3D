@@ -1271,7 +1271,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
         (__cplusplus >= 201703L) || \
         ((__cplusplus >= 201103L) && JSON_HEDLEY_HAS_CPP_ATTRIBUTE(fallthrough))
         #define JSON_HEDLEY_FALL_THROUGH [[fallthrough]]
-    #elif (__cplusplus >= 201103L) && JSON_HEDLEY_HAS_CPP_ATTRIBUTE(clang::fallthrough)
+    #elif (__cplusplus >= 201103L) /*&& JSON_HEDLEY_HAS_CPP_ATTRIBUTE(clang::fallthrough)*/ // Commented because of error (no crash)
         #define JSON_HEDLEY_FALL_THROUGH [[clang::fallthrough]]
     #elif (__cplusplus >= 201103L) && JSON_HEDLEY_GCC_VERSION_CHECK(7,0,0)
         #define JSON_HEDLEY_FALL_THROUGH [[gnu::fallthrough]]

@@ -168,3 +168,35 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+
+bool ModuleRenderer3D::SetVSync(bool vsync)
+{
+	bool ret = true;
+
+	this->vsync = vsync;
+
+	if (this->vsync)
+	{
+
+		if (SDL_GL_SetSwapInterval(1) == -1)
+		{
+			ret = false;
+			LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+		}
+	}
+	else {
+
+		if (SDL_GL_SetSwapInterval(0) == -1)
+		{
+			ret = false;
+			LOG("Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
+		}
+	}
+
+	return ret;
+}
+
+bool ModuleRenderer3D::GetVSync() const
+{
+	return vsync;
+}

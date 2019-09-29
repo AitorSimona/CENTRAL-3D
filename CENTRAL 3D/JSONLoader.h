@@ -4,6 +4,8 @@
 #include "Globals.h"
 #include "Source/json/json.hpp"
 
+// for convenience
+using json = nlohmann::json;
 
 class JSONLoader
 {
@@ -12,11 +14,9 @@ public:
 	JSONLoader() {}
 	~JSONLoader() {}
 
-	bool Load(const char* importFile);
+	json Load(const char* File) const;
 
-	bool Save(const char* File);
-
-	bool done = false;
+	bool Save(const char* File, json jsonfile);
 
 };
 

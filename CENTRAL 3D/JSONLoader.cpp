@@ -2,55 +2,41 @@
 #include <assert.h>
 #include <fstream>
 
-// for convenience
-using json = nlohmann::json;
 
-bool JSONLoader::Load(const char * importFile) 
+json JSONLoader::Load(const char * File) const 
 {
-	/*if (importFile == nullptr)
+	if (File == nullptr)
 	{
-		assert(importFile != nullptr);
-		return false;
-	}*/
-
-	if (!done)
-	{
-		done = true;
-	/*	json test = {
-		  {"pi", 3.141},
-		  {"happy", true},
-		  {"name", "Niels"},
-		  {"nothing", nullptr},
-		  {"answer", {
-			{"everything", 42}
-		  }},
-		  {"list", {1, 0, 2}},
-		  {"object", {
-			{"currency", "USD"},
-			{"value", 42.99}
-		  }}
-		};*/
-
-		std::ifstream ifs("TEST.json");
-
-		json j = json::parse(ifs);
-
-		std::string str = j["HEY"];
+		assert(File != nullptr);
 	}
 
-
-	return true;
-}
-
-bool JSONLoader::Save(const char * File) 
-{
+	// --- Create JSON object ---
 	json jsonfile;
 
-	std::string test = "Hello World";
-	jsonfile["HEY"] = test;
+	// --- Load File ---
+	std::ifstream ifs(File);
+	assert(!ifs.fail());
 
-	std::ofstream file("TEST.json");
+	// --- Parse File, put data in jsonfile ---
+	try
+	{
+		jsonfile = json::parse(ifs);
+	}
+	catch (json::parse_error& e)
+	{
+		LOG("Parse Error in loading file: %c", e.what());
+	}
+	
+	return jsonfile;
+}
+
+bool JSONLoader::Save(const char * File, json jsonfile) 
+{
+	// --- Save to File, create if it does not exist ---
+	std::ofstream file(File);
+	assert(file.fail());
+
 	file << jsonfile;
 
-	return false;
+	return true;
 }
