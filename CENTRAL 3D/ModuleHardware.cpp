@@ -33,8 +33,7 @@ ModuleHardware::ModuleHardware(Application* app, bool start_enabled) : Module(ap
 ModuleHardware::~ModuleHardware()
 {}
 
-
-const ModuleHardware::hw_info & ModuleHardware::GetInfo() const
+const hw_info & ModuleHardware::GetInfo() const
 {
 	// --- Retrieve GPU Information ---
 	const GLubyte* GPUvendor = glGetString(GL_VENDOR);
@@ -61,3 +60,4 @@ const ModuleHardware::hw_info & ModuleHardware::GetInfo() const
 
 	return info;
 }
+

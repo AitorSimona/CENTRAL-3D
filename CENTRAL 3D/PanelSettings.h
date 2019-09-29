@@ -1,7 +1,7 @@
 #ifndef __PANEL_SETTINGS_H__
 #define __PANEL_SETTINGS_H__
 
-#define FPS_LOG_SIZE 100
+#define FPS_TRACKER_SIZE 100
 
 #include "Panel.h"
 #include <vector>
@@ -26,8 +26,8 @@ private:
 	void HardwareNode() const;
 
 private:
-	std::vector<float> fps_log;
-	std::vector<float> ms_log;
+	std::vector<float> FPS_Tracker;
+	std::vector<float> MS_Tracker;
 };
 
 #endif

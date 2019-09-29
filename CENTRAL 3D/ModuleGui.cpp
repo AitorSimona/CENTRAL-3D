@@ -40,7 +40,7 @@ bool ModuleGui::Start()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_NavEnableSetMousePos; // Enable keyboard controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Window Docking (Under Active Development)
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Deactivated because of lib crash when resizing window out of Main window bounds
 
@@ -76,46 +76,35 @@ update_status ModuleGui::PreUpdate(float dt)
 update_status ModuleGui::Update(float dt)
 {
 
-	// Menu Bar
-	/*if (ImGui::BeginMenuBar())
-	{
-		if (ImGui::BeginMenu("Menu"))
-		{
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Examples"))
-		{
-			ImGui::MenuItem("Quit", NULL);
-			ImGui::EndMenu();
-		}
-		if (ImGui::MenuItem("Quit", "Alt+F4"))
-		{
-
-		}
-
-		ImGui::EndMenuBar();
-
-	}*/
-
 	if (ImGui::BeginMainMenuBar())
 	{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::Button("Quit"))
+				if (ImGui::MenuItem("Quit"))
 				{
 					return UPDATE_STOP;
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+				ImGui::Separator();
+				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+				ImGui::EndMenu();
+			}
 
 			if (ImGui::BeginMenu("View"))
 			{
-				if (ImGui::Button("Console"))
+				if (ImGui::MenuItem("Console"))
 				{
 					
 				}
 
-				if (ImGui::Button("Configuration"))
+				if (ImGui::MenuItem("Configuration"))
 				{
 					panelSettings->OnOff();
 				}
@@ -124,27 +113,27 @@ update_status ModuleGui::Update(float dt)
 
 			if (ImGui::BeginMenu("Help"))
 			{
-				if (ImGui::Button("ImGui Demo"))
+				if (ImGui::MenuItem("ImGui Demo"))
 				{
 					show_demo_window = !show_demo_window;
 				}
 
-				if (ImGui::Button("Documentation"))
+				if (ImGui::MenuItem("Documentation"))
 				{
 					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/wiki");
 				}
 
-				if (ImGui::Button("Download latest"))
+				if (ImGui::MenuItem("Download latest"))
 				{
 					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/releases");
 				}
 
-				if (ImGui::Button("Report a bug"))
+				if (ImGui::MenuItem("Report a bug"))
 				{
 					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/issues");
 				}
 
-				if (ImGui::Button("About"))
+				if (ImGui::MenuItem("About"))
 				{
 
 				}
@@ -156,33 +145,6 @@ update_status ModuleGui::Update(float dt)
 			ImGui::EndMainMenuBar();
 	}
 
-		//ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		//ImGui::Text("Hello from another window!");
-		//if (ImGui::Button("Close Me"))
-		//	show_another_window = false;
-		//ImGui::End();
-	
-
-	//if (ImGui::BeginMainMenuBar())
-	//{
-	//	if (ImGui::BeginMenu("File"))
-	//	{
-	//		ShowExampleMenuFile();
-	//		ImGui::EndMenu();
-	//	}
-	//	if (ImGui::BeginMenu("Edit"))
-	//	{
-	//		if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-	//		if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-	//		ImGui::Separator();
-	//		if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-	//		if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-	//		if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-	//		ImGui::EndMenu();
-	//	}
-	//	ImGui::EndMainMenuBar();
-	//}
-
 
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
@@ -192,14 +154,14 @@ update_status ModuleGui::Update(float dt)
 
 update_status ModuleGui::PostUpdate(float dt)
 {
-	// End dock space
-
+	// --- Iterate panels and draw ---
 	for (uint i = 0; i < panels.size(); ++i)
 	{
 		if (panels[i]->IsEnabled())
 			panels[i]->Draw();
 	}
 
+	// End dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	ImGui::End();
 
@@ -210,6 +172,7 @@ bool ModuleGui::CleanUp()
 {
 	bool ret = true;
 
+	// --- Iterate panels and delete ---
 	for (uint i = 0; i < panels.size(); ++i)
 		RELEASE(panels[i]);
 
@@ -246,9 +209,9 @@ void ModuleGui::DockSpace() const
 	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 1.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
 
 	static bool p_open = true;
 	ImGui::Begin("DockSpace Demo", &p_open, window_flags);
