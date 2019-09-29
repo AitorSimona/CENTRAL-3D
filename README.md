@@ -9,6 +9,8 @@ Glew 2.1.0
 ImGui 1.72b
 MathGeoLib 1.5
 OpenGL 3.1
+mmgr
+JSON for Modern C++
 
 License:
 
