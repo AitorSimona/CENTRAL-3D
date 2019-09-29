@@ -6,7 +6,6 @@
 #include "Panel.h"
 #include <vector>
 
-class Module;
 
 class PanelSettings : public Panel
 {

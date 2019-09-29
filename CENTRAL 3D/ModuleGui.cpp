@@ -6,7 +6,7 @@
 
 #include "Panel.h"
 #include "PanelSettings.h"
-
+#include "PanelAbout.h"
 
 #include "Source/Imgui/imgui.h"
 #include "Source/imgui/imgui_impl_sdl.h"
@@ -29,6 +29,9 @@ bool ModuleGui::Init()
 {
 	panelSettings = new PanelSettings("Settings");
 	panels.push_back(panelSettings);
+
+	panelAbout = new PanelAbout("About");
+	panels.push_back(panelAbout);
 
 	return true;
 }
@@ -135,7 +138,7 @@ update_status ModuleGui::Update(float dt)
 
 				if (ImGui::MenuItem("About"))
 				{
-
+					panelAbout->OnOff();
 				}
 
 				ImGui::EndMenu();

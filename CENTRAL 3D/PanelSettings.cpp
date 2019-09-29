@@ -168,6 +168,29 @@ void PanelSettings::WindowNode() const
 
 void PanelSettings::InputNode() const
 {
+	ImGui::Separator();
+	// --- Mouse position
+	int mouse_x, mouse_y;
+	mouse_x = App->input->GetMouseX();
+	mouse_y = App->input->GetMouseY();
+	ImGui::Text("Mouse Position:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i,%i", mouse_x, mouse_y);
+
+	// --- Mouse Motion ---
+	mouse_x = App->input->GetMouseXMotion();
+	mouse_y = App->input->GetMouseYMotion();
+	ImGui::Text("Mouse Motion:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i,%i", mouse_x, mouse_y);
+
+	// --- Mouse Wheel acc ---
+	int wheel = App->input->GetMouseWheel();
+	ImGui::Text("Mouse Wheel:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", wheel);
+
+	ImGui::Separator();
 }
 
 void PanelSettings::HardwareNode() const
@@ -233,7 +256,8 @@ void PanelSettings::HardwareNode() const
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.ram_gb);
 
 	ImGui::Separator();
-	// --- GPU --- (Currently NVIDIA only)
+
+	// --- GPU --- 
 	ImGui::Text("GPU Vendor");
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_vendor.data());
@@ -246,6 +270,7 @@ void PanelSettings::HardwareNode() const
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_driver.data());
 
+	// (Currently NVIDIA only)
 	ImGui::Text("VRAM Budget");
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_budget);
@@ -272,7 +297,7 @@ void PanelSettings::AddFPS(float fps, float ms)
 			MS_Tracker[i] = MS_Tracker[i + 1];
 		}
 	}
-	else // We count untill the max size is reached, then substitute values in the if above
+	else // We count until the max size is reached, then substitute values in the if above
 		++counter;
 
 	FPS_Tracker[counter - 1] = fps;

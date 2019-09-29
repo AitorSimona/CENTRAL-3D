@@ -8,6 +8,7 @@
 
 class Panel;
 class PanelSettings;
+class PanelAbout;
 
 class ModuleGui : public Module
 {
@@ -33,6 +34,7 @@ public:
 public:
 
 	PanelSettings*		panelSettings = nullptr;
+	PanelAbout*			panelAbout = nullptr;
 
 private:
 	bool show_demo_window = false;
