@@ -110,6 +110,49 @@ void PanelSettings::ApplicationNode() const
 
 void PanelSettings::WindowNode() const
 {
+	// --- Brightness ---
+	float brightness = App->window->GetWinBrightness();
+	if (ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f))
+		App->window->SetWinBrightness(brightness);
+
+	// --- Window ReSize ---
+	uint width, height, min_w, min_h, max_w, max_h;
+	App->window->GetWinMaxMinSize(min_w, min_h, max_w, max_h);
+	width = App->window->GetWindowWidth();
+	height = App->window->GetWindowHeight();
+
+	if (ImGui::SliderInt("Width", (int*)&width, min_w, max_w))
+		App->window->SetWindowWidth(width);
+
+	if (ImGui::SliderInt("Height", (int*)&height, min_h, max_h))
+		App->window->SetWindowHeight(height);
+
+	// --- Refresh Rate Indicator ---
+	ImGui::Text("Refresh rate:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%u", App->window->GetDisplayRefreshRate());
+
+	// --- Window Flags ---
+	bool fullscreen = App->window->IsFullscreen();
+	bool resizable = App->window->IsResizable();
+	bool borderless = App->window->IsBorderless();
+	bool full_desktop = App->window->IsFullscreenDesktop();
+
+	if (ImGui::Checkbox("Fullscreen", &fullscreen))
+		App->window->SetFullscreen(fullscreen);
+
+	ImGui::SameLine();
+	if (ImGui::Checkbox("Resizable", &resizable))
+		App->window->SetResizable(resizable);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Restart to apply"); // Cannot Change Resizable flag at runtime
+
+	if (ImGui::Checkbox("Borderless", &borderless))
+		App->window->SetBorderless(borderless);
+
+	ImGui::SameLine();
+	if (ImGui::Checkbox("Full Desktop", &full_desktop))
+		App->window->SetFullscreenDesktop(full_desktop);
 }
 
 void PanelSettings::InputNode() const
@@ -124,6 +167,7 @@ void PanelSettings::AddFPS(float fps, float ms)
 {
 	static uint count = 0;
 
+	// --- If the plot historiogram is already full we shift ---
 	if (count == FPS_LOG_SIZE)
 	{
 		for (uint i = 0; i < FPS_LOG_SIZE - 1; ++i)
