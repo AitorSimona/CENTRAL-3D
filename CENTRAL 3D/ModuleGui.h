@@ -26,7 +26,6 @@ public:
 	void Draw() const;
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
-	//bool LoadEditorConfig() const;
 
 	void LogFPS(float fps, float ms);
 
