@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <fstream>
 
+#include "Source/mmgr/mmgr.h"
+
 
 json JSONLoader::Load(const char * File) const 
 {

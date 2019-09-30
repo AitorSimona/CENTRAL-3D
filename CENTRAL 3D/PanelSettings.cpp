@@ -5,6 +5,8 @@
 #include <vector>
 #include "ModuleHardware.h"
 
+#include "Source/mmgr/mmgr.h"
+
 PanelSettings::PanelSettings(char * name): Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
 {
 

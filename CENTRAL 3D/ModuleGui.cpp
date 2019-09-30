@@ -16,6 +16,8 @@
 
 #include "Source/glew/include/GL/glew.h"
 
+#include "Source/mmgr/mmgr.h"
+
 
 
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)

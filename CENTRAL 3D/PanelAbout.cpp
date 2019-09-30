@@ -6,6 +6,8 @@
 
 #include "Source/glew/include/GL/glew.h"
 
+#include "Source/mmgr/mmgr.h"
+
 
 PanelAbout::PanelAbout(char * name) : Panel(name)
 {

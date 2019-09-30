@@ -4,6 +4,8 @@
 
 #include "Source/glew/include/GL/glew.h"
 
+#include "Source/mmgr/mmgr.h"
+
 ModuleHardware::ModuleHardware(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	// --- Retrieve SDL Version ---
