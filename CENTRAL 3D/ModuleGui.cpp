@@ -250,11 +250,10 @@ void ModuleGui::LogFPS(float fps, float ms)
 		panelSettings->AddFPS(fps, ms);
 }
 
-void ModuleGui::SaveStatus(json file) const  
+void ModuleGui::SaveStatus(json &file) const  
 {
-
-
-
+	for (uint i = 0; i < panels.size(); ++i)
+		file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
 };
 
 void ModuleGui::LoadStatus(json file) 

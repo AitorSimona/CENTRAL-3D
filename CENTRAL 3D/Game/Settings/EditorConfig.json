@@ -1,25 +1,22 @@
 {
-  "Application": {
-    "Title": "CENTRAL 3D"
-  },
-  "GUI": {
-    "Inspector": true,
-    "About": true,
-    "Settings": true
-  },
-  "Window": {
-    "width": 1024,
-    "height": 720,
-    "fullscreen": false,
-    "resizable": true,
-    "borderless": false,
-    "fullscreenDesktop": false
-  },
-  "Input": {
-
-  },
-  "Renderer3D": {
-    "vSync": false
-  }
-
+    "Application": {
+        "Title": "CENTRAL 3D"
+    },
+    "GUI": {
+        "About": false,
+        "Inspector": true,
+        "Settings": false
+    },
+    "Input": null,
+    "Renderer3D": {
+        "VSync": true
+    },
+    "Window": {
+        "borderless": false,
+        "fullscreen": false,
+        "fullscreenDesktop": false,
+        "height": 720,
+        "resizable": true,
+        "width": 1024
+    }
 }

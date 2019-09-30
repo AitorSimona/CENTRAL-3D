@@ -115,15 +115,46 @@ void Application::FinishUpdate()
 
 void Application::SaveAllStatus()
 {
-	//json config = JLoader.Load("Settings/EditorConfig.json");
+	// --- Create Config with default values ---
+	json config = {
+		{"Application", {
+			{"Title", "CENTRAL 3D"}
+		}},
+		
+		{"GUI", {
+			{"Inspector", true},
+			{"About", false},
+			{"Settings", false},
+		}},
 
-	//std::list<Module*>::const_iterator item = list_modules.begin();
+		{"Window", {
+			{"width", 1024},
+			{"height", 720},
+			{"fullscreen", false},
+			{"resizable", true},
+			{"borderless", false},
+			{"fullscreenDesktop", false}
+		}},
 
-	//while (item != list_modules.end())
-	//{
-	//	(*item)->LoadStatus(config);
-	//	item++;
-	//}
+		{"Input", {
+			
+		}},
+
+		{"Renderer3D", {
+			{"VSync", true}
+		}},
+	};
+
+
+	std::list<Module*>::const_iterator item = list_modules.begin();
+
+	while (item != list_modules.end())
+	{
+		(*item)->SaveStatus(config);
+		item++;
+	}
+
+	JLoader.Save("Settings/EditorConfig.json", config);
 }
 
 void Application::LoadAllStatus()
@@ -176,6 +207,9 @@ update_status Application::Update()
 
 bool Application::CleanUp()
 {
+	// --- Save all Status ---
+	SaveAllStatus();
+
 	bool ret = true;
 	std::list<Module*>::reverse_iterator item = list_modules.rbegin();
 

@@ -1,6 +1,7 @@
 #include "JSONLoader.h"
 #include <assert.h>
 #include <fstream>
+#include <iomanip>
 
 #include "Source/mmgr/mmgr.h"
 
@@ -16,8 +17,9 @@ json JSONLoader::Load(const char * File) const
 	json jsonfile;
 
 	// --- Load File ---
-	std::ifstream ifs(File);
-	assert(!ifs.fail());
+	std::ifstream ifs;
+	ifs.open(File);
+	assert(ifs.is_open());
 
 	// --- Parse File, put data in jsonfile ---
 	try
@@ -28,17 +30,22 @@ json JSONLoader::Load(const char * File) const
 	{
 		LOG("Parse Error in loading file: %c", e.what());
 	}
+
+	ifs.close();
 	
 	return jsonfile;
 }
 
 bool JSONLoader::Save(const char * File, json jsonfile) 
 {
-	// --- Save to File, create if it does not exist ---
-	std::ofstream file(File);
-	assert(file.fail());
+	// --- Save to File, overwrite if exists ---
+	// Note setw, used to prettify JSON file (adding newlines and spaces)
 
-	file << jsonfile;
-
+	std::ofstream file;
+	file.open(File);
+	assert(file.is_open());
+	file << std::setw(4) << jsonfile << std::endl;
+	file.close();
+	
 	return true;
 }
