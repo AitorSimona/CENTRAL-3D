@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "JSONLoader.h"
 
 #define MAX_MOUSE_BUTTONS 5
 
@@ -19,7 +20,7 @@ public:
 	ModuleInput(Application* app, bool start_enabled = true);
 	~ModuleInput();
 
-	bool Init();
+	bool Init(json file);
 	update_status PreUpdate(float dt);
 	bool CleanUp();
 

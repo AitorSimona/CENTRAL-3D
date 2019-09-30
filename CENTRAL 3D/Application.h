@@ -16,6 +16,8 @@
 
 #include "PerfTimer.h"
 
+#include "JSONLoader.h"
+
 
 class Application
 {
@@ -47,7 +49,9 @@ private:
 	int					fps_counter;
 	int					last_fps;
 	uint				capped_ms;
-	int					last_frame_ms;
+	uint					last_frame_ms;
+
+	JSONLoader			JLoader;
 
 public:
 
@@ -64,6 +68,8 @@ private:
 	void AddModule(Module* mod);
 	void PrepareUpdate();
 	void FinishUpdate();
+	void SaveAllStatus();
+	void LoadAllStatus();
 };
 
 extern Application* App;

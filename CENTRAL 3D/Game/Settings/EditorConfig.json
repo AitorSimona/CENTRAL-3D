@@ -1,0 +1,25 @@
+{
+  "Application": {
+    "Title": "CENTRAL 3D"
+  },
+  "GUI": {
+    "Inspector": true,
+    "About": true,
+    "Settings": true
+  },
+  "Window": {
+    "width": 1024,
+    "height": 720,
+    "fullscreen": false,
+    "resizable": true,
+    "borderless": false,
+    "fullscreenDesktop": false
+  },
+  "Input": {
+
+  },
+  "Renderer3D": {
+    "vSync": false
+  }
+
+}

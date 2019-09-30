@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Source/SDL/include/SDL.h"
+#include "JSONLoader.h"
 
 class Application;
 
@@ -15,7 +16,7 @@ public:
 	// Destructor
 	virtual ~ModuleWindow();
 
-	bool Init();
+	bool Init(json file);
 	bool Start() override;
 	bool CleanUp();
 

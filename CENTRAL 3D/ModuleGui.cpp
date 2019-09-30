@@ -22,18 +22,21 @@
 
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
+	name = "GUI";
 }
 
 ModuleGui::~ModuleGui()
 {}
 
-bool ModuleGui::Init()
+bool ModuleGui::Init(json file)
 {
 	panelSettings = new PanelSettings("Settings");
 	panels.push_back(panelSettings);
 
 	panelAbout = new PanelAbout("About");
 	panels.push_back(panelAbout);
+
+	LoadStatus(file);
 
 	return true;
 }
@@ -55,8 +58,8 @@ bool ModuleGui::Start()
 	// Setup style
 	ImGui::StyleColorsDark();
 
-	// --- Load JSON File ---
-	ret = LoadEditorConfig();
+	//// --- Load JSON File ---
+	//ret = LoadEditorConfig();
 
 	return ret;
 }
@@ -232,16 +235,30 @@ void ModuleGui::RequestBrowser(const char * url) const
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
 
-bool ModuleGui::LoadEditorConfig() const
-{
-   // json EditorConfig = JLoader.Load("EditorConfig.json");
-
-
-	return true;
-}
+//bool ModuleGui::LoadEditorConfig() const
+//{
+//    json EditorConfig = JLoader.Load("Settings/EditorConfig.json");
+//
+//
+//
+//	return true;
+//}
 
 void ModuleGui::LogFPS(float fps, float ms)
 {
 	if (panelSettings != nullptr)
 		panelSettings->AddFPS(fps, ms);
 }
+
+void ModuleGui::SaveStatus(json file) const  
+{
+
+
+
+};
+
+void ModuleGui::LoadStatus(json file) 
+{
+	for (uint i = 0; i < panels.size(); ++i)
+		panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
+};

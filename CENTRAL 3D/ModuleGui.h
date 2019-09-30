@@ -2,7 +2,6 @@
 #define __MODULE_GUI_H__
 
 #include "Module.h"
-#include "JSONLoader.h"
 
 #include <vector>
 
@@ -17,7 +16,7 @@ public:
 	ModuleGui(Application* app, bool start_enabled = true);
 	~ModuleGui();
 
-	bool Init();
+	bool Init(json file);
 	bool Start();
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
@@ -27,9 +26,13 @@ public:
 	void Draw() const;
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
-	bool LoadEditorConfig() const;
+	//bool LoadEditorConfig() const;
 
 	void LogFPS(float fps, float ms);
+
+	void SaveStatus(json file) const override;
+
+	void LoadStatus(const json file) override;
 
 public:
 
@@ -40,7 +43,6 @@ private:
 	bool show_demo_window = false;
 
 	std::vector<Panel*> panels;
-	JSONLoader JLoader;
 };
 
 #endif

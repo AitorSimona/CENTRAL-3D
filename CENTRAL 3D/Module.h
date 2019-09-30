@@ -1,7 +1,8 @@
 #pragma once
 
 class Application;
-struct PhysBody3D;
+#include <string>
+#include "JSONLoader.h"
 
 class Module
 {
@@ -17,7 +18,7 @@ public:
 	virtual ~Module()
 	{}
 
-	virtual bool Init() 
+	virtual bool Init(json file) 
 	{
 		return true; 
 	}
@@ -47,6 +48,11 @@ public:
 		return true; 
 	}
 
-	virtual void OnCollision(PhysBody3D* body1, PhysBody3D* body2)
-	{}
+	virtual void SaveStatus(json file) const {};
+
+	virtual void LoadStatus(const json file) {};
+
+protected:
+
+	std::string name = "Undefined";
 };

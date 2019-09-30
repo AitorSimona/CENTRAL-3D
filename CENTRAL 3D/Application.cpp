@@ -52,12 +52,16 @@ bool Application::Init()
 {
 	bool ret = true;
 
+	// --- Load App data from JSON files ---
+	json config = JLoader.Load("Settings/EditorConfig.json");
+
 	// Call Init() in all modules
+
 	std::list<Module*>::const_iterator item = list_modules.begin();
 
 	while(item != list_modules.end() && ret == true)
 	{
-		ret = (*item)->Init();
+		ret = (*item)->Init(config);
 		item++;
 	}
 
@@ -107,6 +111,32 @@ void Application::FinishUpdate()
 
 	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
 
+}
+
+void Application::SaveAllStatus()
+{
+	//json config = JLoader.Load("Settings/EditorConfig.json");
+
+	//std::list<Module*>::const_iterator item = list_modules.begin();
+
+	//while (item != list_modules.end())
+	//{
+	//	(*item)->LoadStatus(config);
+	//	item++;
+	//}
+}
+
+void Application::LoadAllStatus()
+{
+	json config = JLoader.Load("Settings/EditorConfig.json");
+
+	std::list<Module*>::const_iterator item = list_modules.begin();
+
+	while (item != list_modules.end())
+	{
+		(*item)->LoadStatus(config);
+		item++;
+	}
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
