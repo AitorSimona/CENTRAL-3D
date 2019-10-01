@@ -98,34 +98,34 @@ void PanelSettings::ApplicationNode() const
 	ImGui::PlotHistogram("##Milliseconds", &MS_Tracker[0], MS_Tracker.size(), 0, title, 0.0f, 40.0f, ImVec2(500, 75));
 
 	// --- Memory ---
-	sMStats stats = m_getMemoryStatistics(); // Using mmgr 
+	sMStats MemoryStats = m_getMemoryStatistics(); // Using mmgr 
 	static int speed = 0;
-	static std::vector<float> mem(100); // Hom many units/lines we want in the plot
+	static std::vector<float> Memory(100); // Hom many units/lines we want in the plot
 	if (++speed > 25) // How fast the plot is plotted :)
 	{
 		speed = 0;
-		if (mem.size() == 100)
+		if (Memory.size() == 100)
 		{
 			for (uint i = 0; i < 100 - 1; ++i)
-				mem[i] = mem[i + 1];
+				Memory[i] = Memory[i + 1];
 
-			mem[100 - 1] = (float)stats.totalReportedMemory;
+			Memory[100 - 1] = (float)MemoryStats.totalReportedMemory;
 		}
 		else
-			mem.push_back((float)stats.totalReportedMemory);
+			Memory.push_back((float)MemoryStats.totalReportedMemory);
 	}
 
-	ImGui::PlotHistogram("##Memory", &mem[0], mem.size(), 0, "Memory Consumption", 0.0f, (float)stats.peakReportedMemory * 1.2f, ImVec2(500, 75));
+	ImGui::PlotHistogram("##Memory", &Memory[0], Memory.size(), 0, "Memory Consumption", 0.0f, (float)MemoryStats.peakReportedMemory * 1.2f, ImVec2(500, 75));
 
-	ImGui::Text("Total Reported Memory: %u", stats.totalReportedMemory);
-	ImGui::Text("Total Actual Memory: %u", stats.totalActualMemory);
-	ImGui::Text("Peak Reported Memory: %u", stats.peakReportedMemory);
-	ImGui::Text("Peak Actual Memory: %u", stats.peakActualMemory);
-	ImGui::Text("Accumulated Reported Memory: %u", stats.accumulatedReportedMemory);
-	ImGui::Text("Accumulated Actual Memory: %u", stats.accumulatedActualMemory);
-	ImGui::Text("Accumulated Alloc Unit Count: %u", stats.accumulatedAllocUnitCount);
-	ImGui::Text("Total Alloc Unit Count: %u", stats.totalAllocUnitCount);
-	ImGui::Text("Peak Alloc Unit Count: %u", stats.peakAllocUnitCount);
+	ImGui::Text("Total Reported Memory: %u", MemoryStats.totalReportedMemory);
+	ImGui::Text("Total Actual Memory: %u", MemoryStats.totalActualMemory);
+	ImGui::Text("Peak Reported Memory: %u", MemoryStats.peakReportedMemory);
+	ImGui::Text("Peak Actual Memory: %u", MemoryStats.peakActualMemory);
+	ImGui::Text("Accumulated Reported Memory: %u", MemoryStats.accumulatedReportedMemory);
+	ImGui::Text("Accumulated Actual Memory: %u", MemoryStats.accumulatedActualMemory);
+	ImGui::Text("Accumulated Alloc Unit Count: %u", MemoryStats.accumulatedAllocUnitCount);
+	ImGui::Text("Total Alloc Unit Count: %u", MemoryStats.totalAllocUnitCount);
+	ImGui::Text("Peak Alloc Unit Count: %u", MemoryStats.peakAllocUnitCount);
 }
 
 void PanelSettings::WindowNode() const
@@ -214,88 +214,67 @@ void PanelSettings::HardwareNode() const
 
 	ImGui::Separator();
 	// --- SDL Version ---
-	ImGui::Text("SDL Version:");
-	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.sdl_version);
+	ImGui::Text("SDL Version:");	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.sdl_version); 
 	ImGui::Separator();
 
 	// --- CPU ---
-	ImGui::Text("CPU Logic Cores:");
-	ImGui::SameLine();
+	ImGui::Text("CPU Logic Cores:");	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.cpu_count);
 
-	ImGui::Text("CPU L1 Cache (Kb):");
-	ImGui::SameLine();
+	ImGui::Text("CPU L1 Cache (Kb):");	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.l1_cachekb);
 
-	ImGui::Text("CPU Instruction Support:");
-	ImGui::SameLine();
+	ImGui::Text("CPU Instruction Support:");ImGui::SameLine();
 
 	if(hardware_info.rdtsc)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "rdtsc");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "rdtsc");ImGui::SameLine();
 	if (hardware_info.altivec)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "altivec");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "altivec");ImGui::SameLine();
 	if (hardware_info.now3d)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "now3d");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "now3d");ImGui::SameLine();
 	if (hardware_info.mmx)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "mmx");
-	ImGui::SameLine();
-	if (hardware_info.sse)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "mmx");	ImGui::SameLine();
+	if (hardware_info.sse)
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse");	ImGui::SameLine();
 	if (hardware_info.sse2)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse2");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse2");ImGui::SameLine();
 	if (hardware_info.sse3)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse3");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse3");ImGui::SameLine();
 	if (hardware_info.sse41)						   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse41");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse41"); ImGui::SameLine();
 	if (hardware_info.sse42)						   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse42");
-	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse42");ImGui::SameLine();
 	if (hardware_info.avx)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "avx");
-	ImGui::SameLine();
-	if (hardware_info.avx2)							   
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "avx");	ImGui::SameLine();
+	if (hardware_info.avx2)						
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "avx2");
 
 	ImGui::Separator();
 	// --- RAM ---
-	ImGui::Text("RAM Memory (Gb)");
-	ImGui::SameLine();
+	ImGui::Text("RAM Memory (Gb)");ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.ram_gb);
 
 	ImGui::Separator();
 
 	// --- GPU --- 
-	ImGui::Text("GPU Vendor");
-	ImGui::SameLine();
+	ImGui::Text("GPU Vendor");	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_vendor.data());
 
-	ImGui::Text("GPU Model");
-	ImGui::SameLine();
+	ImGui::Text("GPU Model"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_brand.data());
 
-	ImGui::Text("GPU Driver");
-	ImGui::SameLine();
+	ImGui::Text("GPU Driver"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_driver.data());
 
 	// (Currently NVIDIA only)
-	ImGui::Text("VRAM Budget");
-	ImGui::SameLine();
+	ImGui::Text("VRAM Budget");	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_budget);
 
-	ImGui::Text("VRAM Available");
-	ImGui::SameLine();
+	ImGui::Text("VRAM Available"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_available);
 
-	ImGui::Text("VRAM Usage");
-	ImGui::SameLine();
+	ImGui::Text("VRAM Usage"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_usage);
 }
 
