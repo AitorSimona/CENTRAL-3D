@@ -1,7 +1,6 @@
 #ifndef __ModuleWindow_H__
 #define __ModuleWindow_H__
 
-#include <string>
 #include "Module.h"
 #include "Source/SDL/include/SDL.h"
 #include "JSONLoader.h"
@@ -35,8 +34,9 @@ public:
 	void SetBorderless(bool value);
 	void SetFullscreenDesktop(bool value);
 	void SetWinBrightness(float value);
+
+	// --- Only App should access this, through SetAppName ---
 	void SetWinTitle(const char* name);
-	const char* GetWinTitle() const;
 
 	float GetWinBrightness() const;
 
@@ -65,7 +65,6 @@ private:
 	uint				screen_height = 1024;
 	uint				display_Width = 0;
 	uint				display_Height = 0;
-	std::string			appName;
 
 	// --- Win Flags ---
 	bool fullscreen = false;

@@ -1,5 +1,6 @@
 {
     "Application": {
+        "Organization": "CITM - UPC",
         "Title": "CENTRAL 3D"
     },
     "GUI": {

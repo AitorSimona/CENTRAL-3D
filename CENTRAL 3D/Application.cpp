@@ -10,6 +10,7 @@ Application::Application()
 	last_fps = -1;
 	capped_ms = 1000 / 60; // Get Display RR!!
 	fps_counter = 0;
+	appName = "";
 
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
@@ -54,6 +55,13 @@ bool Application::Init()
 
 	// --- Load App data from JSON files ---
 	json config = JLoader.Load("Settings/EditorConfig.json");
+
+	// --- Reading App Name/ Org Name from json file ---
+	std::string tmp = config["Application"]["Title"];
+	appName = tmp;
+
+	std::string tmp2 = config["Application"]["Organization"];
+	orgName = tmp2;
 
 	// Call Init() in all modules
 
@@ -118,7 +126,8 @@ void Application::SaveAllStatus()
 	// --- Create Config with default values ---
 	json config = {
 		{"Application", {
-			{"Title", "CENTRAL 3D"}
+			{"Title", "CENTRAL 3D"},
+			{"Organization", "CITM - UPC"}
 		}},
 		
 		{"GUI", {
@@ -145,6 +154,11 @@ void Application::SaveAllStatus()
 		}},
 	};
 
+	std::string tmp = appName;
+	config["Application"]["Title"] = tmp;
+	std::string tmp2 = orgName;
+	config["Application"]["Organization"] = tmp2;
+
 
 	std::list<Module*>::const_iterator item = list_modules.begin();
 
@@ -157,17 +171,23 @@ void Application::SaveAllStatus()
 	JLoader.Save("Settings/EditorConfig.json", config);
 }
 
-void Application::LoadAllStatus()
+void Application::LoadAllStatus(json & file)
 {
-	//json config = JLoader.Load("Settings/EditorConfig.json");
+	// --- This function is not called at startup, but later if needed ---
 
-	//std::list<Module*>::const_iterator item = list_modules.begin();
+	// --- Reading App name from json file ---
+	std::string tmp = file["Application"]["Title"];
+	appName = tmp;
 
-	//while (item != list_modules.end())
-	//{
-	//	(*item)->LoadStatus(config);
-	//	item++;
-	//}
+	json config = JLoader.Load("Settings/EditorConfig.json");
+
+	std::list<Module*>::const_iterator item = list_modules.begin();
+
+	while (item != list_modules.end())
+	{
+		(*item)->LoadStatus(config);
+		item++;
+	}
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
@@ -241,4 +261,25 @@ uint Application::GetMaxFramerate() const
 		return (uint)((1.0f / (float)capped_ms) * 1000.0f);
 	else
 		return 0;
+}
+
+const char * Application::GetAppName() const
+{
+	return appName.data();
+}
+
+void Application::SetAppName(const char* name) 
+{
+	appName.assign(name);
+	App->window->SetWinTitle(appName.data());
+}
+
+void Application::SetOrganizationName(const char* name)
+{
+	orgName = name;
+}
+
+const char* Application::GetOrganizationName() const
+{
+	return orgName.data();
 }

@@ -2,6 +2,7 @@
 #define __APPLICATION_H_
 
 #include <list>
+#include <string>
 
 #include "Globals.h"
 #include "Timer.h"
@@ -25,6 +26,10 @@ public:
 
 	void SetMaxFramerate(uint maxFramerate);
 	uint GetMaxFramerate() const;
+	const char * GetAppName() const;
+	void SetAppName(const char* name);
+	void SetOrganizationName(const char* name);
+	const char* GetOrganizationName() const;
 
 public:
 	ModuleWindow* window;
@@ -50,6 +55,8 @@ private:
 	uint					last_frame_ms;
 
 	JSONLoader			JLoader;
+	std::string			appName;
+	std::string			orgName;
 
 public:
 
@@ -67,7 +74,7 @@ private:
 	void PrepareUpdate();
 	void FinishUpdate();
 	void SaveAllStatus();
-	void LoadAllStatus();
+	void LoadAllStatus(json & file);
 };
 
 extern Application* App;

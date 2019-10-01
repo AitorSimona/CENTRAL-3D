@@ -56,11 +56,19 @@ void PanelSettings::ApplicationNode() const
 {
 	// --- Application name ---
 	static char appName[100];
-	if (App->window->GetWinTitle() != nullptr)
-	   strcpy_s(appName, 100, App->window->GetWinTitle());
+	if (App->GetAppName() != nullptr)
+	   strcpy_s(appName, 100, App->GetAppName());
 	if (ImGui::InputText("App Name", appName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-		App->window->SetWinTitle(appName);
+		App->SetAppName(appName);
 	
+	ImGui::Separator();
+
+	// --- Organization name ---
+	static char orgName[100];
+	if (App->GetOrganizationName() != nullptr)
+		strcpy_s(orgName, 100, App->GetOrganizationName());
+	if (ImGui::InputText("Organization Name", orgName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+		App->SetOrganizationName(orgName);
 
 	ImGui::Separator();
 	// --- Cap frames ---
