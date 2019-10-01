@@ -5,7 +5,7 @@
     "GUI": {
         "About": false,
         "Inspector": true,
-        "Settings": false
+        "Settings": true
     },
     "Input": null,
     "Renderer3D": {

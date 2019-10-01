@@ -159,15 +159,15 @@ void Application::SaveAllStatus()
 
 void Application::LoadAllStatus()
 {
-	json config = JLoader.Load("Settings/EditorConfig.json");
+	//json config = JLoader.Load("Settings/EditorConfig.json");
 
-	std::list<Module*>::const_iterator item = list_modules.begin();
+	//std::list<Module*>::const_iterator item = list_modules.begin();
 
-	while (item != list_modules.end())
-	{
-		(*item)->LoadStatus(config);
-		item++;
-	}
+	//while (item != list_modules.end())
+	//{
+	//	(*item)->LoadStatus(config);
+	//	item++;
+	//}
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
@@ -226,10 +226,6 @@ void Application::AddModule(Module* mod)
 	list_modules.push_back(mod);
 }
 
-const char * Application::GetAppName() const
-{
-	return appName;
-}
 
 void Application::SetMaxFramerate(uint maxFramerate)
 {

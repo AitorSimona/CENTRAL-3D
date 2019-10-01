@@ -1,9 +1,10 @@
+#include <vector>
 #include "PanelSettings.h"
 #include "Application.h"
 #include "Source/Imgui/imgui.h"
 #include "Source/mmgr/mmgr.h"
-#include <vector>
 #include "ModuleHardware.h"
+#include "ModuleWindow.h"
 
 #include "Source/mmgr/mmgr.h"
 
@@ -54,10 +55,14 @@ bool PanelSettings::Draw()
 void PanelSettings::ApplicationNode() const
 {
 	// --- Application name ---
-	static char appName[20] = "CENTRAL 3D";
-	ImGui::InputText("App Name", appName, IM_ARRAYSIZE(appName));
-	ImGui::Separator();
+	static char appName[100];
+	if (App->window->GetWinTitle() != nullptr)
+	   strcpy_s(appName, 100, App->window->GetWinTitle());
+	if (ImGui::InputText("App Name", appName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+		App->window->SetWinTitle(appName);
+	
 
+	ImGui::Separator();
 	// --- Cap frames ---
 	int maxFramerate = App->GetMaxFramerate();
 	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, App->window->GetDisplayRefreshRate()))

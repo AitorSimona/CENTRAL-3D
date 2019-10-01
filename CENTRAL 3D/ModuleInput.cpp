@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
+#include "ModuleGui.h"
 
 #include "Source/mmgr/mmgr.h"
 
@@ -90,6 +91,9 @@ update_status ModuleInput::PreUpdate(float dt)
 	SDL_Event e;
 	while(SDL_PollEvent(&e))
 	{
+		// --- NEED to tell Imgui about the INPUT!! ---
+		App->gui->HandleInput(&e);
+
 		switch(e.type)
 		{
 			case SDL_MOUSEWHEEL:

@@ -31,7 +31,11 @@ public:
 
 	void SaveStatus(json &file) const override;
 
-	void LoadStatus(const json file) override;
+	void LoadStatus(const json & file) override;
+
+	void HandleInput(SDL_Event* event);
+
+	bool IsKeyboardCaptured();
 
 public:
 
@@ -39,7 +43,11 @@ public:
 	PanelAbout*			panelAbout = nullptr;
 
 private:
+
 	bool show_demo_window = false;
+
+	bool capture_keyboard = false;
+	bool capture_mouse = false;
 
 	std::vector<Panel*> panels;
 };

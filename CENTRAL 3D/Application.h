@@ -22,7 +22,6 @@
 class Application
 {
 public:
-	const char* GetAppName() const;
 
 	void SetMaxFramerate(uint maxFramerate);
 	uint GetMaxFramerate() const;
@@ -39,7 +38,6 @@ public:
 private:
 
 	std::list<Module*> list_modules;
-	const char* appName = "CENTRAL 3D";
 
 	Timer				ms_timer;
 	Timer				fps_timer;

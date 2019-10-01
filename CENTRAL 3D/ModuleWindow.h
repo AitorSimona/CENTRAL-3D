@@ -1,6 +1,7 @@
 #ifndef __ModuleWindow_H__
 #define __ModuleWindow_H__
 
+#include <string>
 #include "Module.h"
 #include "Source/SDL/include/SDL.h"
 #include "JSONLoader.h"
@@ -34,6 +35,9 @@ public:
 	void SetBorderless(bool value);
 	void SetFullscreenDesktop(bool value);
 	void SetWinBrightness(float value);
+	void SetWinTitle(const char* name);
+	const char* GetWinTitle() const;
+
 	float GetWinBrightness() const;
 
 	bool IsFullscreen();
@@ -42,6 +46,9 @@ public:
 	bool IsFullscreenDesktop();
 
 	void GetWinMaxMinSize(uint & min_width, uint & min_height, uint & max_width, uint & max_height) const;
+
+	void SaveStatus(json &file) const override;
+	void LoadStatus(const json & file) override;
 
 public:
 	//The window we'll be rendering to
@@ -58,6 +65,7 @@ private:
 	uint				screen_height = 1024;
 	uint				display_Width = 0;
 	uint				display_Height = 0;
+	std::string			appName;
 
 	// --- Win Flags ---
 	bool fullscreen = false;

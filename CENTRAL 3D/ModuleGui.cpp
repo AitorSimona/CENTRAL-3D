@@ -48,7 +48,7 @@ bool ModuleGui::Start()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_NavEnableSetMousePos; // Enable keyboard controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Window Docking (Under Active Development)
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Deactivated because of lib crash when resizing window out of Main window bounds
 
@@ -71,6 +71,13 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui::NewFrame();
 	//ImGuizmo::BeginFrame();
 
+	int mouse_x, mouse_y;
+	SDL_GetMouseState(&mouse_x, &mouse_y);
+	ImGui::GetIO().MousePos = ImVec2(float(mouse_x), float(mouse_y));
+
+	ImGuiIO& io = ImGui::GetIO();
+	capture_keyboard = io.WantCaptureKeyboard;
+	capture_mouse = io.WantCaptureMouse;
 
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
@@ -246,8 +253,18 @@ void ModuleGui::SaveStatus(json &file) const
 		file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
 };
 
-void ModuleGui::LoadStatus(json file) 
+void ModuleGui::LoadStatus(const json & file) 
 {
 	for (uint i = 0; i < panels.size(); ++i)
 		panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
-};
+}
+void ModuleGui::HandleInput(SDL_Event * event)
+{
+	ImGui_ImplSDL2_ProcessEvent(event);
+}
+
+bool ModuleGui::IsKeyboardCaptured()
+{
+	return capture_keyboard;
+}
+;

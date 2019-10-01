@@ -8,6 +8,7 @@ ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, s
 {
 	window = NULL;
 	screen_surface = NULL;
+	appName = "";
 }
 
 // Destructor
@@ -66,7 +67,10 @@ bool ModuleWindow::Init(json file)
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, flags);
+		// --- Read from JSON file ---
+		LoadStatus(file);
+
+		window = SDL_CreateWindow(appName.data(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, flags);
 
 		if(window == NULL)
 		{
@@ -170,6 +174,19 @@ void ModuleWindow::GetWinMaxMinSize(uint & min_width, uint & min_height, uint & 
 	}
 }
 
+void ModuleWindow::SaveStatus(json & file) const
+{
+	std::string tmp = appName;
+	file["Application"]["Title"] = tmp;
+}
+
+void ModuleWindow::LoadStatus(const json & file)
+{
+	// --- Reading App name from json file ---
+	std::string tmp = file["Application"]["Title"];
+	appName = tmp;
+}
+
 void ModuleWindow::SetFullscreen(bool value)
 {
 	if (value != fullscreen)
@@ -258,6 +275,17 @@ void ModuleWindow::SetWinBrightness(float value)
 	CAP(value);
 	if (SDL_SetWindowBrightness(window, value) != 0)
 		LOG("Could not change window brightness: %s\n", SDL_GetError());
+}
+
+void ModuleWindow::SetWinTitle(const char * name)
+{
+	appName.assign(name);
+	SDL_SetWindowTitle(window,name);
+}
+
+const char * ModuleWindow::GetWinTitle() const
+{
+	return appName.data();
 }
 
 float ModuleWindow::GetWinBrightness() const
