@@ -109,6 +109,11 @@ bool ModuleRenderer3D::Init(json file)
 		lights[0].Active(true);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+	
+
+		// Transparency and color merge
+		// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+
 	}
 
 	// Projection matrix for
@@ -120,13 +125,16 @@ bool ModuleRenderer3D::Init(json file)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	// --- Reset Buffers to default values ---
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glLoadIdentity();
 
+	// --- Set Model View as current ---
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
-	// light 0 on cam pos
+	// light 0 on cam pos, Render lights
 	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
 
 	for(uint i = 0; i < MAX_LIGHTS; ++i)
@@ -138,9 +146,11 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+	// --- Draw everything and swap buffers ---
 	App->gui->Draw();
 
-	SDL_GL_MakeCurrent(App->window->window, context);
+	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
+	SDL_GL_MakeCurrent(App->window->window, context); 
 	SDL_GL_SwapWindow(App->window->window);
 
 	return UPDATE_CONTINUE;
@@ -159,6 +169,10 @@ bool ModuleRenderer3D::CleanUp()
 
 void ModuleRenderer3D::OnResize(int width, int height)
 {
+	// --- Called by UpdateWindowSize() in Window module this when resizing windows to prevent rendering issues ---
+
+	// --- Resetting View matrices ---
+
 	glViewport(0, 0, width, height);
 
 	glMatrixMode(GL_PROJECTION);

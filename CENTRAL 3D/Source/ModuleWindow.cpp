@@ -34,16 +34,20 @@ bool ModuleWindow::Init(json file)
 		display_Width = display.w;
 		display_Height = display.h;
 
-		//Create window
+		// --- Assign Display Specific values to code vars ---
 		screen_width = uint(display.w * 0.75f);
 		screen_height = uint(display.h * 0.75f);
 		RefreshRate = display.refresh_rate;
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
+
 		//Use OpenGL 3.1
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE); // deprecated functions are disabled
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 
 		if(WIN_FULLSCREEN == true)
@@ -66,8 +70,6 @@ bool ModuleWindow::Init(json file)
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
 
-		//// --- Read from JSON file ---
-		//LoadStatus(file);
 
 		window = SDL_CreateWindow(App->GetAppName(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, flags);
 
@@ -156,6 +158,8 @@ uint ModuleWindow::GetDisplayRefreshRate()
 
 void ModuleWindow::GetWinMaxMinSize(uint & min_width, uint & min_height, uint & max_width, uint & max_height) const
 {
+	// --- Function used to set bounds to window resize by user ---
+
 	max_width = display_Width;
 	max_height = display_Height;
 	min_width = 640;
@@ -200,7 +204,7 @@ void ModuleWindow::SetFullscreen(bool value)
 			if (SDL_SetWindowFullscreen(window, 0) != 0)
 				LOG("Could not switch to windowed: %s\n", SDL_GetError());
 
-
+			//  --- To keep a default window size on deactivation ---
 			SetWindowWidth(uint(display_Width *0.75f));
 			SetWindowHeight(uint(display_Height*0.75f));
 		}
@@ -240,6 +244,7 @@ void ModuleWindow::SetFullscreenDesktop(bool value)
 			if (SDL_SetWindowFullscreen(window, 0) != 0)
 				LOG("Could not switch to windowed: %s\n", SDL_GetError());
 
+			//  --- To keep a default window size on deactivation ---
 			SetWindowWidth(uint(display_Width *0.75f));
 			SetWindowHeight(uint(display_Height*0.75f));
 		}
@@ -268,7 +273,7 @@ bool ModuleWindow::IsFullscreenDesktop()
 
 void ModuleWindow::SetWinBrightness(float value)
 {
-	CAP(value);
+	CAP(value); // Force values from 0 to 1
 	if (SDL_SetWindowBrightness(window, value) != 0)
 		LOG("Could not change window brightness: %s\n", SDL_GetError());
 }
