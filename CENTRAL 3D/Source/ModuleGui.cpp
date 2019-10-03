@@ -14,7 +14,7 @@
 #include "Imgui/imgui_internal.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 
-#include "glew/include/GL/glew.h"
+#include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 

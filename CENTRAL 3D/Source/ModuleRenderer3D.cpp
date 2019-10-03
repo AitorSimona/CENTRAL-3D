@@ -2,8 +2,7 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 
-#include "glew/include/GL/glew.h"
-#include "SDL\include\SDL_opengl.h"
+#include "OpenGL.h"
 #include "Imgui/imgui.h"
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */

@@ -1,5 +1,5 @@
 #include "JSONLoader.h"
-#include <assert.h>
+#include "SDL/include/SDL_assert.h"
 #include <fstream>
 #include <iomanip>
 
@@ -10,7 +10,7 @@ json JSONLoader::Load(const char * File) const
 {
 	if (File == nullptr)
 	{
-		assert(File != nullptr);
+		SDL_assert(File != nullptr);
 	}
 
 	// --- Create JSON object ---
@@ -19,7 +19,7 @@ json JSONLoader::Load(const char * File) const
 	// --- Load File ---
 	std::ifstream ifs;
 	ifs.open(File);
-	assert(ifs.is_open());
+	SDL_assert(ifs.is_open());
 
 	// --- Parse File, put data in jsonfile ---
 	try
@@ -43,7 +43,7 @@ bool JSONLoader::Save(const char * File, json jsonfile)
 
 	std::ofstream file;
 	file.open(File);
-	assert(file.is_open());
+	SDL_assert(file.is_open());
 	file << std::setw(4) << jsonfile << std::endl;
 	file.close();
 	

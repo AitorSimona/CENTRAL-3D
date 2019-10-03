@@ -4,7 +4,7 @@
 #include "Imgui/imgui.h"
 #include "SDL/include/SDL.h"
 
-#include "glew/include/GL/glew.h"
+#include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 

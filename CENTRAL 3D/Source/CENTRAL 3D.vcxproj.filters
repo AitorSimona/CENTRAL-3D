@@ -351,6 +351,9 @@
     <ClInclude Include="mmgr\nommgr.h">
       <Filter>Sources\3rd Party\mmgr</Filter>
     </ClInclude>
+    <ClInclude Include="OpenGL.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
