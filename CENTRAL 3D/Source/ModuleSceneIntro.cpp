@@ -5,7 +5,7 @@
 
 #include "Math.h"
 
-#include "Source/mmgr/mmgr.h"
+#include "mmgr/mmgr.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {

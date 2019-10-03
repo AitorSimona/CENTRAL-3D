@@ -8,15 +8,15 @@
 #include "PanelSettings.h"
 #include "PanelAbout.h"
 
-#include "Source/Imgui/imgui.h"
-#include "Source/imgui/imgui_impl_sdl.h"
-#include "Source/imgui/imgui_impl_opengl3.h"
-#include "Source/Imgui/imgui_internal.h"
-#include "Source/Imgui/ImGuizmo/ImGuizmo.h"
+#include "Imgui/imgui.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "Imgui/imgui_internal.h"
+#include "Imgui/ImGuizmo/ImGuizmo.h"
 
-#include "Source/glew/include/GL/glew.h"
+#include "glew/include/GL/glew.h"
 
-#include "Source/mmgr/mmgr.h"
+#include "mmgr/mmgr.h"
 
 
 

@@ -2,15 +2,15 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 
-#include "Source/glew/include/GL/glew.h"
-#include "Source/SDL\include\SDL_opengl.h"
-#include "Source/Imgui/imgui.h"
+#include "glew/include/GL/glew.h"
+#include "SDL\include\SDL_opengl.h"
+#include "Imgui/imgui.h"
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
-#pragma comment(lib, "Source/glew/libx86/glew32.lib")
+#pragma comment(lib, "glew/libx86/glew32.lib")
 
-#include "Source/mmgr/mmgr.h"
+#include "mmgr/mmgr.h"
 
 ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {

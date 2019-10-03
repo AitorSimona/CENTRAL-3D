@@ -1,6 +1,6 @@
 #include "Panel.h"
 
-#include "Source/mmgr/mmgr.h"
+#include "mmgr/mmgr.h"
 
 Panel::Panel(char* name) : name(name) {}
 

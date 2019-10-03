@@ -2,7 +2,7 @@
 #define __JSONLoader_H__
 
 #include "Globals.h"
-#include "Source/json/json.hpp"
+#include "json/json.hpp"
 
 // for convenience
 using json = nlohmann::json;

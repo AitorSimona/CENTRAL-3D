@@ -1,12 +1,12 @@
 #include <vector>
 #include "PanelSettings.h"
 #include "Application.h"
-#include "Source/Imgui/imgui.h"
-#include "Source/mmgr/mmgr.h"
+#include "Imgui/imgui.h"
 #include "ModuleHardware.h"
 #include "ModuleWindow.h"
 
-#include "Source/mmgr/mmgr.h"
+#include "mmgr/mmgr.h"
+
 
 PanelSettings::PanelSettings(char * name): Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
 {

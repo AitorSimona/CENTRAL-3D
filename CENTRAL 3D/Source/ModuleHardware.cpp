@@ -1,10 +1,10 @@
 #include "Globals.h"
 #include "ModuleHardware.h"
-#include "Source/SDL/include/SDL.h"
+#include "SDL/include/SDL.h"
 
-#include "Source/glew/include/GL/glew.h"
+#include "glew/include/GL/glew.h"
 
-#include "Source/mmgr/mmgr.h"
+#include "mmgr/mmgr.h"
 
 ModuleHardware::ModuleHardware(Application* app, bool start_enabled) : Module(app, start_enabled)
 {

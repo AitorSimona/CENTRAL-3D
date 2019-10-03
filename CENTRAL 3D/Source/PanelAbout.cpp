@@ -1,12 +1,12 @@
 #include "PanelAbout.h"
 #include "Application.h"
 #include "ModuleGui.h"
-#include "Source/Imgui/imgui.h"
-#include "Source/SDL/include/SDL.h"
+#include "Imgui/imgui.h"
+#include "SDL/include/SDL.h"
 
-#include "Source/glew/include/GL/glew.h"
+#include "glew/include/GL/glew.h"
 
-#include "Source/mmgr/mmgr.h"
+#include "mmgr/mmgr.h"
 
 
 PanelAbout::PanelAbout(char * name) : Panel(name)
