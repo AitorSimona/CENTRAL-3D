@@ -11,6 +11,7 @@ Application::Application()
 	capped_ms = 1000 / 60; // Get Display RR!!
 	fps_counter = 0;
 	appName = "";
+	configpath = "Settings/EditorConfig.json";
 
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
@@ -54,7 +55,13 @@ bool Application::Init()
 	bool ret = true;
 
 	// --- Load App data from JSON files ---
-	json config = JLoader.Load("Settings/EditorConfig.json");
+	json config = JLoader.Load(configpath.data());
+
+	// --- Create Config with default values if load fails ---
+	if (config.is_null())
+	{
+		config = GetDefaultConfig();
+	}
 
 	// --- Reading App Name/ Org Name from json file ---
 	std::string tmp = config["Application"]["Title"];
@@ -85,7 +92,7 @@ bool Application::Init()
 	
 	ms_timer.Start();
 
-	SetMaxFramerate(0);
+	SetMaxFramerate(App->window->GetDisplayRefreshRate());
 
 	return ret;
 }
@@ -117,6 +124,7 @@ void Application::FinishUpdate()
 	if (capped_ms > 0 && (last_frame_ms < capped_ms))
 		SDL_Delay(capped_ms - last_frame_ms);
 
+	// --- Send data to GUI- PanelSettings Historiograms
 	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
 
 }
@@ -124,41 +132,14 @@ void Application::FinishUpdate()
 void Application::SaveAllStatus()
 {
 	// --- Create Config with default values ---
-	json config = {
-		{"Application", {
-			{"Title", "CENTRAL 3D"},
-			{"Organization", "CITM - UPC"}
-		}},
-		
-		{"GUI", {
-			{"Inspector", true},
-			{"About", false},
-			{"Settings", false},
-		}},
-
-		{"Window", {
-			{"width", 1024},
-			{"height", 720},
-			{"fullscreen", false},
-			{"resizable", true},
-			{"borderless", false},
-			{"fullscreenDesktop", false}
-		}},
-
-		{"Input", {
-			
-		}},
-
-		{"Renderer3D", {
-			{"VSync", true}
-		}},
-	};
+	json config = GetDefaultConfig();
 
 	std::string tmp = appName;
 	config["Application"]["Title"] = tmp;
 	std::string tmp2 = orgName;
 	config["Application"]["Organization"] = tmp2;
 
+	// --- Call Save of all modules ---
 
 	std::list<Module*>::const_iterator item = list_modules.begin();
 
@@ -168,7 +149,7 @@ void Application::SaveAllStatus()
 		item++;
 	}
 
-	JLoader.Save("Settings/EditorConfig.json", config);
+	JLoader.Save(configpath.data(), config);
 }
 
 void Application::LoadAllStatus(json & file)
@@ -179,7 +160,9 @@ void Application::LoadAllStatus(json & file)
 	std::string tmp = file["Application"]["Title"];
 	appName = tmp;
 
-	json config = JLoader.Load("Settings/EditorConfig.json");
+	// --- Call Load of all modules ---
+
+	json config = JLoader.Load(configpath.data());
 
 	std::list<Module*>::const_iterator item = list_modules.begin();
 
@@ -227,7 +210,7 @@ update_status Application::Update()
 
 bool Application::CleanUp()
 {
-	// --- Save all Status ---
+	// --- Save all Status --- TODO: Should be called by user
 	SaveAllStatus();
 
 	bool ret = true;
@@ -282,4 +265,40 @@ void Application::SetOrganizationName(const char* name)
 const char* Application::GetOrganizationName() const
 {
 	return orgName.data();
+}
+
+json Application::GetDefaultConfig() const
+{
+	// --- Create Config with default values ---
+	json config = {
+		{"Application", {
+			{"Title", "CENTRAL 3D"},
+			{"Organization", "CITM - UPC"}
+		}},
+
+		{"GUI", {
+			{"Inspector", true},
+			{"About", false},
+			{"Settings", false},
+		}},
+
+		{"Window", {
+			{"width", 1024},
+			{"height", 720},
+			{"fullscreen", false},
+			{"resizable", true},
+			{"borderless", false},
+			{"fullscreenDesktop", false}
+		}},
+
+		{"Input", {
+
+		}},
+
+		{"Renderer3D", {
+			{"VSync", true}
+		}},
+	};
+
+	return config;
 }

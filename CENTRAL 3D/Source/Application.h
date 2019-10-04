@@ -30,6 +30,7 @@ public:
 	void SetAppName(const char* name);
 	void SetOrganizationName(const char* name);
 	const char* GetOrganizationName() const;
+	json GetDefaultConfig() const;
 
 public:
 	ModuleWindow* window;
@@ -57,6 +58,7 @@ private:
 	JSONLoader			JLoader;
 	std::string			appName;
 	std::string			orgName;
+	std::string			configpath;
 
 public:
 
