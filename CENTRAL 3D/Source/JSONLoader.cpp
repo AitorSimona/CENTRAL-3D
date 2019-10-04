@@ -1,5 +1,4 @@
 #include "JSONLoader.h"
-#include "SDL/include/SDL_assert.h"
 #include <fstream>
 #include <iomanip>
 
@@ -8,30 +7,48 @@
 
 json JSONLoader::Load(const char * File) const 
 {
-	if (File == nullptr)
-	{
-		SDL_assert(File != nullptr);
-	}
+
+	bool ret = true;
 
 	// --- Create JSON object ---
 	json jsonfile;
 
-	// --- Load File ---
-	std::ifstream ifs;
-	ifs.open(File);
-	SDL_assert(ifs.is_open());
-
-	// --- Parse File, put data in jsonfile ---
-	try
+	if (File == nullptr)
 	{
-		jsonfile = json::parse(ifs);
-	}
-	catch (json::parse_error& e)
-	{
-		LOG("Parse Error in loading file: %c", e.what());
+		ret = false;
+		LOG("JSONLoader::Load : %c was nullptr", File);
 	}
 
-	ifs.close();
+	else
+	{
+		
+		// --- Load File ---
+		std::ifstream ifs;
+		ifs.open(File);
+
+		if (!ifs.is_open())
+		{
+			LOG("JSONLoader::Save could not open File: %c", File);
+			ret = false;
+		}
+
+		else
+		{
+			// --- Parse File, put data in jsonfile ---
+			try
+			{
+				jsonfile = json::parse(ifs);
+			}
+			catch (json::parse_error& e)
+			{
+				LOG("Parse Error in loading file: %c", e.what());
+			}
+
+			ifs.close();
+
+		}
+
+	}
 	
 	return jsonfile;
 }
@@ -41,11 +58,21 @@ bool JSONLoader::Save(const char * File, json jsonfile)
 	// --- Save to File, overwrite if exists ---
 	// Note setw, used to prettify JSON file (adding newlines and spaces)
 
+	bool ret = true;
+
 	std::ofstream file;
 	file.open(File);
-	SDL_assert(file.is_open());
-	file << std::setw(4) << jsonfile << std::endl;
-	file.close();
+
+	if (!file.is_open())
+	{
+		LOG("JSONLoader::Save could not open File: %c", File);
+		ret = false;
+	}
+	else
+	{
+		file << std::setw(4) << jsonfile << std::endl;
+		file.close();
+	}
 	
-	return true;
+	return ret;
 }
