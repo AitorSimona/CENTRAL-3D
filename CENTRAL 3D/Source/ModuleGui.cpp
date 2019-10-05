@@ -8,6 +8,8 @@
 #include "PanelSettings.h"
 #include "PanelAbout.h"
 #include "PanelConsole.h"
+#include "PanelInspector.h"
+#include "PanelHierarchy.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -39,6 +41,12 @@ bool ModuleGui::Init(json file)
 
 	panelConsole = new PanelConsole("Console");
 	panels.push_back(panelConsole);
+
+	panelInspector = new PanelInspector("Inspector");
+	panels.push_back(panelInspector);
+
+	panelHierarchy = new PanelHierarchy("Hierarchy");
+	panels.push_back(panelHierarchy);
 
 	LoadStatus(file);
 
@@ -125,6 +133,17 @@ update_status ModuleGui::Update(float dt)
 				{
 					panelSettings->OnOff();
 				}
+
+				if (ImGui::MenuItem("Inspector"))
+				{
+					panelInspector->OnOff();
+				}
+
+				if (ImGui::MenuItem("Hierarchy"))
+				{
+					panelHierarchy->OnOff();
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -226,6 +245,10 @@ void ModuleGui::DockSpace() const
 	ImGui::SetNextWindowSize(viewport->Size);
 	ImGui::SetNextWindowViewport(viewport->ID);
 
+	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+
+	//ImGui::DockSpaceOverViewport(viewport,dockspace_flags);
+
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
@@ -239,7 +262,7 @@ void ModuleGui::DockSpace() const
 	ImGui::PopStyleVar(3);
 
 	ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
-	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+	//ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 }
 
@@ -269,7 +292,7 @@ void ModuleGui::LoadStatus(const json & file)
 		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end())
 			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
 		else
-			LOG("Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
+			LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
 	}
 }
 void ModuleGui::HandleInput(SDL_Event * event)

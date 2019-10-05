@@ -35,7 +35,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	if(context == NULL)
 	{
-		LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+		LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 	
@@ -43,14 +43,14 @@ bool ModuleRenderer3D::Init(json file)
 	{
 		//Use Vsync
 		if(vsync && SDL_GL_SetSwapInterval(1) < 0)
-			LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		// Initialize glew
 		GLenum error = glewInit();
 
 		if (error != GL_NO_ERROR)
 		{
-			LOG("Error initializing glew! %s\n"/*, glewGetErrorString(error)*/);
+			LOG("|[error]: Error initializing glew! %s\n"/*, glewGetErrorString(error)*/);
 			ret = false;
 		}
 
@@ -62,7 +62,7 @@ bool ModuleRenderer3D::Init(json file)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 
@@ -74,7 +74,7 @@ bool ModuleRenderer3D::Init(json file)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 		
@@ -88,7 +88,7 @@ bool ModuleRenderer3D::Init(json file)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 		
@@ -199,7 +199,7 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 		if (SDL_GL_SetSwapInterval(1) == -1)
 		{
 			ret = false;
-			LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 	else {
@@ -207,7 +207,7 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 		if (SDL_GL_SetSwapInterval(0) == -1)
 		{
 			ret = false;
-			LOG("Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
+			LOG("|[error]: Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 

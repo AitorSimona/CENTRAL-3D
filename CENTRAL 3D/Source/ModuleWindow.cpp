@@ -24,7 +24,7 @@ bool ModuleWindow::Init(json file)
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
+		LOG("|[error]: SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 	else
@@ -76,7 +76,7 @@ bool ModuleWindow::Init(json file)
 
 		if(window == NULL)
 		{
-			LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+			LOG("|[error]: Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
 		}
 		else
@@ -150,7 +150,7 @@ uint ModuleWindow::GetDisplayRefreshRate()
 	if (SDL_GetDesktopDisplayMode(0, &desktopDisplay) == 0)
 		refreshRate = desktopDisplay.refresh_rate;
 	else
-		LOG("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+		LOG("|[error]: SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 
 	RefreshRate = refreshRate;
 
@@ -169,7 +169,7 @@ void ModuleWindow::GetWinMaxMinSize(uint & min_width, uint & min_height, uint & 
 	SDL_DisplayMode dm;
 	if (SDL_GetDesktopDisplayMode(0, &dm) != 0)
 	{
-		LOG("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+		LOG("|[error]: SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 	}
 	else
 	{
@@ -196,14 +196,14 @@ void ModuleWindow::SetFullscreen(bool value)
 		if (fullscreen == true)
 		{
 			if (SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN) != 0)
-				LOG("Could not switch to fullscreen: %s\n", SDL_GetError());
+				LOG("|[error]: Could not switch to fullscreen: %s\n", SDL_GetError());
 			fullscreen_desktop = false;
 
 		}
 		else
 		{
 			if (SDL_SetWindowFullscreen(window, 0) != 0)
-				LOG("Could not switch to windowed: %s\n", SDL_GetError());
+				LOG("|[error]: Could not switch to windowed: %s\n", SDL_GetError());
 
 			//  --- To keep a default window size on deactivation ---
 			SetWindowWidth(uint(display_Width *0.75f));
@@ -236,14 +236,14 @@ void ModuleWindow::SetFullscreenDesktop(bool value)
 		if (fullscreen_desktop == true)
 		{
 			if (SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
-				LOG("Could not switch to fullscreen desktop: %s\n", SDL_GetError());
+				LOG("|[error]: Could not switch to fullscreen desktop: %s\n", SDL_GetError());
 			fullscreen = false;
 
 		}
 		else
 		{
 			if (SDL_SetWindowFullscreen(window, 0) != 0)
-				LOG("Could not switch to windowed: %s\n", SDL_GetError());
+				LOG("|[error]: Could not switch to windowed: %s\n", SDL_GetError());
 
 			//  --- To keep a default window size on deactivation ---
 			SetWindowWidth(uint(display_Width *0.75f));
@@ -276,7 +276,7 @@ void ModuleWindow::SetWinBrightness(float value)
 {
 	CAP(value); // Force values from 0 to 1
 	if (SDL_SetWindowBrightness(window, value) != 0)
-		LOG("Could not change window brightness: %s\n", SDL_GetError());
+		LOG("|[error]: Could not change window brightness: %s\n", SDL_GetError());
 }
 
 void ModuleWindow::SetWinTitle(const char * name)

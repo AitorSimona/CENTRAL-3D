@@ -19,7 +19,7 @@ Application::Application()
 	fps_counter = 0;
 	appName = "";
 	configpath = "Settings/EditorConfig.json";
-	//log = "Application Logs:";
+	log = "Application Logs:";
 
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
@@ -303,14 +303,11 @@ json Application::GetDefaultConfig() const
 	// --- Create Config with default values ---
 	json config = {
 		{"Application", {
-			{"Title", "CENTRAL 3D"},
-			{"Organization", "CITM - UPC"}
+
 		}},
 
 		{"GUI", {
-			{"Inspector", true},
-			{"About", false},
-			{"Settings", false},
+
 		}},
 
 		{"Window", {

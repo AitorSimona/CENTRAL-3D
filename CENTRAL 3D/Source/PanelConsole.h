@@ -17,6 +17,7 @@ private:
 
 	void Clear();
 	ImGuiTextFilter filter;
+	char* error_key = "|";
 };
 
 #endif

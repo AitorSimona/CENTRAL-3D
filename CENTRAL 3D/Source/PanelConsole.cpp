@@ -41,19 +41,25 @@ bool PanelConsole::Draw()
 			// --- Print logs to console ---
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 1)); // Tighten spacing
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 255, 255, 255));
 
 			for (uint i = 0; i < App->GetLogs().size(); ++i)
 			{
 				const char* item = App->GetLogs().at(i).data();
+
+				if(item[1] == *error_key)
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.75, 0, 0, 255));
+				else
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 255, 255, 255));
 
 				if (!filter.PassFilter(item))
 					continue;
 
 				ImGui::TextUnformatted(item);
 
+
+				ImGui::PopStyleColor();
+
 			}
-			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
 
 		}
