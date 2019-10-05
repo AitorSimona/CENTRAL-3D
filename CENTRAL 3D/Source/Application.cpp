@@ -168,6 +168,9 @@ void Application::LoadAllStatus(json & file)
 	std::string tmp = file["Application"]["Title"];
 	appName = tmp;
 
+	std::string tmp2 = file["Application"]["Organization"];
+	orgName = tmp2;
+
 	// --- Call Load of all modules ---
 
 	json config = JLoader.Load(configpath.data());

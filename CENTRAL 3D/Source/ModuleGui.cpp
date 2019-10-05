@@ -7,6 +7,7 @@
 #include "Panel.h"
 #include "PanelSettings.h"
 #include "PanelAbout.h"
+#include "PanelConsole.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -35,6 +36,9 @@ bool ModuleGui::Init(json file)
 
 	panelAbout = new PanelAbout("About");
 	panels.push_back(panelAbout);
+
+	panelConsole = new PanelConsole("Console");
+	panels.push_back(panelConsole);
 
 	LoadStatus(file);
 
@@ -71,9 +75,9 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui::NewFrame();
 	//ImGuizmo::BeginFrame();
 
-	int mouse_x, mouse_y;
-	SDL_GetMouseState(&mouse_x, &mouse_y);
-	ImGui::GetIO().MousePos = ImVec2(float(mouse_x), float(mouse_y));
+	//int mouse_x, mouse_y;
+	//SDL_GetMouseState(&mouse_x, &mouse_y);
+	//ImGui::GetIO().MousePos = ImVec2(float(mouse_x), float(mouse_y));
 
 	ImGuiIO& io = ImGui::GetIO();
 	capture_keyboard = io.WantCaptureKeyboard;
@@ -114,7 +118,7 @@ update_status ModuleGui::Update(float dt)
 			{
 				if (ImGui::MenuItem("Console"))
 				{
-					
+					panelConsole->OnOff();
 				}
 
 				if (ImGui::MenuItem("Configuration"))
@@ -255,8 +259,14 @@ void ModuleGui::SaveStatus(json &file) const
 
 void ModuleGui::LoadStatus(const json & file) 
 {
+	
 	for (uint i = 0; i < panels.size(); ++i)
-		panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
+	{
+		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end())
+			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
+		else
+			LOG("Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
+	}
 }
 void ModuleGui::HandleInput(SDL_Event * event)
 {

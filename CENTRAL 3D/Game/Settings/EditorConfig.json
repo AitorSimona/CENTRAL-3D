@@ -5,6 +5,7 @@
     },
     "GUI": {
         "About": false,
+        "Console": true,
         "Inspector": true,
         "Settings": true
     },

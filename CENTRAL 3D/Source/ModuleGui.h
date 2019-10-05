@@ -8,6 +8,7 @@
 class Panel;
 class PanelSettings;
 class PanelAbout;
+class PanelConsole;
 
 class ModuleGui : public Module
 {
@@ -43,6 +44,7 @@ public:
 
 	PanelSettings*		panelSettings = nullptr;
 	PanelAbout*			panelAbout = nullptr;
+	PanelConsole*		panelConsole = nullptr;
 
 private:
 
