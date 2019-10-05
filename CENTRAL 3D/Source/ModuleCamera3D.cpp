@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleCamera3D.h"
 #include "ModuleGui.h"
+#include "ModuleInput.h"
 
 #include "mmgr/mmgr.h"
 

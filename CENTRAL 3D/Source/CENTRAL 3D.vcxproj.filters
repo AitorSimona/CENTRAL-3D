@@ -354,6 +354,9 @@
     <ClInclude Include="OpenGL.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="PanelConsole.h">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -535,6 +538,12 @@
     </ClCompile>
     <ClCompile Include="mmgr\mmgr.cpp">
       <Filter>Sources\3rd Party\mmgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Globals.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelConsole.cpp">
+      <Filter>Sources\Modules\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

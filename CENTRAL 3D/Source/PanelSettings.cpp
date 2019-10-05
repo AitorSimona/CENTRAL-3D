@@ -4,6 +4,8 @@
 #include "Imgui/imgui.h"
 #include "ModuleHardware.h"
 #include "ModuleWindow.h"
+#include "ModuleInput.h"
+#include "ModuleRenderer3D.h"
 
 #include "mmgr/mmgr.h"
 

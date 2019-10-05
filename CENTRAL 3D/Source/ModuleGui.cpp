@@ -267,4 +267,7 @@ bool ModuleGui::IsKeyboardCaptured()
 {
 	return capture_keyboard;
 }
+void ModuleGui::ConsoleLog(const char * entry) const
+{
+}
 ;

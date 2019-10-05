@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleGui.h"
+#include "ModuleWindow.h"
 
 #include "mmgr/mmgr.h"
 

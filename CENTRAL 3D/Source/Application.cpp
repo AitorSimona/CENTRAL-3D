@@ -1,4 +1,11 @@
 #include "Application.h"
+#include "ModuleWindow.h"
+#include "ModuleInput.h"
+#include "ModuleSceneIntro.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
+#include "ModuleGui.h"
+#include "ModuleHardware.h"
 
 #include "mmgr/mmgr.h"
 
@@ -12,6 +19,7 @@ Application::Application()
 	fps_counter = 0;
 	appName = "";
 	configpath = "Settings/EditorConfig.json";
+	//log = "Application Logs:";
 
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
@@ -260,6 +268,16 @@ void Application::SetAppName(const char* name)
 void Application::SetOrganizationName(const char* name)
 {
 	orgName = name;
+}
+
+void Application::Log(const char * entry)
+{
+	//// --- Append all logs to a string so we can save them to a file upon app close --- 
+	log.append(entry);
+	
+
+	// --- Ask GUI to print the log on the console ---
+	App->gui->ConsoleLog(entry);
 }
 
 const char* Application::GetOrganizationName() const

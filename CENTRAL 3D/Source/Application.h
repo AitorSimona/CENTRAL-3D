@@ -1,36 +1,40 @@
 #ifndef __APPLICATION_H_
 #define __APPLICATION_H_
 
+#include "Globals.h"
 #include <list>
 #include <string>
-
-#include "Globals.h"
 #include "Timer.h"
-#include "Module.h"
-#include "ModuleWindow.h"
-#include "ModuleInput.h"
-#include "ModuleSceneIntro.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleCamera3D.h"
-#include "ModuleGui.h"
-#include "ModuleHardware.h"
-
 #include "PerfTimer.h"
 
 #include "JSONLoader.h"
 
+class Module;
+class ModuleWindow;
+class ModuleInput;
+class ModuleSceneIntro;
+class ModuleRenderer3D;
+class ModuleCamera3D;
+class ModuleGui;
+class ModuleHardware;
 
 class Application
 {
 public:
 
-	void SetMaxFramerate(uint maxFramerate);
+	// --- Getters ---
 	uint GetMaxFramerate() const;
 	const char * GetAppName() const;
-	void SetAppName(const char* name);
-	void SetOrganizationName(const char* name);
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
+
+	// --- Setters ---
+	void SetMaxFramerate(uint maxFramerate);
+	void SetAppName(const char* name);
+	void SetOrganizationName(const char* name);
+
+	void Log(const char* entry);
+
 
 public:
 	ModuleWindow* window;
@@ -59,6 +63,7 @@ private:
 	std::string			appName;
 	std::string			orgName;
 	std::string			configpath;
+	std::string			log;
 
 public:
 

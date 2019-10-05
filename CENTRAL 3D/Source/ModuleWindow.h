@@ -20,6 +20,7 @@ public:
 	bool Start() override;
 	bool CleanUp();
 
+	// On Resize
 	void UpdateWindowSize() const;
 
 	// --- Setters ---
