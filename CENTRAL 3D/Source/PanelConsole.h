@@ -2,6 +2,7 @@
 #define __PANEL_CONSOLE_H__
 
 #include "Panel.h"
+#include "Imgui/imgui.h"
 
 class PanelConsole : public Panel
 {
@@ -15,7 +16,7 @@ public:
 private:
 
 	void Clear();
-
+	ImGuiTextFilter filter;
 };
 
 #endif

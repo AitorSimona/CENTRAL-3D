@@ -1,7 +1,6 @@
 #include "Globals.h"
 #include "PanelConsole.h"
 #include "Application.h"
-#include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
 
@@ -27,6 +26,10 @@ bool PanelConsole::Draw()
 			Clear();
 		}
 
+		ImGui::SameLine();
+
+		filter.Draw("Filter", 200.0f);
+
 		ImGui::Separator();
 
 		ImGuiWindowFlags scrollFlags = 0;
@@ -38,13 +41,21 @@ bool PanelConsole::Draw()
 			// --- Print logs to console ---
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 1)); // Tighten spacing
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 255, 255, 255));
 
 			for (uint i = 0; i < App->GetLogs().size(); ++i)
 			{
-				ImGui::Text(App->GetLogs().at(i).data());
-			}
+				const char* item = App->GetLogs().at(i).data();
 
+				if (!filter.PassFilter(item))
+					continue;
+
+				ImGui::TextUnformatted(item);
+
+			}
+			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
+
 		}
 
 		if(ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
