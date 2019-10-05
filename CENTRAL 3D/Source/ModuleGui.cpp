@@ -193,6 +193,10 @@ bool ModuleGui::CleanUp()
 	for (uint i = 0; i < panels.size(); ++i)
 		RELEASE(panels[i]);
 
+	panelSettings = nullptr;
+	panelAbout = nullptr;
+	panelConsole = nullptr;
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -277,7 +281,5 @@ bool ModuleGui::IsKeyboardCaptured()
 {
 	return capture_keyboard;
 }
-void ModuleGui::ConsoleLog(const char * entry) const
-{
-}
+
 ;

@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include <list>
 #include <string>
+#include <vector>
 #include "Timer.h"
 #include "PerfTimer.h"
 
@@ -27,6 +28,7 @@ public:
 	const char * GetAppName() const;
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
+	std::vector<std::string>& GetLogs();
 
 	// --- Setters ---
 	void SetMaxFramerate(uint maxFramerate);
@@ -34,7 +36,7 @@ public:
 	void SetOrganizationName(const char* name);
 
 	void Log(const char* entry);
-
+	void ClearLogsFromConsole();
 
 public:
 	ModuleWindow* window;
@@ -64,6 +66,8 @@ private:
 	std::string			orgName;
 	std::string			configpath;
 	std::string			log;
+	std::vector<std::string> logs;
+
 
 public:
 

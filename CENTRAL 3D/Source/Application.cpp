@@ -275,12 +275,22 @@ void Application::SetOrganizationName(const char* name)
 
 void Application::Log(const char * entry)
 {
-	//// --- Append all logs to a string so we can save them to a file upon app close --- 
+	// --- Append all logs to a string so we can print them on console --- 
 	log.append(entry);
-	
 
-	// --- Ask GUI to print the log on the console ---
-	App->gui->ConsoleLog(entry);
+	std::string to_add = entry;
+	logs.push_back(to_add);
+}
+
+void Application::ClearLogsFromConsole()
+{
+	logs.erase(logs.begin(),logs.end());
+	logs.clear();
+}
+
+std::vector<std::string> & Application::GetLogs()
+{
+	return logs;
 }
 
 const char* Application::GetOrganizationName() const
@@ -323,3 +333,5 @@ json Application::GetDefaultConfig() const
 
 	return config;
 }
+
+

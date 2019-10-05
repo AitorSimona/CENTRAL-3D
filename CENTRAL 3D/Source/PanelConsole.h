@@ -3,8 +3,6 @@
 
 #include "Panel.h"
 
-#include "ImGui\imgui.h"
-
 class PanelConsole : public Panel
 {
 public:
@@ -14,18 +12,10 @@ public:
 
 	bool Draw();
 
-	void AddLog(const char* log);
-
 private:
 
 	void Clear();
 
-private:
-
-	ImGuiTextBuffer buf;
-	ImGuiTextFilter filter;
-	ImVector<int> lineOffsets;
-	bool scrollToBottom = true;
 };
 
 #endif

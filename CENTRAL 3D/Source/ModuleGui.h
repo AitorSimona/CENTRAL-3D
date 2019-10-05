@@ -38,8 +38,6 @@ public:
 
 	bool IsKeyboardCaptured();
 
-	void ConsoleLog(const char * entry) const;
-
 public:
 
 	PanelSettings*		panelSettings = nullptr;
