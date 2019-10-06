@@ -67,8 +67,6 @@ void Primitive::Render() const
 		glEnable(GL_CULL_FACE);
 	}
 
-	InnerRender();
-
 }
 
 
@@ -104,64 +102,162 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 
 void PrimitiveCube::InnerRender() const
 {
-	glBegin(GL_TRIANGLES);  // draw a cube with 12 triangles
 
-	// front face =================
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(size.x,0.0f,0.0f);
-	glVertex3f(0.0f,size.y,0.0f);
+	bool direct_mode = false;
+	bool vertex_arrays = false;
+	bool indices = true;
 
-	glVertex3f(size.x, 0.0f, 0.0f);
-	glVertex3f(size.x, size.y, 0.0f);
-	glVertex3f(0.0f, size.y, 0.0f);
+	if (direct_mode)
+	{
+		glBegin(GL_TRIANGLES);  // draw a cube with 12 triangles
 
-	// right face =================
-	glVertex3f(0.0f, 0.0f, -size.z);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, size.y, 0.0f);
+		// front face =================
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(size.x, 0.0f, 0.0f);
+		glVertex3f(0.0f, size.y, 0.0f);
 
-	glVertex3f(0.0f, 0.0f, -size.z);
-	glVertex3f(0.0f, size.y, 0.0f);
-	glVertex3f(0.0f, size.y, -size.z);
+		glVertex3f(size.x, 0.0f, 0.0f);
+		glVertex3f(size.x, size.y, 0.0f);
+		glVertex3f(0.0f, size.y, 0.0f);
 
-	// top face ===================
-	glVertex3f(0.0f, size.y, -size.z);
-	glVertex3f(0.0f, size.y, 0.0f);
-	glVertex3f(size.x, size.y, 0.0f);
+		// right face =================
+		glVertex3f(0.0f, 0.0f, -size.z);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(0.0f, size.y, 0.0f);
 
-	glVertex3f(0.0f, size.y, -size.z);
-	glVertex3f(size.x, size.y, 0.0f);
-	glVertex3f(size.x, size.y, -size.z);
+		glVertex3f(0.0f, 0.0f, -size.z);
+		glVertex3f(0.0f, size.y, 0.0f);
+		glVertex3f(0.0f, size.y, -size.z);
 
-	//// back face =================
-	glVertex3f(0.0f, size.y, -size.z);
-	glVertex3f(size.x, 0.0f, -size.z);
-	glVertex3f(0.0f, 0.0f, -size.z);
+		// top face ===================
+		glVertex3f(0.0f, size.y, -size.z);
+		glVertex3f(0.0f, size.y, 0.0f);
+		glVertex3f(size.x, size.y, 0.0f);
 
-	glVertex3f(0.0f, size.y, -size.z);
-	glVertex3f(size.x, size.y, -size.z);
-	glVertex3f(size.x, 0.0f, -size.z);
+		glVertex3f(0.0f, size.y, -size.z);
+		glVertex3f(size.x, size.y, 0.0f);
+		glVertex3f(size.x, size.y, -size.z);
 
-	//// left face =================
-	glVertex3f(size.x, size.y, 0.0f);
-	glVertex3f(size.x, 0.0f, 0.0f);
-	glVertex3f(size.x, 0.0f, -size.z);
+		//// back face =================
+		glVertex3f(0.0f, size.y, -size.z);
+		glVertex3f(size.x, 0.0f, -size.z);
+		glVertex3f(0.0f, 0.0f, -size.z);
 
-	glVertex3f(size.x, size.y, -size.z);
-	glVertex3f(size.x, size.y, 0.0f);
-	glVertex3f(size.x, 0.0f, -size.z);
+		glVertex3f(0.0f, size.y, -size.z);
+		glVertex3f(size.x, size.y, -size.z);
+		glVertex3f(size.x, 0.0f, -size.z);
 
-	//// bottom face ===================
-	glVertex3f(size.x, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, -size.z);
+		//// left face =================
+		glVertex3f(size.x, size.y, 0.0f);
+		glVertex3f(size.x, 0.0f, 0.0f);
+		glVertex3f(size.x, 0.0f, -size.z);
 
-	glVertex3f(size.x, 0.0f, -size.z);
-	glVertex3f(size.x, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, -size.z);
+		glVertex3f(size.x, size.y, -size.z);
+		glVertex3f(size.x, size.y, 0.0f);
+		glVertex3f(size.x, 0.0f, -size.z);
+
+		//// bottom face ===================
+		glVertex3f(size.x, 0.0f, 0.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(0.0f, 0.0f, -size.z);
+
+		glVertex3f(size.x, 0.0f, -size.z);
+		glVertex3f(size.x, 0.0f, 0.0f);
+		glVertex3f(0.0f, 0.0f, -size.z);
+
+		glEnd();
+	}
+
+	else if (vertex_arrays)
+	{
+		GLfloat vertices[36*3] = {
+	-size.x,-size.y,-size.z,
+	-size.x,-size.y, size.z,
+	-size.x, size.y, size.z,
+	size.x, size.y,-size.z,
+	-size.x,-size.y,-size.z,
+	-size.x, size.y,-size.z,
+	size.x,-size.y, size.z,
+	-size.x,-size.y,-size.z,
+	size.x,-size.y,-size.z,
+	size.x, size.y,-size.z,
+	size.x,-size.y,-size.z,
+	-size.x,-size.y,-size.z,
+	-size.x,-size.y,-size.z,
+	-size.x, size.y, size.z,
+	-size.x, size.y,-size.z,
+	size.x,-size.y, size.z,
+	-size.x,-size.y, size.z,
+	-size.x,-size.y,-size.z,
+	-size.x, size.y, size.z,
+	-size.x,-size.y, size.z,
+	size.x,-size.y, size.z,
+	size.x, size.y, size.z,
+	size.x,-size.y,-size.z,
+	size.x, size.y,-size.z,
+	size.x,-size.y,-size.z,
+	size.x, size.y, size.z,
+	size.x,-size.y, size.z,
+	size.x, size.y, size.z,
+	size.x, size.y,-size.z,
+	-size.x, size.y,-size.z,
+	size.x, size.y, size.z,
+	-size.x, size.y,-size.z,
+	-size.x, size.y, size.z,
+	size.x, size.y, size.z,
+	-size.x, size.y, size.z,
+	size.x,-size.y, size.z
+	};
 
 
-	glEnd();
+		// activate and specify pointer to vertex array
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+
+		// draw a cube
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		// deactivate vertex arrays after drawing
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+	}
+
+	else if (indices)
+	{
+			GLfloat vertices[8 * 3] = {  // 8 of vertex coords
+
+		-size.x, size.y, size.z,
+		-size.x,-size.y,size.z,
+		size.x, -size.y,size.z,
+		size.x, size.y, size.z,
+
+		
+		size.x, size.y, -size.z,
+		-size.x, size.y,-size.z,
+		-size.x,-size.y, -size.z,
+		size.x, -size.y,-size.z,
+
+		};
+
+		GLubyte indices[] = { 0,1,2, 2,3,0,   // 36 of indices
+								 0,3,4, 4,5,0,
+								 0,5,6, 6,1,0,
+								 1,6,7, 7,2,1,
+								 7,4,3, 3,2,7,
+								 4,7,6, 6,5,4 };
+
+
+	// activate and specify pointer to vertex array
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, vertices);
+
+	// draw a cube
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+
+	// deactivate vertex arrays after drawing
+	glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
 }
 
 
