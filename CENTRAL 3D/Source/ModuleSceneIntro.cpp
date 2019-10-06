@@ -69,9 +69,9 @@ update_status ModuleSceneIntro::Update(float dt)
 
 	PrimitiveCube cube;
 	cube.axis = true;
-	float3 size = float3(3.0f, 3.0f, 3.0f);
+	float3 size = float3(1.0f, 1.0f, 1.0f);
 	cube.size = size;
-	cube.SetPos(0.0f, 0.0f, 0.0f);
+	cube.SetPos(10.0f, 10.0f, 0.0f);
 	cube.Render();
 	
 	return UPDATE_CONTINUE;

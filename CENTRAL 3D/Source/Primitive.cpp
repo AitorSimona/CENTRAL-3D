@@ -19,6 +19,8 @@ PrimitiveTypes Primitive::GetType() const
 // ------------------------------------------------------------
 void Primitive::Render() const
 {
+	glPushMatrix();
+	glMultMatrixf((math::float4x4::identity* this->transform).Transposed().ptr());
 
 	if (axis == true)
 	{
@@ -67,13 +69,14 @@ void Primitive::Render() const
 		glEnable(GL_CULL_FACE);
 	}
 
+	glPopMatrix();
 }
 
 
 // ------------------------------------------------------------
 void Primitive::SetPos(float x, float y, float z)
 {
-	transform.Translate(x, y, z);
+	transform.TransformPos(x, y, z);
 }
 
 // ------------------------------------------------------------
@@ -103,67 +106,68 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 void PrimitiveCube::InnerRender() const
 {
 
-	bool direct_mode = false;
+	bool direct_mode = true;
 	bool vertex_arrays = false;
-	bool indices = true;
+	bool indices = false;
 
 	if (direct_mode)
 	{
 		glBegin(GL_TRIANGLES);  // draw a cube with 12 triangles
 
 		// front face =================
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(size.x, 0.0f, 0.0f);
-		glVertex3f(0.0f, size.y, 0.0f);
+		glVertex3f(-size.x, -size.y, size.z);
+		glVertex3f(size.x, -size.y, size.z);
+		glVertex3f(size.x, size.y, size.z);
 
-		glVertex3f(size.x, 0.0f, 0.0f);
-		glVertex3f(size.x, size.y, 0.0f);
-		glVertex3f(0.0f, size.y, 0.0f);
+		glVertex3f(size.x, size.y, size.z);
+		glVertex3f(-size.x, size.y, size.z);
+		glVertex3f(-size.x, -size.y, size.z);
 
 		// right face =================
-		glVertex3f(0.0f, 0.0f, -size.z);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, size.y, 0.0f);
+		glVertex3f(size.x, size.y, size.z);
+		glVertex3f(size.x, -size.y, size.z);
+		glVertex3f(size.x, size.y, -size.z);
 
-		glVertex3f(0.0f, 0.0f, -size.z);
-		glVertex3f(0.0f, size.y, 0.0f);
-		glVertex3f(0.0f, size.y, -size.z);
+		glVertex3f(size.x, -size.y, size.z);
+		glVertex3f(size.x, -size.y, -size.z);
+		glVertex3f(size.x, size.y, -size.z);
 
 		// top face ===================
-		glVertex3f(0.0f, size.y, -size.z);
-		glVertex3f(0.0f, size.y, 0.0f);
-		glVertex3f(size.x, size.y, 0.0f);
+		glVertex3f(-size.x, size.y, -size.z);
+		glVertex3f(-size.x, size.y, size.z);
+		glVertex3f(size.x, size.y, size.z);
 
-		glVertex3f(0.0f, size.y, -size.z);
-		glVertex3f(size.x, size.y, 0.0f);
+		glVertex3f(size.x, size.y, size.z);
+		glVertex3f(size.x, size.y, -size.z);
+		glVertex3f(-size.x, size.y, -size.z);
+
+		////// back face =================
+		glVertex3f(size.x, size.y, -size.z);
+		glVertex3f(size.x, -size.y, -size.z);
+		glVertex3f(-size.x, -size.y, -size.z);
+
+		glVertex3f(-size.x, -size.y, -size.z);
+		glVertex3f(-size.x, size.y, -size.z);
 		glVertex3f(size.x, size.y, -size.z);
 
-		//// back face =================
-		glVertex3f(0.0f, size.y, -size.z);
-		glVertex3f(size.x, 0.0f, -size.z);
-		glVertex3f(0.0f, 0.0f, -size.z);
+		////// left face =================
+		glVertex3f(-size.x, size.y, -size.z);
+		glVertex3f(-size.x, -size.y, size.z);
+		glVertex3f(-size.x, size.y, size.z);
 
-		glVertex3f(0.0f, size.y, -size.z);
-		glVertex3f(size.x, size.y, -size.z);
-		glVertex3f(size.x, 0.0f, -size.z);
+		glVertex3f(-size.x, size.y, -size.z);
+		glVertex3f(-size.x, -size.y, -size.z);
+		glVertex3f(-size.x, -size.y, size.z);
 
-		//// left face =================
-		glVertex3f(size.x, size.y, 0.0f);
-		glVertex3f(size.x, 0.0f, 0.0f);
-		glVertex3f(size.x, 0.0f, -size.z);
+		////// bottom face ===================
 
-		glVertex3f(size.x, size.y, -size.z);
-		glVertex3f(size.x, size.y, 0.0f);
-		glVertex3f(size.x, 0.0f, -size.z);
+		glVertex3f(size.x, -size.y, size.z);
+		glVertex3f(-size.x, -size.y, size.z);
+		glVertex3f(-size.x, -size.y, -size.z);
 
-		//// bottom face ===================
-		glVertex3f(size.x, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, -size.z);
-
-		glVertex3f(size.x, 0.0f, -size.z);
-		glVertex3f(size.x, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, -size.z);
+		glVertex3f(-size.x, -size.y, -size.z);
+		glVertex3f(size.x, -size.y, -size.z);
+		glVertex3f(size.x, -size.y, size.z);
 
 		glEnd();
 	}
