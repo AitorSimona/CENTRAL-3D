@@ -173,6 +173,7 @@
     <ClInclude Include="PanelConsole.h" />
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PanelSettings.h" />
+    <ClInclude Include="par\par_shapes.h" />
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="resource.h" />

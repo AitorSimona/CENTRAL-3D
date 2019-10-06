@@ -58,6 +58,9 @@
     <Filter Include="Sources\3rd Party\mmgr">
       <UniqueIdentifier>{6c326692-43bf-43ba-b73c-793c6a979038}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd Party\par shapes">
+      <UniqueIdentifier>{bc82f0f5-fca0-46f2-a6f1-b30668937b32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -368,6 +371,9 @@
     </ClInclude>
     <ClInclude Include="PanelToolbar.h">
       <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="par\par_shapes.h">
+      <Filter>Sources\3rd Party\par shapes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
