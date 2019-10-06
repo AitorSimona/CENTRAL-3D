@@ -41,5 +41,5 @@ public:
 	bool cull_face = true;
 	bool lighting = true;
 	bool color_material = true;
-	bool wireframe = true;
+	bool wireframe = false;
 };

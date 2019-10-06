@@ -2,6 +2,8 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include "Primitive.h"
+#include "Application.h"
+#include "ModuleRenderer3D.h"
 
 
 // ------------------------------------------------------------
@@ -26,6 +28,7 @@ void Primitive::Render() const
 		glLineWidth(2.0f);
 
 		glBegin(GL_LINES);
+
 
 		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 
@@ -54,7 +57,7 @@ void Primitive::Render() const
 
 	glColor3f(color.r, color.g, color.b);
 
-	if (wire)
+	if (wire || App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -155,34 +158,34 @@ void Cube::InnerRender() const
 }
 
 // SPHERE ============================================
-Sphere::Sphere() : Primitive(), radius(1.0f)
+SphereS::SphereS() : Primitive(), radius(1.0f)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
 }
 
-Sphere::Sphere(float radius) : Primitive(), radius(radius)
+SphereS::SphereS(float radius) : Primitive(), radius(radius)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
 }
 
-void Sphere::InnerRender() const
+void SphereS::InnerRender() const
 {
 	//glutSolidSphere(radius, 25, 25);
 }
 
 
 // CYLINDER ============================================
-Cylinder::Cylinder() : Primitive(), radius(1.0f), height(1.0f)
+CylinderC::CylinderC() : Primitive(), radius(1.0f), height(1.0f)
 {
 	type = PrimitiveTypes::Primitive_Cylinder;
 }
 
-Cylinder::Cylinder(float radius, float height) : Primitive(), radius(radius), height(height)
+CylinderC::CylinderC(float radius, float height) : Primitive(), radius(radius), height(height)
 {
 	type = PrimitiveTypes::Primitive_Cylinder;
 }
 
-void Cylinder::InnerRender() const
+void CylinderC::InnerRender() const
 {
 	int n = 30;
 

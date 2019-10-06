@@ -47,22 +47,22 @@ public:
 };
 
 // ============================================
-class Sphere : public Primitive
+class SphereS : public Primitive
 {
 public:
-	Sphere();
-	Sphere(float radius);
+	SphereS();
+	SphereS(float radius);
 	void InnerRender() const;
 public:
 	float radius;
 };
 
 // ============================================
-class Cylinder : public Primitive
+class CylinderC : public Primitive
 {
 public:
-	Cylinder();
-	Cylinder(float radius, float height);
+	CylinderC();
+	CylinderC(float radius, float height);
 	void InnerRender() const;
 public:
 	float radius;

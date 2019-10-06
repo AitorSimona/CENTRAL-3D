@@ -3,6 +3,8 @@
 #include "ModuleSceneIntro.h"
 #include "ModuleCamera3D.h"
 #include "Primitive.h"
+#include "ModuleRenderer3D.h"
+#include "OpenGL.h"
 
 
 #include "Math.h"
@@ -44,7 +46,11 @@ bool ModuleSceneIntro::Draw()
 	PlaneP p(0, 1, 0, 0);
 	p.axis = true;
 	p.Render();
-
+	
+	CylinderC c;
+	c.radius = 3;
+	c.SetPos(0, 0, 0);
+	c.Render();
 
 	return true;
 }
