@@ -37,14 +37,26 @@ bool ModuleSceneIntro::CleanUp()
 	return true;
 }
 
-// Update
-update_status ModuleSceneIntro::Update(float dt)
+bool ModuleSceneIntro::Draw()
 {
 
 	// Grid TODO: Remove and make own primitives class
 	PlaneP p(0, 1, 0, 0);
 	p.axis = true;
 	p.Render();
+
+
+	return true;
+}
+
+// Update
+update_status ModuleSceneIntro::Update(float dt)
+{
+
+	//// Grid TODO: Remove and make own primitives class
+	//PlaneP p(0, 1, 0, 0);
+	//p.axis = true;
+	//p.Render();
 
 	
 	return UPDATE_CONTINUE;

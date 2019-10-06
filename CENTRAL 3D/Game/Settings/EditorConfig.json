@@ -8,7 +8,8 @@
         "Console": true,
         "Hierarchy": true,
         "Inspector": true,
-        "Settings": true
+        "Scene": true,
+        "Settings": false
     },
     "Input": null,
     "Renderer3D": {

@@ -10,6 +10,7 @@
 #include "PanelConsole.h"
 #include "PanelInspector.h"
 #include "PanelHierarchy.h"
+#include "PanelScene.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -47,6 +48,9 @@ bool ModuleGui::Init(json file)
 
 	panelHierarchy = new PanelHierarchy("Hierarchy");
 	panels.push_back(panelHierarchy);
+
+	panelScene = new PanelScene("Scene");
+	panels.push_back(panelScene);
 
 	LoadStatus(file);
 
@@ -142,6 +146,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Hierarchy"))
 				{
 					panelHierarchy->OnOff();
+				}
+
+				if (ImGui::MenuItem("Scene"))
+				{
+					panelScene->OnOff();
 				}
 
 				ImGui::EndMenu();
@@ -244,6 +253,7 @@ void ModuleGui::DockSpace() const
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
 	ImGui::SetNextWindowViewport(viewport->ID);
+	ImGui::SetNextWindowBgAlpha(0.0f);
 
 	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 
@@ -262,7 +272,6 @@ void ModuleGui::DockSpace() const
 	ImGui::PopStyleVar(3);
 
 	ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
-	//ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 }
 

@@ -13,4 +13,6 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	bool Draw();
+
 };

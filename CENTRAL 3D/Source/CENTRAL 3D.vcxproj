@@ -170,6 +170,7 @@
     <ClInclude Include="Panel.h" />
     <ClInclude Include="PanelAbout.h" />
     <ClInclude Include="PanelConsole.h" />
+    <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PanelSettings.h" />
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="Primitive.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="PanelConsole.cpp" />
     <ClCompile Include="PanelHierarchy.cpp" />
     <ClCompile Include="PanelInspector.cpp" />
+    <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="Primitive.cpp" />
