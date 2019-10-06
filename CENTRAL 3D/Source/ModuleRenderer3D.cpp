@@ -54,6 +54,7 @@ bool ModuleRenderer3D::Init(json file)
 			ret = false;
 		}
 
+
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -119,6 +120,9 @@ bool ModuleRenderer3D::Init(json file)
 
 	}
 
+	LOG("OpenGL Version: %s", glGetString(GL_VERSION));
+	LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
+
 	// Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
 
@@ -136,6 +140,9 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	// --- Set Model View as current ---
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
+
+	// --- Update OpenGL Capabilities ---
+	UpdateGLCapabilities();
 
 	// light 0 on cam pos, Render lights
 	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
@@ -167,6 +174,29 @@ bool ModuleRenderer3D::CleanUp()
 	SDL_GL_DeleteContext(context);
 
 	return true;
+}
+
+void ModuleRenderer3D::UpdateGLCapabilities()
+{
+		if (!depth_test)
+			glDisable(GL_DEPTH_TEST);
+		else 
+			glEnable(GL_DEPTH_TEST);
+
+		if (!cull_face)
+			glDisable(GL_CULL_FACE);
+		else
+			glEnable(GL_CULL_FACE);
+
+		if (!lighting)
+			glDisable(GL_LIGHTING);
+		else
+			glEnable(GL_LIGHTING);
+
+		if (!color_material)
+			glDisable(GL_COLOR_MATERIAL);
+		else
+			glEnable(GL_COLOR_MATERIAL);
 }
 
 

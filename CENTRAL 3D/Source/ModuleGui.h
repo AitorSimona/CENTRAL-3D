@@ -12,6 +12,7 @@ class PanelConsole;
 class PanelInspector;
 class PanelHierarchy;
 class PanelScene;
+class PanelToolbar;
 
 class ModuleGui : public Module
 {
@@ -49,6 +50,7 @@ public:
 	PanelInspector*		panelInspector = nullptr;
 	PanelHierarchy*		panelHierarchy = nullptr;
 	PanelScene*			panelScene = nullptr;
+	PanelToolbar*     panelToolbar = nullptr;
 
 private:
 

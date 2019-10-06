@@ -18,6 +18,8 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
+	void UpdateGLCapabilities();
+
 	void OnResize(int width, int height);
 
 	// --- Setters ---
@@ -35,4 +37,9 @@ public:
 
 	// --- Flags ---
 	bool vsync = true;
+	bool depth_test = true;
+	bool cull_face = true;
+	bool lighting = true;
+	bool color_material = true;
+	bool wireframe = true;
 };

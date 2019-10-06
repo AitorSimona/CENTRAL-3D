@@ -11,6 +11,7 @@
 #include "PanelInspector.h"
 #include "PanelHierarchy.h"
 #include "PanelScene.h"
+#include "PanelToolbar.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -51,6 +52,9 @@ bool ModuleGui::Init(json file)
 
 	panelScene = new PanelScene("Scene");
 	panels.push_back(panelScene);
+
+	panelToolbar = new PanelToolbar("Toolbar");
+	panels.push_back(panelToolbar);
 
 	LoadStatus(file);
 
@@ -107,6 +111,7 @@ update_status ModuleGui::Update(float dt)
 
 	if (ImGui::BeginMainMenuBar())
 	{
+		
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("Quit"))
@@ -126,7 +131,7 @@ update_status ModuleGui::Update(float dt)
 				ImGui::EndMenu();
 			}
 
-			if (ImGui::BeginMenu("View"))
+			if (ImGui::BeginMenu("Window"))
 			{
 				if (ImGui::MenuItem("Console"))
 				{
@@ -151,6 +156,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Scene"))
 				{
 					panelScene->OnOff();
+				}
+
+				if (ImGui::MenuItem("Toolbar"))
+				{
+					panelToolbar->OnOff();
 				}
 
 				ImGui::EndMenu();

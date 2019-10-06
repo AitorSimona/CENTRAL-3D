@@ -366,6 +366,9 @@
     <ClInclude Include="PanelScene.h">
       <Filter>Sources\Modules\EditorPanels</Filter>
     </ClInclude>
+    <ClInclude Include="PanelToolbar.h">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -561,6 +564,9 @@
       <Filter>Sources\Modules\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelScene.cpp">
+      <Filter>Sources\Modules\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelToolbar.cpp">
       <Filter>Sources\Modules\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
