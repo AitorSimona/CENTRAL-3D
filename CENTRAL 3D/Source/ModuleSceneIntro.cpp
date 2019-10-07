@@ -41,6 +41,8 @@ bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
 
+	delete cube;
+
 	return true;
 }
 
