@@ -24,6 +24,14 @@ void _log(const char file[], int line, const char* format, ...);
 	x = nullptr; \
 	} \
 
+#define RELEASE_ARRAY(x) \
+    { \
+    if (x != nullptr) \
+      delete[] x; \
+	x = nullptr; \
+	} \
+
+
 typedef unsigned int uint;
 
 enum update_status

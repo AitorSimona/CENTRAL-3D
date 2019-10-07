@@ -2,6 +2,7 @@
 #include "Module.h"
 #include "Globals.h"
 
+class PrimitiveCube;
 
 class ModuleSceneIntro : public Module
 {
@@ -14,5 +15,7 @@ public:
 	bool CleanUp();
 
 	bool Draw();
+
+	PrimitiveCube* cube = nullptr;
 
 };

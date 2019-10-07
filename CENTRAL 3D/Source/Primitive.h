@@ -14,9 +14,10 @@ class Primitive
 public:
 
 	Primitive();
+	virtual ~Primitive();
 
 	virtual void	Render() const;
-	virtual void	InnerRender() const = 0;
+	virtual void	InnerRender() const;
 	void			SetPos(float x, float y, float z);
 	void			SetRotation(float angle, const float3 &u);
 	void			Scale(float x, float y, float z);
@@ -25,22 +26,30 @@ public:
 public:
 
 	Color color;
-	float4x4 transform;
+	float4x4 transform = math::float4x4::identity;
 	bool axis, wire;
 
 protected:
+
 	PrimitiveTypes type;
+
+	float* Vertices = nullptr;
+	uint VerticesID = 0;
+	uint verticesSize = 0;
+
+	uint* Indices = nullptr;
+	uint IndicesID = 0;
+	uint IndicesSize = 0;
 };
 
 // ============================================
 class PrimitiveCube : public Primitive
 {
 public:
-	PrimitiveCube();
 	PrimitiveCube(float sizeX, float sizeY, float sizeZ);
-	void InnerRender() const;
+	/*void InnerRender() const;*/
 public:
-	float3 size;
+	float3 size = { 0.0f,0.0f,0.0f };
 };
 
 // ============================================

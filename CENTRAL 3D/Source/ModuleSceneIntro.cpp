@@ -28,6 +28,11 @@ bool ModuleSceneIntro::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 
+	cube = new PrimitiveCube(1.0f, 1.0f, 1.0f);
+	cube->axis = true;
+	cube->SetPos(0.0f, 0.0f, 0.0f);
+	cube->SetRotation(30,float3::unitX);
+
 	return ret;
 }
 
@@ -43,13 +48,6 @@ bool ModuleSceneIntro::Draw()
 {
 
 	// Grid TODO: Remove and make own primitives class
-
-	return true;
-}
-
-// Update
-update_status ModuleSceneIntro::Update(float dt)
-{
 	glLineWidth(2.0f);
 
 	glBegin(GL_LINES);
@@ -67,12 +65,16 @@ update_status ModuleSceneIntro::Update(float dt)
 	glEnd();
 
 
-	PrimitiveCube cube;
-	cube.axis = true;
-	float3 size = float3(1.0f, 1.0f, 1.0f);
-	cube.size = size;
-	cube.SetPos(10.0f, 10.0f, 0.0f);
-	cube.Render();
+	//cube.SetPos(10.0f, 10.0f, 0.0f);
+	cube->Render();
+
+	return true;
+}
+
+// Update
+update_status ModuleSceneIntro::Update(float dt)
+{
+
 	
 	return UPDATE_CONTINUE;
 }
