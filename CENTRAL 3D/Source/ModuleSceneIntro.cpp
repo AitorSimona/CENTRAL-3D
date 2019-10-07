@@ -33,6 +33,10 @@ bool ModuleSceneIntro::Start()
 	cube->SetPos(0.0f, 0.0f, 0.0f);
 	cube->SetRotation(30,float3::unitX);
 
+	sphere = new PrimitiveSphere();
+	cube->axis = true;
+	cube->SetPos(0.0f, 0.0f, 0.0f);
+
 	return ret;
 }
 
@@ -42,6 +46,7 @@ bool ModuleSceneIntro::CleanUp()
 	LOG("Unloading Intro scene");
 
 	delete cube;
+	delete sphere;
 
 	return true;
 }
@@ -67,8 +72,9 @@ bool ModuleSceneIntro::Draw()
 	glEnd();
 
 
-	//cube.SetPos(10.0f, 10.0f, 0.0f);
-	cube->Render();
+
+	//cube->Render();
+	sphere->Render();
 
 	return true;
 }

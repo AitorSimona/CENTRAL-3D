@@ -358,15 +358,167 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 
 PrimitiveSphere::PrimitiveSphere()
 {
+	//par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(4,5);
+
+	//IndicesSize = mesh->ntriangles * 3;
+	//verticesSize = mesh->npoints*3;
+
+	//Vertices = new float[verticesSize];
+	//Vertices = mesh->points;
+
+	///*Indices = new uint[IndicesSize];
+	//Indices = mesh->triangles;*/
+
+	//glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+	//glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+	//// --- Indices ---
+
+	//glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
+
+	//par_shapes_free_mesh(mesh);
+
+	//uint rings = 12;
+	//uint sectors = 24;
+	//float radius = 1;
+
+	//float const R = 1. / (float)(rings - 1);
+	//float const S = 1. / (float)(sectors - 1);
+	//int r, s;
+
+	//// --- Vertices ---
+
+	//verticesSize = rings * sectors * 3;
+	//Vertices = new float[verticesSize];
+
+	//uint iterator = 0;
+
+	//for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
+	//	float const y = sin(-M_PI_2 + M_PI * r * R);
+	//	float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
+	//	float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+
+	//	Vertices[iterator++] = x * radius;
+	//	Vertices[iterator++] = y * radius;
+	//	Vertices[iterator++] = z * radius;
+	//}
+
+	//glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+ //   glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+ //   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+ //   glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+	//// --- Indices ---
+
+	//iterator = 0;
+
+	//IndicesSize = rings * sectors * 4;
+	//Indices = new uint[IndicesSize];
+	//
+	//for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
+	//	Indices[iterator++] = r * sectors + s;
+	//	Indices[iterator++] = r * sectors + (s + 1);
+	//	Indices[iterator++] = (r + 1) * sectors + (s + 1);
+	//	Indices[iterator++] = (r + 1) * sectors + s;
+	//}
+
+	//glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW); // send vertices to VRAM
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
+
+
+	//int stacks = 20;
+	//int slices = 20;
+	//const float PI = 3.14f;
+
+	//std::vector<float> positions;
+	//std::vector<GLuint> indices;
+
+	//// loop through stacks.
+	//for (int i = 0; i <= stacks; ++i) {
+
+	//	float V = (float)i / (float)stacks;
+	//	float phi = V * PI;
+
+	//	// loop through the slices.
+	//	for (int j = 0; j <= slices; ++j) {
+
+	//		float U = (float)j / (float)slices;
+	//		float theta = U * (PI * 2);
+
+	//		// use spherical coordinates to calculate the positions.
+	//		float x = cos(theta) * sin(phi);
+	//		float y = cos(phi);
+	//		float z = sin(theta) * sin(phi);
+
+	//		positions.push_back(x);
+	//		positions.push_back(y);
+	//		positions.push_back(z);
+	//	}
+
+	//}
+	//verticesSize = positions.size();
+	//Vertices = new float[verticesSize];
+
+
+	//for (int i = 0; i < positions.size(); ++i)
+	//{
+	//	Vertices[i] = positions[i];
+	//}
+
+	//glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+	//glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+	//// Calc The Index Positions
+	//for (int i = 0; i < slices * stacks + slices; ++i) {
+	//	indices.push_back(GLuint(i));
+	//	indices.push_back(GLuint(i + slices + 1));
+	//	indices.push_back(GLuint(i + slices));
+
+	//	indices.push_back(GLuint(i + slices + 1));
+	//	indices.push_back(GLuint(i));
+	//	indices.push_back(GLuint(i + 1));
+	//}
+
+	//IndicesSize = indices.size();
+	//Indices = new uint[IndicesSize];
+
+	//for (int i = 0; i < indices.size(); ++i)
+	//{
+	//	Indices[i] = indices[i];
+	//}
+
+	//glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW); // send vertices to VRAM
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 }
+
+
 
 PrimitiveSphere::PrimitiveSphere(float radius)
 {
 }
 
-void PrimitiveSphere::InnerRender() const
-{
-}
+//void PrimitiveSphere::InnerRender() const
+//{
+//	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+//	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
+//	glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+//	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+//}
 
 
 

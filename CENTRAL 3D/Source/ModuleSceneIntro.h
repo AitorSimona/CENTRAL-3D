@@ -3,6 +3,7 @@
 #include "Globals.h"
 
 class PrimitiveCube;
+class PrimitiveSphere;
 
 class ModuleSceneIntro : public Module
 {
@@ -17,5 +18,7 @@ public:
 	bool Draw();
 
 	PrimitiveCube* cube = nullptr;
+
+	PrimitiveSphere* sphere = nullptr;
 
 };
