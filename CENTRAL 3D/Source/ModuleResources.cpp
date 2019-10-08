@@ -20,6 +20,12 @@ bool ModuleResources::CleanUp()
 	// detach log stream
 	aiDetachAllLogStreams();
 
+	glDeleteBuffers(1, (GLuint*)&VerticesID);
+	glDeleteBuffers(1, (GLuint*)&IndicesID);
+
+	RELEASE_ARRAY(Vertices);
+	RELEASE_ARRAY(Indices);
+
 	return true;
 }
 
@@ -48,6 +54,12 @@ bool ModuleResources::LoadFile(const char* path)
 			Vertices[i] = *((float3*)&mesh->mVertices[i]);
 		}
 
+		glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+		glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+
 		// --- Indices ---
 		IndicesSize = mesh->mNumFaces * 3;
 		Indices = new uint[IndicesSize];
@@ -62,11 +74,6 @@ bool ModuleResources::LoadFile(const char* path)
 			Indices[j * 3 + 1] = face.mIndices[1];
 			Indices[j * 3 + 2] = face.mIndices[2];
 		}
-
-		glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
-		glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
-		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 
 		glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
