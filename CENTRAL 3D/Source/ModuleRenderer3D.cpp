@@ -5,6 +5,7 @@
 #include "ModuleGui.h"
 #include "ModuleCamera3D.h"
 #include "ModuleSceneIntro.h"
+#include "ModuleResources.h"
 
 #include "OpenGL.h"
 #include "Imgui/imgui.h"
@@ -159,6 +160,8 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	// 1. Level geometry
 	App->scene_intro->Draw();
+
+	App->resources->Draw();
 
 	// --- Draw everything and swap buffers ---
 	App->gui->Draw();

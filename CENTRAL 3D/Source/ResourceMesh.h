@@ -12,6 +12,7 @@ public:
 	ResourceMesh();
 	virtual ~ResourceMesh();
 
+	void Import(const char* path);
 
 public:
 
