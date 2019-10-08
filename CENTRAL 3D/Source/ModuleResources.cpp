@@ -11,7 +11,8 @@
 
 bool ModuleResources::CleanUp()
 {
-	return false;
+
+	return true;
 }
 
 ModuleResources::ModuleResources(Application * app, bool start_enabled) : Module(app,start_enabled)
@@ -24,10 +25,12 @@ ModuleResources::~ModuleResources()
 
 bool ModuleResources::Init(json file)
 {
-	return false;
+
+	return true;
 }
 
 bool ModuleResources::Start()
 {
-	return false;
+
+	return true;
 }

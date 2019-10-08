@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleHardware.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
@@ -26,6 +27,7 @@ Application::Application()
 	hardware = new ModuleHardware(this);
 	fs =  new ModuleFileSystem(this,true,ASSETS_FOLDER);
 	window = new ModuleWindow(this);
+	resources = new ModuleResources(this);
 	input = new ModuleInput(this);
 	scene_intro = new ModuleSceneIntro(this);
 	renderer3D = new ModuleRenderer3D(this);
@@ -39,6 +41,7 @@ Application::Application()
 	// Main Modules
 	AddModule(hardware);
 	AddModule(fs);
+	AddModule(resources);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);

@@ -19,6 +19,7 @@ class ModuleCamera3D;
 class ModuleGui;
 class ModuleHardware;
 class ModuleFileSystem;
+class ModuleResources;
 
 class Application
 {
@@ -48,6 +49,7 @@ public:
 	ModuleGui*			gui = nullptr;
 	ModuleHardware* hardware = nullptr;
 	ModuleFileSystem* fs = nullptr;
+	ModuleResources* resources = nullptr;
 
 private:
 
