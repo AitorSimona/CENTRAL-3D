@@ -22,6 +22,28 @@ bool ModuleResources::CleanUp()
 	return true;
 }
 
+bool ModuleResources::LoadFile(const char* path)
+{
+	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
+
+	if (scene != nullptr && scene->HasMeshes())
+	{
+		// Use scene->mNumMeshes to iterate on scene->mMeshes array
+
+		for (uint i = 0; i < scene->mNumMeshes; ++i)
+		{
+			// Call mesh importer
+		}
+
+		aiReleaseImport(scene);
+	}
+	else
+		LOG("|[error]: Error loading scene %s", path);
+
+
+	return true;
+}
+
 ModuleResources::ModuleResources(Application * app, bool start_enabled) : Module(app,start_enabled)
 {
 }
@@ -37,6 +59,9 @@ bool ModuleResources::Init(json file)
 	stream.callback = MyAssimpCallback;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	aiAttachLogStream(&stream);
+
+
+
 	return true;
 }
 
