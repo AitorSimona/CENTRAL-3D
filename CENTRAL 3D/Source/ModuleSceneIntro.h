@@ -4,6 +4,7 @@
 
 class PrimitiveCube;
 class PrimitiveSphere;
+class PrimitiveGrid;
 
 class ModuleSceneIntro : public Module
 {
@@ -21,4 +22,5 @@ public:
 
 	PrimitiveSphere* sphere = nullptr;
 
+	PrimitiveGrid* grid = nullptr;
 };

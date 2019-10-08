@@ -37,6 +37,10 @@ bool ModuleSceneIntro::Start()
 	cube->axis = true;
 	cube->SetPos(0.0f, 0.0f, 0.0f);
 
+
+	grid = new PrimitiveGrid();
+	grid->axis = true;
+
 	return ret;
 }
 
@@ -47,6 +51,7 @@ bool ModuleSceneIntro::CleanUp()
 
 	delete cube;
 	delete sphere;
+	delete grid;
 
 	return true;
 }
@@ -55,26 +60,27 @@ bool ModuleSceneIntro::Draw()
 {
 
 	// Grid TODO: Remove and make own primitives class
-	glLineWidth(2.0f);
+	//glLineWidth(2.0f);
 
-	glBegin(GL_LINES);
+	//glBegin(GL_LINES);
 
-	for (int max_linesgrid = -30; max_linesgrid < 30; max_linesgrid++)
-	{
-		glVertex3f((float)max_linesgrid, 0.0f, -30.0f);
-		glVertex3f((float)max_linesgrid, 0.0f, 30.0f);
-		glVertex3f(-30.0f, 0.0f, (float)max_linesgrid);
-		glVertex3f(30.0f, 0.0f, (float)max_linesgrid);
+	//for (int max_linesgrid = -30; max_linesgrid < 30; max_linesgrid++)
+	//{
+	//	glVertex3f((float)max_linesgrid, 0.0f, -30.0f);
+	//	glVertex3f((float)max_linesgrid, 0.0f, 30.0f);
+	//	glVertex3f(-30.0f, 0.0f, (float)max_linesgrid);
+	//	glVertex3f(30.0f, 0.0f, (float)max_linesgrid);
 
-		glLineWidth(2.0f);
-	}
+	//	glLineWidth(2.0f);
+	//}
 
-	glEnd();
+	//glEnd();
 
 
 
 	//cube->Render();
-	sphere->Render();
+	//sphere->Render();
+	grid->Render();
 
 	return true;
 }

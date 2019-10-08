@@ -63,6 +63,7 @@ void Primitive::Render() const
 		glEnd();
 
 		glLineWidth(1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// --- Activate wireframe mode ---
@@ -148,6 +149,8 @@ void Primitive::Scale(float x, float y, float z)
 
 PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 {
+	type = type = PrimitiveTypes::Primitive_Cube;
+
 	size = float3(sizeX,sizeY,sizeZ);
 	float sx = size.x * 0.5f;
 	float sy = size.y * 0.5f;
@@ -508,6 +511,7 @@ PrimitiveSphere::PrimitiveSphere()
 
 PrimitiveSphere::PrimitiveSphere(float radius)
 {
+	type = type = PrimitiveTypes::Primitive_Sphere;
 }
 
 //void PrimitiveSphere::InnerRender() const
@@ -525,14 +529,36 @@ PrimitiveSphere::PrimitiveSphere(float radius)
 // PLANE ==================================================
 
 
-PrimitivePlane::PrimitivePlane()
+PrimitiveGrid::PrimitiveGrid()
 {
+	type = type = PrimitiveTypes::Primitive_Grid;
 }
 
-PrimitivePlane::PrimitivePlane(float x, float y, float z, float d)
-{
-}
 
-void PrimitivePlane::InnerRender() const
+void PrimitiveGrid::InnerRender() const
 {
+	glLineWidth(2.0f);
+
+	glBegin(GL_LINES);
+
+	float distance = 10.0f;
+
+	for (int max_linesgrid = -distance; max_linesgrid < distance; max_linesgrid++)
+	{
+		glVertex3f((float)max_linesgrid, 0.0f, -distance);
+		glVertex3f((float)max_linesgrid, 0.0f, distance);
+		glVertex3f(-distance, 0.0f, (float)max_linesgrid);
+		glVertex3f(distance, 0.0f, (float)max_linesgrid);
+
+	}
+
+	glVertex3f((float)-distance, 0.0f, distance);
+	glVertex3f((float)distance, 0.0f, distance);
+	glVertex3f((float)distance, 0.0f, -distance);
+	glVertex3f((float)distance, 0.0f, distance);
+
+	glLineWidth(1.0f);
+
+	glEnd();
+
 }

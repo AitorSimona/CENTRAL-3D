@@ -4,7 +4,7 @@
 
 enum PrimitiveTypes
 {
-	Primitive_Plane,
+	Primitive_Grid,
 	Primitive_Cube,
 	Primitive_Sphere,
 };
@@ -65,11 +65,10 @@ public:
 
 
 // ============================================
-class PrimitivePlane : public Primitive
+class PrimitiveGrid : public Primitive
 {
 public:
-	PrimitivePlane();
-	PrimitivePlane(float x, float y, float z, float d);
+	PrimitiveGrid();
 	void InnerRender() const;
 public:
 	float3 normal;
