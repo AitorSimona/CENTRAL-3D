@@ -234,6 +234,11 @@ bool ModuleGui::CleanUp()
 	panelSettings = nullptr;
 	panelAbout = nullptr;
 	panelConsole = nullptr;
+	panelHierarchy = nullptr;
+	panelInspector = nullptr;
+	panelScene = nullptr;
+	panelToolbar = nullptr;
+
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();

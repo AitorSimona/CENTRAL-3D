@@ -18,6 +18,7 @@ class ModuleRenderer3D;
 class ModuleCamera3D;
 class ModuleGui;
 class ModuleHardware;
+class ModuleFileSystem;
 
 class Application
 {
@@ -39,13 +40,14 @@ public:
 	void ClearLogsFromConsole();
 
 public:
-	ModuleWindow* window;
-	ModuleInput* input;
-	ModuleSceneIntro* scene_intro;
-	ModuleRenderer3D* renderer3D;
-	ModuleCamera3D* camera;
-	ModuleGui*			gui;
-	ModuleHardware* hardware;
+	ModuleWindow* window = nullptr;
+	ModuleInput* input = nullptr;
+	ModuleSceneIntro* scene_intro = nullptr;
+	ModuleRenderer3D* renderer3D = nullptr;
+	ModuleCamera3D* camera = nullptr;
+	ModuleGui*			gui = nullptr;
+	ModuleHardware* hardware = nullptr;
+	ModuleFileSystem* fs = nullptr;
 
 private:
 

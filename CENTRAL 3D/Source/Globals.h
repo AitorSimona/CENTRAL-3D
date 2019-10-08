@@ -43,10 +43,14 @@ enum update_status
 
 
 // Configuration -----------
+#define TITLE "CENTRAL 3D"
+#define VERSION "0.4-alpha"
+#define ASSETS_FOLDER "/Assets/"
+#define SETTINGS_FOLDER "/Settings/"
+
 #define SCREEN_SIZE 1
 #define WIN_FULLSCREEN false
 #define WIN_RESIZABLE true
 #define WIN_BORDERLESS false
 #define WIN_FULLSCREEN_DESKTOP false
-#define TITLE "CENTRAL 3D"
 #define MAX_BUF_SIZE 4096

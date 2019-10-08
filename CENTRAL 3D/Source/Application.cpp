@@ -1,11 +1,13 @@
 #include "Application.h"
+#include "ModuleHardware.h"
+#include "ModuleFileSystem.h"
 #include "ModuleWindow.h"
+#include "ModuleCamera3D.h"
 #include "ModuleInput.h"
+#include "ModuleGui.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleRenderer3D.h"
-#include "ModuleCamera3D.h"
-#include "ModuleGui.h"
-#include "ModuleHardware.h"
+
 
 #include "mmgr/mmgr.h"
 
@@ -21,9 +23,10 @@ Application::Application()
 	configpath = "Settings/EditorConfig.json";
 	log = "Application Logs:";
 
+	hardware = new ModuleHardware(this);
+	fs =  new ModuleFileSystem(this,true,ASSETS_FOLDER);
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
-	hardware = new ModuleHardware(this);
 	scene_intro = new ModuleSceneIntro(this);
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
@@ -34,10 +37,11 @@ Application::Application()
 	// They will CleanUp() in reverse order
 
 	// Main Modules
+	AddModule(hardware);
+	AddModule(fs);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
-	AddModule(hardware);
 	AddModule(gui);
 
 	// Scenes
