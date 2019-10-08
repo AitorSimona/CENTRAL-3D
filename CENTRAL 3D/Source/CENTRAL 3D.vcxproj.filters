@@ -46,20 +46,20 @@
     <Filter Include="Sources\VSResources">
       <UniqueIdentifier>{6057c556-5da2-4161-a91e-ab85919a9010}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Loaders">
-      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\3rd Party\json">
       <UniqueIdentifier>{8c42a9a9-a0d8-4f2e-b986-5b89e57c1712}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Modules\EditorPanels">
-      <UniqueIdentifier>{b9ecbe23-f523-4b9d-97a3-34d6e133690c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\3rd Party\mmgr">
       <UniqueIdentifier>{6c326692-43bf-43ba-b73c-793c6a979038}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\3rd Party\par shapes">
       <UniqueIdentifier>{bc82f0f5-fca0-46f2-a6f1-b30668937b32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\I/O">
+      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\EditorPanels">
+      <UniqueIdentifier>{b9ecbe23-f523-4b9d-97a3-34d6e133690c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -109,19 +109,19 @@
       <Filter>Sources\VSResources</Filter>
     </ClInclude>
     <ClInclude Include="JSONLoader.h">
-      <Filter>Sources\Loaders</Filter>
+      <Filter>Sources\I/O</Filter>
     </ClInclude>
     <ClInclude Include="ModuleGui.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Panel.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelAbout.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelSettings.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PerfTimer.h">
       <Filter>Sources\Tools</Filter>
@@ -358,24 +358,27 @@
       <Filter>Sources\Tools</Filter>
     </ClInclude>
     <ClInclude Include="PanelConsole.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelInspector.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelHierarchy.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelScene.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelToolbar.h">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="par\par_shapes.h">
       <Filter>Sources\3rd Party\par shapes</Filter>
     </ClInclude>
     <ClInclude Include="ModuleFileSystem.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleResources.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
@@ -423,19 +426,19 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="JSONLoader.cpp">
-      <Filter>Sources\Loaders</Filter>
+      <Filter>Sources\I/O</Filter>
     </ClCompile>
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Panel.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelAbout.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelSettings.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PerfTimer.cpp">
       <Filter>Sources\Tools</Filter>
@@ -564,21 +567,24 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="PanelConsole.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelInspector.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelHierarchy.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelScene.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelToolbar.cpp">
-      <Filter>Sources\Modules\EditorPanels</Filter>
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="ModuleFileSystem.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleResources.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
