@@ -9,8 +9,15 @@
 
 #include "mmgr/mmgr.h"
 
+void MyAssimpCallback(const char * msg, char * userData)
+{
+	LOG("[Assimp]: %s", msg);
+}
+
 bool ModuleResources::CleanUp()
 {
+	// detach log stream
+	aiDetachAllLogStreams();
 
 	return true;
 }
@@ -25,7 +32,11 @@ ModuleResources::~ModuleResources()
 
 bool ModuleResources::Init(json file)
 {
-
+	// Stream log messages to Debug window
+	struct aiLogStream stream;
+	stream.callback = MyAssimpCallback;
+	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
+	aiAttachLogStream(&stream);
 	return true;
 }
 
