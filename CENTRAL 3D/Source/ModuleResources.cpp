@@ -56,7 +56,7 @@ bool ModuleResources::LoadFile(const char* path)
 
 		glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
 		glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
 		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 
