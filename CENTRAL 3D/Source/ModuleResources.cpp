@@ -1,6 +1,8 @@
 #include "ModuleResources.h"
 #include "ResourceMesh.h"
 #include "OpenGL.h"
+#include "Application.h"
+#include "ModuleRenderer3D.h"
 
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
@@ -123,6 +125,10 @@ bool ModuleResources::Start()
 
 void ModuleResources::Draw()
 {
+	// --- Activate wireframe mode ---
+	if (App->renderer3D->wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 
 	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
@@ -135,5 +141,9 @@ void ModuleResources::Draw()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
 
 	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+	
+	// --- DeActivate wireframe mode ---
+	if (App->renderer3D->wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
