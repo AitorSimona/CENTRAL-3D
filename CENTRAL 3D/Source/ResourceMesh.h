@@ -5,6 +5,7 @@
 #include "Resource.h"
 #include "Math.h"
 
+struct aiMesh;
 
 class ResourceMesh : public Resource
 {
@@ -13,7 +14,7 @@ public:
 	ResourceMesh();
 	virtual ~ResourceMesh();
 
-	void Import(const char* path);
+	void ImportMesh(aiMesh* mesh);
 
 public:
 

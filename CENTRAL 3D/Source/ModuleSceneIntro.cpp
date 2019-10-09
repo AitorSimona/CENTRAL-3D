@@ -79,7 +79,7 @@ bool ModuleSceneIntro::Draw()
 
 
 	//cube->Render();
-	//sphere->Render();
+	sphere->Render();
 	grid->Render();
 
 	return true;

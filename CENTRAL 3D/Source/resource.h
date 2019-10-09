@@ -6,7 +6,7 @@
 class Resource
 {
 public:
-	enum ResourceType
+	enum class ResourceType
 	{
 		none = 0,
 		mesh

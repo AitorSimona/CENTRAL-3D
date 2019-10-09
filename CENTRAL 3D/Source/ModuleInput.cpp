@@ -128,7 +128,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			case SDL_DROPFILE:
 
 				if(e.drop.type == SDL_DROPFILE)
-				App->resources->LoadFile(e.drop.file);
+				App->resources->LoadFBX(e.drop.file);
 
 			break;
 		}
