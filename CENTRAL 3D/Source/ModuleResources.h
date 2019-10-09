@@ -1,6 +1,7 @@
 #ifndef __MODULE_RESOURCES_H__
 #define __MODULE_RESOURCES_H__
 
+#include <vector>
 #include "Module.h"
 #include "Math.h"
 
@@ -23,15 +24,16 @@ public:
 	bool LoadFile(const char* path);
 
 private:
+	std::vector<ResourceMesh*> meshes;
 
-	ResourceMesh* model = nullptr;
-	float3* Vertices = nullptr;
-	uint VerticesID = 0; // unique vertex in VRAM
-	uint verticesSize = 0;
+	//ResourceMesh* model = nullptr;
+	//float3* Vertices = nullptr;
+	//uint VerticesID = 0; // unique vertex in VRAM
+	//uint verticesSize = 0;
 
-	uint* Indices = nullptr;
-	uint IndicesID = 0; // index in VRAM
-	uint IndicesSize = 0;
+	//uint* Indices = nullptr;
+	//uint IndicesID = 0; // index in VRAM
+	//uint IndicesSize = 0;
 };
 
 #endif

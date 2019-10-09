@@ -3,6 +3,7 @@
 
 #include "Globals.h"
 #include "Resource.h"
+#include "Math.h"
 
 
 class ResourceMesh : public Resource
@@ -16,7 +17,7 @@ public:
 
 public:
 
-	float* Vertices = nullptr;
+	float3* Vertices = nullptr;
 	uint VerticesID = 0; // unique vertex in VRAM
 	uint verticesSize = 0;
 
