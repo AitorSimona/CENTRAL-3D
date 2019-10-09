@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
+#include "ModuleResources.h"
 
 #include "mmgr/mmgr.h"
 
@@ -122,6 +123,14 @@ update_status ModuleInput::PreUpdate(float dt)
 					App->window->UpdateWindowSize();
 				}
 			}
+			break;
+
+			case SDL_DROPFILE:
+
+				if(e.drop.type == SDL_DROPFILE)
+				App->resources->LoadFile(e.drop.file);
+
+			break;
 		}
 	}
 

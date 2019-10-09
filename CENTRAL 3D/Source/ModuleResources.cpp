@@ -118,7 +118,7 @@ bool ModuleResources::Init(json file)
 
 bool ModuleResources::Start()
 {
-	LoadFile("Assets/warrior.fbx");
+	//LoadFile("Assets/warrior.fbx");
 
 	return true;
 }
