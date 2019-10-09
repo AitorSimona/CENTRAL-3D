@@ -25,6 +25,10 @@ public:
 	uint* Indices = nullptr; 
 	uint IndicesID = 0; // index in VRAM
 	uint IndicesSize = 0;
+
+	float3* Normals = nullptr;
+
+	float2* TexCoords = nullptr;
 };
 
 #endif
