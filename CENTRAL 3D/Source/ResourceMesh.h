@@ -20,15 +20,21 @@ public:
 
 	float3* Vertices = nullptr;
 	uint VerticesID = 0; // unique vertex in VRAM
-	uint verticesSize = 0;
+	uint VerticesSize = 0;
 
 	uint* Indices = nullptr; 
 	uint IndicesID = 0; // index in VRAM
 	uint IndicesSize = 0;
 
 	float3* Normals = nullptr;
+	uint NormalsSize = 0;
 
 	float2* TexCoords = nullptr;
+	uint TexCoordsSize = 0;
+
+	unsigned char* Colours = nullptr;
+	uint ColoursSize = 0;
+
 };
 
 #endif

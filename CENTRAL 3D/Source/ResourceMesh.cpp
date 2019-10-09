@@ -17,7 +17,7 @@ ResourceMesh::~ResourceMesh()
 void ResourceMesh::ImportMesh(aiMesh* mesh)
 {
 	// --- Vertices ---
-	this->verticesSize = mesh->mNumVertices;
+	this->VerticesSize = mesh->mNumVertices;
 	this->Vertices = new float3[mesh->mNumVertices];
 
 	for (unsigned j = 0; j < mesh->mNumVertices; ++j)
@@ -27,32 +27,39 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 
 	glGenBuffers(1, (GLuint*)&this->VerticesID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, this->VerticesID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * this->verticesSize, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * this->VerticesSize, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Normals ---
 	if (mesh->HasNormals())
 	{
-		Normals = new float3[mesh->mNumVertices];
-		memcpy(Normals, mesh->mNormals, sizeof(float3)*mesh->mNumVertices);
-
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float3)*verticesSize, Normals);
+		NormalsSize = mesh->mNumVertices;
+		Normals = new float3[NormalsSize];
+		memcpy(Normals, mesh->mNormals, sizeof(float3)*NormalsSize);
 	}
 
 	// --- Texture Coordinates ---
 
 	if (mesh->HasTextureCoords(0))
 	{
-		TexCoords = new float2[mesh->mNumVertices];
+		TexCoordsSize = mesh->mNumVertices;
+		TexCoords = new float2[TexCoordsSize];
 
-		for (unsigned i = 0; i < mesh->mNumVertices; ++i)
+		for (unsigned i = 0; i < TexCoordsSize; ++i)
 		{
 			TexCoords[i] = float2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
 		}
 
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float2)*verticesSize, TexCoords);
 	}
 
+	// --- Colours ---
+
+	if (mesh->HasVertexColors(0))
+	{
+		ColoursSize = VerticesSize;
+		Colours = new unsigned char[ColoursSize * 4];
+		memcpy(Colours, mesh->mColors, sizeof(unsigned char)*ColoursSize*4);
+	}
 
 	// --- Indices ---
 	this->IndicesSize = mesh->mNumFaces * 3;
