@@ -30,6 +30,7 @@ public:
 	uint NormalsSize = 0;
 
 	float2* TexCoords = nullptr;
+	uint  TexID = 0;
 	uint TexCoordsSize = 0;
 
 	unsigned char* Colours = nullptr;

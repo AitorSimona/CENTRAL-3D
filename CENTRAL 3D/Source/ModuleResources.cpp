@@ -118,6 +118,20 @@ void ModuleResources::Draw()
 		glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 
 
+		if (meshes[i]->TexCoords)
+		{
+			glEnable(GL_TEXTURE_2D);
+			//glEnableClientState(GL_TEXTURE_2D);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->TexID); // start using created buffer (indices)
+			glDrawArrays(GL_TEXTURE_2D, 0, meshes[i]->TexCoordsSize);
+
+			//glDisableClientState(GL_TEXTURE_2D);
+
+			glDisable(GL_TEXTURE_2D);
+
+		}
+
 		if (meshes[i]->Normals)
 		{
 			glBegin(GL_LINES);

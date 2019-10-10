@@ -49,8 +49,14 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 		{
 			TexCoords[i] = float2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
 		}
-
 	}
+
+	glGenTextures(1, (GLuint*)&this->TexID); // create buffer
+	glBindTexture(GL_TEXTURE_2D, this->TexID); // start using created buffer
+	//glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,sizeof(float3)*TexCoordsSize,0,GL_RGBA, GL_UNSIGNED_BYTE,); // send vertices to VRAM
+	
+	
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer
 
 	// --- Colours ---
 
