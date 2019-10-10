@@ -53,7 +53,7 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 
 	glGenTextures(1, (GLuint*)&this->TexID); // create buffer
 	glBindTexture(GL_TEXTURE_2D, this->TexID); // start using created buffer
-	//glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,sizeof(float3)*TexCoordsSize,0,GL_RGBA, GL_UNSIGNED_BYTE,); // send vertices to VRAM
+	//glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,1024,1024,GL_RGBA, GL_UNSIGNED_BYTE,GL_RGBA,); // send vertices to VRAM
 	
 	
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer

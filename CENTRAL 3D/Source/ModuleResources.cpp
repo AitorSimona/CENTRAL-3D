@@ -120,7 +120,8 @@ void ModuleResources::Draw()
 
 		if (meshes[i]->TexCoords)
 		{
-			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_TEXTURE_2D);
+
 			//glEnableClientState(GL_TEXTURE_2D);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->TexID); // start using created buffer (indices)
