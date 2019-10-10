@@ -25,8 +25,8 @@ bool ModuleResources::CleanUp()
 
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
-		glDeleteBuffers(1, (GLuint*)&meshes[i]->VerticesID);
-		glDeleteBuffers(1, (GLuint*)&meshes[i]->IndicesID);
+		glDeleteBuffers(1, (GLuint*)&meshes[i]->VBO);
+		glDeleteBuffers(1, (GLuint*)&meshes[i]->IBO);
 
 		RELEASE_ARRAY(meshes[i]->Vertices);
 		RELEASE_ARRAY(meshes[i]->Indices);
@@ -106,52 +106,60 @@ void ModuleResources::Draw()
 	{
 		glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 
-		glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->VerticesID); // start using created buffer (vertices)
-		glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
+		//glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->VBO); // start using created buffer (vertices)
+		//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IndicesID); // start using created buffer (indices)
-		glDrawElements(GL_TRIANGLES, meshes[i]->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IBO); // start using created buffer (indices)
+		//glDrawElements(GL_TRIANGLES, meshes[i]->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+		//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+		glBindVertexArray(meshes[i]->VAO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IBO);
+
+		glDrawElements(GL_TRIANGLES, meshes[i]->IndicesSize, GL_UNSIGNED_INT, NULL);
+
+		/*glBindBuffer(GL_ARRAY_BUFFER, 0);*/
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 
 		glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 
 
-		if (meshes[i]->TexCoords)
-		{
-			glEnable(GL_TEXTURE_2D);
+		//if (meshes[i]->TexCoords)
+		//{
+		//	glEnable(GL_TEXTURE_2D);
 
-			//glEnableClientState(GL_TEXTURE_2D);
+		//	//glEnableClientState(GL_TEXTURE_2D);
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->TexID); // start using created buffer (indices)
-			glDrawArrays(GL_TEXTURE_2D, 0, meshes[i]->TexCoordsSize);
+		//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->TexID); // start using created buffer (indices)
+		//	glDrawArrays(GL_TEXTURE_2D, 0, meshes[i]->TexCoordsSize);
 
-			//glDisableClientState(GL_TEXTURE_2D);
+		//	//glDisableClientState(GL_TEXTURE_2D);
 
-			glDisable(GL_TEXTURE_2D);
+		//	glDisable(GL_TEXTURE_2D);
 
-		}
+		//}
 
-		if (meshes[i]->Normals)
-		{
-			glBegin(GL_LINES);
-			glLineWidth(1.0f);
-			uint Normal_length = 1;
+		//if (meshes[i]->Normals)
+		//{
+		//	glBegin(GL_LINES);
+		//	glLineWidth(1.0f);
+		//	uint Normal_length = 1;
 
-			glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+		//	glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
-			for (uint j = 0; j < meshes[i]->VerticesSize; ++j)
-			{
-				glVertex3f(meshes[i]->Vertices[j].x, meshes[i]->Vertices[j].y, meshes[i]->Vertices[j].z);
-				glVertex3f(meshes[i]->Vertices[j].x + meshes[i]->Normals[j].x*Normal_length, meshes[i]->Vertices[j].y + meshes[i]->Normals[j].y*Normal_length, meshes[i]->Vertices[j].z + meshes[i]->Normals[j].z*Normal_length);
-			}
+		//	for (uint j = 0; j < meshes[i]->VerticesSize; ++j)
+		//	{
+		//		glVertex3f(meshes[i]->Vertices[j].x, meshes[i]->Vertices[j].y, meshes[i]->Vertices[j].z);
+		//		glVertex3f(meshes[i]->Vertices[j].x + meshes[i]->Normals[j].x*Normal_length, meshes[i]->Vertices[j].y + meshes[i]->Normals[j].y*Normal_length, meshes[i]->Vertices[j].z + meshes[i]->Normals[j].z*Normal_length);
+		//	}
 
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		//	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-			glEnd();
+		//	glEnd();
 
-		}
+		//}
 
 	}
 

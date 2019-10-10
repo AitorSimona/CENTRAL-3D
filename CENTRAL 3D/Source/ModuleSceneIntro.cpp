@@ -35,7 +35,7 @@ bool ModuleSceneIntro::Start()
 
 	sphere = new PrimitiveSphere();
 	cube->axis = true;
-	cube->SetPos(0.0f, 0.0f, 0.0f);
+	cube->SetPos(0.0f, 0.5f, 0.0f);
 
 
 	grid = new PrimitiveGrid();
@@ -60,7 +60,7 @@ bool ModuleSceneIntro::Draw()
 {
 
 	cube->Render();
-	sphere->Render();
+	//sphere->Render();
 	grid->Render();
 
 	return true;

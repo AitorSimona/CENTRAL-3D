@@ -1,11 +1,19 @@
 #ifndef __RESOURCE_MESH_H__
 #define __RESOURCE_MESH_H__
 
-#include "Globals.h"
 #include "Resource.h"
-#include "Math.h"
+
+#include "glew\include\GL\glew.h"
 
 struct aiMesh;
+
+struct Vertex
+{
+	GLfloat position[3];
+	GLfloat normal[3];
+	GLubyte color[4];
+	GLfloat texCoord[2];
+};
 
 class ResourceMesh : public Resource
 {
@@ -16,26 +24,21 @@ public:
 
 	void ImportMesh(aiMesh* mesh);
 
+	void GenerateVBO();
+	void GenerateIBO();
+	void GenerateVAO();
+
 public:
 
-	float3* Vertices = nullptr;
-	uint VerticesID = 0; // unique vertex in VRAM
+	Vertex* Vertices = nullptr;
 	uint VerticesSize = 0;
 
-	uint* Indices = nullptr; 
-	uint IndicesID = 0; // index in VRAM
+	GLuint* Indices = nullptr;
 	uint IndicesSize = 0;
 
-	float3* Normals = nullptr;
-	uint NormalsSize = 0;
-
-	float2* TexCoords = nullptr;
-	uint  TexID = 0;
-	uint TexCoordsSize = 0;
-
-	unsigned char* Colours = nullptr;
-	uint ColoursSize = 0;
-
+	GLuint VBO = 0;
+	GLuint IBO = 0;
+	GLuint VAO = 0;
 };
 
 #endif

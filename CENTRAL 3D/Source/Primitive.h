@@ -2,6 +2,7 @@
 #include "Math.h"
 #include "Color.h"
 
+
 enum PrimitiveTypes
 {
 	Primitive_Grid,
@@ -41,7 +42,8 @@ protected:
 	uint IndicesID = 0;
 	uint IndicesSize = 0;
 
-	uint texID = 0;
+	//uint texID = 0;
+	//float * texCoords = nullptr;
 };
 
 // ============================================
@@ -49,7 +51,7 @@ class PrimitiveCube : public Primitive
 {
 public:
 	PrimitiveCube(float sizeX, float sizeY, float sizeZ);
-	void InnerRender() const;
+	/*void InnerRender() const;*/
 public:
 	float3 size = { 0.0f,0.0f,0.0f };
 };
