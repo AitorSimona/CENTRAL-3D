@@ -114,6 +114,8 @@ void ModuleResources::Draw()
 
 		//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+
+		// --- SHOULD CREATE DRAW FUNCTION IN RENDERER TO DRAW MESHES ---
 		glBindVertexArray(meshes[i]->VAO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IBO);
 
