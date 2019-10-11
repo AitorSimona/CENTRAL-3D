@@ -28,13 +28,20 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 {
 	// --- Vertices ---
 	this->VerticesSize = mesh->mNumVertices;
-	this->Vertices = new float3[mesh->mNumVertices*3];
+	this->Vertices = new float3[mesh->mNumVertices];
 
-	memcpy(Vertices, mesh->mVertices, sizeof(float3) * VerticesSize * 3);
+	for (uint i = 0; i < mesh->mNumVertices; ++i)
+	{
+		Vertices[i].x = mesh->mVertices[i].x;
+		Vertices[i].y = mesh->mVertices[i].y;
+		Vertices[i].z = mesh->mVertices[i].z;
+	}
+
+	//memcpy(Vertices, mesh->mVertices, sizeof(float3) * VerticesSize * 3);
 
 	glGenBuffers(1, (GLuint*)&this->VerticesID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, this->VerticesID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * this->VerticesSize*3, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * this->VerticesSize, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Normals ---
