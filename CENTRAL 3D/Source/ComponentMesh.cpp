@@ -38,8 +38,6 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 		Vertices[i].z = mesh->mVertices[i].z;
 	}
 
-	//memcpy(Vertices, mesh->mVertices, sizeof(float3) * VerticesSize * 3);
-
 	glGenBuffers(1, (GLuint*)&this->VerticesID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, this->VerticesID); // start using created buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * this->VerticesSize, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
@@ -51,8 +49,13 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 		NormalsSize = mesh->mNumVertices;
 		Normals = new float3[NormalsSize];
 
+		for (uint i = 0; i < mesh->mNumVertices; ++i)
+		{
+			Normals[i].x = mesh->mNormals[i].x;
+			Normals[i].y = mesh->mNormals[i].y;
+			Normals[i].z = mesh->mNormals[i].z;
+		}
 
-		memcpy(Normals, mesh->mNormals, sizeof(float3)*NormalsSize);
 	}
 
 	// --- Texture Coordinates ---
@@ -63,12 +66,11 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 
 		for (uint j = 0; j < mesh->mNumVertices; ++j)
 		{
-			memcpy(&TexCoords[j*2], &mesh->mTextureCoords[0][j].x, sizeof(float));
-			memcpy(&TexCoords[(j*2)+1], &mesh->mTextureCoords[0][j].y, sizeof(float));
+			TexCoords[j * 2] = mesh->mTextureCoords[0][j].x;
+			TexCoords[(j * 2) + 1] = mesh->mTextureCoords[0][j].y;
 		}
-		LOG("Mesh tex coords at channel 0 loaded");
+		LOG("Mesh texture coords at channel 0 loaded");
 	}
-
 
 	glGenBuffers(1, (GLuint*)&this->TextureCoordsID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, this->TextureCoordsID); // start using created buffer
@@ -79,9 +81,16 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 
 	if (mesh->HasVertexColors(0))
 	{
-		ColoursSize = VerticesSize;
+		ColoursSize = mesh->mNumVertices;
 		Colours = new unsigned char[ColoursSize * 4];
-		memcpy(Colours, mesh->mColors, sizeof(unsigned char)*ColoursSize * 4);
+
+		for (uint i = 0; i < mesh->mNumVertices; ++i)
+		{
+			Colours[4*i] = mesh->mColors[0][i].r;
+			Colours[(4*i)+1] = mesh->mColors[0][i].g;
+			Colours[(4*i)+2] = mesh->mColors[0][i].b;
+			Colours[(4*i)+3] = mesh->mColors[0][i].a;
+		}
 	}
 
 	// --- Indices ---
