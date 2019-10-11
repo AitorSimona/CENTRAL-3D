@@ -140,7 +140,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	// --- Unbind texture ---
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	LOG("Loaded Texture: %i ID, %i Width, %i Height", TextureID, width, height);
+	LOG("Loaded Texture: ID: %i , Width: %i , Height: %i ", TextureID, width, height);
 
 	// --- Returning id so a mesh can use it (and destroy buffer when done) ---
 
@@ -157,6 +157,11 @@ uint ModuleTextures::CreateTextureFromFile(const char* path) const
 	if (App->meshImporter->GetNumMeshes() <= 0)
 	{
 		LOG("|[error]: Error at loading texture from path. ERROR: Scene does not contain any mesh");
+		return texName;
+	}
+	else if (path == nullptr)
+	{
+		LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr",path);
 		return texName;
 	}
 

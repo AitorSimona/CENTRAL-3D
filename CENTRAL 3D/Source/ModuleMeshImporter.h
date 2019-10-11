@@ -28,7 +28,7 @@ public:
 private:
 	std::vector<ComponentMesh*> meshes;
 
-	uint ImageName = 0;
+	uint HouseTexID = 0;
 };
 
 #endif

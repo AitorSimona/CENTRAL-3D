@@ -117,7 +117,7 @@ bool ModuleRenderer3D::Init(json file)
 		glEnable(GL_COLOR_MATERIAL);
 
 		glEnable(GL_TEXTURE_2D);
-		glActiveTexture(GL_TEXTURE0);
+		//glActiveTexture(GL_TEXTURE0);
 
 
 		// Transparency and color merge
@@ -161,9 +161,10 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-	// 1. Level geometry
+	// --- Draw Level geometry ---
 	App->scene_intro->Draw();
 
+	// --- Draw Meshes ---
 	App->meshImporter->Draw();
 
 	// --- Draw everything and swap buffers ---
