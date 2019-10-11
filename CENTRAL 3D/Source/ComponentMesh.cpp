@@ -1,4 +1,4 @@
-#include "ResourceMesh.h"
+#include "ComponentMesh.h"
 #include "OpenGL.h"
 
 #include "Assimp/include/cimport.h"
@@ -9,11 +9,11 @@
 #include "mmgr/mmgr.h"
 
 
-ResourceMesh::ResourceMesh() : Resource(Resource::ResourceType::mesh)
+ComponentMesh::ComponentMesh() : Component(Component::ComponentType::mesh)
 {
 }
 
-ResourceMesh::~ResourceMesh()
+ComponentMesh::~ComponentMesh()
 {
 	glDeleteBuffers(1, (GLuint*)&VerticesID);
 	glDeleteBuffers(1, (GLuint*)&IndicesID);
@@ -24,7 +24,7 @@ ResourceMesh::~ResourceMesh()
 	RELEASE_ARRAY(TexCoords);
 }
 
-void ResourceMesh::ImportMesh(aiMesh* mesh)
+void ComponentMesh::ImportMesh(aiMesh* mesh)
 {
 	// --- Vertices ---
 	this->VerticesSize = mesh->mNumVertices;

@@ -1,18 +1,18 @@
-#ifndef __MODULE_RESOURCES_H__
-#define __MODULE_RESOURCES_H__
+#ifndef __MODULE_MESH_IMPORTER_H__
+#define __MODULE_MESH_IMPORTER_H__
 
 #include <vector>
 #include "Module.h"
 #include "Math.h"
 
-class ResourceMesh;
+class ComponentMesh;
 
-class ModuleResources : public Module
+class ModuleMeshImporter : public Module
 {
 public:
 
-	ModuleResources(Application* app, bool start_enabled = true);
-	~ModuleResources();
+	ModuleMeshImporter(Application* app, bool start_enabled = true);
+	~ModuleMeshImporter();
 
 	bool Init(json file);
 	bool Start();
@@ -24,7 +24,7 @@ public:
 	bool LoadFBX(const char* path);
 
 private:
-	std::vector<ResourceMesh*> meshes;
+	std::vector<ComponentMesh*> meshes;
 
 	uint ImageName = 0;
 };

@@ -1,18 +1,18 @@
-#ifndef __RESOURCE_MESH_H__
-#define __RESOURCE_MESH_H__
+#ifndef __COMPONENT_MESH_H__
+#define __COMPONENT_MESH_H__
 
-#include "Resource.h"
+#include "Component.h"
 #include "Math.h"
 
 struct aiMesh;
 
 
-class ResourceMesh : public Resource
+class ComponentMesh : public Component
 {
 public:
 
-	ResourceMesh();
-	virtual ~ResourceMesh();
+	ComponentMesh();
+	virtual ~ComponentMesh();
 
 	void ImportMesh(aiMesh* mesh);
 

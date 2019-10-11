@@ -375,23 +375,23 @@
     <ClInclude Include="ModuleFileSystem.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleResources.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="JSONLoader.h">
       <Filter>Sources\I/O</Filter>
     </ClInclude>
     <ClInclude Include="VSresource.h">
       <Filter>Sources\VSResources</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceMesh.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleTextures.h">
       <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleMeshImporter.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMesh.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Sources\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -593,20 +593,20 @@
     <ClCompile Include="ModuleFileSystem.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleResources.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="JSONLoader.cpp">
       <Filter>Sources\I/O</Filter>
     </ClCompile>
-    <ClCompile Include="Resource.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceMesh.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleTextures.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleMeshImporter.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMesh.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Sources\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

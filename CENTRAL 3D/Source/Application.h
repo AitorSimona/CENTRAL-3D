@@ -19,7 +19,7 @@ class ModuleCamera3D;
 class ModuleGui;
 class ModuleHardware;
 class ModuleFileSystem;
-class ModuleResources;
+class ModuleMeshImporter;
 class ModuleTextures;
 
 class Application
@@ -50,7 +50,7 @@ public:
 	ModuleGui*			gui = nullptr;
 	ModuleHardware* hardware = nullptr;
 	ModuleFileSystem* fs = nullptr;
-	ModuleResources* resources = nullptr;
+	ModuleMeshImporter* meshImporter = nullptr;
 	ModuleTextures* textures = nullptr;
 
 private:

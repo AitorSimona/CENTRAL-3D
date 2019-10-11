@@ -3,7 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
-#include "ModuleResources.h"
+#include "ModuleMeshImporter.h"
 
 #include "mmgr/mmgr.h"
 
@@ -128,7 +128,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			case SDL_DROPFILE:
 
 				if(e.drop.type == SDL_DROPFILE)
-				App->resources->LoadFBX(e.drop.file);
+				App->meshImporter->LoadFBX(e.drop.file);
 
 			break;
 		}
