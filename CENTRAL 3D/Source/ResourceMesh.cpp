@@ -60,16 +60,19 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 
 	//// --- Colours ---
 
-	if (mesh->HasVertexColors(0))
+
+	for (unsigned j = 0; j < mesh->mNumVertices; ++j)
 	{
-		for (unsigned j = 0; j < mesh->mNumVertices; ++j)
+		if (mesh->HasVertexColors(j))
 		{
 			this->Vertices[j].color[0] = *((GLfloat*)&mesh->mColors[j]->r);
 			this->Vertices[j].color[1] = *((GLfloat*)&mesh->mColors[j]->g);
 			this->Vertices[j].color[2] = *((GLfloat*)&mesh->mColors[j]->b);
 			this->Vertices[j].color[3] = *((GLfloat*)&mesh->mColors[j]->a);
+
 		}
 	}
+	
 
 	// --- Indices ---
 	this->IndicesSize = mesh->mNumFaces * 3;
