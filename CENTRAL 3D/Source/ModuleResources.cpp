@@ -118,25 +118,25 @@ void ModuleResources::Draw()
 
 		glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 
-		//if (meshes[i]->Normals)
-		//{
-		//	glBegin(GL_LINES);
-		//	glLineWidth(1.0f);
-		//	uint Normal_length = 1;
+		if (meshes[i]->Normals)
+		{
+			glBegin(GL_LINES);
+			glLineWidth(1.0f);
+			uint Normal_length = 1;
 
-		//	glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+			glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
-		//	for (uint j = 0; j < meshes[i]->VerticesSize; ++j)
-		//	{
-		//		glVertex3f(meshes[i]->Vertices[j].x, meshes[i]->Vertices[j].y, meshes[i]->Vertices[j].z);
-		//		glVertex3f(meshes[i]->Vertices[j].x + meshes[i]->Normals[j].x*Normal_length, meshes[i]->Vertices[j].y + meshes[i]->Normals[j].y*Normal_length, meshes[i]->Vertices[j].z + meshes[i]->Normals[j].z*Normal_length);
-		//	}
+			for (uint j = 0; j < meshes[i]->VerticesSize; ++j)
+			{
+				glVertex3f(meshes[i]->Vertices[j].x, meshes[i]->Vertices[j].y, meshes[i]->Vertices[j].z);
+				glVertex3f(meshes[i]->Vertices[j].x + meshes[i]->Normals[j].x*Normal_length, meshes[i]->Vertices[j].y + meshes[i]->Normals[j].y*Normal_length, meshes[i]->Vertices[j].z + meshes[i]->Normals[j].z*Normal_length);
+			}
 
-		//	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-		//	glEnd();
+			glEnd();
 
-		//}
+		}
 
 
 	}

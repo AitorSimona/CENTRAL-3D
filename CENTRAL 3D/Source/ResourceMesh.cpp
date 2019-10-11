@@ -28,33 +28,33 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 {
 	// --- Vertices ---
 	this->VerticesSize = mesh->mNumVertices;
-	this->Vertices = new float[mesh->mNumVertices*3];
+	this->Vertices = new float3[mesh->mNumVertices*3];
 
-	memcpy(Vertices, mesh->mVertices, sizeof(float) * VerticesSize * 3);
+	memcpy(Vertices, mesh->mVertices, sizeof(float3) * VerticesSize * 3);
 
 	glGenBuffers(1, (GLuint*)&this->VerticesID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, this->VerticesID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->VerticesSize*3, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * this->VerticesSize*3, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Normals ---
 	if (mesh->HasNormals())
 	{
 		NormalsSize = mesh->mNumVertices;
-		Normals = new float[NormalsSize];
-		memcpy(Normals, mesh->mNormals, sizeof(float)*NormalsSize);
+		Normals = new float3[NormalsSize];
+		memcpy(Normals, mesh->mNormals, sizeof(float3)*NormalsSize);
 	}
 
 	// --- Texture Coordinates ---
 
 	if (mesh->HasTextureCoords(0))
 	{
-		TexCoords = new float[mesh->mNumVertices * 2];
+		TexCoords = new float2[mesh->mNumVertices * 2];
 
 		for (uint j = 0; j < mesh->mNumVertices; ++j)
 		{
-			memcpy(&TexCoords[j * 2], &mesh->mTextureCoords[0][j].x, sizeof(float));
-			memcpy(&TexCoords[(j * 2) + 1], &mesh->mTextureCoords[0][j].y, sizeof(float));
+			memcpy(&TexCoords[j].x, &mesh->mTextureCoords[0][j].x, sizeof(float));
+			memcpy(&TexCoords[j].y, &mesh->mTextureCoords[0][j].y, sizeof(float));
 		}
 		
 	}
@@ -62,7 +62,7 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 
 	glGenBuffers(1, (GLuint*)&this->TexID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, this->TexID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->VerticesSize, this->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float2) * this->VerticesSize, this->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Colours ---

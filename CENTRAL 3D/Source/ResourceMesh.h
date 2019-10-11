@@ -2,6 +2,7 @@
 #define __RESOURCE_MESH_H__
 
 #include "Resource.h"
+#include "Math.h"
 
 struct aiMesh;
 
@@ -28,7 +29,7 @@ public:
 	float* textureCoords = nullptr;
 	uint textureCoordsID = 0;*/
 
-	float* Vertices = nullptr;
+	float3* Vertices = nullptr;
 	uint VerticesID = 0; // unique vertex in VRAM
 	uint VerticesSize = 0;
 
@@ -36,10 +37,10 @@ public:
 	uint IndicesID = 0; // index in VRAM
 	uint IndicesSize = 0;
 
-	float* Normals = nullptr;
+	float3* Normals = nullptr;
 	uint NormalsSize = 0;
 
-	float* TexCoords = nullptr;
+	float2* TexCoords = nullptr;
 	uint  TexID = 0;
 	uint TexCoordsSize = 0;
 
