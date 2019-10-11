@@ -22,6 +22,7 @@ ComponentMesh::~ComponentMesh()
 	RELEASE_ARRAY(Indices);
 	RELEASE_ARRAY(Normals);
 	RELEASE_ARRAY(TexCoords);
+	RELEASE_ARRAY(Colours);
 }
 
 void ComponentMesh::ImportMesh(aiMesh* mesh)
@@ -49,6 +50,8 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 	{
 		NormalsSize = mesh->mNumVertices;
 		Normals = new float3[NormalsSize];
+
+
 		memcpy(Normals, mesh->mNormals, sizeof(float3)*NormalsSize);
 	}
 
