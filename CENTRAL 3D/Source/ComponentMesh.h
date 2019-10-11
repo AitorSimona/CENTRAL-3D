@@ -40,9 +40,11 @@ public:
 	float3* Normals = nullptr;
 	uint NormalsSize = 0;
 
-	float2* TexCoords = nullptr;
-	uint  TexID = 0;
+	float* TexCoords = nullptr;
+	uint  TextureCoordsID = 0;
 	uint TexCoordsSize = 0;
+
+	uint  TexID = 0;
 
 	unsigned char* Colours = nullptr;
 	uint ColoursSize = 0;

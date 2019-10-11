@@ -49,20 +49,20 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 
 	if (mesh->HasTextureCoords(0))
 	{
-		TexCoords = new float2[mesh->mNumVertices * 2];
+		TexCoords = new float[mesh->mNumVertices * 2];
 
 		for (uint j = 0; j < mesh->mNumVertices; ++j)
 		{
-			memcpy(&TexCoords[j].x, &mesh->mTextureCoords[0][j].x, sizeof(float));
-			memcpy(&TexCoords[j].y, &mesh->mTextureCoords[0][j].y, sizeof(float));
+			memcpy(&TexCoords[j*2], &mesh->mTextureCoords[0][j].x, sizeof(float));
+			memcpy(&TexCoords[(j*2)+1], &mesh->mTextureCoords[0][j].y, sizeof(float));
 		}
-		
+		LOG("Mesh tex coords at channel 0 loaded");
 	}
 
 
-	glGenBuffers(1, (GLuint*)&this->TexID); // create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, this->TexID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float2) * this->VerticesSize, this->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+	glGenBuffers(1, (GLuint*)&this->TextureCoordsID); // create buffer
+	glBindBuffer(GL_ARRAY_BUFFER, this->TextureCoordsID); // start using created buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->VerticesSize*2, this->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Colours ---
@@ -93,6 +93,7 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->IndicesID); // start using created buffer
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * this->IndicesSize, this->Indices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
 }
 
 

@@ -87,7 +87,7 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 
 			// --- Import mesh data (fill new_mesh)---
 			new_mesh->ImportMesh(mesh);
-			new_mesh->TexID = HouseTexID;
+			
 		}
 
 		// --- Free scene ---
@@ -111,6 +111,13 @@ void ModuleMeshImporter::Draw()
 
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, HouseTexID);
+		glActiveTexture(GL_TEXTURE0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->TextureCoordsID);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 		
 		// --- Draw mesh ---
 		glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
@@ -127,6 +134,10 @@ void ModuleMeshImporter::Draw()
 		glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 
 		// ----        ----
+
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// --- Draw Vertex Normals ---
 		//if (meshes[i]->Normals)

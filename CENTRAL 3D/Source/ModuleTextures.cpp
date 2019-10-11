@@ -175,6 +175,13 @@ uint ModuleTextures::CreateTextureFromFile(const char* path) const
 	// --- Load the image ---
 	if (ilLoadImage(path))
 	{
+		// --- Attention!! If the image is flipped, we flip it back --- 
+		ILinfo imageInfo;
+		iluGetImageInfo(&imageInfo);
+
+		if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+			iluFlipImage();
+
 		// --- Convert the image into a suitable format to work with ---
 		if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
 		{
