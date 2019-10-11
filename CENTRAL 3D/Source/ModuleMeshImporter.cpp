@@ -49,7 +49,6 @@ bool ModuleMeshImporter::CleanUp()
 	// --- Detach assimp log stream ---
 	aiDetachAllLogStreams();
 
-
 	// -- Release all buffer data and own stored data ---
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
@@ -85,7 +84,6 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 		// --- Free scene ---
 		aiReleaseImport(scene);
 
-
 	}
 	else
 		LOG("|[error]: Error loading scene %s", path);
@@ -105,6 +103,7 @@ void ModuleMeshImporter::Draw()
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
 		
+		// --- Draw mesh ---
 		glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 
 		glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->VerticesID); // start using created buffer (vertices)
@@ -118,6 +117,9 @@ void ModuleMeshImporter::Draw()
 
 		glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 
+		// ----        ----
+
+		// --- Draw Vertex Normals ---
 		if (meshes[i]->Normals)
 		{
 			glBegin(GL_LINES);
