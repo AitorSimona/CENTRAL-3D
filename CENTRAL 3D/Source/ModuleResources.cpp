@@ -8,6 +8,14 @@
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
 #include "Assimp/include/cfileio.h"
+
+#include "DevIL/include/il.h"
+#include "DevIL/include/ilu.h"
+#include "DevIL/include/ilut.h"
+
+#pragma comment (lib, "DevIL/libx86/DevIL.lib")
+#pragma comment (lib, "DevIL/libx86/ILU.lib")
+#pragma comment (lib, "DevIL/libx86/ILUT.lib")
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 
 #include "mmgr/mmgr.h"
@@ -16,6 +24,32 @@ void MyAssimpCallback(const char * msg, char * userData)
 {
 	LOG("[Assimp]: %s", msg);
 }
+
+ModuleResources::ModuleResources(Application * app, bool start_enabled) : Module(app, start_enabled)
+{
+}
+
+ModuleResources::~ModuleResources()
+{
+}
+
+bool ModuleResources::Init(json file)
+{
+	// Stream log messages to Debug window
+	struct aiLogStream stream;
+	stream.callback = MyAssimpCallback;
+	aiAttachLogStream(&stream);
+
+	return true;
+}
+
+bool ModuleResources::Start()
+{
+	//LoadFile("Assets/warrior.fbx");
+
+	return true;
+}
+
 
 bool ModuleResources::CleanUp()
 {
@@ -69,30 +103,6 @@ bool ModuleResources::LoadFBX(const char* path)
 	return true;
 }
 
-ModuleResources::ModuleResources(Application * app, bool start_enabled) : Module(app,start_enabled)
-{
-}
-
-ModuleResources::~ModuleResources()
-{
-}
-
-bool ModuleResources::Init(json file)
-{
-	// Stream log messages to Debug window
-	struct aiLogStream stream;
-	stream.callback = MyAssimpCallback;
-	aiAttachLogStream(&stream);
-
-	return true;
-}
-
-bool ModuleResources::Start()
-{
-	//LoadFile("Assets/warrior.fbx");
-
-	return true;
-}
 
 void ModuleResources::Draw()
 {

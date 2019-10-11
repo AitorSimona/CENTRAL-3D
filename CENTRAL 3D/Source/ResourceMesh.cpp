@@ -6,6 +6,7 @@
 #include "Assimp/include/postprocess.h"
 #include "Assimp/include/cfileio.h"
 
+
 ResourceMesh::ResourceMesh() : Resource(Resource::ResourceType::mesh)
 {
 }
@@ -38,9 +39,7 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 		}
 	}
 
-	//// --- Texture Coordinates ---
-
-
+	// --- Texture Coordinates ---
 	for (unsigned j = 0; j < mesh->mNumVertices; ++j)
 	{
 		if (mesh->HasTextureCoords(j))
@@ -58,9 +57,7 @@ void ResourceMesh::ImportMesh(aiMesh* mesh)
 	//
 	//glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer
 
-	//// --- Colours ---
-
-
+	// --- Colours ---
 	for (unsigned j = 0; j < mesh->mNumVertices; ++j)
 	{
 		if (mesh->HasVertexColors(j))
@@ -98,11 +95,11 @@ void ResourceMesh::GenerateVBO()
 {
 	assert(Vertices != nullptr);
 
-	// Vertex Buffer Object
+	// --- Vertex Buffer Object ---
 
-	// Generate a VBO
+	// --- Generate a VBO ---
 	glGenBuffers(1, &VBO);
-	// Bind the VBO
+	// --- Bind the VBO ---
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * VerticesSize, Vertices, GL_STATIC_DRAW);
@@ -114,11 +111,12 @@ void ResourceMesh::GenerateIBO()
 {
 	assert(Indices != nullptr);
 
-	// Index Buffer Object
+	// --- Index Buffer Object ---
 
-	// Generate a IBO
+	// --- Generate a IBO ---
 	glGenBuffers(1, &IBO);
-	// Bind the IBO
+
+	// --- Bind the IBO ---
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * IndicesSize, Indices, GL_STATIC_DRAW);
@@ -128,22 +126,23 @@ void ResourceMesh::GenerateIBO()
 
 void ResourceMesh::GenerateVAO()
 {
-	// Vertex Array Object
+	// --- Vertex Array Object ---
 
-	// Generate a VAO
+	// --- Generate a VAO ---
 	glGenVertexArrays(1, &VAO);
-	// Bind the VAO
+	// --- Bind the VAO ---
 	glBindVertexArray(VAO);
 
-	// Bind the VBO 
+	// --- Bind the VBO we are adding attributes to ---
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	// Set the vertex attributes pointers
+	// --- Set the vertex attributes ---
+
 	// 1. Position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, position)));
 	glEnableVertexAttribArray(0);
 
-	// 2. Normal
+	// 2. Normals
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, normal)));
 	glEnableVertexAttribArray(1);
 
@@ -151,10 +150,14 @@ void ResourceMesh::GenerateVAO()
 	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)(offsetof(Vertex, color)));
 	glEnableVertexAttribArray(2);
 
-	// 4. Tex coords
+	// 4. Texture coords
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, texCoord)));
 	glEnableVertexAttribArray(3);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// Regarding offsetof, stddef macro that returns the offset value in bytes between Vertex class data start
+	// and the corresponding attribute (be it position...). For example, in the fourth case, texture coords, this
+	// macro returns 10 (add position[3], normal[3] and color[4])
 }
