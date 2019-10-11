@@ -148,3 +148,8 @@ void ModuleMeshImporter::Draw()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+uint ModuleMeshImporter::GetNumMeshes() const
+{
+	return meshes.size();
+}
+

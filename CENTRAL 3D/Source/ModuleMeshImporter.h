@@ -23,6 +23,8 @@ public:
 	bool CleanUp();
 	bool LoadFBX(const char* path);
 
+	uint GetNumMeshes() const;
+
 private:
 	std::vector<ComponentMesh*> meshes;
 

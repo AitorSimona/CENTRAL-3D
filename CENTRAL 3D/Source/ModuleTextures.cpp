@@ -1,5 +1,6 @@
 #include "ModuleTextures.h"
 #include "Application.h"
+#include "ModuleMeshImporter.h"
 #include "OpenGL.h"
 
 #include "DevIL/include/il.h"
@@ -61,6 +62,7 @@ bool ModuleTextures::Start()
 
 bool ModuleTextures::CleanUp()
 {
+	// --- Delete sample checkers texture ---
 	if (CheckerTexID > 0)
 		glDeleteTextures(1, (GLuint*)&CheckerTexID);
 
@@ -69,6 +71,8 @@ bool ModuleTextures::CleanUp()
 
 uint ModuleTextures::LoadCheckImage() const
 {
+	// --- Creating pixel data for checkers texture ---
+
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 
 	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
@@ -81,7 +85,7 @@ uint ModuleTextures::LoadCheckImage() const
 		}
 	}
 
-	// Create the texture
+	// --- Create the texture ---
 	return CreateTextureFromPixels(GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT, GL_RGBA, checkImage, true);
 }
 
@@ -128,14 +132,59 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 
 	if (!CheckersTexture)
 	{
-		// --- Mipmap ---
+		// --- Generate Mipmap and enable 2D Textures ---
 		glEnable(GL_TEXTURE_2D);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
+	// --- Unbind texture ---
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	LOG("Loaded Texture: %i ID, %i Width, %i Height", TextureID, width, height);
 
+	// --- Returning id so a mesh can use it (and destroy buffer when done) ---
+
 	return TextureID;
+}
+
+uint ModuleTextures::CreateTextureFromFile(const char* path) const
+{
+	// --- In this function I use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromPixels ---
+
+	uint texName = 0;
+
+	// --- If there are no meshes stop ---
+	if (App->meshImporter->GetNumMeshes() <= 0)
+	{
+		LOG("|[error]: Error at loading texture from path. ERROR: Scene does not contain any mesh");
+		return texName;
+	}
+
+	// --- Generate the image name ---
+	uint ImageName = 0;
+	ilGenImages(1, (ILuint*)&ImageName);
+
+	// --- Bind the image ---
+	ilBindImage(ImageName);
+
+	// --- Load the image ---
+	if (ilLoadImage(path))
+	{
+		// --- Convert the image into a suitable format to work with ---
+		if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
+		{
+			// --- Create the texture ---
+			texName = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());		
+		}
+		else
+			LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
+	}
+	else
+		LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
+
+	ilDeleteImages(1, (const ILuint*)&ImageName);
+
+	// --- Returning the Texture ID so a mesh can use it, note that this variable is filled by CreateTextureFromPixels ---
+
+	return texName;
 }
