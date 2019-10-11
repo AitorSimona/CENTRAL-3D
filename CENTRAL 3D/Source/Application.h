@@ -20,6 +20,7 @@ class ModuleGui;
 class ModuleHardware;
 class ModuleFileSystem;
 class ModuleResources;
+class ModuleTextures;
 
 class Application
 {
@@ -50,6 +51,7 @@ public:
 	ModuleHardware* hardware = nullptr;
 	ModuleFileSystem* fs = nullptr;
 	ModuleResources* resources = nullptr;
+	ModuleTextures* textures = nullptr;
 
 private:
 

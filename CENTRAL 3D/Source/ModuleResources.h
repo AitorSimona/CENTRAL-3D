@@ -25,6 +25,8 @@ public:
 
 private:
 	std::vector<ResourceMesh*> meshes;
+
+	uint ImageName = 0;
 };
 
 #endif

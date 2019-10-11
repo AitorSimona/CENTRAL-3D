@@ -9,13 +9,6 @@
 #include "Assimp/include/postprocess.h"
 #include "Assimp/include/cfileio.h"
 
-#include "DevIL/include/il.h"
-#include "DevIL/include/ilu.h"
-#include "DevIL/include/ilut.h"
-
-#pragma comment (lib, "DevIL/libx86/DevIL.lib")
-#pragma comment (lib, "DevIL/libx86/ILU.lib")
-#pragma comment (lib, "DevIL/libx86/ILUT.lib")
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 
 #include "mmgr/mmgr.h"
@@ -35,7 +28,7 @@ ModuleResources::~ModuleResources()
 
 bool ModuleResources::Init(json file)
 {
-	// Stream log messages to Debug window
+	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
 	struct aiLogStream stream;
 	stream.callback = MyAssimpCallback;
 	aiAttachLogStream(&stream);
@@ -45,7 +38,7 @@ bool ModuleResources::Init(json file)
 
 bool ModuleResources::Start()
 {
-	//LoadFile("Assets/warrior.fbx");
+	LoadFBX("Assets/BakerHouse.fbx");
 
 	return true;
 }
@@ -53,18 +46,13 @@ bool ModuleResources::Start()
 
 bool ModuleResources::CleanUp()
 {
-	// detach log stream
+	// --- Detach assimp log stream ---
 	aiDetachAllLogStreams();
 
 
+	// -- Release all buffer data and own stored data ---
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
-		glDeleteBuffers(1, (GLuint*)&meshes[i]->VBO);
-		glDeleteBuffers(1, (GLuint*)&meshes[i]->IBO);
-
-		RELEASE_ARRAY(meshes[i]->Vertices);
-		RELEASE_ARRAY(meshes[i]->Indices);
-
 		delete meshes[i];
 	}
 
@@ -73,12 +61,13 @@ bool ModuleResources::CleanUp()
 
 bool ModuleResources::LoadFBX(const char* path)
 {
+	// --- Import scene from path ---
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
 
-		// Use scene->mNumMeshes to iterate on scene->mMeshes array
+		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 
 		for (uint i = 0; i < scene->mNumMeshes; ++i)
 		{
@@ -92,6 +81,8 @@ bool ModuleResources::LoadFBX(const char* path)
 			// --- Import mesh data (fill new_mesh)---
 			new_mesh->ImportMesh(mesh);
 		}
+
+		// --- Free scene ---
 		aiReleaseImport(scene);
 
 
@@ -113,64 +104,40 @@ void ModuleResources::Draw()
 
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
+		
 		glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 
-		//glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->VBO); // start using created buffer (vertices)
-		//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
+		glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->VerticesID); // start using created buffer (vertices)
+		glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
 
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IBO); // start using created buffer (indices)
-		//glDrawElements(GL_TRIANGLES, meshes[i]->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IndicesID); // start using created buffer (indices)
+		glDrawElements(GL_TRIANGLES, meshes[i]->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-		//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-
-		// --- SHOULD CREATE DRAW FUNCTION IN RENDERER TO DRAW MESHES ---
-		glBindVertexArray(meshes[i]->VAO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IBO);
-
-		glDrawElements(GL_TRIANGLES, meshes[i]->IndicesSize, GL_UNSIGNED_INT, NULL);
-
-		/*glBindBuffer(GL_ARRAY_BUFFER, 0);*/
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
 
 		glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 
-
-		//if (meshes[i]->TexCoords)
+		//if (meshes[i]->Normals)
 		//{
-		//	glEnable(GL_TEXTURE_2D);
+		//	glBegin(GL_LINES);
+		//	glLineWidth(1.0f);
+		//	uint Normal_length = 1;
 
-		//	//glEnableClientState(GL_TEXTURE_2D);
+		//	glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
-		//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->TexID); // start using created buffer (indices)
-		//	glDrawArrays(GL_TEXTURE_2D, 0, meshes[i]->TexCoordsSize);
+		//	for (uint j = 0; j < meshes[i]->VerticesSize; ++j)
+		//	{
+		//		glVertex3f(meshes[i]->Vertices[j].x, meshes[i]->Vertices[j].y, meshes[i]->Vertices[j].z);
+		//		glVertex3f(meshes[i]->Vertices[j].x + meshes[i]->Normals[j].x*Normal_length, meshes[i]->Vertices[j].y + meshes[i]->Normals[j].y*Normal_length, meshes[i]->Vertices[j].z + meshes[i]->Normals[j].z*Normal_length);
+		//	}
 
-		//	//glDisableClientState(GL_TEXTURE_2D);
+		//	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-		//	glDisable(GL_TEXTURE_2D);
+		//	glEnd();
 
 		//}
 
-		if (meshes[i]->Vertices->normal)
-		{
-			glBegin(GL_LINES);
-			glLineWidth(1.0f);
-			uint Normal_length = 1;
-
-			glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
-
-			for (uint j = 0; j < meshes[i]->VerticesSize; ++j)
-			{
-				glVertex3f(meshes[i]->Vertices[j].position[0], meshes[i]->Vertices[j].position[1], meshes[i]->Vertices[j].position[2]);
-				glVertex3f(meshes[i]->Vertices[j].position[0] + meshes[i]->Vertices[j].normal[0]*Normal_length, meshes[i]->Vertices[j].position[1] + meshes[i]->Vertices[j].normal[1]*Normal_length, meshes[i]->Vertices[j].position[2] + meshes[i]->Vertices[j].normal[2]*Normal_length);
-			}
-
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-			glEnd();
-
-		}
 
 	}
 
