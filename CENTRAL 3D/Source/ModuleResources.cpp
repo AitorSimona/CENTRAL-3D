@@ -82,7 +82,6 @@ bool ModuleResources::Init(json file)
 	// Stream log messages to Debug window
 	struct aiLogStream stream;
 	stream.callback = MyAssimpCallback;
-	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	aiAttachLogStream(&stream);
 
 	return true;
