@@ -17,6 +17,7 @@
 
 void MyAssimpCallback(const char * msg, char * userData)
 {
+	// --- Get Assimp LOGS and print them to console ---
 	LOG("[Assimp]: %s", msg);
 }
 
@@ -106,10 +107,10 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 void ModuleMeshImporter::Draw() const
 {
 	// --- Activate wireframe mode ---
-
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	// --- Draw Meshes ---
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
 		DrawMesh(meshes[i]);
@@ -154,12 +155,12 @@ void ModuleMeshImporter::GetTextureIDFromSceneMaterial(const aiScene & scene, ui
 void ModuleMeshImporter::DrawMesh(const ComponentMesh * mesh) const
 {
 	// --- Draw Texture ---
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, mesh->TextureID);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
+	glEnable(GL_TEXTURE_2D); // enable gl capability
+	glBindTexture(GL_TEXTURE_2D, mesh->TextureID); // start using texture
 	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->TextureCoordsID);
-	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->TextureCoordsID); // start using created buffer (tex coords)
+	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 
 	// --- Draw mesh ---
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
@@ -182,9 +183,12 @@ void ModuleMeshImporter::DrawMesh(const ComponentMesh * mesh) const
 
 void ModuleMeshImporter::DrawNormals(const ComponentMesh * mesh) const
 {
-	// --- Draw Vertex Normals ---
+	// --- Draw Mesh Normals ---
+
 	if (mesh->Normals)
 	{
+		// --- Draw Vertex Normals ---
+
 		glBegin(GL_LINES);
 		glLineWidth(1.0f);
 

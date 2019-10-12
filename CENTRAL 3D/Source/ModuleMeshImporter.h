@@ -8,29 +8,29 @@
 class ComponentMesh;
 class aiScene;
 
+// Specifying normal vectors length (used when drawing normals)
 #define NORMAL_LENGTH 1
 
 class ModuleMeshImporter : public Module
 {
 public:
-
+	// --- Basic ---
 	ModuleMeshImporter(bool start_enabled = true);
 	~ModuleMeshImporter();
-
 	bool Init(json file);
 	bool Start();
-	//update_status PreUpdate(float dt);
-	//update_status Update(float dt);
-	//update_status PostUpdate(float dt);
-	void Draw() const;
 	bool CleanUp();
-	bool LoadFBX(const char* path);
 
+	// --- Getters ---
 	uint GetNumMeshes() const;
 	void GetTextureIDFromSceneMaterial(const aiScene& scene, uint & texture_ID, std::string & directory);
 
+	// --- Utilities ---
+	void Draw() const;
+	bool LoadFBX(const char* path);
 
 private:
+	// --- Draw Functiions accessed by main Draw (which is called by renderer) ---
 	void DrawMesh(const ComponentMesh* mesh) const;
 	void DrawNormals(const ComponentMesh* mesh) const;
 
