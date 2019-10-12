@@ -34,7 +34,7 @@ class ModuleHardware : public Module
 
 public:
 
-	ModuleHardware(Application* app, bool start_enabled = true);
+	ModuleHardware(bool start_enabled = true);
 	~ModuleHardware();
 
 	const hw_info& GetInfo() const;

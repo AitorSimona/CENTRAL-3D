@@ -11,7 +11,7 @@ class ModuleMeshImporter : public Module
 {
 public:
 
-	ModuleMeshImporter(Application* app, bool start_enabled = true);
+	ModuleMeshImporter(bool start_enabled = true);
 	~ModuleMeshImporter();
 
 	bool Init(json file);

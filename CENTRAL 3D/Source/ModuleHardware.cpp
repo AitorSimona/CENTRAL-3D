@@ -6,7 +6,7 @@
 
 #include "mmgr/mmgr.h"
 
-ModuleHardware::ModuleHardware(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleHardware::ModuleHardware(bool start_enabled) : Module(start_enabled)
 {
 	// --- Retrieve SDL Version ---
 	SDL_version version;

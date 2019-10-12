@@ -12,7 +12,7 @@
 
 using namespace std;
 
-ModuleFileSystem::ModuleFileSystem(Application* app, bool start_enabled, const char* game_path) : Module(app, true)
+ModuleFileSystem::ModuleFileSystem(Application* app, bool start_enabled, const char* game_path) : Module(start_enabled)
 {
 	name = "File System";
 
@@ -312,16 +312,6 @@ SDL_RWops* ModuleFileSystem::Load(const char* file) const
 	}
 	else
 		return nullptr;
-}
-
-void * ModuleFileSystem::BassLoad(const char * file) const
-{
-	PHYSFS_file* fs_file = PHYSFS_openRead(file);
-
-	if (fs_file == nullptr)
-		LOG("File System error while opening file %s: %s\n", file, PHYSFS_getLastError());
-
-	return (void*)fs_file;
 }
 
 int close_sdl_rwops(SDL_RWops *rw)

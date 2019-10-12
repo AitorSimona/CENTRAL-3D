@@ -19,7 +19,7 @@ void MyAssimpCallback(const char * msg, char * userData)
 	LOG("[Assimp]: %s", msg);
 }
 
-ModuleMeshImporter::ModuleMeshImporter(Application * app, bool start_enabled) : Module(app, start_enabled)
+ModuleMeshImporter::ModuleMeshImporter(bool start_enabled) : Module(start_enabled)
 {
 }
 

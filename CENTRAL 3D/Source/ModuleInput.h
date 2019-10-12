@@ -17,7 +17,7 @@ class ModuleInput : public Module
 {
 public:
 	
-	ModuleInput(Application* app, bool start_enabled = true);
+	ModuleInput(bool start_enabled = true);
 	~ModuleInput();
 
 	bool Init(json file);
