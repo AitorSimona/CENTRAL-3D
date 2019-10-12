@@ -103,7 +103,7 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 }
 
 
-void ModuleMeshImporter::Draw()
+void ModuleMeshImporter::Draw() const
 {
 	// --- Activate wireframe mode ---
 
@@ -112,83 +112,8 @@ void ModuleMeshImporter::Draw()
 
 	for (uint i = 0; i < meshes.size(); ++i)
 	{
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, meshes[i]->TextureID);
-		glActiveTexture(GL_TEXTURE0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->TextureCoordsID);
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-		
-		// --- Draw mesh ---
-		glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-
-		glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->VerticesID); // start using created buffer (vertices)
-		glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->IndicesID); // start using created buffer (indices)
-		glDrawElements(GL_TRIANGLES, meshes[i]->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-
-		glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
-
-		// ----        ----
-
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		// --- Draw Vertex Normals ---
-		//if (meshes[i]->Normals)
-		//{
-		//	glBegin(GL_LINES);
-		//	glLineWidth(1.0f);
-		//	uint Normal_length = 1;
-
-		//	glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
-
-		//	for (uint j = 0; j < meshes[i]->VerticesSize; ++j)
-		//	{
-		//		glVertex3f(meshes[i]->Vertices[j].x, meshes[i]->Vertices[j].y, meshes[i]->Vertices[j].z);
-		//		glVertex3f(meshes[i]->Vertices[j].x + meshes[i]->Normals[j].x*Normal_length, meshes[i]->Vertices[j].y + meshes[i]->Normals[j].y*Normal_length, meshes[i]->Vertices[j].z + meshes[i]->Normals[j].z*Normal_length);
-		//	}
-
-		//	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-		//	glEnd();
-
-		//}
-
-		// --- Draw Face Normals 
-
-		glBegin(GL_LINES);
-		glLineWidth(1.0f);
-		uint Normal_length = 1;
-
-		glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
-		Triangle face;
-
-		for (uint j = 0; j < meshes[i]->VerticesSize/3; ++j)
-		{
-			face.a = meshes[i]->Vertices[(j*3)+2];
-			face.b = meshes[i]->Vertices[(j*3) + 1];
-			face.c = meshes[i]->Vertices[(j*3) ];
-
-			float3 face_center = face.Centroid();
-			float3 face_normal = face.NormalCW();
-
-			glVertex3f(face_center.x, face_center.y, face_center.z);
-			glVertex3f(face_center.x + face_normal.x*Normal_length, face_center.y + face_normal.y*Normal_length, face_center.z + face_normal.z*Normal_length);
-		}
-
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-		glEnd();
-
-
-
+		DrawMesh(meshes[i]);
+		DrawNormals(meshes[i]);
 	}
 
 	// --- DeActivate wireframe mode ---
@@ -224,5 +149,77 @@ void ModuleMeshImporter::GetTextureIDFromSceneMaterial(const aiScene & scene, ui
 
 		}
 	}
+}
+
+void ModuleMeshImporter::DrawMesh(const ComponentMesh * mesh) const
+{
+	// --- Draw Texture ---
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, mesh->TextureID);
+	glActiveTexture(GL_TEXTURE0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->TextureCoordsID);
+	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+	// --- Draw mesh ---
+	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->VerticesID); // start using created buffer (vertices)
+	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->IndicesID); // start using created buffer (indices)
+	glDrawElements(GL_TRIANGLES, mesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+
+	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+
+	// ----        ----
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void ModuleMeshImporter::DrawNormals(const ComponentMesh * mesh) const
+{
+	// --- Draw Vertex Normals ---
+	if (mesh->Normals)
+	{
+		glBegin(GL_LINES);
+		glLineWidth(1.0f);
+
+		glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+
+		for (uint j = 0; j < mesh->VerticesSize; ++j)
+		{
+			glVertex3f(mesh->Vertices[j].x, mesh->Vertices[j].y, mesh->Vertices[j].z);
+			glVertex3f(mesh->Vertices[j].x + mesh->Normals[j].x*NORMAL_LENGTH, mesh->Vertices[j].y + mesh->Normals[j].y*NORMAL_LENGTH, mesh->Vertices[j].z + mesh->Normals[j].z*NORMAL_LENGTH);
+		}
+
+		// --- Draw Face Normals 
+
+		Triangle face;
+
+		for (uint j = 0; j < mesh->VerticesSize / 3; ++j)
+		{
+			face.a = mesh->Vertices[(j * 3) + 2];
+			face.b = mesh->Vertices[(j * 3) + 1];
+			face.c = mesh->Vertices[(j * 3)];
+
+			float3 face_center = face.Centroid();
+			float3 face_normal = face.NormalCW();
+
+			glVertex3f(face_center.x, face_center.y, face_center.z);
+			glVertex3f(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
+		}
+
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glEnd();
+
+	}
+
 }
 
