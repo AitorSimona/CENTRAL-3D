@@ -66,31 +66,13 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 	// --- Import scene from path ---
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
+	// --- Get Directory from filename ---
 	std::string directory = path;
 	App->fs->GetDirectoryFromPath(directory);
 
-	// --- Material ---
-
+	// --- Query Scene first Material to get Texture name. If found, create a texture and return ID  ---
 	uint TextureID = 0;
-
-	if (scene->HasMaterials())
-	{
-		aiMaterial* material = scene->mMaterials[0];
-
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-		{
-			aiString Texture_path;
-			material->GetTexture(aiTextureType_DIFFUSE, 0, &Texture_path);
-
-			directory.append(Texture_path.C_Str());
-
-			// --- If we find the texture file, load it ---
-			if(App->fs->Exists(directory.data()))
-			TextureID = App->textures->CreateTextureFromFile(directory.data());
-
-		}
-	}
-	
+	GetTextureIDFromSceneMaterial(*scene, TextureID, directory);
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
@@ -217,5 +199,30 @@ void ModuleMeshImporter::Draw()
 uint ModuleMeshImporter::GetNumMeshes() const
 {
 	return meshes.size();
+}
+
+void ModuleMeshImporter::GetTextureIDFromSceneMaterial(const aiScene & scene, uint & texture_ID, std::string & directory)
+{
+	if (scene.HasMaterials())
+	{
+		// --- Get scene's first material ---
+		aiMaterial* material = scene.mMaterials[0];
+
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+		{
+			aiString Texture_path;
+
+			// --- Specify type of texture to retrieve (in this case DIFFUSE/ALBEDO)---
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &Texture_path);
+
+			// --- Build whole path to texture file ---
+			directory.append(Texture_path.C_Str());
+
+			// --- If we find the texture file, load it ---
+			if (App->fs->Exists(directory.data()))
+				texture_ID = App->textures->CreateTextureFromFile(directory.data());
+
+		}
+	}
 }
 

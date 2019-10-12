@@ -6,6 +6,7 @@
 #include "Math.h"
 
 class ComponentMesh;
+class aiScene;
 
 class ModuleMeshImporter : public Module
 {
@@ -24,6 +25,7 @@ public:
 	bool LoadFBX(const char* path);
 
 	uint GetNumMeshes() const;
+	void GetTextureIDFromSceneMaterial(const aiScene& scene, uint & texture_ID, std::string & directory);
 
 private:
 	std::vector<ComponentMesh*> meshes;
