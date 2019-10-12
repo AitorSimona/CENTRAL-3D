@@ -25,7 +25,7 @@ ComponentMesh::~ComponentMesh()
 	RELEASE_ARRAY(Colours);
 }
 
-void ComponentMesh::ImportMesh(aiMesh* mesh)
+void ComponentMesh::ImportMesh(const aiMesh* mesh, uint MATTextureID)
 {
 	// --- Vertices ---
 	this->VerticesSize = mesh->mNumVertices;
@@ -113,6 +113,20 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * this->IndicesSize, this->Indices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 
+	//// --- Material ---
+
+	this->TextureID = MATTextureID;
+
+	//if (scene->HasMaterials())
+	//{
+	//	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+	//	if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+	//	{
+	//		aiString Texture_path;
+	//		material->GetTexture(aiTextureType_DIFFUSE,0, &Texture_path);
+	//	}
+	//}
 }
 
 

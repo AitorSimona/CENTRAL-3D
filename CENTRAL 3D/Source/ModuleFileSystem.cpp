@@ -251,8 +251,8 @@ void ModuleFileSystem::NormalizePath(std::string & full_path) const
 	{
 		if (*it == '\\')
 			*it = '/';
-		else
-			*it = tolower(*it);
+		/*else
+			*it = tolower(*it);*/
 	}
 }
 

@@ -5,7 +5,7 @@
 #include "Math.h"
 
 struct aiMesh;
-
+struct aiScene;
 
 class ComponentMesh : public Component
 {
@@ -14,20 +14,9 @@ public:
 	ComponentMesh();
 	virtual ~ComponentMesh();
 
-	void ImportMesh(aiMesh* mesh);
+	void ImportMesh(const aiMesh* mesh, uint MATTextureID);
 
 public:
-
-	/*float* vertices = nullptr;
-	uint VerticesSize = 0;
-	uint VerticesID = 0;
-
-	uint* Indices = nullptr;
-	uint IndicesSize = 0;
-	uint IndicesID = 0;
-
-	float* textureCoords = nullptr;
-	uint textureCoordsID = 0;*/
 
 	float3* Vertices = nullptr;
 	uint VerticesID = 0; // unique vertex in VRAM
@@ -44,12 +33,10 @@ public:
 	uint  TextureCoordsID = 0;
 	uint TexCoordsSize = 0;
 
-	uint  TexID = 0;
+	uint  TextureID = 0;
 
 	unsigned char* Colours = nullptr;
 	uint ColoursSize = 0;
-
-	uint ImageName = 0;
 };
 
 #endif

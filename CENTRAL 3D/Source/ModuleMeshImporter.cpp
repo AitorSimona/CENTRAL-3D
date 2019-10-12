@@ -4,6 +4,7 @@
 #include "OpenGL.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleFileSystem.h"
 
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
@@ -71,10 +72,37 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 	// --- Import scene from path ---
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
+	std::string directory = path;
+	App->fs->NormalizePath(directory);
+	uint count = directory.find_last_of("/");
+	directory = directory.substr(0, count+1);
+
+
+	// --- Material ---
+
+	uint TextureID = 0;
+
+	if (scene->HasMaterials())
+	{
+		aiMaterial* material = scene->mMaterials[0];
+
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+		{
+			aiString Texture_path;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &Texture_path);
+
+			directory.append(Texture_path.C_Str());
+
+			// --- If we find the texture file, load it ---
+			if(App->fs->Exists(directory.data()))
+			TextureID = App->textures->CreateTextureFromFile(directory.data());
+
+		}
+	}
+	
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
-
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 
 		for (uint i = 0; i < scene->mNumMeshes; ++i)
@@ -87,8 +115,9 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 			aiMesh* mesh = scene->mMeshes[i];
 
 			// --- Import mesh data (fill new_mesh)---
-			new_mesh->ImportMesh(mesh);
-			
+			new_mesh->ImportMesh(mesh,TextureID);
+
+
 		}
 
 		// --- Free scene ---
