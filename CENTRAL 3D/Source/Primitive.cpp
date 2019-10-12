@@ -89,18 +89,31 @@ void Primitive::InnerRender() const
 
 	// -----
 
-	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+	// --- Draw Texture ---
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
+	glEnable(GL_TEXTURE_2D); // enable gl capability
+	glBindTexture(GL_TEXTURE_2D, TexID); // start using texture
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
+	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer (tex coords)
+	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 
+	// --- Draw mesh ---
+	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
 	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
 	glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
+	// ----        ----
+
+	// --- Unbind buffers, Disable capabilities ---
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-
 	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
 
 	// -----
@@ -149,10 +162,8 @@ void Primitive::Scale(float x, float y, float z)
 
 // CUBE ============================================
 
-#define CHECKERS_WIDTH 64
-#define CHECKERS_HEIGHT 64
 
-PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
+PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ, bool checkers)
 {
 	type = type = PrimitiveTypes::Primitive_Cube;
 
@@ -163,21 +174,17 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 
 	// --- Vertices ---
 
-	uint verticesSize = 3 * 8;
+	uint verticesSize = 3 * 8 * 3;
 
 	Vertices = new float[verticesSize] {  // 8 of vertex coords
 
-		    sx, sy, sz,
-		   -sx, sy, sz,
-           -sx,-sy, sz,
-			sx,-sy, sz,
-					
-			sx,-sy,-sz,
-		    sx, sy,-sz,
-		   -sx, sy,-sz,
-		   -sx,-sy,-sz,
+		sx, sy, sz,  -sx, sy, sz,  -sx,-sy, sz,   sx,-sy, sz,   // v0,v1,v2,v3 (front)
+		sx, sy, sz,   sx,-sy, sz,   sx,-sy,-sz,   sx, sy,-sz,   // v0,v3,v4,v5 (right)
+		sx, sy, sz,   sx, sy,-sz,  -sx, sy,-sz,  -sx, sy, sz,   // v0,v5,v6,v1 (top)
+	   -sx, sy, sz,  -sx, sy,-sz,  -sx,-sy,-sz,  -sx,-sy, sz,   // v1,v6,v7,v2 (left)
+	   -sx,-sy,-sz,   sx,-sy,-sz,   sx,-sy, sz,  -sx,-sy, sz,   // v7,v4,v3,v2 (bottom)
+	    sx,-sy,-sz,  -sx,-sy,-sz,  -sx, sy,-sz,   sx, sy,-sz    // v4,v7,v6,v5 (back)
 	};
-
 
 	glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
@@ -186,12 +193,13 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 
 	// --- Indices ---
 	IndicesSize = 3 * (2 * 6);
-	Indices = new uint[IndicesSize]{ 0,1,2, 2,3,0, // front face 36 of indices
-							 0,3,4, 4,5,0,		    // right face
-							 0,5,6, 6,1,0,		    // top face
-							 1,6,7, 7,2,1,		    // left face
-							 7,4,3, 3,2,7,		    // bottom face
-							 4,7,6, 6,5,4 };	   // back face
+	Indices = new uint[IndicesSize]{ 0, 1, 2,   2, 3, 0,    // v0-v1-v2, v2-v3-v0 (front)
+									 4, 5, 6,   6, 7, 4,    // v0-v3-v4, v4-v5-v0 (right)
+									 8, 9,10,  10,11, 8,    // v0-v5-v6, v6-v1-v0 (top)
+									12,13,14,  14,15,12,    // v1-v6-v7, v7-v2-v1 (left)
+									16,17,18,  18,19,16,    // v7-v4-v3, v3-v2-v7 (bottom)
+									20,21,22,  22,23,20     // v4-v7-v6, v6-v5-v4 (back)
+									};
 
 
 	glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
@@ -199,258 +207,27 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 
-}
+	// --- Texture Coords ---
 
-//void PrimitiveCube::InnerRender() const
-//{
-//
-//	bool direct_mode = false;
-//	bool vertex_arrays = false;
-//	bool indices = true;
-//
-//	//if (direct_mode)
-//	//{
-//	//	glEnable(GL_TEXTURE_2D);
-//	//	glBindTexture(GL_TEXTURE_2D, 0);
-//	//	glBindTexture(GL_TEXTURE_2D, this->texID);
-//
-//	//	glBegin(GL_TRIANGLES);  // draw a cube with 12 triangles
-//
-//	//	// front face =================
-//	//	glVertex3f(-size.x, -size.y, size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//	//	glVertex3f(size.x, -size.y, size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//	//	glVertex3f(size.x, size.y, size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//
-//	//	glVertex3f(size.x, size.y, size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//	//	glVertex3f(-size.x, size.y, size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//	//	glVertex3f(-size.x, -size.y, size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//
-//	//	// right face =================
-//	//	glVertex3f(size.x, size.y, size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//	//	glVertex3f(size.x, -size.y, size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//	//	glVertex3f(size.x, size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//
-//	//	glVertex3f(size.x, -size.y, size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//	//	glVertex3f(size.x, -size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//	//	glVertex3f(size.x, size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//
-//	//	// top face ===================
-//	//	glVertex3f(-size.x, size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//	//	glVertex3f(-size.x, size.y, size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//	//	glVertex3f(size.x, size.y, size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//
-//
-//	//	glVertex3f(size.x, size.y, size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//	//	glVertex3f(size.x, size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//	//	glVertex3f(-size.x, size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//
-//	//	////// back face =================
-//	//	glVertex3f(size.x, size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//	//	glVertex3f(size.x, -size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//	//	glVertex3f(-size.x, -size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//
-//	//	glVertex3f(-size.x, -size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//	//	glVertex3f(-size.x, size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//	//	glVertex3f(size.x, size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//
-//	//	////// left face =================
-//	//	glVertex3f(-size.x, size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//	//	glVertex3f(-size.x, -size.y, size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//	//	glVertex3f(-size.x, size.y, size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//
-//	//	glVertex3f(-size.x, size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//	//	glVertex3f(-size.x, -size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//	//	glVertex3f(-size.x, -size.y, size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//
-//	//	////// bottom face ===================
-//
-//	//	glVertex3f(size.x, -size.y, size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//	//	glVertex3f(-size.x, -size.y, size.z);
-//	//	glTexCoord2f(1.0f, 0.0f);
-//	//	glVertex3f(-size.x, -size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//
-//	//	glVertex3f(-size.x, -size.y, -size.z);
-//	//	glTexCoord2f(1.0f, 1.0f);
-//	//	glVertex3f(size.x, -size.y, -size.z);
-//	//	glTexCoord2f(0.0f, 1.0f);
-//	//	glVertex3f(size.x, -size.y, size.z);
-//	//	glTexCoord2f(0.0f, 0.0f);
-//
-//
-//	//	glEnd();
-//	//	glBindTexture(GL_TEXTURE_2D, 0);
-//
-//	//}
-//
-//	//else if (vertex_arrays)
-//	//{
-//	//	GLfloat vertices[36*3] = {
-//	//-size.x,-size.y,-size.z,
-//	//-size.x,-size.y, size.z,
-//	//-size.x, size.y, size.z,
-//	//size.x, size.y,-size.z,
-//	//-size.x,-size.y,-size.z,
-//	//-size.x, size.y,-size.z,
-//	//size.x,-size.y, size.z,
-//	//-size.x,-size.y,-size.z,
-//	//size.x,-size.y,-size.z,
-//	//size.x, size.y,-size.z,
-//	//size.x,-size.y,-size.z,
-//	//-size.x,-size.y,-size.z,
-//	//-size.x,-size.y,-size.z,
-//	//-size.x, size.y, size.z,
-//	//-size.x, size.y,-size.z,
-//	//size.x,-size.y, size.z,
-//	//-size.x,-size.y, size.z,
-//	//-size.x,-size.y,-size.z,
-//	//-size.x, size.y, size.z,
-//	//-size.x,-size.y, size.z,
-//	//size.x,-size.y, size.z,
-//	//size.x, size.y, size.z,
-//	//size.x,-size.y,-size.z,
-//	//size.x, size.y,-size.z,
-//	//size.x,-size.y,-size.z,
-//	//size.x, size.y, size.z,
-//	//size.x,-size.y, size.z,
-//	//size.x, size.y, size.z,
-//	//size.x, size.y,-size.z,
-//	//-size.x, size.y,-size.z,
-//	//size.x, size.y, size.z,
-//	//-size.x, size.y,-size.z,
-//	//-size.x, size.y, size.z,
-//	//size.x, size.y, size.z,
-//	//-size.x, size.y, size.z,
-//	//size.x,-size.y, size.z
-//	//};
-//
-//
-//	//	// activate and specify pointer to vertex array
-//	//	glEnableClientState(GL_VERTEX_ARRAY);
-//	//	glVertexPointer(3, GL_FLOAT, 0, vertices);
-//
-//	//	// draw a cube
-//	//	glDrawArrays(GL_TRIANGLES, 0, 36);
-//
-//	//	// deactivate vertex arrays after drawing
-//	//	glDisableClientState(GL_VERTEX_ARRAY);
-//
-//	//}
-//
-//	//else if (indices)
-//	//{
-//	//	//	GLfloat vertices[8 * 3] = {  // 8 of vertex coords
-//	//	//size.x, size.y, size.z,
-//	//	//-size.x, size.y, size.z,
-//	//	//-size.x,-size.y,size.z,
-//	//	//size.x, -size.y,size.z,	
-//
-//	//	//size.x,-size.y, -size.z,
-//	//	//size.x, size.y,-size.z,
-//	// //  -size.x, size.y, -size.z,
-//	// //  -size.x,-size.y,-size.z
-//	//	//};
-//
-//	//	
-//	//		//GLfloat vertices[] = { 1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1,   // v0,v1,v2,v3 (front)
-//	//		//		   1, 1, 1,   1,-1, 1,   1,-1,-1,   1, 1,-1,   // v0,v3,v4,v5 (right)
-//	//		//		   1, 1, 1,   1, 1,-1,  -1, 1,-1,  -1, 1, 1,   // v0,v5,v6,v1 (top)
-//	//		//		  -1, 1, 1,  -1, 1,-1,  -1,-1,-1,  -1,-1, 1,   // v1,v6,v7,v2 (left)
-//	//		//		  -1,-1,-1,   1,-1,-1,   1,-1, 1,  -1,-1, 1,   // v7,v4,v3,v2 (bottom)
-//	//		//		   1,-1,-1,  -1,-1,-1,  -1, 1,-1,   1, 1,-1 }; // v4,v7,v6,v5 (back)
-//
-//	//	
-//
-//	//	//GLubyte indices[] = { 0,1,2, 2,3,0,   // front face 36 of indices
-//	//	//						 0,3,4, 4,5,0, // right face
-//	//	//						 0,5,6, 6,1,0, // top face
-//	//	//						 1,6,7, 7,2,1, // left face
-//	//	//						 7,4,3, 3,2,7, // bottom face
-//	//	//						 4,7,6, 6,5,4 }; // back face
-//
-//	//		//// index array of vertex array for glDrawElements() & glDrawRangeElement()
-//	//		//GLubyte indices[] = { 0, 1, 2,   2, 3, 0,      // front
-//	//		//					   4, 5, 6,   6, 7, 4,      // right
-//	//		//					   8, 9,10,  10,11, 8,      // top
-//	//		//					  12,13,14,  14,15,12,      // left
-//	//		//					  16,17,18,  18,19,16,      // bottom
-//	//		//					  20,21,22,  22,23,20 };    // back
-//
-//
-//	//// texCoord array
-//	////GLfloat texCoords [] =				{ 1, 0,   0, 0,   0, 1,   0, 1,   1, 1,  1, 0,           // v0,v1,v2,v2,v3,v0 (front)
-//	////									  0, 0,   0, 1,   1, 1,   1, 1,   1, 0,  0, 0,           // v0,v3,v4,v4,v5,v0 (right)
-//	////									  1, 1,   1, 0,   0, 0,   0, 0,   0, 1,  1, 1,           // v0,v5,v6,v6,v1,v0 (top)
-//	////									  1, 0,   0, 0,   0, 1,   0, 1,   1, 1,  1, 0,           // v1,v6,v7,v7,v2,v1 (left)
-//	////									  0, 1,   1, 1,   1, 0,   1, 0,   0, 0,  0, 1,           // v7,v4,v3,v3,v2,v7 (bottom)
-//	////									  0, 1,   1, 1,   1, 0,   1, 0,   0, 0,  0, 1 };         // v4,v7,v6,v6,v5,v4 (back)
-//
-//	//glEnable(GL_TEXTURE_2D);
-//
-//	////// activate and specify pointer to vertex array
-//	////glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//	////glEnableClientState(GL_VERTEX_ARRAY);
-//
-//	////glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-//	////glVertexPointer(3, GL_FLOAT, 0, vertices);
-//
-//	////// draw a cube
-//	////glBindTexture(GL_TEXTURE_2D, this->texID);
-//	////glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
-//
-//
-//	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-//
-//	//glBindTexture(GL_TEXTURE_2D, this->texID);
-//	//glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-//
-//	//glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
-//	//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-//
-//	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
-//	//glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
-//
-//	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-//	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-//	//glBindTexture(GL_TEXTURE_2D, 0);
-//
-//	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
-//	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-//	//}
-//
-//}
+	TexCoordsSize = verticesSize * 2 / 3;
+
+	TexCoords = new float[TexCoordsSize] {
+		1, 0,   0, 0,   0, 1,   1, 1,               // v0,v1,v2,v3 (front)
+		0, 0,   0, 1,   1, 1,   1, 0,               // v0,v3,v4,v5 (right)
+		1, 1,   1, 0,   0, 0,   0, 1,               // v0,v5,v6,v1 (top)
+		1, 0,   0, 0,   0, 1,   1, 1,               // v1,v6,v7,v2 (left)
+		0, 1,   1, 1,   1, 0,   0, 0,               // v7,v4,v3,v2 (bottom)
+		0, 1,   1, 1,   1, 0,   0, 0                // v4,v7,v6,v5 (back)
+	};
+
+	if (checkers)
+	 TexID = App->textures->GetCheckerTextureID();
+
+	glGenBuffers(1, (GLuint*)&TextureCoordsID); // create buffer
+	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * TexCoordsSize, TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+}
 
 
 // SPHERE ============================================
@@ -461,7 +238,7 @@ PrimitiveSphere::PrimitiveSphere(float size,int slices, int slacks, bool checker
 
 	if (mesh)
 	{
-		par_shapes_scale(mesh, size, size, size);
+		par_shapes_scale(mesh, size/2, size/2, size/2);
 
 		IndicesSize = mesh->ntriangles * 3;
 		verticesSize = mesh->npoints * 3;
@@ -508,9 +285,9 @@ PrimitiveSphere::PrimitiveSphere(float size,int slices, int slacks, bool checker
 		}
 
 		glGenBuffers(1, (GLuint*)&TextureCoordsID); // create buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TextureCoordsID); // start using created buffer
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * TexCoordsSize, TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+		glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * TexCoordsSize, TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 
 		par_shapes_free_mesh(mesh);
@@ -529,21 +306,7 @@ void PrimitiveSphere::InnerRender() const
 {
 	glColor3f(color.r, color.g, color.b);
 
-	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-
-	//glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
-	//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
-	//glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_SHORT, NULL); // render primitives from array data
-
-	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-
-	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
-
-
-		// --- Draw Texture ---
+	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
 	glEnable(GL_TEXTURE_2D); // enable gl capability
 	glBindTexture(GL_TEXTURE_2D, TexID); // start using texture
@@ -569,11 +332,8 @@ void PrimitiveSphere::InnerRender() const
 	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
-
-
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
-
 
 
 // PLANE ==================================================

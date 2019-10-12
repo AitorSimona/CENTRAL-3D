@@ -54,7 +54,7 @@ protected:
 class PrimitiveCube : public Primitive
 {
 public:
-	PrimitiveCube(float sizeX, float sizeY, float sizeZ);
+	PrimitiveCube(float sizeX, float sizeY, float sizeZ, bool checkers = false);
 	/*void InnerRender() const;*/
 public:
 	float3 size = { 0.0f,0.0f,0.0f };

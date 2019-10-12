@@ -28,14 +28,14 @@ bool ModuleSceneIntro::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 
-	cube = new PrimitiveCube(1.0f, 1.0f, 1.0f);
+	cube = new PrimitiveCube(1.0f, 1.0f, 1.0f,true);
 	cube->axis = true;
 	cube->SetPos(0.0f, 0.0f, 0.0f);
 	//cube->SetRotation(30,float3::unitX);
 
 	sphere = new PrimitiveSphere(1,25,25,true);
-	cube->axis = true;
-	cube->SetPos(0.0f, 0.5f, 0.0f);
+	sphere->axis = true;
+	sphere->SetPos(-2.0f, 0.0f, 0.0f);
 
 
 	grid = new PrimitiveGrid();
@@ -59,7 +59,7 @@ bool ModuleSceneIntro::CleanUp()
 bool ModuleSceneIntro::Draw()
 {
 
-	//cube->Render();
+	cube->Render();
 	sphere->Render();
 	grid->Render();
 
