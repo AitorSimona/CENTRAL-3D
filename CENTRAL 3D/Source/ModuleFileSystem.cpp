@@ -116,6 +116,18 @@ void ModuleFileSystem::CreateDirectory(const char* directory)
 	PHYSFS_mkdir(directory);
 }
 
+void ModuleFileSystem::GetDirectoryFromPath(std::string & directory)
+{
+	// --- Normalize string, replacing \\ for / ---
+	NormalizePath(directory);
+
+	// --- Count until the last / ---
+	uint count = directory.find_last_of("/");
+
+	// --- Finally remove the file name, obtaining the directory ---
+	directory = directory.substr(0, count + 1);
+}
+
 void ModuleFileSystem::DiscoverFiles(const char* directory, vector<string> & file_list, vector<string> & dir_list) const
 {
 	char **rc = PHYSFS_enumerateFiles(directory);

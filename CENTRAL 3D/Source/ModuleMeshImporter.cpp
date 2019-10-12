@@ -67,10 +67,7 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	std::string directory = path;
-	App->fs->NormalizePath(directory);
-	uint count = directory.find_last_of("/");
-	directory = directory.substr(0, count+1);
-
+	App->fs->GetDirectoryFromPath(directory);
 
 	// --- Material ---
 
