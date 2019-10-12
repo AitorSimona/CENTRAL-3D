@@ -42,8 +42,6 @@ protected:
 	uint IndicesID = 0;
 	uint IndicesSize = 0;
 
-	//uint texID = 0;
-	//float * texCoords = nullptr;
 };
 
 // ============================================
@@ -60,7 +58,7 @@ public:
 class PrimitiveSphere : public Primitive
 {
 public:
-	PrimitiveSphere();
+	PrimitiveSphere(float size, int slices, int slacks);
 	PrimitiveSphere(float radius);
 	void InnerRender() const;
 public:

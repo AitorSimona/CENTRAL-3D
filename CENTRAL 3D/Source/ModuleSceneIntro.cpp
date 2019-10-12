@@ -33,7 +33,7 @@ bool ModuleSceneIntro::Start()
 	cube->SetPos(0.0f, 0.0f, 0.0f);
 	//cube->SetRotation(30,float3::unitX);
 
-	sphere = new PrimitiveSphere();
+	sphere = new PrimitiveSphere(1,25,25);
 	cube->axis = true;
 	cube->SetPos(0.0f, 0.5f, 0.0f);
 
