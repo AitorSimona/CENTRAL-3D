@@ -157,30 +157,27 @@ void ModuleMeshImporter::DrawMesh(const ComponentMesh * mesh) const
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, mesh->TextureID);
-	glActiveTexture(GL_TEXTURE0);
-
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->TextureCoordsID);
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
 	// --- Draw mesh ---
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->VerticesID); // start using created buffer (vertices)
 	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->IndicesID); // start using created buffer (indices)
 	glDrawElements(GL_TRIANGLES, mesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-
-	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
-
 	// ----        ----
 
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	// --- Unbind buffers, Disable capabilities ---
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 }
 
 void ModuleMeshImporter::DrawNormals(const ComponentMesh * mesh) const
