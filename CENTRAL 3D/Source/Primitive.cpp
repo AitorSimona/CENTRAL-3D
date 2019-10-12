@@ -489,31 +489,47 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 
 PrimitiveSphere::PrimitiveSphere()
 {
-	//par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(4,5);
+	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(4,5);
 
-	//IndicesSize = mesh->ntriangles * 3;
-	//verticesSize = mesh->npoints*3;
+	if (mesh)
+	{
+		par_shapes_scale(mesh, 1, 1, 1);
 
-	//Vertices = new float[verticesSize];
-	//Vertices = mesh->points;
+		IndicesSize = mesh->ntriangles * 3;
+		verticesSize = mesh->npoints * 3;
 
-	///*Indices = new uint[IndicesSize];
-	//Indices = mesh->triangles;*/
+		Vertices = new float[verticesSize];
 
-	//glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
-	//glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
-	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
-
-	//// --- Indices ---
-
-	//glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+		for (uint i = 0; i < uint(mesh->npoints) * 3; ++i)
+		{
+			Vertices[i] = mesh->points[i];
+		}
 
 
-	//par_shapes_free_mesh(mesh);
+		Indices = new unsigned[IndicesSize];
+		for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
+		{
+			Indices[i] = mesh->triangles[i];
+		}
+
+		glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+		glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+		// --- Indices ---
+
+		glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
+
+		par_shapes_free_mesh(mesh);
+
+	}
+
+
 
 	//uint rings = 12;
 	//uint sectors = 24;
@@ -642,15 +658,21 @@ PrimitiveSphere::PrimitiveSphere(float radius)
 	type = type = PrimitiveTypes::Primitive_Sphere;
 }
 
-//void PrimitiveSphere::InnerRender() const
-//{
-//	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-//	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
-//	glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-//	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
-//}
+void PrimitiveSphere::InnerRender() const
+{
+	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+
+	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
+	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
+	glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_SHORT, NULL); // render primitives from array data
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+
+	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+}
 
 
 

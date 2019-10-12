@@ -59,8 +59,8 @@ bool ModuleSceneIntro::CleanUp()
 bool ModuleSceneIntro::Draw()
 {
 
-	cube->Render();
-	//sphere->Render();
+	//cube->Render();
+	sphere->Render();
 	grid->Render();
 
 	return true;
