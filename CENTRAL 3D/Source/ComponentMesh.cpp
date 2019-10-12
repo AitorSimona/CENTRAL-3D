@@ -17,6 +17,10 @@ ComponentMesh::~ComponentMesh()
 {
 	glDeleteBuffers(1, (GLuint*)&VerticesID);
 	glDeleteBuffers(1, (GLuint*)&IndicesID);
+	glDeleteBuffers(1, (GLuint*)&TextureCoordsID);
+
+	// MYTODO: Should not delete the texture if it is shared with another mesh
+	glDeleteBuffers(1, (GLuint*)&TextureID);
 
 	RELEASE_ARRAY(Vertices);
 	RELEASE_ARRAY(Indices);

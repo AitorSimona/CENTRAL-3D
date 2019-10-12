@@ -42,8 +42,6 @@ bool ModuleMeshImporter::Start()
 {
 	LoadFBX("Assets/BakerHouse.fbx");
 
-	HouseTexID = App->textures->CreateTextureFromFile("Assets/Baker_house.png");
-
 	return true;
 }
 
@@ -58,10 +56,6 @@ bool ModuleMeshImporter::CleanUp()
 	{
 		delete meshes[i];
 	}
-
-	// --- Delete sample Image texture ---
-	if (HouseTexID > 0)
-		glDeleteTextures(1, (GLuint*)&HouseTexID);
 
 
 	return true;
@@ -116,8 +110,6 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 
 			// --- Import mesh data (fill new_mesh)---
 			new_mesh->ImportMesh(mesh,TextureID);
-
-
 		}
 
 		// --- Free scene ---
@@ -143,7 +135,7 @@ void ModuleMeshImporter::Draw()
 	{
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, HouseTexID);
+		glBindTexture(GL_TEXTURE_2D, meshes[i]->TextureID);
 		glActiveTexture(GL_TEXTURE0);
 
 		glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->TextureCoordsID);

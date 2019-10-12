@@ -27,8 +27,6 @@ public:
 
 private:
 	std::vector<ComponentMesh*> meshes;
-
-	uint HouseTexID = 0;
 };
 
 #endif
