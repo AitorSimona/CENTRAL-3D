@@ -46,6 +46,8 @@ protected:
 	uint  TextureCoordsID = 0;
 	uint TexCoordsSize = 0;
 
+	uint TexID = 0;
+
 };
 
 // ============================================
@@ -62,7 +64,7 @@ public:
 class PrimitiveSphere : public Primitive
 {
 public:
-	PrimitiveSphere(float size, int slices, int slacks);
+	PrimitiveSphere(float size, int slices, int slacks, bool checkers = false);
 	PrimitiveSphere(float radius);
 	void InnerRender() const;
 public:

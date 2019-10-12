@@ -4,6 +4,7 @@
 #include "par/par_shapes.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleTextures.h"
 
 #include "mmgr/mmgr.h"
 
@@ -198,39 +199,6 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 
-
-	//// --- Checkers Texture ---
-	//GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
-
-	//for (int i = 0; i < CHECKERS_HEIGHT; i++) {
-	//	for (int j = 0; j < CHECKERS_WIDTH; j++) {
-	//		int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
-	//		checkImage[i][j][0] = (GLubyte)c;
-	//		checkImage[i][j][1] = (GLubyte)c;
-	//		checkImage[i][j][2] = (GLubyte)c;
-	//		checkImage[i][j][3] = (GLubyte)255;
-	//	}
-	//}
-
-	//// texCoord array
-	//texCoords = new  float[IndicesSize*2] { 1, 0,   0, 0,   0, 1,   0, 1,   1, 1,  1, 0,           // v0,v1,v2,v2,v3,v0 (front)
-	//									  0, 0,   0, 1,   1, 1,   1, 1,   1, 0,  0, 0,           // v0,v3,v4,v4,v5,v0 (right)
-	//									  1, 1,   1, 0,   0, 0,   0, 0,   0, 1,  1, 1,           // v0,v5,v6,v6,v1,v0 (top)
-	//									  1, 0,   0, 0,   0, 1,   0, 1,   1, 1,  1, 0,           // v1,v6,v7,v7,v2,v1 (left)
-	//									  0, 1,   1, 1,   1, 0,   1, 0,   0, 0,  0, 1,           // v7,v4,v3,v3,v2,v7 (bottom)
-	//									  0, 1,   1, 1,   1, 0,   1, 0,   0, 0,  0, 1 };         // v4,v7,v6,v6,v5,v4 (back)
-
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	//glGenTextures(1, &texID);
-	//glBindTexture(GL_TEXTURE_2D, texID);
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
-	//	0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 }
 
 //void PrimitiveCube::InnerRender() const
@@ -487,7 +455,7 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ)
 
 // SPHERE ============================================
 
-PrimitiveSphere::PrimitiveSphere(float size,int slices, int slacks)
+PrimitiveSphere::PrimitiveSphere(float size,int slices, int slacks, bool checkers)
 {
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
@@ -498,18 +466,13 @@ PrimitiveSphere::PrimitiveSphere(float size,int slices, int slacks)
 		IndicesSize = mesh->ntriangles * 3;
 		verticesSize = mesh->npoints * 3;
 
+		// --- Vertices ---
+
 		Vertices = new float[verticesSize];
 
 		for (uint i = 0; i < uint(mesh->npoints) * 3; ++i)
 		{
 			Vertices[i] = mesh->points[i];
-		}
-
-
-		Indices = new unsigned[IndicesSize];
-		for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
-		{
-			Indices[i] = mesh->triangles[i];
 		}
 
 		glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
@@ -519,9 +482,34 @@ PrimitiveSphere::PrimitiveSphere(float size,int slices, int slacks)
 
 		// --- Indices ---
 
+		Indices = new unsigned[IndicesSize];
+		for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
+		{
+			Indices[i] = mesh->triangles[i];
+		}
+
 		glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
+		// --- Texture Coords ---
+
+		if (checkers)
+			TexID = App->textures->GetCheckerTextureID();
+
+		TexCoordsSize = verticesSize * 2;
+		TexCoords = new float[TexCoordsSize];
+
+		for (uint i = 0; i < verticesSize; ++i)
+		{
+			TexCoords[2*i] = mesh->tcoords[2*i];
+			TexCoords[(2*i) + 1] = mesh->tcoords[(2*i) + 1];
+		}
+
+		glGenBuffers(1, (GLuint*)&TextureCoordsID); // create buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TextureCoordsID); // start using created buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * TexCoordsSize, TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 
 
@@ -541,18 +529,47 @@ void PrimitiveSphere::InnerRender() const
 {
 	glColor3f(color.r, color.g, color.b);
 
-	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 
+	//glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
+	//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
+
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
+	//glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_SHORT, NULL); // render primitives from array data
+
+	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+
+	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+
+
+		// --- Draw Texture ---
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
+	glEnable(GL_TEXTURE_2D); // enable gl capability
+	glBindTexture(GL_TEXTURE_2D, TexID); // start using texture
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
+	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer (tex coords)
+	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
+
+	// --- Draw mesh ---
+	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
 	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
 	glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_SHORT, NULL); // render primitives from array data
 
+	// ----        ----
+
+	// --- Unbind buffers, Disable capabilities ---
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-
 	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+
+
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
