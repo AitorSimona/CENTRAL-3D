@@ -160,6 +160,33 @@ void ModuleMeshImporter::Draw()
 
 		//}
 
+		// --- Draw Face Normals 
+
+		glBegin(GL_LINES);
+		glLineWidth(1.0f);
+		uint Normal_length = 1;
+
+		glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+		Triangle face;
+
+		for (uint j = 0; j < meshes[i]->VerticesSize/3; ++j)
+		{
+			face.a = meshes[i]->Vertices[(j*3)+2];
+			face.b = meshes[i]->Vertices[(j*3) + 1];
+			face.c = meshes[i]->Vertices[(j*3) ];
+
+			float3 face_center = face.Centroid();
+			float3 face_normal = face.NormalCW();
+
+			glVertex3f(face_center.x, face_center.y, face_center.z);
+			glVertex3f(face_center.x + face_normal.x*Normal_length, face_center.y + face_normal.y*Normal_length, face_center.z + face_normal.z*Normal_length);
+		}
+
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+		glEnd();
+
+
 
 	}
 

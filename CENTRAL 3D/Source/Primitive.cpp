@@ -101,6 +101,7 @@ void Primitive::InnerRender() const
 
 	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 
+
 	// -----
 
 	glColor3f(1.0f, 1.0f, 1.0f);

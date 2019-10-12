@@ -69,7 +69,7 @@ void ComponentMesh::ImportMesh(aiMesh* mesh)
 			TexCoords[j * 2] = mesh->mTextureCoords[0][j].x;
 			TexCoords[(j * 2) + 1] = mesh->mTextureCoords[0][j].y;
 		}
-		LOG("Mesh texture coords at channel 0 loaded");
+		/*LOG("Mesh texture coords at channel 0 loaded");*/
 	}
 
 	glGenBuffers(1, (GLuint*)&this->TextureCoordsID); // create buffer
