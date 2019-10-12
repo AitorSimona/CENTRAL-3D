@@ -71,6 +71,7 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 	// --- Import scene from path ---
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
+
 	if (scene != nullptr && scene->HasMeshes())
 	{
 

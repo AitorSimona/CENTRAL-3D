@@ -126,8 +126,9 @@ update_status ModuleInput::PreUpdate(float dt)
 			break;
 
 			case SDL_DROPFILE:
+				std::string DroppedFile_path = e.drop.file;
 
-				if(e.drop.type == SDL_DROPFILE)
+				if(DroppedFile_path.find(".fbx") != std::string::npos || DroppedFile_path.find(".FBX") != std::string::npos)
 				App->meshImporter->LoadFBX(e.drop.file);
 
 			break;
