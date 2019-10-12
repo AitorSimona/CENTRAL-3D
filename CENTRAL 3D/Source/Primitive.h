@@ -42,6 +42,10 @@ protected:
 	uint IndicesID = 0;
 	uint IndicesSize = 0;
 
+	float* TexCoords = nullptr;
+	uint  TextureCoordsID = 0;
+	uint TexCoordsSize = 0;
+
 };
 
 // ============================================

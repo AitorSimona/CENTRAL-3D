@@ -539,6 +539,8 @@ PrimitiveSphere::PrimitiveSphere(float radius)
 
 void PrimitiveSphere::InnerRender() const
 {
+	glColor3f(color.r, color.g, color.b);
+
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 
 	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
@@ -551,6 +553,8 @@ void PrimitiveSphere::InnerRender() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
 
 	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 
