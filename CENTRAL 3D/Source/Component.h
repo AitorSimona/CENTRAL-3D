@@ -10,9 +10,9 @@ class Component
 public:
 	enum class ComponentType
 	{
-		Unknown = 0,
 		Mesh,
-		Renderer
+		Renderer,
+		Unknown
 	};
 
 public:

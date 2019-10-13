@@ -30,8 +30,7 @@ uint GameObject::GetUID() const
 
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
-	if (type == Component::ComponentType::Unknown)
-		LOG("|[error]: Invalid type of Component");
+	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 2, "Component Creation Switch needs to be updated");
 
 	Component* new_component = nullptr;
 
