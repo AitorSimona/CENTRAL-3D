@@ -41,7 +41,7 @@ bool ModuleMeshImporter::Init(json file)
 
 bool ModuleMeshImporter::Start()
 {
-	//LoadFBX("Assets/BakerHouse.fbx");
+	LoadFBX("Assets/BakerHouse.fbx");
 
 	return true;
 }

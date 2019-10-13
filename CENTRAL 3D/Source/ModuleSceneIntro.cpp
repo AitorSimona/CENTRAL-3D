@@ -30,12 +30,12 @@ bool ModuleSceneIntro::Start()
 
 	cube = new PrimitiveCube(1.0f, 1.0f, 1.0f,true);
 	cube->axis = true;
-	cube->SetPos(0.0f, 0.0f, 0.0f);
+	cube->SetPos(-3.0f, 0.0f, 0.0f);
 	//cube->SetRotation(30,float3::unitX);
 
 	sphere = new PrimitiveSphere(1,25,25,true);
 	sphere->axis = true;
-	sphere->SetPos(-2.0f, 0.0f, 0.0f);
+	sphere->SetPos(-5.0f, 0.0f, 0.0f);
 
 
 	grid = new PrimitiveGrid();
