@@ -61,8 +61,11 @@
     <Filter Include="Sources\Tools\Helpers">
       <UniqueIdentifier>{121f8e6b-df36-4ab0-be0d-601ddfc9e503}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Resources">
-      <UniqueIdentifier>{17214a59-c3d1-4aaf-88bb-fbb5a9041d4f}</UniqueIdentifier>
+    <Filter Include="Sources\Game Objects">
+      <UniqueIdentifier>{7f726d8d-a75f-44b3-8629-35d0d62f3672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game Objects\Components">
+      <UniqueIdentifier>{61475cf2-6c53-4b8e-babc-3bf35a2320a2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -387,11 +390,14 @@
     <ClInclude Include="ModuleMeshImporter.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentMesh.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Sources\Resources</Filter>
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMesh.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Sources\Game Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -602,11 +608,14 @@
     <ClCompile Include="ModuleMeshImporter.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentMesh.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="Component.cpp">
-      <Filter>Sources\Resources</Filter>
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMesh.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Sources\Game Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
