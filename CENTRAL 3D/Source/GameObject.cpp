@@ -42,6 +42,20 @@ float4x4 GameObject::GetTransform()
 	return transform;
 }
 
+Component * GameObject::GetComponent(Component::ComponentType type)
+{
+	for (std::list<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+	{
+		if ((*it))
+		{
+			delete(*it);
+			*it = nullptr;
+		}
+	}
+
+	return nullptr;
+}
+
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
 	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 2, "Component Creation Switch needs to be updated");

@@ -12,3 +12,8 @@ Component::Component(GameObject* ContainerGO,Component::ComponentType type)
 Component::~Component()
 {
 }
+
+Component::ComponentType Component::GetType()
+{
+	return type;
+}

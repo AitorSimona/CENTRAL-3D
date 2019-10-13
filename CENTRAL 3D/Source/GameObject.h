@@ -18,6 +18,7 @@ public:
 	uint			GetUID() const;
 	float3			GetPosition();
 	float4x4        GetTransform();
+	Component*		GetComponent(Component::ComponentType type);
 
 	// --- Utilities ---
 	Component*		AddComponent(Component::ComponentType type);

@@ -20,6 +20,8 @@ public:
 	Component(GameObject* ContainerGO,Component::ComponentType type);
 	virtual ~Component();
 
+	Component::ComponentType GetType();
+
 private:
 	GameObject* GO = nullptr;
 	Component::ComponentType type;
