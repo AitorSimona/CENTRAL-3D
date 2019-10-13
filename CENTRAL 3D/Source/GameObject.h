@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Component.h"
 #include <list>
+#include "Math.h"
 
 class GameObject
 {
@@ -23,6 +24,7 @@ private:
 	uint UID = 0;
 
 public:
+	float4x4 transform = math::float4x4::identity;
 	std::list<Component*> components;
 	std::string name;
 };
