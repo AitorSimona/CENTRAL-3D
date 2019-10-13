@@ -54,9 +54,9 @@ bool ModuleMeshImporter::CleanUp()
 	aiDetachAllLogStreams();
 
 	// -- Release all buffer data and own stored data ---
-	for (uint i = 0; i < meshes.size(); ++i)
+	for (uint i = 0; i < game_objects.size(); ++i)
 	{
-		delete meshes[i];
+		delete game_objects[i];
 	}
 
 
@@ -88,7 +88,7 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 
 			// --- Create new Resource mesh to store current scene mesh data ---
 			/*ComponentMesh* new_mesh = new ComponentMesh;*/
-			meshes.push_back(new_mesh);
+			game_objects.push_back(new_object);
 
 			// --- Get Scene mesh number i ---
 			aiMesh* mesh = scene->mMeshes[i];
@@ -116,10 +116,11 @@ void ModuleMeshImporter::Draw() const
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// --- Draw Meshes ---
-	for (uint i = 0; i < meshes.size(); ++i)
+	for (uint i = 0; i < game_objects.size(); ++i)
 	{
-		DrawMesh(meshes[i]);
-		DrawNormals(meshes[i]);
+		std::list<Component*>::const_iterator it = game_objects[i]->components.begin();
+		/*DrawMesh(*it);
+		DrawNormals(game_objects[i]->components[0]);*/
 	}
 
 	// --- DeActivate wireframe mode ---
@@ -129,7 +130,7 @@ void ModuleMeshImporter::Draw() const
 
 uint ModuleMeshImporter::GetNumMeshes() const
 {
-	return meshes.size();
+	return game_objects.size();
 }
 
 void ModuleMeshImporter::GetTextureIDFromSceneMaterial(const aiScene & scene, uint & texture_ID, std::string & directory)

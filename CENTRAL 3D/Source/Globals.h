@@ -17,20 +17,6 @@ void _log(const char file[], int line, const char* format, ...);
 #define RADTODEG 57.295779513082320876f
 #define HAVE_M_PI
 
-#define RELEASE(x) \
-    { \
-    if (x != nullptr) \
-      delete x; \
-	x = nullptr; \
-	} \
-
-#define RELEASE_ARRAY(x) \
-    { \
-    if (x != nullptr) \
-      delete[] x; \
-	x = nullptr; \
-	} \
-
 
 typedef unsigned int uint;
 

@@ -53,7 +53,12 @@ ModuleFileSystem::ModuleFileSystem(Application* app, bool start_enabled, const c
 // Destructor
 ModuleFileSystem::~ModuleFileSystem()
 {
-	RELEASE(AssimpIO);
+	if (AssimpIO)
+	{
+		delete AssimpIO;
+		AssimpIO = nullptr;
+	}
+
 	PHYSFS_deinit();
 }
 
@@ -293,7 +298,12 @@ uint ModuleFileSystem::Load(const char* file, char** buffer) const
 			if (readed != size)
 			{
 				LOG("File System error while reading from file %s: %s\n", file, PHYSFS_getLastError());
-				RELEASE(buffer);
+
+				if (buffer)
+				{
+					delete buffer;
+					buffer = nullptr;
+				}
 			}
 			else
 				ret = readed;
@@ -328,7 +338,12 @@ SDL_RWops* ModuleFileSystem::Load(const char* file) const
 
 int close_sdl_rwops(SDL_RWops *rw)
 {
-	RELEASE_ARRAY(rw->hidden.mem.base);
+	if (rw->hidden.mem.base)
+	{
+		delete rw->hidden.mem.base;
+		rw->hidden.mem.base = nullptr;
+	}
+
 	SDL_FreeRW(rw);
 	return 0;
 }
@@ -524,7 +539,11 @@ void AssimpClose(aiFileIO* io, aiFile* file)
 
 void ModuleFileSystem::CreateAssimpIO()
 {
-	RELEASE(AssimpIO);
+	if (AssimpIO)
+	{
+		delete AssimpIO;
+		AssimpIO = nullptr;
+	}
 
 	AssimpIO = new aiFileIO;
 	AssimpIO->OpenProc = AssimpOpen;

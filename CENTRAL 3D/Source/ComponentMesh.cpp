@@ -23,11 +23,31 @@ ComponentMesh::~ComponentMesh()
 	// MYTODO: Should not delete the texture if it is shared with another mesh?
 	glDeleteBuffers(1, (GLuint*)&TextureID);
 
-	RELEASE_ARRAY(Vertices);
-	RELEASE_ARRAY(Indices);
-	RELEASE_ARRAY(Normals);
-	RELEASE_ARRAY(TexCoords);
-	RELEASE_ARRAY(Colours);
+	if (Vertices)
+	{
+		delete[] Vertices;
+		Vertices = nullptr;
+	}
+	if (Indices)
+	{
+		delete[] Indices;
+		Indices = nullptr;
+	}
+	if (Normals)
+	{
+		delete[] Normals;
+		Normals = nullptr;
+	}
+	if (TexCoords)
+	{
+		delete[] TexCoords;
+		TexCoords = nullptr;
+	}
+	if (Colours)
+	{
+		delete[] Colours;
+		Colours = nullptr;
+	}
 }
 
 void ComponentMesh::ImportMesh(const aiMesh* mesh, uint MATTextureID)

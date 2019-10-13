@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "ComponentMesh.h"
 
+#include "mmgr/mmgr.h"
+
 GameObject::GameObject(const char* name)
 {
 	UID = App->GetRandom().Int();
@@ -12,7 +14,11 @@ GameObject::~GameObject()
 {
 	for (std::list<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
-		RELEASE(*it);
+		if (*it)
+		{
+			delete(*it);
+			*it = nullptr;
+		}
 	}
 }
 

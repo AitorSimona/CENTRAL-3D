@@ -16,9 +16,23 @@ Primitive::~Primitive()
 {
 	glDeleteBuffers(1, (GLuint*)&VerticesID);
 	glDeleteBuffers(1, (GLuint*)&IndicesID);
+	glDeleteBuffers(1, (GLuint*)&TextureCoordsID);
 
-	RELEASE_ARRAY(Vertices);
-	RELEASE_ARRAY(Indices);
+	if (Vertices)
+	{
+		delete[] Vertices;
+		Vertices = nullptr;
+	}
+	if (Indices)
+	{
+		delete[] Indices;
+		Indices = nullptr;
+	}
+	if (TexCoords)
+	{
+		delete[] TexCoords;
+		TexCoords = nullptr;
+	}
 }
 
 // ------------------------------------------------------------

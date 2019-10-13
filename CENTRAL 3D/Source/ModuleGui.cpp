@@ -229,7 +229,10 @@ bool ModuleGui::CleanUp()
 
 	// --- Iterate panels and delete ---
 	for (uint i = 0; i < panels.size(); ++i)
-		RELEASE(panels[i]);
+	{
+		delete panels[i];
+		panels[i] = nullptr;
+	}
 
 	panelSettings = nullptr;
 	panelAbout = nullptr;

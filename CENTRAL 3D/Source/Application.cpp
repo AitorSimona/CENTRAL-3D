@@ -69,7 +69,11 @@ Application::~Application()
 		item++;
 	}
 
-	RELEASE(RandomNumber);
+	if (RandomNumber)
+	{
+		delete RandomNumber;
+		RandomNumber = nullptr;
+	}
 }
 
 bool Application::Init()
