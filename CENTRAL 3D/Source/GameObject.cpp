@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "ComponentMesh.h"
+#include "ComponentRenderer.h"
 
 #include "mmgr/mmgr.h"
 
@@ -38,6 +39,9 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	{
 	case Component::ComponentType::Mesh:
 		new_component = new ComponentMesh(this);
+		break;
+	case Component::ComponentType::Renderer:
+		new_component = new ComponentRenderer(this);
 		break;
 
 	}

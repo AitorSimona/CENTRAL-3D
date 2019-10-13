@@ -11,7 +11,8 @@ public:
 	enum class ComponentType
 	{
 		Unknown = 0,
-		Mesh
+		Mesh,
+		Renderer
 	};
 
 public:
