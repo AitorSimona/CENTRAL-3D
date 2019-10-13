@@ -28,6 +28,20 @@ uint GameObject::GetUID() const
 	return UID;
 }
 
+float3 GameObject::GetPosition()
+{
+	float3 position; 
+	transform.TransformPos(position);
+	transform.TranslatePart();
+
+	return position;
+}
+
+float4x4 GameObject::GetTransform()
+{
+	return transform;
+}
+
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
 	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 2, "Component Creation Switch needs to be updated");
@@ -49,4 +63,24 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		components.push_back(new_component);
 
 	return new_component;
+}
+
+void GameObject::SetPosition(float x, float y, float z)
+{
+	transform.Translate(x,y,z);
+}
+
+void GameObject::SetRotationAxisAngle(const float3 & rot_axis, float degrees_angle)
+{
+	transform.RotateAxisAngle(rot_axis, degrees_angle);
+}
+
+void GameObject::Scale(float x, float y, float z)
+{
+	transform.Scale(x, y, z);
+}
+
+void GameObject::SetTransform(float4x4 new_transform)
+{
+	transform = new_transform;
 }

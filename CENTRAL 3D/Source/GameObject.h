@@ -15,18 +15,25 @@ public:
 	virtual ~GameObject();
 
 	// --- Getters ---
-	uint GetUID() const;
+	uint			GetUID() const;
+	float3			GetPosition();
+	float4x4        GetTransform();
 
-	Component* AddComponent(Component::ComponentType type);
+	// --- Utilities ---
+	Component*		AddComponent(Component::ComponentType type);
+
+	// --- Setters ---
+	void			SetPosition(float x, float y, float z);
+	void			SetRotationAxisAngle(const float3 &rot_axis, float degrees_angle);
+	void			Scale(float x, float y, float z);
+	void			SetTransform(float4x4 new_transform);
 
 private:
 	// Unique Identifier
 	uint UID = 0;
-
-public:
 	float4x4 transform = math::float4x4::identity;
-	std::list<Component*> components;
 	std::string name;
+	std::list<Component*> components;
 };
 
 #endif

@@ -118,7 +118,7 @@ void ModuleMeshImporter::Draw() const
 	// --- Draw Meshes ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
-		std::list<Component*>::const_iterator it = game_objects[i]->components.begin();
+		//std::list<Component*>::const_iterator it = game_objects[i]->components.begin();
 		/*DrawMesh(*it);
 		DrawNormals(game_objects[i]->components[0]);*/
 	}
