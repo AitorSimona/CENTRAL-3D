@@ -1,7 +1,6 @@
 #pragma once
 #include "Math.h"
 #include "Color.h"
-#include "ComponentMesh.h"
 
 
 enum PrimitiveTypes
@@ -34,21 +33,20 @@ public:
 protected:
 
 	PrimitiveTypes type;
-	ComponentMesh mesh;
 
-	//float* Vertices = nullptr;
-	//uint VerticesID = 0;
-	//uint verticesSize = 0;
+	float* Vertices = nullptr;
+	uint VerticesID = 0;
+	uint verticesSize = 0;
 
-	//uint* Indices = nullptr;
-	//uint IndicesID = 0;
-	//uint IndicesSize = 0;
+	uint* Indices = nullptr;
+	uint IndicesID = 0;
+	uint IndicesSize = 0;
 
-	//float* TexCoords = nullptr;
-	//uint  TextureCoordsID = 0;
-	//uint TexCoordsSize = 0;
+	float* TexCoords = nullptr;
+	uint  TextureCoordsID = 0;
+	uint TexCoordsSize = 0;
 
-	//uint TexID = 0;
+	uint TexID = 0;
 
 };
 

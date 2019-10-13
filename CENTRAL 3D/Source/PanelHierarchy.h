@@ -3,10 +3,6 @@
 
 #include "Panel.h"
 
-struct HierarchyObject {
-	const char* name;
-};
-
 class PanelHierarchy : public Panel
 {
 public:

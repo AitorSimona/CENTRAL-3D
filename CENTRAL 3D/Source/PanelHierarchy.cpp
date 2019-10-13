@@ -20,8 +20,6 @@ bool PanelHierarchy::Draw()
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 
-		
-
 	}
 
 	ImGui::End();

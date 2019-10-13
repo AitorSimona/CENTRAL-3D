@@ -33,18 +33,18 @@ void ComponentMesh::ImportMesh(const aiMesh* mesh, uint MATTextureID)
 {
 	// --- Vertices ---
 	this->VerticesSize = mesh->mNumVertices;
-	this->Vertices = new float[mesh->mNumVertices*3];
+	this->Vertices = new float3[mesh->mNumVertices];
 
 	for (uint i = 0; i < mesh->mNumVertices; ++i)
 	{
-		Vertices[i*3] = mesh->mVertices[i].x;
-		Vertices[(i*3) + 1] = mesh->mVertices[i].y;
-		Vertices[(i*3) + 2] = mesh->mVertices[i].z;
+		Vertices[i].x = mesh->mVertices[i].x;
+		Vertices[i].y = mesh->mVertices[i].y;
+		Vertices[i].z = mesh->mVertices[i].z;
 	}
 
 	glGenBuffers(1, (GLuint*)&this->VerticesID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, this->VerticesID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->VerticesSize*3, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * this->VerticesSize, this->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Normals ---

@@ -202,24 +202,24 @@ void ModuleMeshImporter::DrawNormals(const ComponentMesh * mesh) const
 */
 		// --- Draw Face Normals 
 
-		//Triangle face;
+		Triangle face;
 
-		//for (uint j = 0; j < mesh->VerticesSize / 3; ++j)
-		//{
-		//	face.a = (float3)(mesh->Vertices[(j * 3)], mesh->Vertices[(j * 3) + 1], mesh->Vertices[(j * 3) + 2]);
-		//	face.b = mesh->Vertices[(j * 3) + 1];
-		//	face.c = mesh->Vertices[(j * 3) + 2];
+		for (uint j = 0; j < mesh->VerticesSize / 3; ++j)
+		{
+			face.a = mesh->Vertices[(j * 3)];
+			face.b = mesh->Vertices[(j * 3) + 1];
+			face.c = mesh->Vertices[(j * 3) + 2];
 
-		//	float3 face_center = face.Centroid();
-		//	//float3 face_normal = face.NormalCW();
-		//	
-		//	float3 face_normal = Cross(face.a - face.b, face.c - face.b);
+			float3 face_center = face.Centroid();
+			//float3 face_normal = face.NormalCW();
+			
+			float3 face_normal = Cross(face.a - face.b, face.c - face.b);
 
-		//	face_normal.Normalize();
+			face_normal.Normalize();
 
-		//	glVertex3f(face_center.x, face_center.y, face_center.z);
-		//	glVertex3f(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
-		//}
+			glVertex3f(face_center.x, face_center.y, face_center.z);
+			glVertex3f(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
+		}
 
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glEnd();

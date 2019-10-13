@@ -17,9 +17,8 @@ public:
 	void ImportMesh(const aiMesh* mesh, uint MATTextureID);
 
 public:
-	float4x4 transform = math::float4x4::identity;
 
-	float* Vertices = nullptr;
+	float3* Vertices = nullptr;
 	uint VerticesID = 0; // unique vertex in VRAM
 	uint VerticesSize = 0;
 

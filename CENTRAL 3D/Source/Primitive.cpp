@@ -14,11 +14,11 @@ Primitive::Primitive() : transform(math::float4x4::identity), color(White), wire
 
 Primitive::~Primitive()
 {
-	glDeleteBuffers(1, (GLuint*)&mesh.VerticesID);
-	glDeleteBuffers(1, (GLuint*)&mesh.IndicesID);
+	glDeleteBuffers(1, (GLuint*)&VerticesID);
+	glDeleteBuffers(1, (GLuint*)&IndicesID);
 
-	RELEASE_ARRAY(mesh.Vertices);
-	RELEASE_ARRAY(mesh.Indices);
+	RELEASE_ARRAY(Vertices);
+	RELEASE_ARRAY(Indices);
 }
 
 // ------------------------------------------------------------
@@ -92,17 +92,17 @@ void Primitive::InnerRender() const
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
 	glEnable(GL_TEXTURE_2D); // enable gl capability
-	glBindTexture(GL_TEXTURE_2D, mesh.TextureID); // start using texture
+	glBindTexture(GL_TEXTURE_2D, TexID); // start using texture
 	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
+	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer (tex coords)
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 
 	// --- Draw mesh ---
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
+	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
 	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
-	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
+	glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 	// ----        ----
 
@@ -174,9 +174,9 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ, bool checker
 
 	// --- Vertices ---
 
-	mesh.VerticesSize = 3 * 8 * 3;
+	uint verticesSize = 3 * 8 * 3;
 
-	mesh.Vertices = new float[mesh.VerticesSize] {  // 8 of vertex coords
+	Vertices = new float[verticesSize] {  // 8 of vertex coords
 
 		sx, sy, sz,  -sx, sy, sz,  -sx,-sy, sz,   sx,-sy, sz,   // v0,v1,v2,v3 (front)
 		sx, sy, sz,   sx,-sy, sz,   sx,-sy,-sz,   sx, sy,-sz,   // v0,v3,v4,v5 (right)
@@ -186,15 +186,14 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ, bool checker
 	    sx,-sy,-sz,  -sx,-sy,-sz,  -sx, sy,-sz,   sx, sy,-sz    // v4,v7,v6,v5 (back)
 	};
 
-	glGenBuffers(1, (GLuint*)&mesh.VerticesID); // create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh.VerticesSize, mesh.Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Indices ---
-	mesh.IndicesSize = 3 * (2 * 6);
-
-	mesh.Indices = new uint[mesh.IndicesSize]{ 0, 1, 2,   2, 3, 0,    // v0-v1-v2, v2-v3-v0 (front)
+	IndicesSize = 3 * (2 * 6);
+	Indices = new uint[IndicesSize]{ 0, 1, 2,   2, 3, 0,    // v0-v1-v2, v2-v3-v0 (front)
 									 4, 5, 6,   6, 7, 4,    // v0-v3-v4, v4-v5-v0 (right)
 									 8, 9,10,  10,11, 8,    // v0-v5-v6, v6-v1-v0 (top)
 									12,13,14,  14,15,12,    // v1-v6-v7, v7-v2-v1 (left)
@@ -203,16 +202,16 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ, bool checker
 									};
 
 
-	glGenBuffers(1, (GLuint*)&mesh.IndicesID); // create buffer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * mesh.IndicesSize, mesh.Indices, GL_STATIC_DRAW); // send vertices to VRAM
+	glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 
 	// --- Texture Coords ---
 
-	mesh.TexCoordsSize = mesh.VerticesSize * 2 / 3;
+	TexCoordsSize = verticesSize * 2 / 3;
 
-	mesh.TexCoords = new float[mesh.TexCoordsSize] {
+	TexCoords = new float[TexCoordsSize] {
 		1, 0,   0, 0,   0, 1,   1, 1,               // v0,v1,v2,v3 (front)
 		0, 0,   0, 1,   1, 1,   1, 0,               // v0,v3,v4,v5 (right)
 		1, 1,   1, 0,   0, 0,   0, 1,               // v0,v5,v6,v1 (top)
@@ -222,11 +221,11 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ, bool checker
 	};
 
 	if (checkers)
-		mesh.TextureID = App->textures->GetCheckerTextureID();
+	 TexID = App->textures->GetCheckerTextureID();
 
-	glGenBuffers(1, (GLuint*)&mesh.TextureCoordsID); // create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh.TexCoordsSize, mesh.TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+	glGenBuffers(1, (GLuint*)&TextureCoordsID); // create buffer
+	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * TexCoordsSize, TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 }
 
@@ -235,63 +234,63 @@ PrimitiveCube::PrimitiveCube(float sizeX, float sizeY, float sizeZ, bool checker
 
 PrimitiveSphere::PrimitiveSphere(float size,int slices, int slacks, bool checkers)
 {
-	par_shapes_mesh * par_mesh = par_shapes_create_parametric_sphere(slices, slacks);
+	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
-	if (par_mesh)
+	if (mesh)
 	{
-		par_shapes_scale(par_mesh, size/2, size/2, size/2);
+		par_shapes_scale(mesh, size/2, size/2, size/2);
 
-		mesh.IndicesSize = par_mesh->ntriangles * 3;
-		mesh.VerticesSize = par_mesh->npoints * 3;
+		IndicesSize = mesh->ntriangles * 3;
+		verticesSize = mesh->npoints * 3;
 
 		// --- Vertices ---
 
-		mesh.Vertices = new float[mesh.VerticesSize];
+		Vertices = new float[verticesSize];
 
-		for (uint i = 0; i < uint(par_mesh->npoints) * 3; ++i)
+		for (uint i = 0; i < uint(mesh->npoints) * 3; ++i)
 		{
-			mesh.Vertices[i] = par_mesh->points[i];
+			Vertices[i] = mesh->points[i];
 		}
 
-		glGenBuffers(1, (GLuint*)&mesh.VerticesID); // create buffer
-		glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh.VerticesSize, mesh.Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+		glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+		glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
 		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 		// --- Indices ---
 
-		mesh.Indices = new unsigned[mesh.IndicesSize];
-		for (uint i = 0; i < uint(par_mesh->ntriangles) * 3; ++i)
+		Indices = new unsigned[IndicesSize];
+		for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
 		{
-			mesh.Indices[i] = par_mesh->triangles[i];
+			Indices[i] = mesh->triangles[i];
 		}
 
-		glGenBuffers(1, (GLuint*)&mesh.IndicesID); // create buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * mesh.IndicesSize, par_mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
+		glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 
 		// --- Texture Coords ---
 
 		if (checkers)
-			mesh.TextureID = App->textures->GetCheckerTextureID();
+			TexID = App->textures->GetCheckerTextureID();
 
-		mesh.TexCoordsSize = mesh.VerticesSize * 2;
-		mesh.TexCoords = new float[mesh.TexCoordsSize];
+		TexCoordsSize = verticesSize * 2;
+		TexCoords = new float[TexCoordsSize];
 
-		for (uint i = 0; i < mesh.VerticesSize; ++i)
+		for (uint i = 0; i < verticesSize; ++i)
 		{
-			mesh.TexCoords[2*i] = par_mesh->tcoords[2*i];
-			mesh.TexCoords[(2*i) + 1] = par_mesh->tcoords[(2*i) + 1];
+			TexCoords[2*i] = mesh->tcoords[2*i];
+			TexCoords[(2*i) + 1] = mesh->tcoords[(2*i) + 1];
 		}
 
-		glGenBuffers(1, (GLuint*)&mesh.TextureCoordsID); // create buffer
-		glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh.TexCoordsSize, mesh.TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+		glGenBuffers(1, (GLuint*)&TextureCoordsID); // create buffer
+		glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * TexCoordsSize, TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
 		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 
-		par_shapes_free_mesh(par_mesh);
+		par_shapes_free_mesh(mesh);
 
 	}
 
@@ -310,17 +309,17 @@ void PrimitiveSphere::InnerRender() const
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
 	glEnable(GL_TEXTURE_2D); // enable gl capability
-	glBindTexture(GL_TEXTURE_2D, mesh.TextureID); // start using texture
+	glBindTexture(GL_TEXTURE_2D, TexID); // start using texture
 	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
+	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer (tex coords)
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 
 	// --- Draw mesh ---
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
+	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer (vertices)
 	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
-	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_SHORT, NULL); // render primitives from array data
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer (indices)
+	glDrawElements(GL_TRIANGLES, IndicesSize, GL_UNSIGNED_SHORT, NULL); // render primitives from array data
 
 	// ----        ----
 
