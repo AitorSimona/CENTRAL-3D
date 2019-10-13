@@ -9,7 +9,7 @@ public:
 
 	ComponentRenderer(GameObject* ContainerGO);
 	virtual ~ComponentRenderer();
-
+	
 };
 
 #endif

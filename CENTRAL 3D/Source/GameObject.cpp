@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "ComponentMesh.h"
 #include "ComponentRenderer.h"
+#include "ComponentMaterial.h"
 
 #include "mmgr/mmgr.h"
 
@@ -57,7 +58,7 @@ Component * GameObject::GetComponent(Component::ComponentType type)
 
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
-	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 2, "Component Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 3, "Component Creation Switch needs to be updated");
 
 	Component* new_component = nullptr;
 
@@ -69,7 +70,9 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	case Component::ComponentType::Renderer:
 		new_component = new ComponentRenderer(this);
 		break;
-
+	case Component::ComponentType::Material:
+		new_component = new ComponentMaterial(this);
+		break;
 	}
 
 	if (new_component)

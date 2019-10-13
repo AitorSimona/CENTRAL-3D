@@ -12,6 +12,7 @@ public:
 	{
 		Mesh,
 		Renderer,
+		Material,
 		Unknown
 	};
 
