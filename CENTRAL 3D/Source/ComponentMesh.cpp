@@ -1,5 +1,6 @@
 #include "ComponentMesh.h"
 #include "OpenGL.h"
+#include "GameObject.h"
 
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
@@ -9,7 +10,7 @@
 #include "mmgr/mmgr.h"
 
 
-ComponentMesh::ComponentMesh() : Component(Component::ComponentType::mesh)
+ComponentMesh::ComponentMesh(GameObject* ContainerGO) : Component(ContainerGO,Component::ComponentType::Mesh)
 {
 }
 

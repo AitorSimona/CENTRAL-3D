@@ -3,20 +3,25 @@
 
 #include "Globals.h"
 
+class GameObject;
+
 class Component
 {
 public:
 	enum class ComponentType
 	{
-		none = 0,
-		mesh
+		Unknown = 0,
+		Mesh
 	};
 
 public:
 
-	Component(Component::ComponentType type);
+	Component(GameObject* ContainerGO,Component::ComponentType type);
 	virtual ~Component();
 
+private:
+	GameObject* GO = nullptr;
+	Component::ComponentType type;
 };
 
 #endif

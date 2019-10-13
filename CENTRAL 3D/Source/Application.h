@@ -45,7 +45,6 @@ public:
 
 
 public:
-	LCG*		  RandomNumber = nullptr;
 
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
@@ -78,6 +77,8 @@ private:
 	std::string			configpath;
 	std::string			log;
 	std::vector<std::string> logs;
+
+	LCG*		  RandomNumber = nullptr;
 
 
 public:

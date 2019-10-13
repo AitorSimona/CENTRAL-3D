@@ -11,7 +11,7 @@ class ComponentMesh : public Component
 {
 public:
 
-	ComponentMesh();
+	ComponentMesh(GameObject* ContainerGO);
 	virtual ~ComponentMesh();
 
 	void ImportMesh(const aiMesh* mesh, uint MATTextureID);

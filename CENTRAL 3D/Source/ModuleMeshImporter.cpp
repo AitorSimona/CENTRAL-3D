@@ -1,6 +1,7 @@
 #include "ModuleMeshImporter.h"
 #include "ModuleTextures.h"
 #include "ComponentMesh.h"
+#include "GameObject.h"
 #include "OpenGL.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
@@ -81,8 +82,12 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 
 		for (uint i = 0; i < scene->mNumMeshes; ++i)
 		{
+			GameObject* new_object = new GameObject("GO");
+
+			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+
 			// --- Create new Resource mesh to store current scene mesh data ---
-			ComponentMesh* new_mesh = new ComponentMesh;
+			/*ComponentMesh* new_mesh = new ComponentMesh;*/
 			meshes.push_back(new_mesh);
 
 			// --- Get Scene mesh number i ---
