@@ -14,6 +14,7 @@ class PanelHierarchy;
 class PanelScene;
 class PanelToolbar;
 
+
 class ModuleGui : public Module
 {
 public:
@@ -41,6 +42,8 @@ public:
 	void HandleInput(SDL_Event* event);
 
 	bool IsKeyboardCaptured();
+
+	/*void PrintMeshPropertiesOnInspector();*/
 
 public:
 
