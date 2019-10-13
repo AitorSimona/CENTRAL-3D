@@ -24,6 +24,8 @@ Application::Application()
 	appName = "";
 	configpath = "Settings/EditorConfig.json";
 	log = "Application Logs:";
+	RandomNumber = new math::LCG();
+
 
 	hardware = new ModuleHardware(this);
 	fs =  new ModuleFileSystem(this,true,ASSETS_FOLDER);
@@ -66,6 +68,8 @@ Application::~Application()
 		delete *item;
 		item++;
 	}
+
+	RELEASE(RandomNumber);
 }
 
 bool Application::Init()
@@ -339,6 +343,12 @@ json Application::GetDefaultConfig() const
 	};
 
 	return config;
+}
+
+// ---------------------------------------------
+LCG & Application::GetRandom()
+{
+	return *RandomNumber;
 }
 
 

@@ -7,7 +7,7 @@
 #include <vector>
 #include "Timer.h"
 #include "PerfTimer.h"
-
+#include "MathGeoLib/include/Algorithm/Random/LCG.h"
 #include "JSONLoader.h"
 
 class Module;
@@ -32,6 +32,7 @@ public:
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
 	std::vector<std::string>& GetLogs();
+	LCG& GetRandom();
 
 	// --- Setters ---
 	void SetMaxFramerate(uint maxFramerate);
@@ -41,7 +42,11 @@ public:
 	void Log(const char* entry);
 	void ClearLogsFromConsole();
 
+
+
 public:
+	LCG*		  RandomNumber = nullptr;
+
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleSceneIntro* scene_intro = nullptr;
