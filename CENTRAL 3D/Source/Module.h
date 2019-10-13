@@ -1,6 +1,5 @@
 #pragma once
 
-class Application;
 #include <string>
 #include "JSONLoader.h"
 

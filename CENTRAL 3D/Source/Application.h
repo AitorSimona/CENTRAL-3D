@@ -21,6 +21,7 @@ class ModuleHardware;
 class ModuleFileSystem;
 class ModuleMeshImporter;
 class ModuleTextures;
+class ModuleSceneManager;
 
 class Application
 {
@@ -56,6 +57,7 @@ public:
 	ModuleFileSystem* fs = nullptr;
 	ModuleMeshImporter* meshImporter = nullptr;
 	ModuleTextures* textures = nullptr;
+	ModuleSceneManager* scene_manager = nullptr;
 
 private:
 

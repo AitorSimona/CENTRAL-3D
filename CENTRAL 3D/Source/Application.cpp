@@ -6,6 +6,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
 #include "ModuleGui.h"
+#include "ModuleSceneManager.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
@@ -27,16 +28,17 @@ Application::Application()
 	RandomNumber = new math::LCG();
 
 
-	hardware = new ModuleHardware(this);
-	fs =  new ModuleFileSystem(this,true,ASSETS_FOLDER);
-	window = new ModuleWindow(this);
-	meshImporter = new ModuleMeshImporter(this);
-	input = new ModuleInput(this);
-	scene_intro = new ModuleSceneIntro(this);
-	renderer3D = new ModuleRenderer3D(this);
-	camera = new ModuleCamera3D(this);
-	gui = new ModuleGui(this);
-	textures = new ModuleTextures(this);
+	hardware = new ModuleHardware(true);
+	fs =  new ModuleFileSystem(true,ASSETS_FOLDER);
+	window = new ModuleWindow(true);
+	scene_manager = new ModuleSceneManager(true);
+	meshImporter = new ModuleMeshImporter(true);
+	input = new ModuleInput(true);
+	scene_intro = new ModuleSceneIntro(true);
+	renderer3D = new ModuleRenderer3D(true);
+	camera = new ModuleCamera3D(true);
+	gui = new ModuleGui(true);
+	textures = new ModuleTextures(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -53,6 +55,7 @@ Application::Application()
 	AddModule(gui);
 
 	// Scenes
+	AddModule(scene_manager);
 	AddModule(scene_intro);
 
 	// Renderer last!

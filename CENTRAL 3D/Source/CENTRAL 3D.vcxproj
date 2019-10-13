@@ -92,6 +92,7 @@
     <ClInclude Include="Imgui\imstb_rectpack.h" />
     <ClInclude Include="Imgui\imstb_textedit.h" />
     <ClInclude Include="Imgui\imstb_truetype.h" />
+    <ClInclude Include="ModuleSceneManager.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ModuleFileSystem.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="ModuleSceneManager.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="JSONLoader.cpp" />

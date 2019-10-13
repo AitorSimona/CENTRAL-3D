@@ -12,7 +12,7 @@
 
 using namespace std;
 
-ModuleFileSystem::ModuleFileSystem(Application* app, bool start_enabled, const char* game_path) : Module(start_enabled)
+ModuleFileSystem::ModuleFileSystem(bool start_enabled, const char* game_path) : Module(start_enabled)
 {
 	name = "File System";
 
