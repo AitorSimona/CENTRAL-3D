@@ -31,25 +31,24 @@ uint GameObject::GetUID() const
 float3 GameObject::GetPosition()
 {
 	float3 position; 
-	transform.TransformPos(position);
-	transform.TranslatePart();
+	Local_transform.TransformPos(position);
+	Local_transform.TranslatePart();
 
 	return position;
 }
 
-float4x4 GameObject::GetTransform()
+float4x4 GameObject::GetLocalTransform()
 {
-	return transform;
+	return Local_transform;
 }
 
 Component * GameObject::GetComponent(Component::ComponentType type)
 {
 	for (std::list<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
-		if ((*it))
+		if ((*it)->GetType() == type)
 		{
-			delete(*it);
-			*it = nullptr;
+			return *it;
 		}
 	}
 
@@ -81,20 +80,20 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 
 void GameObject::SetPosition(float x, float y, float z)
 {
-	transform.Translate(x,y,z);
+	Local_transform.Translate(x,y,z);
 }
 
 void GameObject::SetRotationAxisAngle(const float3 & rot_axis, float degrees_angle)
 {
-	transform.RotateAxisAngle(rot_axis, degrees_angle);
+	Local_transform.RotateAxisAngle(rot_axis, degrees_angle);
 }
 
 void GameObject::Scale(float x, float y, float z)
 {
-	transform.Scale(x, y, z);
+	Local_transform.Scale(x, y, z);
 }
 
-void GameObject::SetTransform(float4x4 new_transform)
+void GameObject::SetLocalTransform(float4x4 new_transform)
 {
-	transform = new_transform;
+	Local_transform = new_transform;
 }

@@ -118,9 +118,17 @@ void ModuleMeshImporter::Draw() const
 	// --- Draw Meshes ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
-		//std::list<Component*>::const_iterator it = game_objects[i]->components.begin();
-		/*DrawMesh(*it);
-		DrawNormals(game_objects[i]->components[0]);*/
+		ComponentMesh* mesh = (ComponentMesh*) game_objects[i]->GetComponent(Component::ComponentType::Mesh);
+
+		if (mesh)
+		{
+			DrawMesh(mesh);
+			DrawNormals(mesh);
+		}
+		else
+		{
+			LOG("|[error]: Could not find Mesh component in current game object");
+		}
 	}
 
 	// --- DeActivate wireframe mode ---

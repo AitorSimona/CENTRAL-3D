@@ -17,7 +17,7 @@ public:
 	// --- Getters ---
 	uint			GetUID() const;
 	float3			GetPosition();
-	float4x4        GetTransform();
+	float4x4        GetLocalTransform();
 	Component*		GetComponent(Component::ComponentType type);
 
 	// --- Utilities ---
@@ -27,12 +27,12 @@ public:
 	void			SetPosition(float x, float y, float z);
 	void			SetRotationAxisAngle(const float3 &rot_axis, float degrees_angle);
 	void			Scale(float x, float y, float z);
-	void			SetTransform(float4x4 new_transform);
+	void			SetLocalTransform(float4x4 new_transform);
 
 private:
 	// Unique Identifier
 	uint UID = 0;
-	float4x4 transform = math::float4x4::identity;
+	float4x4 Local_transform = math::float4x4::identity;
 	std::string name;
 	std::list<Component*> components;
 };
