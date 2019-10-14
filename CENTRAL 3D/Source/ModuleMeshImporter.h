@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "Module.h"
-#include "Math.h"
 
 class GameObject;
 class ComponentMaterial;
@@ -19,7 +18,7 @@ public:
 	bool CleanUp();
 
 	// --- Getters ---
-	uint GetNumMeshes() const;
+	uint GetNumGameObjects() const;
 
 	// --- Utilities ---
 	void Draw() const;

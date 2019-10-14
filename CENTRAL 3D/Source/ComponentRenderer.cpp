@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "OpenGL.h"
 
+#include "mmgr/mmgr.h"
+
 ComponentRenderer::ComponentRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::Renderer)
 {
 }

@@ -1,5 +1,4 @@
 #include "ModuleMeshImporter.h"
-#include "ModuleTextures.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentRenderer.h"
@@ -8,7 +7,7 @@
 #include "OpenGL.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
-#include "ModuleFileSystem.h"
+
 
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
@@ -126,7 +125,7 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 
 	}
 	else
-		LOG("|[error]: Error loading scene %s", path);
+		LOG("|[error]: Error loading FBX %s", path);
 
 
 	return true;
@@ -139,7 +138,7 @@ void ModuleMeshImporter::Draw() const
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// --- Draw Meshes ---
+	// --- Draw Game Object Meshes ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
 		ComponentRenderer* Renderer = (ComponentRenderer*) game_objects[i]->GetComponent(Component::ComponentType::Renderer);
@@ -159,8 +158,7 @@ void ModuleMeshImporter::Draw() const
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-// MYTODO: Change Name of this function
-uint ModuleMeshImporter::GetNumMeshes() const
+uint ModuleMeshImporter::GetNumGameObjects() const
 {
 	return game_objects.size();
 }

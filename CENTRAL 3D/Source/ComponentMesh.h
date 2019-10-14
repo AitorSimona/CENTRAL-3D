@@ -5,7 +5,6 @@
 #include "Math.h"
 
 struct aiMesh;
-class aiScene;
 
 class ComponentMesh : public Component
 {
