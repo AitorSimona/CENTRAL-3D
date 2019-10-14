@@ -14,7 +14,7 @@ public:
 	ComponentMesh(GameObject* ContainerGO);
 	virtual ~ComponentMesh();
 
-	void ImportMesh(const aiMesh* mesh, uint MATTextureID);
+	void ImportMesh(const aiMesh* mesh);
 
 public:
 
@@ -33,10 +33,6 @@ public:
 	uint  TextureCoordsID = 0;
 	uint TexCoordsSize = 0;
 
-	uint  TextureID = 0;
-
-	unsigned char* Colours = nullptr;
-	uint ColoursSize = 0;
 };
 
 #endif

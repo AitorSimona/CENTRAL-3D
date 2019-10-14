@@ -19,11 +19,13 @@ public:
 public:
 
 	Component(GameObject* ContainerGO,Component::ComponentType type);
+	Component(Component::ComponentType type);
 	virtual ~Component();
 
 	Component::ComponentType GetType();
+	GameObject* GetContainerGameObject();
 
-private:
+protected:
 	GameObject* GO = nullptr;
 	Component::ComponentType type;
 };

@@ -3,13 +3,20 @@
 
 #include "Component.h"
 
+class aiScene;
+
 class ComponentMaterial : public Component
 {
 public:
 
-	ComponentMaterial(GameObject* ContainerGO);
+	ComponentMaterial(Component::ComponentType type);
 	virtual ~ComponentMaterial();
 
+	void CreateEmpty();
+	void CreateFromScene(const aiScene * scene, const char* file_path);
+
+public:
+	uint  TextureID = 0;
 };
 
 #endif

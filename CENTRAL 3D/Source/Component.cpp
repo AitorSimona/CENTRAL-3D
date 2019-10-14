@@ -9,6 +9,11 @@ Component::Component(GameObject* ContainerGO,Component::ComponentType type)
 	this->type = type;
 }
 
+Component::Component(Component::ComponentType type)
+{
+	this->type = type;
+}
+
 Component::~Component()
 {
 }
@@ -16,4 +21,9 @@ Component::~Component()
 Component::ComponentType Component::GetType()
 {
 	return type;
+}
+
+GameObject * Component::GetContainerGameObject()
+{
+	return GO;
 }

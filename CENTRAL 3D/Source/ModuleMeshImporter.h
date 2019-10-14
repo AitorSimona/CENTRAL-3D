@@ -8,6 +8,7 @@
 class ComponentMesh;
 class aiScene;
 class GameObject;
+class ComponentMaterial;
 
 // Specifying normal vectors length (used when drawing normals)
 #define NORMAL_LENGTH 1
@@ -32,11 +33,12 @@ public:
 
 private:
 	// --- Draw Functiions accessed by main Draw (which is called by renderer) ---
-	void DrawMesh(const ComponentMesh* mesh) const;
+	void DrawMesh(ComponentMesh* mesh) const;
 	void DrawNormals(const ComponentMesh* mesh) const;
 
 private:
 	std::vector<GameObject*> game_objects;
+	std::vector<ComponentMaterial*> Materials;
 };
 
 #endif

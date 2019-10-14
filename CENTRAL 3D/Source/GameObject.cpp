@@ -18,7 +18,9 @@ GameObject::~GameObject()
 	{
 		if (*it)
 		{
+			if((*it)->GetType() != Component::ComponentType::Material)
 			delete(*it);
+
 			*it = nullptr;
 		}
 	}
@@ -70,9 +72,9 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	case Component::ComponentType::Renderer:
 		new_component = new ComponentRenderer(this);
 		break;
-	case Component::ComponentType::Material:
-		new_component = new ComponentMaterial(this);
-		break;
+	//case Component::ComponentType::Material: // MYTODO: We should not treat materials as components in front of the user (what if we have 100 meshes that could use the same material?)
+	//	new_component = new ComponentMaterial(this);
+	//	break;
 	}
 
 	if (new_component)
@@ -99,4 +101,10 @@ void GameObject::Scale(float x, float y, float z)
 void GameObject::SetLocalTransform(float4x4 new_transform)
 {
 	Local_transform = new_transform;
+}
+
+void GameObject::SetMaterial(ComponentMaterial * material)
+{
+	if (material)
+		components.push_back(material);
 }

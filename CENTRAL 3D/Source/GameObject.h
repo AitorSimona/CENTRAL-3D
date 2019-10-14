@@ -6,6 +6,8 @@
 #include <list>
 #include "Math.h"
 
+class ComponentMaterial;
+
 class GameObject
 {
 
@@ -28,6 +30,7 @@ public:
 	void			SetRotationAxisAngle(const float3 &rot_axis, float degrees_angle);
 	void			Scale(float x, float y, float z);
 	void			SetLocalTransform(float4x4 new_transform);
+	void			SetMaterial(ComponentMaterial* material);
 
 private:
 	// Unique Identifier
@@ -38,4 +41,3 @@ private:
 };
 
 #endif
-

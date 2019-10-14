@@ -1,6 +1,8 @@
 #include "ModuleMeshImporter.h"
 #include "ModuleTextures.h"
 #include "ComponentMesh.h"
+#include "ComponentMaterial.h"
+
 #include "GameObject.h"
 #include "OpenGL.h"
 #include "Application.h"
@@ -56,7 +58,14 @@ bool ModuleMeshImporter::CleanUp()
 	// -- Release all buffer data and own stored data ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
+		if(game_objects[i])
 		delete game_objects[i];
+	}
+
+	for (uint i = 0; i < Materials.size(); ++i)
+	{
+		if (Materials[i])
+		delete Materials[i];
 	}
 
 
@@ -69,32 +78,48 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	// --- Get Directory from filename ---
-	std::string directory = path;
-	App->fs->GetDirectoryFromPath(directory);
+	//std::string directory = path;
+	//App->fs->GetDirectoryFromPath(directory);
 
 	// --- Query Scene first Material to get Texture name. If found, create a texture and return ID  ---
-	uint TextureID = 0;
-	GetTextureIDFromSceneMaterial(*scene, TextureID, directory);
+	//uint TextureID = 0;
+	//GetTextureIDFromSceneMaterial(*scene, TextureID, directory);
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
+
+		// --- Create new Component Material to store scene's, meshes will use this for now since we do not want to create a material for every mesh if not needed ---
+
+		ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
+		Material->CreateFromScene(scene, path);
+
+		if(Material)
+		Materials.push_back(Material);
+
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 
 		for (uint i = 0; i < scene->mNumMeshes; ++i)
 		{
-			GameObject* new_object = new GameObject("GO");
-
-			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-
-			// --- Create new Resource mesh to store current scene mesh data ---
-			/*ComponentMesh* new_mesh = new ComponentMesh;*/
+			// --- Create Game Object and add it to list to keep track of it ---
+			GameObject* new_object = new GameObject("GO"); // MYTODO: We should create name like GameObject, GameObject1 ...
 			game_objects.push_back(new_object);
 
 			// --- Get Scene mesh number i ---
 			aiMesh* mesh = scene->mMeshes[i];
 
-			// --- Import mesh data (fill new_mesh)---
-			new_mesh->ImportMesh(mesh,TextureID);
+			if (mesh)
+			{
+				// --- Create new Component Mesh to store current scene mesh data ---
+				ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+
+				// --- Import mesh data (fill new_mesh)---
+				new_mesh->ImportMesh(mesh);
+
+			}
+			if (Material)
+			{
+				new_object->SetMaterial(Material);
+			}
 		}
 
 		// --- Free scene ---
@@ -136,6 +161,7 @@ void ModuleMeshImporter::Draw() const
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+// MYTODO: Change Name of this function
 uint ModuleMeshImporter::GetNumMeshes() const
 {
 	return game_objects.size();
@@ -166,15 +192,22 @@ void ModuleMeshImporter::GetTextureIDFromSceneMaterial(const aiScene & scene, ui
 	}
 }
 
-void ModuleMeshImporter::DrawMesh(const ComponentMesh * mesh) const
+void ModuleMeshImporter::DrawMesh(ComponentMesh * mesh) const
 {
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
 	glEnable(GL_TEXTURE_2D); // enable gl capability
-	glBindTexture(GL_TEXTURE_2D, mesh->TextureID); // start using texture
-	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->TextureCoordsID); // start using created buffer (tex coords)
-	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
+
+	// --- If the mesh has a material associated, get it ---
+	ComponentMaterial* mat = (ComponentMaterial*)mesh->GetContainerGameObject()->GetComponent(Component::ComponentType::Material);
+
+	if (mat)
+	{
+		glBindTexture(GL_TEXTURE_2D, mat->TextureID); // start using texture
+		glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->TextureCoordsID); // start using created buffer (tex coords)
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
+	}
 
 	// --- Draw mesh ---
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability

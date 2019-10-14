@@ -20,9 +20,6 @@ ComponentMesh::~ComponentMesh()
 	glDeleteBuffers(1, (GLuint*)&IndicesID);
 	glDeleteBuffers(1, (GLuint*)&TextureCoordsID);
 
-	// MYTODO: Should not delete the texture if it is shared with another mesh?
-	glDeleteBuffers(1, (GLuint*)&TextureID);
-
 	if (Vertices)
 	{
 		delete[] Vertices;
@@ -43,14 +40,10 @@ ComponentMesh::~ComponentMesh()
 		delete[] TexCoords;
 		TexCoords = nullptr;
 	}
-	if (Colours)
-	{
-		delete[] Colours;
-		Colours = nullptr;
-	}
+
 }
 
-void ComponentMesh::ImportMesh(const aiMesh* mesh, uint MATTextureID)
+void ComponentMesh::ImportMesh(const aiMesh* mesh)
 {
 	// --- Vertices ---
 	this->VerticesSize = mesh->mNumVertices;
@@ -102,22 +95,6 @@ void ComponentMesh::ImportMesh(const aiMesh* mesh, uint MATTextureID)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->VerticesSize*2, this->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
-	// --- Colours ---
-
-	if (mesh->HasVertexColors(0))
-	{
-		ColoursSize = mesh->mNumVertices;
-		Colours = new unsigned char[ColoursSize * 4];
-
-		for (uint i = 0; i < mesh->mNumVertices; ++i)
-		{
-			Colours[4*i] = mesh->mColors[0][i].r;
-			Colours[(4*i)+1] = mesh->mColors[0][i].g;
-			Colours[(4*i)+2] = mesh->mColors[0][i].b;
-			Colours[(4*i)+3] = mesh->mColors[0][i].a;
-		}
-	}
-
 	// --- Indices ---
 	this->IndicesSize = mesh->mNumFaces * 3;
 	this->Indices = new uint[this->IndicesSize];
@@ -137,10 +114,6 @@ void ComponentMesh::ImportMesh(const aiMesh* mesh, uint MATTextureID)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->IndicesID); // start using created buffer
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * this->IndicesSize, this->Indices, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
-
-	// --- Texture ---
-
-	this->TextureID = MATTextureID;
 
 }
 
