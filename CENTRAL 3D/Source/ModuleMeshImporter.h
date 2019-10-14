@@ -5,7 +5,6 @@
 #include "Module.h"
 #include "Math.h"
 
-class aiScene;
 class GameObject;
 class ComponentMaterial;
 
