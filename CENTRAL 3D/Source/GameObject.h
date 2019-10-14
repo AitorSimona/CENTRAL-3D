@@ -38,6 +38,7 @@ private:
 	float4x4 Local_transform = math::float4x4::identity;
 	std::string name;
 	std::list<Component*> components;
+
 };
 
 #endif

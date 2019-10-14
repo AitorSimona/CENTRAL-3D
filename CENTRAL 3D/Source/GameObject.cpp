@@ -72,9 +72,6 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	case Component::ComponentType::Renderer:
 		new_component = new ComponentRenderer(this);
 		break;
-	//case Component::ComponentType::Material: // MYTODO: We should not treat materials as components in front of the user (what if we have 100 meshes that could use the same material?)
-	//	new_component = new ComponentMaterial(this);
-	//	break;
 	}
 
 	if (new_component)

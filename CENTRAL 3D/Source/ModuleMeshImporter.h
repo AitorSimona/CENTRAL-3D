@@ -25,7 +25,6 @@ public:
 
 	// --- Getters ---
 	uint GetNumMeshes() const;
-	void GetTextureIDFromSceneMaterial(const aiScene& scene, uint & texture_ID, std::string & directory);
 
 	// --- Utilities ---
 	void Draw() const;
@@ -33,8 +32,8 @@ public:
 
 private:
 	// --- Draw Functiions accessed by main Draw (which is called by renderer) ---
-	void DrawMesh(ComponentMesh* mesh) const;
-	void DrawNormals(const ComponentMesh* mesh) const;
+	//void DrawMesh(ComponentMesh* mesh) const;
+	//void DrawNormals(const ComponentMesh* mesh) const;
 
 private:
 	std::vector<GameObject*> game_objects;

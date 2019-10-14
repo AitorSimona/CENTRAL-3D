@@ -23,7 +23,7 @@ ComponentMaterial::~ComponentMaterial()
 
 void ComponentMaterial::CreateEmpty()
 {
-	// MYTODO: Whenever we create a material, add it to some list to later show them on own explorer (if we create a file)
+
 }
 
 // --- Create Material from Scene and path to file ---
