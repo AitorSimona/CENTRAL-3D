@@ -1,10 +1,9 @@
 #ifndef __MODULE_IMPORTER_H__
 #define __MODULE_IMPORTER_H__
 
-#include <vector>
 #include "Module.h"
 
-//class ComponentMaterial;
+class ImporterScene;
 
 class ModuleImporter : public Module
 {
@@ -19,8 +18,9 @@ public:
 	// --- Utilities ---
 	bool LoadFBX(const char* path);
 
-//private:
-//	std::vector<ComponentMaterial*> Materials;
+private:
+	ImporterScene* IScene = nullptr;
+
 };
 
 #endif
