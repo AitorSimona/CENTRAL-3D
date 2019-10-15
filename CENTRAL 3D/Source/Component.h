@@ -22,6 +22,7 @@ public:
 	Component(Component::ComponentType type);
 	virtual ~Component();
 
+	// --- Getters ---
 	Component::ComponentType GetType();
 	GameObject* GetContainerGameObject();
 
