@@ -64,6 +64,7 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 
 	Component* new_component = nullptr;
 
+	// MYTODO: We should check if there is already a component of the type given and log a msg
 	switch (type)
 	{
 	case Component::ComponentType::Mesh:
