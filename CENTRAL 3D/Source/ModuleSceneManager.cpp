@@ -54,6 +54,11 @@ bool ModuleSceneManager::CleanUp()
 	return true;
 }
 
+uint ModuleSceneManager::GetNumGameObjects() const
+{
+	return game_objects.size();
+}
+
 GameObject * ModuleSceneManager::CreateEmptyGameObject()
 {
 	// --- Create New Game Object Name ---
@@ -74,8 +79,7 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 	// --- Creating Empty material to be filled out ---
 	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
 
-	if (Material)
-		Materials.push_back(Material);
+	Materials.push_back(Material);
 
 	return Material;
 }
@@ -86,15 +90,9 @@ ComponentMaterial * ModuleSceneManager::CreateMaterialFromScene(const aiScene& s
 	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
 	Material->CreateFromScene(scene, file_path);
 
-	if (Material)
-		Materials.push_back(Material);
+	Materials.push_back(Material);
 
 	return Material;
-}
-
-uint ModuleSceneManager::GetNumGameObjects() const
-{
-	return game_objects.size();
 }
 
 void ModuleSceneManager::Draw() const

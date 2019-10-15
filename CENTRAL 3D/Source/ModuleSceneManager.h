@@ -21,6 +21,7 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
 	ComponentMaterial* CreateMaterialFromScene(const aiScene& scene, const char& file_path);
