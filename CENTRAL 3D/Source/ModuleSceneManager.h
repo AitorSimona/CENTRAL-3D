@@ -19,6 +19,12 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	GameObject* CreateEmptyGameObject();
+
+	// --- Getters ---
+	uint GetNumGameObjects() const;
+
+	// --- Utilities ---
 	void Draw() const;
 
 private:

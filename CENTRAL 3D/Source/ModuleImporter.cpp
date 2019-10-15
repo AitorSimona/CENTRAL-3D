@@ -2,11 +2,11 @@
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentRenderer.h"
+#include "ModuleSceneManager.h"
 
 #include "GameObject.h"
 #include "OpenGL.h"
 #include "Application.h"
-#include "ModuleRenderer3D.h"
 
 
 #include "Assimp/include/cimport.h"
@@ -55,13 +55,6 @@ bool ModuleImporter::CleanUp()
 	// --- Detach assimp log stream ---
 	aiDetachAllLogStreams();
 
-	// -- Release all buffer data and own stored data ---
-	for (uint i = 0; i < game_objects.size(); ++i)
-	{
-		if(game_objects[i])
-		delete game_objects[i];
-	}
-
 	for (uint i = 0; i < Materials.size(); ++i)
 	{
 		if (Materials[i])
@@ -93,9 +86,8 @@ bool ModuleImporter::LoadFBX(const char* path)
 
 		for (uint i = 0; i < scene->mNumMeshes; ++i)
 		{
-			// --- Create Game Object and add it to list to keep track of it ---
-			GameObject* new_object = new GameObject("GO"); // MYTODO: We should create name like GameObject, GameObject1 ...
-			game_objects.push_back(new_object);
+			// --- Create Game Object ---
+			GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
 
 			// --- Get Scene mesh number i ---
 			aiMesh* mesh = scene->mMeshes[i];
@@ -111,13 +103,14 @@ bool ModuleImporter::LoadFBX(const char* path)
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
 
+				if (Material)
+				{
+					// --- Set Object's Material ---
+					new_object->SetMaterial(Material);
+				}
 
 			}
-			if (Material)
-			{
-				// --- Set Object's Material ---
-				new_object->SetMaterial(Material);
-			}
+
 		}
 
 		// --- Free scene ---
@@ -129,36 +122,4 @@ bool ModuleImporter::LoadFBX(const char* path)
 
 
 	return true;
-}
-
-
-void ModuleImporter::Draw() const
-{
-	// --- Activate wireframe mode ---
-	if (App->renderer3D->wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	// --- Draw Game Object Meshes ---
-	for (uint i = 0; i < game_objects.size(); ++i)
-	{
-		ComponentRenderer* Renderer = (ComponentRenderer*) game_objects[i]->GetComponent(Component::ComponentType::Renderer);
-
-		if (Renderer)
-		{
-			Renderer->Draw();
-		}
-		else
-		{
-			//LOG("|[error]: Could not find Renderer component in current game object");
-		}
-	}
-
-	// --- DeActivate wireframe mode ---
-	if (App->renderer3D->wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-uint ModuleImporter::GetNumGameObjects() const
-{
-	return game_objects.size();
 }

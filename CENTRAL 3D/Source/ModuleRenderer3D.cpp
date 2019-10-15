@@ -5,7 +5,7 @@
 #include "ModuleGui.h"
 #include "ModuleCamera3D.h"
 #include "ModuleSceneIntro.h"
-#include "ModuleImporter.h"
+#include "ModuleSceneManager.h"
 
 #include "OpenGL.h"
 #include "Imgui/imgui.h"
@@ -161,11 +161,11 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-	// --- Draw Level geometry ---
+	// --- Draw Level geometry --- // To be destroyed
 	App->scene_intro->Draw();
 
-	// --- Draw Meshes ---
-	App->meshImporter->Draw();
+	// --- Draw Level Geometry ---
+	App->scene_manager->Draw();
 
 	// --- Draw everything and swap buffers ---
 	App->gui->Draw();
