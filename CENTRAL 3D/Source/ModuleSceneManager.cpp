@@ -56,8 +56,14 @@ bool ModuleSceneManager::CleanUp()
 
 GameObject * ModuleSceneManager::CreateEmptyGameObject()
 {
+	// --- Create New Game Object Name ---
+	std::string Name = "GameObject ";
+	Name.append("(");
+	Name.append(std::to_string(game_objects.size()));
+	Name.append(")");
+
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject("GO"); // MYTODO: We should create name like GameObject, GameObject1 ...
+	GameObject* new_object = new GameObject(Name.data()); 
 	game_objects.push_back(new_object);
 
 	return new_object;
@@ -101,15 +107,13 @@ void ModuleSceneManager::Draw() const
 	// --- Draw Game Object Meshes ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
+		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = (ComponentRenderer*)game_objects[i]->GetComponent(Component::ComponentType::Renderer);
 
+		// --- If Found, draw the mesh ---
 		if (Renderer)
 		{
 			Renderer->Draw();
-		}
-		else
-		{
-			//LOG("|[error]: Could not find Renderer component in current game object");
 		}
 	}
 
