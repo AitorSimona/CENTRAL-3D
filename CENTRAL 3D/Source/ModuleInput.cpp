@@ -4,7 +4,7 @@
 #include "ModuleTextures.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
-#include "ModuleMeshImporter.h"
+#include "ModuleImporter.h"
 
 #include "mmgr/mmgr.h"
 

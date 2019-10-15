@@ -3,7 +3,7 @@
 
 #include "Component.h"
 
-class aiScene;
+struct aiScene;
 
 class ComponentMaterial : public Component
 {

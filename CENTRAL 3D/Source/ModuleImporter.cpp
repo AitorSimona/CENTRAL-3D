@@ -1,4 +1,4 @@
-#include "ModuleMeshImporter.h"
+#include "ModuleImporter.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentRenderer.h"
@@ -24,15 +24,15 @@ void MyAssimpCallback(const char * msg, char * userData)
 	LOG("[Assimp]: %s", msg);
 }
 
-ModuleMeshImporter::ModuleMeshImporter(bool start_enabled) : Module(start_enabled)
+ModuleImporter::ModuleImporter(bool start_enabled) : Module(start_enabled)
 {
 }
 
-ModuleMeshImporter::~ModuleMeshImporter()
+ModuleImporter::~ModuleImporter()
 {
 }
 
-bool ModuleMeshImporter::Init(json file)
+bool ModuleImporter::Init(json file)
 {
 	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
 	struct aiLogStream stream;
@@ -42,7 +42,7 @@ bool ModuleMeshImporter::Init(json file)
 	return true;
 }
 
-bool ModuleMeshImporter::Start()
+bool ModuleImporter::Start()
 {
 	LoadFBX("Assets/BakerHouse.fbx");
 
@@ -50,7 +50,7 @@ bool ModuleMeshImporter::Start()
 }
 
 
-bool ModuleMeshImporter::CleanUp()
+bool ModuleImporter::CleanUp()
 {
 	// --- Detach assimp log stream ---
 	aiDetachAllLogStreams();
@@ -72,7 +72,7 @@ bool ModuleMeshImporter::CleanUp()
 	return true;
 }
 
-bool ModuleMeshImporter::LoadFBX(const char* path)
+bool ModuleImporter::LoadFBX(const char* path)
 {
 	// --- Import scene from path ---
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
@@ -132,7 +132,7 @@ bool ModuleMeshImporter::LoadFBX(const char* path)
 }
 
 
-void ModuleMeshImporter::Draw() const
+void ModuleImporter::Draw() const
 {
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
@@ -158,7 +158,7 @@ void ModuleMeshImporter::Draw() const
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-uint ModuleMeshImporter::GetNumGameObjects() const
+uint ModuleImporter::GetNumGameObjects() const
 {
 	return game_objects.size();
 }

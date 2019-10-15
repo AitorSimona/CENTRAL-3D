@@ -1,6 +1,6 @@
 #include "ModuleTextures.h"
 #include "Application.h"
-#include "ModuleMeshImporter.h"
+#include "ModuleImporter.h"
 #include "OpenGL.h"
 
 #include "DevIL/include/il.h"

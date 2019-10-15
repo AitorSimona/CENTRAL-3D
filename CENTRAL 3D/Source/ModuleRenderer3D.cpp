@@ -5,7 +5,7 @@
 #include "ModuleGui.h"
 #include "ModuleCamera3D.h"
 #include "ModuleSceneIntro.h"
-#include "ModuleMeshImporter.h"
+#include "ModuleImporter.h"
 
 #include "OpenGL.h"
 #include "Imgui/imgui.h"

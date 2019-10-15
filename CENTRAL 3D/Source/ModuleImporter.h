@@ -1,5 +1,5 @@
-#ifndef __MODULE_MESH_IMPORTER_H__
-#define __MODULE_MESH_IMPORTER_H__
+#ifndef __MODULE_IMPORTER_H__
+#define __MODULE_IMPORTER_H__
 
 #include <vector>
 #include "Module.h"
@@ -7,12 +7,12 @@
 class GameObject;
 class ComponentMaterial;
 
-class ModuleMeshImporter : public Module
+class ModuleImporter : public Module
 {
 public:
 	// --- Basic ---
-	ModuleMeshImporter(bool start_enabled = true);
-	~ModuleMeshImporter();
+	ModuleImporter(bool start_enabled = true);
+	~ModuleImporter();
 	bool Init(json file);
 	bool Start();
 	bool CleanUp();

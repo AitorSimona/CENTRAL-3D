@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "ModuleHardware.h"
 #include "ModuleFileSystem.h"
-#include "ModuleMeshImporter.h"
+#include "ModuleImporter.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
@@ -32,7 +32,7 @@ Application::Application()
 	fs =  new ModuleFileSystem(true,ASSETS_FOLDER);
 	window = new ModuleWindow(true);
 	scene_manager = new ModuleSceneManager(true);
-	meshImporter = new ModuleMeshImporter(true);
+	meshImporter = new ModuleImporter(true);
 	input = new ModuleInput(true);
 	scene_intro = new ModuleSceneIntro(true);
 	renderer3D = new ModuleRenderer3D(true);
