@@ -55,13 +55,6 @@ bool ModuleImporter::CleanUp()
 	// --- Detach assimp log stream ---
 	aiDetachAllLogStreams();
 
-	for (uint i = 0; i < Materials.size(); ++i)
-	{
-		if (Materials[i])
-		delete Materials[i];
-	}
-
-
 	return true;
 }
 
@@ -75,12 +68,7 @@ bool ModuleImporter::LoadFBX(const char* path)
 	{
 
 		// --- Create new Component Material to store scene's, meshes will use this for now since we do not want to create a material for every mesh if not needed ---
-
-		ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
-		Material->CreateFromScene(scene, path);
-
-		if(Material)
-		Materials.push_back(Material);
+		ComponentMaterial* Material = App->scene_manager->CreateMaterialFromScene(*scene,*path);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 

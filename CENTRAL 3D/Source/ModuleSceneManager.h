@@ -5,6 +5,8 @@
 #include <vector>
 
 class GameObject;
+class ComponentMaterial;
+struct aiScene;
 
 class ModuleSceneManager : public Module
 {
@@ -20,6 +22,8 @@ public:
 	bool CleanUp();
 
 	GameObject* CreateEmptyGameObject();
+	ComponentMaterial* CreateEmptyMaterial();
+	ComponentMaterial* CreateMaterialFromScene(const aiScene& scene, const char& file_path);
 
 	// --- Getters ---
 	uint GetNumGameObjects() const;
@@ -30,6 +34,7 @@ public:
 private:
 
 	std::vector<GameObject*> game_objects;
+	std::vector<ComponentMaterial*> Materials;
 };
 
 #endif

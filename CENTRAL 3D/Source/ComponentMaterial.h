@@ -13,7 +13,7 @@ public:
 	virtual ~ComponentMaterial();
 
 	void CreateEmpty();
-	void CreateFromScene(const aiScene * scene, const char* file_path);
+	void CreateFromScene(const aiScene & scene, const char& file_path);
 
 public:
 	uint  TextureID = 0;

@@ -4,7 +4,7 @@
 #include <vector>
 #include "Module.h"
 
-class ComponentMaterial;
+//class ComponentMaterial;
 
 class ModuleImporter : public Module
 {
@@ -19,8 +19,8 @@ public:
 	// --- Utilities ---
 	bool LoadFBX(const char* path);
 
-private:
-	std::vector<ComponentMaterial*> Materials;
+//private:
+//	std::vector<ComponentMaterial*> Materials;
 };
 
 #endif

@@ -4,10 +4,7 @@
 #include "ModuleTextures.h"
 #include "OpenGL.h"
 
-#include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
-#include "Assimp/include/postprocess.h"
-#include "Assimp/include/cfileio.h"
 
 #include "mmgr/mmgr.h"
 
@@ -27,16 +24,16 @@ void ComponentMaterial::CreateEmpty()
 }
 
 // --- Create Material from Scene and path to file ---
-void ComponentMaterial::CreateFromScene(const aiScene* scene, const char* file_path)
+void ComponentMaterial::CreateFromScene(const aiScene& scene, const char& file_path)
 {
 	// --- Get Directory from filename ---
-	std::string directory = file_path;
+	std::string directory = &file_path;
 	App->fs->GetDirectoryFromPath(directory);
 
-	if (scene->HasMaterials())
+	if (scene.HasMaterials())
 	{
 		// --- Get scene's first material ---
-		aiMaterial* material = scene->mMaterials[0];
+		aiMaterial* material = scene.mMaterials[0];
 
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 		{
