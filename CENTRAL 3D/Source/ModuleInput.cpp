@@ -130,7 +130,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				std::string DroppedFile_path = e.drop.file;
 
 				if (DroppedFile_path.find(".fbx") != std::string::npos || DroppedFile_path.find(".FBX") != std::string::npos)
-					App->meshImporter->LoadFBX(e.drop.file);
+					App->meshImporter->LoadFromPath(e.drop.file);
 
 				else if (DroppedFile_path.find(".dds") != std::string::npos)
 					App->textures->CreateTextureFromFile(e.drop.file);

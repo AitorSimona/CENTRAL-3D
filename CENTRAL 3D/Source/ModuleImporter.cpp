@@ -37,7 +37,7 @@ bool ModuleImporter::Init(json file)
 
 bool ModuleImporter::Start()
 {
-	LoadFBX("Assets/BakerHouse.fbx");
+	LoadFromPath("Assets/BakerHouse.fbx");
 
 	return true;
 }
@@ -58,9 +58,12 @@ bool ModuleImporter::CleanUp()
 	return true;
 }
 
-bool ModuleImporter::LoadFBX(const char* path)
+bool ModuleImporter::LoadFromPath(const char* path)
 {
 	bool ret = true;
+
+	// MYTODO: Any load operation should go through this function and then decide which importer to call based on file extension
+	// MYTODO: Could JSONLoader be a new importer?
 
 	if (path)
 	{

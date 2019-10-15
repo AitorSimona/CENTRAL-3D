@@ -16,7 +16,7 @@ public:
 	bool CleanUp();
 
 	// --- Utilities ---
-	bool LoadFBX(const char* path);
+	bool LoadFromPath(const char* path);
 
 private:
 	ImporterScene* IScene = nullptr;
