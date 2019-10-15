@@ -1,7 +1,6 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
-#include "ModuleTextures.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
 #include "ModuleImporter.h"
@@ -129,11 +128,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			case SDL_DROPFILE:
 				std::string DroppedFile_path = e.drop.file;
 
-				if (DroppedFile_path.find(".fbx") != std::string::npos || DroppedFile_path.find(".FBX") != std::string::npos)
-					App->meshImporter->LoadFromPath(e.drop.file);
-
-				else if (DroppedFile_path.find(".dds") != std::string::npos)
-					App->textures->CreateTextureFromFile(e.drop.file);
+				App->importer->LoadFromPath(e.drop.file);
 
 				SDL_free((char*)DroppedFile_path.data());
 			break;

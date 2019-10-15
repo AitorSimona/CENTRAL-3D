@@ -1,5 +1,6 @@
 #include "ModuleImporter.h"
 #include "Application.h"
+#include "ModuleTextures.h"
 
 #include "Importer.h"
 #include "ImporterScene.h"
@@ -67,8 +68,24 @@ bool ModuleImporter::LoadFromPath(const char* path)
 
 	if (path)
 	{
-		ImportData data;
-		ret = IScene->Import(*path, data);
+		std::string DroppedFile_path = path;
+
+		// If it is a 3D Model ...
+		if (DroppedFile_path.find(".fbx") != std::string::npos || DroppedFile_path.find(".FBX") != std::string::npos)
+		{
+			ImportData data;
+			ret = IScene->Import(*path, data);
+		}
+		// If it is a json file ...
+		else if (DroppedFile_path.find(".json") != std::string::npos || DroppedFile_path.find(".JSON") != std::string::npos)
+		{
+
+		}
+		// If it is an image file file ...
+		else if (DroppedFile_path.find(".dds") != std::string::npos)
+		{
+			App->textures->CreateTextureFromFile(path);
+		}
 	}
 	else
 		ret = false;

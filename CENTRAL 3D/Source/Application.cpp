@@ -32,7 +32,7 @@ Application::Application()
 	fs =  new ModuleFileSystem(true,ASSETS_FOLDER);
 	window = new ModuleWindow(true);
 	scene_manager = new ModuleSceneManager(true);
-	meshImporter = new ModuleImporter(true);
+	importer = new ModuleImporter(true);
 	input = new ModuleInput(true);
 	scene_intro = new ModuleSceneIntro(true);
 	renderer3D = new ModuleRenderer3D(true);
@@ -48,7 +48,7 @@ Application::Application()
 	AddModule(textures);
 	AddModule(hardware);
 	AddModule(fs);
-	AddModule(meshImporter);
+	AddModule(importer);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);

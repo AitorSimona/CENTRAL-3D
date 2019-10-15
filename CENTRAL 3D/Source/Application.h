@@ -55,7 +55,7 @@ public:
 	ModuleGui*			gui = nullptr;
 	ModuleHardware* hardware = nullptr;
 	ModuleFileSystem* fs = nullptr;
-	ModuleImporter* meshImporter = nullptr;
+	ModuleImporter* importer = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleSceneManager* scene_manager = nullptr;
 
