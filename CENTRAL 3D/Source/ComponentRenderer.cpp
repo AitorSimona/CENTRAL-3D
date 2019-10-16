@@ -22,7 +22,7 @@ void ComponentRenderer::Draw()
 	if (mesh)
 	{
 		DrawMesh(*mesh);
-		DrawNormals(*mesh);
+		//DrawNormals(*mesh);
 	}
 }
 
@@ -31,6 +31,7 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
+	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 
 	// --- If the mesh has a material associated, get it ---
 	ComponentMaterial* mat = (ComponentMaterial*)mesh.GetContainerGameObject()->GetComponent(Component::ComponentType::Material);
@@ -38,13 +39,11 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 	if (mat)
 	{
 		glBindTexture(GL_TEXTURE_2D, mat->TextureID); // start using texture
-		glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 	}
 
 	// --- Draw mesh ---
-	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
 	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
@@ -52,14 +51,15 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 
 	// ----        ----
 
-	// --- Unbind buffers, Disable capabilities ---
+	// --- Unbind buffers ---
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+
+	// --- Disable capabilities ---
 	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
-	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
-	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
 }
 
