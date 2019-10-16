@@ -31,7 +31,6 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
-	glEnable(GL_TEXTURE_2D); // enable gl capability
 
 	// --- If the mesh has a material associated, get it ---
 	ComponentMaterial* mat = (ComponentMaterial*)mesh.GetContainerGameObject()->GetComponent(Component::ComponentType::Material);

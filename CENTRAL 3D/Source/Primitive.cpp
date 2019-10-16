@@ -105,7 +105,7 @@ void Primitive::InnerRender() const
 
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
-	glEnable(GL_TEXTURE_2D); // enable gl capability
+
 	glBindTexture(GL_TEXTURE_2D, TexID); // start using texture
 	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer (tex coords)

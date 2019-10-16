@@ -13,8 +13,8 @@
 
 #include "mmgr/mmgr.h"
 
-#define CHECKERS_HEIGHT 64
-#define CHECKERS_WIDTH 64
+#define CHECKERS_HEIGHT 32
+#define CHECKERS_WIDTH 32
 
 ModuleTextures::ModuleTextures(bool start_enabled) : Module(start_enabled)
 {
@@ -94,15 +94,8 @@ uint ModuleTextures::GetCheckerTextureID() const
 	return CheckerTexID;
 }
 
-uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture) const
+inline void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
 {
-	uint TextureID = 0;
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	// --- Generate the texture ID ---
-	glGenTextures(1, (GLuint*)&TextureID);
-	// --- Bind the texture so we can work with it---
-	glBindTexture(GL_TEXTURE_2D, TextureID);
 	// --- Set texture clamping method ---
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -127,13 +120,27 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest_supported_anisotropy);
 		}
 	}
+}
 
+uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture) const
+{
+	uint TextureID = 0;
+
+	// --- Tell OpenGl where to expect next row of pixels, in this case 1 means byte alignment, algined memory reads tend to be faster than unaligned ---
+    //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// --- Generate the texture ID ---
+	glGenTextures(1, (GLuint*)&TextureID);
+	// --- Bind the texture so we can work with it---
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+
+	SetTextureParameters(CheckersTexture);
+	
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
 
 	if (!CheckersTexture)
 	{
-		// --- Generate Mipmap and enable 2D Textures ---
-		glEnable(GL_TEXTURE_2D);
+		// --- Generate Mipmap of the recently created texture (Note that we are using it in texture size reduction only)---
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
@@ -149,7 +156,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 
 uint ModuleTextures::CreateTextureFromFile(const char* path) const
 {
-	// --- In this function I use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromPixels ---
+	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromPixels ---
 
 	uint texName = 0;
 
