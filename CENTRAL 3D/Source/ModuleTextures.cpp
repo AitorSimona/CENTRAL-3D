@@ -126,9 +126,6 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 {
 	uint TextureID = 0;
 
-	// --- Tell OpenGl where to expect next row of pixels, in this case 1 means byte alignment, algined memory reads tend to be faster than unaligned ---
-    //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
 	// --- Generate the texture ID ---
 	glGenTextures(1, (GLuint*)&TextureID);
 	// --- Bind the texture so we can work with it---
@@ -154,50 +151,54 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
+inline void ModuleTextures::CreateTextureFromImage(uint &TextureID) const
+{
+	// --- Attention!! If the image is flipped, we flip it back --- 
+	ILinfo imageInfo;
+	iluGetImageInfo(&imageInfo);
+
+	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		iluFlipImage();
+
+	// --- Convert the image into a suitable format to work with ---
+	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
+	{
+		// --- Create the texture ---
+		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
+	}
+	else
+		LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
+}
+
 uint ModuleTextures::CreateTextureFromFile(const char* path) const
 {
-	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromPixels ---
+	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromImage ---
 
-	uint texName = 0;
+	uint TextureID = 0;
 
 	if (path == nullptr)
 	{
 		LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr",path);
-		return texName;
+		return TextureID;
 	}
 
-	// --- Generate the image name ---
+	// --- Generate the image name (ID for buffer) ---
 	uint ImageName = 0;
 	ilGenImages(1, (ILuint*)&ImageName);
 
 	// --- Bind the image ---
 	ilBindImage(ImageName);
 
-	// --- Load the image ---
+	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path))
-	{
-		// --- Attention!! If the image is flipped, we flip it back --- 
-		ILinfo imageInfo;
-		iluGetImageInfo(&imageInfo);
-
-		if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
-			iluFlipImage();
-
-		// --- Convert the image into a suitable format to work with ---
-		if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
-		{
-			// --- Create the texture ---
-			texName = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());		
-		}
-		else
-			LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
-	}
+		CreateTextureFromImage(TextureID);
 	else
 		LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
 
+	// --- Release Image data (we have already extracted the necessary information) ---
 	ilDeleteImages(1, (const ILuint*)&ImageName);
 
 	// --- Returning the Texture ID so a mesh can use it, note that this variable is filled by CreateTextureFromPixels ---
 
-	return texName;
+	return TextureID;
 }

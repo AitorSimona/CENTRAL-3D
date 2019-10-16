@@ -25,8 +25,10 @@ private:
 	uint CheckerTexID = 0;
 
 private:
-
+	// --- Called by CreateTextureFromPixels to split code ---
 	inline void SetTextureParameters(bool CheckersTexture = false) const;
+
+	inline void CreateTextureFromImage(uint & TextureID) const;
 };
 
 #endif
