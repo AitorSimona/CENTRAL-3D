@@ -7,19 +7,23 @@
 #include "Assimp/include/cfileio.h"
 
 
-
 #include "ComponentMaterial.h"
 #include "ComponentMesh.h"
 #include "ComponentRenderer.h"
 #include "ModuleSceneManager.h"
 #include "GameObject.h"
+#include "ImporterMesh.h"
+
+#include "mmgr/mmgr.h"
 
 ImporterScene::ImporterScene() 
 {
+	IMesh = new ImporterMesh;
 }
 
 ImporterScene::~ImporterScene()
 {
+	delete IMesh;
 }
 
 bool ImporterScene::Import(const char & File_path, const ImportData & IData) const
@@ -53,7 +57,12 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 				ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 
 				// --- Import mesh data (fill new_mesh)---
-				new_mesh->ImportMesh(mesh);
+				ImportMeshData Mdata;
+				Mdata.mesh = mesh;
+				Mdata.new_mesh = new_mesh;
+				IMesh->Import(Mdata);
+
+				//new_mesh->ImportMesh(mesh);
 
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);

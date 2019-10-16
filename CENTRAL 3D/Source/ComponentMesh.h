@@ -4,16 +4,12 @@
 #include "Component.h"
 #include "Math.h"
 
-struct aiMesh;
-
 class ComponentMesh : public Component
 {
 public:
 
 	ComponentMesh(GameObject* ContainerGO);
 	virtual ~ComponentMesh();
-
-	void ImportMesh(const aiMesh* mesh);
 
 public:
 

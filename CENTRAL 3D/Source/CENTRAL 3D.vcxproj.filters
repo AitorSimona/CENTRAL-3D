@@ -414,6 +414,9 @@
     <ClInclude Include="ImporterScene.h">
       <Filter>Sources\I/O</Filter>
     </ClInclude>
+    <ClInclude Include="ImporterMesh.h">
+      <Filter>Sources\I/O</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -645,6 +648,9 @@
       <Filter>Sources\I/O</Filter>
     </ClCompile>
     <ClCompile Include="ImporterScene.cpp">
+      <Filter>Sources\I/O</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterMesh.cpp">
       <Filter>Sources\I/O</Filter>
     </ClCompile>
   </ItemGroup>

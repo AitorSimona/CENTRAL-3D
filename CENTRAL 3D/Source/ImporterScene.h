@@ -3,6 +3,8 @@
 
 #include "Importer.h"
 
+class ImporterMesh;
+
 struct ImportSceneData : public ImportData
 {
 
@@ -16,6 +18,9 @@ public:
 	virtual ~ImporterScene();
 
 	bool Import(const char& File_path, const ImportData& IData) const override;
+
+private:
+	ImporterMesh* IMesh = nullptr;
 };
 
 #endif
