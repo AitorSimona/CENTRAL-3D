@@ -20,6 +20,11 @@ ImporterMesh::~ImporterMesh()
 {
 }
 
+//bool ImporterMesh::Import(const char & File_path, const ImportData & IData) const
+//{
+//	return false;
+//}
+
 bool ImporterMesh::Import(const ImportData & IData) const
 {
 

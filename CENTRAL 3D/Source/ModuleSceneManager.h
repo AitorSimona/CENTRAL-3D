@@ -7,6 +7,7 @@
 class GameObject;
 class ComponentMaterial;
 struct aiScene;
+struct ImportMaterialData;
 
 class ModuleSceneManager : public Module
 {
@@ -24,7 +25,6 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
-	ComponentMaterial* CreateMaterialFromScene(const aiScene& scene, const char& file_path);
 
 	// --- Getters ---
 	uint GetNumGameObjects() const;

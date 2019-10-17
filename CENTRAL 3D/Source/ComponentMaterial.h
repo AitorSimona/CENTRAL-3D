@@ -12,9 +12,6 @@ public:
 	ComponentMaterial(Component::ComponentType type);
 	virtual ~ComponentMaterial();
 
-	void CreateEmpty();
-	void CreateFromScene(const aiScene & scene, const char& file_path);
-
 public:
 	uint  TextureID = 0;
 };

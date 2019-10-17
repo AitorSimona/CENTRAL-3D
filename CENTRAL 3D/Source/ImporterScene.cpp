@@ -12,18 +12,22 @@
 #include "ComponentRenderer.h"
 #include "ModuleSceneManager.h"
 #include "GameObject.h"
+
 #include "ImporterMesh.h"
+#include "ImporterMaterial.h"
 
 #include "mmgr/mmgr.h"
 
 ImporterScene::ImporterScene() 
 {
 	IMesh = new ImporterMesh;
+	IMaterial = new ImporterMaterial;
 }
 
 ImporterScene::~ImporterScene()
 {
 	delete IMesh;
+	delete IMaterial;
 }
 
 bool ImporterScene::Import(const char & File_path, const ImportData & IData) const
@@ -39,7 +43,13 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 	{
 
 		// --- Create new Component Material to store scene's, meshes will use this for now since we do not want to create a material for every mesh if not needed ---
-		ComponentMaterial* Material = App->scene_manager->CreateMaterialFromScene(*scene, File_path);
+		ComponentMaterial* Material = App->scene_manager->CreateEmptyMaterial();
+
+		// --- Import Material Data (fill Material) --- 
+		ImportMaterialData MData;
+		MData.scene = scene;
+		MData.new_material = Material;
+		IMaterial->Import(File_path, MData);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 

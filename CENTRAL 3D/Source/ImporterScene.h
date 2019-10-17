@@ -4,6 +4,7 @@
 #include "Importer.h"
 
 class ImporterMesh;
+class ImporterMaterial;
 
 struct ImportSceneData : public ImportData
 {
@@ -21,6 +22,7 @@ public:
 
 private:
 	ImporterMesh* IMesh = nullptr;
+	ImporterMaterial* IMaterial = nullptr;
 };
 
 #endif

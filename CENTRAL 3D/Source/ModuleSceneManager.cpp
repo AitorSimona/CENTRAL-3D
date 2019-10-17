@@ -6,6 +6,8 @@
 #include "ComponentMaterial.h"
 #include "ModuleRenderer3D.h"
 
+#include "ImporterMaterial.h"
+
 #include "mmgr/mmgr.h"
 
 ModuleSceneManager::ModuleSceneManager(bool start_enabled)
@@ -84,16 +86,6 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 	return Material;
 }
 
-ComponentMaterial * ModuleSceneManager::CreateMaterialFromScene(const aiScene& scene, const char& file_path)
-{
-	// --- Creating material from scene data, note that we are not including assimp here since we are only passing aiscene by parameter to another function ---
-	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
-	Material->CreateFromScene(scene, file_path);
-
-	Materials.push_back(Material);
-
-	return Material;
-}
 
 void ModuleSceneManager::Draw() const
 {

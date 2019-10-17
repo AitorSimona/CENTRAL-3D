@@ -52,9 +52,6 @@
     <Filter Include="Sources\3rd Party\par shapes">
       <UniqueIdentifier>{bc82f0f5-fca0-46f2-a6f1-b30668937b32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\I/O">
-      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\EditorPanels">
       <UniqueIdentifier>{b9ecbe23-f523-4b9d-97a3-34d6e133690c}</UniqueIdentifier>
     </Filter>
@@ -66,6 +63,9 @@
     </Filter>
     <Filter Include="Sources\Game Objects\Components">
       <UniqueIdentifier>{61475cf2-6c53-4b8e-babc-3bf35a2320a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Importers">
+      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -379,7 +379,7 @@
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="JSONLoader.h">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="VSresource.h">
       <Filter>Sources\VSResources</Filter>
@@ -409,13 +409,16 @@
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Importer.h">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterScene.h">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterMesh.h">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterMaterial.h">
+      <Filter>Sources\Importers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -618,7 +621,7 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="JSONLoader.cpp">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ModuleTextures.cpp">
       <Filter>Sources\Modules</Filter>
@@ -645,13 +648,16 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Importer.cpp">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ImporterScene.cpp">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ImporterMesh.cpp">
-      <Filter>Sources\I/O</Filter>
+      <Filter>Sources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterMaterial.cpp">
+      <Filter>Sources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
