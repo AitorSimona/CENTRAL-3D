@@ -72,8 +72,6 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 				Mdata.new_mesh = new_mesh;
 				IMesh->Import(Mdata);
 
-				//new_mesh->ImportMesh(mesh);
-
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
 

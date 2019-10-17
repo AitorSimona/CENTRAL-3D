@@ -1,11 +1,7 @@
 #include "ImporterMesh.h"
 #include "ComponentMesh.h"
 
-
-#include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
-#include "Assimp/include/postprocess.h"
-#include "Assimp/include/cfileio.h"
 
 #include "OpenGL.h"
 #include "Math.h"
@@ -19,11 +15,6 @@ ImporterMesh::ImporterMesh()
 ImporterMesh::~ImporterMesh()
 {
 }
-
-//bool ImporterMesh::Import(const char & File_path, const ImportData & IData) const
-//{
-//	return false;
-//}
 
 bool ImporterMesh::Import(const ImportData & IData) const
 {
