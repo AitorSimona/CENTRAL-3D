@@ -66,19 +66,23 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 				// --- Create new Component Mesh to store current scene mesh data ---
 				ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 
-				// --- Import mesh data (fill new_mesh)---
-				ImportMeshData Mdata;
-				Mdata.mesh = mesh;
-				Mdata.new_mesh = new_mesh;
-				IMesh->Import(Mdata);
-
-				// --- Create new Component Renderer to draw mesh ---
-				ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
-
-				if (Material)
+				if (new_mesh)
 				{
-					// --- Set Object's Material ---
-					new_object->SetMaterial(Material);
+					// --- Import mesh data (fill new_mesh)---
+					ImportMeshData Mdata;
+					Mdata.mesh = mesh;
+					Mdata.new_mesh = new_mesh;
+					IMesh->Import(Mdata);
+
+					// --- Create new Component Renderer to draw mesh ---
+					ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
+
+					if (Material)
+					{
+						// --- Set Object's Material ---
+						new_object->SetMaterial(Material);
+					}
+
 				}
 
 			}

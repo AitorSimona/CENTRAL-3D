@@ -64,19 +64,32 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 
 	Component* new_component = nullptr;
 
-	// MYTODO: We should check if there is already a component of the type given and log a msg
-	switch (type)
-	{
-	case Component::ComponentType::Mesh:
-		new_component = new ComponentMesh(this);
-		break;
-	case Component::ComponentType::Renderer:
-		new_component = new ComponentRenderer(this);
-		break;
-	}
+	// --- Check if there is already a component of the type given ---
 
-	if (new_component)
-		components.push_back(new_component);
+	if (GetComponent(type) == nullptr)
+	{
+
+		switch (type)
+		{
+		case Component::ComponentType::Mesh:
+			new_component = new ComponentMesh(this);
+			break;
+		case Component::ComponentType::Renderer:
+			new_component = new ComponentRenderer(this);
+			break;
+		}
+
+		if (new_component)
+			components.push_back(new_component);
+
+	}
+	else
+	{
+		// --- If we find a component of the same type, tell the user ---
+
+		LOG("|[error]: The current Game Object already has a component of the type given");
+
+	}
 
 	return new_component;
 }
