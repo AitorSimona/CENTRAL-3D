@@ -30,8 +30,10 @@ bool ModuleSceneManager::Init(json file)
 bool ModuleSceneManager::Start()
 {
 	CheckersMaterial = CreateEmptyMaterial();
-
 	CheckersMaterial->TextureID = App->textures->GetCheckerTextureID();
+
+
+	CreateCube(1, 1, 1, true);
 
 	return true;
 }
@@ -147,7 +149,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 
 	// --- Texture Coords ---
 
-	new_mesh->TexCoordsSize = verticesSize * 2 / 3;
+	new_mesh->TexCoordsSize = verticesSize * 2;
 
 	new_mesh->TexCoords = new float[new_mesh->TexCoordsSize] {
 		1, 0, 0, 0, 0, 1, 1, 1,               // v0,v1,v2,v3 (front)
