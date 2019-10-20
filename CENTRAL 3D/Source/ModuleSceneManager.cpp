@@ -107,7 +107,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 
 	ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 
-
+	ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
 
 	// --- Vertices ---
 
@@ -159,14 +159,14 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	};
 
 	if (checkers)
-		//TexID = App->textures->GetCheckerTextureID();
+		new_object->SetMaterial(CheckersMaterial);
 
 	glGenBuffers(1, (GLuint*)&new_mesh->TextureCoordsID); // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, new_mesh->TextureCoordsID); // start using created buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
-	return nullptr;
+	return new_object;
 }
 
 
