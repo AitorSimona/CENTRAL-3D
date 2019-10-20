@@ -58,6 +58,12 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 			// --- Create Game Object ---
 			GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
 
+			// TEST Transform
+	/*		new_object->SetPosition(5, 0, 0);
+			new_object->SetRotationAxisAngle(float3::unitY, 30);
+			new_object->Scale(2, 2, 2);*/
+
+
 			// --- Get Scene mesh number i ---
 			aiMesh* mesh = scene->mMeshes[i];
 

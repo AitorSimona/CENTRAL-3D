@@ -30,7 +30,7 @@ enum update_status
 
 // Configuration -----------
 #define TITLE "CENTRAL 3D"
-#define VERSION "0.4-alpha"
+#define VERSION "0.05"
 #define ASSETS_FOLDER "/Assets/"
 #define SETTINGS_FOLDER "/Settings/"
 

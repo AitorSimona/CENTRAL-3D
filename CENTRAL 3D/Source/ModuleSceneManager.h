@@ -26,6 +26,7 @@ public:
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
 
+
 	// --- Getters ---
 	uint GetNumGameObjects() const;
 

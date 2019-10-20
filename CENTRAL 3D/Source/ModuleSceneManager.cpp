@@ -97,6 +97,9 @@ void ModuleSceneManager::Draw() const
 	// --- Draw Game Object Meshes ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
+		glPushMatrix();
+		glMultMatrixf(game_objects[i]->GetLocalTransform().ptr());
+
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = (ComponentRenderer*)game_objects[i]->GetComponent(Component::ComponentType::Renderer);
 
@@ -105,10 +108,13 @@ void ModuleSceneManager::Draw() const
 		{
 			Renderer->Draw();
 		}
+
+		glPopMatrix();
 	}
 
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
+
 }
