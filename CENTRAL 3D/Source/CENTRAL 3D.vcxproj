@@ -187,7 +187,6 @@
     <ClInclude Include="PanelSettings.h" />
     <ClInclude Include="par\par_shapes.h" />
     <ClInclude Include="PerfTimer.h" />
-    <ClInclude Include="Primitive.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
@@ -269,7 +268,6 @@
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PerfTimer.cpp" />
-    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>

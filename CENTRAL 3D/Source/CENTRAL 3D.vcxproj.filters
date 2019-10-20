@@ -105,9 +105,6 @@
     <ClInclude Include="Math.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Primitive.h">
-      <Filter>Sources\Tools\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleHardware.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -457,9 +454,6 @@
     </ClCompile>
     <ClCompile Include="ModuleSceneIntro.cpp">
       <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Primitive.cpp">
-      <Filter>Sources\Tools\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="ModuleHardware.cpp">
       <Filter>Sources\Modules</Filter>
