@@ -18,6 +18,7 @@ public:
 
 	// --- Getters ---
 	uint			GetUID() const;
+	std::string		GetName() const;
 	float3			GetPosition();
 	float4x4        GetLocalTransform();
 	Component*		GetComponent(Component::ComponentType type);

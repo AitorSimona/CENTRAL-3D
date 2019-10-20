@@ -115,6 +115,21 @@ uint ModuleSceneManager::GetNumGameObjects() const
 	return game_objects.size();
 }
 
+uint ModuleSceneManager::GetSelectedGameObjects() 
+{
+	return SelectedGameObject;
+}
+
+std::vector<GameObject*>& ModuleSceneManager::GetGameObjects() 
+{
+	return game_objects;
+}
+
+void ModuleSceneManager::SetSelectedGameObject(uint index)
+{
+	SelectedGameObject = index;
+}
+
 GameObject * ModuleSceneManager::CreateEmptyGameObject()
 {
 	// --- Create New Game Object Name ---
@@ -302,7 +317,6 @@ void ModuleSceneManager::CreateGrid() const
 		glVertex3f((float)max_linesgrid, 0.0f, distance);
 		glVertex3f(-distance, 0.0f, (float)max_linesgrid);
 		glVertex3f(distance, 0.0f, (float)max_linesgrid);
-
 	}
 
 	glVertex3f((float)-distance, 0.0f, distance);

@@ -34,6 +34,11 @@ uint GameObject::GetUID() const
 	return UID;
 }
 
+std::string GameObject::GetName() const
+{
+	return name;
+}
+
 float3 GameObject::GetPosition()
 {
 	float3 position; 

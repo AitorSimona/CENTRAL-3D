@@ -31,6 +31,11 @@ public:
 
 	// --- Getters ---
 	uint GetNumGameObjects() const;
+	uint GetSelectedGameObjects();
+	std::vector<GameObject*>& GetGameObjects();
+
+	// --- Setters ---
+	void SetSelectedGameObject(uint index);
 
 	// --- Utilities ---
 	void Draw() const;
@@ -39,7 +44,7 @@ public:
 	ComponentMaterial* CheckersMaterial = nullptr;
 
 private:
-
+	uint SelectedGameObject = 0;
 	std::vector<GameObject*> game_objects;
 	std::vector<ComponentMaterial*> Materials;
 };
