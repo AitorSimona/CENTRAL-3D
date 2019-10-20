@@ -35,11 +35,11 @@ bool ModuleSceneManager::Start()
 	CheckersMaterial->TextureID = App->textures->GetCheckerTextureID();
 
 
-	GameObject* cube = CreateCube(1, 1, 1, true);
-	GameObject* sphere = CreateSphere(1,25,25, true);
+	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f, true);
+	GameObject* sphere = CreateSphere(1.0f,25,25, true);
 
 	cube->SetPosition(-3.0f, 0.0f, 0.0f);
-	sphere->SetPosition(-5.0f, 0.0f, 0.0f);
+	sphere->SetPosition(-4.5f, 0.5f, 0.5f);
 
 	return true;
 }
@@ -142,73 +142,73 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 
 GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, bool checkers)
 {
-	float3 size = float3(sizeX, sizeY, sizeZ);
-	float sx = size.x * 0.5f;
-	float sy = size.y * 0.5f;
-	float sz = size.z * 0.5f;
 
+	par_shapes_mesh * mesh = par_shapes_create_cube();
 	GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
 
-	ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	if (mesh)
+	{
+		ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 
-	ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
+		ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
 
-	// --- Vertices ---
+		new_mesh->IndexDatatype = GL_UNSIGNED_SHORT;
 
-	uint verticesSize = 3 * 8;
-	new_mesh->VerticesSize = verticesSize;
+		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
 
-	new_mesh->Vertices = new float3[verticesSize]{  // 8 of vertex coords
+		new_mesh->IndicesSize = mesh->ntriangles * 3;
+		new_mesh->VerticesSize = mesh->npoints;
 
-		{	sx, sy, sz },  {-sx, sy, sz },  {-sx,-sy, sz },  { sx,-sy, sz },  // v0,v1,v2,v3 (front)
-		{	sx, sy, sz },  { sx,-sy, sz },  { sx,-sy,-sz },  { sx, sy,-sz },  // v0,v3,v4,v5 (right)
-		{	sx, sy, sz },  { sx, sy,-sz },  {-sx, sy,-sz },  {-sx, sy, sz },  // v0,v5,v6,v1 (top)
-		{  -sx, sy, sz },  {-sx, sy,-sz },  {-sx,-sy,-sz },  {-sx,-sy, sz },  // v1,v6,v7,v2 (left)
-		{  -sx,-sy,-sz },  { sx,-sy,-sz },  { sx,-sy, sz },  {-sx,-sy, sz },  // v7,v4,v3,v2 (bottom)
-		{	sx,-sy,-sz },  {-sx,-sy,-sz },  {-sx, sy,-sz },  { sx, sy,-sz }   // v4,v7,v6,v5 (back)
-	};
+		// --- Vertices ---
 
-	glGenBuffers(1, (GLuint*)&new_mesh->VerticesID); // create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, new_mesh->VerticesID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * verticesSize, new_mesh->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+		new_mesh->Vertices = new float3[new_mesh->VerticesSize];
 
-	// --- Indices ---
-	new_mesh->IndicesSize = 3 * (2 * 6);
-	new_mesh->Indices = new uint[new_mesh->IndicesSize]{ 0, 1, 2,   2, 3, 0,    // v0-v1-v2, v2-v3-v0 (front)
-									 4, 5, 6,   6, 7, 4,    // v0-v3-v4, v4-v5-v0 (right)
-									 8, 9,10,  10,11, 8,    // v0-v5-v6, v6-v1-v0 (top)
-									12,13,14,  14,15,12,    // v1-v6-v7, v7-v2-v1 (left)
-									16,17,18,  18,19,16,    // v7-v4-v3, v3-v2-v7 (bottom)
-									20,21,22,  22,23,20     // v4-v7-v6, v6-v5-v4 (back)
-	};
+		for (uint i = 0; i < new_mesh->VerticesSize; ++i)
+		{
+			new_mesh->Vertices[i].x = mesh->points[3 * i];
+			new_mesh->Vertices[i].y = mesh->points[(3 * i) + 1];
+			new_mesh->Vertices[i].z = mesh->points[(3 * i) + 2];
+		}
+
+		glGenBuffers(1, (GLuint*)&new_mesh->VerticesID); // create buffer
+		glBindBuffer(GL_ARRAY_BUFFER, new_mesh->VerticesID); // start using created buffer
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * new_mesh->VerticesSize, new_mesh->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+		// --- Indices ---
+
+		new_mesh->Indices = new unsigned[new_mesh->IndicesSize];
+		for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
+		{
+			new_mesh->Indices[i] = mesh->triangles[i];
+		}
+
+		glGenBuffers(1, (GLuint*)&new_mesh->IndicesID); // create buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_mesh->IndicesID); // start using created buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * new_mesh->IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
+		// --- Texture Coords ---
+	
+		new_mesh->TexCoordsSize = new_mesh->VerticesSize*2;
+	
+		new_mesh->TexCoords = new float[new_mesh->TexCoordsSize]{
+			    1, 0, 	0, 0, 	0, 1, 	1, 1,               // v0,v1,v2,v3 (front)
+				1, 1,   1, 0,   0, 0,   0, 1,               // v4,v7,v6,v5 (back)
+		};
+	
+		if (checkers)
+			new_object->SetMaterial(CheckersMaterial);
+
+		glGenBuffers(1, (GLuint*)&new_mesh->TextureCoordsID); // create buffer
+		glBindBuffer(GL_ARRAY_BUFFER, new_mesh->TextureCoordsID); // start using created buffer
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
 
 
-	glGenBuffers(1, (GLuint*)&new_mesh->IndicesID); // create buffer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_mesh->IndicesID); // start using created buffer
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * new_mesh->IndicesSize, new_mesh->Indices, GL_STATIC_DRAW); // send vertices to VRAM
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+		par_shapes_free_mesh(mesh);
 
-	// --- Texture Coords ---
-
-	new_mesh->TexCoordsSize = verticesSize * 2;
-
-	new_mesh->TexCoords = new float[new_mesh->TexCoordsSize]{
-		1, 0, 0, 0, 0, 1, 1, 1,               // v0,v1,v2,v3 (front)
-			0, 0, 0, 1, 1, 1, 1, 0,               // v0,v3,v4,v5 (right)
-			1, 1, 1, 0, 0, 0, 0, 1,               // v0,v5,v6,v1 (top)
-			1, 0, 0, 0, 0, 1, 1, 1,               // v1,v6,v7,v2 (left)
-			0, 1, 1, 1, 1, 0, 0, 0,               // v7,v4,v3,v2 (bottom)
-			0, 1, 1, 1, 1, 0, 0, 0                // v4,v7,v6,v5 (back)
-	};
-
-	if (checkers)
-		new_object->SetMaterial(CheckersMaterial);
-
-	glGenBuffers(1, (GLuint*)&new_mesh->TextureCoordsID); // create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, new_mesh->TextureCoordsID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+	}
 
 	return new_object;
 }
