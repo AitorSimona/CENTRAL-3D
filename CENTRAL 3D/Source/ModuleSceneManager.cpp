@@ -130,6 +130,17 @@ void ModuleSceneManager::SetSelectedGameObject(uint index)
 	SelectedGameObject = index;
 }
 
+void ModuleSceneManager::SetTextureToSelectedGO(uint id)
+{
+	ComponentMaterial* Material = (ComponentMaterial*)game_objects[SelectedGameObject]->GetComponent(Component::ComponentType::Material);
+
+	if (Material)
+	{
+		//Material->FreeCurrentTexture();
+		Material->TextureID = id;
+	}
+}
+
 GameObject * ModuleSceneManager::CreateEmptyGameObject()
 {
 	// --- Create New Game Object Name ---

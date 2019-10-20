@@ -4,6 +4,7 @@
 
 #include "Importer.h"
 #include "ImporterScene.h"
+#include "ModuleSceneManager.h"
 
 #include "Assimp/include/cimport.h"
 
@@ -82,9 +83,10 @@ bool ModuleImporter::LoadFromPath(const char* path)
 
 		}
 		// If it is an image file file ...
-		else if (DroppedFile_path.find(".dds") != std::string::npos)
+		else if (DroppedFile_path.find(".dds") != std::string::npos || DroppedFile_path.find(".png") != std::string::npos)
 		{
-			App->textures->CreateTextureFromFile(path);
+			// MYTODO: We are not checking if the texture was already loaded, duplicating data
+			App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(path));
 		}
 	}
 	else

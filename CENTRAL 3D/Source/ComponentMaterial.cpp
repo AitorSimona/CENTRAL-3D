@@ -12,3 +12,4 @@ ComponentMaterial::~ComponentMaterial()
 {	
 	glDeleteBuffers(1, (GLuint*)&TextureID);
 }
+

@@ -36,6 +36,7 @@ public:
 
 	// --- Setters ---
 	void SetSelectedGameObject(uint index);
+	void SetTextureToSelectedGO(uint id);
 
 	// --- Utilities ---
 	void Draw() const;
