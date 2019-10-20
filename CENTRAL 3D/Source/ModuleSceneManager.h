@@ -25,6 +25,7 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
+	GameObject* CreateCube(float sizeX, float sizeY, float sizeZ, bool checkers = false);
 
 
 	// --- Getters ---
@@ -32,6 +33,9 @@ public:
 
 	// --- Utilities ---
 	void Draw() const;
+
+public:
+	ComponentMaterial* CheckersMaterial = nullptr;
 
 private:
 
