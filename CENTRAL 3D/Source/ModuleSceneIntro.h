@@ -2,9 +2,9 @@
 #include "Module.h"
 #include "Globals.h"
 
-class PrimitiveCube;
-class PrimitiveSphere;
-class PrimitiveGrid;
+//class PrimitiveCube;
+//class PrimitiveSphere;
+//class PrimitiveGrid;
 
 class ModuleSceneIntro : public Module
 {
@@ -18,9 +18,9 @@ public:
 
 	bool Draw();
 
-	PrimitiveCube* cube = nullptr;
+	//PrimitiveCube* cube = nullptr;
 
-	PrimitiveSphere* sphere = nullptr;
+	//PrimitiveSphere* sphere = nullptr;
 
-	PrimitiveGrid* grid = nullptr;
+	//PrimitiveGrid* grid = nullptr;
 };

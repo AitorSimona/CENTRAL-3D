@@ -72,6 +72,9 @@ bool ModuleSceneManager::CleanUp()
 void ModuleSceneManager::Draw() const
 {
 
+	// --- Draw Grid ---
+	CreateGrid();
+
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -206,5 +209,93 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 
 GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, bool checkers)
 {
+	//par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
+
+	//if (mesh)
+	//{
+	//	par_shapes_scale(mesh, size / 2, size / 2, size / 2);
+
+	//	IndicesSize = mesh->ntriangles * 3;
+	//	verticesSize = mesh->npoints * 3;
+
+	//	// --- Vertices ---
+
+	//	Vertices = new float[verticesSize];
+
+	//	for (uint i = 0; i < uint(mesh->npoints) * 3; ++i)
+	//	{
+	//		Vertices[i] = mesh->points[i];
+	//	}
+
+	//	glGenBuffers(1, (GLuint*)&VerticesID); // create buffer
+	//	glBindBuffer(GL_ARRAY_BUFFER, VerticesID); // start using created buffer
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, Vertices, GL_STATIC_DRAW); // send vertices to VRAM
+	//	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+	//	// --- Indices ---
+
+	//	Indices = new unsigned[IndicesSize];
+	//	for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
+	//	{
+	//		Indices[i] = mesh->triangles[i];
+	//	}
+
+	//	glGenBuffers(1, (GLuint*)&IndicesID); // create buffer
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndicesID); // start using created buffer
+	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
+	//	// --- Texture Coords ---
+
+	//	if (checkers)
+	//		TexID = App->textures->GetCheckerTextureID();
+
+	//	TexCoordsSize = verticesSize * 2;
+	//	TexCoords = new float[TexCoordsSize];
+
+	//	for (uint i = 0; i < verticesSize; ++i)
+	//	{
+	//		TexCoords[2 * i] = mesh->tcoords[2 * i];
+	//		TexCoords[(2 * i) + 1] = mesh->tcoords[(2 * i) + 1];
+	//	}
+
+	//	glGenBuffers(1, (GLuint*)&TextureCoordsID); // create buffer
+	//	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsID); // start using created buffer
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * TexCoordsSize, TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
+	//	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+
+
+	//	par_shapes_free_mesh(mesh);
+
+	//	// GL_UNSIGNED_SHORT
+	//}
+
 	return nullptr;
+}
+
+void ModuleSceneManager::CreateGrid() const
+{
+	glLineWidth(2.0f);
+
+	glBegin(GL_LINES);
+
+	float distance = 10.0f;
+
+	for (int max_linesgrid = -distance; max_linesgrid < distance; max_linesgrid++)
+	{
+		glVertex3f((float)max_linesgrid, 0.0f, -distance);
+		glVertex3f((float)max_linesgrid, 0.0f, distance);
+		glVertex3f(-distance, 0.0f, (float)max_linesgrid);
+		glVertex3f(distance, 0.0f, (float)max_linesgrid);
+
+	}
+
+	glVertex3f((float)-distance, 0.0f, distance);
+	glVertex3f((float)distance, 0.0f, distance);
+	glVertex3f((float)distance, 0.0f, -distance);
+	glVertex3f((float)distance, 0.0f, distance);
+
+	glLineWidth(1.0f);
+
+	glEnd();
 }

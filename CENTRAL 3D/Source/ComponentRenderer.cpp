@@ -32,6 +32,8 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+	glEnable(GL_TEXTURE_2D); // enable gl capability
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 
 	// --- If the mesh has a material associated, get it ---
 	ComponentMaterial* mat = (ComponentMaterial*)mesh.GetContainerGameObject()->GetComponent(Component::ComponentType::Material);
@@ -58,6 +60,8 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
 	// --- Disable capabilities ---
+	glDisable(GL_TEXTURE_2D); // enable gl capability
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
 	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
 
@@ -107,5 +111,40 @@ void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 		glEnd();
 
 	}
+
+	// Test code to draw axis on object, to be adapted
+	//if (axis == true)
+	//{
+	//	// Draw Axis Grid
+	//	glLineWidth(2.0f);
+
+	//	glBegin(GL_LINES);
+
+
+	//	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+	//	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+	//	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+	//	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+
+	//	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+	//	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+	//	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	//	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	//	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+
+	//	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+	//	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+	//	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+	//	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+	//	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+
+	//	glEnd();
+
+	//	glLineWidth(1.0f);
+	//	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	//}
 
 }
