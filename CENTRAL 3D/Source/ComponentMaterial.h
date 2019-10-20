@@ -12,6 +12,7 @@ public:
 	ComponentMaterial(Component::ComponentType type);
 	virtual ~ComponentMaterial();
 
+	void FreeTexture();
 public:
 	uint  TextureID = 0;
 };

@@ -46,6 +46,8 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
+
+
 	return UPDATE_CONTINUE;
 }
 
@@ -62,12 +64,14 @@ bool ModuleSceneManager::CleanUp()
 		if (game_objects[i])
 			delete game_objects[i];
 	}
+	game_objects.clear();
 
 	for (uint i = 0; i < Materials.size(); ++i)
 	{
 		if (Materials[i])
 			delete Materials[i];
 	}
+	Materials.clear();
 
 	CheckersMaterial = nullptr;
 
@@ -90,6 +94,8 @@ void ModuleSceneManager::Draw() const
 	{
 		glPushMatrix();
 		glMultMatrixf(game_objects[i]->GetLocalTransform().ptr());
+
+		Materials;
 
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = (ComponentRenderer*)game_objects[i]->GetComponent(Component::ComponentType::Renderer);
@@ -136,7 +142,7 @@ void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 
 	if (Material)
 	{
-		//Material->FreeCurrentTexture();
+		Material->FreeTexture();
 		Material->TextureID = id;
 	}
 }

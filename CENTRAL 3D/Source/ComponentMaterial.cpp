@@ -10,6 +10,13 @@ ComponentMaterial::ComponentMaterial(Component::ComponentType type) : Component(
 
 ComponentMaterial::~ComponentMaterial()
 {	
-	glDeleteBuffers(1, (GLuint*)&TextureID);
+	glDeleteTextures(1, (GLuint*)&TextureID);
 }
+
+void ComponentMaterial::FreeTexture()
+{
+	glDeleteTextures(1, (GLuint*)&TextureID);
+}
+
+
 
