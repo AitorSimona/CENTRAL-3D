@@ -26,7 +26,7 @@ public:
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
 	GameObject* CreateCube(float sizeX, float sizeY, float sizeZ, bool checkers = false);
-
+	GameObject* CreateSphere(float Radius, int slices, int slacks, bool checkers = false);
 
 	// --- Getters ---
 	uint GetNumGameObjects() const;

@@ -68,6 +68,39 @@ bool ModuleSceneManager::CleanUp()
 	return true;
 }
 
+
+void ModuleSceneManager::Draw() const
+{
+
+	// --- Activate wireframe mode ---
+	if (App->renderer3D->wireframe)
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// --- Draw Game Object Meshes ---
+	for (uint i = 0; i < game_objects.size(); ++i)
+	{
+		glPushMatrix();
+		glMultMatrixf(game_objects[i]->GetLocalTransform().ptr());
+
+		// --- Search for Renderer Component --- 
+		ComponentRenderer* Renderer = (ComponentRenderer*)game_objects[i]->GetComponent(Component::ComponentType::Renderer);
+
+		// --- If Found, draw the mesh ---
+		if (Renderer)
+		{
+			Renderer->Draw();
+		}
+
+		glPopMatrix();
+	}
+
+	// --- DeActivate wireframe mode ---
+	if (App->renderer3D->wireframe)
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
+
+}
+
 uint ModuleSceneManager::GetNumGameObjects() const
 {
 	return game_objects.size();
@@ -82,7 +115,7 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	Name.append(")");
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data()); 
+	GameObject* new_object = new GameObject(Name.data());
 	game_objects.push_back(new_object);
 
 	return new_object;
@@ -116,7 +149,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	uint verticesSize = 3 * 8;
 	new_mesh->VerticesSize = verticesSize;
 
-	new_mesh->Vertices = new float3[verticesSize] {  // 8 of vertex coords
+	new_mesh->Vertices = new float3[verticesSize]{  // 8 of vertex coords
 
 		{	sx, sy, sz },  {-sx, sy, sz },  {-sx,-sy, sz },  { sx,-sy, sz },  // v0,v1,v2,v3 (front)
 		{	sx, sy, sz },  { sx,-sy, sz },  { sx,-sy,-sz },  { sx, sy,-sz },  // v0,v3,v4,v5 (right)
@@ -151,7 +184,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 
 	new_mesh->TexCoordsSize = verticesSize * 2;
 
-	new_mesh->TexCoords = new float[new_mesh->TexCoordsSize] {
+	new_mesh->TexCoords = new float[new_mesh->TexCoordsSize]{
 		1, 0, 0, 0, 0, 1, 1, 1,               // v0,v1,v2,v3 (front)
 			0, 0, 0, 1, 1, 1, 1, 0,               // v0,v3,v4,v5 (right)
 			1, 1, 1, 0, 0, 0, 0, 1,               // v0,v5,v6,v1 (top)
@@ -171,35 +204,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	return new_object;
 }
 
-
-void ModuleSceneManager::Draw() const
+GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, bool checkers)
 {
-
-	// --- Activate wireframe mode ---
-	if (App->renderer3D->wireframe)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	// --- Draw Game Object Meshes ---
-	for (uint i = 0; i < game_objects.size(); ++i)
-	{
-		glPushMatrix();
-		glMultMatrixf(game_objects[i]->GetLocalTransform().ptr());
-
-		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = (ComponentRenderer*)game_objects[i]->GetComponent(Component::ComponentType::Renderer);
-
-		// --- If Found, draw the mesh ---
-		if (Renderer)
-		{
-			Renderer->Draw();
-		}
-
-		glPopMatrix();
-	}
-
-	// --- DeActivate wireframe mode ---
-	if (App->renderer3D->wireframe)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	
-
+	return nullptr;
 }
