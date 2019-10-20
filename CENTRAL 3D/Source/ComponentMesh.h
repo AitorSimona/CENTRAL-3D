@@ -28,6 +28,9 @@ public:
 	uint  TextureCoordsID = 0;
 	uint TexCoordsSize = 0;
 
+	uint IndexDatatype;
+
+
 };
 
 #endif

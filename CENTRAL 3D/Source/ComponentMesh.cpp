@@ -7,6 +7,7 @@
 
 ComponentMesh::ComponentMesh(GameObject* ContainerGO) : Component(ContainerGO,Component::ComponentType::Mesh)
 {
+	IndexDatatype = GL_UNSIGNED_INT;
 }
 
 ComponentMesh::~ComponentMesh()
