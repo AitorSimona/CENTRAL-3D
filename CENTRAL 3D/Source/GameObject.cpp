@@ -42,8 +42,13 @@ std::string GameObject::GetName() const
 float3 GameObject::GetPosition()
 {
 	float3 position; 
-	Local_transform.TransformPos(position);
-	Local_transform.TranslatePart();
+	/*Local_transform.TransformPos(position);
+	Local_transform.TranslatePart();*/
+
+	position.x = Local_transform.ptr()[12];
+	position.y = Local_transform.ptr()[13];
+	position.z = Local_transform.ptr()[14];
+
 
 	return position;
 }
