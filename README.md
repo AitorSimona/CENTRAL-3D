@@ -1,18 +1,52 @@
 # CENTRAL 3D
-Version 0
-Initial steps into game engine development
-By Aitor Simona
+- Version 0.05
+- Initial steps into 3D game engine development
+- By Aitor Simona 
+* Github account: [AitorSimona](https://github.com/AitorSimona)
 
-3rd Party Libraries used:
-SDL 2.0.10
-Glew 2.1.0
-ImGui 1.72b
-MathGeoLib 1.5
-OpenGL 3.1
-mmgr
-JSON for Modern C++
+### TOOLS USED
 
-License:
+- Microsoft Visual Studio 2017
+- 3rd Party Libraries used:
+- SDL 2.0.10
+- Glew 2.1.0
+- ImGui 1.72b (with beta docking)
+- MathGeoLib 1.5
+- OpenGL 3.1
+- mmgr
+- par_shapes at commit 281 
+- DevIL 1.8.0
+- JSON for Modern C++
+- PhysFS 
+
+### HOW TO USE
+
+There is no formal installation process, just look around and play with it
+
+- Navigation:
+
+Mouse and Keyboard controls are enabled both on UI and Scene, working on focused window only.
+
+### DEBUG
+
+- Debug Features
+
+Head to Scene window and click DebugDraw to see available features
+
+### CHANGELOG
+
+## 0.05
+
+Libraries Integration
+Basic Editor with Inspector/Hierarchy/Console/Menu
+Initial GameObject and Component structure
+Save & Load Editor Configuration
+Load 3D Models through assimp (fbx format)
+Load Textures through DevIL (dds and png format)
+Docking
+
+
+### License:
 
 MIT License
 
@@ -35,3 +69,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
