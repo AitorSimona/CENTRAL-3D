@@ -4,9 +4,8 @@
 - By Aitor Simona 
 * Github account: [AitorSimona](https://github.com/AitorSimona)
 
-------
 
-### TOOLS USED
+## TOOLS USED
 
 - Microsoft Visual Studio 2017
 - 3rd Party Libraries used:
@@ -21,9 +20,8 @@
 - JSON for Modern C++
 - PhysFS 
 
-------
 
-### HOW TO USE
+## HOW TO USE
 
 There is no formal installation process, just look around and play with it
 
@@ -31,19 +29,17 @@ There is no formal installation process, just look around and play with it
 
 Mouse and Keyboard controls are enabled both on UI and Scene, working on focused window only.
 
-------
 
-### DEBUG
+## DEBUG
 
 - Debug Features
 
 Head to Scene window and click DebugDraw to see available features
 
-------
 
-### CHANGELOG
+## CHANGELOG
 
-## 0.05
+### 0.05
 
 Libraries Integration
 Basic Editor with Inspector/Hierarchy/Console/Menu
@@ -53,9 +49,8 @@ Load 3D Models through assimp (fbx format)
 Load Textures through DevIL (dds and png format)
 Docking
 
-------
 
-### License:
+## License:
 
 MIT License
 
