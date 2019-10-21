@@ -53,6 +53,27 @@ float3 GameObject::GetPosition()
 	return position;
 }
 
+float3 GameObject::GetScale()
+{
+	float3 scale;
+
+	scale.x = Local_transform.ptr()[0];
+	scale.y = Local_transform.ptr()[5];
+	scale.z = Local_transform.ptr()[10];
+
+	return scale;
+}
+
+float3 GameObject::GetRotation()
+{
+	float3 rotation;
+
+	//rotation.x = Atan2(Local_transform.ptr()[2][0], Local_transform.ptr()[2][0]);
+
+
+	return rotation;
+}
+
 float4x4 GameObject::GetLocalTransform()
 {
 	return Local_transform;

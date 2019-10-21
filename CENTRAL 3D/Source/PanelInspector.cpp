@@ -30,13 +30,40 @@ bool PanelInspector::Draw()
 		if (ImGui::TreeNode("Transform"))
 		{
 
-			// --- Transform ---
+			// --- Transform Position ---
+			ImGui::Text("Position  ");
+			ImGui::SameLine();
+
 			float3 position = Selected->GetPosition();
 			ImGui::Text("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(100.0f);
+			ImGui::SetNextItemWidth(75.0f);
 	
-			ImGui::DragFloat(" ", &position.x, 0.005f);
+			ImGui::DragFloat("PX", &position.x, 0.005f);
+
+			ImGui::SameLine();
+
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(75.0f);
+
+			ImGui::DragFloat("PY", &position.y, 0.005f);
+				
+			ImGui::SameLine();
+
+			ImGui::Text("Z");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(75.0f);
+
+			ImGui::DragFloat("PZ", &position.z, 0.005f);
+
+			// --- Transform Rotation ---
+			/*float3 rotation = Selected->GetRotation();
+			ImGui::Text("X");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(100.0f);
+
+			ImGui::DragFloat("    ", &position.x, 0.005f);
 
 			ImGui::SameLine();
 
@@ -44,17 +71,50 @@ bool PanelInspector::Draw()
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(100.0f);
 
-			ImGui::DragFloat("  ", &position.y, 0.005f);
-				
+			ImGui::DragFloat("     ", &position.y, 0.005f);
+
 			ImGui::SameLine();
 
 			ImGui::Text("Z");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(100.0f);
 
-			ImGui::DragFloat("   ", &position.z, 0.005f);
+			ImGui::DragFloat("      ", &position.z, 0.005f);
 
+			Selected->SetPosition(position.x, position.y, position.z);*/
+
+			// --- Transform Scale ---
+			ImGui::Text("Scale     ");
+			ImGui::SameLine();
+
+			float3 scale = Selected->GetScale();
+			ImGui::Text("X");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(75.0f);
+
+			ImGui::DragFloat("SX", &scale.x, 0.005f);
+
+			ImGui::SameLine();
+
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(75.0f);
+
+			ImGui::DragFloat("SY", &scale.y, 0.005f);
+
+			ImGui::SameLine();
+
+			ImGui::Text("Z");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(75.0f);
+
+			ImGui::DragFloat("SZ", &scale.z, 0.005f);
+
+
+			// --- Transform Set ---
 			Selected->SetPosition(position.x, position.y, position.z);
+			Selected->Scale(scale.x, scale.y, scale.z);
+
 
 			ImGui::TreePop();
 		}

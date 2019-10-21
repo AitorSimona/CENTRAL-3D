@@ -20,6 +20,8 @@ public:
 	uint			GetUID() const;
 	std::string		GetName() const;
 	float3			GetPosition();
+	float3			GetScale();
+	float3			GetRotation();
 	float4x4        GetLocalTransform();
 	Component*		GetComponent(Component::ComponentType type);
 
