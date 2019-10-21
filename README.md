@@ -4,6 +4,8 @@
 - By Aitor Simona 
 * Github account: [AitorSimona](https://github.com/AitorSimona)
 
+------
+
 ### TOOLS USED
 
 - Microsoft Visual Studio 2017
@@ -19,6 +21,8 @@
 - JSON for Modern C++
 - PhysFS 
 
+------
+
 ### HOW TO USE
 
 There is no formal installation process, just look around and play with it
@@ -27,11 +31,15 @@ There is no formal installation process, just look around and play with it
 
 Mouse and Keyboard controls are enabled both on UI and Scene, working on focused window only.
 
+------
+
 ### DEBUG
 
 - Debug Features
 
 Head to Scene window and click DebugDraw to see available features
+
+------
 
 ### CHANGELOG
 
@@ -45,6 +53,7 @@ Load 3D Models through assimp (fbx format)
 Load Textures through DevIL (dds and png format)
 Docking
 
+------
 
 ### License:
 
