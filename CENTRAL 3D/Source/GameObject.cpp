@@ -66,7 +66,7 @@ float3 GameObject::GetScale()
 
 float3 GameObject::GetRotation()
 {
-	float3 rotation;
+	float3 rotation = float3::zero;
 
 	//rotation.x = Atan2(Local_transform.ptr()[2][0], Local_transform.ptr()[2][0]);
 

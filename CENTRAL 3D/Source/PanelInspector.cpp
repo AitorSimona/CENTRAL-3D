@@ -37,7 +37,7 @@ bool PanelInspector::Draw()
 			float3 position = Selected->GetPosition();
 			ImGui::Text("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(75.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 	
 			ImGui::DragFloat("PX", &position.x, 0.005f);
 
@@ -45,7 +45,7 @@ bool PanelInspector::Draw()
 
 			ImGui::Text("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(75.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
 			ImGui::DragFloat("PY", &position.y, 0.005f);
 				
@@ -53,35 +53,36 @@ bool PanelInspector::Draw()
 
 			ImGui::Text("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(75.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
 			ImGui::DragFloat("PZ", &position.z, 0.005f);
 
 			// --- Transform Rotation ---
-			/*float3 rotation = Selected->GetRotation();
+			ImGui::Text("Rotation  ");
+			ImGui::SameLine();
+
+			float3 rotation = Selected->GetRotation();
 			ImGui::Text("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(100.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
-			ImGui::DragFloat("    ", &position.x, 0.005f);
+			ImGui::DragFloat("RX", &rotation.x, 0.005f);
 
 			ImGui::SameLine();
 
 			ImGui::Text("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(100.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
-			ImGui::DragFloat("     ", &position.y, 0.005f);
+			ImGui::DragFloat("RY", &rotation.y, 0.005f);
 
 			ImGui::SameLine();
 
 			ImGui::Text("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(100.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
-			ImGui::DragFloat("      ", &position.z, 0.005f);
-
-			Selected->SetPosition(position.x, position.y, position.z);*/
+			ImGui::DragFloat("RZ", &rotation.z, 0.005f);
 
 			// --- Transform Scale ---
 			ImGui::Text("Scale     ");
@@ -90,7 +91,7 @@ bool PanelInspector::Draw()
 			float3 scale = Selected->GetScale();
 			ImGui::Text("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(75.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
 			ImGui::DragFloat("SX", &scale.x, 0.005f);
 
@@ -98,7 +99,7 @@ bool PanelInspector::Draw()
 
 			ImGui::Text("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(75.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
 			ImGui::DragFloat("SY", &scale.y, 0.005f);
 
@@ -106,7 +107,7 @@ bool PanelInspector::Draw()
 
 			ImGui::Text("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(75.0f);
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
 
 			ImGui::DragFloat("SZ", &scale.z, 0.005f);
 
