@@ -21,6 +21,7 @@ private:
 	// --- Draw Functiions accessed by main Draw ---
 	void DrawMesh(ComponentMesh& mesh) const;
 	void DrawNormals(const ComponentMesh& mesh) const;
+	void DrawAxis() const;
 	
 };
 
