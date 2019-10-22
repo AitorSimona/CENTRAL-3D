@@ -38,8 +38,8 @@ bool ModuleSceneManager::Start()
 	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f, true);
 	GameObject* sphere = CreateSphere(1.0f,25,25, true);
 
-	cube->SetPosition(-3.0f, 0.0f, 0.0f);
-	sphere->SetPosition(-4.5f, 0.5f, 0.5f);
+	cube->SetPosition(-3.5f, 0.5f, 0.0f);
+	sphere->SetPosition(-6.0f, 0.5f, 0.5f);
 
 	return true;
 }
@@ -174,9 +174,39 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 
 GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, bool checkers)
 {
+	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
+	// does not have uvs / normals 
 
-	par_shapes_mesh * mesh = par_shapes_create_cube();
-	par_shapes_compute_normals(mesh);
+	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* top = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* bottom = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* back = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* left = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* right = par_shapes_create_plane(1, 1);
+
+	par_shapes_translate(mesh, -0.5f, -0.5f, 0.5f);
+
+	par_shapes_rotate(top, -float(PAR_PI*0.5), (float*)&float3::unitX);
+	par_shapes_translate(top, -0.5f, 0.5f, 0.5f);
+
+	par_shapes_rotate(bottom, float(PAR_PI*0.5), (float*)&float3::unitX);
+	par_shapes_translate(bottom, -0.5f, -0.5f, -0.5f);
+
+	par_shapes_rotate(back, float(PAR_PI), (float*)&float3::unitX);
+	par_shapes_translate(back, -0.5f, 0.5f, -0.5f);
+
+	par_shapes_rotate(left, float(-PAR_PI * 0.5), (float*)&float3::unitY);
+	par_shapes_translate(left, -0.5f, -0.5f, -0.5f);
+
+	par_shapes_rotate(right, float(PAR_PI*0.5), (float*)&float3::unitY);
+	par_shapes_translate(right, 0.5f, -0.5f, 0.5f);
+
+	par_shapes_merge_and_free(mesh, top);
+	par_shapes_merge_and_free(mesh, bottom);
+	par_shapes_merge_and_free(mesh, back);
+	par_shapes_merge_and_free(mesh, left);
+	par_shapes_merge_and_free(mesh, right);
+
 	GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
 
 	if (mesh)
@@ -237,14 +267,16 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 		}
 
 		// --- Texture Coords ---
-	
-		new_mesh->TexCoordsSize = new_mesh->VerticesSize*2;
-	
-		new_mesh->TexCoords = new float[new_mesh->TexCoordsSize]{
-			    1, 0, 	0, 0, 	0, 1, 	1, 1,               // v0,v1,v2,v3 (front)
-				1, 1,   1, 0,   0, 0,   0, 1,               // v4,v7,v6,v5 (back)
-		};
-	
+
+		new_mesh->TexCoordsSize = new_mesh->VerticesSize * 2;
+		new_mesh->TexCoords = new float[new_mesh->TexCoordsSize];
+
+		for (uint i = 0; i < new_mesh->VerticesSize; ++i)
+		{
+			new_mesh->TexCoords[2 * i] = mesh->tcoords[2 * i];
+			new_mesh->TexCoords[(2 * i) + 1] = mesh->tcoords[(2 * i) + 1];
+		}
+
 		if (checkers)
 			new_object->SetMaterial(CheckersMaterial);
 

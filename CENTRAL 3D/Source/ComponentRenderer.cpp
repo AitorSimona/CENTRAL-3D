@@ -80,10 +80,10 @@ void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 	{
 		// --- Draw Vertex Normals ---
 
-		for (uint j = 0; j < mesh.VerticesSize; ++j)
+		for (uint j = 0; j < mesh.IndicesSize; ++j)
 		{
-			glVertex3f(mesh.Vertices[j].x, mesh.Vertices[j].y, mesh.Vertices[j].z);
-			glVertex3f(mesh.Vertices[j].x + mesh.Normals[j].x*NORMAL_LENGTH, mesh.Vertices[j].y + mesh.Normals[j].y*NORMAL_LENGTH, mesh.Vertices[j].z + mesh.Normals[j].z*NORMAL_LENGTH);
+			glVertex3f(mesh.Vertices[mesh.Indices[j]].x, mesh.Vertices[mesh.Indices[j]].y, mesh.Vertices[mesh.Indices[j]].z);
+			glVertex3f(mesh.Vertices[mesh.Indices[j]].x + mesh.Normals[mesh.Indices[j]].x*NORMAL_LENGTH, mesh.Vertices[mesh.Indices[j]].y + mesh.Normals[mesh.Indices[j]].y*NORMAL_LENGTH, mesh.Vertices[mesh.Indices[j]].z + mesh.Normals[mesh.Indices[j]].z*NORMAL_LENGTH);
 		}
 
 	}
