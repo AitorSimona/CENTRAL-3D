@@ -90,14 +90,13 @@ void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 
 		Triangle face;
 
-		for (uint j = 0; j < mesh.VerticesSize / 3; ++j)
+		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
 		{
 			face.a = mesh.Vertices[mesh.Indices[j * 3]];
 			face.b = mesh.Vertices[mesh.Indices[(j * 3) + 1]];
 			face.c = mesh.Vertices[mesh.Indices[(j * 3) + 2]];
 
 			float3 face_center = face.Centroid();
-			//float3 face_normal = face.NormalCW();
 
 			float3 face_normal = Cross(face.b - face.a, face.c - face.b);
 
