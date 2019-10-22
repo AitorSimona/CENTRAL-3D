@@ -5,6 +5,8 @@
 #include "ModuleSceneManager.h"
 
 #include "GameObject.h"
+#include "ComponentMesh.h"
+#include "ComponentMaterial.h"
 
 #include "mmgr/mmgr.h"
 
@@ -25,6 +27,7 @@ bool PanelInspector::Draw()
 	{
 		GameObject* Selected = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects());
 
+		if(Startup)
 		ImGui::SetNextItemOpen(true);
 
 		if (ImGui::TreeNode("Transform"))
@@ -125,8 +128,53 @@ bool PanelInspector::Draw()
 
 		if (Selected->GetComponent(Component::ComponentType::Mesh))
 		{
+			ComponentMesh* mesh = (ComponentMesh*)Selected->GetComponent(Component::ComponentType::Mesh);
 
+			if (Startup)
+			ImGui::SetNextItemOpen(true);
+
+			if (ImGui::TreeNode("Mesh"))
+			{
+				std::string Triangle_count = "Triangles   ";
+				Triangle_count.append(std::to_string(mesh->IndicesSize / 3));
+				ImGui::Text(Triangle_count.data());
+
+				ImGui::TreePop();
+			}
 		}
+		ImGui::Separator();
+
+		if (Selected->GetComponent(Component::ComponentType::Renderer))
+		{
+			if (Startup)
+				ImGui::SetNextItemOpen(true);
+
+			if (ImGui::TreeNode("Mesh Renderer"))
+			{
+
+				ImGui::TreePop();
+			}
+		}
+		ImGui::Separator();
+
+		if (Selected->GetComponent(Component::ComponentType::Material))
+		{
+			ComponentMaterial* material = (ComponentMaterial*)Selected->GetComponent(Component::ComponentType::Material);
+
+			if (Startup)
+				ImGui::SetNextItemOpen(true);
+
+			if (ImGui::TreeNode("Material"))
+			{
+
+				ImGui::TreePop();
+			}
+		}
+
+		ImGui::Separator();
+
+		if(Startup)
+		Startup = false;
 	}
 
 	ImGui::End();

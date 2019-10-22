@@ -11,6 +11,8 @@ public:
 	~PanelInspector();
 
 	bool Draw();
+
+	bool Startup = true;
 };
 
 #endif
