@@ -3,8 +3,8 @@
 
 #include "Globals.h"
 #include "Component.h"
-#include <list>
 #include "Math.h"
+#include <vector>
 
 class ComponentMaterial;
 
@@ -40,7 +40,7 @@ private:
 	uint UID = 0;
 	float4x4 Local_transform = math::float4x4::identity;
 	std::string name;
-	std::list<Component*> components;
+	std::vector<Component*> components;
 
 };
 

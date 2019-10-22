@@ -17,7 +17,7 @@ GameObject::GameObject(const char* name)
 
 GameObject::~GameObject()
 {
-	for (std::list<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
 		{
@@ -81,7 +81,7 @@ float4x4 GameObject::GetLocalTransform()
 
 Component * GameObject::GetComponent(Component::ComponentType type)
 {
-	for (std::list<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if ((*it)->GetType() == type)
 		{
