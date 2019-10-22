@@ -220,6 +220,21 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * new_mesh->IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
 
+		// --- Normals ---
+		if (mesh->normals)
+		{
+			new_mesh->NormalsSize = mesh->npoints;
+			new_mesh->Normals = new float3[new_mesh->NormalsSize];
+
+			for (uint i = 0; i < mesh->npoints; ++i)
+			{
+				new_mesh->Normals[i].x = mesh->normals[3*i];
+				new_mesh->Normals[i].y = mesh->normals[(3*i) + 1];
+				new_mesh->Normals[i].z = mesh->normals[(3*i) + 2];
+			}
+
+		}
+
 		// --- Texture Coords ---
 	
 		new_mesh->TexCoordsSize = new_mesh->VerticesSize*2;
@@ -292,6 +307,21 @@ GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slac
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_mesh->IndicesID); // start using created buffer
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * new_mesh->IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+
+		// --- Normals ---
+		if (mesh->normals)
+		{
+			new_mesh->NormalsSize = mesh->npoints;
+			new_mesh->Normals = new float3[new_mesh->NormalsSize];
+
+			for (uint i = 0; i < mesh->npoints; ++i)
+			{
+				new_mesh->Normals[i].x = mesh->normals[3 * i];
+				new_mesh->Normals[i].y = mesh->normals[(3 * i) + 1];
+				new_mesh->Normals[i].z = mesh->normals[(3 * i) + 2];
+			}
+
+		}
 
 		// --- Texture Coords ---
 

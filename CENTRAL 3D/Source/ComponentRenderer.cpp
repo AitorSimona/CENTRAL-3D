@@ -22,7 +22,7 @@ void ComponentRenderer::Draw()
 	if (mesh)
 	{
 		DrawMesh(*mesh);
-		//DrawNormals(*mesh);
+		DrawNormals(*mesh);
 	}
 }
 
@@ -80,13 +80,13 @@ void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 
 		glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
-		/*	for (uint j = 0; j < mesh->VerticesSize; ++j)
+		/*	for (uint j = 0; j < mesh.VerticesSize; ++j)
 			{
-				glVertex3f(mesh->Vertices[j].x, mesh->Vertices[j].y, mesh->Vertices[j].z);
-				glVertex3f(mesh->Vertices[j].x + mesh->Normals[j].x*NORMAL_LENGTH, mesh->Vertices[j].y + mesh->Normals[j].y*NORMAL_LENGTH, mesh->Vertices[j].z + mesh->Normals[j].z*NORMAL_LENGTH);
-			}
-	*/
-	// --- Draw Face Normals 
+				glVertex3f(mesh.Vertices[j].x, mesh.Vertices[j].y, mesh.Vertices[j].z);
+				glVertex3f(mesh.Vertices[j].x + mesh.Normals[j].x*NORMAL_LENGTH, mesh.Vertices[j].y + mesh.Normals[j].y*NORMAL_LENGTH, mesh.Vertices[j].z + mesh.Normals[j].z*NORMAL_LENGTH);
+			}*/
+	
+	   // --- Draw Face Normals 
 
 		Triangle face;
 
