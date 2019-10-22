@@ -176,6 +176,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 {
 
 	par_shapes_mesh * mesh = par_shapes_create_cube();
+	par_shapes_compute_normals(mesh);
 	GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
 
 	if (mesh)
