@@ -41,7 +41,7 @@ public:
 	void HandleInput(SDL_Event* event);
 
 	bool IsKeyboardCaptured();
-
+	bool IsMouseCaptured();
 public:
 
 	PanelSettings*		panelSettings = nullptr;

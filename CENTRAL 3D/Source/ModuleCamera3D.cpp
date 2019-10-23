@@ -65,6 +65,14 @@ update_status ModuleCamera3D::Update(float dt)
 	Position += newPos;
 	Reference += newPos;
 
+	// --- Zoom ---
+	if (!App->gui->IsMouseCaptured() && abs(App->input->GetMouseWheel()) > 0)
+	{
+		int mouse_wheel = App->input->GetMouseWheel();
+		vec3 Movement = -Z*mouse_wheel*speed*10.0f;
+		Position += Movement;
+	}
+
 	// Mouse motion ----------------
 
 	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
@@ -74,6 +82,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 		float Sensitivity = 0.25f;
 
+		Reference = Position;
 		Position -= Reference;
 
 		if(dx != 0)
@@ -101,6 +110,8 @@ update_status ModuleCamera3D::Update(float dt)
 
 		Position = Reference + Z * length(Position);
 	}
+
+
 
 	// Recalculate matrix -------------
 	CalculateViewMatrix();

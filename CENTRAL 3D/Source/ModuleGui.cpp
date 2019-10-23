@@ -335,4 +335,8 @@ bool ModuleGui::IsKeyboardCaptured()
 	return capture_keyboard;
 }
 
-;
+bool ModuleGui::IsMouseCaptured()
+{
+	return capture_mouse;
+}
+
