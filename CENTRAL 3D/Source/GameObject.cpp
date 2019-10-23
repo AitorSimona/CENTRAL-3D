@@ -155,6 +155,12 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	return new_component;
 }
 
+void GameObject::SetName(const char* name)
+{
+	if (name)
+		this->name = name;
+}
+
 void GameObject::SetPosition(float x, float y, float z)
 {
 	//Local_transform.Translate(x,y,z);

@@ -28,6 +28,22 @@ bool PanelInspector::Draw()
 	{
 		GameObject* Selected = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects());
 
+		// --- Game Object ---
+
+		ImGui::BeginChild("child", ImVec2(0, 35), true);
+
+		ImGui::Checkbox("GOActive", &Selected->GetActive(), false);
+		ImGui::SameLine();
+
+		// --- Game Object Name Setter ---
+		static char GOName[100] = "";
+		strcpy_s(GOName, 100, Selected->GetName().data());
+		if (ImGui::InputText("", GOName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			Selected->SetName(GOName);
+
+		ImGui::EndChild();
+
+		// --- Components ---
 
 		if(Startup)
 		ImGui::SetNextItemOpen(true);
@@ -190,6 +206,9 @@ bool PanelInspector::Draw()
 				Path.append(material->Texture_path);
 
 				ImGui::Text(Path.data());
+
+				// --- Texture Preview ---
+				ImGui::Image((void*)(uint)&material->TextureID, ImVec2(150, 150));
 
 				// --- Print Texture Width and Height ---
 				ImGui::Text(std::to_string(material->Texture_width).data());

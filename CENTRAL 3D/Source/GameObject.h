@@ -33,6 +33,7 @@ public:
 	Component*		AddComponent(Component::ComponentType type);
 
 	// --- Setters ---
+	void			SetName(const char* name);
 	void			SetPosition(float x, float y, float z);
 	void			SetRotationAxisAngle(const float3 &rot_axis, float degrees_angle);
 	void			Scale(float x, float y, float z);
