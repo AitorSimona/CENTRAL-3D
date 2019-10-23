@@ -80,7 +80,12 @@ bool ImporterMesh::Import(const ImportData & IData) const
 	{
 		const aiFace& face = data.mesh->mFaces[j];
 
-		assert(face.mNumIndices == 3); // Only triangles
+		// Only triangles
+		if (face.mNumIndices > 3)
+		{
+			LOG("|[error]: Importer Mesh found a quad in %s, ignoring it. ", data.mesh->mName);
+			continue;
+		}
 
 		data.new_mesh->Indices[j * 3] = face.mIndices[0];
 		data.new_mesh->Indices[j * 3 + 1] = face.mIndices[1];
