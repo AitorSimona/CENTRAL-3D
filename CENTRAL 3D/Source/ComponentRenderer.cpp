@@ -76,7 +76,7 @@ void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 
 	glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
-	if (mesh.Normals)
+	if (draw_vertexnormals && mesh.Normals)
 	{
 		// --- Draw Vertex Normals ---
 
@@ -90,22 +90,26 @@ void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 	
 	// --- Draw Face Normals 
 
-	Triangle face;
-
-	for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
+	if (draw_facenormals)
 	{
-		face.a = mesh.Vertices[mesh.Indices[j * 3]];
-		face.b = mesh.Vertices[mesh.Indices[(j * 3) + 1]];
-		face.c = mesh.Vertices[mesh.Indices[(j * 3) + 2]];
+		Triangle face;
 
-		float3 face_center = face.Centroid();
+		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
+		{
+			face.a = mesh.Vertices[mesh.Indices[j * 3]];
+			face.b = mesh.Vertices[mesh.Indices[(j * 3) + 1]];
+			face.c = mesh.Vertices[mesh.Indices[(j * 3) + 2]];
 
-		float3 face_normal = Cross(face.b - face.a, face.c - face.b);
+			float3 face_center = face.Centroid();
 
-		face_normal.Normalize();
+			float3 face_normal = Cross(face.b - face.a, face.c - face.b);
 
-		glVertex3f(face_center.x, face_center.y, face_center.z);
-		glVertex3f(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
+			face_normal.Normalize();
+
+			glVertex3f(face_center.x, face_center.y, face_center.z);
+			glVertex3f(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
+		}
+
 	}
 
 	glLineWidth(1.0f);

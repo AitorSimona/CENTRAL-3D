@@ -22,6 +22,10 @@ private:
 	void DrawMesh(ComponentMesh& mesh) const;
 	void DrawNormals(const ComponentMesh& mesh) const;
 	void DrawAxis() const;
+
+public:
+	bool draw_vertexnormals = false;
+	bool draw_facenormals = false;
 	
 };
 

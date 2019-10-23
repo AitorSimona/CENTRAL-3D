@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
+#include "ComponentRenderer.h"
 
 #include "mmgr/mmgr.h"
 
@@ -146,11 +147,16 @@ bool PanelInspector::Draw()
 
 		if (Selected->GetComponent(Component::ComponentType::Renderer))
 		{
+			ComponentRenderer* renderer = (ComponentRenderer*)Selected->GetComponent(Component::ComponentType::Renderer);
+
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
 
 			if (ImGui::TreeNode("Mesh Renderer"))
 			{
+				ImGui::Checkbox("Vertex Normals", &renderer->draw_vertexnormals);
+				ImGui::SameLine();
+				ImGui::Checkbox("Face Normals  ", &renderer->draw_facenormals);
 
 				ImGui::TreePop();
 			}
