@@ -21,12 +21,17 @@ public:
 	Component(GameObject* ContainerGO,Component::ComponentType type);
 	Component(Component::ComponentType type);
 	virtual ~Component();
+	virtual void Enable();
+	virtual void Disable();
 
 	// --- Getters ---
 	Component::ComponentType GetType();
 	GameObject* GetContainerGameObject();
+	bool& GetActive();
+	bool IsEnabled();
 
 protected:
+	bool active = false;
 	GameObject* GO = nullptr;
 	Component::ComponentType type;
 };

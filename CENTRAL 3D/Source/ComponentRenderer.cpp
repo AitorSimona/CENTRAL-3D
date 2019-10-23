@@ -22,7 +22,7 @@ void ComponentRenderer::Draw()
 {
 	ComponentMesh * mesh = (ComponentMesh*)this->GO->GetComponent(Component::ComponentType::Mesh);
 
-	if (mesh)
+	if (mesh && mesh->IsEnabled())
 	{
 		DrawMesh(*mesh);
 		DrawNormals(*mesh);
@@ -42,7 +42,7 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 	// --- If the mesh has a material associated, get it ---
 	ComponentMaterial* mat = (ComponentMaterial*)mesh.GetContainerGameObject()->GetComponent(Component::ComponentType::Material);
 
-	if (mat)
+	if (mat && mat->IsEnabled())
 	{
 		if(this->checkers)
 		glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture

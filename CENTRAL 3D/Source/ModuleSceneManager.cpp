@@ -108,7 +108,7 @@ void ModuleSceneManager::Draw() const
 		ComponentRenderer* Renderer = (ComponentRenderer*)game_objects[i]->GetComponent(Component::ComponentType::Renderer);
 
 		// --- If Found, draw the mesh ---
-		if (Renderer)
+		if (Renderer && Renderer->IsEnabled())
 		{
 			Renderer->Draw();
 		}

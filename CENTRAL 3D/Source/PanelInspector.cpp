@@ -131,6 +131,9 @@ bool PanelInspector::Draw()
 		{
 			ComponentMesh* mesh = (ComponentMesh*)Selected->GetComponent(Component::ComponentType::Mesh);
 
+			ImGui::Checkbox("MeshActive", &mesh->GetActive(),false);
+			ImGui::SameLine();
+
 			if (Startup)
 			ImGui::SetNextItemOpen(true);
 
@@ -149,11 +152,15 @@ bool PanelInspector::Draw()
 		{
 			ComponentRenderer* renderer = (ComponentRenderer*)Selected->GetComponent(Component::ComponentType::Renderer);
 
+			ImGui::Checkbox("RenActive", &renderer->GetActive(), false);
+			ImGui::SameLine();
+
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
 
 			if (ImGui::TreeNode("Mesh Renderer"))
 			{
+
 				ImGui::Checkbox("Vertex Normals", &renderer->draw_vertexnormals);
 				ImGui::SameLine();
 				ImGui::Checkbox("Face Normals  ", &renderer->draw_facenormals);
@@ -169,11 +176,14 @@ bool PanelInspector::Draw()
 		{
 			ComponentMaterial* material = (ComponentMaterial*)Selected->GetComponent(Component::ComponentType::Material);
 
+			ImGui::Checkbox("MatActive", &material->GetActive(), false);
+			ImGui::SameLine();
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
 
 			if (ImGui::TreeNode("Material"))
 			{
+
 				// --- Print Texture Path ---
 				std::string Path = "Path: ";
 				Path.append(material->Texture_path);
