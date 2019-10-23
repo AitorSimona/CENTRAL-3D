@@ -26,6 +26,7 @@ private:
 public:
 	bool draw_vertexnormals = false;
 	bool draw_facenormals = false;
+	bool checkers = false;
 	
 };
 

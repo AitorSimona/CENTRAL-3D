@@ -43,6 +43,7 @@ public:
 
 public:
 	ComponentMaterial* CheckersMaterial = nullptr;
+	ComponentMaterial* DefaultMaterial = nullptr;
 
 private:
 	uint SelectedGameObject = 0;

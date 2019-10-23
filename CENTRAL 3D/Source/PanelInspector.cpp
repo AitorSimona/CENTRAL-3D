@@ -157,6 +157,8 @@ bool PanelInspector::Draw()
 				ImGui::Checkbox("Vertex Normals", &renderer->draw_vertexnormals);
 				ImGui::SameLine();
 				ImGui::Checkbox("Face Normals  ", &renderer->draw_facenormals);
+				ImGui::SameLine();
+				ImGui::Checkbox("Checkers", &renderer->checkers);
 
 				ImGui::TreePop();
 			}
@@ -172,11 +174,13 @@ bool PanelInspector::Draw()
 
 			if (ImGui::TreeNode("Material"))
 			{
+				// --- Print Texture Path ---
 				std::string Path = "Path: ";
 				Path.append(material->Texture_path);
 
 				ImGui::Text(Path.data());
 
+				// --- Print Texture Width and Height ---
 				ImGui::Text(std::to_string(material->Texture_width).data());
 				ImGui::SameLine();
 				ImGui::Text(std::to_string(material->Texture_height).data());

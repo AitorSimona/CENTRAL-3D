@@ -33,9 +33,11 @@ bool ModuleSceneManager::Init(json file)
 
 bool ModuleSceneManager::Start()
 {
+	DefaultMaterial = CreateEmptyMaterial();
+	DefaultMaterial->Texture_path = "Default";
+
 	CheckersMaterial = CreateEmptyMaterial();
 	CheckersMaterial->TextureID = App->textures->GetCheckerTextureID();
-	CheckersMaterial->checkers = true;
 	CheckersMaterial->Texture_path = "NaN";
 	CheckersMaterial->Texture_width = CHECKERS_WIDTH;
 	CheckersMaterial->Texture_height = CHECKERS_HEIGHT;
@@ -164,6 +166,9 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	GameObject* new_object = new GameObject(Name.data());
 	game_objects.push_back(new_object);
 
+	// --- Assign Default Material ---
+	new_object->SetMaterial(DefaultMaterial);
+
 	return new_object;
 }
 
@@ -282,8 +287,8 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 			new_mesh->TexCoords[(2 * i) + 1] = mesh->tcoords[(2 * i) + 1];
 		}
 
-		if (checkers)
-			new_object->SetMaterial(CheckersMaterial);
+		/*if (checkers)
+			new_object->SetMaterial(CheckersMaterial);*/
 
 		glGenBuffers(1, (GLuint*)&new_mesh->TextureCoordsID); // create buffer
 		glBindBuffer(GL_ARRAY_BUFFER, new_mesh->TextureCoordsID); // start using created buffer
@@ -363,8 +368,8 @@ GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slac
 
 		// --- Texture Coords ---
 
-		if (checkers)
-			new_object->SetMaterial(CheckersMaterial);
+		/*if (checkers)
+			new_object->SetMaterial(CheckersMaterial);*/
 
 		new_mesh->TexCoordsSize = new_mesh->VerticesSize * 2;
 		new_mesh->TexCoords = new float[new_mesh->TexCoordsSize];
