@@ -28,7 +28,7 @@ public:
 	Component::ComponentType GetType();
 	GameObject* GetContainerGameObject();
 	bool& GetActive();
-	bool IsEnabled();
+	bool IsEnabled() const;
 
 protected:
 	bool active = false;

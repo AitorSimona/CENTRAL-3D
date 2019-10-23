@@ -15,6 +15,8 @@ public:
 
 	GameObject(const char* name);
 	virtual ~GameObject();
+	void Enable();
+	void Disable();
 
 	// --- Getters ---
 	uint			GetUID() const;
@@ -24,6 +26,8 @@ public:
 	float3			GetRotation();
 	float4x4        GetLocalTransform();
 	Component*		GetComponent(Component::ComponentType type);
+	bool&			GetActive();
+	bool			IsEnabled() const;
 
 	// --- Utilities ---
 	Component*		AddComponent(Component::ComponentType type);
@@ -41,6 +45,8 @@ private:
 	float4x4 Local_transform = math::float4x4::identity;
 	std::string name;
 	std::vector<Component*> components;
+
+	bool active = false;
 
 };
 

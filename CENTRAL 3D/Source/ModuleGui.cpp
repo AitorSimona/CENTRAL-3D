@@ -76,7 +76,10 @@ bool ModuleGui::Start()
 	ImGui_ImplOpenGL3_Init();
 
 	// Setup style
+	ImGuiStyle& style = ImGui::GetStyle();
 	ImGui::StyleColorsDark();
+	style.FrameBorderSize = 1.0f;
+
 
 
 	return ret;

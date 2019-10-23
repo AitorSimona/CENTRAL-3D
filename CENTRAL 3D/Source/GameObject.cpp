@@ -13,10 +13,14 @@ GameObject::GameObject(const char* name)
 {
 	UID = App->GetRandom().Int();
 	this->name = name;
+
+	Enable();
 }
 
 GameObject::~GameObject()
 {
+	Disable();
+
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
@@ -27,6 +31,16 @@ GameObject::~GameObject()
 			*it = nullptr;
 		}
 	}
+}
+
+void GameObject::Enable()
+{
+	active = true;
+}
+
+void GameObject::Disable()
+{
+	active = false;
 }
 
 uint GameObject::GetUID() const
@@ -81,15 +95,28 @@ float4x4 GameObject::GetLocalTransform()
 
 Component * GameObject::GetComponent(Component::ComponentType type)
 {
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+	if (active)
 	{
-		if ((*it)->GetType() == type)
+		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 		{
-			return *it;
+			if ((*it)->GetType() == type)
+			{
+				return *it;
+			}
 		}
 	}
 
 	return nullptr;
+}
+
+bool & GameObject::GetActive()
+{
+	return active;
+}
+
+bool GameObject::IsEnabled() const
+{
+	return active;
 }
 
 Component * GameObject::AddComponent(Component::ComponentType type)

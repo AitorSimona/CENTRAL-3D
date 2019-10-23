@@ -31,7 +31,7 @@ void Component::Disable()
 	active = false;
 }
 
-bool Component::IsEnabled()
+bool Component::IsEnabled() const
 {
 	return active;
 }

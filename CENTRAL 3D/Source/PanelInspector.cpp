@@ -28,6 +28,7 @@ bool PanelInspector::Draw()
 	{
 		GameObject* Selected = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects());
 
+
 		if(Startup)
 		ImGui::SetNextItemOpen(true);
 
