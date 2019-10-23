@@ -6,6 +6,9 @@
 #include "ImporterScene.h"
 #include "ModuleSceneManager.h"
 
+#include "GameObject.h"
+#include "ComponentMaterial.h"
+
 #include "Assimp/include/cimport.h"
 
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
@@ -86,7 +89,16 @@ bool ModuleImporter::LoadFromPath(const char* path)
 		else if (DroppedFile_path.find(".dds") != std::string::npos || DroppedFile_path.find(".png") != std::string::npos)
 		{
 			// MYTODO: We are not checking if the texture was already loaded, duplicating data
-			App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(path));
+
+			// --- Get Selected Game Object's Material ---
+			ComponentMaterial* mat = (ComponentMaterial*) App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetComponent(Component::ComponentType::Material);
+
+			// --- If there is a material, assign diffuse texture ---
+			if (mat)
+			{
+				App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(path, mat->Texture_width, mat->Texture_height ));
+
+			}
 		}
 	}
 	else

@@ -13,8 +13,6 @@
 
 #include "mmgr/mmgr.h"
 
-#define CHECKERS_HEIGHT 32
-#define CHECKERS_WIDTH 32
 
 ModuleTextures::ModuleTextures(bool start_enabled) : Module(start_enabled)
 {
@@ -151,11 +149,14 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
-inline void ModuleTextures::CreateTextureFromImage(uint &TextureID) const
+inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height) const
 {
 	// --- Attention!! If the image is flipped, we flip it back --- 
 	ILinfo imageInfo;
 	iluGetImageInfo(&imageInfo);
+
+	width = imageInfo.Width;
+	height = imageInfo.Height;
 
 	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 		iluFlipImage();
@@ -170,7 +171,7 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID) const
 		LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
 }
 
-uint ModuleTextures::CreateTextureFromFile(const char* path) const
+uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &height) const
 {
 	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromImage ---
 
@@ -191,7 +192,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path) const
 
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path))
-		CreateTextureFromImage(TextureID);
+		CreateTextureFromImage(TextureID, width,height);
 	else
 		LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
 

@@ -35,7 +35,10 @@ bool ModuleSceneManager::Start()
 {
 	CheckersMaterial = CreateEmptyMaterial();
 	CheckersMaterial->TextureID = App->textures->GetCheckerTextureID();
-
+	CheckersMaterial->checkers = true;
+	CheckersMaterial->Texture_path = "NaN";
+	CheckersMaterial->Texture_width = CHECKERS_WIDTH;
+	CheckersMaterial->Texture_height = CHECKERS_HEIGHT;
 
 	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f, true);
 	GameObject* sphere = CreateSphere(1.0f,25,25, true);

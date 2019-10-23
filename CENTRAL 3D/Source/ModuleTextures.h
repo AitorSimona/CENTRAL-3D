@@ -4,6 +4,9 @@
 #include "Module.h"
 #include "Globals.h"
 
+#define CHECKERS_HEIGHT 32
+#define CHECKERS_WIDTH 32
+
 class ModuleTextures : public Module
 {
 public:
@@ -16,7 +19,7 @@ public:
 	bool CleanUp();
 
 	uint LoadCheckImage() const;
-	uint CreateTextureFromFile(const char* path) const;
+	uint CreateTextureFromFile(const char* path, uint &width, uint &height) const;
 	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
 
 	uint GetCheckerTextureID() const;
@@ -28,7 +31,7 @@ private:
 	// --- Called by CreateTextureFromPixels to split code ---
 	inline void SetTextureParameters(bool CheckersTexture = false) const;
 
-	inline void CreateTextureFromImage(uint & TextureID) const;
+	inline void CreateTextureFromImage(uint & TextureID, uint &width, uint &height) const;
 };
 
 #endif

@@ -172,6 +172,14 @@ bool PanelInspector::Draw()
 
 			if (ImGui::TreeNode("Material"))
 			{
+				std::string Path = "Path: ";
+				Path.append(material->Texture_path);
+
+				ImGui::Text(Path.data());
+
+				ImGui::Text(std::to_string(material->Texture_width).data());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(material->Texture_height).data());
 
 				ImGui::TreePop();
 			}
