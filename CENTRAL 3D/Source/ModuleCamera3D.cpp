@@ -52,8 +52,8 @@ update_status ModuleCamera3D::Update(float dt)
 
 	if (!App->gui->IsKeyboardCaptured())
 	{
-		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
-		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
+		/*if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;*/
 
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
 		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
@@ -110,6 +110,14 @@ update_status ModuleCamera3D::Update(float dt)
 		Position = Reference + Z * length(Position);
 	}
 
+	// --- Frame object ---
+	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+	{
+		vec3 ref(0, 0, 0);
+		Look(Position, vec3(0, 0, 0), true);
+		vec3 distance = ref - Position;
+		Position += distance / 2; // this 2 should be the radius of the object (enclosed in a sphere?)
+	}
 
 	// Mouse motion ----------------
 
