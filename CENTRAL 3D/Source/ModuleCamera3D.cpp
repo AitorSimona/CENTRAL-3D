@@ -4,6 +4,9 @@
 #include "ModuleGui.h"
 #include "ModuleInput.h"
 
+#include "ModuleSceneManager.h"
+#include "GameObject.h"
+#include "ComponentMesh.h"
 
 #include "mmgr/mmgr.h"
 
@@ -17,6 +20,7 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 
 	Position = vec3(0.0f, 0.0f, 5.0f);
 	Reference = vec3(0.0f, 0.0f, 0.0f);
+
 }
 
 ModuleCamera3D::~ModuleCamera3D()
@@ -35,6 +39,7 @@ bool ModuleCamera3D::Start()
 bool ModuleCamera3D::CleanUp()
 {
 	LOG("Cleaning camera");
+
 
 	return true;
 }
@@ -111,10 +116,18 @@ update_status ModuleCamera3D::Update(float dt)
 	// --- Frame object ---
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 	{
-		vec3 ref(0, 0, 0);
-		Look(Position, vec3(0, 0, 0), true);
-		vec3 distance = ref - Position;
-		Position += distance / 2; // this 2 should be the radius of the object (enclosed in a sphere?)
+		Reference.x = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().x;
+		Reference.y = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().y;
+		Reference.z = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().z;
+
+		ComponentMesh* mesh = (ComponentMesh*)App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetComponent(Component::ComponentType::Mesh);
+
+		Sphere s(App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition(), 1);
+		s.Enclose(mesh->Vertices, mesh->VerticesSize);
+		Look(Position, Reference, true);
+		vec3 distance = Reference - Position;
+		vec3 Movement = -Z * 2*s.r;
+		Position = Reference - Movement;
 	}
 
 	// Mouse motion ----------------
