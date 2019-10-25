@@ -91,7 +91,7 @@ bool ModuleImporter::LoadFromPath(const char* path)
 			// MYTODO: We are not checking if the texture was already loaded, duplicating data
 
 			// --- Get Selected Game Object's Material ---
-			ComponentMaterial* mat = (ComponentMaterial*) App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetComponent(Component::ComponentType::Material);
+			ComponentMaterial* mat = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetComponent<ComponentMaterial>(Component::ComponentType::Material);;
 
 			// --- If there is a material, assign diffuse texture ---
 			if (mat)

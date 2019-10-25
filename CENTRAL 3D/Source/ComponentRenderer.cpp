@@ -20,7 +20,7 @@ ComponentRenderer::~ComponentRenderer()
 
 void ComponentRenderer::Draw()
 {
-	ComponentMesh * mesh = (ComponentMesh*)this->GO->GetComponent(Component::ComponentType::Mesh);
+	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
 	if (mesh && mesh->IsEnabled())
 	{
@@ -40,7 +40,7 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 
 	// --- If the mesh has a material associated, get it ---
-	ComponentMaterial* mat = (ComponentMaterial*)mesh.GetContainerGameObject()->GetComponent(Component::ComponentType::Material);
+	ComponentMaterial* mat = mesh.GetContainerGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 
 	if (mat && mat->IsEnabled())
 	{

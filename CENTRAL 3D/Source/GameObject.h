@@ -21,12 +21,30 @@ public:
 	// --- Getters ---
 	uint			GetUID() const;
 	std::string		GetName() const;
-	Component*		GetComponent(Component::ComponentType type);
+
 	bool&			GetActive();
 	bool			IsEnabled() const;
 
-	// --- Utilities ---
+	// --- Components ---
 	Component*		AddComponent(Component::ComponentType type);
+
+	template<typename TComponent>
+	TComponent*	GetComponent(Component::ComponentType type)
+	{
+		//Component::ComponentType type = TComponent::GetType();
+
+		if (active)
+		{
+			for (uint i = 0; i < components.size(); ++i)
+			{
+				if (components[i]->GetType() == type)
+				{
+					return ((TComponent*)(components[i]));
+				}
+			}
+		}
+		return nullptr;
+	}
 
 	// --- Setters ---
 	void			SetName(const char* name);

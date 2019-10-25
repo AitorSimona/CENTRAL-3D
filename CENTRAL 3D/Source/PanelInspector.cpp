@@ -51,7 +51,7 @@ bool PanelInspector::Draw()
 
 		if (ImGui::TreeNode("Transform"))
 		{
-			ComponentTransform* transform = (ComponentTransform*)Selected->GetComponent(Component::ComponentType::Transform);
+			ComponentTransform* transform = Selected->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
 			// --- Transform Position ---
 			ImGui::Text("Position  ");
@@ -146,9 +146,9 @@ bool PanelInspector::Draw()
 		ImGui::Separator();
 
 
-		if (Selected->GetComponent(Component::ComponentType::Mesh))
+		if (Selected->GetComponent<ComponentMesh>(Component::ComponentType::Mesh))
 		{
-			ComponentMesh* mesh = (ComponentMesh*)Selected->GetComponent(Component::ComponentType::Mesh);
+			ComponentMesh* mesh = Selected->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
 			ImGui::Checkbox("MeshActive", &mesh->GetActive(),false);
 			ImGui::SameLine();
@@ -167,9 +167,9 @@ bool PanelInspector::Draw()
 		}
 		ImGui::Separator();
 
-		if (Selected->GetComponent(Component::ComponentType::Renderer))
+		if (Selected->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer))
 		{
-			ComponentRenderer* renderer = (ComponentRenderer*)Selected->GetComponent(Component::ComponentType::Renderer);
+			ComponentRenderer* renderer = Selected->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
 			ImGui::Checkbox("RenActive", &renderer->GetActive(), false);
 			ImGui::SameLine();
@@ -191,9 +191,9 @@ bool PanelInspector::Draw()
 		}
 		ImGui::Separator();
 
-		if (Selected->GetComponent(Component::ComponentType::Material))
+		if (Selected->GetComponent<ComponentMaterial>(Component::ComponentType::Material))
 		{
-			ComponentMaterial* material = (ComponentMaterial*)Selected->GetComponent(Component::ComponentType::Material);
+			ComponentMaterial* material = Selected->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 
 			ImGui::Checkbox("MatActive", &material->GetActive(), false);
 			ImGui::SameLine();

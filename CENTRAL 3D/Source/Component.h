@@ -26,7 +26,7 @@ public:
 	virtual void Disable();
 
 	// --- Getters ---
-	Component::ComponentType GetType();
+	ComponentType GetType() const;
 	GameObject* GetContainerGameObject();
 	bool& GetActive();
 	bool IsEnabled() const;
@@ -34,7 +34,7 @@ public:
 protected:
 	bool active = false;
 	GameObject* GO = nullptr;
-	Component::ComponentType type;
+	ComponentType type = ComponentType::Unknown;
 };
 
 #endif

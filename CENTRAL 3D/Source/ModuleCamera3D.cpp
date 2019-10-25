@@ -244,13 +244,13 @@ float* ModuleCamera3D::GetViewMatrix()
 
 void ModuleCamera3D::FrameObject(GameObject& GO)
 {
-	ComponentTransform* transform = (ComponentTransform*)GO.GetComponent(Component::ComponentType::Transform);
+	ComponentTransform* transform = GO.GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
 	Reference.x = transform->GetPosition().x;
 	Reference.y = transform->GetPosition().y;
 	Reference.z = transform->GetPosition().z;
 
-	ComponentMesh* mesh = (ComponentMesh*)GO.GetComponent(Component::ComponentType::Mesh);
+	ComponentMesh* mesh = GO.GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
 	Sphere s(transform->GetPosition(), 1);
 	s.Enclose(mesh->Vertices, mesh->VerticesSize);

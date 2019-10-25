@@ -41,7 +41,7 @@ bool & Component::GetActive()
 	return active;
 }
 
-Component::ComponentType Component::GetType()
+Component::ComponentType Component::GetType() const
 {
 	return type;
 }

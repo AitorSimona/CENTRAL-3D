@@ -34,21 +34,21 @@ GameObject::~GameObject()
 	}
 }
 
-Component * GameObject::GetComponent(Component::ComponentType type)
-{
-	if (active)
-	{
-		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-		{
-			if ((*it)->GetType() == type)
-			{
-				return *it;
-			}
-		}
-	}
-
-	return nullptr;
-}
+//Component * GameObject::GetComponent(Component::ComponentType type)
+//{
+//	if (active)
+//	{
+//		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+//		{
+//			if ((*it)->GetType() == type)
+//			{
+//				return *it;
+//			}
+//		}
+//	}
+//
+//	return nullptr;
+//}
 
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
@@ -58,8 +58,8 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 
 	// --- Check if there is already a component of the type given ---
 
-	if (GetComponent(type) == nullptr)
-	{
+	/*if (this->GetComponent<type>() == nullptr)
+	{*/
 
 		switch (type)
 		{
@@ -77,14 +77,14 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		if (new_component)
 			components.push_back(new_component);
 
-	}
-	else
-	{
-		// --- If we find a component of the same type, tell the user ---
+	//}
+	//else
+	//{
+	//	// --- If we find a component of the same type, tell the user ---
 
-		LOG("|[error]: The current Game Object already has a component of the type given");
+	//	LOG("|[error]: The current Game Object already has a component of the type given");
 
-	}
+	//}
 
 	return new_component;
 }

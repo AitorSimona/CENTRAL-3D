@@ -46,9 +46,9 @@ bool ModuleSceneManager::Start()
 	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
 	GameObject* sphere = CreateSphere(1.0f,25,25);
 
-	ComponentTransform* Ctransform = (ComponentTransform*)cube->GetComponent(Component::ComponentType::Transform);
+	ComponentTransform* Ctransform = cube->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	Ctransform->SetPosition(-3.5f, 0.5f, 0.0f);
-	ComponentTransform* Stransform = (ComponentTransform*)sphere->GetComponent(Component::ComponentType::Transform);
+	ComponentTransform* Stransform = sphere->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	Stransform->SetPosition(-6.0f, 0.5f, 0.5f);
 
 	return true;
@@ -102,7 +102,7 @@ void ModuleSceneManager::Draw() const
 	// --- Draw Game Object Meshes ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
-		ComponentTransform* transform = (ComponentTransform*)game_objects[i]->GetComponent(Component::ComponentType::Transform);
+		ComponentTransform* transform = game_objects[i]->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
 		glPushMatrix();
 		glMultMatrixf(transform->GetLocalTransform().ptr());
@@ -110,7 +110,7 @@ void ModuleSceneManager::Draw() const
 		Materials;
 
 		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = (ComponentRenderer*)game_objects[i]->GetComponent(Component::ComponentType::Renderer);
+		ComponentRenderer* Renderer = game_objects[i]->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
 		// --- If Found, draw the mesh ---
 		if (Renderer && Renderer->IsEnabled())
@@ -150,7 +150,7 @@ void ModuleSceneManager::SetSelectedGameObject(uint index)
 
 void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 {
-	ComponentMaterial* Material = (ComponentMaterial*)game_objects[SelectedGameObject]->GetComponent(Component::ComponentType::Material);
+	ComponentMaterial* Material = game_objects[SelectedGameObject]->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 
 	if (Material)
 	{
