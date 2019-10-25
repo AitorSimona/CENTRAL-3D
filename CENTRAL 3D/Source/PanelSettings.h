@@ -23,7 +23,6 @@ private:
 	void WindowNode() const;
 	void InputNode() const;
 	void RendererNode() const;
-	void TexturesNode() const;
 	void HardwareNode() const;
 	void LibrariesNode() const;
 

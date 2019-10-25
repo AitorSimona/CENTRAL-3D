@@ -186,7 +186,7 @@ bool ModuleRenderer3D::CleanUp()
 
 void ModuleRenderer3D::UpdateGLCapabilities()
 {
-		if (!depth_test)
+		if (!depth)
 			glDisable(GL_DEPTH_TEST);
 		else 
 			glEnable(GL_DEPTH_TEST);

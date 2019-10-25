@@ -52,11 +52,6 @@ bool PanelSettings::Draw()
 			RendererNode();
 			ImGui::Separator();
 		}
-		if (ImGui::CollapsingHeader("Textures"))
-		{
-			TexturesNode();
-			ImGui::Separator();
-		}
 		if (ImGui::CollapsingHeader("Hardware"))
 		{
 			HardwareNode();
@@ -97,14 +92,6 @@ void PanelSettings::ApplicationNode() const
 	int maxFramerate = App->GetMaxFramerate();
 	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, App->window->GetDisplayRefreshRate()))
 		App->SetMaxFramerate(maxFramerate);
-
-	ImGui::SameLine();
-	// --- VSync ---
-	bool vsync = App->renderer3D->GetVSync();
-	if (ImGui::Checkbox("Use VSync", &vsync))
-	{
-		App->renderer3D->SetVSync(vsync);
-	}
 
 	ImGui::Separator();
 
@@ -232,11 +219,20 @@ void PanelSettings::InputNode() const
 
 void PanelSettings::RendererNode() const
 {
+	// --- VSync ---
+	bool vsync = App->renderer3D->GetVSync();
+	if (ImGui::Checkbox("VSync", &vsync))
+	{
+		App->renderer3D->SetVSync(vsync);
+	}
+	if (ImGui::Checkbox("DEPTH", &App->renderer3D->depth))
+	{ }
+
+	if (ImGui::Checkbox("FACE CULLING", &App->renderer3D->cull_face))
+	{ }
+
 }
 
-void PanelSettings::TexturesNode() const
-{
-}
 
 void PanelSettings::HardwareNode() const
 {

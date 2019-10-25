@@ -37,7 +37,7 @@ public:
 
 	// --- Flags ---
 	bool vsync = true;
-	bool depth_test = true;
+	bool depth = true;
 	bool cull_face = true;
 	bool lighting = true;
 	bool color_material = true;

@@ -28,8 +28,6 @@ bool PanelScene::Draw()
 		{
 			if (ImGui::BeginMenu("DebugDraw"))
 			{
-				ImGui::MenuItem("DEPTH",NULL,&App->renderer3D->depth_test);	
-				ImGui::MenuItem("FACE CULLING", NULL, &App->renderer3D->cull_face);
 				ImGui::MenuItem("LIGHTING", NULL, &App->renderer3D->lighting);
 				ImGui::MenuItem("COLOR MATERIAL", NULL, &App->renderer3D->color_material);
 				ImGui::MenuItem("WIREFRAME", NULL, &App->renderer3D->wireframe);
