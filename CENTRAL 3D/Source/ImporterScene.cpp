@@ -11,6 +11,7 @@
 #include "ComponentMesh.h"
 #include "ComponentRenderer.h"
 #include "ModuleSceneManager.h"
+#include "ModuleCamera3D.h"
 #include "GameObject.h"
 
 #include "ImporterMesh.h"
@@ -90,6 +91,9 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 					}
 
 				}
+
+				// --- When the mesh is loaded, frame it with the camera ---
+				App->camera->FrameObject(*new_object);
 
 			}
 
