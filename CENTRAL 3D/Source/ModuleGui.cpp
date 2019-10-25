@@ -171,11 +171,6 @@ update_status ModuleGui::Update(float dt)
 					panelConsole->OnOff();
 				}
 
-				if (ImGui::MenuItem("Configuration"))
-				{
-					panelSettings->OnOff();
-				}
-
 				if (ImGui::MenuItem("Inspector"))
 				{
 					panelInspector->OnOff();
@@ -194,6 +189,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Toolbar"))
 				{
 					panelToolbar->OnOff();
+				}
+
+				if (ImGui::MenuItem("Settings"))
+				{
+					panelSettings->OnOff();
 				}
 
 				ImGui::EndMenu();

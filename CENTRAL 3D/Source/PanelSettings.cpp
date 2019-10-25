@@ -1,11 +1,16 @@
 #include <vector>
 #include "PanelSettings.h"
 #include "Application.h"
-#include "Imgui/imgui.h"
+#include "ModuleGui.h"
 #include "ModuleHardware.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
+
+
+#include "Imgui/imgui.h"
+#include "OpenGL.h"
+#include "DevIL/include/il.h"
 
 #include "mmgr/mmgr.h"
 
@@ -42,9 +47,24 @@ bool PanelSettings::Draw()
 			InputNode();
 			ImGui::Separator();
 		}
+		if (ImGui::CollapsingHeader("Renderer"))
+		{
+			RendererNode();
+			ImGui::Separator();
+		}
+		if (ImGui::CollapsingHeader("Textures"))
+		{
+			TexturesNode();
+			ImGui::Separator();
+		}
 		if (ImGui::CollapsingHeader("Hardware"))
 		{
 			HardwareNode();
+			ImGui::Separator();
+		}
+		if (ImGui::CollapsingHeader("Libraries"))
+		{
+			LibrariesNode();
 			ImGui::Separator();
 		}
 	}
@@ -210,6 +230,14 @@ void PanelSettings::InputNode() const
 	ImGui::Separator();
 }
 
+void PanelSettings::RendererNode() const
+{
+}
+
+void PanelSettings::TexturesNode() const
+{
+}
+
 void PanelSettings::HardwareNode() const
 {
 	hw_info hardware_info = App->hardware->GetInfo();
@@ -278,6 +306,43 @@ void PanelSettings::HardwareNode() const
 
 	ImGui::Text("VRAM Usage"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_usage);
+}
+
+void PanelSettings::LibrariesNode() const
+{
+	// --- Libraries ---
+	ImGui::Spacing();
+
+	SDL_version version;
+	SDL_GetVersion(&version);
+	if (ImGui::Button("SDL")) { App->gui->RequestBrowser("https://www.libsdl.org/"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i.%i.%i", version.major, version.minor, version.patch);
+
+	if (ImGui::Button("OpenGL")) { App->gui->RequestBrowser("https://www.opengl.org/"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glGetString(GL_VERSION));
+
+	if (ImGui::Button("Glew")) { App->gui->RequestBrowser("http://glew.sourceforge.net/"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glewGetString(GLEW_VERSION));
+
+	if (ImGui::Button("ImGui")) { App->gui->RequestBrowser("https://github.com/ocornut/imgui"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", ImGui::GetVersion());
+
+	if (ImGui::Button("ImGuizmo")) { App->gui->RequestBrowser("https://github.com/CedricGuillemet/ImGuizmo"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "1.0");
+
+	if (ImGui::Button("MathGeoLib")) { App->gui->RequestBrowser("https://github.com/juj/MathGeoLib"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "1.5");
+
+	if (ImGui::Button("JSON For Modern C++")) { App->gui->RequestBrowser("https://github.com/nlohmann/json"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "3.7.0");
+
+	if (ImGui::Button("DevIL")) { App->gui->RequestBrowser("http://openil.sourceforge.net/"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", IL_VERSION);
+
+	if (ImGui::Button("Par shapes")) { App->gui->RequestBrowser("https://github.com/prideout/par/blob/master/par_shapes.h"); }
+
+	if (ImGui::Button("MMGR")) { App->gui->RequestBrowser("http://www.paulnettle.com/"); }
+
 }
 
 void PanelSettings::AddFPS(float fps, float ms)

@@ -22,7 +22,10 @@ private:
 	void ApplicationNode() const;
 	void WindowNode() const;
 	void InputNode() const;
+	void RendererNode() const;
+	void TexturesNode() const;
 	void HardwareNode() const;
+	void LibrariesNode() const;
 
 private:
 	std::vector<float> FPS_Tracker;

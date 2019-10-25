@@ -2,10 +2,6 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "Imgui/imgui.h"
-#include "SDL/include/SDL.h"
-#include "DevIL/include/il.h"
-
-#include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 
@@ -28,43 +24,15 @@ bool PanelAbout::Draw()
 		// --- Introduction ---
 		ImGui::Separator();
 		ImGui::Text("CENTRAL 3D");
-		ImGui::Text("Version 0 ");
+		ImGui::SameLine();
+		ImGui::Text("Version 0.05");
+		ImGui::SameLine();
+		if (ImGui::Button("GitHub")) { App->gui->RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D"); }
 		ImGui::Text("Initial steps into game engine development");
-		ImGui::Text("By Aitor Simona");
+		ImGui::Text("By: ");
+		ImGui::SameLine();
+		if (ImGui::Button("Aitor Simona")) { App->gui->RequestBrowser("https://github.com/AitorSimona"); }
 
-		// --- Libraries ---
-		ImGui::Text("Libraries");
-		ImGui::Spacing();
-
-		SDL_version version;
-		SDL_GetVersion(&version);
-		if (ImGui::Button("SDL")) { App->gui->RequestBrowser("https://www.libsdl.org/"); }
-		ImGui::SameLine(); ImGui::TextWrapped("%i.%i.%i", version.major, version.minor, version.patch);
-
-		if (ImGui::Button("OpenGL")) { App->gui->RequestBrowser("https://www.opengl.org/"); }
-		ImGui::SameLine(); ImGui::TextWrapped("%s", glGetString(GL_VERSION));
-
-		if (ImGui::Button("Glew")) { App->gui->RequestBrowser("http://glew.sourceforge.net/"); }
-		ImGui::SameLine(); ImGui::TextWrapped("%s", glewGetString(GLEW_VERSION));
-
-		if (ImGui::Button("ImGui")) { App->gui->RequestBrowser("https://github.com/ocornut/imgui"); }
-		ImGui::SameLine(); ImGui::TextWrapped("%s", ImGui::GetVersion());
-
-		if (ImGui::Button("ImGuizmo")) { App->gui->RequestBrowser("https://github.com/CedricGuillemet/ImGuizmo"); }
-		ImGui::SameLine(); ImGui::TextWrapped("1.0");
-
-		if (ImGui::Button("MathGeoLib")) { App->gui->RequestBrowser("https://github.com/juj/MathGeoLib"); }
-		ImGui::SameLine(); ImGui::TextWrapped("1.5");
-
-		if (ImGui::Button("JSON For Modern C++")) { App->gui->RequestBrowser("https://github.com/nlohmann/json"); }
-		ImGui::SameLine(); ImGui::TextWrapped("3.7.0");
-
-		if (ImGui::Button("DevIL")) { App->gui->RequestBrowser("http://openil.sourceforge.net/"); }
-		ImGui::SameLine(); ImGui::TextWrapped("%i", IL_VERSION);
-
-		if (ImGui::Button("Par shapes")) { App->gui->RequestBrowser("https://github.com/prideout/par/blob/master/par_shapes.h"); }
-
-		if (ImGui::Button("MMGR")) { App->gui->RequestBrowser("http://www.paulnettle.com/"); }
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::Spacing();
