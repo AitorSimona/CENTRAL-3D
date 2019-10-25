@@ -42,8 +42,8 @@ bool ModuleSceneManager::Start()
 	CheckersMaterial->Texture_width = CHECKERS_WIDTH;
 	CheckersMaterial->Texture_height = CHECKERS_HEIGHT;
 
-	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f, true);
-	GameObject* sphere = CreateSphere(1.0f,25,25, true);
+	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
+	GameObject* sphere = CreateSphere(1.0f,25,25);
 
 	cube->SetPosition(-3.5f, 0.5f, 0.0f);
 	sphere->SetPosition(-6.0f, 0.5f, 0.5f);
@@ -182,7 +182,7 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 	return Material;
 }
 
-GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, bool checkers)
+GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
 {
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
 	// does not have uvs / normals 
@@ -251,7 +251,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 		// --- Indices ---
 
 		new_mesh->Indices = new unsigned[new_mesh->IndicesSize];
-		for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
+		for (uint i = 0; i < new_mesh->IndicesSize; ++i)
 		{
 			new_mesh->Indices[i] = mesh->triangles[i];
 		}
@@ -267,7 +267,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 			new_mesh->NormalsSize = mesh->npoints;
 			new_mesh->Normals = new float3[new_mesh->NormalsSize];
 
-			for (uint i = 0; i < mesh->npoints; ++i)
+			for (uint i = 0; i < new_mesh->NormalsSize; ++i)
 			{
 				new_mesh->Normals[i].x = mesh->normals[3*i];
 				new_mesh->Normals[i].y = mesh->normals[(3*i) + 1];
@@ -303,7 +303,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	return new_object;
 }
 
-GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, bool checkers)
+GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
 {
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
@@ -341,7 +341,7 @@ GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slac
 		// --- Indices ---
 
 		new_mesh->Indices = new unsigned[new_mesh->IndicesSize];
-		for (uint i = 0; i < uint(mesh->ntriangles) * 3; ++i)
+		for (uint i = 0; i < new_mesh->IndicesSize; ++i)
 		{
 			new_mesh->Indices[i] = mesh->triangles[i];
 		}
@@ -357,7 +357,7 @@ GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slac
 			new_mesh->NormalsSize = mesh->npoints;
 			new_mesh->Normals = new float3[new_mesh->NormalsSize];
 
-			for (uint i = 0; i < mesh->npoints; ++i)
+			for (uint i = 0; i < new_mesh->NormalsSize; ++i)
 			{
 				new_mesh->Normals[i].x = mesh->normals[3 * i];
 				new_mesh->Normals[i].y = mesh->normals[(3 * i) + 1];
@@ -367,9 +367,6 @@ GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slac
 		}
 
 		// --- Texture Coords ---
-
-		/*if (checkers)
-			new_object->SetMaterial(CheckersMaterial);*/
 
 		new_mesh->TexCoordsSize = new_mesh->VerticesSize * 2;
 		new_mesh->TexCoords = new float[new_mesh->TexCoordsSize];

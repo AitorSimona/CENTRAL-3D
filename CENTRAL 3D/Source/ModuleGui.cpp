@@ -3,6 +3,7 @@
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleSceneManager.h"
 
 #include "Panel.h"
 #include "PanelSettings.h"
@@ -123,6 +124,7 @@ update_status ModuleGui::Update(float dt)
 				}
 				ImGui::EndMenu();
 			}
+
 			if (ImGui::BeginMenu("Edit"))
 			{
 				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
@@ -131,6 +133,25 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
 				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
 				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("GameObject"))
+			{
+				if (ImGui::BeginMenu("3D Object"))
+				{
+
+					if (ImGui::MenuItem("Cube"))
+					{
+						App->scene_manager->CreateCube(1, 1, 1);
+					}
+					if (ImGui::MenuItem("Sphere"))
+					{
+						App->scene_manager->CreateSphere(1.0f, 25, 25);
+					}
+
+					ImGui::EndMenu();
+				}
 				ImGui::EndMenu();
 			}
 
