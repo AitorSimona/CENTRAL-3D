@@ -70,11 +70,30 @@ update_status ModuleCamera3D::Update(float dt)
 	Position += newPos;
 	Reference += newPos;
 
+	// --- Camera Pan ---
+	if (App->input->GetMouseButton(2) == KEY_REPEAT)
+	{
+		int dx = App->input->GetMouseXMotion();
+		int dy = App->input->GetMouseYMotion();
+
+		if (dx != 0)
+		{
+			Position -= 0.25f*dt*X * dx*Length(float3(Position.x, Position.y, Position.z));
+			Reference -= 0.25f*dt*X * dx*Length(float3(Position.x, Position.y, Position.z));
+		}
+
+		if (dy != 0)
+		{
+			Position += 0.25f*dt*Y * dy*Length(float3(Position.x, Position.y, Position.z));
+			Reference += 0.25f*dt*Y * dy*Length(float3(Position.x, Position.y, Position.z));
+		}
+	}
+
 	// --- Zoom ---
 	if (!App->gui->IsMouseCaptured() && abs(App->input->GetMouseWheel()) > 0)
 	{
 		int mouse_wheel = App->input->GetMouseWheel();
-		vec3 Movement = -Z*mouse_wheel*speed*10.0f;
+		vec3 Movement = -Z*mouse_wheel*speed*Position.y;
 		Position += Movement;
 	}
 
@@ -118,17 +137,6 @@ update_status ModuleCamera3D::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 	{
 		FrameObject(*App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects()));
-		//Reference.x = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().x;
-		//Reference.y = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().y;
-		//Reference.z = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().z;
-
-		//ComponentMesh* mesh = (ComponentMesh*)App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetComponent(Component::ComponentType::Mesh);
-
-		//Sphere s(App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition(), 1);
-		//s.Enclose(mesh->Vertices, mesh->VerticesSize);
-		//Look(Position, Reference, true);
-		//vec3 Movement = -Z * (2*s.r - Length(float3(Reference.x, Reference.y, Reference.z)));
-		//Position = Reference - Movement;
 	}
 
 	// Mouse motion ----------------
