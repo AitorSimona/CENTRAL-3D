@@ -5,6 +5,7 @@
 #include "ModuleSceneManager.h"
 
 #include "GameObject.h"
+#include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentRenderer.h"
@@ -50,12 +51,13 @@ bool PanelInspector::Draw()
 
 		if (ImGui::TreeNode("Transform"))
 		{
+			ComponentTransform* transform = (ComponentTransform*)Selected->GetComponent(Component::ComponentType::Transform);
 
 			// --- Transform Position ---
 			ImGui::Text("Position  ");
 			ImGui::SameLine();
 
-			float3 position = Selected->GetPosition();
+			float3 position = transform->GetPosition();
 			ImGui::Text("X");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
@@ -82,7 +84,7 @@ bool PanelInspector::Draw()
 			ImGui::Text("Rotation  ");
 			ImGui::SameLine();
 
-			float3 rotation = Selected->GetRotation();
+			float3 rotation = transform->GetRotation();
 			ImGui::Text("X");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
@@ -109,7 +111,7 @@ bool PanelInspector::Draw()
 			ImGui::Text("Scale     ");
 			ImGui::SameLine();
 
-			float3 scale = Selected->GetScale();
+			float3 scale = transform->GetScale();
 			ImGui::Text("X");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
@@ -134,8 +136,8 @@ bool PanelInspector::Draw()
 
 
 			// --- Transform Set ---
-			Selected->SetPosition(position.x, position.y, position.z);
-			Selected->Scale(scale.x, scale.y, scale.z);
+			transform->SetPosition(position.x, position.y, position.z);
+			transform->Scale(scale.x, scale.y, scale.z);
 
 
 			ImGui::TreePop();

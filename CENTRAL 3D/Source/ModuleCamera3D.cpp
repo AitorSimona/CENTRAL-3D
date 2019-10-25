@@ -6,6 +6,7 @@
 
 #include "GameObject.h"
 #include "ComponentMesh.h"
+#include "ComponentTransform.h"
 
 #include "ModuleSceneManager.h"
 
@@ -243,13 +244,15 @@ float* ModuleCamera3D::GetViewMatrix()
 
 void ModuleCamera3D::FrameObject(GameObject& GO)
 {
-	Reference.x = GO.GetPosition().x;
-	Reference.y = GO.GetPosition().y;
-	Reference.z = GO.GetPosition().z;
+	ComponentTransform* transform = (ComponentTransform*)GO.GetComponent(Component::ComponentType::Transform);
+
+	Reference.x = transform->GetPosition().x;
+	Reference.y = transform->GetPosition().y;
+	Reference.z = transform->GetPosition().z;
 
 	ComponentMesh* mesh = (ComponentMesh*)GO.GetComponent(Component::ComponentType::Mesh);
 
-	Sphere s(GO.GetPosition(), 1);
+	Sphere s(transform->GetPosition(), 1);
 	s.Enclose(mesh->Vertices, mesh->VerticesSize);
 	Look(Position, Reference, true);
 	vec3 Movement = -Z * (2 * s.r - Length(float3(Reference.x, Reference.y, Reference.z)));

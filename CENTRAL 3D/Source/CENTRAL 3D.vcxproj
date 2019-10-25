@@ -78,6 +78,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentRenderer.h" />
+    <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="glew\include\GL\eglew.h" />
     <ClInclude Include="glew\include\GL\glew.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentRenderer.cpp" />
+    <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="Globals.cpp" />

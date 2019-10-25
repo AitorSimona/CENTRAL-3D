@@ -2,6 +2,7 @@
 #include "OpenGL.h"
 #include "Application.h"
 #include "GameObject.h"
+#include "ComponentTransform.h"
 #include "ComponentRenderer.h"
 #include "ComponentMaterial.h"
 #include "ComponentMesh.h"
@@ -45,8 +46,10 @@ bool ModuleSceneManager::Start()
 	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
 	GameObject* sphere = CreateSphere(1.0f,25,25);
 
-	cube->SetPosition(-3.5f, 0.5f, 0.0f);
-	sphere->SetPosition(-6.0f, 0.5f, 0.5f);
+	ComponentTransform* Ctransform = (ComponentTransform*)cube->GetComponent(Component::ComponentType::Transform);
+	Ctransform->SetPosition(-3.5f, 0.5f, 0.0f);
+	ComponentTransform* Stransform = (ComponentTransform*)sphere->GetComponent(Component::ComponentType::Transform);
+	Stransform->SetPosition(-6.0f, 0.5f, 0.5f);
 
 	return true;
 }
@@ -99,8 +102,10 @@ void ModuleSceneManager::Draw() const
 	// --- Draw Game Object Meshes ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
+		ComponentTransform* transform = (ComponentTransform*)game_objects[i]->GetComponent(Component::ComponentType::Transform);
+
 		glPushMatrix();
-		glMultMatrixf(game_objects[i]->GetLocalTransform().ptr());
+		glMultMatrixf(transform->GetLocalTransform().ptr());
 
 		Materials;
 
@@ -165,6 +170,7 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
 	game_objects.push_back(new_object);
+	new_object->AddComponent(Component::ComponentType::Transform);
 
 	// --- Assign Default Material ---
 	new_object->SetMaterial(DefaultMaterial);

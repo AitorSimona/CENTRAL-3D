@@ -10,6 +10,7 @@ class Component
 public:
 	enum class ComponentType
 	{
+		Transform,
 		Mesh,
 		Renderer,
 		Material,

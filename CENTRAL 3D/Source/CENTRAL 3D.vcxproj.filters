@@ -417,6 +417,9 @@
     <ClInclude Include="ImporterMaterial.h">
       <Filter>Sources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentTransform.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -652,6 +655,9 @@
     </ClCompile>
     <ClCompile Include="ImporterMaterial.cpp">
       <Filter>Sources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentTransform.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

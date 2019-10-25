@@ -21,10 +21,6 @@ public:
 	// --- Getters ---
 	uint			GetUID() const;
 	std::string		GetName() const;
-	float3			GetPosition();
-	float3			GetScale();
-	float3			GetRotation();
-	float4x4        GetLocalTransform();
 	Component*		GetComponent(Component::ComponentType type);
 	bool&			GetActive();
 	bool			IsEnabled() const;
@@ -34,16 +30,11 @@ public:
 
 	// --- Setters ---
 	void			SetName(const char* name);
-	void			SetPosition(float x, float y, float z);
-	void			SetRotationAxisAngle(const float3 &rot_axis, float degrees_angle);
-	void			Scale(float x, float y, float z);
-	void			SetLocalTransform(float4x4 new_transform);
 	void			SetMaterial(ComponentMaterial* material);
 
 private:
 	// Unique Identifier
 	uint UID = 0;
-	float4x4 Local_transform = math::float4x4::identity;
 	std::string name;
 	std::vector<Component*> components;
 
