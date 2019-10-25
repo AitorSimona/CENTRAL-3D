@@ -104,7 +104,7 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 
 	}
 	else
-		LOG("|[error]: Error loading FBX %s", File_path);
+		LOG("|[error]: Error loading FBX %s", &File_path);
 
 	return true;
 }
