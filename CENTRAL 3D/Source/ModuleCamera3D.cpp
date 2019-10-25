@@ -4,9 +4,10 @@
 #include "ModuleGui.h"
 #include "ModuleInput.h"
 
-#include "ModuleSceneManager.h"
 #include "GameObject.h"
 #include "ComponentMesh.h"
+
+#include "ModuleSceneManager.h"
 
 #include "mmgr/mmgr.h"
 
@@ -116,17 +117,18 @@ update_status ModuleCamera3D::Update(float dt)
 	// --- Frame object ---
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 	{
-		Reference.x = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().x;
-		Reference.y = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().y;
-		Reference.z = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().z;
+		FrameObject(*App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects()));
+		//Reference.x = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().x;
+		//Reference.y = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().y;
+		//Reference.z = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition().z;
 
-		ComponentMesh* mesh = (ComponentMesh*)App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetComponent(Component::ComponentType::Mesh);
+		//ComponentMesh* mesh = (ComponentMesh*)App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetComponent(Component::ComponentType::Mesh);
 
-		Sphere s(App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition(), 1);
-		s.Enclose(mesh->Vertices, mesh->VerticesSize);
-		Look(Position, Reference, true);
-		vec3 Movement = -Z * (2*s.r - Length(float3(Reference.x, Reference.y, Reference.z)));
-		Position = Reference - Movement;
+		//Sphere s(App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition(), 1);
+		//s.Enclose(mesh->Vertices, mesh->VerticesSize);
+		//Look(Position, Reference, true);
+		//vec3 Movement = -Z * (2*s.r - Length(float3(Reference.x, Reference.y, Reference.z)));
+		//Position = Reference - Movement;
 	}
 
 	// Mouse motion ----------------
@@ -222,6 +224,21 @@ void ModuleCamera3D::Move(const vec3 &Movement)
 float* ModuleCamera3D::GetViewMatrix()
 {
 	return &ViewMatrix;
+}
+
+void ModuleCamera3D::FrameObject(GameObject& GO)
+{
+	Reference.x = GO.GetPosition().x;
+	Reference.y = GO.GetPosition().y;
+	Reference.z = GO.GetPosition().z;
+
+	ComponentMesh* mesh = (ComponentMesh*)GO.GetComponent(Component::ComponentType::Mesh);
+
+	Sphere s(GO.GetPosition(), 1);
+	s.Enclose(mesh->Vertices, mesh->VerticesSize);
+	Look(Position, Reference, true);
+	vec3 Movement = -Z * (2 * s.r - Length(float3(Reference.x, Reference.y, Reference.z)));
+	Position = Reference - Movement;
 }
 
 // -----------------------------------------------------------------
