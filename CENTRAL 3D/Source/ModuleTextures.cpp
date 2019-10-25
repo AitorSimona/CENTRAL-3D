@@ -34,7 +34,7 @@ bool ModuleTextures::Init(json file)
 		ret = false;
 	}
 
-	LOG("Initializing DevIL");
+	LOG("Initializing DevIL Version: %i",IL_VERSION);
 	// --- Initializing DevIL
 
 	// Initialize IL

@@ -26,6 +26,26 @@ ModuleFileSystem::ModuleFileSystem(bool start_enabled, const char* game_path) : 
 
 	if (0 && game_path != nullptr)
 		AddPath(game_path);
+}
+
+// Destructor
+ModuleFileSystem::~ModuleFileSystem()
+{
+	if (AssimpIO)
+	{
+		delete AssimpIO;
+		AssimpIO = nullptr;
+	}
+
+	PHYSFS_deinit();
+}
+
+// Called before render is available
+bool ModuleFileSystem::Init(json config)
+{
+	LOG("Loading File System");
+	bool ret = true;
+
 
 	// Dump list of paths
 	LOG("FileSystem Operations base is [%s] plus:", GetBasePath());
@@ -48,25 +68,7 @@ ModuleFileSystem::ModuleFileSystem(bool start_enabled, const char* game_path) : 
 
 	// Generate IO interfaces
 	CreateAssimpIO();
-}
 
-// Destructor
-ModuleFileSystem::~ModuleFileSystem()
-{
-	if (AssimpIO)
-	{
-		delete AssimpIO;
-		AssimpIO = nullptr;
-	}
-
-	PHYSFS_deinit();
-}
-
-// Called before render is available
-bool ModuleFileSystem::Init(json config)
-{
-	LOG("Loading File System");
-	bool ret = true;
 
 	// Ask SDL for a write dir
 	char* write_path = SDL_GetPrefPath(App->GetOrganizationName(), App->GetAppName());

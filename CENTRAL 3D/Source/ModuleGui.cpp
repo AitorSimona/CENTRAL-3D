@@ -67,21 +67,30 @@ bool ModuleGui::Start()
 	bool ret = true;
 
 	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Window Docking (Under Active Development)
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Deactivated because of lib crash when resizing window out of Main window bounds
+	ImGuiContext * context = ImGui::CreateContext();
 
-	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer3D->context);
-	ImGui_ImplOpenGL3_Init();
+	if (context)
+	{
+		LOG("Successfully created ImGui context");
 
-	// Setup style
-	ImGuiStyle& style = ImGui::GetStyle();
-	ImGui::StyleColorsDark();
-	style.FrameBorderSize = 1.0f;
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Window Docking (Under Active Development)
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Deactivated because of lib crash when resizing window out of Main window bounds
 
+		ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer3D->context);
+		ImGui_ImplOpenGL3_Init();
 
+		// Setup style
+		ImGuiStyle& style = ImGui::GetStyle();
+		ImGui::StyleColorsDark();
+		style.FrameBorderSize = 1.0f;
+	}
+	else
+	{
+		ret = false;
+		LOG("|[error]: Could not create ImGui context");
+	}
 
 	return ret;
 }

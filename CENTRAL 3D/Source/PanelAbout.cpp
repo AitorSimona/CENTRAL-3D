@@ -3,6 +3,7 @@
 #include "ModuleGui.h"
 #include "Imgui/imgui.h"
 #include "SDL/include/SDL.h"
+#include "DevIL/include/il.h"
 
 #include "OpenGL.h"
 
@@ -57,6 +58,11 @@ bool PanelAbout::Draw()
 
 		if (ImGui::Button("JSON For Modern C++")) { App->gui->RequestBrowser("https://github.com/nlohmann/json"); }
 		ImGui::SameLine(); ImGui::TextWrapped("3.7.0");
+
+		if (ImGui::Button("DevIL")) { App->gui->RequestBrowser("http://openil.sourceforge.net/"); }
+		ImGui::SameLine(); ImGui::TextWrapped("%i", IL_VERSION);
+
+		if (ImGui::Button("Par shapes")) { App->gui->RequestBrowser("https://github.com/prideout/par/blob/master/par_shapes.h"); }
 
 		if (ImGui::Button("MMGR")) { App->gui->RequestBrowser("http://www.paulnettle.com/"); }
 		ImGui::Spacing();

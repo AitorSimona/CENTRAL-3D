@@ -29,6 +29,8 @@ bool ModuleWindow::Init(json file)
 	}
 	else
 	{
+		LOG("SDL_Init Video success");
+
 		// --- Get Display Data ---
 		SDL_DisplayMode display;
 		SDL_GetCurrentDisplayMode(0, &display);
@@ -81,6 +83,7 @@ bool ModuleWindow::Init(json file)
 		}
 		else
 		{
+			LOG("Successfully created Window: %s", App->GetAppName());
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
 		}
