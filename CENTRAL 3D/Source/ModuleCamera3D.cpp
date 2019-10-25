@@ -125,8 +125,7 @@ update_status ModuleCamera3D::Update(float dt)
 		Sphere s(App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->GetPosition(), 1);
 		s.Enclose(mesh->Vertices, mesh->VerticesSize);
 		Look(Position, Reference, true);
-		vec3 distance = Reference - Position;
-		vec3 Movement = -Z * 2*s.r;
+		vec3 Movement = -Z * (2*s.r - Length(float3(Reference.x, Reference.y, Reference.z)));
 		Position = Reference - Movement;
 	}
 
