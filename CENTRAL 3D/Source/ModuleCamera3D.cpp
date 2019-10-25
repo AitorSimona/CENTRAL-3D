@@ -75,25 +75,32 @@ update_status ModuleCamera3D::Update(float dt)
 	{
 		int dx = App->input->GetMouseXMotion();
 		int dy = App->input->GetMouseYMotion();
+		float factor = abs(Position.y)/100.0f;
+		if (factor < 0.5f)
+			factor = 0.5f;
 
 		if (dx != 0)
 		{
-			Position -= 0.25f*dt*X * dx*Length(float3(Position.x, Position.y, Position.z));
-			Reference -= 0.25f*dt*X * dx*Length(float3(Position.x, Position.y, Position.z));
+			Position -= speed*X * dx*factor;
+			Reference -= speed*X * dx*factor;
 		}
 
 		if (dy != 0)
 		{
-			Position += 0.25f*dt*Y * dy*Length(float3(Position.x, Position.y, Position.z));
-			Reference += 0.25f*dt*Y * dy*Length(float3(Position.x, Position.y, Position.z));
+			Position += speed *Y * dy*factor;
+			Reference += speed *Y * dy*factor;
 		}
 	}
 
 	// --- Zoom ---
 	if (!App->gui->IsMouseCaptured() && abs(App->input->GetMouseWheel()) > 0)
 	{
+		float factor = abs(Position.y);
+		if (factor < 1.0f)
+			factor = 1.0f;
+
 		int mouse_wheel = App->input->GetMouseWheel();
-		vec3 Movement = -Z*mouse_wheel*speed*Position.y;
+		vec3 Movement = -Z*mouse_wheel*speed*factor;
 		Position += Movement;
 	}
 
