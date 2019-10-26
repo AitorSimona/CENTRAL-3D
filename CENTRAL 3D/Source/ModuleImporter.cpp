@@ -68,7 +68,6 @@ bool ModuleImporter::LoadFromPath(const char* path)
 {
 	bool ret = true;
 
-	// MYTODO: Any load operation should go through this function and then decide which importer to call based on file extension
 	// MYTODO: Could JSONLoader be a new importer?
 
 	if (path)
@@ -97,8 +96,6 @@ bool ModuleImporter::LoadFromPath(const char* path)
 		
 			if (mat->Texture_path == "Default")
 			{
-				App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->RemoveComponent(Component::ComponentType::Material);
-
 				mat = App->scene_manager->CreateEmptyMaterial();
 
 				App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects())->SetMaterial(mat);

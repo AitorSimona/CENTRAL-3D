@@ -126,6 +126,8 @@ update_status ModuleInput::PreUpdate(float dt)
 			break;
 
 			case SDL_DROPFILE:
+				// --- Call Importer on file drop ---
+
 				std::string DroppedFile_path = e.drop.file;
 
 				App->importer->LoadFromPath(e.drop.file);

@@ -93,7 +93,8 @@ bool ModuleRenderer3D::Init(json file)
 			LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
-		
+
+		// --- Set lights and OpenGL Capabilities ---
 		GLfloat LightModelAmbient[] = {0.0f, 0.0f, 0.0f, 1.0f};
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 		
@@ -182,6 +183,8 @@ bool ModuleRenderer3D::CleanUp()
 
 void ModuleRenderer3D::UpdateGLCapabilities()
 {
+	// --- Enable/Disable OpenGL Capabilities ---
+
 		if (!depth)
 			glDisable(GL_DEPTH_TEST);
 		else 

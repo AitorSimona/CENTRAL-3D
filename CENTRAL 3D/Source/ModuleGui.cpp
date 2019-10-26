@@ -36,6 +36,8 @@ ModuleGui::~ModuleGui()
 
 bool ModuleGui::Init(json file)
 {
+	// --- Create UI Panels ---
+
 	panelSettings = new PanelSettings("Settings");
 	panels.push_back(panelSettings);
 
@@ -65,6 +67,8 @@ bool ModuleGui::Init(json file)
 bool ModuleGui::Start()
 {
 	bool ret = true;
+
+	// --- Initialize ImGui ---
 
 	IMGUI_CHECKVERSION();
 	ImGuiContext * context = ImGui::CreateContext();
@@ -97,16 +101,12 @@ bool ModuleGui::Start()
 
 update_status ModuleGui::PreUpdate(float dt)
 {  
-	// Start the frame
+	// --- Start the frame ---
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	//ImGuizmo::BeginFrame();
-
-	//int mouse_x, mouse_y;
-	//SDL_GetMouseState(&mouse_x, &mouse_y);
-	//ImGui::GetIO().MousePos = ImVec2(float(mouse_x), float(mouse_y));
 
 	ImGuiIO& io = ImGui::GetIO();
 	capture_keyboard = io.WantCaptureKeyboard;
@@ -121,6 +121,7 @@ update_status ModuleGui::PreUpdate(float dt)
 
 update_status ModuleGui::Update(float dt)
 {
+	// --- Create Main Menu Bar ---
 
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -275,6 +276,7 @@ bool ModuleGui::CleanUp()
 	panelScene = nullptr;
 	panelToolbar = nullptr;
 
+	// --- ShutDown ImGui ---
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -285,7 +287,6 @@ bool ModuleGui::CleanUp()
 
 void ModuleGui::Draw() const
 {
-	// Render
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -307,8 +308,6 @@ void ModuleGui::DockSpace() const
 	ImGui::SetNextWindowBgAlpha(0.0f);
 
 	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-
-	//ImGui::DockSpaceOverViewport(viewport,dockspace_flags);
 
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
