@@ -26,13 +26,10 @@ public:
 	bool			IsEnabled() const;
 
 	// --- Components ---
-	Component*		AddComponent(Component::ComponentType type);
 
 	template<typename TComponent>
 	TComponent*	GetComponent(Component::ComponentType type)
 	{
-		//Component::ComponentType type = TComponent::GetType();
-
 		if (active)
 		{
 			for (uint i = 0; i < components.size(); ++i)
@@ -45,6 +42,9 @@ public:
 		}
 		return nullptr;
 	}
+
+	Component*		AddComponent(Component::ComponentType type);
+	bool			HasComponent(Component::ComponentType type);
 
 	// --- Setters ---
 	void			SetName(const char* name);

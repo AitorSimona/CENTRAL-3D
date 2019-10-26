@@ -34,22 +34,6 @@ GameObject::~GameObject()
 	}
 }
 
-//Component * GameObject::GetComponent(Component::ComponentType type)
-//{
-//	if (active)
-//	{
-//		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-//		{
-//			if ((*it)->GetType() == type)
-//			{
-//				return *it;
-//			}
-//		}
-//	}
-//
-//	return nullptr;
-//}
-
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
 	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
@@ -58,8 +42,8 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 
 	// --- Check if there is already a component of the type given ---
 
-	/*if (this->GetComponent<type>() == nullptr)
-	{*/
+	if (HasComponent(type) == false)
+	{
 
 		switch (type)
 		{
@@ -77,16 +61,27 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		if (new_component)
 			components.push_back(new_component);
 
-	//}
-	//else
-	//{
-	//	// --- If we find a component of the same type, tell the user ---
+	}
+	else
+	{
+		// --- If we find a component of the same type, tell the user ---
 
-	//	LOG("|[error]: The current Game Object already has a component of the type given");
+		LOG("|[error]: The current Game Object already has a component of the type given");
 
-	//}
+	}
 
 	return new_component;
+}
+
+bool GameObject::HasComponent(Component::ComponentType type)
+{
+	for (uint i = 0; i < components.size(); ++i)
+	{
+		if (components[i]->GetType() == type)
+			return true;
+	}
+
+	return false;
 }
 
 void GameObject::Enable()
