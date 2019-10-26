@@ -107,8 +107,6 @@ void ModuleSceneManager::Draw() const
 		glPushMatrix();
 		glMultMatrixf(transform->GetLocalTransform().ptr());
 
-		Materials;
-
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = game_objects[i]->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 

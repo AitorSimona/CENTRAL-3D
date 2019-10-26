@@ -70,6 +70,7 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 
 			if (mesh)
 			{
+				
 				// --- Create new Component Mesh to store current scene mesh data ---
 				ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 

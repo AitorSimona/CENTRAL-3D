@@ -140,5 +140,8 @@ void GameObject::SetName(const char* name)
 void GameObject::SetMaterial(ComponentMaterial * material)
 {
 	if (material)
+	{
+		RemoveComponent(Component::ComponentType::Material);
 		components.push_back(material);
+	}
 }

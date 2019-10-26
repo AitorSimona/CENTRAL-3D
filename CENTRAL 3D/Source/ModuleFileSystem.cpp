@@ -126,7 +126,7 @@ void ModuleFileSystem::CreateDirectory(const char* directory)
 void ModuleFileSystem::GetDirectoryFromPath(std::string & directory)
 {
 	// --- Normalize string, replacing \\ for / ---
-	NormalizePath(directory);
+	//NormalizePath(directory);
 
 	// --- Count until the last / ---
 	uint count = directory.find_last_of("/");

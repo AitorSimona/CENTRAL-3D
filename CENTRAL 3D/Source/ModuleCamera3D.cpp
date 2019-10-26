@@ -49,9 +49,6 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	// Implement a debug camera with keys and mouse
-	// Now we can make this movememnt frame rate independant!
-
 	vec3 newPos(0,0,0);
 	float speed = 10.0f * dt;
 	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
@@ -254,8 +251,12 @@ void ModuleCamera3D::FrameObject(GameObject& GO)
 
 	Sphere s(transform->GetPosition(), 1);
 	s.Enclose(mesh->Vertices, mesh->VerticesSize);
-	Look(Position, Reference, true);
-	vec3 Movement = -Z * (2 * s.r - Length(float3(Reference.x, Reference.y, Reference.z)));
+
+	s.r = s.Diameter() - Length(float3(Reference.x, Reference.y, Reference.z));
+	s.pos = transform->GetPosition();
+
+	Look(Position, vec3(s.Centroid().x, s.Centroid().y, s.Centroid().z), true);
+	vec3 Movement = -Z * (s.r);
 	Position = Reference - Movement;
 }
 
