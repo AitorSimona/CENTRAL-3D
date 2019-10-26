@@ -161,7 +161,7 @@ void ModuleCamera3D::FrameObject(GameObject& GO)
 	s.pos = transform->GetPosition();
 
 	Look(Position, vec3(s.Centroid().x, s.Centroid().y, s.Centroid().z), true);
-	vec3 Movement = -Z * (s.r);
+	vec3 Movement = -Z * (2*s.r);
 	Position = Reference - Movement;
 }
 
