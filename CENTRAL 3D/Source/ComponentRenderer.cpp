@@ -56,7 +56,7 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
 	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
-	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, mesh.IndexDatatype, NULL); // render primitives from array data
+	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 	// ----        ----
 

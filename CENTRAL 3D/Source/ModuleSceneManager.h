@@ -8,6 +8,7 @@ class GameObject;
 class ComponentMaterial;
 struct aiScene;
 struct ImportMaterialData;
+struct par_shapes_mesh_s;
 
 class ModuleSceneManager : public Module
 {
@@ -40,6 +41,8 @@ public:
 
 	// --- Utilities ---
 	void Draw() const;
+private:
+	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object);
 
 public:
 	ComponentMaterial* CheckersMaterial = nullptr;
