@@ -978,7 +978,7 @@ bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const I
     return pressed;
 }
 
-bool ImGui::Checkbox(const char* label, bool* v, bool show_label)
+bool ImGui::Checkbox(const char* label, bool* v)
 {
 	ImGuiWindow* window = GetCurrentWindow();
 	if (window->SkipItems)
@@ -987,14 +987,7 @@ bool ImGui::Checkbox(const char* label, bool* v, bool show_label)
 	ImGuiContext& g = *GImGui;
 	const ImGuiStyle& style = g.Style;
 	const ImGuiID id = window->GetID(label);
-
-	ImVec2 label_size; // LIBCHANGE : made this non const
-
-	if(show_label)
-	label_size = CalcTextSize(label, NULL, true);
-	else
-	label_size = CalcTextSize("", NULL, true);
-
+	const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
     const float square_sz = GetFrameHeight();
     const ImVec2 pos = window->DC.CursorPos;
@@ -1030,7 +1023,7 @@ bool ImGui::Checkbox(const char* label, bool* v, bool show_label)
 
     if (g.LogEnabled)
         LogRenderedText(&total_bb.Min, *v ? "[x]" : "[ ]");
-    if (label_size.x > 0.0f && show_label)
+    if (label_size.x > 0.0f)
         RenderText(ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y), label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
@@ -2134,9 +2127,8 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* v, floa
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, v, format);
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
 
-	// --- LIBCHANGE: Commented this to prevent imgui from displaying drag widget's labels
-  /*  if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);*/
+    if (label_size.x > 0.0f)
+        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags);
     return value_changed;

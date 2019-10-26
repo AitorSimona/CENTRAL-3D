@@ -3,6 +3,8 @@
 
 #include "Panel.h"
 
+class GameObject;
+
 class PanelInspector : public Panel
 {
 public:
@@ -13,6 +15,13 @@ public:
 	bool Draw();
 
 	bool Startup = true;
+
+private:
+	inline void CreateGameObjectNode(GameObject& Selected) const;
+	inline void CreateTransformNode(GameObject& Selected) const;
+	inline void CreateMeshNode(GameObject& Selected) const;
+	inline void CreateRendererNode(GameObject& Selected) const;
+	inline void CreateMaterialNode(GameObject& Selected) const;
 };
 
 #endif
