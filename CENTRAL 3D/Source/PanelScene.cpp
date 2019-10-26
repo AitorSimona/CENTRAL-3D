@@ -1,7 +1,6 @@
 #include "PanelScene.h"
 #include "Imgui/imgui.h"
 #include "Application.h"
-#include "ModuleSceneIntro.h"
 #include "ModuleRenderer3D.h"
 
 #include "OpenGL.h"
@@ -37,8 +36,6 @@ bool PanelScene::Draw()
 			ImGui::EndMenuBar();
 		}
 
-
-		App->scene_intro->Draw();
 	}
 
 	ImGui::End();

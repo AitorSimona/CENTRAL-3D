@@ -7,7 +7,6 @@
 #include "ModuleInput.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
-#include "ModuleSceneIntro.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 
@@ -34,7 +33,6 @@ Application::Application()
 	scene_manager = new ModuleSceneManager(true);
 	importer = new ModuleImporter(true);
 	input = new ModuleInput(true);
-	scene_intro = new ModuleSceneIntro(true);
 	renderer3D = new ModuleRenderer3D(true);
 	camera = new ModuleCamera3D(true);
 	gui = new ModuleGui(true);
@@ -56,7 +54,6 @@ Application::Application()
 
 	// Scenes
 	AddModule(scene_manager);
-	AddModule(scene_intro);
 
 	// Renderer last!
 	AddModule(renderer3D);

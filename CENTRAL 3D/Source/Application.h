@@ -13,7 +13,6 @@
 class Module;
 class ModuleWindow;
 class ModuleInput;
-class ModuleSceneIntro;
 class ModuleRenderer3D;
 class ModuleCamera3D;
 class ModuleGui;
@@ -49,7 +48,6 @@ public:
 
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
-	ModuleSceneIntro* scene_intro = nullptr;
 	ModuleRenderer3D* renderer3D = nullptr;
 	ModuleCamera3D* camera = nullptr;
 	ModuleGui*			gui = nullptr;
