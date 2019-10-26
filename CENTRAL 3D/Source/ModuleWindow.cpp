@@ -135,17 +135,17 @@ void ModuleWindow::SetWindowHeight(uint height)
 	UpdateWindowSize();
 }
 
-uint ModuleWindow::GetWindowWidth()
+uint ModuleWindow::GetWindowWidth() const
 {
 	return screen_width;
 }
 
-uint ModuleWindow::GetWindowHeight()
+uint ModuleWindow::GetWindowHeight() const
 {
 	return screen_height;
 }
 
-uint ModuleWindow::GetDisplayRefreshRate()
+uint ModuleWindow::GetDisplayRefreshRate() 
 {
 	uint refreshRate = 0;
 
@@ -255,22 +255,22 @@ void ModuleWindow::SetFullscreenDesktop(bool value)
 	}
 }
 
-bool ModuleWindow::IsFullscreen()
+bool ModuleWindow::IsFullscreen() const
 {
 	return fullscreen;
 }
 
-bool ModuleWindow::IsResizable()
+bool ModuleWindow::IsResizable() const
 {
 	return resizable;
 }
 
-bool ModuleWindow::IsBorderless()
+bool ModuleWindow::IsBorderless() const
 {
 	return borderless;
 }
 
-bool ModuleWindow::IsFullscreenDesktop()
+bool ModuleWindow::IsFullscreenDesktop() const
 {
 	return fullscreen_desktop;
 }

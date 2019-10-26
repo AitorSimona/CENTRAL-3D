@@ -15,13 +15,13 @@ public:
 	ComponentRenderer(GameObject* ContainerGO);
 	virtual ~ComponentRenderer();
 
-	void Draw();
+	void Draw() const;
 
 private:
 	// --- Draw Functiions accessed by main Draw ---
-	void DrawMesh(ComponentMesh& mesh) const;
-	void DrawNormals(const ComponentMesh& mesh) const;
-	void DrawAxis() const;
+	inline void DrawMesh(ComponentMesh& mesh) const;
+	inline void DrawNormals(const ComponentMesh& mesh) const;
+	inline void DrawAxis() const;
 
 public:
 	bool draw_vertexnormals = false;

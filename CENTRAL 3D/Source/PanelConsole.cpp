@@ -46,11 +46,13 @@ bool PanelConsole::Draw()
 			{
 				const char* item = App->GetLogs().at(i).data();
 
+				// --- Display error messages in red color ---
 				if(item[1] == *error_key)
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.75, 0, 0, 255));
 				else
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 255, 255, 255));
 
+				// --- If text does not match the filter don't print it ---
 				if (!filter.PassFilter(item))
 				{
 					ImGui::PopStyleColor();
@@ -58,8 +60,6 @@ bool PanelConsole::Draw()
 				}
 
 				ImGui::TextUnformatted(item);
-
-
 				ImGui::PopStyleColor();
 
 			}

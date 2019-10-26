@@ -8,7 +8,7 @@ ComponentTransform::~ComponentTransform()
 {
 }
 
-float3 ComponentTransform::GetPosition()
+float3 ComponentTransform::GetPosition() const
 {
 	float3 position;
 	/*Local_transform.TransformPos(position);
@@ -22,7 +22,7 @@ float3 ComponentTransform::GetPosition()
 	return position;
 }
 
-float3 ComponentTransform::GetScale()
+float3 ComponentTransform::GetScale() const
 {
 	float3 scale;
 
@@ -33,7 +33,7 @@ float3 ComponentTransform::GetScale()
 	return scale;
 }
 
-float3 ComponentTransform::GetRotation()
+float3 ComponentTransform::GetRotation() const
 {
 	float3 rotation = float3::zero;
 
@@ -43,7 +43,7 @@ float3 ComponentTransform::GetRotation()
 	return rotation;
 }
 
-float4x4 ComponentTransform::GetLocalTransform()
+float4x4 ComponentTransform::GetLocalTransform() const
 {
 	return Local_transform;
 }

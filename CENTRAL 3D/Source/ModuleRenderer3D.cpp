@@ -181,7 +181,7 @@ bool ModuleRenderer3D::CleanUp()
 	return true;
 }
 
-void ModuleRenderer3D::UpdateGLCapabilities()
+void ModuleRenderer3D::UpdateGLCapabilities() const
 {
 	// --- Enable/Disable OpenGL Capabilities ---
 
@@ -225,7 +225,7 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	glLoadIdentity();
 }
 
-uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void * data)
+uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void * data) const
 {
 	uint ID = 0;
 

@@ -136,7 +136,7 @@ uint ModuleSceneManager::GetNumGameObjects() const
 	return game_objects.size();
 }
 
-uint ModuleSceneManager::GetSelectedGameObjects() 
+uint ModuleSceneManager::GetSelectedGameObjects() const
 {
 	return SelectedGameObject;
 }
@@ -163,7 +163,7 @@ void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 	}
 }
 
-GameObject * ModuleSceneManager::CreateEmptyGameObject()
+GameObject * ModuleSceneManager::CreateEmptyGameObject() 
 {
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
@@ -192,7 +192,7 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 	return Material;
 }
 
-void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_object)
+void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_object) const
 {
 	// --- Obtain data from par shapes mesh and load it into component mesh ---
 	ComponentMesh* new_mesh = (ComponentMesh*)new_object.AddComponent(Component::ComponentType::Mesh);
@@ -254,7 +254,7 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_o
 	par_shapes_free_mesh(mesh);
 }
 
-GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
+GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ) const
 {
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
 	// does not have uvs / normals 
@@ -300,7 +300,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	return new_object;
 }
 
-GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
+GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks) const
 {
 	// --- Create par shapes sphere ---
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);

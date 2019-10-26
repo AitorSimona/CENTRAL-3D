@@ -93,7 +93,7 @@ void GameObject::RemoveComponent(Component::ComponentType type)
 	}
 }
 
-bool GameObject::HasComponent(Component::ComponentType type)
+bool GameObject::HasComponent(Component::ComponentType type) const
 {
 	// --- Search for given type of component ---
 

@@ -18,7 +18,7 @@ ComponentRenderer::~ComponentRenderer()
 
 }
 
-void ComponentRenderer::Draw()
+void ComponentRenderer::Draw() const
 {
 	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
@@ -30,9 +30,8 @@ void ComponentRenderer::Draw()
 	}
 }
 
-void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
+inline void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 {
-
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
 	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
@@ -74,7 +73,7 @@ void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 
 }
 
-void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
+inline void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 {
 	// --- Draw Mesh Normals ---
 	glBegin(GL_LINES);
@@ -124,7 +123,7 @@ void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
 
 }
 
-void ComponentRenderer::DrawAxis() const
+inline void ComponentRenderer::DrawAxis() const
 {
 	// --- Draw Axis ---
 	glLineWidth(2.0f);

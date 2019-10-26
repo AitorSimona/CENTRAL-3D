@@ -26,13 +26,13 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
-	GameObject* CreateCube(float sizeX, float sizeY, float sizeZ);
-	GameObject* CreateSphere(float Radius, int slices, int slacks);
+	GameObject* CreateCube(float sizeX, float sizeY, float sizeZ) const;
+	GameObject* CreateSphere(float Radius, int slices, int slacks) const;
 	void CreateGrid() const;
 
 	// --- Getters ---
 	uint GetNumGameObjects() const;
-	uint GetSelectedGameObjects();
+	uint GetSelectedGameObjects() const;
 	std::vector<GameObject*>& GetGameObjects();
 
 	// --- Setters ---
@@ -41,8 +41,9 @@ public:
 
 	// --- Utilities ---
 	void Draw() const;
+
 private:
-	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object);
+	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object) const;
 
 public:
 	ComponentMaterial* CheckersMaterial = nullptr;

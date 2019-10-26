@@ -64,7 +64,7 @@ bool ModuleImporter::CleanUp()
 	return true;
 }
 
-bool ModuleImporter::LoadFromPath(const char* path)
+bool ModuleImporter::LoadFromPath(const char* path) const
 {
 	bool ret = true;
 

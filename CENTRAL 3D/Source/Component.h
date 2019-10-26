@@ -27,7 +27,7 @@ public:
 
 	// --- Getters ---
 	ComponentType GetType() const;
-	GameObject* GetContainerGameObject();
+	GameObject* GetContainerGameObject() const;
 	bool& GetActive();
 	bool IsEnabled() const;
 

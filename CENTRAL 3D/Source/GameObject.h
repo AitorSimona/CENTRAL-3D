@@ -45,7 +45,7 @@ public:
 
 	Component*		AddComponent(Component::ComponentType type);
 	void			RemoveComponent(Component::ComponentType type);
-	bool			HasComponent(Component::ComponentType type);
+	bool			HasComponent(Component::ComponentType type) const;
 
 	// --- Setters ---
 	void			SetName(const char* name);

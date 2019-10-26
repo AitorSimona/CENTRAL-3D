@@ -19,12 +19,12 @@ public:
 
 private:
 
-	void ApplicationNode() const;
-	void WindowNode() const;
-	void InputNode() const;
-	void RendererNode() const;
-	void HardwareNode() const;
-	void LibrariesNode() const;
+	inline void ApplicationNode() const;
+	inline void WindowNode() const;
+	inline void InputNode() const;
+	inline void RendererNode() const;
+	inline void HardwareNode() const;
+	inline void LibrariesNode() const;
 
 private:
 	std::vector<float> FPS_Tracker;

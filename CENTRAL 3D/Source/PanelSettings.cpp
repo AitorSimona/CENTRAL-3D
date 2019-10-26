@@ -69,7 +69,7 @@ bool PanelSettings::Draw()
 	return true;
 }
 
-void PanelSettings::ApplicationNode() const
+inline void PanelSettings::ApplicationNode() const
 {
 	// --- Application name ---
 	static char appName[100];
@@ -137,7 +137,7 @@ void PanelSettings::ApplicationNode() const
 	ImGui::Text("Peak Alloc Unit Count: %u", MemoryStats.peakAllocUnitCount);
 }
 
-void PanelSettings::WindowNode() const
+inline void PanelSettings::WindowNode() const
 {
 	ImGui::Separator();
 	// --- Brightness ---
@@ -190,7 +190,7 @@ void PanelSettings::WindowNode() const
 		App->window->SetFullscreenDesktop(fullscreen_desktop);
 }
 
-void PanelSettings::InputNode() const
+inline void PanelSettings::InputNode() const
 {
 	ImGui::Separator();
 	// --- Mouse position
@@ -217,7 +217,7 @@ void PanelSettings::InputNode() const
 	ImGui::Separator();
 }
 
-void PanelSettings::RendererNode() const
+inline void PanelSettings::RendererNode() const
 {
 	// --- VSync ---
 	bool vsync = App->renderer3D->GetVSync();
@@ -234,7 +234,7 @@ void PanelSettings::RendererNode() const
 }
 
 
-void PanelSettings::HardwareNode() const
+inline void PanelSettings::HardwareNode() const
 {
 	hw_info hardware_info = App->hardware->GetInfo();
 
@@ -304,7 +304,7 @@ void PanelSettings::HardwareNode() const
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_usage);
 }
 
-void PanelSettings::LibrariesNode() const
+inline void PanelSettings::LibrariesNode() const
 {
 	// --- Libraries ---
 	ImGui::Spacing();

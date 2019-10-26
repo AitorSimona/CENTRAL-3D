@@ -14,7 +14,7 @@ PanelAbout::~PanelAbout()
 {
 }
 
-bool PanelAbout::Draw()
+bool PanelAbout::Draw() 
 {
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;

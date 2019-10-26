@@ -46,7 +46,7 @@ Component::ComponentType Component::GetType() const
 	return type;
 }
 
-GameObject * Component::GetContainerGameObject()
+GameObject * Component::GetContainerGameObject() const
 {
 	return GO;
 }

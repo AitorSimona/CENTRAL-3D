@@ -354,17 +354,17 @@ void ModuleGui::LoadStatus(const json & file)
 			LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
 	}
 }
-void ModuleGui::HandleInput(SDL_Event * event)
+void ModuleGui::HandleInput(SDL_Event * event) const
 {
 	ImGui_ImplSDL2_ProcessEvent(event);
 }
 
-bool ModuleGui::IsKeyboardCaptured()
+bool ModuleGui::IsKeyboardCaptured() const
 {
 	return capture_keyboard;
 }
 
-bool ModuleGui::IsMouseCaptured()
+bool ModuleGui::IsMouseCaptured() const
 {
 	return capture_mouse;
 }

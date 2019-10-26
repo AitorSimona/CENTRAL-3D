@@ -37,15 +37,15 @@ public:
 
 	// --- Getters ---
 	void GetWinMaxMinSize(uint & min_width, uint & min_height, uint & max_width, uint & max_height) const;
-	uint GetWindowWidth();
-	uint GetWindowHeight();
+	uint GetWindowWidth() const;
+	uint GetWindowHeight() const;
 	float GetWinBrightness() const;
 	uint GetDisplayRefreshRate();
 
-	bool IsFullscreen();
-	bool IsResizable();
-	bool IsBorderless();
-	bool IsFullscreenDesktop();
+	bool IsFullscreen() const;
+	bool IsResizable() const;
+	bool IsBorderless() const;
+	bool IsFullscreenDesktop() const;
 
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;

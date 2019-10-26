@@ -12,10 +12,10 @@ public:
 	virtual ~ComponentTransform();
 
 	// --- Getters ---
-	float3			GetPosition();
-	float3			GetScale();
-	float3			GetRotation();
-	float4x4        GetLocalTransform();
+	float3			GetPosition() const;
+	float3			GetScale() const;
+	float3			GetRotation() const;
+	float4x4        GetLocalTransform() const;
 
 	// --- Setters ---
 	void			SetPosition(float x, float y, float z);

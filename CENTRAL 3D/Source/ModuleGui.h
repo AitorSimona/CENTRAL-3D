@@ -38,10 +38,10 @@ public:
 
 	void LoadStatus(const json & file) override;
 
-	void HandleInput(SDL_Event* event);
+	void HandleInput(SDL_Event* event) const;
 
-	bool IsKeyboardCaptured();
-	bool IsMouseCaptured();
+	bool IsKeyboardCaptured() const;
+	bool IsMouseCaptured() const;
 public:
 
 	PanelSettings*		panelSettings = nullptr;

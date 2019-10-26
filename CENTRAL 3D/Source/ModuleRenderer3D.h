@@ -19,10 +19,10 @@ public:
 	bool CleanUp();
 
 	// --- Utilities ---
-	void UpdateGLCapabilities();
+	void UpdateGLCapabilities() const;
 	void OnResize(int width, int height);
 
-	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data);
+	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
 
 	// --- Setters ---
 	bool SetVSync(bool vsync);
