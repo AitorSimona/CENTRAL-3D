@@ -20,6 +20,8 @@ GameObject::GameObject(const char* name)
 
 GameObject::~GameObject()
 {
+	// --- Destroy all components and game object ---
+
 	Disable();
 
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
@@ -75,6 +77,8 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 
 void GameObject::RemoveComponent(Component::ComponentType type)
 {
+	// ---Remove component of type given from game object ---
+
 	for (uint i = 0; i < components.size(); ++i)
 	{
 		if (components[i]->GetType() == type)
@@ -91,6 +95,8 @@ void GameObject::RemoveComponent(Component::ComponentType type)
 
 bool GameObject::HasComponent(Component::ComponentType type)
 {
+	// --- Search for given type of component ---
+
 	for (uint i = 0; i < components.size(); ++i)
 	{
 		if (components[i]->GetType() == type)

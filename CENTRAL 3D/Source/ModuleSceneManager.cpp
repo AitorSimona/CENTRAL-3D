@@ -34,6 +34,7 @@ bool ModuleSceneManager::Init(json file)
 
 bool ModuleSceneManager::Start()
 {
+	// --- Define Default and Checkers Materials ---
 	DefaultMaterial = CreateEmptyMaterial();
 	DefaultMaterial->Texture_path = "Default";
 
@@ -43,6 +44,7 @@ bool ModuleSceneManager::Start()
 	CheckersMaterial->Texture_width = CHECKERS_WIDTH;
 	CheckersMaterial->Texture_height = CHECKERS_HEIGHT;
 
+	// --- Create Cube and sphere and position them in the scene ---
 	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
 	GameObject* sphere = CreateSphere(1.0f,25,25);
 
@@ -104,6 +106,7 @@ void ModuleSceneManager::Draw() const
 	{
 		ComponentTransform* transform = game_objects[i]->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
+		// --- Send transform to OpenGL and use it to draw ---
 		glPushMatrix();
 		glMultMatrixf(transform->GetLocalTransform().ptr());
 
@@ -116,6 +119,7 @@ void ModuleSceneManager::Draw() const
 			Renderer->Draw();
 		}
 
+		// --- Pop transform so OpenGL does not use it for other operations ---
 		glPopMatrix();
 	}
 
@@ -149,6 +153,7 @@ void ModuleSceneManager::SetSelectedGameObject(uint index)
 
 void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 {
+	// --- Assign Texture to Object's Material ---
 	ComponentMaterial* Material = game_objects[SelectedGameObject]->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 
 	if (Material)
@@ -189,6 +194,7 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 
 void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_object)
 {
+	// --- Obtain data from par shapes mesh and load it into component mesh ---
 	ComponentMesh* new_mesh = (ComponentMesh*)new_object.AddComponent(Component::ComponentType::Mesh);
 
 	ComponentRenderer* Renderer = (ComponentRenderer*)new_object.AddComponent(Component::ComponentType::Renderer);
@@ -296,6 +302,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 
 GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
 {
+	// --- Create par shapes sphere ---
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
 	GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
@@ -311,6 +318,7 @@ GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slac
 
 void ModuleSceneManager::CreateGrid() const
 {
+	// --- Create Grid in direct mode (to be changed) ---
 	glLineWidth(2.0f);
 
 	glBegin(GL_LINES);

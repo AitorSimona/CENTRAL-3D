@@ -1,5 +1,7 @@
 #include "ImporterMesh.h"
+#include "Application.h"
 #include "ComponentMesh.h"
+#include "ModuleRenderer3D.h"
 
 #include "Assimp/include/scene.h"
 
@@ -33,10 +35,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 		data.new_mesh->Vertices[i].z = data.mesh->mVertices[i].z;
 	}
 
-	glGenBuffers(1, (GLuint*)&data.new_mesh->VerticesID); // create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, data.new_mesh->VerticesID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * data.new_mesh->VerticesSize, data.new_mesh->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+	data.new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * data.new_mesh->VerticesSize, data.new_mesh->Vertices);
 
 	// --- Normals ---
 	if (data.mesh->HasNormals())
@@ -64,13 +63,9 @@ bool ImporterMesh::Import(const ImportData & IData) const
 			data.new_mesh->TexCoords[j * 2] = data.mesh->mTextureCoords[0][j].x;
 			data.new_mesh->TexCoords[(j * 2) + 1] = data.mesh->mTextureCoords[0][j].y;
 		}
-		/*LOG("Mesh texture coords at channel 0 loaded");*/
 	}
 
-	glGenBuffers(1, (GLuint*)&data.new_mesh->TextureCoordsID); // create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, data.new_mesh->TextureCoordsID); // start using created buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * data.new_mesh->VerticesSize * 2, data.new_mesh->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+	data.new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * data.new_mesh->VerticesSize * 2, data.new_mesh->TexCoords);
 
 	// --- Indices ---
 	data.new_mesh->IndicesSize = data.mesh->mNumFaces * 3;
@@ -92,10 +87,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 		data.new_mesh->Indices[j * 3 + 2] = face.mIndices[2];
 	}
 
-	glGenBuffers(1, (GLuint*)&data.new_mesh->IndicesID); // create buffer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data.new_mesh->IndicesID); // start using created buffer
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * data.new_mesh->IndicesSize, data.new_mesh->Indices, GL_STATIC_DRAW); // send vertices to VRAM
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+	data.new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * data.new_mesh->IndicesSize, data.new_mesh->Indices);
 
 	return true;
 }
