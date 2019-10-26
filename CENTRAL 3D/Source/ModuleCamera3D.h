@@ -22,7 +22,10 @@ public:
 	void FrameObject(GameObject& GO);
 
 private:
-
+	void CameraPan(float speed);
+	void CameraZoom(float speed);
+	void CameraOrbit();
+	void CameraLookAround();
 	void CalculateViewMatrix();
 
 public:
