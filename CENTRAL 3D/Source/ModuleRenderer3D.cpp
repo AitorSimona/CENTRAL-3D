@@ -7,8 +7,8 @@
 #include "ModuleSceneIntro.h"
 #include "ModuleSceneManager.h"
 
-#include "OpenGL.h"
 #include "Imgui/imgui.h"
+#include "OpenGL.h"
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
@@ -224,6 +224,18 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+}
+
+uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void * data)
+{
+	uint ID = 0;
+
+	glGenBuffers(1, (GLuint*)&ID); // create buffer
+	glBindBuffer(Targetbuffer, ID); // start using created buffer
+	glBufferData(Targetbuffer, size, data, GL_STATIC_DRAW); // send data to VRAM
+	glBindBuffer(Targetbuffer, 0); // Stop using buffer
+
+	return ID;
 }
 
 bool ModuleRenderer3D::SetVSync(bool vsync)

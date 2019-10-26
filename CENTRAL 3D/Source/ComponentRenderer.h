@@ -4,7 +4,7 @@
 #include "Component.h"
 
 // Specifying normal vectors length (used when drawing normals)
-#define NORMAL_LENGTH 1
+#define NORMAL_LENGTH 0.5
 
 class ComponentMesh;
 

@@ -18,9 +18,11 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
+	// --- Utilities ---
 	void UpdateGLCapabilities();
-
 	void OnResize(int width, int height);
+
+	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data);
 
 	// --- Setters ---
 	bool SetVSync(bool vsync);

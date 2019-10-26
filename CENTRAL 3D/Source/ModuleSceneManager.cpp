@@ -247,10 +247,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 			new_mesh->Vertices[i].z = mesh->points[(3 * i) + 2];
 		}
 
-		glGenBuffers(1, (GLuint*)&new_mesh->VerticesID); // create buffer
-		glBindBuffer(GL_ARRAY_BUFFER, new_mesh->VerticesID); // start using created buffer
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * new_mesh->VerticesSize, new_mesh->Vertices, GL_STATIC_DRAW); // send vertices to VRAM
-		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+		new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER,sizeof(float3) * new_mesh->VerticesSize, new_mesh->Vertices);
 
 		// --- Indices ---
 
@@ -259,11 +256,8 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 		{
 			new_mesh->Indices[i] = mesh->triangles[i];
 		}
-
-		glGenBuffers(1, (GLuint*)&new_mesh->IndicesID); // create buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_mesh->IndicesID); // start using created buffer
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * new_mesh->IndicesSize, mesh->triangles, GL_STATIC_DRAW); // send vertices to VRAM
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer
+		new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * new_mesh->IndicesSize, mesh->triangles);
+		// MYTODO: Check why indices are not being loaded correctly, passing mesh->triangles for now...
 
 		// --- Normals ---
 		if (mesh->normals)
@@ -291,13 +285,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 			new_mesh->TexCoords[(2 * i) + 1] = mesh->tcoords[(2 * i) + 1];
 		}
 
-		/*if (checkers)
-			new_object->SetMaterial(CheckersMaterial);*/
-
-		glGenBuffers(1, (GLuint*)&new_mesh->TextureCoordsID); // create buffer
-		glBindBuffer(GL_ARRAY_BUFFER, new_mesh->TextureCoordsID); // start using created buffer
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords, GL_STATIC_DRAW); // send vertices to VRAM
-		glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer
+		new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER,sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords);
 
 
 		par_shapes_free_mesh(mesh);
