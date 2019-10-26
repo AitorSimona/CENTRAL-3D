@@ -73,6 +73,22 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	return new_component;
 }
 
+void GameObject::RemoveComponent(Component::ComponentType type)
+{
+	for (uint i = 0; i < components.size(); ++i)
+	{
+		if (components[i]->GetType() == type)
+		{
+			std::vector<Component*>::iterator it = components.begin();
+			it += i;
+
+			components.erase(it);
+
+			break;
+		}
+	}
+}
+
 bool GameObject::HasComponent(Component::ComponentType type)
 {
 	for (uint i = 0; i < components.size(); ++i)

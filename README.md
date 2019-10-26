@@ -2,8 +2,8 @@
 - Version 0.05
 - Initial steps into 3D game engine development
 - By Aitor Simona 
-* Github account: [AitorSimona](https://github.com/AitorSimona)
-
+* GitHub account: [AitorSimona](https://github.com/AitorSimona)
+* GitHub repository: [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 
 ## TOOLS USED
 

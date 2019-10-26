@@ -44,6 +44,7 @@ public:
 	}
 
 	Component*		AddComponent(Component::ComponentType type);
+	void			RemoveComponent(Component::ComponentType type);
 	bool			HasComponent(Component::ComponentType type);
 
 	// --- Setters ---
