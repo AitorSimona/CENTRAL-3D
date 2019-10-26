@@ -229,8 +229,6 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 
 		ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
 
-		new_mesh->IndexDatatype = GL_UNSIGNED_SHORT;
-
 		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
 
 		new_mesh->IndicesSize = mesh->ntriangles * 3;
@@ -249,15 +247,14 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 
 		new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER,sizeof(float3) * new_mesh->VerticesSize, new_mesh->Vertices);
 
-		// --- Indices ---
 
-		new_mesh->Indices = new unsigned[new_mesh->IndicesSize];
+		// --- Indices ---
+		new_mesh->Indices = new uint[new_mesh->IndicesSize];
 		for (uint i = 0; i < new_mesh->IndicesSize; ++i)
 		{
 			new_mesh->Indices[i] = mesh->triangles[i];
 		}
-		new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(PAR_SHAPES_T) * new_mesh->IndicesSize, mesh->triangles);
-		// MYTODO: Check why indices are not being loaded correctly, passing mesh->triangles for now...
+		new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * new_mesh->IndicesSize, new_mesh->Indices);
 
 		// --- Normals ---
 		if (mesh->normals)
