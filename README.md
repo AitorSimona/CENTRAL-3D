@@ -1,5 +1,5 @@
 # CENTRAL 3D
-- Version 0.05
+- Version 0.1
 - Initial steps into 3D game engine development
 - By Aitor Simona 
 * GitHub account: [AitorSimona](https://github.com/AitorSimona)
@@ -29,25 +29,55 @@ There is no formal installation process, just look around and play with it
 
 Mouse and Keyboard controls are enabled both on UI and Scene, working on focused window only.
 
+- Scene Camera:
+
+- Right Mouse button enables Look Around
+- Alt + Left Mouse button enables Camera Orbit
+- Mouse Wheel click enables camera Pan
+- Right Mouse button + WASD enables free movement
+- Mouse Wheel movement enables zoom
+
 
 ## DEBUG
 
 - Debug Features
 
-Head to Scene window and click DebugDraw to see available features
+Head to Scene window and click DebugDraw to see available features: 
+
+- Wireframe
+- Color Material
+- OpenGL Lighting
+
+There are more options in Window - > Settings
+
+
+## Features in beta
+
+- Texture pre-visualization on Inspector
+- Transform Editing
+- Toolbar
+- Edit Menu
 
 
 ## CHANGELOG
 
+### 0.1
+
+- Polished Game Object and Component Structure
+- Initial Implementation on Inspector (properties for the different components)
+- Modification of many Menus/Windows
+- Possibility of primitives creation through GameObject Menu
+- Unity-like Camera Controls 
+
 ### 0.05
 
-Libraries Integration
-Basic Editor with Inspector/Hierarchy/Console/Menu
-Initial GameObject and Component structure
-Save & Load Editor Configuration
-Load 3D Models through assimp (fbx format)
-Load Textures through DevIL (dds and png format)
-Docking
+- Libraries Integration
+- Basic Editor with Inspector/Hierarchy/Console/Menu
+- Initial GameObject and Component structure
+- Save & Load Editor Configuration
+- Load 3D Models through assimp (fbx format)
+- Load Textures through DevIL (dds and png format)
+- Docking
 
 
 ## License:
