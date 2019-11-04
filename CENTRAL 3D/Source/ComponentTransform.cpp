@@ -42,27 +42,18 @@ void ComponentTransform::SetPosition(float x, float y, float z)
 	Local_transform.ptr()[14] = position.z;
 }
 
-void ComponentTransform::SetRotationAxisAngle(const float3 & rot_axis, float degrees_angle)
+void ComponentTransform::SetRotation(float3 euler_angles)
 {
-	//Local_transform.RotateAxisAngle(rot_axis, degrees_angle);
+	// --- Compute desired rotation in radians ---
+	float3 difference = (euler_angles - rotation_euler) * DEGTORAD;
+	Quat quatrot = Quat::FromEulerXYZ(difference.x, difference.y, difference.z);
 
-		// --- Angle in RADIANS ---
-	degrees_angle = degrees_angle / 180.0f * (float)pi;
+	// --- Update own variables ---
+	rotation = rotation * quatrot;
+	rotation_euler = euler_angles;
 
-	// --- Normalize vector ---
-	float3 v = rot_axis.Normalized();
-
-	float c = 1.0f - cosf(degrees_angle), s = sinf(degrees_angle);
-
-	Local_transform.ptr()[0] = 1.0f + c * (v.x * v.x - 1.0f);
-	Local_transform.ptr()[1] = c * v.x * v.y + v.z * s;
-	Local_transform.ptr()[2] = c * v.x * v.z - v.y * s;
-	Local_transform.ptr()[4] = c * v.x * v.y - v.z * s;
-	Local_transform.ptr()[5] = 1.0f + c * (v.y * v.y - 1.0f);
-	Local_transform.ptr()[6] = c * v.y * v.z + v.x * s;
-	Local_transform.ptr()[8] = c * v.x * v.z + v.y * s;
-	Local_transform.ptr()[9] = c * v.y * v.z - v.x * s;
-	Local_transform.ptr()[10] = 1.0f + c * (v.z * v.z - 1.0f);
+	// --- Update Transform ---
+	UpdateLocalTransform();
 }
 
 void ComponentTransform::Scale(float x, float y, float z)
@@ -79,4 +70,15 @@ void ComponentTransform::Scale(float x, float y, float z)
 void ComponentTransform::SetLocalTransform(float4x4 new_transform)
 {
 	Local_transform = new_transform;
+}
+
+void ComponentTransform::UpdateLocalTransform()
+{
+	Local_transform = float4x4::FromTRS(position, rotation, scale);
+}
+
+void ComponentTransform::UpdateTRS()
+{
+	Local_transform.Decompose(position, rotation, scale);
+	rotation_euler = rotation.ToEulerXYZ()*RADTODEG;
 }

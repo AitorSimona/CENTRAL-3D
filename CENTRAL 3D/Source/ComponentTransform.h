@@ -21,15 +21,20 @@ public:
 
 	// --- Setters ---
 	void			SetPosition(float x, float y, float z);
-	void			SetRotationAxisAngle(const float3 &rot_axis, float degrees_angle);
+	void			SetRotation(float3 euler_angles);
 	void			Scale(float x, float y, float z);
 	void			SetLocalTransform(float4x4 new_transform);
+
+private:
+	void UpdateLocalTransform();
+	void UpdateTRS();
 
 private:
 	float4x4 Local_transform = math::float4x4::identity;
 
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
+	float3		rotation_euler;
 	float3 scale = float3::one;
 };
 
