@@ -10,26 +10,11 @@ ComponentTransform::~ComponentTransform()
 
 float3 ComponentTransform::GetPosition() const
 {
-	float3 position;
-	/*Local_transform.TransformPos(position);
-	Local_transform.TranslatePart();*/
-
-	position.x = Local_transform.ptr()[12];
-	position.y = Local_transform.ptr()[13];
-	position.z = Local_transform.ptr()[14];
-
-
 	return position;
 }
 
 float3 ComponentTransform::GetScale() const
 {
-	float3 scale;
-
-	scale.x = Local_transform.ptr()[0];
-	scale.y = Local_transform.ptr()[5];
-	scale.z = Local_transform.ptr()[10];
-
 	return scale;
 }
 
@@ -50,12 +35,11 @@ float4x4 ComponentTransform::GetLocalTransform() const
 
 void ComponentTransform::SetPosition(float x, float y, float z)
 {
-	//Local_transform.Translate(x,y,z);
-	//Local_transform.SetTranslatePart(x, y, z);
-	//Local_transform.SetRow3(
-	Local_transform.ptr()[12] = x;
-	Local_transform.ptr()[13] = y;
-	Local_transform.ptr()[14] = z;
+	position = float3(x, y, z);
+
+	Local_transform.ptr()[12] = position.x;
+	Local_transform.ptr()[13] = position.y;
+	Local_transform.ptr()[14] = position.z;
 }
 
 void ComponentTransform::SetRotationAxisAngle(const float3 & rot_axis, float degrees_angle)
@@ -85,9 +69,11 @@ void ComponentTransform::Scale(float x, float y, float z)
 {
 	//Local_transform.Scale(x, y, z);
 
-	Local_transform.ptr()[0] = x;
-	Local_transform.ptr()[5] = y;
-	Local_transform.ptr()[10] = z;
+	scale = float3(x, y, z);
+
+	Local_transform.ptr()[0] = scale.x;
+	Local_transform.ptr()[5] = scale.y;
+	Local_transform.ptr()[10] = scale.z;
 }
 
 void ComponentTransform::SetLocalTransform(float4x4 new_transform)

@@ -27,6 +27,10 @@ public:
 
 private:
 	float4x4 Local_transform = math::float4x4::identity;
+
+	float3 position = float3::zero;
+	Quat rotation = Quat::identity;
+	float3 scale = float3::one;
 };
 
 #endif
