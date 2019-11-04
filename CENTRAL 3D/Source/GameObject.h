@@ -30,16 +30,15 @@ public:
 	template<typename TComponent>
 	TComponent*	GetComponent(Component::ComponentType type)
 	{
-		if (active)
+
+		for (uint i = 0; i < components.size(); ++i)
 		{
-			for (uint i = 0; i < components.size(); ++i)
+			if (components[i]->GetType() == type)
 			{
-				if (components[i]->GetType() == type)
-				{
-					return ((TComponent*)(components[i]));
-				}
+				return ((TComponent*)(components[i]));
 			}
 		}
+		
 		return nullptr;
 	}
 
