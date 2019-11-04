@@ -12,6 +12,8 @@
 #include "ImporterMaterial.h"
 
 #include "par/par_shapes.h"
+#include "Math.h"
+
 
 #include "mmgr/mmgr.h"
 
@@ -108,7 +110,7 @@ void ModuleSceneManager::Draw() const
 
 		// --- Send transform to OpenGL and use it to draw ---
 		glPushMatrix();
-		glMultMatrixf(transform->GetLocalTransform().ptr());
+		glMultMatrixf(transform->GetLocalTransform().Transposed().ptr());
 
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = game_objects[i]->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);

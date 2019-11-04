@@ -34,7 +34,7 @@ private:
 
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
-	float3		rotation_euler;
+	float3	rotation_euler = float3::zero;
 	float3 scale = float3::one;
 };
 

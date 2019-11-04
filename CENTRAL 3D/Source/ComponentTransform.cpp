@@ -20,12 +20,7 @@ float3 ComponentTransform::GetScale() const
 
 float3 ComponentTransform::GetRotation() const
 {
-	float3 rotation = float3::zero;
-
-	//rotation.x = Atan2(Local_transform.ptr()[2][0], Local_transform.ptr()[2][0]);
-
-
-	return rotation;
+	return rotation_euler;
 }
 
 float4x4 ComponentTransform::GetLocalTransform() const
@@ -37,9 +32,7 @@ void ComponentTransform::SetPosition(float x, float y, float z)
 {
 	position = float3(x, y, z);
 
-	Local_transform.ptr()[12] = position.x;
-	Local_transform.ptr()[13] = position.y;
-	Local_transform.ptr()[14] = position.z;
+	UpdateLocalTransform();
 }
 
 void ComponentTransform::SetRotation(float3 euler_angles)
@@ -58,13 +51,8 @@ void ComponentTransform::SetRotation(float3 euler_angles)
 
 void ComponentTransform::Scale(float x, float y, float z)
 {
-	//Local_transform.Scale(x, y, z);
-
 	scale = float3(x, y, z);
-
-	Local_transform.ptr()[0] = scale.x;
-	Local_transform.ptr()[5] = scale.y;
-	Local_transform.ptr()[10] = scale.z;
+	UpdateLocalTransform();
 }
 
 void ComponentTransform::SetLocalTransform(float4x4 new_transform)
@@ -75,6 +63,7 @@ void ComponentTransform::SetLocalTransform(float4x4 new_transform)
 void ComponentTransform::UpdateLocalTransform()
 {
 	Local_transform = float4x4::FromTRS(position, rotation, scale);
+	UpdateTRS();
 }
 
 void ComponentTransform::UpdateTRS()

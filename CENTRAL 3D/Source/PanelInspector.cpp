@@ -183,6 +183,7 @@ inline void PanelInspector::CreateTransformNode(GameObject& Selected) const
 	// --- Transform Set ---
 	transform->SetPosition(position.x, position.y, position.z);
 	transform->Scale(scale.x, scale.y, scale.z);
+	transform->SetRotation(rotation);
 
 }
 
