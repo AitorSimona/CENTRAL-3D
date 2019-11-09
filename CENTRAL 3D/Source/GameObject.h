@@ -50,11 +50,14 @@ public:
 	void			SetName(const char* name);
 	void			SetMaterial(ComponentMaterial* material);
 
+public:
+	GameObject* parent = nullptr;
 private:
 	// Unique Identifier
 	uint UID = 0;
 	std::string name;
 	std::vector<Component*> components;
+	std::vector<GameObject*> childs;
 
 	bool active = false;
 

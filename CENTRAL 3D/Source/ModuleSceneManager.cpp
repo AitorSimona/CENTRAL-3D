@@ -29,7 +29,9 @@ ModuleSceneManager::~ModuleSceneManager()
 
 bool ModuleSceneManager::Init(json file)
 {
-
+	// --- Create Root GO ---
+	root = CreateEmptyGameObject();
+	root->SetName("root");
 
 	return true;
 }
@@ -175,6 +177,10 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
+
+	// --- Set Parent GO ---
+	new_object->parent = root;
+
 	game_objects.push_back(new_object);
 	new_object->AddComponent(Component::ComponentType::Transform);
 

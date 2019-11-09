@@ -50,6 +50,7 @@ public:
 	ComponentMaterial* DefaultMaterial = nullptr;
 
 private:
+	GameObject* root = nullptr;
 	uint SelectedGameObject = 0;
 	std::vector<GameObject*> game_objects;
 	std::vector<ComponentMaterial*> Materials;
