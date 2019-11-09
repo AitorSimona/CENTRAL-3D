@@ -36,6 +36,7 @@ GameObject::~GameObject()
 
 void GameObject::RecursiveDelete(GameObject* GO)
 {
+	// --- Delete all childs of given GO, also destroys GO ---
 	if (GO->childs.size() > 0)
 	{
 		for (std::vector<GameObject*>::iterator it = GO->childs.begin(); it != GO->childs.end(); ++it)
@@ -51,6 +52,7 @@ void GameObject::RecursiveDelete(GameObject* GO)
 
 void GameObject::RemoveChildGO(GameObject * GO)
 {
+	// --- Remove given child from list ---
 	if (childs.size() > 0)
 	{
 		std::vector<GameObject*>::iterator go = childs.begin();
@@ -68,6 +70,7 @@ void GameObject::RemoveChildGO(GameObject * GO)
 
 void GameObject::AddChildGO(GameObject * GO)
 {
+	// --- Add a child to a Game Object ---
 	if (!FindChildGO(GO))
 	{
 		if (GO->parent)
@@ -80,6 +83,7 @@ void GameObject::AddChildGO(GameObject * GO)
 
 bool GameObject::FindChildGO(GameObject * GO)
 {
+	// --- Look for given GO in child list and return true if found ---
 	bool ret = false;
 
 	if (childs.size() > 0)

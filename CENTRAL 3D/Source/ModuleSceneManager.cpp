@@ -62,8 +62,6 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
-
-
 	return UPDATE_CONTINUE;
 }
 
