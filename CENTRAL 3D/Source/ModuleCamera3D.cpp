@@ -88,7 +88,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 	// --- Frame object ---
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-		FrameObject(App->scene_manager->GetSelectedGameObjects());
+		FrameObject(App->scene_manager->GetSelectedGameObject());
 
 
 	// Recalculate matrix -------------

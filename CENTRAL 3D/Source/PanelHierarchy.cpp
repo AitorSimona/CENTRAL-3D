@@ -38,7 +38,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow;
 	ImGuiTreeNodeFlags node_flags = base_flags;
 
-	if (Go == App->scene_manager->GetSelectedGameObjects())
+	if (Go == App->scene_manager->GetSelectedGameObject())
 		node_flags |= ImGuiTreeNodeFlags_Selected;
 
 	// --- Avoid displaying root ---

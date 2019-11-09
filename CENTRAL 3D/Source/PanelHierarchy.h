@@ -15,7 +15,6 @@ public:
 	bool Draw();
 
 private:
-
 	void DrawRecursive(GameObject* Go);
 };
 

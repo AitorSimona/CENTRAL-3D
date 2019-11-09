@@ -92,13 +92,13 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 			// MYTODO: We are not checking if the texture was already loaded, duplicating data
 
 			// --- Get Selected Game Object's Material ---
-			ComponentMaterial* mat = App->scene_manager->GetSelectedGameObjects()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+			ComponentMaterial* mat = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 		
 			if (mat->Texture_path == "Default")
 			{
 				mat = App->scene_manager->CreateEmptyMaterial();
 
-				App->scene_manager->GetSelectedGameObjects()->SetMaterial(mat);
+				App->scene_manager->GetSelectedGameObject()->SetMaterial(mat);
 			}
 
 			mat->Texture_path = DroppedFile_path.data();

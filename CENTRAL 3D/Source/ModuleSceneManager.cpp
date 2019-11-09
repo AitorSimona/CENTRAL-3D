@@ -89,7 +89,7 @@ bool ModuleSceneManager::CleanUp()
 }
 
 
-void ModuleSceneManager::Draw() const
+void ModuleSceneManager::Draw() 
 {
 	// --- Draw Grid ---
 	CreateGrid();
@@ -99,6 +99,8 @@ void ModuleSceneManager::Draw() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// --- Draw Game Object Meshes ---
+	DrawRecursive(root);
+
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
 		ComponentTransform* transform = game_objects[i]->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
@@ -125,25 +127,19 @@ void ModuleSceneManager::Draw() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+void ModuleSceneManager::DrawRecursive(GameObject * go)
+{
+
+}
+
 GameObject * ModuleSceneManager::GetRootGO() const
 {
 	return root;
 }
 
-
-uint ModuleSceneManager::GetNumGameObjects() const
-{
-	return game_objects.size();
-}
-
-GameObject* ModuleSceneManager::GetSelectedGameObjects() const
+GameObject* ModuleSceneManager::GetSelectedGameObject() const
 {
 	return SelectedGameObject;
-}
-
-std::vector<GameObject*>& ModuleSceneManager::GetGameObjects() 
-{
-	return game_objects;
 }
 
 void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
@@ -197,6 +193,7 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 
 	return new_object;
 }
+
 
 ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 {

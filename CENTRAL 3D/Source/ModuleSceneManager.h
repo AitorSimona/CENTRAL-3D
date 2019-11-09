@@ -31,20 +31,19 @@ public:
 	void CreateGrid() const;
 
 	// --- Getters ---
-	uint GetNumGameObjects() const;
-	GameObject* GetSelectedGameObjects() const;
-	std::vector<GameObject*>& GetGameObjects();
+	GameObject* GetSelectedGameObject() const;
 
 	// --- Setters ---
 	void SetSelectedGameObject(GameObject* go);
 	void SetTextureToSelectedGO(uint id);
 
 	// --- Utilities ---
-	void Draw() const;
+	void Draw();
 	GameObject* GetRootGO() const;
 
 private:
 	GameObject* CreateRootGameObject();
+	void DrawRecursive(GameObject* go);
 	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object) const;
 
 public:

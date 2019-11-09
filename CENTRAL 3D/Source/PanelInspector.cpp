@@ -27,7 +27,7 @@ bool PanelInspector::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		GameObject* Selected = App->scene_manager->GetSelectedGameObjects();
+		GameObject* Selected = App->scene_manager->GetSelectedGameObject();
 
 		if (Selected == nullptr)
 		{
