@@ -32,15 +32,16 @@ public:
 
 	// --- Getters ---
 	uint GetNumGameObjects() const;
-	uint GetSelectedGameObjects() const;
+	GameObject* GetSelectedGameObjects() const;
 	std::vector<GameObject*>& GetGameObjects();
 
 	// --- Setters ---
-	void SetSelectedGameObject(uint index);
+	void SetSelectedGameObject(GameObject* go);
 	void SetTextureToSelectedGO(uint id);
 
 	// --- Utilities ---
 	void Draw() const;
+	GameObject* GetRootGO() const;
 
 private:
 	GameObject* CreateRootGameObject();
@@ -52,7 +53,7 @@ public:
 
 private:
 	GameObject* root = nullptr;
-	uint SelectedGameObject = 0;
+	GameObject* SelectedGameObject = nullptr;
 	std::vector<GameObject*> game_objects;
 	std::vector<ComponentMaterial*> Materials;
 };

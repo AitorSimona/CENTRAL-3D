@@ -58,12 +58,12 @@ public:
 
 public:
 	GameObject* parent = nullptr;
+	std::vector<GameObject*> childs;
 private:
 	// Unique Identifier
 	uint UID = 0;
 	std::string name;
 	std::vector<Component*> components;
-	std::vector<GameObject*> childs;
 
 	bool active = false;
 

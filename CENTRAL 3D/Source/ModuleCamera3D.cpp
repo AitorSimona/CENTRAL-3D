@@ -88,7 +88,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 	// --- Frame object ---
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-		FrameObject(*App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects()));
+		FrameObject(App->scene_manager->GetSelectedGameObjects());
 
 
 	// Recalculate matrix -------------
@@ -144,25 +144,37 @@ float* ModuleCamera3D::GetViewMatrix()
 	return &ViewMatrix;
 }
 
-void ModuleCamera3D::FrameObject(GameObject& GO)
+void ModuleCamera3D::FrameObject(GameObject* GO)
 {
-	ComponentTransform* transform = GO.GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	// MYTODO: Try to clean this...
+	if (GO)
+	{
+		ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
-	Reference.x = transform->GetPosition().x;
-	Reference.y = transform->GetPosition().y;
-	Reference.z = transform->GetPosition().z;
+		if (transform)
+		{
+			Reference.x = transform->GetPosition().x;
+			Reference.y = transform->GetPosition().y;
+			Reference.z = transform->GetPosition().z;
 
-	ComponentMesh* mesh = GO.GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+			ComponentMesh* mesh = GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
-	Sphere s(transform->GetPosition(), 1);
-	s.Enclose(mesh->Vertices, mesh->VerticesSize);
+			if (mesh)
+			{
 
-	s.r = s.Diameter() - Length(float3(Reference.x, Reference.y, Reference.z));
-	s.pos = transform->GetPosition();
+				Sphere s(transform->GetPosition(), 1);
+				s.Enclose(mesh->Vertices, mesh->VerticesSize);
 
-	Look(Position, vec3(s.Centroid().x, s.Centroid().y, s.Centroid().z), true);
-	vec3 Movement = -Z * (2*s.r);
-	Position = Reference - Movement;
+				s.r = s.Diameter() - Length(float3(Reference.x, Reference.y, Reference.z));
+				s.pos = transform->GetPosition();
+
+				Look(Position, vec3(s.Centroid().x, s.Centroid().y, s.Centroid().z), true);
+				vec3 Movement = -Z * (2 * s.r);
+				Position = Reference - Movement;
+
+			}
+		}
+	}
 }
 
 void ModuleCamera3D::CameraPan(float speed)

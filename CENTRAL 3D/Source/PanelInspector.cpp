@@ -27,10 +27,13 @@ bool PanelInspector::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		GameObject* Selected = App->scene_manager->GetGameObjects().at(App->scene_manager->GetSelectedGameObjects());
+		GameObject* Selected = App->scene_manager->GetSelectedGameObjects();
 
 		if (Selected == nullptr)
+		{
+			ImGui::End();
 			return false;
+		}
 
 		// --- Game Object ---
 		CreateGameObjectNode(*Selected);

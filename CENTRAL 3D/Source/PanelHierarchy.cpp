@@ -24,18 +24,53 @@ bool PanelHierarchy::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		ImGui::BeginChild("GO_List", ImVec2(325, 0), true);
-		for (uint i = 0; i < App->scene_manager->GetNumGameObjects(); i++)
-		{
-			if (ImGui::Selectable(App->scene_manager->GetGameObjects().at(i)->GetName().data(), App->scene_manager->GetSelectedGameObjects() == i))
-				App->scene_manager->SetSelectedGameObject(i);
-		}
-		ImGui::EndChild();
-		ImGui::SameLine();
+		DrawRecursive(App->scene_manager->GetRootGO());
 	}
 
 	ImGui::End();
 
-
 	return true;
+}
+
+void PanelHierarchy::DrawRecursive(GameObject * Go)
+{
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow;
+
+	ImGuiTreeNodeFlags node_flags = base_flags;
+
+	if (Go == App->scene_manager->GetSelectedGameObjects())
+		node_flags |= ImGuiTreeNodeFlags_Selected;
+
+	if (Go->GetName().data() == App->scene_manager->GetRootGO()->GetName())
+	{
+		if (Go->childs.size() > 0)
+		{
+			for (std::vector<GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
+			{
+				DrawRecursive(*it);
+			}
+		}
+	}
+
+    else 
+	{
+		bool open = ImGui::TreeNodeEx(Go->GetName().data(), node_flags);
+
+		if (ImGui::IsItemClicked())
+			App->scene_manager->SetSelectedGameObject(Go);
+
+		if (open)
+		{
+			if (Go->childs.size() > 0)
+			{
+				for (std::vector<GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
+				{
+					DrawRecursive(*it);
+				}
+			}
+
+			ImGui::TreePop();
+		}
+
+	}
 }

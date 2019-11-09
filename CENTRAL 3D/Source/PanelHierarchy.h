@@ -3,6 +3,8 @@
 
 #include "Panel.h"
 
+class GameObject;
+
 class PanelHierarchy : public Panel
 {
 public:
@@ -11,6 +13,10 @@ public:
 	~PanelHierarchy();
 
 	bool Draw();
+
+private:
+
+	void DrawRecursive(GameObject* Go);
 };
 
 #endif

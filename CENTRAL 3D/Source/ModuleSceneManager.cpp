@@ -50,6 +50,7 @@ bool ModuleSceneManager::Start()
 	// --- Create Cube and sphere and position them in the scene ---
 	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
 	GameObject* sphere = CreateSphere(1.0f,25,25);
+	cube->AddChildGO(sphere);
 
 	ComponentTransform* Ctransform = cube->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	Ctransform->SetPosition(-3.5f, 0.5f, 0.0f);
@@ -126,13 +127,18 @@ void ModuleSceneManager::Draw() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+GameObject * ModuleSceneManager::GetRootGO() const
+{
+	return root;
+}
+
 
 uint ModuleSceneManager::GetNumGameObjects() const
 {
 	return game_objects.size();
 }
 
-uint ModuleSceneManager::GetSelectedGameObjects() const
+GameObject* ModuleSceneManager::GetSelectedGameObjects() const
 {
 	return SelectedGameObject;
 }
@@ -142,15 +148,15 @@ std::vector<GameObject*>& ModuleSceneManager::GetGameObjects()
 	return game_objects;
 }
 
-void ModuleSceneManager::SetSelectedGameObject(uint index)
+void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 {
-	SelectedGameObject = index;
+	SelectedGameObject = go;
 }
 
 void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 {
 	// --- Assign Texture to Object's Material ---
-	ComponentMaterial* Material = game_objects[SelectedGameObject]->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+	ComponentMaterial* Material = SelectedGameObject->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 
 	if (Material)
 	{
