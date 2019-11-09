@@ -30,8 +30,7 @@ ModuleSceneManager::~ModuleSceneManager()
 bool ModuleSceneManager::Init(json file)
 {
 	// --- Create Root GO ---
-	root = CreateEmptyGameObject();
-	root->SetName("root");
+	root = CreateRootGameObject();
 
 	return true;
 }
@@ -74,6 +73,8 @@ update_status ModuleSceneManager::Update(float dt)
 
 bool ModuleSceneManager::CleanUp()
 {
+	root->RecursiveDelete(root);
+
 	// --- Clean Up object data ---
 	for (uint i = 0; i < game_objects.size(); ++i)
 	{
@@ -97,7 +98,6 @@ bool ModuleSceneManager::CleanUp()
 
 void ModuleSceneManager::Draw() const
 {
-
 	// --- Draw Grid ---
 	CreateGrid();
 
@@ -130,8 +130,6 @@ void ModuleSceneManager::Draw() const
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	
-
 }
 
 
@@ -190,6 +188,17 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	return new_object;
 }
 
+GameObject * ModuleSceneManager::CreateRootGameObject()
+{
+	// --- Create New Game Object Name ---
+	std::string Name = "root";
+
+	// --- Create empty Game object to be filled out ---
+	GameObject* new_object = new GameObject(Name.data());
+
+	return new_object;
+}
+
 ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 {
 	// --- Creating Empty material to be filled out ---
@@ -199,6 +208,7 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 
 	return Material;
 }
+
 
 void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_object) const
 {

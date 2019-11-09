@@ -43,6 +43,7 @@ public:
 	void Draw() const;
 
 private:
+	GameObject* CreateRootGameObject();
 	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object) const;
 
 public:

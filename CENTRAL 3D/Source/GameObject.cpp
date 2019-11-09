@@ -22,16 +22,44 @@ GameObject::~GameObject()
 {
 	// --- Destroy all components and game object ---
 
-	Disable();
+	if (parent)
+		parent->RemoveChildGO(this);
 
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
 		{
-			if((*it)->GetType() != Component::ComponentType::Material)
-			delete(*it);
+			if ((*it)->GetType() != Component::ComponentType::Material)
+				delete(*it);
 
 			*it = nullptr;
+		}
+	}
+}
+
+void GameObject::RecursiveDelete(GameObject* GO)
+{
+	if (GO->childs.size() > 0)
+	{
+		for (std::vector<GameObject*>::iterator it = GO->childs.begin(); it != GO->childs.end(); ++it)
+		{
+			RecursiveDelete(*it);
+		}
+	}
+
+	delete GO;
+}
+
+void GameObject::RemoveChildGO(GameObject * GO)
+{
+	if (childs.size() > 0)
+	{
+		std::vector<GameObject*>::iterator go = childs.begin();
+
+		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
+		{
+			if (*go == GO)
+				childs.erase(go);
 		}
 	}
 }
@@ -151,3 +179,4 @@ void GameObject::SetMaterial(ComponentMaterial * material)
 		components.push_back(material);
 	}
 }
+

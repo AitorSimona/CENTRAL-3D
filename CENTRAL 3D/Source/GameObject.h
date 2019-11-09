@@ -50,6 +50,10 @@ public:
 	void			SetName(const char* name);
 	void			SetMaterial(ComponentMaterial* material);
 
+	// --- Utilities ---
+	void RecursiveDelete(GameObject* GO);
+	void RemoveChildGO(GameObject* GO);
+
 public:
 	GameObject* parent = nullptr;
 private:
