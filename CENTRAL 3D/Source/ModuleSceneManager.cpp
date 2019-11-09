@@ -75,12 +75,6 @@ bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete(root);
 
-	// --- Clean Up object data ---
-	for (uint i = 0; i < game_objects.size(); ++i)
-	{
-		if (game_objects[i])
-			delete game_objects[i];
-	}
 	game_objects.clear();
 
 	for (uint i = 0; i < Materials.size(); ++i)
@@ -177,8 +171,9 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	GameObject* new_object = new GameObject(Name.data());
 
 	// --- Set Parent GO ---
-	new_object->parent = root;
+	root->AddChildGO(new_object);
 
+	// --- Add to list and add component transform ---
 	game_objects.push_back(new_object);
 	new_object->AddComponent(Component::ComponentType::Transform);
 

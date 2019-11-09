@@ -22,9 +22,6 @@ GameObject::~GameObject()
 {
 	// --- Destroy all components and game object ---
 
-	if (parent)
-		parent->RemoveChildGO(this);
-
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
@@ -43,8 +40,10 @@ void GameObject::RecursiveDelete(GameObject* GO)
 	{
 		for (std::vector<GameObject*>::iterator it = GO->childs.begin(); it != GO->childs.end(); ++it)
 		{
-			RecursiveDelete(*it);
+			RecursiveDelete(*it);			
 		}
+
+		childs.clear();
 	}
 
 	delete GO;
@@ -62,6 +61,33 @@ void GameObject::RemoveChildGO(GameObject * GO)
 				childs.erase(go);
 		}
 	}
+}
+
+void GameObject::AddChildGO(GameObject * GO)
+{
+	if (!FindChildGO(GO))
+	{
+		childs.push_back(GO);
+		GO->parent = this;
+	}
+}
+
+bool GameObject::FindChildGO(GameObject * GO)
+{
+	bool ret = false;
+
+	if (childs.size() > 0)
+	{
+		std::vector<GameObject*>::iterator go = childs.begin();
+
+		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
+		{
+			if (*go == GO)
+				ret = true;
+		}
+	}
+
+	return ret;
 }
 
 Component * GameObject::AddComponent(Component::ComponentType type)

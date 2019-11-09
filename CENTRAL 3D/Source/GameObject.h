@@ -53,6 +53,8 @@ public:
 	// --- Utilities ---
 	void RecursiveDelete(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
+	void AddChildGO(GameObject* GO);
+	bool FindChildGO(GameObject* GO);
 
 public:
 	GameObject* parent = nullptr;
