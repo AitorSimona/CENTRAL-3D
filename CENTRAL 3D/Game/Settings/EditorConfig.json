@@ -9,7 +9,7 @@
         "Hierarchy": true,
         "Inspector": true,
         "Scene": true,
-        "Settings": false,
+        "Settings": true,
         "Toolbar": true
     },
     "Input": null,

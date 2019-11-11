@@ -69,7 +69,7 @@ private:
 
 	// --- Win Flags ---
 	bool fullscreen = false;
-	bool resizable = false;
+	bool resizable = true;
 	bool borderless = false;
 	bool fullscreen_desktop = false;
 };
