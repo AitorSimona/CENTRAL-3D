@@ -34,6 +34,18 @@ GameObject::~GameObject()
 	}
 }
 
+void GameObject::Update(float dt)
+{
+	if (GetComponent<ComponentTransform>(Component::ComponentType::Transform)->update_transform)
+		OnUpdateTransform(this);
+
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		(*it)->Update(dt);
+	}
+
+}
+
 void GameObject::RecursiveDelete(GameObject* GO)
 {
 	// --- Delete all childs of given GO, also destroys GO ---
@@ -48,6 +60,21 @@ void GameObject::RecursiveDelete(GameObject* GO)
 	}
 
 	delete GO;
+}
+
+void GameObject::OnUpdateTransform(GameObject* GO)
+{
+	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	transform->OnUpdateTransform(GO->parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
+
+	// --- Update all children ---
+	if (GO->childs.size() > 0)
+	{
+		for (std::vector<GameObject*>::iterator it = GO->childs.begin(); it != GO->childs.end(); ++it)
+		{
+			OnUpdateTransform(*it);
+		}
+	}
 }
 
 void GameObject::RemoveChildGO(GameObject * GO)
@@ -75,7 +102,7 @@ void GameObject::AddChildGO(GameObject * GO)
 			GO->parent->RemoveChildGO(GO);
 
 		childs.push_back(GO);
-		GO->parent = this;
+		GO->SetParent(this);
 	}
 }
 
@@ -212,5 +239,12 @@ void GameObject::SetMaterial(ComponentMaterial * material)
 		RemoveComponent(Component::ComponentType::Material);
 		components.push_back(material);
 	}
+}
+
+void GameObject::SetParent(GameObject * go)
+{
+	parent = go;
+	ComponentTransform* transform = this->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	transform->SetGlobalTransform(parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
 }
 

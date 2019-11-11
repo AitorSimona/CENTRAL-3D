@@ -67,6 +67,8 @@ update_status ModuleSceneManager::PreUpdate(float dt)
 
 update_status ModuleSceneManager::Update(float dt)
 {
+	root->Update(dt);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -120,7 +122,7 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 
 		// --- Send transform to OpenGL and use it to draw ---
 		glPushMatrix();
-		glMultMatrixf(transform->GetLocalTransform().Transposed().ptr());
+		glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
 
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
@@ -176,11 +178,11 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
 
+	// --- Add component transform ---
+	new_object->AddComponent(Component::ComponentType::Transform);
+
 	// --- Set Parent GO ---
 	root->AddChildGO(new_object);
-
-	// --- Add to list and add component transform ---
-	new_object->AddComponent(Component::ComponentType::Transform);
 
 	// --- Assign Default Material ---
 	new_object->SetMaterial(DefaultMaterial);
@@ -195,6 +197,9 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
+
+	// --- Add component transform ---
+	new_object->AddComponent(Component::ComponentType::Transform);
 
 	return new_object;
 }

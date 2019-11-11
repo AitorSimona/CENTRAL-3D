@@ -18,13 +18,17 @@ public:
 	float3			GetScale() const;
 	float3			GetRotation() const;
 	float4x4        GetLocalTransform() const;
+	float4x4        GetGlobalTransform() const;
 
 	// --- Setters ---
 	void			SetPosition(float x, float y, float z);
 	void			SetRotation(float3 euler_angles);
 	void			Scale(float x, float y, float z);
-	void			SetLocalTransform(float4x4 new_transform);
+	void			SetGlobalTransform(float4x4 new_transform);
+	void			OnUpdateTransform(const float4x4& ParentGlobal);
 
+public:
+	bool update_transform = false;
 private:
 	void UpdateLocalTransform();
 	void UpdateTRS();

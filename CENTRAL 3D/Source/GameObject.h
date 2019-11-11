@@ -17,6 +17,7 @@ public:
 	virtual ~GameObject();
 	void Enable();
 	void Disable();
+	void Update(float dt);
 
 	// --- Getters ---
 	uint			GetUID() const;
@@ -49,9 +50,11 @@ public:
 	// --- Setters ---
 	void			SetName(const char* name);
 	void			SetMaterial(ComponentMaterial* material);
+	void			SetParent(GameObject* go);
 
 	// --- Utilities ---
 	void RecursiveDelete(GameObject* GO);
+	void OnUpdateTransform(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);
