@@ -18,12 +18,12 @@ ImporterMaterial::~ImporterMaterial()
 }
 
 // --- Create Material from Scene and path to file ---
-bool ImporterMaterial::Import(const char & File_path, const ImportData & IData) const
+bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) const
 {
 	ImportMaterialData MData = (ImportMaterialData&) IData;
 
 	// --- Get Directory from filename ---
-	std::string directory = &File_path;
+	std::string directory = File_path;
 	App->fs->GetDirectoryFromPath(directory);
 
 	if (MData.scene->HasMaterials())

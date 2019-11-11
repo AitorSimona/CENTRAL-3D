@@ -9,7 +9,7 @@ Importer::~Importer()
 {
 }
 
-bool Importer::Import(const char & File_path, const ImportData & IData) const
+bool Importer::Import(const char * File_path, const ImportData & IData) const
 {
 	return false;
 }

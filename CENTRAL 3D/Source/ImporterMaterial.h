@@ -19,7 +19,7 @@ public:
 	ImporterMaterial();
 	virtual ~ImporterMaterial();
 
-	bool Import(const char& File_path, const ImportData& IData) const override;
+	bool Import(const char* File_path, const ImportData& IData) const override;
 };
 
 #endif

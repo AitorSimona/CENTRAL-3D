@@ -31,14 +31,25 @@ ImporterScene::~ImporterScene()
 	delete IMaterial;
 }
 
-bool ImporterScene::Import(const char & File_path, const ImportData & IData) const
+bool ImporterScene::Import(const char * File_path, const ImportData & IData) const
 {
 	ImportSceneData Sdata = (ImportSceneData&) IData;
 	
-
 	// --- Import scene from path ---
-	const aiScene* scene = aiImportFile(&File_path, aiProcessPreset_TargetRealtime_MaxQuality);
+	const aiScene* scene = aiImportFile(File_path, aiProcessPreset_TargetRealtime_MaxQuality);
 
+	GameObject* rootnode = App->scene_manager->CreateEmptyGameObject();
+
+	std::string rootnodename = File_path;
+
+	// --- Remove the directory and file type, obtaining the file name ---
+	uint count = rootnodename.find_last_of("/");
+	rootnodename = rootnodename.substr(count + 1, rootnodename.size());
+
+	uint countdot = rootnodename.find_last_of(".");
+	rootnodename = rootnodename.substr(0, countdot);
+
+	rootnode->SetName(rootnodename.data());
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
@@ -54,45 +65,7 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 
-		for (uint i = 0; i < scene->mNumMeshes; ++i)
-		{
-			// --- Create Game Object ---
-			GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
-
-			// --- Get Scene mesh number i ---
-			aiMesh* mesh = scene->mMeshes[i];
-
-			if (mesh)
-			{
-				
-				// --- Create new Component Mesh to store current scene mesh data ---
-				ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-
-				if (new_mesh)
-				{
-					// --- Import mesh data (fill new_mesh)---
-					ImportMeshData Mdata;
-					Mdata.mesh = mesh;
-					Mdata.new_mesh = new_mesh;
-					IMesh->Import(Mdata);
-
-					// --- Create new Component Renderer to draw mesh ---
-					ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
-
-					if (Material)
-					{
-						// --- Set Object's Material ---
-						new_object->SetMaterial(Material);
-					}
-
-				}
-
-				// --- When the mesh is loaded, frame it with the camera ---
-				App->camera->FrameObject(new_object);
-
-			}
-
-		}
+		LoadNodes(scene->mRootNode,rootnode,scene, Material);
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
@@ -102,4 +75,66 @@ bool ImporterScene::Import(const char & File_path, const ImportData & IData) con
 		LOG("|[error]: Error loading FBX %s", &File_path);
 
 	return true;
+}
+
+void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, ComponentMaterial* Material) const
+{
+	GameObject* nodeGo = nullptr;
+
+	if (node != scene->mRootNode)
+	{
+		nodeGo = App->scene_manager->CreateEmptyGameObject();
+		nodeGo->SetName(node->mName.C_Str());
+		nodeGo->SetParent(parent);
+	}
+	else
+		nodeGo = parent;
+
+	for (int i = 0; i < node->mNumChildren; ++i)
+	{
+		LoadNodes(node->mChildren[i], nodeGo,scene, Material);
+	}
+
+	for (int j = 0; j < node->mNumMeshes; ++j)
+	{
+		// --- Create Game Object ---
+		GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
+
+		new_object->SetParent(nodeGo);
+
+		// --- Get Scene mesh number i ---
+		uint mesh_index = node->mMeshes[j];
+		aiMesh* mesh = scene->mMeshes[mesh_index];
+
+		if (mesh)
+		{
+
+
+			// --- Create new Component Mesh to store current scene mesh data ---
+			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+
+			if (new_mesh)
+			{
+				// --- Import mesh data (fill new_mesh)---
+				ImportMeshData Mdata;
+				Mdata.mesh = mesh;
+				Mdata.new_mesh = new_mesh;
+				IMesh->Import(Mdata);
+
+				// --- Create new Component Renderer to draw mesh ---
+				ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
+
+				if (Material)
+				{
+					// --- Set Object's Material ---
+					new_object->SetMaterial(Material);
+				}
+
+			}
+
+			// --- When the mesh is loaded, frame it with the camera ---
+			App->camera->FrameObject(new_object);
+
+		}
+	}
 }

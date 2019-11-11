@@ -58,8 +58,11 @@ void ComponentTransform::SetRotation(float3 euler_angles)
 
 void ComponentTransform::Scale(float x, float y, float z)
 {
-	scale = float3(x, y, z);
-	UpdateLocalTransform();
+	if (x > 0.0f && y > 00.0f && z > 00.0f)
+	{
+		scale = float3(x, y, z);
+		UpdateLocalTransform();
+	}
 }
 
 void ComponentTransform::SetGlobalTransform(float4x4 new_transform)

@@ -243,6 +243,7 @@ void GameObject::SetMaterial(ComponentMaterial * material)
 
 void GameObject::SetParent(GameObject * go)
 {
+	go->AddChildGO(this);
 	parent = go;
 	ComponentTransform* transform = this->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	transform->SetGlobalTransform(parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());

@@ -48,14 +48,14 @@ bool ModuleSceneManager::Start()
 	CheckersMaterial->Texture_height = CHECKERS_HEIGHT;
 
 	// --- Create Cube and sphere and position them in the scene ---
-	GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
-	GameObject* sphere = CreateSphere(1.0f,25,25);
-	cube->AddChildGO(sphere);
+	//GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
+	//GameObject* sphere = CreateSphere(1.0f,25,25);
+	//cube->AddChildGO(sphere);
 
-	ComponentTransform* Ctransform = cube->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-	Ctransform->SetPosition(-3.5f, 0.5f, 0.0f);
-	ComponentTransform* Stransform = sphere->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-	Stransform->SetPosition(-6.0f, 0.5f, 0.5f);
+	//ComponentTransform* Ctransform = cube->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	//Ctransform->SetPosition(-3.5f, 0.5f, 0.0f);
+	//ComponentTransform* Stransform = sphere->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	//Stransform->SetPosition(-6.0f, 0.5f, 0.5f);
 
 	return true;
 }

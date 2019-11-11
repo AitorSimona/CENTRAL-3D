@@ -79,7 +79,7 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 		if (DroppedFile_path.find(".fbx") != std::string::npos || DroppedFile_path.find(".FBX") != std::string::npos)
 		{
 			ImportData data;
-			ret = IScene->Import(*DroppedFile_path.data(), data);
+			ret = IScene->Import(DroppedFile_path.data(), data);
 		}
 		// If it is a json file ...
 		else if (DroppedFile_path.find(".json") != std::string::npos || DroppedFile_path.find(".JSON") != std::string::npos)
