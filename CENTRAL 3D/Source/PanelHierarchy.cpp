@@ -56,6 +56,9 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 	// --- Display Go node ---
     else 
 	{
+		if (Go->childs.size() == 0)
+			node_flags |= ImGuiTreeNodeFlags_Leaf;
+
 		// --- Create current node and get if it is opened or not ---
 		bool open = ImGui::TreeNodeEx(Go->GetName().data(), node_flags);
 
