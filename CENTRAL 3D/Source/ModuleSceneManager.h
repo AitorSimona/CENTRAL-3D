@@ -51,9 +51,9 @@ public:
 	ComponentMaterial* DefaultMaterial = nullptr;
 
 private:
+	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
-	std::vector<GameObject*> game_objects;
 	std::vector<ComponentMaterial*> Materials;
 };
 

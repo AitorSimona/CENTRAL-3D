@@ -63,7 +63,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 		if (ImGui::IsItemClicked())
 			App->scene_manager->SetSelectedGameObject(Go);
 
-		// --- Displat children only if current node is open ---
+		// --- Display children only if current node is open ---
 		if (open)
 		{
 			// --- Check for children and draw them the same way ---

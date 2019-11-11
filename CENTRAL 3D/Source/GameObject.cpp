@@ -55,8 +55,6 @@ void GameObject::RemoveChildGO(GameObject * GO)
 	// --- Remove given child from list ---
 	if (childs.size() > 0)
 	{
-		std::vector<GameObject*>::iterator go = childs.begin();
-
 		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
 		{
 			if (*go == GO)

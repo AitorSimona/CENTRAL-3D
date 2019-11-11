@@ -74,8 +74,6 @@ bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete(root);
 
-	game_objects.clear();
-
 	for (uint i = 0; i < Materials.size(); ++i)
 	{
 		if (Materials[i])
@@ -101,16 +99,31 @@ void ModuleSceneManager::Draw()
 	// --- Draw Game Object Meshes ---
 	DrawRecursive(root);
 
-	for (uint i = 0; i < game_objects.size(); ++i)
+	// --- DeActivate wireframe mode ---
+	if (App->renderer3D->wireframe)
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void ModuleSceneManager::DrawRecursive(GameObject * go)
+{
+	if (go->childs.size() > 0)
 	{
-		ComponentTransform* transform = game_objects[i]->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
+		{
+			DrawRecursive(*it);
+		}
+	}
+
+	if (go->GetName() != root->GetName())
+	{
+		ComponentTransform* transform = go->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
 		// --- Send transform to OpenGL and use it to draw ---
 		glPushMatrix();
 		glMultMatrixf(transform->GetLocalTransform().Transposed().ptr());
 
 		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = game_objects[i]->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+		ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
 		// --- If Found, draw the mesh ---
 		if (Renderer && Renderer->IsEnabled())
@@ -121,15 +134,6 @@ void ModuleSceneManager::Draw()
 		// --- Pop transform so OpenGL does not use it for other operations ---
 		glPopMatrix();
 	}
-
-	// --- DeActivate wireframe mode ---
-	if (App->renderer3D->wireframe)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-void ModuleSceneManager::DrawRecursive(GameObject * go)
-{
-
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const
@@ -164,8 +168,10 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
 	Name.append("(");
-	Name.append(std::to_string(game_objects.size()));
+	Name.append(std::to_string(go_count));
 	Name.append(")");
+
+	go_count++;
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
@@ -174,7 +180,6 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	root->AddChildGO(new_object);
 
 	// --- Add to list and add component transform ---
-	game_objects.push_back(new_object);
 	new_object->AddComponent(Component::ComponentType::Transform);
 
 	// --- Assign Default Material ---
