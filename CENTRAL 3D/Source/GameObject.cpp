@@ -212,7 +212,7 @@ void GameObject::Disable()
 	active = false;
 }
 
-uint GameObject::GetUID() const
+uint& GameObject::GetUID()
 {
 	return UID;
 }

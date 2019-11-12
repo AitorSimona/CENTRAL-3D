@@ -71,7 +71,8 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 			node_flags |= ImGuiTreeNodeFlags_Leaf;
 
 		// --- Create current node and get if it is opened or not ---
-		bool open = ImGui::TreeNodeEx(Go->GetName().data(), node_flags);
+
+		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName().data());
 
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))

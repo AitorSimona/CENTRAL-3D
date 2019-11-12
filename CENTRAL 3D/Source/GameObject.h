@@ -20,7 +20,7 @@ public:
 	void Update(float dt);
 
 	// --- Getters ---
-	uint			GetUID() const;
+	uint&			GetUID();
 	std::string		GetName() const;
 
 	bool&			GetActive();
