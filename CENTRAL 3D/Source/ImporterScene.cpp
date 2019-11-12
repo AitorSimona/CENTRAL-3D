@@ -75,6 +75,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		IMaterial->Import(File_path, MData);
 
 		std::vector<GameObject*> scene_gos;
+		scene_gos.push_back(rootnode);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 		LoadNodes(scene->mRootNode,rootnode,scene, Material, scene_gos);
@@ -106,6 +107,7 @@ void ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::st
 	{
 		file[scene_gos[i]->GetName()];
 		file[scene_gos[i]->GetName()]["UID"] = std::to_string(scene_gos[i]->GetUID());
+		file[scene_gos[i]->GetName()]["Parent"] = std::to_string(scene_gos[i]->parent->GetUID());
 	}
 	std::string data;
 	data = App->GetJLoader()->Serialize(file);
