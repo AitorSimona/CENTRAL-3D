@@ -19,3 +19,8 @@ bool Importer::Import(const ImportData & IData) const
 	return false;
 }
 
+bool Importer::Load(const char * exported_file) const
+{
+	return false;
+}
+

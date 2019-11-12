@@ -13,7 +13,8 @@ public:
 
 	virtual bool Import(const char* File_path, const ImportData& IData) const;
 	virtual bool Import(const ImportData& IData) const;
-
+	virtual bool Load(const char* exported_file) const;
+		
 };
 
 #endif

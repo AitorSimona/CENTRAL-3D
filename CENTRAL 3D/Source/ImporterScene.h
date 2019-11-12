@@ -23,6 +23,7 @@ public:
 	virtual ~ImporterScene();
 
 	bool Import(const char* File_path, const ImportData& IData) const override;
+	bool Load(const char* exported_file) const override;
 
 private:
 	void LoadNodes(const aiNode* node, GameObject* parent ,const aiScene* scene, ComponentMaterial* Material) const;

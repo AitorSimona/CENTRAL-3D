@@ -36,6 +36,7 @@ enum update_status
 #define VERSION "0.05"
 #define ASSETS_FOLDER "/Assets/"
 #define SETTINGS_FOLDER "/Settings/"
+#define LIBRARY_FOLDER "/Library/"
 
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096

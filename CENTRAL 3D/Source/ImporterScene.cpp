@@ -13,6 +13,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
 #include "GameObject.h"
+#include "ModuleFileSystem.h"
 
 #include "ImporterMesh.h"
 #include "ImporterMaterial.h"
@@ -34,11 +35,6 @@ ImporterScene::~ImporterScene()
 bool ImporterScene::Import(const char * File_path, const ImportData & IData) const
 {
 	ImportSceneData Sdata = (ImportSceneData&) IData;
-	
-	// --- Import scene from path ---
-	const aiScene* scene = aiImportFile(File_path, aiProcessPreset_TargetRealtime_MaxQuality);
-
-	GameObject* rootnode = App->scene_manager->CreateEmptyGameObject();
 
 	std::string rootnodename = File_path;
 
@@ -49,6 +45,25 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	uint countdot = rootnodename.find_last_of(".");
 	rootnodename = rootnodename.substr(0, countdot);
 
+	// --- Duplicate File into Assets folder, save relative path ---
+	std::string relative_path;
+
+	App->fs->DuplicateFile(File_path, ASSETS_FOLDER, relative_path);
+
+	//if (!App->fs->Exists(path.data()))
+	//{
+	char* buffer;
+	uint size = App->fs->Load(relative_path.data(), &buffer);
+	//App->fs->Save(path.data(), buffer, size);
+
+	//}
+	
+	// --- Import scene from path ---
+	const aiScene* scene = aiImportFileFromMemory(buffer, size, aiProcessPreset_TargetRealtime_MaxQuality, nullptr);
+
+	GameObject* rootnode = App->scene_manager->CreateEmptyGameObject();
+
+	// --- Set root node name as file name with no extension ---
 	rootnode->SetName(rootnodename.data());
 
 	if (scene != nullptr && scene->HasMeshes())
@@ -73,6 +88,13 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	}
 	else
 		LOG("|[error]: Error loading FBX %s", &File_path);
+
+	return true;
+}
+
+bool ImporterScene::Load(const char * exported_file) const
+{
+
 
 	return true;
 }

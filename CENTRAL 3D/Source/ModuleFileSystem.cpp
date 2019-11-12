@@ -1,3 +1,4 @@
+#include <fstream>
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
@@ -57,7 +58,7 @@ bool ModuleFileSystem::Init(json config)
 
 	// Make sure standard paths exist
 	const char* dirs[] = {
-		SETTINGS_FOLDER, ASSETS_FOLDER,
+		SETTINGS_FOLDER, ASSETS_FOLDER, LIBRARY_FOLDER
 	};
 
 	for (uint i = 0; i < sizeof(dirs) / sizeof(const char*); ++i)
@@ -336,6 +337,37 @@ SDL_RWops* ModuleFileSystem::Load(const char* file) const
 	}
 	else
 		return nullptr;
+}
+
+bool ModuleFileSystem::DuplicateFile(const char * file, const char * dstFolder, std::string & relativePath)
+{
+	std::string fileStr, extensionStr;
+	SplitFilePath(file, nullptr, &fileStr, &extensionStr);
+
+	relativePath = relativePath.append(dstFolder).append("/") + fileStr.append(".") + extensionStr;
+	std::string finalPath = std::string(*PHYSFS_getSearchPath()).append("/") + relativePath;
+
+	std::ifstream src;
+	src.open(file, std::ios::binary);
+	bool srcOpen = src.is_open();
+	std::ofstream  dst(finalPath.c_str(), std::ios::binary);
+	bool dstOpen = dst.is_open();
+
+	dst << src.rdbuf();
+
+	src.close();
+	dst.close();
+
+	if (srcOpen && dstOpen)
+	{
+		LOG("[success] File Duplicated Correctly");
+		return true;
+	}
+	else
+	{
+		LOG("[error] File could not be duplicated");
+		return false;
+	}
 }
 
 int close_sdl_rwops(SDL_RWops *rw)
