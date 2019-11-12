@@ -355,4 +355,9 @@ LCG & Application::GetRandom()
 	return *RandomNumber;
 }
 
+JSONLoader * Application::GetJLoader()
+{
+	return &JLoader;
+}
+
 

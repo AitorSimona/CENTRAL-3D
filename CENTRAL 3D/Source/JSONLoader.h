@@ -18,6 +18,7 @@ public:
 
 	bool Save(const char* File, json jsonfile);
 
+	std::string Serialize(json jsonfile);
 };
 
 #endif
