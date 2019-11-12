@@ -1,4 +1,8 @@
 {
-    "Baker_house": null,
-    "Chimney": null
+    "Baker_house": {
+        "UID": "1430437120"
+    },
+    "Chimney": {
+        "UID": "115197058"
+    }
 }
