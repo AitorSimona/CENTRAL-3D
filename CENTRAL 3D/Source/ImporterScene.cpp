@@ -108,13 +108,18 @@ void ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::st
 		file[scene_gos[i]->GetName()];
 		file[scene_gos[i]->GetName()]["UID"] = std::to_string(scene_gos[i]->GetUID());
 		file[scene_gos[i]->GetName()]["Parent"] = std::to_string(scene_gos[i]->parent->GetUID());
+		file[scene_gos[i]->GetName()]["Components"];
+		for (int j = 0; j < scene_gos[i]->GetComponents().size(); ++j)
+		{
+			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())];
+		}
 	}
 	std::string data;
 	data = App->GetJLoader()->Serialize(file);
 
 	std::string path = LIBRARY_FOLDER;
 	path.append(scene_name);
-	path.append(".scene");
+	path.append(".model");
 
 	char* buffer = (char*)data.data();
 	uint size = data.length();

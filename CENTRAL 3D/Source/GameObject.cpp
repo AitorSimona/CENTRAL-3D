@@ -198,6 +198,11 @@ bool GameObject::HasComponent(Component::ComponentType type) const
 	return false;
 }
 
+std::vector<Component*>& GameObject::GetComponents()
+{
+	return components;
+}
+
 void GameObject::Enable()
 {
 	active = true;
