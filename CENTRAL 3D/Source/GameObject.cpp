@@ -105,11 +105,7 @@ void GameObject::AddChildGO(GameObject * GO)
 		childs.push_back(GO);
 
 		ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-
-		if (transform)
-			transform->SetGlobalTransform(this->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
-		else
-			LOG("|[error]: no transform");
+		transform->SetGlobalTransform(this->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
 	}
 }
 

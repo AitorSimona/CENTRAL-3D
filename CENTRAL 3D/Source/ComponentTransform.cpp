@@ -67,9 +67,12 @@ void ComponentTransform::Scale(float x, float y, float z)
 
 void ComponentTransform::SetGlobalTransform(float4x4 new_transform)
 {
-	Local_transform = GO->parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Inverted()*new_transform;
+	// --- New transform is parent's global transform ---
+	Local_transform = new_transform.Inverted()*Global_transform;
 	Global_transform = new_transform;
-	update_transform = true;
+	
+	// --- Force Update of Global transform ---
+	OnUpdateTransform(Global_transform);
 }
 
 void ComponentTransform::UpdateLocalTransform()
