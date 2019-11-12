@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "ModuleSceneManager.h"
+#include "ModuleInput.h"
 
 #include "GameObject.h"
 
@@ -27,18 +28,24 @@ bool PanelHierarchy::Draw()
 		DrawRecursive(App->scene_manager->GetRootGO());
 	}
 
+	ImGui::End();
+
+	// --- Manage Drag & Drop ---
 	if (end_drag)
 	{
-		if(!dragged->FindChildGO(target))
-		target->AddChildGO(dragged);
+		if (!dragged->FindChildGO(target))
+			target->AddChildGO(dragged);
 
 		end_drag = false;
 		dragged = nullptr;
 		target = nullptr;
 	}
-
-
-	ImGui::End();
+	if (to_destroy)
+	{
+		App->scene_manager->DestroyGameObject(to_destroy);
+		to_destroy = nullptr;
+		App->scene_manager->SetSelectedGameObject(nullptr);
+	}
 
 	return true;
 }
@@ -93,9 +100,17 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 			ImGui::EndDragDropTarget();
 		}
 
+		// --- Set Game Object to be destroyed ---
+		if (ImGui::IsWindowFocused() && Go == App->scene_manager->GetSelectedGameObject() && App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
+		{
+			LOG("Destroying: %s ...", Go->GetName().data());
+			to_destroy = Go;
+		}
+
 		// --- If node is clicked set Go as selected ---
 		if (ImGui::IsItemClicked())
 			App->scene_manager->SetSelectedGameObject(Go);
+
 
 		// --- Display children only if current node is open ---
 		if (open)

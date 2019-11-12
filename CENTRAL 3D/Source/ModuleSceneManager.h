@@ -30,6 +30,8 @@ public:
 	GameObject* CreateSphere(float Radius, int slices, int slacks) const;
 	void CreateGrid() const;
 
+	void DestroyGameObject(GameObject* go);
+
 	// --- Getters ---
 	GameObject* GetSelectedGameObject() const;
 

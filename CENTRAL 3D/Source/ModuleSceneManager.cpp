@@ -62,6 +62,8 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
+
+
 	return UPDATE_CONTINUE;
 }
 
@@ -365,4 +367,12 @@ void ModuleSceneManager::CreateGrid() const
 	glLineWidth(1.0f);
 
 	glEnd();
+}
+
+void ModuleSceneManager::DestroyGameObject(GameObject * go)
+{
+	go->parent->RemoveChildGO(go);
+	go->RecursiveDelete(go);
+
+	this->go_count--;
 }
