@@ -16,6 +16,10 @@ public:
 
 private:
 	void DrawRecursive(GameObject* Go);
+
+	bool end_drag = false;
+	GameObject* target = nullptr;
+	GameObject* dragged = nullptr;
 };
 
 #endif

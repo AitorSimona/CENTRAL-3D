@@ -84,7 +84,7 @@ void GameObject::RemoveChildGO(GameObject * GO)
 	{
 		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
 		{
-			if (*go == GO)
+			if ((*go)->GetUID() == GO->GetUID())
 			{				
 				childs.erase(go);
 				break;
@@ -95,14 +95,21 @@ void GameObject::RemoveChildGO(GameObject * GO)
 
 void GameObject::AddChildGO(GameObject * GO)
 {
-	// --- Add a child to a Game Object ---
+	// --- Add a child GO to a Game Object this ---
 	if (!FindChildGO(GO))
 	{
 		if (GO->parent)
 			GO->parent->RemoveChildGO(GO);
 
+		GO->parent = this;
 		childs.push_back(GO);
-		GO->SetParent(this);
+
+		ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+
+		if (transform)
+			transform->SetGlobalTransform(this->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
+		else
+			LOG("|[error]: no transform");
 	}
 }
 
@@ -240,12 +247,3 @@ void GameObject::SetMaterial(ComponentMaterial * material)
 		components.push_back(material);
 	}
 }
-
-void GameObject::SetParent(GameObject * go)
-{
-	go->AddChildGO(this);
-	parent = go;
-	ComponentTransform* transform = this->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-	transform->SetGlobalTransform(parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
-}
-

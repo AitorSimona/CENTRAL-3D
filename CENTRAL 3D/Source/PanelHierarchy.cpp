@@ -27,6 +27,17 @@ bool PanelHierarchy::Draw()
 		DrawRecursive(App->scene_manager->GetRootGO());
 	}
 
+	if (end_drag)
+	{
+		if(!dragged->FindChildGO(target))
+		target->AddChildGO(dragged);
+
+		end_drag = false;
+		dragged = nullptr;
+		target = nullptr;
+	}
+
+
 	ImGui::End();
 
 	return true;
@@ -61,6 +72,25 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 
 		// --- Create current node and get if it is opened or not ---
 		bool open = ImGui::TreeNodeEx(Go->GetName().data(), node_flags);
+
+		// Our buttons are both drag sources and drag targets here!
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			ImGui::SetDragDropPayload("GO", Go, sizeof(GameObject));        // Set payload to carry the index of our item (could be anything)
+			dragged = Go;
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
+			{
+				target = Go;
+				end_drag = true;
+			}
+			
+			ImGui::EndDragDropTarget();
+		}
 
 		// --- If node is clicked set Go as selected ---
 		if (ImGui::IsItemClicked())

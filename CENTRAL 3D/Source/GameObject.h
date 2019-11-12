@@ -50,7 +50,6 @@ public:
 	// --- Setters ---
 	void			SetName(const char* name);
 	void			SetMaterial(ComponentMaterial* material);
-	void			SetParent(GameObject* go);
 
 	// --- Utilities ---
 	void RecursiveDelete(GameObject* GO);
