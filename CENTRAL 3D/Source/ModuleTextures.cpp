@@ -147,7 +147,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
-inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, const char* path) const
+inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, const char* path, bool load_existing) const
 {
 	// --- Attention!! If the image is flipped, we flip it back --- 
 	ILinfo imageInfo;
@@ -156,7 +156,7 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 	width = imageInfo.Width;
 	height = imageInfo.Height;
 
-	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT && ! load_existing)
 		iluFlipImage();
 
 	// --- Convert the image into a suitable format to work with ---
@@ -184,7 +184,7 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 		LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
 }
 
-uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &height) const
+uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &height, bool load_existing) const
 {
 	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromImage ---
 
@@ -204,20 +204,24 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	ilBindImage(ImageName);
 
 	// --- Extract the filename from the path ---
-	std::string file_path = path;
-	std::string name = TEXTURES_FOLDER;
-	uint count = file_path.find_last_of("/");
-	file_path = file_path.substr(count + 1, file_path.size());
+	if (!load_existing)
+	{
+		// --- Only if the file is being imported (no copy in library) ---
+		std::string file_path = path;
+		std::string name = TEXTURES_FOLDER;
+		uint count = file_path.find_last_of("/");
+		file_path = file_path.substr(count + 1, file_path.size());
 
-	uint countdot = file_path.find_last_of(".");
-	file_path = file_path.substr(0, countdot);
+		uint countdot = file_path.find_last_of(".");
+		file_path = file_path.substr(0, countdot);
 
-	name.append(file_path);
-	name.append(".dds");
+		name.append(file_path);
+		name.append(".dds");
+	}
 
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path))
-		CreateTextureFromImage(TextureID, width,height, name.data());
+		CreateTextureFromImage(TextureID, width,height, name.data(), load_existing);
 	else
 		LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
 

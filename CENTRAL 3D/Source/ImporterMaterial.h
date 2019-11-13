@@ -20,6 +20,7 @@ public:
 	virtual ~ImporterMaterial();
 
 	bool Import(const char* File_path, const ImportData& IData) const override;
+	void Load(const char* filename, ComponentMaterial& mat);
 };
 
 #endif

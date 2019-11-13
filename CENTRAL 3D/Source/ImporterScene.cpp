@@ -99,6 +99,7 @@ bool ImporterScene::Load(const char * exported_file) const
 	json model= App->GetJLoader()->Load(exported_file);
 
 	std::vector<GameObject*> objects;
+	ComponentMaterial* mat = nullptr;
 
 	for (json::iterator it = model.begin(); it != model.end(); ++it)
 	{
@@ -109,12 +110,15 @@ bool ImporterScene::Load(const char * exported_file) const
 
 		json components = model[it.key()]["Components"];
 
+
+
 		for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
 		{
 			std::string val = it2.key();
 			uint value = std::stoi(val);
 			
 			Component::ComponentType type = (Component::ComponentType)value;
+			ComponentMesh* mesh = nullptr;
 
 			switch (type)
 			{
@@ -123,11 +127,16 @@ bool ImporterScene::Load(const char * exported_file) const
 					break;
 
 				case Component::ComponentType::Material:
-
+					if (!mat)
+					{
+						mat = App->scene_manager->CreateEmptyMaterial();
+						IMaterial->Load(new_go->GetName().data(), *mat);
+					}
+					new_go->SetMaterial(mat);
 					break;
 
 				case Component::ComponentType::Mesh:
-					ComponentMesh* mesh = (ComponentMesh*) new_go->AddComponent(type);
+					mesh = (ComponentMesh*) new_go->AddComponent(type);
 					IMesh->Load(new_go->GetName().data(), *mesh);
 					break;
 

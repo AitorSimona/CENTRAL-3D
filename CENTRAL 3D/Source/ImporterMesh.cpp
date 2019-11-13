@@ -54,10 +54,11 @@ bool ImporterMesh::Import(const ImportData & IData) const
 	}
 
 	// --- Texture Coordinates ---
+	data.new_mesh->TexCoordsSize = data.mesh->mNumVertices * 2;
 
 	if (data.mesh->HasTextureCoords(0))
 	{
-		data.new_mesh->TexCoords = new float[data.mesh->mNumVertices * 2];
+		data.new_mesh->TexCoords = new float[data.new_mesh->TexCoordsSize];
 
 		for (uint j = 0; j < data.mesh->mNumVertices; ++j)
 		{
@@ -123,7 +124,7 @@ void ImporterMesh::Save(ComponentMesh * mesh, const char* path) const
 
 	// --- Store TexCoords ---
 	cursor += bytes;
-	bytes = sizeof(float) * mesh->TexCoordsSize;
+	bytes = sizeof(uint) * mesh->TexCoordsSize;
 	memcpy(cursor, mesh->TexCoords, bytes);
 	
 	App->fs->Save(path, data, size);
@@ -180,5 +181,10 @@ void ImporterMesh::Load(const char * filename, ComponentMesh & mesh) const
 
 	mesh.TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * mesh.TexCoordsSize, mesh.TexCoords);
 
+	if (buffer)
+	{
+		delete[] buffer;
+		buffer = nullptr;
+	}
 }
 
