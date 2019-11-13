@@ -106,6 +106,36 @@ bool ImporterScene::Load(const char * exported_file) const
 		new_go->SetName(it.key().data());
 		std::string uid = model[it.key()]["UID"];
 		new_go->GetUID() = std::stoi(uid);
+
+		json components = model[it.key()]["Components"];
+
+		for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+		{
+			std::string val = it2.key();
+			uint value = std::stoi(val);
+			
+			Component::ComponentType type = (Component::ComponentType)value;
+
+			switch (type)
+			{
+				case Component::ComponentType::Renderer:
+					new_go->AddComponent(Component::ComponentType::Renderer);
+					break;
+
+				case Component::ComponentType::Material:
+
+					break;
+
+				case Component::ComponentType::Mesh:
+					ComponentMesh* mesh = (ComponentMesh*) new_go->AddComponent(type);
+					IMesh->Load(new_go->GetName().data(), *mesh);
+					break;
+
+
+			}
+		}
+
+
 		objects.push_back(new_go);
 	}
 
