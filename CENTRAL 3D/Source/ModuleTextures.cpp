@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleImporter.h"
 #include "OpenGL.h"
+#include "ModuleFileSystem.h"
 
 #include "DevIL/include/il.h"
 #include "DevIL/include/ilu.h"
@@ -146,7 +147,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
-inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height) const
+inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, const char* path) const
 {
 	// --- Attention!! If the image is flipped, we flip it back --- 
 	ILinfo imageInfo;
@@ -163,6 +164,21 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 	{
 		// --- Create the texture ---
 		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
+
+		// --- Save to Lib ---
+		//ILuint size;
+		//ILubyte *data;
+		//ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
+		//size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
+
+		//if (size > 0) {
+		//	data = new ILubyte[size]; // allocate data buffer
+
+		//	if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
+		//		App->fs->Save(path, data, size);
+
+		//	delete[] data;
+		//}
 	}
 	else
 		LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
@@ -187,9 +203,13 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	// --- Bind the image ---
 	ilBindImage(ImageName);
 
+	// --- Extract the filename from the path ---
+	std::string name = LIBRARY_FOLDER;
+
+
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path))
-		CreateTextureFromImage(TextureID, width,height);
+		CreateTextureFromImage(TextureID, width,height, name.data());
 	else
 		LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
 

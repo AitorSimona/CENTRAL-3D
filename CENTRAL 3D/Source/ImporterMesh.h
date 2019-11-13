@@ -20,6 +20,8 @@ public:
 	virtual ~ImporterMesh();
 
 	bool Import(const ImportData& IData) const override;
+
+	void Save(ComponentMesh* mesh, const char* path) const;
 };
 
 #endif

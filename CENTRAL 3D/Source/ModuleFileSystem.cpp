@@ -339,36 +339,6 @@ SDL_RWops* ModuleFileSystem::Load(const char* file) const
 		return nullptr;
 }
 
-bool ModuleFileSystem::DuplicateFile(const char * file, const char * dstFolder, std::string & relativePath)
-{
-	std::string fileStr, extensionStr;
-	SplitFilePath(file, nullptr, &fileStr, &extensionStr);
-
-	relativePath = relativePath.append(dstFolder).append("/") + fileStr.append(".") + extensionStr;
-	std::string finalPath = std::string(*PHYSFS_getSearchPath()).append("/") + relativePath;
-
-	std::ifstream src;
-	src.open(file, std::ios::binary);
-	bool srcOpen = src.is_open();
-	std::ofstream  dst(finalPath.c_str(), std::ios::binary);
-	bool dstOpen = dst.is_open();
-
-	dst << src.rdbuf();
-
-	src.close();
-	dst.close();
-
-	if (srcOpen && dstOpen)
-	{
-		LOG("[success] File Duplicated Correctly");
-		return true;
-	}
-	else
-	{
-		LOG("[error] File could not be duplicated");
-		return false;
-	}
-}
 
 int close_sdl_rwops(SDL_RWops *rw)
 {

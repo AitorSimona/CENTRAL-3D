@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ComponentMesh.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleFileSystem.h"
 
 #include "Assimp/include/scene.h"
 
@@ -90,5 +91,26 @@ bool ImporterMesh::Import(const ImportData & IData) const
 	data.new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * data.new_mesh->IndicesSize, data.new_mesh->Indices);
 
 	return true;
+}
+
+void ImporterMesh::Save(ComponentMesh * mesh, const char* path) const
+{
+	// amount of indices / vertices / colors / normals / texture_coords / AABB
+	uint ranges[2] = { mesh->IndicesSize, mesh->VerticesSize };
+
+	uint size = sizeof(ranges) + sizeof(uint) * mesh->IndicesSize + sizeof(float) * mesh->VerticesSize * 3;
+
+	char* data = new char[size]; // Allocate
+	char* cursor = data;
+
+	uint bytes = sizeof(ranges); // First store ranges
+	memcpy(cursor, ranges, bytes);
+
+	cursor += bytes; // Store indices
+	bytes = sizeof(uint) * mesh->IndicesSize;
+	memcpy(cursor, mesh->Indices, bytes);	cursor += bytes; // Store vertices
+	bytes = sizeof(float3) * mesh->VerticesSize;
+	memcpy(cursor, mesh->Vertices, bytes);	
+	App->fs->Save(path, data, size);
 }
 

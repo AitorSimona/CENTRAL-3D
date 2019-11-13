@@ -31,7 +31,7 @@ private:
 	// --- Called by CreateTextureFromPixels to split code ---
 	inline void SetTextureParameters(bool CheckersTexture = false) const;
 
-	inline void CreateTextureFromImage(uint & TextureID, uint &width, uint &height) const;
+	inline void CreateTextureFromImage(uint & TextureID, uint &width, uint &height, const char* path) const;
 };
 
 #endif

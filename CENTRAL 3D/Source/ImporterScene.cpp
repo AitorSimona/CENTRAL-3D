@@ -51,7 +51,6 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	relative_path.append(rootnodename);
 	relative_path.append(extension);
 
-	//App->fs->DuplicateFile(File_path, ASSETS_FOLDER, relative_path);
 	App->fs->CopyFromOutsideFS(File_path, relative_path.data());
 
 	char* buffer;
@@ -104,21 +103,41 @@ bool ImporterScene::Load(const char * exported_file) const
 
 void ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name) const
 {
-	json file;
+	json model;
+
+	std::string mesh_path = LIBRARY_FOLDER;
+	mesh_path.append(scene_name);
+	mesh_path.append(".mesh");
 
 	for (int i = 0; i < scene_gos.size(); ++i)
 	{
-		file[scene_gos[i]->GetName()];
-		file[scene_gos[i]->GetName()]["UID"] = std::to_string(scene_gos[i]->GetUID());
-		file[scene_gos[i]->GetName()]["Parent"] = std::to_string(scene_gos[i]->parent->GetUID());
-		file[scene_gos[i]->GetName()]["Components"];
+		model[scene_gos[i]->GetName()];
+		model[scene_gos[i]->GetName()]["UID"] = std::to_string(scene_gos[i]->GetUID());
+		model[scene_gos[i]->GetName()]["Parent"] = std::to_string(scene_gos[i]->parent->GetUID());
+		model[scene_gos[i]->GetName()]["Components"];
 		for (int j = 0; j < scene_gos[i]->GetComponents().size(); ++j)
 		{
-			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())];
+			model[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())];
+
+
+			switch (scene_gos[i]->GetComponents()[j]->GetType())
+			{
+
+				case Component::ComponentType::Transform:
+
+					break;
+				case Component::ComponentType::Mesh:
+					IMesh->Save(scene_gos[i]->GetComponent<ComponentMesh>(Component::ComponentType::Mesh),mesh_path.data());
+					break;
+				case Component::ComponentType::Renderer:
+					
+					break;
+				
+			}
 		}
 	}
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	data = App->GetJLoader()->Serialize(model);
 
 	std::string path = LIBRARY_FOLDER;
 	path.append(scene_name);
