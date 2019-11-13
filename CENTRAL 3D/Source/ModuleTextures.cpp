@@ -166,19 +166,19 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
 
 		// --- Save to Lib ---
-		//ILuint size;
-		//ILubyte *data;
-		//ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
-		//size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
+		ILuint size;
+		ILubyte *data;
+		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
+		size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
 
-		//if (size > 0) {
-		//	data = new ILubyte[size]; // allocate data buffer
+		if (size > 0) {
+			data = new ILubyte[size]; // allocate data buffer
 
-		//	if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
-		//		App->fs->Save(path, data, size);
+			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
+				App->fs->Save(path, data, size);
 
-		//	delete[] data;
-		//}
+			delete[] data;
+		}
 	}
 	else
 		LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
@@ -204,8 +204,16 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	ilBindImage(ImageName);
 
 	// --- Extract the filename from the path ---
+	std::string file_path = path;
 	std::string name = LIBRARY_FOLDER;
+	uint count = file_path.find_last_of("/");
+	file_path = file_path.substr(count + 1, file_path.size());
 
+	uint countdot = file_path.find_last_of(".");
+	file_path = file_path.substr(0, countdot);
+
+	name.append(file_path);
+	name.append(".dds");
 
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path))

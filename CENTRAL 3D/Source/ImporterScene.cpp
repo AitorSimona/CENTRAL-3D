@@ -184,7 +184,6 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		if (mesh)
 		{
 
-
 			// --- Create new Component Mesh to store current scene mesh data ---
 			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 
