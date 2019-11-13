@@ -43,17 +43,20 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	rootnodename = rootnodename.substr(count + 1, rootnodename.size());
 
 	uint countdot = rootnodename.find_last_of(".");
+	std::string extension = rootnodename.substr(countdot,rootnodename.length());
 	rootnodename = rootnodename.substr(0, countdot);
 
 	// --- Duplicate File into Assets folder, save relative path ---
-	std::string relative_path;
+	std::string relative_path = ASSETS_FOLDER;
+	relative_path.append(rootnodename);
+	relative_path.append(extension);
 
-	App->fs->DuplicateFile(File_path, ASSETS_FOLDER, relative_path);
+	//App->fs->DuplicateFile(File_path, ASSETS_FOLDER, relative_path);
+	App->fs->CopyFromOutsideFS(File_path, relative_path.data());
 
 	char* buffer;
 	uint size = App->fs->Load(relative_path.data(), &buffer);
 
-	
 	// --- Import scene from path ---
 	const aiScene* scene = aiImportFileFromMemory(buffer, size, aiProcessPreset_TargetRealtime_MaxQuality, nullptr);
 

@@ -41,7 +41,6 @@ public:
 	unsigned int Load(const char* path, const char* file, char** buffer) const;
 	unsigned int Load(const char* file, char** buffer) const;
 	SDL_RWops* Load(const char* file) const;
-	bool DuplicateFile(const char* file, const char* dstFolder, std::string& relativePath);
 
 	// IO interfaces for other libs to handle files via PHYSfs
 	aiFileIO* GetAssimpIO();
