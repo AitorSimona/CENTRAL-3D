@@ -150,6 +150,11 @@ GameObject* ModuleSceneManager::GetSelectedGameObject() const
 	return SelectedGameObject;
 }
 
+GameObject * ModuleSceneManager::GetGoFromUID(uint UID) const
+{
+	return nullptr;
+}
+
 void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 {
 	SelectedGameObject = go;

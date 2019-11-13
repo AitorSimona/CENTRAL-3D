@@ -117,3 +117,8 @@ void ImporterMesh::Save(ComponentMesh * mesh, const char* path) const
 	App->fs->Save(path, data, size);
 }
 
+void ImporterMesh::Load(char * buffer) const
+{
+
+}
+

@@ -22,6 +22,7 @@ public:
 	bool Import(const ImportData& IData) const override;
 
 	void Save(ComponentMesh* mesh, const char* path) const;
+	void Load(char * buffer) const;
 };
 
 #endif

@@ -96,7 +96,23 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 
 bool ImporterScene::Load(const char * exported_file) const
 {
+	json model= App->GetJLoader()->Load(exported_file);
 
+	std::vector<GameObject*> objects;
+
+	for (json::iterator it = model.begin(); it != model.end(); ++it)
+	{
+		GameObject* new_go = App->scene_manager->CreateEmptyGameObject();
+		new_go->SetName(it.key().data());
+		std::string uid = model[it.key()]["UID"];
+		new_go->GetUID() = std::stoi(uid);
+		objects.push_back(new_go);
+	}
+
+	for (uint i = 0; i < objects.size(); ++i)
+	{
+
+	}
 
 	return true;
 }
