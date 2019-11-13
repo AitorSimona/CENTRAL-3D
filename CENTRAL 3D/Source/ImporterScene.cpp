@@ -108,7 +108,7 @@ void ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::st
 	for (int i = 0; i < scene_gos.size(); ++i)
 	{
 
-		std::string mesh_path = LIBRARY_FOLDER;
+		std::string mesh_path = MESHES_FOLDER;
 		mesh_path.append(scene_gos[i]->GetName());
 		mesh_path.append(".mesh");
 
@@ -140,7 +140,7 @@ void ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::st
 	std::string data;
 	data = App->GetJLoader()->Serialize(model);
 
-	std::string path = LIBRARY_FOLDER;
+	std::string path = MODELS_FOLDER;
 	path.append(scene_name);
 	path.append(".model");
 

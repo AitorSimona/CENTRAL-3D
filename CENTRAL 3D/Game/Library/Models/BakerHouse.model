@@ -3,8 +3,8 @@
         "Components": {
             "0": null
         },
-        "Parent": "2098539043",
-        "UID": "484272705"
+        "Parent": "189329915",
+        "UID": "83386929"
     },
     "Baker_house": {
         "Components": {
@@ -13,8 +13,8 @@
             "2": null,
             "3": null
         },
-        "Parent": "484272705",
-        "UID": "857636172"
+        "Parent": "83386929",
+        "UID": "1046802052"
     },
     "Chimney": {
         "Components": {
@@ -23,7 +23,7 @@
             "2": null,
             "3": null
         },
-        "Parent": "484272705",
-        "UID": "56736905"
+        "Parent": "83386929",
+        "UID": "833086068"
     }
 }

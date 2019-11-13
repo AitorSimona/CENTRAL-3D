@@ -205,7 +205,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 
 	// --- Extract the filename from the path ---
 	std::string file_path = path;
-	std::string name = LIBRARY_FOLDER;
+	std::string name = TEXTURES_FOLDER;
 	uint count = file_path.find_last_of("/");
 	file_path = file_path.substr(count + 1, file_path.size());
 
