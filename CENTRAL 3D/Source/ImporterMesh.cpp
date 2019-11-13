@@ -108,9 +108,12 @@ void ImporterMesh::Save(ComponentMesh * mesh, const char* path) const
 
 	cursor += bytes; // Store indices
 	bytes = sizeof(uint) * mesh->IndicesSize;
-	memcpy(cursor, mesh->Indices, bytes);	cursor += bytes; // Store vertices
+	memcpy(cursor, mesh->Indices, bytes);
+
+	cursor += bytes; // Store vertices
 	bytes = sizeof(float3) * mesh->VerticesSize;
-	memcpy(cursor, mesh->Vertices, bytes);	
+	memcpy(cursor, mesh->Vertices, bytes);
+	
 	App->fs->Save(path, data, size);
 }
 

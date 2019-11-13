@@ -105,12 +105,13 @@ void ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::st
 {
 	json model;
 
-	std::string mesh_path = LIBRARY_FOLDER;
-	mesh_path.append(scene_name);
-	mesh_path.append(".mesh");
-
 	for (int i = 0; i < scene_gos.size(); ++i)
 	{
+
+		std::string mesh_path = LIBRARY_FOLDER;
+		mesh_path.append(scene_gos[i]->GetName());
+		mesh_path.append(".mesh");
+
 		model[scene_gos[i]->GetName()];
 		model[scene_gos[i]->GetName()]["UID"] = std::to_string(scene_gos[i]->GetUID());
 		model[scene_gos[i]->GetName()]["Parent"] = std::to_string(scene_gos[i]->parent->GetUID());
