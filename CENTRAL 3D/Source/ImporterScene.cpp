@@ -111,7 +111,17 @@ bool ImporterScene::Load(const char * exported_file) const
 
 	for (uint i = 0; i < objects.size(); ++i)
 	{
+		std::string parent_uid = model[objects[i]->GetName()]["Parent"];
+		uint p_uid = std::stoi(parent_uid);
 
+		for (uint j = 0; j < objects.size(); ++j)
+		{
+			if (p_uid == objects[j]->GetUID())
+			{
+				objects[j]->AddChildGO(objects[i]);
+				continue;
+			}
+		}
 	}
 
 	return true;

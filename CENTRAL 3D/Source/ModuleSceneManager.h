@@ -34,7 +34,6 @@ public:
 
 	// --- Getters ---
 	GameObject* GetSelectedGameObject() const;
-	GameObject* GetGoFromUID(uint UID)const;
 
 	// --- Setters ---
 	void SetSelectedGameObject(GameObject* go);
