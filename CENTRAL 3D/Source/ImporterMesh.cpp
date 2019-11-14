@@ -129,6 +129,7 @@ void ImporterMesh::Save(ComponentMesh * mesh, const char* path) const
 	
 	App->fs->Save(path, data, size);
 
+	// --- Delete buffer data ---
 	if (data)
 	{
 		delete[] data;
@@ -139,9 +140,6 @@ void ImporterMesh::Save(ComponentMesh * mesh, const char* path) const
 
 void ImporterMesh::Load(const char * filename, ComponentMesh & mesh) const
 {
-	//std::string path = MESHES_FOLDER;
-	//path.append(filename);
-	//path.append(".mesh");
 
 	// --- Load mesh data ---
 	char* buffer;
@@ -188,6 +186,7 @@ void ImporterMesh::Load(const char * filename, ComponentMesh & mesh) const
 
 	mesh.TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * mesh.TexCoordsSize, mesh.TexCoords);
 
+	// --- Delete buffer data ---
 	if (buffer)
 	{
 		delete[] buffer;

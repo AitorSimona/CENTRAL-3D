@@ -56,8 +56,8 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 
 void ImporterMaterial::Load(const char * filename, ComponentMaterial& mat)
 {
-
+	// --- Load from Library ---
+	// --- LibUID won't be overwritten since we are loading from library ---
 	mat.TextureID = App->textures->CreateTextureFromFile(filename,mat.Texture_width, mat.Texture_height, mat.LibUID,true);
 	mat.Texture_path = filename;
-
 }
