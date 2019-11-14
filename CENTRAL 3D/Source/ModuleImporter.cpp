@@ -43,7 +43,7 @@ bool ModuleImporter::Init(json file)
 
 bool ModuleImporter::Start()
 {
-	LoadFromPath("Assets/BakerHouse.fbx");
+	//LoadFromPath("Assets/BakerHouse.fbx");
 	//IScene->Load("Library/Models/BakerHouse.model");
 	return true;
 }
@@ -62,6 +62,11 @@ bool ModuleImporter::CleanUp()
 	}
 
 	return true;
+}
+
+ImporterScene * ModuleImporter::GetImporterScene() const
+{
+	return IScene;
 }
 
 bool ModuleImporter::LoadFromPath(const char* path) const

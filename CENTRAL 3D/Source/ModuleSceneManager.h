@@ -43,7 +43,14 @@ public:
 	void Draw();
 	GameObject* GetRootGO() const;
 
+	// --- Save/Load ----
+	void SaveStatus(json &file) const override;
+	void LoadStatus(const json & file) override;
+	void SaveScene();
+	void LoadScene();
+
 private:
+	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawRecursive(GameObject* go);
 	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object) const;

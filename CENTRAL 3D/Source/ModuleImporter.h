@@ -15,6 +15,9 @@ public:
 	bool Start();
 	bool CleanUp();
 
+	// --- Getters ---
+	ImporterScene* GetImporterScene() const;
+
 	// --- Utilities ---
 	bool LoadFromPath(const char* path) const;
 

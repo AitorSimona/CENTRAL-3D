@@ -1,0 +1,68 @@
+{
+    "BakerHouse": {
+        "Components": {
+            "0": "",
+            "3": "/Library/Textures/0.dds"
+        },
+        "Parent": "175606377",
+        "UID": "1001830473"
+    },
+    "Baker_house": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/1714608666.mesh",
+            "2": "",
+            "3": "/Library/Textures/0.dds"
+        },
+        "Parent": "1001830473",
+        "UID": "417474183"
+    },
+    "Chimney": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/596449797.mesh",
+            "2": "",
+            "3": "/Library/Textures/0.dds"
+        },
+        "Parent": "1001830473",
+        "UID": "317989820"
+    },
+    "GameObject (0)": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/1486342040.mesh",
+            "2": "",
+            "3": "/Library/Textures/0.dds"
+        },
+        "Parent": "175606377",
+        "UID": "267170746"
+    },
+    "GameObject (1)": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/1972152498.mesh",
+            "2": "",
+            "3": "/Library/Textures/0.dds"
+        },
+        "Parent": "175606377",
+        "UID": "1338640599"
+    },
+    "Professor:H_DDS_MidRes": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/1687518545.mesh",
+            "2": "",
+            "3": "/Library/Textures/0.dds"
+        },
+        "Parent": "764903304",
+        "UID": "33449478"
+    },
+    "professor": {
+        "Components": {
+            "0": "",
+            "3": "/Library/Textures/0.dds"
+        },
+        "Parent": "175606377",
+        "UID": "764903304"
+    }
+}

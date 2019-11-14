@@ -9,7 +9,9 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 
+#include "ModuleImporter.h"
 #include "ImporterMaterial.h"
+#include "ImporterScene.h"
 
 #include "par/par_shapes.h"
 #include "Math.h"
@@ -91,7 +93,6 @@ bool ModuleSceneManager::CleanUp()
 	return true;
 }
 
-
 void ModuleSceneManager::Draw() 
 {
 	// --- Draw Grid ---
@@ -146,9 +147,52 @@ GameObject * ModuleSceneManager::GetRootGO() const
 	return root;
 }
 
+void ModuleSceneManager::SaveStatus(json & file) const
+{
+}
+
+void ModuleSceneManager::LoadStatus(const json & file)
+{
+}
+
+void ModuleSceneManager::SaveScene()
+{
+	// --- Fill vector with scene's GO's ---
+	std::vector<GameObject*> scene_gos;
+	GatherGameObjects(scene_gos, root);
+
+	if (scene_gos.size() > 0)
+	{
+		std::string Scene_name = "SampleScene";
+		App->importer->GetImporterScene()->SaveSceneToFile(scene_gos, Scene_name, SCENE);
+	}
+}
+
+void ModuleSceneManager::LoadScene()
+{
+	std::string Scene_name = "SampleScene";
+
+	App->importer->GetImporterScene()->Load(Scene_name.data());
+}
+
 GameObject* ModuleSceneManager::GetSelectedGameObject() const
 {
 	return SelectedGameObject;
+}
+
+void ModuleSceneManager::GatherGameObjects(std::vector<GameObject*>& scene_gos, GameObject* go)
+{
+	// --- Add all childs from go to vector ---
+	if(go->GetName() != root->GetName())
+	scene_gos.push_back(go);
+
+	if (go->childs.size() > 0)
+	{
+		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
+		{
+			GatherGameObjects(scene_gos, *it);
+		}
+	}
 }
 
 

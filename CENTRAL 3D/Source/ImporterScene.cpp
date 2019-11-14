@@ -32,6 +32,8 @@ ImporterScene::~ImporterScene()
 	delete IMaterial;
 }
 
+// MYTODO: Give some use to return type (bool) in all functions (if load fails log...)
+
 bool ImporterScene::Import(const char * File_path, const ImportData & IData) const
 {
 	ImportSceneData Sdata = (ImportSceneData&) IData;
@@ -102,24 +104,24 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 
 bool ImporterScene::Load(const char * exported_file) const
 {
-	// --- Load JSON-like file ---
-	json model= App->GetJLoader()->Load(exported_file);
+	// --- Load Scene/model file ---
+	json file = App->GetJLoader()->Load(exported_file);
 
 
 	std::vector<GameObject*> objects;
 
-	for (json::iterator it = model.begin(); it != model.end(); ++it)
+	for (json::iterator it = file.begin(); it != file.end(); ++it)
 	{
 		// --- Create a Game Object for each node ---
 		GameObject* new_go = App->scene_manager->CreateEmptyGameObject();
 
 		// --- Retrieve GO's UID and name ---
 		new_go->SetName(it.key().data());
-		std::string uid = model[it.key()]["UID"];
+		std::string uid = file[it.key()]["UID"];
 		new_go->GetUID() = std::stoi(uid);
 
 		// --- Iterate components ---
-		json components = model[it.key()]["Components"];
+		json components = file[it.key()]["Components"];
 
 
 		for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
@@ -165,7 +167,7 @@ bool ImporterScene::Load(const char * exported_file) const
 	// --- Parent GO's ---
 	for (uint i = 0; i < objects.size(); ++i)
 	{
-		std::string parent_uid = model[objects[i]->GetName()]["Parent"];
+		std::string parent_uid = file[objects[i]->GetName()]["Parent"];
 		uint p_uid = std::stoi(parent_uid);
 
 		for (uint j = 0; j < objects.size(); ++j)
@@ -183,15 +185,17 @@ bool ImporterScene::Load(const char * exported_file) const
 
 std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name, ExportFileTypes exportedfile_type) const
 {
-	json model;
+	// --- Save Scene/Model to file ---
+
+	json file;
 
 	for (int i = 0; i < scene_gos.size(); ++i)
 	{
 		// --- Create GO Structure ---
-		model[scene_gos[i]->GetName()];
-		model[scene_gos[i]->GetName()]["UID"] = std::to_string(scene_gos[i]->GetUID());
-		model[scene_gos[i]->GetName()]["Parent"] = std::to_string(scene_gos[i]->parent->GetUID());
-		model[scene_gos[i]->GetName()]["Components"];
+		file[scene_gos[i]->GetName()];
+		file[scene_gos[i]->GetName()]["UID"] = std::to_string(scene_gos[i]->GetUID());
+		file[scene_gos[i]->GetName()]["Parent"] = std::to_string(scene_gos[i]->parent->GetUID());
+		file[scene_gos[i]->GetName()]["Components"];
 
 		for (int j = 0; j < scene_gos[i]->GetComponents().size(); ++j)
 		{
@@ -225,13 +229,13 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 			}
 
 			// --- Store path to component file ---
-			model[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
+			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 
 		}
 	}
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(model);
+	data = App->GetJLoader()->Serialize(file);
 
 	// --- Set destination file given exportfile type ---
 	std::string path;
@@ -262,6 +266,8 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 
 void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* File_path) const
 {
+	// --- Load Game Objects from Assimp scene ---
+
 	GameObject* nodeGo = nullptr;
 
 	if (node != scene->mRootNode && node->mNumMeshes > 1)
@@ -316,6 +322,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 				ComponentMaterial* Material = App->scene_manager->CreateEmptyMaterial();
 
 				// --- Import Material Data (fill Material) --- 
+
 				ImportMaterialData MData;
 				MData.scene = scene;
 				MData.new_material = Material;

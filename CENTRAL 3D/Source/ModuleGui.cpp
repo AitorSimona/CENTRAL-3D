@@ -132,6 +132,16 @@ update_status ModuleGui::Update(float dt)
 				{
 					return UPDATE_STOP;
 				}
+
+				if (ImGui::MenuItem("Save Scene"))
+				{
+					App->scene_manager->SaveScene();
+				}
+
+				if (ImGui::MenuItem("Load Scene"))
+				{
+					//App->scene_manager->LoadScene();
+				}
 				ImGui::EndMenu();
 			}
 

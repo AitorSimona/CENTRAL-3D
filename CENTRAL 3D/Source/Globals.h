@@ -39,7 +39,7 @@ enum update_status
 #define LIBRARY_FOLDER "/Library/"
 #define TEXTURES_FOLDER "/Library/Textures/"
 #define MESHES_FOLDER "/Library/Meshes/"
-#define SCENES_FOLDER "/Library/Scenes/"
+#define SCENES_FOLDER "/Assets/Scenes/"
 #define MODELS_FOLDER "/Library/Models/"
 
 #define SCREEN_SIZE 1
