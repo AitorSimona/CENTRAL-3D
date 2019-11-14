@@ -29,9 +29,12 @@ GameObject::~GameObject()
 			if ((*it)->GetType() != Component::ComponentType::Material)
 				delete(*it);
 
+			// MYTODO: We are not deleting materials here (should be deleted by user via project folder) All materials are deleted on app end
+
 			*it = nullptr;
 		}
 	}
+	components.clear();
 }
 
 void GameObject::Update(float dt)
@@ -46,18 +49,22 @@ void GameObject::Update(float dt)
 
 }
 
-void GameObject::RecursiveDelete(GameObject* GO)
+void GameObject::RecursiveDelete(GameObject* GO, bool target)
 {
 	// --- Delete all childs of given GO, also destroys GO ---
+
 	if (GO->childs.size() > 0)
 	{
 		for (std::vector<GameObject*>::iterator it = GO->childs.begin(); it != GO->childs.end(); ++it)
 		{
-			RecursiveDelete(*it);			
+			RecursiveDelete(*it, false);			
 		}
 
 		GO->childs.clear();
 	}
+	// --- If this is the first object GO given to Recursive delete, erase it from parent's list ---
+	if (target && GO->parent)
+		GO->parent->RemoveChildGO(GO);
 
 	delete GO;
 }

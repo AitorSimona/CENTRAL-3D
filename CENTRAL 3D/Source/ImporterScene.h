@@ -25,7 +25,7 @@ public:
 
 	bool Import(const char* File_path, const ImportData& IData) const override;
 	bool Load(const char* exported_file) const override;
-	void SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name) const;
+	std::string SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name) const;
 
 private:
 	void LoadNodes(const aiNode* node, GameObject* parent ,const aiScene* scene,  std::vector<GameObject*>& scene_gos, const char* File_path) const;

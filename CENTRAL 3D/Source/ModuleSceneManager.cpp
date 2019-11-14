@@ -85,6 +85,7 @@ bool ModuleSceneManager::CleanUp()
 	}
 	Materials.clear();
 
+	DefaultMaterial = nullptr;
 	CheckersMaterial = nullptr;
 
 	return true;

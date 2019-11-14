@@ -128,6 +128,13 @@ void ImporterMesh::Save(ComponentMesh * mesh, const char* path) const
 	memcpy(cursor, mesh->TexCoords, bytes);
 	
 	App->fs->Save(path, data, size);
+
+	if (data)
+	{
+		delete[] data;
+		data = nullptr;
+		cursor = nullptr;
+	}
 }
 
 void ImporterMesh::Load(const char * filename, ComponentMesh & mesh) const
@@ -185,6 +192,7 @@ void ImporterMesh::Load(const char * filename, ComponentMesh & mesh) const
 	{
 		delete[] buffer;
 		buffer = nullptr;
+		cursor = nullptr;
 	}
 }
 
