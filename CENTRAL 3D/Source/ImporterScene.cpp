@@ -81,7 +81,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		LoadNodes(scene->mRootNode,rootnode,scene, scene_gos, File_path);
 
 		// --- Save to Own format files in Library ---
-		std::string exported_file = SaveSceneToFile(scene_gos, rootnodename);
+		std::string exported_file = SaveSceneToFile(scene_gos, rootnodename, MODEL);
 		exported_file = exported_file.substr(1, exported_file.size());
 
 		// --- Delete Everything once Library files have been created ---
@@ -181,7 +181,7 @@ bool ImporterScene::Load(const char * exported_file) const
 	return true;
 }
 
-std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name) const
+std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name, ExportFileTypes exportedfile_type) const
 {
 	json model;
 
@@ -233,10 +233,23 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 	std::string data;
 	data = App->GetJLoader()->Serialize(model);
 
-	// --- Set destination file (model,scene) ---
-	std::string path = MODELS_FOLDER;
-	path.append(scene_name);
-	path.append(".model");
+	// --- Set destination file given exportfile type ---
+	std::string path;
+
+	switch (exportedfile_type)
+	{
+		case MODEL:
+			path = MODELS_FOLDER;
+			path.append(scene_name);
+			path.append(".model");
+			break;
+
+		case SCENE:
+			path = SCENES_FOLDER;
+			path.append(scene_name);
+			path.append(".scene");
+			break;
+	}
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();
