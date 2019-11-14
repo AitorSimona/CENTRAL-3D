@@ -1,29 +1,29 @@
 {
     "BakerHouse": {
         "Components": {
-            "0": null
+            "0": ""
         },
-        "Parent": "1341760279",
-        "UID": "1301223406"
+        "Parent": "770614981",
+        "UID": "401639200"
     },
     "Baker_house": {
         "Components": {
-            "0": null,
-            "1": null,
-            "2": null,
-            "3": null
+            "0": "",
+            "1": "/Library/Meshes/749647984.mesh",
+            "2": "",
+            "3": "/Library/Textures/286922930.dds"
         },
-        "Parent": "1301223406",
-        "UID": "911604206"
+        "Parent": "401639200",
+        "UID": "1731754231"
     },
     "Chimney": {
         "Components": {
-            "0": null,
-            "1": null,
-            "2": null,
-            "3": null
+            "0": "",
+            "1": "/Library/Meshes/2115908783.mesh",
+            "2": "",
+            "3": "/Library/Textures/1345097760.dds"
         },
-        "Parent": "1301223406",
-        "UID": "877100431"
+        "Parent": "401639200",
+        "UID": "138175613"
     }
 }

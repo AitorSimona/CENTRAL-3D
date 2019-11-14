@@ -113,7 +113,7 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 					// --- If there is a material, assign diffuse texture ---
 					if (mat)
 					{
-						App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(path, mat->Texture_width, mat->Texture_height));
+						App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(path, mat->Texture_width, mat->Texture_height,mat->LibUID));
 
 					}
 				}

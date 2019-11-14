@@ -165,26 +165,30 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 		// --- Create the texture ---
 		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
 
-		// --- Save to Lib ---
-		ILuint size;
-		ILubyte *data;
-		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
-		size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
+		if (!load_existing)
+		{
+			// --- Save to Lib ---
+			ILuint size;
+			ILubyte *data;
+			ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
+			size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
 
-		if (size > 0) {
-			data = new ILubyte[size]; // allocate data buffer
+			if (size > 0) {
+				data = new ILubyte[size]; // allocate data buffer
 
-			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
-				App->fs->Save(path, data, size);
+				if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
+					App->fs->Save(path, data, size);
 
-			delete[] data;
+				delete[] data;
+			}
+
 		}
 	}
 	else
 		LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
 }
 
-uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &height, bool load_existing) const
+uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &height, uint & LibUID,bool load_existing) const
 {
 	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromImage ---
 
@@ -203,19 +207,14 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	// --- Bind the image ---
 	ilBindImage(ImageName);
 
+	std::string name = TEXTURES_FOLDER;
+
 	// --- Extract the filename from the path ---
 	if (!load_existing)
 	{
 		// --- Only if the file is being imported (no copy in library) ---
-		std::string file_path = path;
-		std::string name = TEXTURES_FOLDER;
-		uint count = file_path.find_last_of("/");
-		file_path = file_path.substr(count + 1, file_path.size());
-
-		uint countdot = file_path.find_last_of(".");
-		file_path = file_path.substr(0, countdot);
-
-		name.append(file_path);
+		LibUID = App->GetRandom().Int();
+		name.append(std::to_string(LibUID));
 		name.append(".dds");
 	}
 

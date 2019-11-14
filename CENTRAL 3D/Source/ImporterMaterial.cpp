@@ -44,7 +44,7 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 			// --- If we find the texture file, load it ---
 			//if (App->fs->Exists(directory.data()))
 			//{
-				MData.new_material->TextureID = App->textures->CreateTextureFromFile(directory.data(), MData.new_material->Texture_width, MData.new_material->Texture_height);
+				MData.new_material->TextureID = App->textures->CreateTextureFromFile(directory.data(), MData.new_material->Texture_width, MData.new_material->Texture_height, MData.new_material->LibUID);
 				MData.new_material->Texture_path = directory.data();
 			//}
 
@@ -56,12 +56,8 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 
 void ImporterMaterial::Load(const char * filename, ComponentMaterial& mat)
 {
-	std::string path = TEXTURES_FOLDER;
-	path.append(filename);
-	path.append(".dds");
-	path = path.substr(1, path.size());
 
-	mat.TextureID = App->textures->CreateTextureFromFile(path.data(),mat.Texture_width, mat.Texture_height, true);
-	mat.Texture_path = path;
+	mat.TextureID = App->textures->CreateTextureFromFile(filename,mat.Texture_width, mat.Texture_height, mat.LibUID,true);
+	mat.Texture_path = filename;
 
 }
