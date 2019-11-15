@@ -11,6 +11,8 @@
 #include "ComponentRenderer.h"
 
 #include "ResourceMesh.h"
+#include "ResourceMaterial.h"
+#include "ResourceTexture.h"
 
 #include "mmgr/mmgr.h"
 
@@ -253,17 +255,17 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 
 		// --- Print Texture Path ---
 		std::string Path = "Path: ";
-		Path.append(material->Texture_path);
+		Path.append(material->resource_material->resource_diffuse->Texture_path);
 
 		ImGui::Text(Path.data());
 
 		// --- Texture Preview ---
-		ImGui::Image((void*)(uint)&material->TextureID, ImVec2(150, 150));
+		ImGui::Image((void*)(uint)&material->resource_material->resource_diffuse->buffer_id, ImVec2(150, 150));
 
 		// --- Print Texture Width and Height ---
-		ImGui::Text(std::to_string(material->Texture_width).data());
+		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_width).data());
 		ImGui::SameLine();
-		ImGui::Text(std::to_string(material->Texture_height).data());
+		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_height).data());
 
 		ImGui::TreePop();
 	}

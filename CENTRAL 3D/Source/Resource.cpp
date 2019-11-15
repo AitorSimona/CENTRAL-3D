@@ -18,6 +18,11 @@ uint Resource::GetUID() const
 	return UID;
 }
 
+void Resource::SetUID(uint UID)
+{ 
+	this->UID = UID;
+}
+
 Resource::ResourceType Resource::GetType() const
 {
 	return type;

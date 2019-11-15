@@ -19,7 +19,7 @@ public:
 	bool CleanUp();
 
 	uint LoadCheckImage() const;
-	uint CreateTextureFromFile(const char* path, uint &width, uint &height, uint & LibUID, bool load_existing = false) const;
+	uint CreateTextureFromFile(const char* path, uint &width, uint &height, uint LibUID, bool load_existing = false) const;
 	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
 
 	uint GetCheckerTextureID() const;

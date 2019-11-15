@@ -13,7 +13,6 @@ public:
 	virtual ~ComponentMesh();
 
 public:
-
 	ResourceMesh* resource_mesh = nullptr;
 };
 

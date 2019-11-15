@@ -1,5 +1,4 @@
 #include "ComponentMaterial.h"
-#include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 
@@ -10,12 +9,11 @@ ComponentMaterial::ComponentMaterial(Component::ComponentType type) : Component(
 
 ComponentMaterial::~ComponentMaterial()
 {	
-	glDeleteTextures(1, (GLuint*)&TextureID);
 }
 
 void ComponentMaterial::FreeTexture()
 {
-	glDeleteTextures(1, (GLuint*)&TextureID);
+	resource_material->resource_diffuse->FreeMemory();
 }
 
 

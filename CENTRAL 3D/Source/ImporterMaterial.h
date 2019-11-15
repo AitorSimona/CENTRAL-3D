@@ -4,12 +4,12 @@
 #include "Importer.h"
 
 struct aiScene;
-class ComponentMaterial;
+class ResourceMaterial;
 
 struct ImportMaterialData : public ImportData
 {
 	const aiScene* scene = nullptr;
-	ComponentMaterial* new_material = nullptr;
+	ResourceMaterial* new_material = nullptr;
 };
 
 class ImporterMaterial : public Importer
@@ -20,7 +20,7 @@ public:
 	virtual ~ImporterMaterial();
 
 	bool Import(const char* File_path, const ImportData& IData) const override;
-	void Load(const char* filename, ComponentMaterial& mat);
+	void Load(const char* filename, ResourceMaterial& mat);
 };
 
 #endif

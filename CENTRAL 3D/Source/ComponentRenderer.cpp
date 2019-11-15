@@ -47,7 +47,7 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 		if(this->checkers)
 		glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
 		else
-		glBindTexture(GL_TEXTURE_2D, mat->TextureID); // start using texture
+		glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 	}

@@ -157,13 +157,13 @@ bool ImporterScene::Load(const char * exported_file) const
 					{
 
 						mat = App->scene_manager->CreateEmptyMaterial();
-						IMaterial->Load(component_path.data(), *mat);
+						IMaterial->Load(component_path.data(), *mat->resource_material);
 
 						diffuse_uid = component_path;
 						App->fs->SplitFilePath(component_path.data(), nullptr, &diffuse_uid);
 						count = diffuse_uid.find_last_of(".");
 						diffuse_uid = diffuse_uid.substr(0, count);
-						mat->LibUID = std::stoi(diffuse_uid);
+						mat->resource_material->resource_diffuse->SetUID(std::stoi(diffuse_uid));
 
 						new_go->SetMaterial(mat);
 					}
@@ -255,11 +255,11 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 
 				case Component::ComponentType::Material:
 					component_path = TEXTURES_FOLDER;
-					component_path.append(std::to_string(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->LibUID));
+					component_path.append(std::to_string(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID()));
 					component_path.append(".dds");
 
 					// --- Store path to component file ---
-					if(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->LibUID != 0)
+					if(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID())
 					file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 					break;
 				
@@ -362,7 +362,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 				ImportMaterialData MData;
 				MData.scene = scene;
-				MData.new_material = Material;
+				MData.new_material = Material->resource_material;
 				IMaterial->Import(File_path, MData);
 
 				// --- Set Object's Material ---

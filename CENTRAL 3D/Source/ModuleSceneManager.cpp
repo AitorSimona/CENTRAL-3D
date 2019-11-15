@@ -18,6 +18,9 @@
 #include "par/par_shapes.h"
 #include "Math.h"
 
+#include "ResourceMaterial.h"
+#include "ResourceTexture.h"
+
 
 #include "mmgr/mmgr.h"
 
@@ -43,13 +46,13 @@ bool ModuleSceneManager::Start()
 {
 	// --- Define Default and Checkers Materials ---
 	DefaultMaterial = CreateEmptyMaterial();
-	DefaultMaterial->Texture_path = "Default";
+	DefaultMaterial->resource_material->resource_diffuse->Texture_path = "Default";
 
 	CheckersMaterial = CreateEmptyMaterial();
-	CheckersMaterial->TextureID = App->textures->GetCheckerTextureID();
-	CheckersMaterial->Texture_path = "NaN";
-	CheckersMaterial->Texture_width = CHECKERS_WIDTH;
-	CheckersMaterial->Texture_height = CHECKERS_HEIGHT;
+	CheckersMaterial->resource_material->resource_diffuse->buffer_id = App->textures->GetCheckerTextureID();
+	CheckersMaterial->resource_material->resource_diffuse->Texture_path = "NaN";
+	CheckersMaterial->resource_material->resource_diffuse->Texture_width = CHECKERS_WIDTH;
+	CheckersMaterial->resource_material->resource_diffuse->Texture_height = CHECKERS_HEIGHT;
 
 	// --- Create Cube and sphere and position them in the scene ---
 	//GameObject* cube = CreateCube(1.0f, 1.0f, 1.0f);
@@ -214,7 +217,7 @@ void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 	if (Material)
 	{
 		Material->FreeTexture();
-		Material->TextureID = id;
+		Material->resource_material->resource_diffuse->buffer_id = id;
 	}
 }
 
@@ -262,6 +265,10 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 {
 	// --- Creating Empty material to be filled out ---
 	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
+	Material->resource_material = new ResourceMaterial;
+	Material->resource_material->resource_diffuse = new ResourceTexture;
+	App->resources->AddResource(Material->resource_material);
+	App->resources->AddResource(Material->resource_material->resource_diffuse);
 
 	Materials.push_back(Material);
 
