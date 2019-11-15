@@ -15,4 +15,4 @@ public:
 	uint  TextureID = 0;
 };
 
-#endif //__R_MATERIAL_H__
+#endif //__RESOURCE_MATERIAL_H__

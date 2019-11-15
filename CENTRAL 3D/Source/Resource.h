@@ -4,8 +4,11 @@
 #include <string>
 #include "Globals.h"
 
+
 class Resource 
 {
+	friend class ModuleResources;
+
 public:
 	enum ResourceType
 	{
@@ -13,6 +16,7 @@ public:
 		MESH,
 		TEXTURE,
 		MATERIAL,
+		META,
 		UNKNOWN,
 	};
 
