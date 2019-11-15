@@ -1,8 +1,12 @@
 #include "Resource.h"
+#include "Application.h"
+
+#include "mmgr/mmgr.h"
 
 Resource::Resource(ResourceType type)
 {
 	this->type = type;
+	UID = App->GetRandom().Int();
 }
 
 Resource::~Resource()
@@ -32,4 +36,14 @@ const char * Resource::GetResourceFile() const
 const char * Resource::GetName() const
 {
 	return name.data();
+}
+
+void Resource::SetName(const char * name)
+{
+	this->name = name;
+}
+
+void Resource::SetOriginalFilename(const char * filename)
+{
+	this->original_file = filename;
 }

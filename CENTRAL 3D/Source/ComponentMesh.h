@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "Math.h"
+#include "ResourceMesh.h"
 
 class ComponentMesh : public Component
 {
@@ -13,20 +14,7 @@ public:
 
 public:
 
-	float3* Vertices = nullptr;
-	uint VerticesID = 0; // unique vertex in VRAM
-	uint VerticesSize = 0;
-
-	uint* Indices = nullptr;
-	uint IndicesID = 0; // index in VRAM
-	uint IndicesSize = 0;
-
-	float3* Normals = nullptr;
-	uint NormalsSize = 0;
-
-	float* TexCoords = nullptr;
-	uint  TextureCoordsID = 0;
-	uint TexCoordsSize = 0;
+	ResourceMesh* resource_mesh = nullptr;
 };
 
 #endif

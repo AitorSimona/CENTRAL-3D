@@ -5,11 +5,12 @@
 
 struct aiMesh;
 class ComponentMesh;
+class ResourceMesh;
 
 struct ImportMeshData : public ImportData
 {
 	aiMesh* mesh = nullptr;
-	ComponentMesh* new_mesh = nullptr;
+	ResourceMesh* new_mesh = nullptr;
 };
 
 class ImporterMesh : public Importer
@@ -21,8 +22,8 @@ public:
 
 	bool Import(const ImportData& IData) const override;
 
-	void Save(ComponentMesh* mesh, const char* path) const;
-	void Load(const char* filename, ComponentMesh& mesh) const;
+	void Save(ResourceMesh* mesh, const char* path) const;
+	void Load(const char* filename, ResourceMesh& mesh) const;
 };
 
 #endif

@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 
+#include "mmgr/mmgr.h"
+
 ModuleResources::ModuleResources(bool start_enabled)
 {
 }
@@ -27,6 +29,13 @@ update_status ModuleResources::Update(float dt)
 
 bool ModuleResources::CleanUp()
 {
+	for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = resources.erase(it);
+	}
+
 	return true;
 }
 
@@ -66,9 +75,9 @@ Resource * ModuleResources::GetResource(uint UID)
 
 		if (ret)
 		{
-			ret->original_file = it->second.original_file;
-			ret->name = it->second.resource_name;
-			LOG("Loaded Resource: %s", ret->name);
+			ret->SetOriginalFilename(it->second.original_file.data());
+			ret->SetName(it->second.resource_name.data());
+			LOG("Loaded Resource: %s", ret->GetName());
 		}
 	}
 
@@ -89,3 +98,47 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char * pat
 
 	return type;
 }
+
+void ModuleResources::AddResource(Resource * resource)
+{
+	if (resource)
+		resources[resource->GetUID()] = resource;
+	
+}
+
+void ModuleResources::LoadResource(Resource * resource)
+{
+	resources[resource->GetUID()] = resource;
+	resource->LoadOnMemory();
+}
+
+uint ModuleResources::DeleteResource(uint UID)
+{
+	Resource::ResourceType type = LoadedResources[UID].type;
+	uint instances = 0;
+
+	// --- If resource exists in Library destroy it ---
+	if (resources[UID])
+	{
+		instances = resources[UID]->instances;
+		UnloadResource(UID);
+		delete resources[UID];
+		resources.erase(UID);
+	}
+
+	return uint();
+}
+
+void ModuleResources::UnloadResource(uint UID)
+{
+	std::map<uint, Resource*>::iterator it = resources.find(UID);
+
+	if (it != resources.end())
+	{
+		it->second->FreeMemory();
+		Resource* resource = it->second;
+		resources.erase(it);
+		delete resource;
+	}
+}
+

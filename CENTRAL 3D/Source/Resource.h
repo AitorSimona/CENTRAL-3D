@@ -7,7 +7,6 @@
 
 class Resource 
 {
-	friend class ModuleResources;
 
 public:
 	enum ResourceType
@@ -21,7 +20,7 @@ public:
 	};
 
 	Resource(ResourceType type);
-	~Resource();
+	virtual ~Resource();
 
 	// --- Getters ---
 	uint GetUID() const;
@@ -29,6 +28,9 @@ public:
 	const char* GetOriginalFile() const;
 	const char* GetResourceFile() const;
 	const char* GetName() const;
+
+	void SetName(const char* name);
+	void SetOriginalFilename(const char* filename);
 
 	// --- Utilities ---
 	virtual void LoadOnMemory() {};

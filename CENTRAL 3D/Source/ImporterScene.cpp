@@ -18,6 +18,10 @@
 #include "ImporterMesh.h"
 #include "ImporterMaterial.h"
 
+#include "ModuleResources.h"
+
+#include "ResourceMesh.h"
+
 #include "mmgr/mmgr.h"
 
 ImporterScene::ImporterScene() 
@@ -173,7 +177,9 @@ bool ImporterScene::Load(const char * exported_file) const
 					if (App->fs->Exists(component_path.data()))
 					{
 						mesh = (ComponentMesh*)new_go->AddComponent(type);
-						IMesh->Load(component_path.data(), *mesh);
+						mesh->resource_mesh = new ResourceMesh;
+						App->resources->AddResource(mesh->resource_mesh);
+						IMesh->Load(component_path.data(), *mesh->resource_mesh);
 					}
 					else
 						LOG("|[error]: Could not find %s", component_path.data());
@@ -237,7 +243,7 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 					component_path = MESHES_FOLDER;
 					component_path.append(std::to_string(App->GetRandom().Int()));
 					component_path.append(".mesh");
-					IMesh->Save(scene_gos[i]->GetComponent<ComponentMesh>(Component::ComponentType::Mesh), component_path.data());
+					IMesh->Save(scene_gos[i]->GetComponent<ComponentMesh>(Component::ComponentType::Mesh)->resource_mesh, component_path.data());
 
 					// --- Store path to component file ---
 					file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
@@ -334,6 +340,8 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 			// --- Create new Component Mesh to store current scene mesh data ---
 			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+			new_mesh->resource_mesh = new ResourceMesh;
+			App->resources->AddResource(new_mesh->resource_mesh);
 
 			// --- Create Default components ---
 			if (new_mesh)
@@ -341,7 +349,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 				// --- Import mesh data (fill new_mesh)---
 				ImportMeshData Mdata;
 				Mdata.mesh = mesh;
-				Mdata.new_mesh = new_mesh;
+				Mdata.new_mesh = new_mesh->resource_mesh;
 				IMesh->Import(Mdata);
 
 				// --- Create new Component Renderer to draw mesh ---

@@ -6,7 +6,8 @@
 // Specifying normal vectors length (used when drawing normals)
 #define NORMAL_LENGTH 0.5
 
-class ComponentMesh;
+class ResourceMesh;
+class ComponentMaterial;
 
 class ComponentRenderer : public Component
 {
@@ -19,8 +20,8 @@ public:
 
 private:
 	// --- Draw Functiions accessed by main Draw ---
-	inline void DrawMesh(ComponentMesh& mesh) const;
-	inline void DrawNormals(const ComponentMesh& mesh) const;
+	inline void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
+	inline void DrawNormals(const ResourceMesh& mesh) const;
 	inline void DrawAxis() const;
 
 public:

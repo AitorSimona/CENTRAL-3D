@@ -1,4 +1,5 @@
 #include "ResourceTexture.h"
+#include "mmgr/mmgr.h"
 
 ResourceTexture::ResourceTexture() : Resource(Resource::ResourceType::TEXTURE)
 {

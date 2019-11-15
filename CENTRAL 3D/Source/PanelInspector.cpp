@@ -10,6 +10,8 @@
 #include "ComponentMaterial.h"
 #include "ComponentRenderer.h"
 
+#include "ResourceMesh.h"
+
 #include "mmgr/mmgr.h"
 
 PanelInspector::PanelInspector(char * name) : Panel(name)
@@ -206,7 +208,7 @@ inline void PanelInspector::CreateMeshNode(GameObject& Selected) const
 	if (ImGui::TreeNode("Mesh"))
 	{
 		std::string Triangle_count = "Triangles   ";
-		Triangle_count.append(std::to_string(mesh->IndicesSize / 3));
+		Triangle_count.append(std::to_string(mesh->resource_mesh->IndicesSize / 3));
 		ImGui::Text(Triangle_count.data());
 
 		ImGui::TreePop();

@@ -7,6 +7,8 @@
 #include "Application.h"
 #include "ModuleTextures.h"
 
+#include "ResourceMesh.h"
+
 #include "mmgr/mmgr.h"
 
 ComponentRenderer::ComponentRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::Renderer)
@@ -22,15 +24,15 @@ void ComponentRenderer::Draw() const
 {
 	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
-	if (mesh && mesh->IsEnabled())
+	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
-		DrawMesh(*mesh);
-		DrawNormals(*mesh);
+		DrawMesh(*mesh->resource_mesh, mesh->GetContainerGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material));
+		DrawNormals(*mesh->resource_mesh);
 		DrawAxis();
 	}
 }
 
-inline void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
+inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
 {
 	// --- Draw Texture ---
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
@@ -38,8 +40,7 @@ inline void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 	glEnable(GL_TEXTURE_2D); // enable gl capability
 	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 
-	// --- If the mesh has a material associated, get it ---
-	ComponentMaterial* mat = mesh.GetContainerGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+	// --- If the mesh has a material associated, use it ---
 
 	if (mat && mat->IsEnabled())
 	{
@@ -73,7 +74,7 @@ inline void ComponentRenderer::DrawMesh(ComponentMesh& mesh) const
 
 }
 
-inline void ComponentRenderer::DrawNormals(const ComponentMesh& mesh) const
+inline void ComponentRenderer::DrawNormals(const ResourceMesh& mesh) const
 {
 	// --- Draw Mesh Normals ---
 	glBegin(GL_LINES);

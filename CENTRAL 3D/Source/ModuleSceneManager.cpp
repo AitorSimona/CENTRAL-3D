@@ -9,6 +9,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
 
 #include "ModuleImporter.h"
 #include "ImporterMaterial.h"
@@ -271,7 +272,9 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_object) const
 {
 	// --- Obtain data from par shapes mesh and load it into component mesh ---
-	ComponentMesh* new_mesh = (ComponentMesh*)new_object.AddComponent(Component::ComponentType::Mesh);
+	ComponentMesh* comp_mesh = (ComponentMesh*)new_object.AddComponent(Component::ComponentType::Mesh);
+	ResourceMesh* new_mesh = comp_mesh->resource_mesh = new ResourceMesh;
+	App->resources->AddResource(comp_mesh->resource_mesh);
 
 	ComponentRenderer* Renderer = (ComponentRenderer*)new_object.AddComponent(Component::ComponentType::Renderer);
 

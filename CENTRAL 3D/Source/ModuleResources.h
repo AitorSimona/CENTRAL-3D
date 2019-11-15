@@ -38,10 +38,10 @@ public:
 	Resource* GetResource(uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 
-	//void AddResource(Resource* resource);
-	//void LoadResource(Resource* resource);
-	//uint DeleteResource(uint UID);
-	//void UnloadResource(uint UID);
+	void AddResource(Resource* resource);
+	void LoadResource(Resource* resource);
+	uint DeleteResource(uint UID);
+	void UnloadResource(uint UID);
 
 private:
 	// --- Resources in memory ---
