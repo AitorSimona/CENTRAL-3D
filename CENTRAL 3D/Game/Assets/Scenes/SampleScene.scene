@@ -1,68 +1,47 @@
 {
     "BakerHouse": {
         "Components": {
-            "0": "",
-            "3": "/Library/Textures/0.dds"
+            "0": ""
         },
-        "Parent": "175606377",
-        "UID": "1001830473"
+        "Parent": "843642817",
+        "UID": "1578816907"
     },
     "Baker_house": {
         "Components": {
             "0": "",
-            "1": "/Library/Meshes/1714608666.mesh",
+            "1": "/Library/Meshes/1947273106.mesh",
             "2": "",
-            "3": "/Library/Textures/0.dds"
+            "3": "/Library/Textures/1043271822.dds"
         },
-        "Parent": "1001830473",
-        "UID": "417474183"
+        "Parent": "1578816907",
+        "UID": "1164858530"
     },
     "Chimney": {
         "Components": {
             "0": "",
-            "1": "/Library/Meshes/596449797.mesh",
+            "1": "/Library/Meshes/458277716.mesh",
             "2": "",
-            "3": "/Library/Textures/0.dds"
+            "3": "/Library/Textures/2055550410.dds"
         },
-        "Parent": "1001830473",
-        "UID": "317989820"
+        "Parent": "1578816907",
+        "UID": "2008894199"
     },
-    "GameObject (0)": {
+    "GameObject (6)": {
         "Components": {
             "0": "",
-            "1": "/Library/Meshes/1486342040.mesh",
-            "2": "",
-            "3": "/Library/Textures/0.dds"
+            "1": "/Library/Meshes/588322157.mesh",
+            "2": ""
         },
-        "Parent": "175606377",
-        "UID": "267170746"
+        "Parent": "843642817",
+        "UID": "1497128433"
     },
-    "GameObject (1)": {
+    "GameObject (7)": {
         "Components": {
             "0": "",
-            "1": "/Library/Meshes/1972152498.mesh",
-            "2": "",
-            "3": "/Library/Textures/0.dds"
+            "1": "/Library/Meshes/621293266.mesh",
+            "2": ""
         },
-        "Parent": "175606377",
-        "UID": "1338640599"
-    },
-    "Professor:H_DDS_MidRes": {
-        "Components": {
-            "0": "",
-            "1": "/Library/Meshes/1687518545.mesh",
-            "2": "",
-            "3": "/Library/Textures/0.dds"
-        },
-        "Parent": "764903304",
-        "UID": "33449478"
-    },
-    "professor": {
-        "Components": {
-            "0": "",
-            "3": "/Library/Textures/0.dds"
-        },
-        "Parent": "175606377",
-        "UID": "764903304"
+        "Parent": "843642817",
+        "UID": "1312343101"
     }
 }

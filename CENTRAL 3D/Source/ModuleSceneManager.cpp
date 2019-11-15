@@ -8,6 +8,7 @@
 #include "ComponentMesh.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
+#include "ModuleFileSystem.h"
 
 #include "ModuleImporter.h"
 #include "ImporterMaterial.h"
@@ -170,8 +171,11 @@ void ModuleSceneManager::SaveScene()
 
 void ModuleSceneManager::LoadScene()
 {
-	std::string Scene_name = "SampleScene";
+	std::string Scene_name = SCENES_FOLDER;
+	Scene_name.append("SampleScene.scene");
+	Scene_name = Scene_name.substr(1, Scene_name.size());
 
+	if(App->fs->Exists(Scene_name.data()))
 	App->importer->GetImporterScene()->Load(Scene_name.data());
 }
 

@@ -137,7 +137,8 @@ bool ImporterScene::Load(const char * exported_file) const
 
 			// --- Get path to component file ---
 			std::string component_path = components[val];
-
+			std::string diffuse_uid;
+			uint count;
 			switch (type)
 			{
 				case Component::ComponentType::Renderer:
@@ -146,15 +147,36 @@ bool ImporterScene::Load(const char * exported_file) const
 
 				case Component::ComponentType::Material:
 					component_path = component_path.substr(1, component_path.size());
-					mat = App->scene_manager->CreateEmptyMaterial();
-					IMaterial->Load(component_path.data(), *mat);
-					
-					new_go->SetMaterial(mat);
+
+					// --- Check if Library file exists ---
+					if (App->fs->Exists(component_path.data()))
+					{
+
+						mat = App->scene_manager->CreateEmptyMaterial();
+						IMaterial->Load(component_path.data(), *mat);
+
+						diffuse_uid = component_path;
+						App->fs->SplitFilePath(component_path.data(), nullptr, &diffuse_uid);
+						count = diffuse_uid.find_last_of(".");
+						diffuse_uid = diffuse_uid.substr(0, count);
+						mat->LibUID = std::stoi(diffuse_uid);
+
+						new_go->SetMaterial(mat);
+					}
+					else
+						LOG("|[error]: Could not find %s", component_path.data());
+
 					break;
 
 				case Component::ComponentType::Mesh:
-					mesh = (ComponentMesh*) new_go->AddComponent(type);
-					IMesh->Load(component_path.data(), *mesh);
+					// --- Check if Library file exists ---
+					if (App->fs->Exists(component_path.data()))
+					{
+						mesh = (ComponentMesh*)new_go->AddComponent(type);
+						IMesh->Load(component_path.data(), *mesh);
+					}
+					else
+						LOG("|[error]: Could not find %s", component_path.data());
 					break;
 
 			}
@@ -208,28 +230,35 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 			{
 
 				case Component::ComponentType::Transform:
-
+					// --- Store path to component file ---
+					file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 					break;
 				case Component::ComponentType::Mesh:
 					component_path = MESHES_FOLDER;
 					component_path.append(std::to_string(App->GetRandom().Int()));
 					component_path.append(".mesh");
 					IMesh->Save(scene_gos[i]->GetComponent<ComponentMesh>(Component::ComponentType::Mesh), component_path.data());
+
+					// --- Store path to component file ---
+					file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 					break;
 				case Component::ComponentType::Renderer:
-					
+					// --- Store path to component file ---
+					file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 					break;
 
 				case Component::ComponentType::Material:
 					component_path = TEXTURES_FOLDER;
 					component_path.append(std::to_string(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->LibUID));
 					component_path.append(".dds");
+
+					// --- Store path to component file ---
+					if(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->LibUID != 0)
+					file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 					break;
 				
 			}
 
-			// --- Store path to component file ---
-			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 
 		}
 	}

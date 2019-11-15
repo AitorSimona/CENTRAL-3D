@@ -140,7 +140,7 @@ update_status ModuleGui::Update(float dt)
 
 				if (ImGui::MenuItem("Load Scene"))
 				{
-					//App->scene_manager->LoadScene();
+					App->scene_manager->LoadScene();
 				}
 				ImGui::EndMenu();
 			}

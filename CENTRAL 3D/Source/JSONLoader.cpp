@@ -28,7 +28,7 @@ json JSONLoader::Load(const char * File) const
 
 		if (!ifs.is_open())
 		{
-			LOG("|[error]: JSONLoader::Save could not open File: %c", File);
+			LOG("|[error]: JSONLoader::Load could not open File: %c", File);
 			ret = false;
 		}
 
