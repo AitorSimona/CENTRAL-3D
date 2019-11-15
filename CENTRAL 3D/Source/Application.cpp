@@ -9,6 +9,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
+#include "ModuleResources.h"
 
 
 #include "mmgr/mmgr.h"
@@ -37,6 +38,7 @@ Application::Application()
 	camera = new ModuleCamera3D(true);
 	gui = new ModuleGui(true);
 	textures = new ModuleTextures(true);
+	resources = new ModuleResources(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -47,6 +49,7 @@ Application::Application()
 	AddModule(hardware);
 	AddModule(fs);
 	AddModule(importer);
+	AddModule(resources);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
