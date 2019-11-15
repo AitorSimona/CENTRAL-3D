@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Globals.h"
 
+class Resource;
 
 class ModuleResources : public Module
 {
@@ -16,6 +17,8 @@ public:
 	//bool Start();
 	//bool CleanUp();
 
+private:
+	std::map<uint, Resource*> resources;
 };
 
 #endif
