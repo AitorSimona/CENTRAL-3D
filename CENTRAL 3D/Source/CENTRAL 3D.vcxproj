@@ -190,6 +190,10 @@
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceFolder.h" />
+    <ClInclude Include="ResourceMaterial.h" />
+    <ClInclude Include="ResourceMesh.h" />
+    <ClInclude Include="ResourceTexture.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
@@ -273,6 +277,10 @@
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceFolder.cpp" />
+    <ClCompile Include="ResourceMaterial.cpp" />
+    <ClCompile Include="ResourceMesh.cpp" />
+    <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
