@@ -8,6 +8,7 @@
         "Console": true,
         "Hierarchy": true,
         "Inspector": true,
+        "Project": true,
         "Scene": true,
         "Settings": false,
         "Toolbar": true

@@ -13,6 +13,7 @@
 #include "PanelHierarchy.h"
 #include "PanelScene.h"
 #include "PanelToolbar.h"
+#include "PanelProject.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -58,6 +59,9 @@ bool ModuleGui::Init(json file)
 
 	panelToolbar = new PanelToolbar("Toolbar");
 	panels.push_back(panelToolbar);
+
+	panelProject = new PanelProject("Project");
+	panels.push_back(panelProject);
 
 	LoadStatus(file);
 
@@ -177,9 +181,14 @@ update_status ModuleGui::Update(float dt)
 
 			if (ImGui::BeginMenu("Window"))
 			{
-				if (ImGui::MenuItem("Console"))
+				if (ImGui::MenuItem("Project"))
 				{
-					panelConsole->OnOff();
+					panelProject->OnOff();
+				}
+
+				if (ImGui::MenuItem("Settings"))
+				{
+					panelSettings->OnOff();
 				}
 
 				if (ImGui::MenuItem("Inspector"))
@@ -285,6 +294,7 @@ bool ModuleGui::CleanUp()
 	panelInspector = nullptr;
 	panelScene = nullptr;
 	panelToolbar = nullptr;
+	panelProject = nullptr;
 
 	// --- ShutDown ImGui ---
 
