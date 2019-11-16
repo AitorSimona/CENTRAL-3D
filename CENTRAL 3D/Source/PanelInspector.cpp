@@ -261,6 +261,9 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 
 		// --- Texture Preview ---
 		ImGui::Image((void*)(uint)&material->resource_material->resource_diffuse->buffer_id, ImVec2(150, 150));
+		ImGui::Text("Instances:");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->instances).data());
 
 		// --- Print Texture Width and Height ---
 		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_width).data());

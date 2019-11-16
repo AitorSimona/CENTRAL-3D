@@ -37,7 +37,7 @@ public:
 	Resource* GetResource(uint UID);
 	Resource* GetResource(const char* original_file);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-
+	uint GetUIDFromMeta(const char* file);
 
 	Resource* CreateResource(Resource::ResourceType type);
 	//void AddResource(Resource* resource);

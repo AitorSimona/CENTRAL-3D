@@ -152,6 +152,23 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char * pat
 	return type;
 }
 
+uint ModuleResources::GetUIDFromMeta(const char * file)
+{
+	std::string path = file;
+	path.append(".meta");
+	uint UID = 0;
+	path = path.substr(1, path.size());
+
+	if (App->fs->Exists(path.data()))
+	{
+		json file = App->GetJLoader()->Load(path.data());
+		std::string uid = file["UID"];
+		UID = std::stoi(uid);
+	}
+
+	return UID;
+}
+
 Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 {
 	Resource* resource = nullptr;

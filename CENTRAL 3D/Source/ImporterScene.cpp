@@ -57,10 +57,23 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	relative_path.append(rootnodename);
 	relative_path.append(extension);
 
-	// --- Check if File is already imported ---
+	// --- Check if File is already imported, then load from library ---
 
 	if (App->resources->IsFileImported(relative_path.data()))
+	{
+		uint model_uid = App->resources->GetUIDFromMeta(relative_path.data());
+
+		if (extension == ".fbx")
+		{
+			std::string model_path = MODELS_FOLDER;
+			model_path.append(std::to_string(model_uid));
+			model_path.append(".model");
+			model_path = model_path.substr(1, model_path.size());
+			Load(model_path.data());
+		}
+
 		return false;
+	}
 
 	// --- Copy File to Assets Folder ---
 	App->fs->CopyFromOutsideFS(File_path, relative_path.data());
@@ -168,17 +181,18 @@ bool ImporterScene::Load(const char * exported_file) const
 						if (texture)
 						{
 							mat->resource_material->resource_diffuse = texture;
+							texture->instances++;
 						}
 						else
 						{
 							IMaterial->Load(component_path.data(), *mat->resource_material);
-						}
 
-						diffuse_uid = component_path;
-						App->fs->SplitFilePath(component_path.data(), nullptr, &diffuse_uid);
-						count = diffuse_uid.find_last_of(".");
-						diffuse_uid = diffuse_uid.substr(0, count);
-						mat->resource_material->resource_diffuse->SetUID(std::stoi(diffuse_uid));
+							diffuse_uid = component_path;
+							App->fs->SplitFilePath(component_path.data(), nullptr, &diffuse_uid);
+							count = diffuse_uid.find_last_of(".");
+							diffuse_uid = diffuse_uid.substr(0, count);
+							mat->resource_material->resource_diffuse->SetUID(std::stoi(diffuse_uid));
+						}
 
 						new_go->SetMaterial(mat);
 					}
