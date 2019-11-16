@@ -10,6 +10,10 @@
 #include "GameObject.h"
 #include "ComponentMaterial.h"
 
+#include "ModuleResources.h"
+#include "ResourceMaterial.h"
+#include "ResourceTexture.h"
+
 #include "Assimp/include/cimport.h"
 
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
@@ -109,6 +113,8 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 					if (mat->resource_material->resource_diffuse->Texture_path == "Default")
 					{
 						mat = App->scene_manager->CreateEmptyMaterial();
+						mat->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+						mat->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 
 						App->scene_manager->GetSelectedGameObject()->SetMaterial(mat);
 					}

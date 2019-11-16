@@ -46,9 +46,15 @@ bool ModuleSceneManager::Start()
 {
 	// --- Define Default and Checkers Materials ---
 	DefaultMaterial = CreateEmptyMaterial();
+	DefaultMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+	DefaultMaterial->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+
 	DefaultMaterial->resource_material->resource_diffuse->Texture_path = "Default";
 
 	CheckersMaterial = CreateEmptyMaterial();
+	CheckersMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+	CheckersMaterial->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+
 	CheckersMaterial->resource_material->resource_diffuse->buffer_id = App->textures->GetCheckerTextureID();
 	CheckersMaterial->resource_material->resource_diffuse->Texture_path = "NaN";
 	CheckersMaterial->resource_material->resource_diffuse->Texture_width = CHECKERS_WIDTH;
@@ -265,9 +271,6 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 {
 	// --- Creating Empty material to be filled out ---
 	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
-	Material->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
-	Material->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
-
 	Materials.push_back(Material);
 
 	return Material;

@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleTextures.h"
+#include "ModuleResources.h"
 
 #include "ComponentMaterial.h"
 #include "ResourceMaterial.h"
@@ -43,11 +44,21 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 			directory.append(Texture_path.C_Str());
 
 			// --- If we find the texture file, load it ---
-			//if (App->fs->Exists(directory.data()))
-			//{
+
+			ResourceTexture* texture = (ResourceTexture*) App->resources->GetResource(directory.data());
+
+			if (texture)
+			{
+				MData.new_material->resource_diffuse = texture;
+			}
+			else
+			{
+				MData.new_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 				MData.new_material->resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(directory.data(), MData.new_material->resource_diffuse->Texture_width, MData.new_material->resource_diffuse->Texture_height, MData.new_material->resource_diffuse->GetUID());
+				MData.new_material->resource_diffuse->SetOriginalFilename(directory.data());
 				MData.new_material->resource_diffuse->Texture_path = directory.data();
-			//}
+			}
+			
 
 		}
 	}

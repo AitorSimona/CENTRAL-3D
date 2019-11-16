@@ -123,6 +123,20 @@ Resource * ModuleResources::GetResource(uint UID)
 	return ret;
 }
 
+Resource * ModuleResources::GetResource(const char * original_file)
+{
+	// --- If resource is loaded into memory, return pointer to it, else load it ---
+
+	for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end(); ++it)
+	{
+		std::string tmp = it->second->GetOriginalFile();
+		if (tmp.compare(original_file) == 0)
+			return it->second;
+	}
+
+	return nullptr;
+}
+
 Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char * path)
 {
 	std::string extension = "";

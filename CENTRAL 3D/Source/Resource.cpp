@@ -50,5 +50,6 @@ void Resource::SetName(const char * name)
 
 void Resource::SetOriginalFilename(const char * filename)
 {
-	this->original_file = filename;
+	std::string new_name = filename;
+	this->original_file = new_name;
 }

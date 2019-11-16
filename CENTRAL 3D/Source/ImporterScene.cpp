@@ -143,7 +143,7 @@ bool ImporterScene::Load(const char * exported_file) const
 			// --- Create components to fill ---
 			ComponentMesh* mesh = nullptr;
 			ComponentMaterial* mat = nullptr;
-
+			ResourceTexture* texture = nullptr;
 			// --- Get path to component file ---
 			std::string component_path = components[val];
 			std::string diffuse_uid;
@@ -162,7 +162,17 @@ bool ImporterScene::Load(const char * exported_file) const
 					{
 
 						mat = App->scene_manager->CreateEmptyMaterial();
-						IMaterial->Load(component_path.data(), *mat->resource_material);
+						mat->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+						texture = (ResourceTexture*) App->resources->GetResource(component_path.data());
+
+						if (texture)
+						{
+							mat->resource_material->resource_diffuse = texture;
+						}
+						else
+						{
+							IMaterial->Load(component_path.data(), *mat->resource_material);
+						}
 
 						diffuse_uid = component_path;
 						App->fs->SplitFilePath(component_path.data(), nullptr, &diffuse_uid);
@@ -349,7 +359,6 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 			// --- Create new Component Mesh to store current scene mesh data ---
 			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 			new_mesh->resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
-			//App->resources->AddResource(new_mesh->resource_mesh);
 
 			// --- Create Default components ---
 			if (new_mesh)
@@ -365,6 +374,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 				// --- Create new Component Material to store scene's, meshes will use this for now since we do not want to create a material for every mesh if not needed ---
 				ComponentMaterial* Material = App->scene_manager->CreateEmptyMaterial();
+				Material->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
 
 				// --- Import Material Data (fill Material) --- 
 

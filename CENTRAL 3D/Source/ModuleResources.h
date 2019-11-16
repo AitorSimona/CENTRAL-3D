@@ -35,6 +35,7 @@ public:
 
 	bool IsFileImported(const char* file);
 	Resource* GetResource(uint UID);
+	Resource* GetResource(const char* original_file);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 
 
