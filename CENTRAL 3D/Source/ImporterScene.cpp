@@ -111,9 +111,6 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		// --- Delete Everything once Library files have been created ---
 		rootnode->RecursiveDelete(rootnode);
 
-		//// --- Load from Library, our own format files ---
-		//Load(exported_file.data());
-
 		// --- Free scene ---
 		aiReleaseImport(scene);
 
@@ -157,6 +154,8 @@ bool ImporterScene::Load(const char * exported_file) const
 			ComponentMesh* mesh = nullptr;
 			ComponentMaterial* mat = nullptr;
 			ResourceTexture* texture = nullptr;
+			ResourceMesh* rmesh = nullptr;
+
 			// --- Get path to component file ---
 			std::string component_path = components[val];
 			std::string diffuse_uid;
@@ -205,9 +204,18 @@ bool ImporterScene::Load(const char * exported_file) const
 					// --- Check if Library file exists ---
 					if (App->fs->Exists(component_path.data()))
 					{
+						rmesh = (ResourceMesh*)App->resources->GetResource(component_path.data());
 						mesh = (ComponentMesh*)new_go->AddComponent(type);
-						mesh->resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
-						IMesh->Load(component_path.data(), *mesh->resource_mesh);
+						if (rmesh)
+						{
+							mesh->resource_mesh = rmesh;
+							rmesh->instances++;
+						}
+						else
+						{
+							mesh->resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+							IMesh->Load(component_path.data(), *mesh->resource_mesh);
+						}
 					}
 					else
 						LOG("|[error]: Could not find %s", component_path.data());

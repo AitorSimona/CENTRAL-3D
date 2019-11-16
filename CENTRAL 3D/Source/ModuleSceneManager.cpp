@@ -282,7 +282,7 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_o
 	// --- Obtain data from par shapes mesh and load it into component mesh ---
 	ComponentMesh* comp_mesh = (ComponentMesh*)new_object.AddComponent(Component::ComponentType::Mesh);
 	ResourceMesh* new_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
-
+	comp_mesh->resource_mesh = new_mesh;
 	ComponentRenderer* Renderer = (ComponentRenderer*)new_object.AddComponent(Component::ComponentType::Renderer);
 
 	new_mesh->IndicesSize = mesh->ntriangles * 3;

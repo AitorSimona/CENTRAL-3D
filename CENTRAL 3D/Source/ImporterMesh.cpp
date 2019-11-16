@@ -142,6 +142,8 @@ void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
 void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 {
 
+	mesh.SetOriginalFilename(filename);
+
 	// --- Load mesh data ---
 	char* buffer;
 	App->fs->Load(filename,&buffer);
