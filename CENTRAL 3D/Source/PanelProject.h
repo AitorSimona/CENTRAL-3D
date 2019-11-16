@@ -12,6 +12,10 @@ public:
 	~PanelProject();
 
 	bool Draw();
+
+private:
+
+	void RecursiveDirectoryDraw(const char* directory, const char* filter);
 };
 
 #endif
