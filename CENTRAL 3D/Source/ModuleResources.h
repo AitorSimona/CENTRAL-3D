@@ -31,8 +31,9 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void CreateMetaFromUID(uint UID);
+	void CreateMetaFromUID(uint UID, const char* filename);
 
+	bool IsFileImported(const char* file);
 	Resource* GetResource(uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 

@@ -43,7 +43,7 @@ bool ModuleResources::CleanUp()
 	return true;
 }
 
-void ModuleResources::CreateMetaFromUID(uint UID)
+void ModuleResources::CreateMetaFromUID(uint UID,const char* filename)
 {
 	ResourceMeta meta;
 
@@ -58,11 +58,24 @@ void ModuleResources::CreateMetaFromUID(uint UID)
 	meta_buffer = (char*)jsondata.data();
 
 	meta_path = ASSETS_FOLDER;
-	meta_path.append(std::to_string(UID));
-	meta_path.append(".fbx.meta");
+	meta_path.append(filename);
+	meta_path.append(".meta");
 
 	LoadedResources[UID] = meta;
 	App->fs->Save(meta_path.data(), meta_buffer, jsondata.length());
+}
+
+bool ModuleResources::IsFileImported(const char * file)
+{
+	bool ret = false;
+
+	std::string path = file;
+
+	path.append(".meta");
+
+	ret = App->fs->Exists(path.data());
+
+	return ret;
 }
 
 Resource * ModuleResources::GetResource(uint UID)

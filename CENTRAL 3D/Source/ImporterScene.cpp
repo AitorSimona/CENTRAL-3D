@@ -57,6 +57,10 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	relative_path.append(rootnodename);
 	relative_path.append(extension);
 
+	// --- Check if File is already imported ---
+
+	if (App->resources->IsFileImported(relative_path.data()))
+		return false;
 
 	// --- Copy File to Assets Folder ---
 	App->fs->CopyFromOutsideFS(File_path, relative_path.data());
@@ -94,8 +98,8 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		// --- Delete Everything once Library files have been created ---
 		rootnode->RecursiveDelete(rootnode);
 
-		// --- Load from Library, our own format files ---
-		Load(exported_file.data());
+		//// --- Load from Library, our own format files ---
+		//Load(exported_file.data());
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
@@ -275,15 +279,16 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 	// --- Set destination file given exportfile type ---
 	std::string path;
 	uint new_uid;
-
+	std::string filename = scene_name;
 	switch (exportedfile_type)
 	{
 		case MODEL:
 			path = MODELS_FOLDER;
 			new_uid = App->GetRandom().Int();
 			path.append(std::to_string(new_uid));
-			path.append(".model");		
-			App->resources->CreateMetaFromUID(new_uid);
+			path.append(".model");	
+			filename.append(".fbx");
+			App->resources->CreateMetaFromUID(new_uid, filename.data());
 			break;
 
 		case SCENE:
