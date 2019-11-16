@@ -65,7 +65,14 @@ void PanelProject::RecursiveDirectoryDraw(const char * directory, const char * f
 
 		if (ok && ImGui::TreeNodeEx(str.c_str(), ImGuiTreeNodeFlags_Leaf))
 		{
-
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				// Not using this at all due to data corruption
+				ImGui::SetDragDropPayload("FBX", str.data(), str.size()); 
+				dragged = ASSETS_FOLDER;
+				dragged.append(str.data());
+				ImGui::EndDragDropSource();
+			}
 
 			ImGui::TreePop();
 		}

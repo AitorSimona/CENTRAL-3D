@@ -194,46 +194,5 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 	return resource;
 }
 
-//void ModuleResources::AddResource(Resource * resource)
-//{
-//	if(resource)
-//	resources[resource->GetUID()] = resource;
-//	
-//}
 
-void ModuleResources::LoadResource(Resource * resource)
-{
-	resources[resource->GetUID()] = resource;
-	resource->LoadOnMemory();
-}
-
-uint ModuleResources::DeleteResource(uint UID)
-{
-	Resource::ResourceType type = LoadedResources[UID].type;
-	uint instances = 0;
-
-	// --- If resource exists in Library destroy it ---
-	if (resources[UID])
-	{
-		instances = resources[UID]->instances;
-		UnloadResource(UID);
-		delete resources[UID];
-		resources.erase(UID);
-	}
-
-	return uint();
-}
-
-void ModuleResources::UnloadResource(uint UID)
-{
-	std::map<uint, Resource*>::iterator it = resources.find(UID);
-
-	if (it != resources.end())
-	{
-		it->second->FreeMemory();
-		Resource* resource = it->second;
-		resources.erase(it);
-		delete resource;
-	}
-}
 

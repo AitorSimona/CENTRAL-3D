@@ -63,7 +63,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	{
 		uint model_uid = App->resources->GetUIDFromMeta(relative_path.data());
 
-		if (extension == ".fbx")
+		if (extension == ".fbx" || extension == ".FBX")
 		{
 			std::string model_path = MODELS_FOLDER;
 			model_path.append(std::to_string(model_uid));

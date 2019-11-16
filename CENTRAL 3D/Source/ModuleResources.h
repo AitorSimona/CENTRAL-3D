@@ -40,10 +40,6 @@ public:
 	uint GetUIDFromMeta(const char* file);
 
 	Resource* CreateResource(Resource::ResourceType type);
-	//void AddResource(Resource* resource);
-	void LoadResource(Resource* resource);
-	uint DeleteResource(uint UID);
-	void UnloadResource(uint UID);
 
 private:
 	// --- Resources in memory ---

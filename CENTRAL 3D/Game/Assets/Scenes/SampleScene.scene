@@ -2,67 +2,29 @@
     "BakerHouse": {
         "Components": {
             "0": "",
-            "3": "/Library/Textures/1867888323.dds"
+            "3": "/Library/Textures/1333162106.dds"
         },
-        "Parent": "610783450",
-        "UID": "72585636"
+        "Parent": "1163877745",
+        "UID": "171106962"
     },
     "Baker_house": {
         "Components": {
             "0": "",
-            "1": "/Library/Meshes/1941092353.mesh",
+            "1": "/Library/Meshes/646450545.mesh",
             "2": "",
-            "3": "/Library/Textures/450731458.dds"
+            "3": "/Library/Textures/945058476.dds"
         },
-        "Parent": "72585636",
-        "UID": "798191338"
+        "Parent": "171106962",
+        "UID": "1312180810"
     },
     "Chimney": {
         "Components": {
             "0": "",
-            "1": "/Library/Meshes/1792286150.mesh",
+            "1": "/Library/Meshes/1718603266.mesh",
             "2": "",
-            "3": "/Library/Textures/468212931.dds"
+            "3": "/Library/Textures/945058476.dds"
         },
-        "Parent": "72585636",
-        "UID": "455542565"
-    },
-    "GameObject (10)": {
-        "Components": {
-            "0": "",
-            "1": "/Library/Meshes/1030568953.mesh",
-            "2": "",
-            "3": "/Library/Textures/1867888323.dds"
-        },
-        "Parent": "610783450",
-        "UID": "1239537662"
-    },
-    "GameObject (11)": {
-        "Components": {
-            "0": "",
-            "1": "/Library/Meshes/1812430543.mesh",
-            "2": "",
-            "3": "/Library/Textures/1867888323.dds"
-        },
-        "Parent": "610783450",
-        "UID": "934298370"
-    },
-    "Professor:H_DDS_MidRes": {
-        "Components": {
-            "0": "",
-            "1": "/Library/Meshes/1216740215.mesh",
-            "2": "",
-            "3": "/Library/Textures/639923802.dds"
-        },
-        "Parent": "2129464100",
-        "UID": "1739051808"
-    },
-    "professor": {
-        "Components": {
-            "0": "",
-            "3": "/Library/Textures/1867888323.dds"
-        },
-        "Parent": "610783450",
-        "UID": "2129464100"
+        "Parent": "171106962",
+        "UID": "546011493"
     }
 }
