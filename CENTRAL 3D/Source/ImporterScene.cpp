@@ -88,6 +88,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 
 		// --- Save to Own format files in Library ---
 		std::string exported_file = SaveSceneToFile(scene_gos, rootnodename, MODEL);
+
 		exported_file = exported_file.substr(1, exported_file.size());
 
 		// --- Delete Everything once Library files have been created ---
@@ -274,13 +275,31 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 
 	// --- Set destination file given exportfile type ---
 	std::string path;
+	uint new_uid;
+	json meta;
+	std::string jsondata;
+	std::string meta_path;
+	char* meta_buffer = nullptr;
 
 	switch (exportedfile_type)
 	{
 		case MODEL:
 			path = MODELS_FOLDER;
-			path.append(scene_name);
-			path.append(".model");
+			new_uid = App->GetRandom().Int();
+			path.append(std::to_string(new_uid));
+			path.append(".model");		
+
+
+			// --- Create Meta ---
+			meta["UID"] = std::to_string(new_uid);
+			jsondata = App->GetJLoader()->Serialize(meta);
+			meta_buffer = (char*)jsondata.data();
+
+			meta_path = ASSETS_FOLDER;
+			meta_path.append(std::to_string(new_uid));
+			meta_path.append(".fbx.meta");
+
+			App->fs->Save(meta_path.data(),meta_buffer, jsondata.length());
 			break;
 
 		case SCENE:

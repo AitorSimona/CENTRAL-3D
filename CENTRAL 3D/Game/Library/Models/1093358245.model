@@ -1,0 +1,30 @@
+{
+    "BakerHouse": {
+        "Components": {
+            "0": "",
+            "3": "/Library/Textures/1074598900.dds"
+        },
+        "Parent": "203878770",
+        "UID": "1134460977"
+    },
+    "Baker_house": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/2020509073.mesh",
+            "2": "",
+            "3": "/Library/Textures/1784090654.dds"
+        },
+        "Parent": "1134460977",
+        "UID": "1138750474"
+    },
+    "Chimney": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/1868763301.mesh",
+            "2": "",
+            "3": "/Library/Textures/1346939963.dds"
+        },
+        "Parent": "1134460977",
+        "UID": "6626704"
+    }
+}
