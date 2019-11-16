@@ -7,7 +7,7 @@
 
 struct ResourceMeta
 {
-	Resource::ResourceType type = Resource::UNKNOWN;
+	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
 	std::string original_file = "";
 	std::string resource_name = "";
 	uint UID = 0;

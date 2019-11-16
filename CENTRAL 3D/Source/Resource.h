@@ -9,7 +9,7 @@ class Resource
 {
 
 public:
-	enum ResourceType
+	enum class ResourceType
 	{
 		FOLDER,
 		MESH,
@@ -42,7 +42,7 @@ public:
 
 protected:
 	uint UID = 0;
-	ResourceType type = UNKNOWN;
+	ResourceType type = ResourceType::UNKNOWN;
 
 	std::string resource_file = "";
 	std::string original_file = "";
