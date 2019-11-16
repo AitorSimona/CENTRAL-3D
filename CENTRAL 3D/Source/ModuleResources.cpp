@@ -2,6 +2,10 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 
+#include "ResourceMesh.h"
+#include "ResourceMaterial.h"
+#include "ResourceTexture.h"
+
 #include "mmgr/mmgr.h"
 
 ModuleResources::ModuleResources(bool start_enabled)
@@ -121,12 +125,37 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char * pat
 	return type;
 }
 
-void ModuleResources::AddResource(Resource * resource)
+Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 {
+	Resource* resource = nullptr;
+
+	switch (type)
+	{
+	case Resource::ResourceType::MESH:
+		resource = (Resource*)new ResourceMesh;
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		resource = (Resource*)new ResourceTexture;
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		resource = (Resource*)new ResourceMaterial;
+		break;
+	}
+
 	if (resource)
 		resources[resource->GetUID()] = resource;
-	
+
+	return resource;
 }
+
+//void ModuleResources::AddResource(Resource * resource)
+//{
+//	if(resource)
+//	resources[resource->GetUID()] = resource;
+//	
+//}
 
 void ModuleResources::LoadResource(Resource * resource)
 {

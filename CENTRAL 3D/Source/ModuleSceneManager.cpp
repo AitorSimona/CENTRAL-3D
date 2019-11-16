@@ -265,10 +265,8 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 {
 	// --- Creating Empty material to be filled out ---
 	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
-	Material->resource_material = new ResourceMaterial;
-	Material->resource_material->resource_diffuse = new ResourceTexture;
-	App->resources->AddResource(Material->resource_material);
-	App->resources->AddResource(Material->resource_material->resource_diffuse);
+	Material->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+	Material->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 
 	Materials.push_back(Material);
 
@@ -280,8 +278,7 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_o
 {
 	// --- Obtain data from par shapes mesh and load it into component mesh ---
 	ComponentMesh* comp_mesh = (ComponentMesh*)new_object.AddComponent(Component::ComponentType::Mesh);
-	ResourceMesh* new_mesh = comp_mesh->resource_mesh = new ResourceMesh;
-	App->resources->AddResource(comp_mesh->resource_mesh);
+	ResourceMesh* new_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 
 	ComponentRenderer* Renderer = (ComponentRenderer*)new_object.AddComponent(Component::ComponentType::Renderer);
 

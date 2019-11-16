@@ -178,8 +178,7 @@ bool ImporterScene::Load(const char * exported_file) const
 					if (App->fs->Exists(component_path.data()))
 					{
 						mesh = (ComponentMesh*)new_go->AddComponent(type);
-						mesh->resource_mesh = new ResourceMesh;
-						App->resources->AddResource(mesh->resource_mesh);
+						mesh->resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 						IMesh->Load(component_path.data(), *mesh->resource_mesh);
 					}
 					else
@@ -344,8 +343,8 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 			// --- Create new Component Mesh to store current scene mesh data ---
 			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-			new_mesh->resource_mesh = new ResourceMesh;
-			App->resources->AddResource(new_mesh->resource_mesh);
+			new_mesh->resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+			//App->resources->AddResource(new_mesh->resource_mesh);
 
 			// --- Create Default components ---
 			if (new_mesh)

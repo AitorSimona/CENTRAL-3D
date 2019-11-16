@@ -31,15 +31,14 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	//uint ImportScene(const char* scene_path);
-	//uint ImportResourceMesh();
-
 	void CreateMetaFromUID(uint UID);
 
 	Resource* GetResource(uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 
-	void AddResource(Resource* resource);
+
+	Resource* CreateResource(Resource::ResourceType type);
+	//void AddResource(Resource* resource);
 	void LoadResource(Resource* resource);
 	uint DeleteResource(uint UID);
 	void UnloadResource(uint UID);
