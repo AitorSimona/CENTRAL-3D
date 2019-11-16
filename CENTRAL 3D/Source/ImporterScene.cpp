@@ -276,10 +276,6 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 	// --- Set destination file given exportfile type ---
 	std::string path;
 	uint new_uid;
-	json meta;
-	std::string jsondata;
-	std::string meta_path;
-	char* meta_buffer = nullptr;
 
 	switch (exportedfile_type)
 	{
@@ -288,18 +284,7 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 			new_uid = App->GetRandom().Int();
 			path.append(std::to_string(new_uid));
 			path.append(".model");		
-
-
-			// --- Create Meta ---
-			meta["UID"] = std::to_string(new_uid);
-			jsondata = App->GetJLoader()->Serialize(meta);
-			meta_buffer = (char*)jsondata.data();
-
-			meta_path = ASSETS_FOLDER;
-			meta_path.append(std::to_string(new_uid));
-			meta_path.append(".fbx.meta");
-
-			App->fs->Save(meta_path.data(),meta_buffer, jsondata.length());
+			App->resources->CreateMetaFromUID(new_uid);
 			break;
 
 		case SCENE:

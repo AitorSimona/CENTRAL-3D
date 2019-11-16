@@ -34,6 +34,7 @@ public:
 	//uint ImportScene(const char* scene_path);
 	//uint ImportResourceMesh();
 
+	void CreateMetaFromUID(uint UID);
 
 	Resource* GetResource(uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);

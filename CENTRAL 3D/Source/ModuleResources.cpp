@@ -39,6 +39,28 @@ bool ModuleResources::CleanUp()
 	return true;
 }
 
+void ModuleResources::CreateMetaFromUID(uint UID)
+{
+	ResourceMeta meta;
+
+	json jsonmeta;
+	std::string jsondata;
+	std::string meta_path;
+	char* meta_buffer = nullptr;
+
+	// --- Create Meta ---
+	jsonmeta["UID"] = std::to_string(UID);
+	jsondata = App->GetJLoader()->Serialize(jsonmeta);
+	meta_buffer = (char*)jsondata.data();
+
+	meta_path = ASSETS_FOLDER;
+	meta_path.append(std::to_string(UID));
+	meta_path.append(".fbx.meta");
+
+	LoadedResources[UID] = meta;
+	App->fs->Save(meta_path.data(), meta_buffer, jsondata.length());
+}
+
 Resource * ModuleResources::GetResource(uint UID)
 {
 	Resource* ret = nullptr;
