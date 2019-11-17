@@ -22,6 +22,8 @@ public:
 	// --- Getters ---
 	uint&			GetUID();
 	std::string		GetName() const;
+	const AABB&	    GetAABB() const;
+	const OBB&      GetOBB() const;
 
 	bool&			GetActive();
 	bool			IsEnabled() const;
@@ -59,6 +61,9 @@ public:
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);
 
+private:
+	void UpdateAABB();
+
 public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childs;
@@ -70,6 +75,8 @@ private:
 
 	bool active = false;
 
+	AABB						aabb;
+	OBB							obb;
 };
 
 #endif

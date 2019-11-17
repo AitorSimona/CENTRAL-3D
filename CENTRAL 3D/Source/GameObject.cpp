@@ -230,6 +230,16 @@ std::string GameObject::GetName() const
 	return name;
 }
 
+const AABB & GameObject::GetAABB() const
+{
+	return aabb;
+}
+
+const OBB & GameObject::GetOBB() const
+{
+	return obb;
+}
+
 bool & GameObject::GetActive()
 {
 	return active;
@@ -246,12 +256,32 @@ void GameObject::SetName(const char* name)
 		this->name = name;
 }
 
-
 void GameObject::SetMaterial(ComponentMaterial * material)
 {
 	if (material)
 	{
 		RemoveComponent(Component::ComponentType::Material);
 		components.push_back(material);
+	}
+}
+
+void GameObject::UpdateAABB()
+{
+	ComponentMesh* mesh = GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+	ComponentTransform* transform = GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	if (mesh)
+	{
+		//AABB meshAABB = mesh->GetAABB();
+		obb = mesh->GetAABB();
+		obb.Transform(transform->GetGlobalTransform());
+
+		aabb.SetNegativeInfinity();
+		aabb.Enclose(obb);
+	}
+	else
+	{
+		aabb.SetNegativeInfinity();
+		aabb.SetFromCenterAndSize(transform->GetGlobalPosition(), float3(1, 1, 1));
+		obb = aabb;
 	}
 }

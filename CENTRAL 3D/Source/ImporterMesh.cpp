@@ -93,6 +93,8 @@ bool ImporterMesh::Import(const ImportData & IData) const
 
 	data.new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * data.new_mesh->IndicesSize, data.new_mesh->Indices);
 
+	data.new_mesh->CreateAABB();
+
 	return true;
 }
 
@@ -197,5 +199,7 @@ void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 		buffer = nullptr;
 		cursor = nullptr;
 	}
+
+	mesh.CreateAABB();
 }
 

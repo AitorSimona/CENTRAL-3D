@@ -11,9 +11,11 @@ public:
 
 	ComponentMesh(GameObject* ContainerGO);
 	virtual ~ComponentMesh();
+	const AABB& GetAABB() const;
 
 public:
 	ResourceMesh* resource_mesh = nullptr;
+
 };
 
 #endif
