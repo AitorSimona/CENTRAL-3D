@@ -1,0 +1,20 @@
+{
+    "Group1": {
+        "Components": {
+            "0": "",
+            "1": "/Library/Meshes/1568983750.mesh",
+            "2": "",
+            "3": "/Library/Textures/686794105.dds"
+        },
+        "Parent": "662682414",
+        "UID": "73672946"
+    },
+    "pacopepe": {
+        "Components": {
+            "0": "",
+            "3": "/Library/Textures/858164764.dds"
+        },
+        "Parent": "1835400942",
+        "UID": "662682414"
+    }
+}

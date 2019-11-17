@@ -54,6 +54,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 
 	// --- Duplicate File into Assets folder, save relative path ---
 	std::string relative_path = ASSETS_FOLDER;
+	relative_path = relative_path.substr(1, relative_path.size());
 	relative_path.append(rootnodename);
 	relative_path.append(extension);
 
@@ -76,6 +77,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	}
 
 	// --- Copy File to Assets Folder ---
+	if(!App->fs->Exists(relative_path.data()))
 	App->fs->CopyFromOutsideFS(File_path, relative_path.data());
 
 	// --- Load file from assets folder ---
@@ -85,14 +87,17 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	// --- Import scene from path ---
 	const aiScene* scene = aiImportFileFromMemory(buffer, size, aiProcessPreset_TargetRealtime_MaxQuality, nullptr);
 
+	GameObject* rootnode = nullptr;
 	// --- Release data ---
-	delete[] buffer;
+	if (buffer && size > 0)
+	{
+		delete[] buffer;
 
+		rootnode = App->scene_manager->CreateEmptyGameObject();
 
-	GameObject* rootnode = App->scene_manager->CreateEmptyGameObject();
-
-	// --- Set root node name as file name with no extension ---
-	rootnode->SetName(rootnodename.data());
+		// --- Set root node name as file name with no extension ---
+		rootnode->SetName(rootnodename.data());
+	}
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
@@ -101,7 +106,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		scene_gos.push_back(rootnode);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		LoadNodes(scene->mRootNode,rootnode,scene, scene_gos, File_path);
+		LoadNodes(scene->mRootNode,rootnode,scene, scene_gos, relative_path.data());
 
 		// --- Save to Own format files in Library ---
 		std::string exported_file = SaveSceneToFile(scene_gos, rootnodename, MODEL);

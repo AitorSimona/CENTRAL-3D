@@ -212,12 +212,14 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	ilBindImage(ImageName);
 
 	std::string destination = ASSETS_FOLDER;
+	destination = destination.substr(1, destination.size());
 	std::string filename;
 	App->fs->SplitFilePath(path, nullptr, &filename, nullptr);
 	destination.append(filename);
 
 	bool load_existing = false;
 	std::string name = TEXTURES_FOLDER;
+	name = name.substr(1, name.size());
 	name.append(std::to_string(LibUID));
 	name.append(".dds");
 
@@ -227,6 +229,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 		uint uid = App->resources->GetUIDFromMeta(destination.data());
 
 		std::string lib_Tex = TEXTURES_FOLDER;
+		lib_Tex = lib_Tex.substr(1, lib_Tex.size());
 		lib_Tex.append(std::to_string(uid));
 		lib_Tex.append(".dds");
 		final_path = lib_Tex;
