@@ -6,6 +6,8 @@
 #include "ModuleCamera3D.h"
 #include "ModuleSceneManager.h"
 
+#include "ComponentCamera.h"
+
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 
@@ -141,13 +143,13 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 
 	// --- Set Model View as current ---
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+	glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().ptr());
 
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
 	// light 0 on cam pos, Render lights
-	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+	lights[0].SetPos(App->camera->camera->frustum.pos.x, App->camera->camera->frustum.pos.y, App->camera->camera->frustum.pos.z);
 
 	for(uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
