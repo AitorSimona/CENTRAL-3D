@@ -14,6 +14,7 @@ public:
 		Mesh,
 		Renderer,
 		Material,
+		Camera,
 		Unknown
 	};
 
