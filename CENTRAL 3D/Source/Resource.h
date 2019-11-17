@@ -38,7 +38,7 @@ public:
 	virtual void FreeMemory() {};
 
 public:
-	uint instances = 0;
+	uint instances = 1;
 
 protected:
 	uint UID = 0;

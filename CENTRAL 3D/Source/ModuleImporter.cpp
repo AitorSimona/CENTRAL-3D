@@ -114,22 +114,60 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 					{
 						mat = App->scene_manager->CreateEmptyMaterial();
 						mat->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
-						mat->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
-
-						App->scene_manager->GetSelectedGameObject()->SetMaterial(mat);
 					}
 
-					mat->resource_material->resource_diffuse->Texture_path = DroppedFile_path.data();
+					std::string destination = ASSETS_FOLDER;
+					std::string filename;
+					App->fs->SplitFilePath(path, nullptr, &filename, nullptr);
+					destination.append(filename);
 
-					// --- If there is a material, assign diffuse texture ---
-					if (mat)
+					ResourceTexture* tex = nullptr;
+
+					// --- Look for meta, if found load image from library ---
+					if (App->resources->IsFileImported(destination.data()))
 					{
-						App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(path, mat->resource_material->resource_diffuse->Texture_width, mat->resource_material->resource_diffuse->Texture_height,mat->resource_material->resource_diffuse->GetUID()));
+						uint uid = App->resources->GetUIDFromMeta(destination.data());
+
+						std::string lib_Tex = TEXTURES_FOLDER;
+						lib_Tex = lib_Tex.substr(1, lib_Tex.size());
+						lib_Tex.append(std::to_string(uid));
+						lib_Tex.append(".dds");
+
+						tex = (ResourceTexture*)App->resources->GetResource(lib_Tex.data());
 
 					}
+					else
+					tex = (ResourceTexture*)App->resources->GetResource(destination.data());
+
+					if (tex)
+					{
+						if (mat->resource_material->resource_diffuse)
+						{
+							mat->resource_material->resource_diffuse->instances--;
+							// MYTODO: UNLOAD RESOURCE FROM MEMORY
+						}
+
+						mat->resource_material->resource_diffuse = tex;
+					}
+					else
+					{
+						destination = destination.substr(1, destination.size());
+						mat->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+						App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(destination.data(), mat->resource_material->resource_diffuse->Texture_width, mat->resource_material->resource_diffuse->Texture_height, mat->resource_material->resource_diffuse->GetUID()));
+						
+						std::string lib_Tex = TEXTURES_FOLDER;
+						lib_Tex = lib_Tex.substr(1, lib_Tex.size());
+						lib_Tex.append(std::to_string(mat->resource_material->resource_diffuse->GetUID()));
+						lib_Tex.append(".dds");
+
+						mat->resource_material->resource_diffuse->Texture_path = lib_Tex.data();
+						mat->resource_material->resource_diffuse->SetOriginalFilename(lib_Tex.data());
+					}
+
+					App->scene_manager->GetSelectedGameObject()->SetMaterial(mat);
+
 				}
-				else
-					ret = false;
+
 			}
 			else
 				ret = false;

@@ -58,6 +58,7 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 				MData.new_material->resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(directory.data(), MData.new_material->resource_diffuse->Texture_width, MData.new_material->resource_diffuse->Texture_height, MData.new_material->resource_diffuse->GetUID());
 				MData.new_material->resource_diffuse->SetOriginalFilename(directory.data());
 				MData.new_material->resource_diffuse->Texture_path = directory.data();
+				App->resources->CreateMetaFromUID(MData.new_material->resource_diffuse->GetUID(), directory.data());
 			}
 			
 
@@ -72,7 +73,7 @@ void ImporterMaterial::Load(const char * filename, ResourceMaterial& mat)
 	// --- Load from Library ---
 	// --- LibUID won't be overwritten since we are loading from library ---
 	mat.resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
-	mat.resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(filename,mat.resource_diffuse->Texture_width, mat.resource_diffuse->Texture_height, mat.resource_diffuse->GetUID(),true);
+	mat.resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(filename,mat.resource_diffuse->Texture_width, mat.resource_diffuse->Texture_height, mat.resource_diffuse->GetUID());
 	mat.resource_diffuse->Texture_path = filename;
 	mat.resource_diffuse->SetOriginalFilename(filename);
 }

@@ -222,7 +222,7 @@ void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 
 	if (Material)
 	{
-		Material->FreeTexture();
+		//Material->FreeTexture();
 		Material->resource_material->resource_diffuse->buffer_id = id;
 	}
 }
