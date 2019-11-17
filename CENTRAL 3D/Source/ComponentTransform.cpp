@@ -58,7 +58,7 @@ void ComponentTransform::SetRotation(float3 euler_angles)
 
 void ComponentTransform::Scale(float x, float y, float z)
 {
-	if (x > 0.0f && y > 00.0f && z > 00.0f)
+	if (x > 0.0f && y > 0.0f && z > 0.0f)
 	{
 		scale = float3(x, y, z);
 		UpdateLocalTransform();

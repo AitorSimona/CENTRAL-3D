@@ -129,7 +129,6 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 						uint uid = App->resources->GetUIDFromMeta(destination.data());
 
 						std::string lib_Tex = TEXTURES_FOLDER;
-						lib_Tex = lib_Tex.substr(1, lib_Tex.size());
 						lib_Tex.append(std::to_string(uid));
 						lib_Tex.append(".dds");
 
@@ -151,12 +150,10 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 					}
 					else
 					{
-						destination = destination.substr(1, destination.size());
 						mat->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 						App->scene_manager->SetTextureToSelectedGO(App->textures->CreateTextureFromFile(destination.data(), mat->resource_material->resource_diffuse->Texture_width, mat->resource_material->resource_diffuse->Texture_height, mat->resource_material->resource_diffuse->GetUID()));
 						
 						std::string lib_Tex = TEXTURES_FOLDER;
-						lib_Tex = lib_Tex.substr(1, lib_Tex.size());
 						lib_Tex.append(std::to_string(mat->resource_material->resource_diffuse->GetUID()));
 						lib_Tex.append(".dds");
 

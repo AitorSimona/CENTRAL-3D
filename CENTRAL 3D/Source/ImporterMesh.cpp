@@ -25,6 +25,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 
 	ImportMeshData data = (ImportMeshData&) IData;
 
+
 	// --- Vertices ---
 	data.new_mesh->VerticesSize = data.mesh->mNumVertices;
 	data.new_mesh->Vertices = new float3[data.mesh->mNumVertices];
