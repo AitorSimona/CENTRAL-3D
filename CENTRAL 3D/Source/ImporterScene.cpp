@@ -254,7 +254,7 @@ bool ImporterScene::Load(const char * exported_file) const
 			}
 		}
 
-		new_go->OnUpdateTransform(new_go);
+		transform->update_transform = true;
 		objects.push_back(new_go);
 	}
 

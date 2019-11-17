@@ -2,7 +2,7 @@
     "BakerHouse": {
         "Components": {
             "0": {
-                "positionx": "0.000000",
+                "positionx": "-4.220000",
                 "positiony": "0.000000",
                 "positionz": "0.000000",
                 "rotationx": "-0.000000",
@@ -12,10 +12,10 @@
                 "scaley": "0.999756",
                 "scalez": "0.999756"
             },
-            "3": "Library/Textures/1398059263.dds"
+            "3": "Library/Textures/1066760217.dds"
         },
-        "Parent": "51910065",
-        "UID": "874791944"
+        "Parent": "1685378890",
+        "UID": "1627907653"
     },
     "Baker_house": {
         "Components": {
@@ -23,19 +23,19 @@
                 "positionx": "0.000000",
                 "positiony": "0.000000",
                 "positionz": "0.000000",
-                "rotationx": "-1.570796",
+                "rotationx": "-0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "0.000000",
-                "scalex": "100.000000",
-                "scaley": "100.000000",
-                "scalez": "100.000000"
+                "rotationz": "-0.000000",
+                "scalex": "0.999999",
+                "scaley": "0.999999",
+                "scalez": "0.999999"
             },
-            "1": "Library/Meshes/138182372.mesh",
+            "1": "Library/Meshes/1235285508.mesh",
             "2": "",
-            "3": "Library/Textures/1363584416.dds"
+            "3": "Library/Textures/1415971552.dds"
         },
-        "Parent": "874791944",
-        "UID": "301043407"
+        "Parent": "1627907653",
+        "UID": "1118606257"
     },
     "Chimney": {
         "Components": {
@@ -43,18 +43,18 @@
                 "positionx": "0.000000",
                 "positiony": "0.000000",
                 "positionz": "0.000000",
-                "rotationx": "-1.570796",
+                "rotationx": "-0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "0.000000",
-                "scalex": "100.000000",
-                "scaley": "100.000000",
-                "scalez": "100.000000"
+                "rotationz": "-0.000000",
+                "scalex": "0.999999",
+                "scaley": "0.999999",
+                "scalez": "0.999999"
             },
-            "1": "Library/Meshes/1603312085.mesh",
+            "1": "Library/Meshes/1534741059.mesh",
             "2": "",
-            "3": "Library/Textures/1363584416.dds"
+            "3": "Library/Textures/1415971552.dds"
         },
-        "Parent": "874791944",
-        "UID": "1253704304"
+        "Parent": "1627907653",
+        "UID": "961755441"
     }
 }

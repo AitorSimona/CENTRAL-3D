@@ -1,0 +1,60 @@
+{
+    "BakerHouse": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "0.999756",
+                "scaley": "0.999756",
+                "scalez": "0.999756"
+            },
+            "3": "Library/Textures/1066760217.dds"
+        },
+        "Parent": "1685378890",
+        "UID": "1627907653"
+    },
+    "Baker_house": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "-1.570796",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "100.000000",
+                "scaley": "100.000000",
+                "scalez": "100.000000"
+            },
+            "1": "Library/Meshes/1874408361.mesh",
+            "2": "",
+            "3": "Library/Textures/1415971552.dds"
+        },
+        "Parent": "1627907653",
+        "UID": "1118606257"
+    },
+    "Chimney": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "-1.570796",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "100.000000",
+                "scaley": "100.000000",
+                "scalez": "100.000000"
+            },
+            "1": "Library/Meshes/55548541.mesh",
+            "2": "",
+            "3": "Library/Textures/1415971552.dds"
+        },
+        "Parent": "1627907653",
+        "UID": "961755441"
+    }
+}
