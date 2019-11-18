@@ -5,15 +5,15 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 {
 	frustum.type = FrustumType::PerspectiveFrustum;
 
-	frustum.pos = (float3(0, 0, 0));
-	frustum.front = (float3::unitZ);
-	frustum.up = (float3::unitY);
+	frustum.pos = float3::zero;
+	frustum.front = float3::unitZ;
+	frustum.up = float3::unitY;
 
-	frustum.nearPlaneDistance = 1.0f;
-	frustum.farPlaneDistance = 1000.0f;
-	SetAspectRatio(1.0f);
+	frustum.nearPlaneDistance = 0.1f;
+	frustum.farPlaneDistance = 2000.0f;
+	frustum.verticalFov = DEGTORAD * 60.0f;
+	SetAspectRatio(1.3f);
 
-	UpdatePlanes();
 	update_projection = true;
 }
 
@@ -58,7 +58,6 @@ void ComponentCamera::SetNearPlane(float distance)
 	if (distance > 0 && distance < frustum.farPlaneDistance)
 	{
 		frustum.nearPlaneDistance = distance;
-		UpdatePlanes();
 		update_projection = true;
 	}
 
@@ -69,28 +68,21 @@ void ComponentCamera::SetFarPlane(float distance)
 	if (distance > 0 && distance > frustum.nearPlaneDistance)
 	{
 		frustum.farPlaneDistance = distance;
-		UpdatePlanes();
 		update_projection = true;
 	}
 }
 
 void ComponentCamera::SetFOV(float fov)
 {
-	fov *= DEGTORAD;
+	float aspect_ratio = frustum.AspectRatio();
 
-	frustum.horizontalFov = fov;
-	frustum.verticalFov = 2.f * Atan(Tan(fov*0.5f) / frustum.AspectRatio());
-
-	UpdatePlanes();
-	update_projection = true;
+	frustum.verticalFov = DEGTORAD * fov;
+	SetAspectRatio(aspect_ratio);
 }
 
 void ComponentCamera::SetAspectRatio(float ar)
 {
-	float horizontalFov = frustum.horizontalFov;
-	frustum.horizontalFov = horizontalFov;
-	frustum.verticalFov = 2.f * Atan(Tan(horizontalFov*0.5f) / frustum.AspectRatio());
-	UpdatePlanes();
+	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ar);
 	update_projection = true;
 }
 
@@ -102,8 +94,6 @@ void ComponentCamera::Look(const float3 & position)
 
 	frustum.front = matrix.MulDir(frustum.front).Normalized();
 	frustum.up = matrix.MulDir(frustum.up).Normalized();
-	UpdatePlanes();
-	update_projection = true;
 }
 
 void ComponentCamera::OnUpdateTransform(const float4x4 & global)
@@ -117,12 +107,6 @@ void ComponentCamera::OnUpdateTransform(const float4x4 & global)
 	global.Decompose(position, quat, scale);
 
 	frustum.pos = position;
-	UpdatePlanes();
 
 	update_projection = true;
-}
-
-void ComponentCamera::UpdatePlanes()
-{
-	frustum.GetPlanes(planes);
 }

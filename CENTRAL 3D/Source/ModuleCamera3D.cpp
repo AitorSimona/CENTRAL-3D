@@ -30,6 +30,7 @@ bool ModuleCamera3D::Start()
 	bool ret = true;
 	camera->frustum.pos = { 0.0f,1.0f,-5.0f };
 	reference = camera->frustum.pos;
+	camera->update_projection = true;
 	return ret;
 }
 
@@ -106,17 +107,17 @@ void ModuleCamera3D::Look(const float3 &Position, const float3 &Reference, bool 
 }
 
 // -----------------------------------------------------------------
-void ModuleCamera3D::LookAt( const float3 &Spot)
-{
-	reference = Spot;
-
-	math::float3 Z = -(camera->frustum.pos - reference).Normalized(); 
-	math::float3 X = math::Cross(math::float3(0.0f, 1.0f, 0.0f), Z).Normalized();
-	math::float3 Y = math::Cross(Z, X); 
-
-	camera->frustum.front = Z;
-	camera->frustum.up = Y;
-}
+//void ModuleCamera3D::LookAt( const float3 &Spot)
+//{
+//	reference = Spot;
+//
+//	math::float3 Z = -(camera->frustum.pos - reference).Normalized(); 
+//	math::float3 X = math::Cross(math::float3(0.0f, 1.0f, 0.0f), Z).Normalized();
+//	math::float3 Y = math::Cross(Z, X); 
+//
+//	camera->frustum.front = Z;
+//	camera->frustum.up = Y;
+//}
 
 
 void ModuleCamera3D::FrameObject(GameObject* GO)
@@ -175,6 +176,8 @@ void ModuleCamera3D::CameraZoom(float speed)
 	int mouse_wheel = App->input->GetMouseWheel();
 	float3 Movement = camera->frustum.front * mouse_wheel*speed*factor;
 	camera->frustum.pos += Movement;
+
+	//camera->SetFOV(camera->GetFOV() + speed);
 }
 
 void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
@@ -186,8 +189,8 @@ void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 	math::Quat rotationY = math::Quat::RotateAxisAngle(camera->frustum.WorldRight(), dy * DEGTORAD);
 	math::Quat finalRotation = rotationX * rotationY;
 
-	camera->frustum.up = finalRotation * camera->frustum.up;
-	camera->frustum.front = finalRotation * camera->frustum.front;
+	camera->frustum.up = finalRotation.Mul(camera->frustum.up).Normalized();
+	camera->frustum.front = finalRotation.Mul(camera->frustum.front).Normalized();
 
 	float distance = (camera->frustum.pos - reference).Length();
 	camera->frustum.pos = reference + (-camera->frustum.front * distance);

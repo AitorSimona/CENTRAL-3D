@@ -136,6 +136,12 @@ bool ModuleRenderer3D::Init(json file)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	if (App->camera->camera->update_projection)
+	{
+		UpdateProjectionMatrix();
+		App->camera->camera->update_projection = false;
+	}
+
 	// --- Reset Buffers to default values ---
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -207,6 +213,17 @@ void ModuleRenderer3D::UpdateGLCapabilities() const
 		else
 			glEnable(GL_COLOR_MATERIAL);
 
+}
+
+void ModuleRenderer3D::UpdateProjectionMatrix() const
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glLoadMatrixf((GLfloat*)App->camera->camera->GetOpenGLProjectionMatrix().ptr());
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 
