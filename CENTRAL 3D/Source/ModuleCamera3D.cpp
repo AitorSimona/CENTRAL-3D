@@ -49,7 +49,7 @@ update_status ModuleCamera3D::Update(float dt)
 	float3 newPos(0,0,0);
 	float speed = 10.0f * dt;
 	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed = 20.0f * dt;
+		speed *= 2.0f;
 
 	// --- Move ---
 	if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
@@ -61,13 +61,13 @@ update_status ModuleCamera3D::Update(float dt)
 		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * speed;
 		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * speed;
 
-		camera->frustum.pos += newPos;
-		reference += newPos;
 
 		// --- Look Around ---
-		CameraLookAround(dt);
+		CameraLookAround(speed, camera->frustum.pos);
 	}
 
+	camera->frustum.pos += newPos;
+	reference += newPos;
 
 	// --- Camera Pan ---
 	if (App->input->GetMouseButton(2) == KEY_REPEAT)
@@ -79,7 +79,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 	// --- Orbit Object ---
 	if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
-		CameraOrbit();
+		CameraLookAround(speed, reference);
 
 	// --- Frame object ---
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
@@ -164,7 +164,7 @@ void ModuleCamera3D::CameraPan(float speed)
 	if (dx != 0)
 	{
 		camera->frustum.pos += speed * camera->frustum.WorldRight() * dx*factor;
-		reference -= speed * camera->frustum.WorldRight() * dx*factor;
+		reference += speed * camera->frustum.WorldRight() * dx*factor;
 	}
 
 	if (dy != 0)
@@ -185,80 +185,10 @@ void ModuleCamera3D::CameraZoom(float speed)
 	camera->frustum.pos += Movement;
 }
 
-void ModuleCamera3D::CameraOrbit()
+void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 {
-	//int dx = -App->input->GetMouseXMotion();
-	//int dy = -App->input->GetMouseYMotion();
-
-	//float Sensitivity = 0.25f;
-
-	//camera->frustum.pos -= reference;
-
-	//if (dx != 0)
-	//{
-	//	float DeltaX = (float)dx * Sensitivity;
-
-	//	//X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-	//	camera->frustum.up = rotate(camera->frustum.up, DeltaX, float3(0.0f, 1.0f, 0.0f));
-	//	camera->frustum.front = rotate(camera->frustum.front, DeltaX, float3(0.0f, 1.0f, 0.0f));
-
-	//}
-
-	//if (dy != 0)
-	//{
-	//	float DeltaY = (float)dy * Sensitivity;
-
-	//	Quat::RotateAxisAngle()
-
-	//	camera->frustum.up = rotate(camera->frustum.up, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
-	//	camera->frustum.front = rotate(camera->frustum.front, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
-
-	//	if (camera->frustum.up.y < 0.0f)
-	//	{
-	//		camera->frustum.front = float3(0.0f, camera->frustum.front.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-	//		camera->frustum.up = Cross(camera->frustum.front, math::Cross(camera->frustum.up, camera->frustum.front));
-	//	}
-	//}
-
-	//camera->frustum.pos = reference + camera->frustum.front * camera->frustum.pos.Length();
-}
-
-void ModuleCamera3D::CameraLookAround(float dt)
-{
-	float speed = 25.0f;
-	float dx = -App->input->GetMouseXMotion()*dt*speed;
-	float dy = -App->input->GetMouseYMotion()*dt*speed;
-
-	float Sensitivity = 0.025f;
-
-	//reference = camera->frustum.pos;
-	//camera->frustum.pos -= reference;
-
-	if (dx != 0)
-	{
-		float DeltaX = (float)dx * Sensitivity;
-
-		////X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-		//camera->frustum.up = rotate(camera->frustum.up, DeltaX, float3(0.0f, 1.0f, 0.0f));
-		//camera->frustum.front = rotate(camera->frustum.front, DeltaX, float3(0.0f, 1.0f, 0.0f));
-	}
-
-	if (dy != 0)
-	{
-		float DeltaY = (float)dy * Sensitivity;
-
-		//camera->frustum.up = (camera->frustum.up, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
-		//camera->frustum.front = rotate(camera->frustum.front, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
-
-		//if (camera->frustum.up.y < 0.0f)
-		//{
-		//	camera->frustum.front = float3(0.0f, camera->frustum.front.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-		//	camera->frustum.up = math::Cross(camera->frustum.front, math::Cross(camera->frustum.up, camera->frustum.front));
-		//}
-	}
-
-	//camera->frustum.pos = reference + camera->frustum.front * (camera->frustum.pos).Length();
-	//reference = camera->frustum.pos - camera->frustum.front * (camera->frustum.pos).Length();
+	float dx = -App->input->GetMouseXMotion()*speed;
+	float dy = -App->input->GetMouseYMotion()*speed;
 
 	math::Quat rotationX = math::Quat::RotateAxisAngle(float3::unitY, dx * DEGTORAD);
 	math::Quat rotationY = math::Quat::RotateAxisAngle(camera->frustum.WorldRight(), dy * DEGTORAD);
@@ -267,6 +197,6 @@ void ModuleCamera3D::CameraLookAround(float dt)
 	camera->frustum.up = finalRotation * camera->frustum.up;
 	camera->frustum.front = finalRotation * camera->frustum.front;
 
-	float distance = (camera->frustum.pos - camera->frustum.pos).Length();
-	camera->frustum.pos = camera->frustum.pos + (-camera->frustum.front * distance);
+	float distance = (camera->frustum.pos - reference).Length();
+	camera->frustum.pos = reference + (-camera->frustum.front * distance);
 }

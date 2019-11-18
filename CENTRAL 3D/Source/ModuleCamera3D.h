@@ -23,9 +23,7 @@ public:
 private:
 	void CameraPan(float speed);
 	void CameraZoom(float speed);
-	void CameraOrbit();
-	void CameraLookAround(float dt);
-
+	void CameraLookAround(float speed, float3 reference);
 public:
 
 	float3 reference = { 0.0f,0.0f,0.0f };
