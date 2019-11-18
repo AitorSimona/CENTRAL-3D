@@ -29,7 +29,7 @@ bool ModuleCamera3D::Start()
 	LOG("Setting up the camera");
 	bool ret = true;
 	camera->frustum.pos = { 0.0f,1.0f,-5.0f };
-
+	reference = camera->frustum.pos;
 	return ret;
 }
 
@@ -199,4 +199,5 @@ void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 
 	float distance = (camera->frustum.pos - reference).Length();
 	camera->frustum.pos = reference + (-camera->frustum.front * distance);
+	this->reference = camera->frustum.pos + camera->frustum.front * (camera->frustum.pos).Length();
 }
