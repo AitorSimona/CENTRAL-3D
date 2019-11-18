@@ -16,8 +16,6 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void Look(const float3 &Position, const float3 &Reference, bool RotateAroundReference = false);
-	//void LookAt(const float3 &Spot);
 	void FrameObject(GameObject* GO);
 
 private:
@@ -25,7 +23,6 @@ private:
 	void CameraZoom(float speed);
 	void CameraLookAround(float speed, float3 reference);
 public:
-
 	float3 reference = { 0.0f,0.0f,0.0f };
 	ComponentCamera* camera = nullptr;
 };

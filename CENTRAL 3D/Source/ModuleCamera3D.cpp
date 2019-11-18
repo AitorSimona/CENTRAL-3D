@@ -90,35 +90,6 @@ update_status ModuleCamera3D::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-// -----------------------------------------------------------------
-void ModuleCamera3D::Look(const float3 &Position, const float3 &Reference, bool RotateAroundReference)
-{
-	this->camera->frustum.pos = Position;
-	this->reference = Reference;
-
-	this->camera->frustum.front = (Position - Reference).Normalized();
-	camera->frustum.up = Cross(camera->frustum.front, (Cross(float3::unitY, camera->frustum.front)).Normalized());
-
-	if(!RotateAroundReference)
-	{
-		this->reference = this->camera->frustum.pos;
-		this->camera->frustum.pos += camera->frustum.front * 0.05f;
-	}
-}
-
-// -----------------------------------------------------------------
-//void ModuleCamera3D::LookAt( const float3 &Spot)
-//{
-//	reference = Spot;
-//
-//	math::float3 Z = -(camera->frustum.pos - reference).Normalized(); 
-//	math::float3 X = math::Cross(math::float3(0.0f, 1.0f, 0.0f), Z).Normalized();
-//	math::float3 Y = math::Cross(Z, X); 
-//
-//	camera->frustum.front = Z;
-//	camera->frustum.up = Y;
-//}
-
 
 void ModuleCamera3D::FrameObject(GameObject* GO)
 {
@@ -176,8 +147,6 @@ void ModuleCamera3D::CameraZoom(float speed)
 	int mouse_wheel = App->input->GetMouseWheel();
 	float3 Movement = camera->frustum.front * mouse_wheel*speed*factor;
 	camera->frustum.pos += Movement;
-
-	//camera->SetFOV(camera->GetFOV() + speed);
 }
 
 void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
