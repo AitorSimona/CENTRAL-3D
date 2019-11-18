@@ -12,6 +12,7 @@
 #include "ComponentCamera.h"
 
 #include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "mmgr/mmgr.h"
 
@@ -23,6 +24,13 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 ModuleCamera3D::~ModuleCamera3D()
 {}
 
+bool ModuleCamera3D::Init(json config)
+{
+	App->renderer3D->active_camera = camera;
+
+	return true;
+}
+
 // -----------------------------------------------------------------
 bool ModuleCamera3D::Start()
 {
@@ -31,6 +39,8 @@ bool ModuleCamera3D::Start()
 	camera->frustum.pos = { 0.0f,1.0f,-5.0f };
 	reference = camera->frustum.pos;
 	camera->update_projection = true;
+
+
 	return ret;
 }
 

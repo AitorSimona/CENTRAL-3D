@@ -34,7 +34,6 @@ public:
 	Frustum		frustum;
 	bool		update_projection = true;
 	bool		culling = false;
-	bool		active_camera = false;
 };
 
 #endif

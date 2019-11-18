@@ -3,7 +3,7 @@
 #include "ComponentMesh.h"
 #include "GameObject.h"
 #include "OpenGL.h"
-
+#include "Color.h"
 #include "Application.h"
 #include "ModuleTextures.h"
 
@@ -29,6 +29,7 @@ void ComponentRenderer::Draw() const
 		DrawMesh(*mesh->resource_mesh, mesh->GetContainerGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material));
 		DrawNormals(*mesh->resource_mesh);
 		DrawAxis();
+		DrawBoundingBox();
 	}
 }
 
@@ -156,4 +157,56 @@ inline void ComponentRenderer::DrawAxis() const
 	glLineWidth(1.0f);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	
+}
+
+inline void ComponentRenderer::DrawBoundingBox() const
+{
+	glDisable(GL_LIGHTING);
+	glBegin(GL_LINES);
+
+	float3 corners[8];
+	GO->GetAABB().GetCornerPoints(corners);
+
+	glColor4f(Green.r, Green.g, Green.b, Green.a);
+
+	//Between-planes right
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[3]);
+
+	//Between-planes left
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	//Far plane horizontal
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+	glVertex3fv((GLfloat*)&corners[7]);
+
+	//Near plane horizontal
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	//Near plane vertical
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	//Far plane vertical
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+
+	glEnd();
+	glEnable(GL_LIGHTING);
 }

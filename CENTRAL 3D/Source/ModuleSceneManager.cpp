@@ -10,6 +10,8 @@
 #include "ModuleTextures.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResources.h"
+#include "ModuleCamera3D.h"
+#include "ComponentCamera.h"
 
 #include "ModuleImporter.h"
 #include "ImporterMaterial.h"
@@ -133,7 +135,7 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 		ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
 		// --- If Found, draw the mesh ---
-		if (Renderer && Renderer->IsEnabled())
+		if (Renderer && Renderer->IsEnabled() /*&& App->camera->camera->frustum.Intersects(go->GetAABB())*/)
 		{
 			Renderer->Draw();
 		}
