@@ -116,40 +116,32 @@ void ModuleCamera3D::LookAt( const float3 &Spot)
 
 	camera->frustum.front = Z;
 	camera->frustum.up = Y;
-
 }
 
 
 void ModuleCamera3D::FrameObject(GameObject* GO)
 {
-	// MYTODO: Try to clean this...
 	if (GO)
 	{
 		ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+		ComponentMesh* mesh = GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
-		if (transform)
+		if (mesh && mesh->resource_mesh)
 		{
-			reference.x = transform->GetPosition().x;
-			reference.y = transform->GetPosition().y;
-			reference.z = transform->GetPosition().z;
+			AABB aabb;
+			aabb.SetNegativeInfinity();
+			aabb.Enclose(mesh->resource_mesh->Vertices, mesh->resource_mesh->VerticesSize);
+			aabb.Translate(transform->GetPosition());
+			float3 center = aabb.CenterPoint();
 
-			ComponentMesh* mesh = GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+			reference.x = center.x;
+			reference.y = center.y;
+			reference.z = center.z;
 
-			if (mesh)
-			{
-
-				Sphere s(transform->GetPosition(), 1);
-				s.Enclose(mesh->resource_mesh->Vertices, mesh->resource_mesh->VerticesSize);
-
-				s.r = s.Diameter() - Length(float3(reference.x, reference.y, reference.z));
-				s.pos = transform->GetPosition();
-
-				Look(camera->frustum.pos, float3(s.Centroid().x, s.Centroid().y, s.Centroid().z), true);
-				float3 Movement = -camera->frustum.front * (2 * s.r);
-				camera->frustum.pos = reference - Movement;
-
-			}
+			float3 Movement = camera->frustum.front * (2 * mesh->GetAABB().HalfDiagonal().Length());
+			camera->frustum.pos = reference - Movement;
 		}
+		
 	}
 }
 
@@ -199,5 +191,7 @@ void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 
 	float distance = (camera->frustum.pos - reference).Length();
 	camera->frustum.pos = reference + (-camera->frustum.front * distance);
+
+	if(!reference.Equals(this->reference))
 	this->reference = camera->frustum.pos + camera->frustum.front * (camera->frustum.pos).Length();
 }
