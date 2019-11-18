@@ -24,7 +24,7 @@ private:
 	void CameraPan(float speed);
 	void CameraZoom(float speed);
 	void CameraOrbit();
-	void CameraLookAround();
+	void CameraLookAround(float dt);
 
 public:
 

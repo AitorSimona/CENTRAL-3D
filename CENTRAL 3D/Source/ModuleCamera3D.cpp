@@ -58,15 +58,16 @@ update_status ModuleCamera3D::Update(float dt)
 		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.front * speed;
 
 
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos += math::Cross(camera->frustum.up, camera->frustum.front) * speed;
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos -= math::Cross(camera->frustum.up, camera->frustum.front) * speed;
+		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * speed;
+		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * speed;
+
+		camera->frustum.pos += newPos;
+		reference += newPos;
 
 		// --- Look Around ---
-		CameraLookAround();
+		CameraLookAround(dt);
 	}
 
-	camera->frustum.pos += newPos;
-	reference += newPos;
 
 	// --- Camera Pan ---
 	if (App->input->GetMouseButton(2) == KEY_REPEAT)
@@ -85,29 +86,23 @@ update_status ModuleCamera3D::Update(float dt)
 		FrameObject(App->scene_manager->GetSelectedGameObject());
 
 
-	// Recalculate matrix -------------
-	//CalculateViewMatrix();
-
 	return UPDATE_CONTINUE;
 }
 
 // -----------------------------------------------------------------
 void ModuleCamera3D::Look(const float3 &Position, const float3 &Reference, bool RotateAroundReference)
 {
-	//this->camera->frustum.pos = Position;
-	//this->reference = Reference;
+	this->camera->frustum.pos = Position;
+	this->reference = Reference;
 
-	//this->camera->frustum.front = (Position - Reference).Normalized;
-	//X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
-	//Y = cross(Z, X);
+	this->camera->frustum.front = (Position - Reference).Normalized();
+	camera->frustum.up = Cross(camera->frustum.front, (Cross(float3::unitY, camera->frustum.front)).Normalized());
 
-	//if(!RotateAroundReference)
-	//{
-	//	this->reference = this->camera->frustum.pos;
-	//	this->camera->frustum.pos += Z * 0.05f;
-	//}
-
-	//CalculateViewMatrix();
+	if(!RotateAroundReference)
+	{
+		this->reference = this->camera->frustum.pos;
+		this->camera->frustum.pos += camera->frustum.front * 0.05f;
+	}
 }
 
 // -----------------------------------------------------------------
@@ -115,18 +110,13 @@ void ModuleCamera3D::LookAt( const float3 &Spot)
 {
 	reference = Spot;
 
-	//Z = normalize(Position - Reference);
-	//X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
-	//Y = cross(Z, X);
-
-	math::float3 Z = -(camera->frustum.pos - reference).Normalized(); // Direction the camera is looking at (reverse direction of what the camera is targeting)
-	math::float3 X = math::Cross(math::float3(0.0f, 1.0f, 0.0f), Z).Normalized(); // X is perpendicular to vectors Y and Z
-	math::float3 Y = math::Cross(Z, X); // Y is perpendicular to vectors Z and X
+	math::float3 Z = -(camera->frustum.pos - reference).Normalized(); 
+	math::float3 X = math::Cross(math::float3(0.0f, 1.0f, 0.0f), Z).Normalized();
+	math::float3 Y = math::Cross(Z, X); 
 
 	camera->frustum.front = Z;
 	camera->frustum.up = Y;
 
-	//CalculateViewMatrix();
 }
 
 
@@ -173,8 +163,8 @@ void ModuleCamera3D::CameraPan(float speed)
 
 	if (dx != 0)
 	{
-		camera->frustum.pos -= speed * math::Cross(camera->frustum.up, camera->frustum.front) * dx*factor;
-		reference -= speed * math::Cross(camera->frustum.up, camera->frustum.front) * dx*factor;
+		camera->frustum.pos += speed * camera->frustum.WorldRight() * dx*factor;
+		reference -= speed * camera->frustum.WorldRight() * dx*factor;
 	}
 
 	if (dy != 0)
@@ -197,50 +187,11 @@ void ModuleCamera3D::CameraZoom(float speed)
 
 void ModuleCamera3D::CameraOrbit()
 {
-	/*int dx = -App->input->GetMouseXMotion();
-	int dy = -App->input->GetMouseYMotion();
-
-	float Sensitivity = 0.25f;
-
-	camera->frustum.pos -= reference;
-
-	if (dx != 0)
-	{
-		float DeltaX = (float)dx * Sensitivity;
-
-		X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-		Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-		Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-
-		camera->frustum.up = float3::
-	}
-
-	if (dy != 0)
-	{
-		float DeltaY = (float)dy * Sensitivity;
-
-		Y = rotate(Y, DeltaY, X);
-		Z = rotate(Z, DeltaY, X);
-
-		if (Y.y < 0.0f)
-		{
-			Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-			Y = cross(Z, X);
-		}
-	}
-
-	Position = Reference + Z * length(Position);*/
-}
-
-void ModuleCamera3D::CameraLookAround()
-{
-
 	//int dx = -App->input->GetMouseXMotion();
 	//int dy = -App->input->GetMouseYMotion();
 
 	//float Sensitivity = 0.25f;
 
-	//reference = camera->frustum.pos;
 	//camera->frustum.pos -= reference;
 
 	//if (dx != 0)
@@ -250,22 +201,72 @@ void ModuleCamera3D::CameraLookAround()
 	//	//X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
 	//	camera->frustum.up = rotate(camera->frustum.up, DeltaX, float3(0.0f, 1.0f, 0.0f));
 	//	camera->frustum.front = rotate(camera->frustum.front, DeltaX, float3(0.0f, 1.0f, 0.0f));
+
 	//}
 
 	//if (dy != 0)
 	//{
 	//	float DeltaY = (float)dy * Sensitivity;
 
-	//	camera->frustum.up = (camera->frustum.up, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
+	//	Quat::RotateAxisAngle()
+
+	//	camera->frustum.up = rotate(camera->frustum.up, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
 	//	camera->frustum.front = rotate(camera->frustum.front, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
 
 	//	if (camera->frustum.up.y < 0.0f)
 	//	{
 	//		camera->frustum.front = float3(0.0f, camera->frustum.front.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-	//		camera->frustum.up = math::Cross(camera->frustum.front, math::Cross(camera->frustum.up, camera->frustum.front));
+	//		camera->frustum.up = Cross(camera->frustum.front, math::Cross(camera->frustum.up, camera->frustum.front));
 	//	}
 	//}
 
+	//camera->frustum.pos = reference + camera->frustum.front * camera->frustum.pos.Length();
+}
+
+void ModuleCamera3D::CameraLookAround(float dt)
+{
+	float speed = 25.0f;
+	float dx = -App->input->GetMouseXMotion()*dt*speed;
+	float dy = -App->input->GetMouseYMotion()*dt*speed;
+
+	float Sensitivity = 0.025f;
+
+	//reference = camera->frustum.pos;
+	//camera->frustum.pos -= reference;
+
+	if (dx != 0)
+	{
+		float DeltaX = (float)dx * Sensitivity;
+
+		////X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+		//camera->frustum.up = rotate(camera->frustum.up, DeltaX, float3(0.0f, 1.0f, 0.0f));
+		//camera->frustum.front = rotate(camera->frustum.front, DeltaX, float3(0.0f, 1.0f, 0.0f));
+	}
+
+	if (dy != 0)
+	{
+		float DeltaY = (float)dy * Sensitivity;
+
+		//camera->frustum.up = (camera->frustum.up, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
+		//camera->frustum.front = rotate(camera->frustum.front, DeltaY, math::Cross(camera->frustum.up, camera->frustum.front));
+
+		//if (camera->frustum.up.y < 0.0f)
+		//{
+		//	camera->frustum.front = float3(0.0f, camera->frustum.front.y > 0.0f ? 1.0f : -1.0f, 0.0f);
+		//	camera->frustum.up = math::Cross(camera->frustum.front, math::Cross(camera->frustum.up, camera->frustum.front));
+		//}
+	}
+
 	//camera->frustum.pos = reference + camera->frustum.front * (camera->frustum.pos).Length();
 	//reference = camera->frustum.pos - camera->frustum.front * (camera->frustum.pos).Length();
+
+	math::Quat rotationX = math::Quat::RotateAxisAngle(float3::unitY, dx * DEGTORAD);
+	math::Quat rotationY = math::Quat::RotateAxisAngle(camera->frustum.WorldRight(), dy * DEGTORAD);
+	math::Quat finalRotation = rotationX * rotationY;
+
+	camera->frustum.up = finalRotation * camera->frustum.up;
+	camera->frustum.front = finalRotation * camera->frustum.front;
+
+	float distance = (camera->frustum.pos - camera->frustum.pos).Length();
+	camera->frustum.pos = camera->frustum.pos + (-camera->frustum.front * distance);
 }
