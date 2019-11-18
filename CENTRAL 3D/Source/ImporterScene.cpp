@@ -109,7 +109,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		// --- Save to Own format files in Library ---
 		std::string exported_file = SaveSceneToFile(scene_gos, rootnodename, MODEL);
 
-		exported_file = exported_file.substr(1, exported_file.size());
+		// MYTODO: what can we do with the exported_file string ?
 
 		// --- Delete Everything once Library files have been created ---
 		rootnode->RecursiveDelete(rootnode);
