@@ -75,6 +75,11 @@ void GameObject::OnUpdateTransform(GameObject* GO)
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	transform->OnUpdateTransform(GO->parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
 
+	ComponentCamera* camera = GO->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
+
+	if(camera)
+	camera->OnUpdateTransform(transform->GetGlobalTransform());
+
 	// --- Update all children ---
 	if (GO->childs.size() > 0)
 	{

@@ -5,6 +5,9 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
 
+#include "GameObject.h"
+#include "ComponentCamera.h"
+
 #include "Panel.h"
 #include "PanelSettings.h"
 #include "PanelAbout.h"
@@ -172,6 +175,17 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Sphere"))
 					{
 						App->scene_manager->CreateSphere(1.0f, 25, 25);
+					}
+					if (ImGui::MenuItem("Empty Game Object"))
+					{
+						App->scene_manager->CreateEmptyGameObject();
+					}
+					if (ImGui::MenuItem("Camera"))
+					{
+						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
+						camera->SetFarPlane(10);
+						cam->AddComponent(Component::ComponentType::Renderer);
 					}
 
 					ImGui::EndMenu();
