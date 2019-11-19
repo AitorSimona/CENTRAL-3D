@@ -320,6 +320,8 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_o
 
 	new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords);
 
+
+	new_mesh->CreateAABB();
 	par_shapes_free_mesh(mesh);
 }
 
