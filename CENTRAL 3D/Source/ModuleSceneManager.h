@@ -3,6 +3,8 @@
 
 #include "Module.h"
 #include <vector>
+#include "Math.h"
+#include "Color.h"
 
 class GameObject;
 class ComponentMaterial;
@@ -49,12 +51,22 @@ public:
 	void SaveScene();
 	void LoadScene();
 
+	// --- Draw Wireframe using given vertices ---
+	template <typename Box>
+	static void DrawWire(const Box& box, Color color)
+	{
+		float3 corners[8];
+		box.GetCornerPoints(corners);
+		DrawWireFromVertices(corners, color);
+	};
+
 private:
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawRecursive(GameObject* go);
 	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object) const;
 
+	static void DrawWireFromVertices(const float3* corners, Color color);
 public:
 	ComponentMaterial* CheckersMaterial = nullptr;
 	ComponentMaterial* DefaultMaterial = nullptr;

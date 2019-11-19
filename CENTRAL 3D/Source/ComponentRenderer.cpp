@@ -2,11 +2,13 @@
 #include "ComponentMaterial.h"
 #include "ComponentMesh.h"
 #include "ComponentTransform.h"
+#include "ComponentCamera.h"
 #include "GameObject.h"
 #include "OpenGL.h"
 #include "Color.h"
 #include "Application.h"
 #include "ModuleTextures.h"
+#include "ModuleSceneManager.h"
 
 #include "ResourceMesh.h"
 
@@ -25,7 +27,9 @@ void ComponentRenderer::Draw() const
 {
 	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	//ComponentCamera* camera = GO->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
 
+	// --- Send transform to OpenGL and use it to draw ---
 	glPushMatrix();
 	glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
 
@@ -35,11 +39,12 @@ void ComponentRenderer::Draw() const
 		DrawNormals(*mesh->resource_mesh);
 		DrawAxis();
 
+		// --- Pop transform so OpenGL does not use it for other operations ---
+
 		glPopMatrix();
 
-		DrawBoundingBox();
+		ModuleSceneManager::DrawWire(GO->GetAABB(), Green);
 	}
-
 }
 
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
@@ -168,54 +173,54 @@ inline void ComponentRenderer::DrawAxis() const
 	
 }
 
-inline void ComponentRenderer::DrawBoundingBox() const
-{
-	glDisable(GL_LIGHTING);
-	glBegin(GL_LINES);
-
-	float3 corners[8];
-	GO->GetAABB().GetCornerPoints(corners);
-
-	glColor4f(Green.r, Green.g, Green.b, Green.a);
-
-	//Between-planes right
-	glVertex3fv((GLfloat*)&corners[1]);
-	glVertex3fv((GLfloat*)&corners[5]);
-	glVertex3fv((GLfloat*)&corners[7]);
-	glVertex3fv((GLfloat*)&corners[3]);
-
-	//Between-planes left
-	glVertex3fv((GLfloat*)&corners[4]);
-	glVertex3fv((GLfloat*)&corners[0]);
-	glVertex3fv((GLfloat*)&corners[2]);
-	glVertex3fv((GLfloat*)&corners[6]);
-
-	//Far plane horizontal
-	glVertex3fv((GLfloat*)&corners[5]);
-	glVertex3fv((GLfloat*)&corners[4]);
-	glVertex3fv((GLfloat*)&corners[6]);
-	glVertex3fv((GLfloat*)&corners[7]);
-
-	//Near plane horizontal
-	glVertex3fv((GLfloat*)&corners[0]);
-	glVertex3fv((GLfloat*)&corners[1]);
-	glVertex3fv((GLfloat*)&corners[3]);
-	glVertex3fv((GLfloat*)&corners[2]);
-
-	//Near plane vertical
-	glVertex3fv((GLfloat*)&corners[1]);
-	glVertex3fv((GLfloat*)&corners[3]);
-	glVertex3fv((GLfloat*)&corners[0]);
-	glVertex3fv((GLfloat*)&corners[2]);
-
-	//Far plane vertical
-	glVertex3fv((GLfloat*)&corners[5]);
-	glVertex3fv((GLfloat*)&corners[7]);
-	glVertex3fv((GLfloat*)&corners[4]);
-	glVertex3fv((GLfloat*)&corners[6]);
-
-	glColor4f(1.0, 1.0, 1.0, 1.0);
-
-	glEnd();
-	glEnable(GL_LIGHTING);
-}
+//inline void ComponentRenderer::DrawBoundingBox() const
+//{
+//	glDisable(GL_LIGHTING);
+//	glBegin(GL_LINES);
+//
+//	float3 corners[8];
+//	GO->GetAABB().GetCornerPoints(corners);
+//
+//	glColor4f(Green.r, Green.g, Green.b, Green.a);
+//
+//	//Between-planes right
+//	glVertex3fv((GLfloat*)&corners[1]);
+//	glVertex3fv((GLfloat*)&corners[5]);
+//	glVertex3fv((GLfloat*)&corners[7]);
+//	glVertex3fv((GLfloat*)&corners[3]);
+//
+//	//Between-planes left
+//	glVertex3fv((GLfloat*)&corners[4]);
+//	glVertex3fv((GLfloat*)&corners[0]);
+//	glVertex3fv((GLfloat*)&corners[2]);
+//	glVertex3fv((GLfloat*)&corners[6]);
+//
+//	//Far plane horizontal
+//	glVertex3fv((GLfloat*)&corners[5]);
+//	glVertex3fv((GLfloat*)&corners[4]);
+//	glVertex3fv((GLfloat*)&corners[6]);
+//	glVertex3fv((GLfloat*)&corners[7]);
+//
+//	//Near plane horizontal
+//	glVertex3fv((GLfloat*)&corners[0]);
+//	glVertex3fv((GLfloat*)&corners[1]);
+//	glVertex3fv((GLfloat*)&corners[3]);
+//	glVertex3fv((GLfloat*)&corners[2]);
+//
+//	//Near plane vertical
+//	glVertex3fv((GLfloat*)&corners[1]);
+//	glVertex3fv((GLfloat*)&corners[3]);
+//	glVertex3fv((GLfloat*)&corners[0]);
+//	glVertex3fv((GLfloat*)&corners[2]);
+//
+//	//Far plane vertical
+//	glVertex3fv((GLfloat*)&corners[5]);
+//	glVertex3fv((GLfloat*)&corners[7]);
+//	glVertex3fv((GLfloat*)&corners[4]);
+//	glVertex3fv((GLfloat*)&corners[6]);
+//
+//	glColor4f(1.0, 1.0, 1.0, 1.0);
+//
+//	glEnd();
+//	glEnable(GL_LIGHTING);
+//}

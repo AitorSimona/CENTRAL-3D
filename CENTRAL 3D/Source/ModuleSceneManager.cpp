@@ -18,7 +18,6 @@
 #include "ImporterScene.h"
 
 #include "par/par_shapes.h"
-#include "Math.h"
 
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
@@ -125,12 +124,6 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 
 	if (go->GetName() != root->GetName())
 	{
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-
-		// --- Send transform to OpenGL and use it to draw ---
-		//glPushMatrix();
-		//glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
-
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
@@ -140,8 +133,6 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 			Renderer->Draw();
 		}
 
-		// --- Pop transform so OpenGL does not use it for other operations ---
-		//glPopMatrix();
 	}
 }
 
@@ -329,6 +320,55 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_o
 	new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords);
 
 	par_shapes_free_mesh(mesh);
+}
+
+void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color color)
+{
+	glDisable(GL_LIGHTING);
+	glBegin(GL_LINES);
+
+	glColor4f(Green.r, Green.g, Green.b, Green.a);
+
+	//Between-planes right
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[3]);
+
+	//Between-planes left
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	//Far plane horizontal
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+	glVertex3fv((GLfloat*)&corners[7]);
+
+	//Near plane horizontal
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	//Near plane vertical
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	//Far plane vertical
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+
+	glEnd();
+	glEnable(GL_LIGHTING);
 }
 
 GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ) const
