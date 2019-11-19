@@ -22,6 +22,8 @@ private:
 	inline void CreateMeshNode(GameObject& Selected) const;
 	inline void CreateRendererNode(GameObject& Selected) const;
 	inline void CreateMaterialNode(GameObject& Selected) const;
+	inline void CreateCameraNode(GameObject& Selected) const;
+
 };
 
 #endif

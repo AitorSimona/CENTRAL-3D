@@ -3,8 +3,8 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleWindow.h"
 #include "ModuleGui.h"
-#include "ModuleCamera3D.h"
 #include "ModuleSceneManager.h"
+#include "ModuleCamera3D.h"
 
 #include "ComponentCamera.h"
 
@@ -136,10 +136,10 @@ bool ModuleRenderer3D::Init(json file)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-	if (App->camera->camera->update_projection)
+	if (active_camera->update_projection)
 	{
 		UpdateProjectionMatrix();
-		App->camera->camera->update_projection = false;
+		active_camera->update_projection = false;
 	}
 
 	// --- Reset Buffers to default values ---
@@ -149,13 +149,13 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 
 	// --- Set Model View as current ---
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().ptr());
+	glLoadMatrixf(active_camera->GetOpenGLViewMatrix().ptr());
 
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
 	// light 0 on cam pos, Render lights
-	lights[0].SetPos(App->camera->camera->frustum.pos.x, App->camera->camera->frustum.pos.y, App->camera->camera->frustum.pos.z);
+	lights[0].SetPos(active_camera->frustum.pos.x, active_camera->frustum.pos.y, active_camera->frustum.pos.z);
 
 	for(uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
@@ -220,7 +220,7 @@ void ModuleRenderer3D::UpdateProjectionMatrix() const
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glLoadMatrixf((GLfloat*)App->camera->camera->GetOpenGLProjectionMatrix().ptr());
+	glLoadMatrixf((GLfloat*)active_camera->GetOpenGLProjectionMatrix().ptr());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -281,6 +281,34 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 	}
 
 	return ret;
+}
+
+void ModuleRenderer3D::SetActiveCamera(ComponentCamera * camera)
+{
+	if (this->active_camera)
+	{
+		this->active_camera->active_camera = false;
+	}
+	this->active_camera = camera ? camera : App->camera->camera;
+	if (camera)
+	{
+		camera->active_camera = true;
+	}
+
+	UpdateProjectionMatrix();
+}
+
+void ModuleRenderer3D::SetCullingCamera(ComponentCamera * camera)
+{
+	if (culling_camera)
+	{
+		culling_camera->culling = false;
+	}
+	this->culling_camera = camera ? camera : App->camera->camera;
+	if (camera)
+	{
+		camera->culling = true;
+	}
 }
 
 bool ModuleRenderer3D::GetVSync() const

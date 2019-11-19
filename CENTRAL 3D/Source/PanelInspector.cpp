@@ -3,12 +3,14 @@
 
 #include "Application.h"
 #include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentRenderer.h"
+#include "ComponentCamera.h"
 
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
@@ -73,6 +75,13 @@ bool PanelInspector::Draw()
 		if (Selected->GetComponent<ComponentMaterial>(Component::ComponentType::Material))
 		{
 			CreateMaterialNode(*Selected);
+			ImGui::Separator();
+		}
+
+		// --- Camera ---
+		if (Selected->GetComponent<ComponentCamera>(Component::ComponentType::Camera))
+		{
+			CreateCameraNode(*Selected);
 			ImGui::Separator();
 		}
 
@@ -276,4 +285,26 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 
 		ImGui::TreePop();
 	}
+}
+
+inline void PanelInspector::CreateCameraNode(GameObject & Selected) const
+{
+	if (Startup)
+		ImGui::SetNextItemOpen(true);
+
+	ComponentCamera* camera = Selected.GetComponent<ComponentCamera>(Component::ComponentType::Camera);
+
+	if (ImGui::TreeNode("Camera"))
+	{
+		if (ImGui::Checkbox("Active Camera", &camera->active_camera))
+			camera->active_camera ? App->renderer3D->SetActiveCamera(camera) : App->renderer3D->SetActiveCamera(nullptr);
+
+
+		if (ImGui::Checkbox("Culling Camera", &camera->culling))
+			camera->culling ? App->renderer3D->SetCullingCamera(camera) : App->renderer3D->SetCullingCamera(nullptr);
+
+
+		ImGui::TreePop();
+	}
+	
 }

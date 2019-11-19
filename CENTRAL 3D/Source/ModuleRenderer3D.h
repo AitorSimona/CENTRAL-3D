@@ -29,6 +29,8 @@ public:
 
 	// --- Setters ---
 	bool SetVSync(bool vsync);
+	void SetActiveCamera(ComponentCamera* camera);
+	void SetCullingCamera(ComponentCamera* camera);
 
 	// --- Getters ---
 	bool GetVSync() const;
@@ -40,6 +42,8 @@ public:
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 	ComponentCamera* active_camera = nullptr;
+	ComponentCamera* culling_camera = nullptr;
+
 	// --- Flags ---
 	bool vsync = true;
 	bool depth = true;

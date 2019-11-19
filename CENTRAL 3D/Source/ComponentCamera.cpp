@@ -86,6 +86,7 @@ void ComponentCamera::SetAspectRatio(float ar)
 	update_projection = true;
 }
 
+
 void ComponentCamera::Look(const float3 & position)
 {
 	float3 vector = position - frustum.pos;

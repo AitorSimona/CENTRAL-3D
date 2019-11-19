@@ -128,11 +128,12 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 		ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
 		// --- If Found, draw the mesh ---
-		if (Renderer && Renderer->IsEnabled() /*&& App->camera->camera->frustum.Intersects(go->GetAABB())*/)
+		if (Renderer && Renderer->IsEnabled())
 		{
-			Renderer->Draw();
+			if (App->renderer3D->culling_camera->frustum.Intersects(go->GetAABB())
+				|| go->GetComponent<ComponentCamera>(Component::ComponentType::Camera))
+				Renderer->Draw();
 		}
-
 	}
 }
 
