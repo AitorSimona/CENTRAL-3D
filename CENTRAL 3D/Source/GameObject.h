@@ -55,8 +55,8 @@ public:
 	void			SetMaterial(ComponentMaterial* material);
 
 	// --- Utilities ---
-	void RecursiveDelete(GameObject* GO, bool target = true);
-	void OnUpdateTransform(GameObject* GO);
+	void RecursiveDelete(bool target = true);
+	void OnUpdateTransform();
 	void RemoveChildGO(GameObject* GO);
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);

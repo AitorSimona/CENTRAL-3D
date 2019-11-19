@@ -80,7 +80,7 @@ update_status ModuleSceneManager::Update(float dt)
 
 bool ModuleSceneManager::CleanUp()
 {
-	root->RecursiveDelete(root);
+	root->RecursiveDelete();
 
 	for (uint i = 0; i < Materials.size(); ++i)
 	{
@@ -464,7 +464,7 @@ void ModuleSceneManager::CreateGrid() const
 void ModuleSceneManager::DestroyGameObject(GameObject * go)
 {
 	go->parent->RemoveChildGO(go);
-	go->RecursiveDelete(go);
+	go->RecursiveDelete();
 
 	this->go_count--;
 }

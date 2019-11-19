@@ -112,7 +112,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		// MYTODO: what can we do with the exported_file string ?
 
 		// --- Delete Everything once Library files have been created ---
-		rootnode->RecursiveDelete(rootnode);
+		rootnode->RecursiveDelete();
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
@@ -254,7 +254,7 @@ bool ImporterScene::Load(const char * exported_file) const
 			}
 		}
 
-		transform->update_transform = true;
+		//transform->update_transform = true;
 		objects.push_back(new_go);
 	}
 
@@ -273,6 +273,8 @@ bool ImporterScene::Load(const char * exported_file) const
 			}
 		}
 	}
+
+	App->scene_manager->GetRootGO()->OnUpdateTransform();
 
 	return true;
 }
