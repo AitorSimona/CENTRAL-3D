@@ -128,8 +128,8 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 		ComponentTransform* transform = go->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
 		// --- Send transform to OpenGL and use it to draw ---
-		glPushMatrix();
-		glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
+		//glPushMatrix();
+		//glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
 
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
@@ -141,7 +141,7 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 		}
 
 		// --- Pop transform so OpenGL does not use it for other operations ---
-		glPopMatrix();
+		//glPopMatrix();
 	}
 }
 
