@@ -15,7 +15,6 @@ GameObject::GameObject(const char* name)
 {
 	UID = App->GetRandom().Int();
 	this->name = name;
-
 	Enable();
 }
 

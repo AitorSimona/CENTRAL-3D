@@ -128,6 +128,7 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 	}
 }
 
+
 void ModuleCamera3D::CameraPan(float speed)
 {
 	int dx = -App->input->GetMouseXMotion();

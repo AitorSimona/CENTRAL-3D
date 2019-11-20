@@ -61,7 +61,6 @@ public:
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);
 
-private:
 	void UpdateAABB();
 
 public:

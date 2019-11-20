@@ -222,9 +222,10 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
-
 	// --- Add component transform ---
 	new_object->AddComponent(Component::ComponentType::Transform);
+
+	new_object->UpdateAABB();
 
 	// --- Set Parent GO ---
 	root->AddChildGO(new_object);
