@@ -71,6 +71,9 @@ void GameObject::RecursiveDelete(bool target)
 
 void GameObject::OnUpdateTransform()
 {
+	if (Static)
+		return;
+
 	ComponentTransform* transform = GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 
 	if(parent)

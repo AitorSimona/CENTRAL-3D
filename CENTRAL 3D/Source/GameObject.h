@@ -66,6 +66,7 @@ public:
 public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childs;
+	bool Static = false;
 private:
 	// Unique Identifier
 	uint UID = 0;
@@ -73,7 +74,6 @@ private:
 	std::vector<Component*> components;
 
 	bool active = false;
-
 	AABB						aabb;
 	OBB							obb;
 };
