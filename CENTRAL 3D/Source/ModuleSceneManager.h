@@ -5,12 +5,14 @@
 #include <vector>
 #include "Math.h"
 #include "Color.h"
+#include "Quadtree.h"
 
 class GameObject;
 class ComponentMaterial;
 struct aiScene;
 struct ImportMaterialData;
 struct par_shapes_mesh_s;
+
 
 class ModuleSceneManager : public Module
 {
@@ -44,6 +46,8 @@ public:
 	// --- Utilities ---
 	void Draw();
 	GameObject* GetRootGO() const;
+	void RedoOctree();
+	void RecursiveDrawQuadtree(QuadtreeNode * node) const;
 
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;
@@ -71,11 +75,15 @@ public:
 	ComponentMaterial* CheckersMaterial = nullptr;
 	ComponentMaterial* DefaultMaterial = nullptr;
 
+	// --- Actually this is an octree ---
+	Quadtree tree;
 private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
 	std::vector<ComponentMaterial*> Materials;
+	std::vector<AABB> aabb;
+
 };
 
 #endif

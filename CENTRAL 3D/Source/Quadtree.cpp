@@ -5,7 +5,7 @@
 
 #include "mmgr/mmgr.h"
 
-
+// --- All child indexes ---
 #define NET 0
 #define SET 1
 #define SWT 2
@@ -15,7 +15,8 @@
 #define SWB 6
 #define NWB 7
 
-#define QUADTREE_MAX_ITEMS 8
+// --- Max items before subdividing ---
+#define QUADTREE_MAX_ITEMS 4
 #define QUADTREE_MIN_SIZE 10.0f 
 
 
@@ -42,8 +43,8 @@ bool QuadtreeNode::IsLeaf() const
 void QuadtreeNode::Insert(GameObject* go)
 {
 	if (IsLeaf() == true &&
-		(objects.size() < QUADTREE_MAX_ITEMS ||
-		(box.HalfSize().LengthSq() <= QUADTREE_MIN_SIZE * QUADTREE_MIN_SIZE)))
+		(objects.size() < QUADTREE_MAX_ITEMS /*||
+		(box.HalfSize().LengthSq() <= QUADTREE_MIN_SIZE * QUADTREE_MIN_SIZE))*/))
 		objects.push_back(go);
 	else
 	{
@@ -79,46 +80,38 @@ MinPoint
 
 void QuadtreeNode::CreateChilds()
 {
-	// We need to subdivide this node ...
-	//float3 size(box.Size());
-	//float3 new_size(size.x*0.5f, size.y*0.5f, size.z*0.5f); // Octree would subdivide y too
-
-	//float3 center(box.CenterPoint());
-	//float3 new_center(center);
-	AABB new_box;
-
 	// NorthEast - TOP
-	childs[NET] = new QuadtreeNode(new_box);
-	CreateNode(NET);
+	childs[NET] = new QuadtreeNode(box);
+	childs[NET]->CreateNode(NET);
 
 	// SouthEast - TOP
-	childs[SET] = new QuadtreeNode(new_box);
-	CreateNode(SET);
+	childs[SET] = new QuadtreeNode(box);
+	childs[SET]->CreateNode(SET);
 
 	// SouthWest - TOP
-	childs[SWT] = new QuadtreeNode(new_box);
-	CreateNode(SWT);
+	childs[SWT] = new QuadtreeNode(box);
+	childs[SWT]->CreateNode(SWT);
 
 	// NorthWest - TOP
-	childs[NWT] = new QuadtreeNode(new_box);
-	CreateNode(NWT);
+	childs[NWT] = new QuadtreeNode(box);
+	childs[NWT]->CreateNode(NWT);
 
 
 	// NorthEast - BOT
-	childs[NEB] = new QuadtreeNode(new_box);
-	CreateNode(NEB);
+	childs[NEB] = new QuadtreeNode(box);
+	childs[NEB]->CreateNode(NEB);
 
 	// SouthEast - BOT
-	childs[SEB] = new QuadtreeNode(new_box);
-	CreateNode(SEB);
+	childs[SEB] = new QuadtreeNode(box);
+	childs[SEB]->CreateNode(SEB);
 
 	// SouthWest - BOT
-	childs[SWB] = new QuadtreeNode(new_box);
-	CreateNode(SWB);
+	childs[SWB] = new QuadtreeNode(box);
+	childs[SWB]->CreateNode(SWB);
 
 	// NorthWest - BOT
-	childs[NWB] = new QuadtreeNode(new_box);
-	CreateNode(NWB);
+	childs[NWB] = new QuadtreeNode(box);
+	childs[NWB]->CreateNode(NWB);
 
 
 }
@@ -198,6 +191,7 @@ void QuadtreeNode::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const
 		if (childs[i] != nullptr) childs[i]->CollectBoxes(nodes);
 }
 
+
 // ---------------------------------------------------------------------
 
 Quadtree::Quadtree()
@@ -207,6 +201,7 @@ Quadtree::~Quadtree()
 {
 	Clear();
 }
+
 
 void Quadtree::SetBoundaries(const AABB& box)
 {

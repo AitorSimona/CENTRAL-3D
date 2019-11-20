@@ -39,6 +39,7 @@ bool ModuleSceneManager::Init(json file)
 {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
+	tree.SetBoundaries(AABB(float3(-10, 0, -10), float3(10, 10, 10)));
 
 	return true;
 }
@@ -89,6 +90,7 @@ bool ModuleSceneManager::CleanUp()
 	}
 	Materials.clear();
 
+
 	DefaultMaterial = nullptr;
 	CheckersMaterial = nullptr;
 
@@ -114,6 +116,10 @@ void ModuleSceneManager::Draw()
 
 void ModuleSceneManager::DrawRecursive(GameObject * go)
 {
+
+	RecursiveDrawQuadtree(tree.root);
+
+
 	if (go->childs.size() > 0)
 	{
 		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
@@ -141,6 +147,32 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 GameObject * ModuleSceneManager::GetRootGO() const
 {
 	return root;
+}
+
+void ModuleSceneManager::RedoOctree()
+{
+	std::vector<GameObject*> scene_gos;
+	GatherGameObjects(scene_gos, root);
+
+	for (uint i = 0; i < scene_gos.size(); ++i)
+	{
+		tree.Erase(scene_gos[i]);
+		tree.Insert(scene_gos[i]);
+	}
+
+}
+
+void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
+{
+	if (!node->IsLeaf())
+	{
+		for (uint i = 0; i < 8; ++i)
+		{
+			RecursiveDrawQuadtree(node->childs[i]);
+		}
+	}
+
+	DrawWire(node->box, Red);
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
@@ -225,8 +257,9 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	GameObject* new_object = new GameObject(Name.data());
 	// --- Add component transform ---
 	new_object->AddComponent(Component::ComponentType::Transform);
-
 	new_object->UpdateAABB();
+
+	tree.Insert(new_object);
 
 	// --- Set Parent GO ---
 	root->AddChildGO(new_object);
@@ -332,7 +365,7 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 
-	glColor4f(Green.r, Green.g, Green.b, Green.a);
+	glColor4f(color.r, color.g, color.b, color.a);
 
 	//Between-planes right
 	glVertex3fv((GLfloat*)&corners[1]);

@@ -188,6 +188,11 @@ update_status ModuleGui::Update(float dt)
 						cam->AddComponent(Component::ComponentType::Renderer);
 					}
 
+					if (ImGui::MenuItem("Redo Octree"))
+					{
+						App->scene_manager->RedoOctree();
+					}
+
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();

@@ -14,7 +14,6 @@ class GameObject;
 // Tree node -------------------------------------------------------
 class QuadtreeNode
 {
-
 public:
 	ALIGN_CLASS_TO_16
 
@@ -96,7 +95,7 @@ inline void QuadtreeNode::CollectIntersections(std::map<float, GameObject*>& obj
 				objects[hit_near] = *it;
 		}
 
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < 8; ++i)
 			if (childs[i] != nullptr) childs[i]->CollectIntersections(objects, primitive);
 	}
 }
@@ -112,7 +111,7 @@ inline void QuadtreeNode::CollectIntersections(std::vector<GameObject*>& objects
 				objects.push_back(*it);
 		}
 
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < 8; ++i)
 			if (childs[i] != nullptr) childs[i]->CollectIntersections(objects, primitive);
 	}
 }
