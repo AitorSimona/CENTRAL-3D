@@ -38,7 +38,7 @@ float4x4 ComponentTransform::GetGlobalTransform() const
 float3 ComponentTransform::GetGlobalPosition() const
 {
 	float4x4 global_transform = GetGlobalTransform();
-	return float3(global_transform[0][3], global_transform[1][3], global_transform[2][3]);
+	return global_transform.TranslatePart();
 }
 
 void ComponentTransform::SetPosition(float x, float y, float z)

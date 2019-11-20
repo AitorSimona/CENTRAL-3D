@@ -130,8 +130,9 @@ void ModuleSceneManager::DrawRecursive(GameObject * go)
 		// --- If Found, draw the mesh ---
 		if (Renderer && Renderer->IsEnabled())
 		{
-			if (App->renderer3D->culling_camera->frustum.Intersects(go->GetAABB())
+			if(App->renderer3D->culling_camera->ContainsAABB(go->GetAABB())
 				|| go->GetComponent<ComponentCamera>(Component::ComponentType::Camera))
+
 				Renderer->Draw();
 		}
 	}
