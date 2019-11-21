@@ -166,8 +166,16 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	//glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	//glClear(GL_COLOR_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT);
+
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
 
 	// --- Draw everything and swap buffers ---
 	App->gui->Draw();
@@ -241,6 +249,9 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	//ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
 	//glLoadMatrixf(&ProjectionMatrix);
 	 UpdateProjectionMatrix();
+
+	 glDeleteFramebuffers(1, &fbo);
+	 CreateFramebuffer();
 	//glMatrixMode(GL_MODELVIEW);
 	//glLoadIdentity();
 }
