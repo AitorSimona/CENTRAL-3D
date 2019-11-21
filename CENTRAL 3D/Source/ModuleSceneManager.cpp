@@ -76,6 +76,7 @@ update_status ModuleSceneManager::Update(float dt)
 {
 	root->Update(dt);
 
+
 	return UPDATE_CONTINUE;
 }
 

@@ -18,6 +18,7 @@ public:
 	bool CleanUp();
 
 	void FrameObject(GameObject* GO);
+	void OnMouseClick(const float mouse_x, const float mouse_y);
 
 private:
 	void CameraPan(float speed);
