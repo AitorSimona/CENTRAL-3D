@@ -162,6 +162,19 @@ void ModuleSceneManager::RedoOctree()
 
 }
 
+void ModuleSceneManager::SetStatic(GameObject * go)
+{
+	if (!go->in_statictree)
+	{
+		go->in_statictree = true;
+		tree.Insert(go);
+	}
+	if (!go->Static && go->in_statictree)
+	{
+		tree.Erase(go);
+	}
+}
+
 void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 {
 	if (!node->IsLeaf())
@@ -259,7 +272,6 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	new_object->AddComponent(Component::ComponentType::Transform);
 	new_object->UpdateAABB();
 
-	tree.Insert(new_object);
 
 	// --- Set Parent GO ---
 	root->AddChildGO(new_object);

@@ -109,8 +109,9 @@ inline void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 		Selected.SetName(GOName);
 
 	ImGui::SameLine();
-	ImGui::Checkbox("Static", &Selected.Static);
 
+	if(ImGui::Checkbox("Static", &Selected.Static))
+	App->scene_manager->SetStatic(&Selected);
 
 	ImGui::EndChild();
 }

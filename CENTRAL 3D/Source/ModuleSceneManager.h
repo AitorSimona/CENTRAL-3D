@@ -47,6 +47,7 @@ public:
 	void Draw();
 	GameObject* GetRootGO() const;
 	void RedoOctree();
+	void SetStatic(GameObject* go);
 	void RecursiveDrawQuadtree(QuadtreeNode * node) const;
 
 	// --- Save/Load ----
