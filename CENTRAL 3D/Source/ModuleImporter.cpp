@@ -121,6 +121,9 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 					App->fs->SplitFilePath(path, nullptr, &filename, nullptr);
 					destination.append(filename);
 
+					if (!App->fs->Exists(destination.data()))
+						App->fs->CopyFromOutsideFS(path, destination.data());
+
 					ResourceTexture* tex = nullptr;
 
 					// --- Look for meta, if found load image from library ---
