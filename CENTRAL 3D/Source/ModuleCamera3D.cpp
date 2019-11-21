@@ -30,6 +30,7 @@ bool ModuleCamera3D::Init(json config)
 	App->renderer3D->SetActiveCamera(camera);
 	App->renderer3D->SetCullingCamera(camera);
 
+
 	return true;
 }
 
@@ -114,13 +115,14 @@ update_status ModuleCamera3D::Update(float dt)
 void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 {
 	float normalized_x = mouse_x / (float)App->window->GetWindowWidth();
-	float normalized_y = mouse_y / (float)App->window->GetWindowHeight();
+	float normalized_y = 1.0f - (mouse_y / (float)App->window->GetWindowHeight());
 
 	// --- Normalizing mouse position --- 
 	normalized_x = (normalized_x - 0.5) / 0.5;
 	normalized_y = (normalized_y - 0.5) / 0.5;
 
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
+	last_ray = ray;
 
 	App->scene_manager->SelectFromRay(ray);
 }

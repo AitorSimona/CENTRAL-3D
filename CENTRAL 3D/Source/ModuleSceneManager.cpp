@@ -11,6 +11,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResources.h"
 #include "ModuleCamera3D.h"
+#include "ModuleInput.h"
 #include "ComponentCamera.h"
 
 #include "ModuleImporter.h"
@@ -142,6 +143,23 @@ void ModuleSceneManager::DrawScene()
 		// --- If Found, draw the mesh ---
 		if (Renderer && Renderer->IsEnabled())
 			Renderer->Draw();
+	}
+
+	// --- Draw ray ---
+	if (App->camera->last_ray.IsFinite())
+	{
+		glDisable(GL_LIGHTING);
+		glBegin(GL_LINES);
+
+		glColor4f(Red.r, Red.g, Red.b, Red.a);
+
+		glVertex3fv((GLfloat*)&App->camera->last_ray.a);
+		glVertex3fv((GLfloat*)&App->camera->last_ray.b);
+
+		glColor4f(1.0, 1.0, 1.0, 1.0);
+
+		glEnd();
+		glEnable(GL_LIGHTING);
 	}
 }
 

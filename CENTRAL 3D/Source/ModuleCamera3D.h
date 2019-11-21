@@ -27,4 +27,5 @@ private:
 public:
 	float3 reference = { 0.0f,0.0f,0.0f };
 	ComponentCamera* camera = nullptr;
+	LineSegment last_ray;
 };
