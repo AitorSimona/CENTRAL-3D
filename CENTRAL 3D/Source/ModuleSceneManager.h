@@ -30,8 +30,8 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
-	GameObject* CreateCube(float sizeX, float sizeY, float sizeZ) const;
-	GameObject* CreateSphere(float Radius, int slices, int slacks) const;
+	GameObject* CreateCube(float sizeX, float sizeY, float sizeZ);
+	GameObject* CreateSphere(float Radius, int slices, int slacks);
 	void CreateGrid() const;
 
 	void DestroyGameObject(GameObject* go);
@@ -68,7 +68,7 @@ public:
 private:
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
-	void DrawRecursive(GameObject* go);
+	void DrawScene();
 	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object) const;
 
 	static void DrawWireFromVertices(const float3* corners, Color color);
@@ -79,6 +79,7 @@ public:
 	// --- Actually this is an octree ---
 	Quadtree tree;
 private:
+	std::vector<GameObject*> NoStaticGo;
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;

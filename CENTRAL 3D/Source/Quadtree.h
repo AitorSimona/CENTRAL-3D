@@ -91,7 +91,7 @@ inline void QuadtreeNode::CollectIntersections(std::map<float, GameObject*>& obj
 		float hit_near, hit_far;
 		for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it)
 		{
-			if (primitive.Intersects((*it)->global_bbox, hit_near, hit_far))
+			if (primitive.Intersects((*it)->GetOBB(), hit_near, hit_far))
 				objects[hit_near] = *it;
 		}
 
@@ -107,7 +107,7 @@ inline void QuadtreeNode::CollectIntersections(std::vector<GameObject*>& objects
 	{
 		for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it)
 		{
-			if (primitive.Intersects((*it)->global_bbox))
+			if (primitive.Intersects((*it)->GetOBB()))
 				objects.push_back(*it);
 		}
 

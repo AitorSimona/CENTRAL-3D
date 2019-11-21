@@ -67,7 +67,6 @@ public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childs;
 	bool Static = false;
-	bool in_statictree = false;
 private:
 	// Unique Identifier
 	uint UID = 0;

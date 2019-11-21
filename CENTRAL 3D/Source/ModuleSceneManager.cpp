@@ -89,7 +89,7 @@ bool ModuleSceneManager::CleanUp()
 			delete Materials[i];
 	}
 	Materials.clear();
-
+	NoStaticGo.clear();
 
 	DefaultMaterial = nullptr;
 	CheckersMaterial = nullptr;
@@ -107,41 +107,63 @@ void ModuleSceneManager::Draw()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// --- Draw Game Object Meshes ---
-	DrawRecursive(root);
+	DrawScene();
 
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void ModuleSceneManager::DrawRecursive(GameObject * go)
+void ModuleSceneManager::DrawScene()
 {
-
 	RecursiveDrawQuadtree(tree.root);
 
-
-	if (go->childs.size() > 0)
+	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
 	{
-		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
+		if ((*it)->GetName() != root->GetName())
 		{
-			DrawRecursive(*it);
+			// --- Search for Renderer Component --- 
+			ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+
+			// --- If Found, draw the mesh ---
+			if (Renderer && Renderer->IsEnabled())
+					Renderer->Draw();
 		}
 	}
+	std::vector<GameObject*> static_go;
+	tree.CollectIntersections(static_go, App->renderer3D->culling_camera->frustum);
 
-	if (go->GetName() != root->GetName())
+	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 	{
 		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+		ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
 		// --- If Found, draw the mesh ---
 		if (Renderer && Renderer->IsEnabled())
-		{
-			if(App->renderer3D->culling_camera->ContainsAABB(go->GetAABB())
-				|| go->GetComponent<ComponentCamera>(Component::ComponentType::Camera))
-
-				Renderer->Draw();
-		}
+			Renderer->Draw();
 	}
+
+	//if (go->childs.size() > 0)
+	//{
+	//	for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
+	//	{
+	//		DrawRecursive(*it);
+	//	}
+	//}
+
+	//if (go->GetName() != root->GetName())
+	//{
+	//	// --- Search for Renderer Component --- 
+	//	ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+
+	//	// --- If Found, draw the mesh ---
+	//	if (Renderer && Renderer->IsEnabled())
+	//	{
+	//		if(App->renderer3D->culling_camera->ContainsAABB(go->GetAABB())
+	//			|| go->GetComponent<ComponentCamera>(Component::ComponentType::Camera))
+	//			Renderer->Draw();
+	//	}
+	//}
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const
@@ -166,13 +188,22 @@ void ModuleSceneManager::RedoOctree()
 
 void ModuleSceneManager::SetStatic(GameObject * go)
 {
-	if (!go->in_statictree)
+	if (go->Static)
 	{
-		go->in_statictree = true;
 		tree.Insert(go);
+
+		for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+		{
+			if ((*it) == go)
+			{
+				NoStaticGo.erase(it);
+				break;
+			}
+		}
 	}
-	if (!go->Static && go->in_statictree)
+	else
 	{
+		NoStaticGo.push_back(go);
 		tree.Erase(go);
 	}
 }
@@ -270,6 +301,7 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
+	NoStaticGo.push_back(new_object);
 	// --- Add component transform ---
 	new_object->AddComponent(Component::ComponentType::Transform);
 	new_object->UpdateAABB();
@@ -423,7 +455,7 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glEnable(GL_LIGHTING);
 }
 
-GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ) const
+GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
 {
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
 	// does not have uvs / normals 
@@ -458,7 +490,7 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	par_shapes_merge_and_free(mesh, left);
 	par_shapes_merge_and_free(mesh, right);
 
-	GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
+	GameObject* new_object = CreateEmptyGameObject();
 
 	if (mesh)
 	{
@@ -469,12 +501,12 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	return new_object;
 }
 
-GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks) const
+GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
 {
 	// --- Create par shapes sphere ---
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
-	GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
+	GameObject* new_object = CreateEmptyGameObject();
 
 	if (mesh)
 	{
@@ -514,7 +546,7 @@ void ModuleSceneManager::CreateGrid() const
 
 void ModuleSceneManager::DestroyGameObject(GameObject * go)
 {
-	if (go->in_statictree)
+	if (go->Static)
 		tree.Erase(go);
 
 	go->parent->RemoveChildGO(go);
