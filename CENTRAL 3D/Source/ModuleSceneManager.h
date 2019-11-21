@@ -49,6 +49,7 @@ public:
 	void RedoOctree();
 	void SetStatic(GameObject* go);
 	void RecursiveDrawQuadtree(QuadtreeNode * node) const;
+	void SelectFromRay(LineSegment& ray) const;
 
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;

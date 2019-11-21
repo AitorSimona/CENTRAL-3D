@@ -200,6 +200,11 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 	DrawWire(node->box, Red);
 }
 
+void ModuleSceneManager::SelectFromRay(LineSegment & ray) const
+{
+	
+}
+
 void ModuleSceneManager::SaveStatus(json & file) const
 {
 }

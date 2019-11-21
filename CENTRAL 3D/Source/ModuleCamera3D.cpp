@@ -122,6 +122,7 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 
+	App->scene_manager->SelectFromRay(ray);
 }
 
 void ModuleCamera3D::FrameObject(GameObject* GO)
