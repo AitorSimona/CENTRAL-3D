@@ -152,11 +152,13 @@ GameObject * ModuleSceneManager::GetRootGO() const
 void ModuleSceneManager::RedoOctree()
 {
 	std::vector<GameObject*> scene_gos;
-	GatherGameObjects(scene_gos, root);
+	tree.CollectObjects(scene_gos);
+
+	tree.SetBoundaries(AABB(float3(-10, 0, -10), float3(10, 10, 10)));
 
 	for (uint i = 0; i < scene_gos.size(); ++i)
 	{
-		tree.Erase(scene_gos[i]);
+		//tree.Erase(scene_gos[i]);
 		tree.Insert(scene_gos[i]);
 	}
 
