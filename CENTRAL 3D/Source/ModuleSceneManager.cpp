@@ -200,9 +200,22 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 	DrawWire(node->box, Red);
 }
 
-void ModuleSceneManager::SelectFromRay(LineSegment & ray) const
+void ModuleSceneManager::SelectFromRay(LineSegment & ray) 
 {
-	
+	// --- Gather static gos ---
+	std::map<float, GameObject*> candidate_gos;
+	tree.CollectIntersections(candidate_gos, ray);
+
+	// --- Gather non-static gos ---
+	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+	{
+		if (ray.Intersects((*it)->GetAABB()))
+		{
+			float hit_near, hit_far;
+			if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
+				candidate_gos[hit_near] = *it;
+		}
+	}
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
