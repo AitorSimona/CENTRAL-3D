@@ -202,7 +202,6 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 
 void ModuleSceneManager::SelectFromRay(LineSegment & ray) 
 {
-
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 
 	// --- Gather static gos ---
@@ -228,14 +227,28 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 
 		if (mesh)
 		{
-			ResourceMesh* resource_mesh = mesh->resource_mesh;
 
-			if (resource_mesh)
+			if (mesh->resource_mesh)
 			{
 				// --- We need to transform the ray to local mesh space ---
 				LineSegment local = ray;
 				local.Transform(it->second->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Inverted());
 
+				for (uint j = 0; j < mesh->resource_mesh->IndicesSize/3; j++)
+				{
+					float3 a = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[j * 3]];
+					float3 b = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 1]];
+					float3 c = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 2]];
+					// --- Create Triangle given three vertices ---
+					Triangle triangle(a, b, c);
+					
+					// --- Test ray/triangle intersection ---
+					if (local.Intersects(triangle, nullptr, nullptr))
+					{
+						toSelect = it->second;
+						break;
+					}
+				}
 			}
 		}
 	}
