@@ -184,6 +184,7 @@ bool ModuleRenderer3D::CleanUp()
 {
 	LOG("Destroying 3D Renderer");
 
+	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);
 
 	return true;
@@ -234,14 +235,14 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	// --- Resetting View matrices ---
 
 	glViewport(0, 0, width, height);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-	glLoadMatrixf(&ProjectionMatrix);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	active_camera->SetAspectRatio(width / height);
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
+	//glLoadMatrixf(&ProjectionMatrix);
+	 UpdateProjectionMatrix();
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 }
 
 uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void * data) const
@@ -254,6 +255,40 @@ uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void *
 	glBindBuffer(Targetbuffer, 0); // Stop using buffer
 
 	return ID;
+}
+
+void ModuleRenderer3D::CreateFramebuffer()
+{
+	// --- Generate framebuffer object (fbo) ---
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	// --- Create a texture to use it as render target ---
+	glGenTextures(1, &rendertexture);
+	glBindTexture(GL_TEXTURE_2D, rendertexture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, App->window->GetWindowWidth(), App->window->GetWindowHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// --- Generate attachments, DEPTH and STENCIL render buffer objects ---
+	glGenRenderbuffers(1, &depthbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthbuffer);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		LOG("|[error]: Could not create framebuffer");
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 bool ModuleRenderer3D::SetVSync(bool vsync)
