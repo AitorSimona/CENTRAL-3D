@@ -11,7 +11,7 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 
 	frustum.nearPlaneDistance = 1.0f;
 	frustum.farPlaneDistance = 2000.0f;
-	frustum.verticalFov = DEGTORAD * 60.0f;
+	frustum.verticalFov = DEGTORAD * 90.0f;
 	SetAspectRatio(1.3f);
 
 	update_projection = true;
