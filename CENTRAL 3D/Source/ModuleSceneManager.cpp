@@ -142,28 +142,6 @@ void ModuleSceneManager::DrawScene()
 		if (Renderer && Renderer->IsEnabled())
 			Renderer->Draw();
 	}
-
-	//if (go->childs.size() > 0)
-	//{
-	//	for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-	//	{
-	//		DrawRecursive(*it);
-	//	}
-	//}
-
-	//if (go->GetName() != root->GetName())
-	//{
-	//	// --- Search for Renderer Component --- 
-	//	ComponentRenderer* Renderer = go->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
-
-	//	// --- If Found, draw the mesh ---
-	//	if (Renderer && Renderer->IsEnabled())
-	//	{
-	//		if(App->renderer3D->culling_camera->ContainsAABB(go->GetAABB())
-	//			|| go->GetComponent<ComponentCamera>(Component::ComponentType::Camera))
-	//			Renderer->Draw();
-	//	}
-	//}
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const
