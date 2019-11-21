@@ -202,6 +202,9 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 
 void ModuleSceneManager::SelectFromRay(LineSegment & ray) 
 {
+
+	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
+
 	// --- Gather static gos ---
 	std::map<float, GameObject*> candidate_gos;
 	tree.CollectIntersections(candidate_gos, ray);
@@ -216,6 +219,30 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 				candidate_gos[hit_near] = *it;
 		}
 	}
+
+	GameObject* toSelect = nullptr;
+	for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
+	{
+		// --- We have to test triangle by triangle ---
+		ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+
+		if (mesh)
+		{
+			ResourceMesh* resource_mesh = mesh->resource_mesh;
+
+			if (resource_mesh)
+			{
+				// --- We need to transform the ray to local mesh space ---
+				LineSegment local = ray;
+				local.Transform(it->second->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Inverted());
+
+			}
+		}
+	}
+
+	// --- Set Selected ---
+	if (toSelect)
+		SelectedGameObject = toSelect;
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
