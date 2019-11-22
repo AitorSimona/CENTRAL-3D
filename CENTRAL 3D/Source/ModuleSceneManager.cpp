@@ -14,6 +14,8 @@
 #include "ModuleInput.h"
 #include "ComponentCamera.h"
 
+#include "ModuleGui.h"
+
 #include "ModuleImporter.h"
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
@@ -222,58 +224,62 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 
-	// --- Gather static gos ---
-	std::map<float, GameObject*> candidate_gos;
-	tree.CollectIntersections(candidate_gos, ray);
-
-	// --- Gather non-static gos ---
-	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+	if (!App->gui->IsMouseCaptured())
 	{
-		if (ray.Intersects((*it)->GetAABB()))
+		// --- Gather static gos ---
+		std::map<float, GameObject*> candidate_gos;
+		tree.CollectIntersections(candidate_gos, ray);
+
+		// --- Gather non-static gos ---
+		for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
 		{
-			float hit_near, hit_far;
-			if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
-				candidate_gos[hit_near] = *it;
-		}
-	}
-
-	GameObject* toSelect = nullptr;
-	for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
-	{
-		// --- We have to test triangle by triangle ---
-		ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
-
-		if (mesh)
-		{
-
-			if (mesh->resource_mesh)
+			if (ray.Intersects((*it)->GetAABB()))
 			{
-				// --- We need to transform the ray to local mesh space ---
-				LineSegment local = ray;
-				local.Transform(it->second->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Inverted());
+				float hit_near, hit_far;
+				if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
+					candidate_gos[hit_near] = *it;
+			}
+		}
 
-				for (uint j = 0; j < mesh->resource_mesh->IndicesSize/3; j++)
+		GameObject* toSelect = nullptr;
+		for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
+		{
+			// --- We have to test triangle by triangle ---
+			ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+
+			if (mesh)
+			{
+
+				if (mesh->resource_mesh)
 				{
-					float3 a = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[j * 3]];
-					float3 b = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 1]];
-					float3 c = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 2]];
-					// --- Create Triangle given three vertices ---
-					Triangle triangle(a, b, c);
-					
-					// --- Test ray/triangle intersection ---
-					if (local.Intersects(triangle, nullptr, nullptr))
+					// --- We need to transform the ray to local mesh space ---
+					LineSegment local = ray;
+					local.Transform(it->second->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Inverted());
+
+					for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
 					{
-						toSelect = it->second;
-						break;
+						float3 a = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[j * 3]];
+						float3 b = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 1]];
+						float3 c = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 2]];
+						// --- Create Triangle given three vertices ---
+						Triangle triangle(a, b, c);
+
+						// --- Test ray/triangle intersection ---
+						if (local.Intersects(triangle, nullptr, nullptr))
+						{
+							toSelect = it->second;
+							break;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	// --- Set Selected ---
-	if (toSelect)
-		SelectedGameObject = toSelect;
+		// --- Set Selected ---
+		if (toSelect)
+			SelectedGameObject = toSelect;
+
+	}
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
