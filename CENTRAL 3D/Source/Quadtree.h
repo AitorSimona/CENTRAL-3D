@@ -15,9 +15,6 @@ class GameObject;
 class QuadtreeNode
 {
 public:
-	ALIGN_CLASS_TO_16
-
-public:
 
 	QuadtreeNode(const AABB& box);
 	virtual ~QuadtreeNode();

@@ -601,8 +601,6 @@ void ModuleSceneManager::CreateGrid() const
 
 void ModuleSceneManager::DestroyGameObject(GameObject * go)
 {
-	if (go->Static)
-		tree.Erase(go);
 
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();

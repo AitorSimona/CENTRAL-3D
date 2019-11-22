@@ -29,7 +29,7 @@ ModuleRenderer3D::~ModuleRenderer3D()
 // Called before render is available
 bool ModuleRenderer3D::Init(json file)
 {
-	LOG("Creating 3D Renderer context");
+	CONSOLE_LOG("Creating 3D Renderer context");
 
 	bool ret = true;
 	
@@ -38,7 +38,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	if(context == NULL)
 	{
-		LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+		CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 	
@@ -46,14 +46,14 @@ bool ModuleRenderer3D::Init(json file)
 	{
 		//Use Vsync
 		if(vsync && SDL_GL_SetSwapInterval(1) < 0)
-			LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		// Initialize glew
 		GLenum error = glewInit();
 
 		if (error != GL_NO_ERROR)
 		{
-			LOG("|[error]: Error initializing glew! %s\n"/*, glewGetErrorString(error)*/);
+			CONSOLE_LOG("|[error]: Error initializing glew! %s\n"/*, glewGetErrorString(error)*/);
 			ret = false;
 		}
 
@@ -66,7 +66,7 @@ bool ModuleRenderer3D::Init(json file)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
+			CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 
@@ -78,7 +78,7 @@ bool ModuleRenderer3D::Init(json file)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
+			CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 		
@@ -92,7 +92,7 @@ bool ModuleRenderer3D::Init(json file)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
+			CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 
@@ -124,8 +124,8 @@ bool ModuleRenderer3D::Init(json file)
 
 	}
 
-	LOG("OpenGL Version: %s", glGetString(GL_VERSION));
-	LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
+	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
+	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
 
 	// Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
@@ -155,7 +155,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	UpdateGLCapabilities();
 
 	// light 0 on cam pos, Render lights
-	lights[0].SetPos(active_camera->frustum.pos.x, active_camera->frustum.pos.y, active_camera->frustum.pos.z);
+	lights[0].SetPos(active_camera->frustum.Pos().x, active_camera->frustum.Pos().y, active_camera->frustum.Pos().z);
 
 	for(uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
@@ -190,7 +190,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 // Called before quitting
 bool ModuleRenderer3D::CleanUp()
 {
-	LOG("Destroying 3D Renderer");
+	CONSOLE_LOG("Destroying 3D Renderer");
 
 	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);
@@ -297,7 +297,7 @@ void ModuleRenderer3D::CreateFramebuffer()
 
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		LOG("|[error]: Could not create framebuffer");
+		CONSOLE_LOG("|[error]: Could not create framebuffer");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -314,7 +314,7 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 		if (SDL_GL_SetSwapInterval(1) == -1)
 		{
 			ret = false;
-			LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 	else {
@@ -322,7 +322,7 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 		if (SDL_GL_SetSwapInterval(0) == -1)
 		{
 			ret = false;
-			LOG("|[error]: Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
+			CONSOLE_LOG("|[error]: Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 

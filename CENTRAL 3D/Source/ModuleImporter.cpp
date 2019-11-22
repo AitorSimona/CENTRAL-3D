@@ -23,7 +23,7 @@
 void MyAssimpCallback(const char * msg, char * userData)
 {
 	// --- Get Assimp LOGS and print them to console ---
-	LOG("[Assimp]: %s", msg);
+	CONSOLE_LOG("[Assimp]: %s", msg);
 }
 
 ModuleImporter::ModuleImporter(bool start_enabled) : Module(start_enabled)

@@ -22,10 +22,14 @@
 #endif
 
 #include "../MathGeoLibFwd.h"
-#include "MatrixProxy.h"
-#include "CoordinateAxisConvention.h"
 #include "../MathBuildConfig.h"
+#include "MatrixProxy.h"
+#include "float3.h"
 #include "SSEMath.h"
+
+#ifdef MATH_URHO3D_INTEROP
+#include <Urho3D/Math/Matrix3x4.h>
+#endif
 
 MATH_BEGIN_NAMESPACE
 
@@ -69,15 +73,30 @@ public:
 
 	/// Stores the data in this matrix in row-major format.
 	/** [noscript] */
-#if defined(MATH_SIMD)
 	union
 	{
-#endif
 		float v[Rows][Cols];
 #if defined(MATH_SIMD)
 		simd4f row[3];
-	};
 #endif
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4201) // warning C4201: nonstandard extension used: nameless struct/union
+#endif
+		// Alias into the array of elements to allow accessing items from this matrix directly for convenience.
+		// This gives human-readable names to the individual matrix elements:
+		struct
+		{
+			float  scaleX, shearXy, shearXz, x;
+			float shearYx,  scaleY, shearYz, y;
+			float shearZx, shearZy,  scaleZ, z;
+		};
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+		// where scaleX/Y/Z specify how much principal axes are scaled by, x/y/z specify translation (position) on the axes,
+		// and shearAb specify how much shearing occurs towards axis A from axis b (when vector is multiplied via M*v convention)
+	};
 
 	/// A constant matrix that has zeroes in all its entries.
 	static const float3x4 zero;
@@ -92,7 +111,7 @@ public:
 
 	/// A compile-time constant float3x4 which has NaN in each element.
 	/// For this constant, each element has the value of quiet NaN, or Not-A-Number.
-	/// @note Never compare a float3x4 to this value! Due to how IEEE floats work, for each float x, both the expression "x == nan" and "x != nan" returns false!
+	/// @note Never compare a float3x4 to this value! Due to how IEEE floats work, "nan == nan" returns false!
 	///	   That is, nothing is equal to NaN, not even NaN itself!
 	static const float3x4 nan;
 
@@ -142,8 +161,10 @@ public:
 	float3x4(const Quat &orientation, const float3 &translation);
 
 	/// Creates a new transformation matrix that translates by the given offset.
+	/** @param offset A position or a direction vector specifying the amount of translation. The w-component is ignored. */
 	static TranslateOp Translate(float tx, float ty, float tz);
 	static TranslateOp Translate(const float3 &offset);
+	static TranslateOp Translate(const float4 &offset);
 
 	/// Creates a new float3x4 that rotates about one of the principal axes. [indexTitle: RotateX/Y/Z]
 	/** Calling RotateX, RotateY or RotateZ is slightly faster than calling the more generic RotateAxisAngle function.
@@ -234,12 +255,14 @@ public:
 	/// This matrix scales with respect to origin.
 	static ScaleOp Scale(float sx, float sy, float sz);
 	static ScaleOp Scale(const float3 &scale);
+	static ScaleOp Scale(const float4 &scale);
 
 	/// Creates a new float3x4 that scales with respect to the given center point.
 	/** @param scale The amount of scale to apply to the x, y and z directions.
 		@param scaleCenter The coordinate system center point for the scaling. If omitted, the origin (0,0,0) will
 			be used as the origin for the scale operation. */
 	static float3x4 Scale(const float3 &scale, const float3 &scaleCenter);
+	static float3x4 Scale(const float4 &scale, const float4 &scaleCenter);
 
 	/// Creates a new float3x4 that scales points along the given axis.
 	/** @param axis A normalized direction vector that specifies the direction of scaling.
@@ -367,9 +390,8 @@ public:
 	/// @return A pointer to the upper-left element. The data is contiguous in memory.
 	/// ptr[0] gives the element [0][0], ptr[1] is [0][1], ptr[2] is [0][2].
 	/// ptr[4] == [1][0], ptr[5] == [1][1], ..., and finally, ptr[15] == [3][3].
-	float *ptr();
-	/// @return A pointer to the upper-left element . The data is contiguous in memory.
-	const float *ptr() const;
+	FORCE_INLINE float *ptr() { return &v[0][0]; }
+	FORCE_INLINE const float *ptr() const { return &v[0][0]; }
 
 	/// Sets the values of the given row.
 	/** @param row The index of the row to set, in the range [0-2].
@@ -419,7 +441,7 @@ public:
 	/// Sets the translation part of this matrix.
 	/** This function sets the translation part of this matrix. These are the three first elements of the fourth column.
 		All other entries are left untouched. */
-	void SetTranslatePart(float tx, float ty, float tz) { SetCol(3, tx, ty, tz); }
+	void SetTranslatePart(float translateX, float translateY, float translateZ) { SetCol(3, translateX, translateY, translateZ); }
 	void SetTranslatePart(const float3 &offset) { SetCol(3, offset); }
 
 	/// Sets the 3-by-3 part of this matrix to perform rotation about the positive X axis which passes through
@@ -533,7 +555,7 @@ public:
 
 	/// Inverts this matrix using the generic Gauss's method.
 	/// @return Returns true on success, false otherwise.
-	bool Inverse(float epsilon = 1e-3f);
+	bool Inverse(float epsilon = 1e-6f);
 
 	/// Returns an inverted copy of this matrix. Uses Gauss's method.
 	/// If this matrix does not have an inverse, returns the matrix that was the result of running
@@ -601,32 +623,49 @@ public:
 	void RemoveScale();
 
 	/// Transforms the given point vector by this matrix M , i.e. returns M * (x, y, z, 1).
+	/** The suffix "Pos" in this function means that the w component of the input vector is assumed to be 1, i.e. the input
+		vector represents a point (a position). */
+	float2 TransformPos(const float2 &pointVector) const;
 	float3 TransformPos(const float3 &pointVector) const;
 	float3 TransformPos(float x, float y, float z) const;
+	float2 TransformPos(float x, float y) const;
 
 	/// Transforms the given direction vector by this matrix M , i.e. returns M * (x, y, z, 0).
+	/** The suffix "Dir" in this function just means that the w component of the input vector is assumed to be 0, i.e. the
+		input vector represents a direction. The input vector does not need to be normalized. */
+	float4 TransformDir(const float4 &directionVector) const;
 	float3 TransformDir(const float3 &directionVector) const;
+	float2 TransformDir(const float2 &directionVector) const;
 	float3 TransformDir(float x, float y, float z) const;
+	float2 TransformDir(float x, float y) const;
 
 	/// Transforms the given 4-vector by this matrix M, i.e. returns M * (x, y, z, w).
 	float4 Transform(const float4 &vector) const;
 
-	/// Performs a batch transform of the given array.
+	/// Performs a batch transform of the given array of point vectors.
+	/** The suffix "Pos" in this function just means that the w components of each input vector are assumed to be 1, i.e. the
+		input vectors represent points (positions).
+		@param stride If specified, represents the distance in bytes between subsequent vector elements. If stride is not
+			specified, the vectors are assumed to be tightly packed in memory. */
 	void BatchTransformPos(float3 *pointArray, int numPoints) const;
-
-	/// Performs a batch transform of the given array.
 	void BatchTransformPos(float3 *pointArray, int numPoints, int stride) const;
+	void BatchTransformPos(float4 *vectorArray, int numVectors) const { BatchTransform(vectorArray, numVectors); }
+	void BatchTransformPos(float4 *vectorArray, int numVectors, int stride) const { BatchTransform(vectorArray, numVectors, stride); }
 
-	/// Performs a batch transform of the given array.
+	/// Performs a batch transform of the given array of direction vectors.
+	/** The suffix "Dir" in this function just means that the w components of each input vector are assumed to be 0, i.e. the
+		input vectors represent directions. The input vectors do not need to be normalized.
+		@param stride If specified, represents the distance in bytes between subsequent vector elements. If stride is not
+			specified, the vectors are assumed to be tightly packed in memory. */
 	void BatchTransformDir(float3 *dirArray, int numVectors) const;
-
-	/// Performs a batch transform of the given array.
 	void BatchTransformDir(float3 *dirArray, int numVectors, int stride) const;
+	void BatchTransformDir(float4 *vectorArray, int numVectors) const { BatchTransform(vectorArray, numVectors); }
+	void BatchTransformDir(float4 *vectorArray, int numVectors, int stride) const { BatchTransform(vectorArray, numVectors, stride); }
 
 	/// Performs a batch transform of the given array.
+	/** @param stride If specified, represents the distance in bytes between subsequent vector elements. If stride is not
+			specified, the vectors are assumed to be tightly packed in memory. */
 	void BatchTransform(float4 *vectorArray, int numVectors) const;
-
-	/// Performs a batch transform of the given array.
 	void BatchTransform(float4 *vectorArray, int numVectors, int stride) const;
 
 	/// Treats the float3x3 as a 4-by-4 matrix with the last row and column as identity, and multiplies the two matrices.
@@ -729,8 +768,11 @@ public:
 #ifdef MATH_ENABLE_STL_SUPPORT
 	/// Returns a string representation of form "(m00, m01, m02, m03; m10, m11, m12, m13; ... )".
 	std::string ToString() const;
+	std::string SerializeToString() const;
 
 	std::string ToString2() const;
+
+	static float3x4 FromString(const char *str, const char **outEndStr = 0);
 #endif
 
 	/// Extracts the rotation part of this matrix into Euler rotation angles (in radians). [indexTitle: ToEuler***]
@@ -780,15 +822,22 @@ public:
 	float3x4 Mul(const float3x4 &rhs) const;
 	float4x4 Mul(const float4x4 &rhs) const;
 	float3x4 Mul(const Quat &rhs) const;
+	float2 MulPos(const float2 &pointVector) const;
 	float3 MulPos(const float3 &pointVector) const;
+	float4 MulPos(const float4 &pointVector) const;
+	float2 MulDir(const float2 &directionVector) const;
 	float3 MulDir(const float3 &directionVector) const;
+	float4 MulDir(const float4 &directionVector) const;
 	float4 Mul(const float4 &vector) const;
 
 #ifdef MATH_QT_INTEROP
 	operator QString() const { return toString(); }
 	QString toString() const { return ToString2().c_str(); }
 #endif
-
+#ifdef MATH_URHO3D_INTEROP
+	float3x4(const Urho3D::Matrix3x4 &m) { Set(m.m00_, m.m01_, m.m02_, m.m03_, m.m10_, m.m11_, m.m12_, m.m13_, m.m20_, m.m21_, m.m22_, m.m23_); }
+	operator Urho3D::Matrix3x4() { return Urho3D::Matrix3x4(ptr()); }
+#endif
 };
 
 #ifdef MATH_ENABLE_STL_SUPPORT

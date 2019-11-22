@@ -82,7 +82,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 		// Only triangles
 		if (face.mNumIndices > 3)
 		{
-			LOG("|[error]: Importer Mesh found a quad in %s, ignoring it. ", data.mesh->mName);
+			CONSOLE_LOG("|[error]: Importer Mesh found a quad in %s, ignoring it. ", data.mesh->mName);
 			continue;
 		}
 

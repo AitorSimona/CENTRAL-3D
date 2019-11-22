@@ -82,7 +82,7 @@ bool ModuleGui::Start()
 
 	if (context)
 	{
-		LOG("Successfully created ImGui context");
+		CONSOLE_LOG("Successfully created ImGui context");
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
@@ -100,7 +100,7 @@ bool ModuleGui::Start()
 	else
 	{
 		ret = false;
-		LOG("|[error]: Could not create ImGui context");
+		CONSOLE_LOG("|[error]: Could not create ImGui context");
 	}
 
 	return ret;
@@ -390,7 +390,7 @@ void ModuleGui::LoadStatus(const json & file)
 		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end())
 			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
 		else
-			LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
+			CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
 	}
 }
 void ModuleGui::HandleInput(SDL_Event * event) const

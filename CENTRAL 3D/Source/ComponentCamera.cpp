@@ -3,15 +3,13 @@
 
 ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Camera)
 {
-	frustum.type = FrustumType::PerspectiveFrustum;
+	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	frustum.SetPos(float3::zero);
+	frustum.SetFront(float3::unitZ);
+	frustum.SetUp(float3::unitY);
 
-	frustum.pos = float3::zero;
-	frustum.front = float3::unitZ;
-	frustum.up = float3::unitY;
-
-	frustum.nearPlaneDistance = 1.0f;
-	frustum.farPlaneDistance = 2000.0f;
-	frustum.verticalFov = DEGTORAD * 90.0f;
+	frustum.SetViewPlaneDistances(0.1f, 1000.0f);
+	frustum.SetPerspective(1.0f, 1.0f);
 	SetAspectRatio(1.3f);
 
 	update_projection = true;
@@ -23,17 +21,17 @@ ComponentCamera::~ComponentCamera()
 
 float ComponentCamera::GetNearPlane() const
 {
-	return frustum.nearPlaneDistance;
+	return frustum.NearPlaneDistance();
 }
 
 float ComponentCamera::GetFarPlane() const
 {
-	return frustum.farPlaneDistance;
+	return frustum.FarPlaneDistance();
 }
 
 float ComponentCamera::GetFOV() const
 {
-	return frustum.verticalFov * RADTODEG;
+	return frustum.VerticalFov() * RADTODEG;
 }
 
 float ComponentCamera::GetAspectRatio() const
@@ -55,9 +53,9 @@ float4x4 ComponentCamera::GetOpenGLProjectionMatrix()
 
 void ComponentCamera::SetNearPlane(float distance)
 {
-	if (distance > 0 && distance < frustum.farPlaneDistance)
+	if (distance > 0 && distance < frustum.FarPlaneDistance())
 	{
-		frustum.nearPlaneDistance = distance;
+		frustum.SetViewPlaneDistances(distance, frustum.FarPlaneDistance());
 		update_projection = true;
 	}
 
@@ -65,9 +63,9 @@ void ComponentCamera::SetNearPlane(float distance)
 
 void ComponentCamera::SetFarPlane(float distance)
 {
-	if (distance > 0 && distance > frustum.nearPlaneDistance)
+	if (distance > 0 && distance > frustum.NearPlaneDistance())
 	{
-		frustum.farPlaneDistance = distance;
+		frustum.SetViewPlaneDistances(frustum.NearPlaneDistance(), distance);
 		update_projection = true;
 	}
 }
@@ -76,39 +74,40 @@ void ComponentCamera::SetFOV(float fov)
 {
 	float aspect_ratio = frustum.AspectRatio();
 
-	frustum.verticalFov = DEGTORAD * fov;
-	SetAspectRatio(aspect_ratio);
+	frustum.SetVerticalFovAndAspectRatio(fov * DEGTORAD, frustum.AspectRatio());
+	update_projection = true;
 }
 
 void ComponentCamera::SetAspectRatio(float ar)
 {
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ar);
+	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), ar);
 	update_projection = true;
 }
 
 
 void ComponentCamera::Look(const float3 & position)
 {
-	float3 vector = position - frustum.pos;
+	float3 vector = position - frustum.Pos();
 
-	float3x3 matrix = float3x3::LookAt(frustum.front, vector.Normalized(), frustum.up, float3::unitY);
+	float3x3 matrix = float3x3::LookAt(frustum.Front(), vector.Normalized(), frustum.Up(), float3::unitY);
 
-	frustum.front = matrix.MulDir(frustum.front).Normalized();
-	frustum.up = matrix.MulDir(frustum.up).Normalized();
+	frustum.SetFront(matrix.MulDir(frustum.Front()).Normalized());
+	frustum.SetUp(matrix.MulDir(frustum.Up()).Normalized());
+
+	update_projection = true;
 }
 
 void ComponentCamera::OnUpdateTransform(const float4x4 & global)
 {
-	frustum.front = global.WorldZ();
-	frustum.up = global.WorldY();
+	frustum.SetFront(global.WorldZ());
+	frustum.SetUp(global.WorldY());
 
 	float3 position = float3::zero;
 	float3 scale = float3::one;
 	Quat quat = Quat::identity;
 	global.Decompose(position, quat, scale);
 
-	frustum.pos = position;
-
+	frustum.SetPos(position);
 	update_projection = true;
 }
 

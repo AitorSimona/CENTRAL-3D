@@ -21,7 +21,7 @@ Application* App = NULL;
 
 int main(int argc, char ** argv)
 {
-	LOG("Starting app '%s'...", TITLE);
+	CONSOLE_LOG("Starting app '%s'...", TITLE);
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -33,23 +33,23 @@ int main(int argc, char ** argv)
 		{
 		case MAIN_CREATION:
 
-			LOG("-------------- Application Creation --------------");
+			CONSOLE_LOG("-------------- Application Creation --------------");
 			App = new Application();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
-			LOG("-------------- Application Init --------------");
+			CONSOLE_LOG("-------------- Application Init --------------");
 			if (App->Init() == false)
 			{
-				LOG("|[error]: Application Init exits with ERROR");
+				CONSOLE_LOG("|[error]: Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
 			else
 			{
 				state = MAIN_UPDATE;
-				LOG("-------------- Application Update --------------");
+				CONSOLE_LOG("-------------- Application Update --------------");
 			}
 
 			break;
@@ -60,7 +60,7 @@ int main(int argc, char ** argv)
 
 			if (update_return == UPDATE_ERROR)
 			{
-				LOG("|[error]: Application Update exits with ERROR");
+				CONSOLE_LOG("|[error]: Application Update exits with ERROR");
 				state = MAIN_EXIT;
 			}
 
@@ -71,10 +71,10 @@ int main(int argc, char ** argv)
 
 		case MAIN_FINISH:
 
-			LOG("-------------- Application CleanUp --------------");
+			CONSOLE_LOG("-------------- Application CleanUp --------------");
 			if (App->CleanUp() == false)
 			{
-				LOG("|[error]: Application CleanUp exits with ERROR");
+				CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
 			}
 			else
 				main_return = EXIT_SUCCESS;
@@ -85,7 +85,7 @@ int main(int argc, char ** argv)
 
 		}
 	}
-	LOG("Exiting app '%s'...\n", TITLE);
+	CONSOLE_LOG("Exiting app '%s'...\n", TITLE);
 
 	delete App;
 	return main_return;

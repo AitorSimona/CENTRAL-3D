@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <stdio.h>
 
-#define LOG(format, ...) _log(__FILE__, __LINE__, format, __VA_ARGS__);
+#define CONSOLE_LOG(format, ...) _log(__FILE__, __LINE__, format, __VA_ARGS__);
 
 void _log(const char file[], int line, const char* format, ...);
 
@@ -17,9 +17,6 @@ void _log(const char file[], int line, const char* format, ...);
 #define RADTODEG 57.295779513082320876f
 #define HAVE_M_PI
 
-#define ALIGN_CLASS_TO_16 \
-	void* operator new(size_t i) { return _aligned_malloc(i,16); }\
-    void operator delete(void* p) { _aligned_free(p); }
 
 typedef unsigned int uint;
 

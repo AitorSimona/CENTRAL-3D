@@ -115,7 +115,7 @@ Resource * ModuleResources::GetResource(uint UID)
 		{
 			ret->SetOriginalFilename(it->second.original_file.data());
 			ret->SetName(it->second.resource_name.data());
-			LOG("Loaded Resource: %s", ret->GetName());
+			CONSOLE_LOG("Loaded Resource: %s", ret->GetName());
 		}
 	}
 

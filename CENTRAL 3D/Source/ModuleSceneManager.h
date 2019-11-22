@@ -79,8 +79,9 @@ public:
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
-private:
 	std::vector<GameObject*> NoStaticGo;
+
+private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;

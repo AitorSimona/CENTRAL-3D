@@ -18,25 +18,9 @@
 #pragma once
 
 #include "MathNamespace.h"
+#include "MultiLineMacro.h"
 
 MATH_BEGIN_NAMESPACE
-
-// From http://cnicholson.net/2009/03/stupid-c-tricks-dowhile0-and-c4127/
-#ifdef _MSC_VER
-#define MULTI_LINE_MACRO_BEGIN do { \
-	__pragma(warning(push)) \
-	__pragma(warning(disable:4127))
-
-#define MULTI_LINE_MACRO_END \
-	} while(0) \
-	__pragma(warning(pop))
-
-#else
-
-#define MULTI_LINE_MACRO_BEGIN do {
-#define MULTI_LINE_MACRO_END } while(0)
-
-#endif
 
 /// A bitfield type that describes single or multiple log channels (each bit represents a channel).
 typedef unsigned int MathLogChannel;
@@ -46,6 +30,8 @@ namespace
 const MathLogChannel MathLogInfo = 1;
 const MathLogChannel MathLogError = 2;
 const MathLogChannel MathLogWarning = 4;
+const MathLogChannel MathLogErrorNoCallstack = MathLogError|65536;
+const MathLogChannel MathLogWarningNoCallstack = MathLogWarning|65536;
 }
 
 void PrintToConsoleVariadic(MathLogChannel channel, const char *format, ...);
@@ -55,20 +41,22 @@ void PrintToConsole(MathLogChannel channel, const char *str);
 #define STRINGIZE(x) STRINGIZE_HELPER(x)
 #define WARNING(desc) message(__FILE__ "(" STRINGIZE(__LINE__) ") : warning: " #desc)
 
-
-#define LOGGING_SUPPORT_DISABLED
 #ifndef LOGGING_SUPPORT_DISABLED
 
 #define LOGI(...) PrintToConsoleVariadic(MathLogInfo, __VA_ARGS__)
 #define LOGW(...) PrintToConsoleVariadic(MathLogWarning, __VA_ARGS__)
+#define LOGW_NS(...) PrintToConsoleVariadic(MathLogWarningNoCallstack, __VA_ARGS__)
 #define LOGE(...) PrintToConsoleVariadic(MathLogError, __VA_ARGS__)
+#define LOGE_NS(...) PrintToConsoleVariadic(MathLogErrorNoCallstack, __VA_ARGS__)
 #define LOG(channel, ...) PrintToConsoleVariadic(channel, __VA_ARGS__)
 
 #else
 
-//#define LOG(...) ((void)0)
-#define LOGE(...) ((void)0)
+#define LOG(...) ((void)0)
 #define LOGW(...) ((void)0)
+#define LOGW_NS(...) ((void)0)
+#define LOGE(...) ((void)0)
+#define LOGE_NS(...) ((void)0)
 #define LOGI(...) ((void)0)
 
 #endif
