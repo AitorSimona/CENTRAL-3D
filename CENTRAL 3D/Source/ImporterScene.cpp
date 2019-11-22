@@ -274,7 +274,7 @@ bool ImporterScene::Load(const char * exported_file) const
 		}
 	}
 
-	App->scene_manager->GetRootGO()->OnUpdateTransform();
+	//App->scene_manager->GetRootGO()->OnUpdateTransform();
 
 	return true;
 }
