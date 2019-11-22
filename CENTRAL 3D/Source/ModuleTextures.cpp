@@ -158,8 +158,8 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 	width = imageInfo.Width;
 	height = imageInfo.Height;
 
-	//if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT && ! load_existing)
-	iluFlipImage();
+	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		iluFlipImage();
 
 	// --- Convert the image into a suitable format to work with ---
 	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
