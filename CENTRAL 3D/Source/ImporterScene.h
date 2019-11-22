@@ -34,7 +34,7 @@ public:
 	std::string SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name, ExportFileTypes exportedfile_type) const;
 
 private:
-	void LoadNodes(const aiNode* node, GameObject* parent ,const aiScene* scene,  std::vector<GameObject*>& scene_gos, const char* File_path) const;
+	void LoadNodes(const aiNode* node, GameObject* parent ,const aiScene* scene,  std::vector<GameObject*>& scene_gos, const char* File_path, const char* original_path) const;
 	ImporterMesh* IMesh = nullptr;
 	ImporterMaterial* IMaterial = nullptr;
 };

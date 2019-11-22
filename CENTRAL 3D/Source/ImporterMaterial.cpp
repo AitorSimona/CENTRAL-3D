@@ -31,7 +31,7 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 	if (MData.scene->HasMaterials())
 	{
 		// --- Get scene's first material ---
-		aiMaterial* material = MData.scene->mMaterials[0];
+		aiMaterial* material = MData.scene->mMaterials[MData.mesh->mMaterialIndex];
 
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 		{
@@ -40,8 +40,11 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 			// --- Specify type of texture to retrieve (in this case DIFFUSE/ALBEDO)---
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &Texture_path);
 
+			std::string final_path = Texture_path.C_Str();
+			App->fs->SplitFilePath(final_path.data(), nullptr, &final_path);
+
 			// --- Build whole path to texture file ---
-			directory.append(Texture_path.C_Str());
+			directory.append(final_path);
 
 			// --- If we find the texture file, load it ---
 

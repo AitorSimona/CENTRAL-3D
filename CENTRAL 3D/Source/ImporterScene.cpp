@@ -104,7 +104,7 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 		scene_gos.push_back(rootnode);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		LoadNodes(scene->mRootNode,rootnode,scene, scene_gos, relative_path.data());
+		LoadNodes(scene->mRootNode,rootnode,scene, scene_gos, relative_path.data(), File_path);
 
 		// --- Save to Own format files in Library ---
 		std::string exported_file = SaveSceneToFile(scene_gos, rootnodename, MODEL);
@@ -339,13 +339,16 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 					break;
 
 				case Component::ComponentType::Material:
-					component_path = TEXTURES_FOLDER;
-					component_path.append(std::to_string(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID()));
-					component_path.append(".dds");
+					if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse)
+					{
+						component_path = TEXTURES_FOLDER;
+						component_path.append(std::to_string(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID()));
+						component_path.append(".dds");
 
-					// --- Store path to component file ---
-					if(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID())
-					file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
+						// --- Store path to component file ---
+						if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID())
+							file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
+					}
 					break;
 				
 			}
@@ -389,7 +392,7 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 	return path;
 }
 
-void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* File_path) const
+void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* File_path, const char* original_path) const
 {
 	// --- Load Game Objects from Assimp scene ---
 
@@ -409,7 +412,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	// --- Iterate children and repeat process ---
 	for (int i = 0; i < node->mNumChildren; ++i)
 	{
-		LoadNodes(node->mChildren[i], nodeGo,scene, scene_gos, File_path);
+		LoadNodes(node->mChildren[i], nodeGo,scene, scene_gos, File_path, original_path);
 	}
 
 	// --- Iterate and load meshes ---
@@ -470,8 +473,9 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 				ImportMaterialData MData;
 				MData.scene = scene;
+				MData.mesh = mesh;
 				MData.new_material = Material->resource_material;
-				IMaterial->Import(File_path, MData);
+				IMaterial->Import(original_path, MData);
 
 				// --- Set Object's Material ---
 				new_object->SetMaterial(Material);			

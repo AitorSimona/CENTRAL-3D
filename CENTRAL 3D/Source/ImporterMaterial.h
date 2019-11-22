@@ -4,11 +4,13 @@
 #include "Importer.h"
 
 struct aiScene;
+struct aiMesh;
 class ResourceMaterial;
 
 struct ImportMaterialData : public ImportData
 {
 	const aiScene* scene = nullptr;
+	const aiMesh* mesh = nullptr;
 	ResourceMaterial* new_material = nullptr;
 };
 
