@@ -250,8 +250,8 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	//glLoadMatrixf(&ProjectionMatrix);
 	 UpdateProjectionMatrix();
 
-	 glDeleteFramebuffers(1, &fbo);
-	 CreateFramebuffer();
+	// glDeleteFramebuffers(1, &fbo);
+	 //CreateFramebuffer();
 	//glMatrixMode(GL_MODELVIEW);
 	//glLoadIdentity();
 }
