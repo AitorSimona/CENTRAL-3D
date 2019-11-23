@@ -46,6 +46,13 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 			// --- Build whole path to texture file ---
 			directory.append(final_path);
 
+			// --- Duplicate texture in assets folder ---
+			std::string assetpath = ASSETS_FOLDER;
+			assetpath.append(final_path);
+
+			if (!App->fs->Exists(assetpath.data()))
+				App->fs->CopyFromOutsideFS(directory.data(), assetpath.data());
+
 			// --- If we find the texture file, load it ---
 
 			ResourceTexture* texture = (ResourceTexture*) App->resources->GetResource(directory.data());
@@ -61,7 +68,7 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 				MData.new_material->resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(directory.data(), MData.new_material->resource_diffuse->Texture_width, MData.new_material->resource_diffuse->Texture_height, MData.new_material->resource_diffuse->GetUID());
 				MData.new_material->resource_diffuse->SetOriginalFilename(directory.data());
 				MData.new_material->resource_diffuse->Texture_path = directory.data();
-				App->resources->CreateMetaFromUID(MData.new_material->resource_diffuse->GetUID(), directory.data());
+				App->resources->CreateMetaFromUID(MData.new_material->resource_diffuse->GetUID(), assetpath.data());
 			}
 			
 
