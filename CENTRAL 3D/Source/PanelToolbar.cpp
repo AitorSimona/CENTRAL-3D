@@ -19,7 +19,24 @@ bool PanelToolbar::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
+		ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
 
+		if(ImGui::Button("PLAY"))
+		{
+
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("PAUSE"))
+		{
+
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("STOP"))
+		{
+
+		}
 	}
 
 	ImGui::End();
