@@ -6,6 +6,7 @@
 #include "PerfTimer.h"
 
 
+
 class ModuleTimeManager : public Module
 {
 public:
@@ -17,7 +18,8 @@ public:
 	void FinishUpdate();
 
 	// --- Getters ---
-	float GetDt() const;
+	float GetGameDt() const;
+	float GetRealTimeDt()const;
 	uint GetMaxFramerate() const;
 
 	// --- Setters ---
@@ -26,10 +28,15 @@ public:
 
 private:
 
-	Timer				ms_timer;
+	Timer				Realtime_clock;
+	Timer				Gametime_clock;
+	float				Time_scale = 0.0f;
+
+
 	Timer				fps_timer;
-	float				dt = 0;
-	Uint32				frames;
+	float				game_dt = 0.0f;
+	float				realtime_dt = 0.0f;
+	Uint32				frame_count;
 	int					fps_counter;
 	int					last_fps;
 	uint				capped_ms;

@@ -22,7 +22,6 @@ enum AppState
 	TO_PAUSE,
 
 	STEP,
-	TO_STEP,
 };
 
 class Module;

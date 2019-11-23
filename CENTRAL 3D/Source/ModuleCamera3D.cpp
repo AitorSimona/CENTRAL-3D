@@ -60,53 +60,56 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	float3 newPos(0,0,0);
-	float speed = 10.0f * dt;
-	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed *= 2.0f;
-
-	// --- Move ---
-	if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	if (App->GetAppState() == AppState::EDITOR)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * speed;
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * speed;
+		float3 newPos(0, 0, 0);
+		float speed = 10.0f * dt;
+		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+			speed *= 2.0f;
+
+		// --- Move ---
+		if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+		{
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * speed;
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * speed;
 
 
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * speed;
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * speed;
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * speed;
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * speed;
 
 
-		// --- Look Around ---
-		CameraLookAround(speed, camera->frustum.Pos());
-	}
+			// --- Look Around ---
+			CameraLookAround(speed, camera->frustum.Pos());
+		}
 
-	camera->frustum.SetPos(camera->frustum.Pos() + newPos);
-	reference += newPos;
+		camera->frustum.SetPos(camera->frustum.Pos() + newPos);
+		reference += newPos;
 
-	// --- Camera Pan ---
-	if (App->input->GetMouseButton(2) == KEY_REPEAT)
-		CameraPan(speed);
+		// --- Camera Pan ---
+		if (App->input->GetMouseButton(2) == KEY_REPEAT)
+			CameraPan(speed);
 
-	// --- Zoom ---
-	if (!App->gui->IsMouseCaptured() && abs(App->input->GetMouseWheel()) > 0)
-		CameraZoom(speed);
+		// --- Zoom ---
+		if (!App->gui->IsMouseCaptured() && abs(App->input->GetMouseWheel()) > 0)
+			CameraZoom(speed);
 
-	// --- Orbit Object ---
-	if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
-		CameraLookAround(speed, reference);
+		// --- Orbit Object ---
+		if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+			CameraLookAround(speed, reference);
 
-	// --- Frame object ---
-	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-		FrameObject(App->scene_manager->GetSelectedGameObject());
+		// --- Frame object ---
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+			FrameObject(App->scene_manager->GetSelectedGameObject());
 
 
-	// --- Mouse picking ---
-	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
-	{
-		float mouse_x = App->input->GetMouseX();
-		float mouse_y = App->input->GetMouseY();
+		// --- Mouse picking ---
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+		{
+			float mouse_x = App->input->GetMouseX();
+			float mouse_y = App->input->GetMouseY();
 
-		OnMouseClick(mouse_x, mouse_y);
+			OnMouseClick(mouse_x, mouse_y);
+		}
 	}
 
 	return UPDATE_CONTINUE;

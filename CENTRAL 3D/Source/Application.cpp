@@ -190,7 +190,7 @@ update_status Application::Update()
 	
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PreUpdate(time->GetDt());
+		ret = (*item)->PreUpdate(time->GetRealTimeDt());
 		item++;
 	}
 
@@ -198,7 +198,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->Update(time->GetDt());
+		ret = (*item)->Update(time->GetRealTimeDt());
 		item++;
 	}
 
@@ -206,7 +206,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PostUpdate(time->GetDt());
+		ret = (*item)->PostUpdate(time->GetRealTimeDt());
 		item++;
 	}
 

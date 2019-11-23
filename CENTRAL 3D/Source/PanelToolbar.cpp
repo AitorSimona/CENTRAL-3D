@@ -1,4 +1,7 @@
 #include "PanelToolbar.h"
+#include "Application.h"
+
+
 #include "Imgui/imgui.h"
 
 
@@ -23,20 +26,30 @@ bool PanelToolbar::Draw()
 
 		if(ImGui::Button("PLAY"))
 		{
-
+			if (App->GetAppState() == AppState::PLAY || App->GetAppState() == AppState::PAUSE)
+				App->GetAppState() = AppState::TO_EDITOR;
+			else
+				App->GetAppState() = AppState::TO_PLAY;
 		}
 		ImGui::SameLine();
 
 		if (ImGui::Button("PAUSE"))
 		{
+			if (App->GetAppState() == AppState::PLAY)
+				App->GetAppState() = AppState::TO_PAUSE;
+			else if (App->GetAppState() == AppState::PAUSE)
+				App->GetAppState() = AppState::TO_PLAY;
 
 		}
 		ImGui::SameLine();
 
-		if (ImGui::Button("STOP"))
+		if (ImGui::Button("STEP"))
 		{
+			if (App->GetAppState() == AppState::PAUSE)
+				App->GetAppState() = AppState::STEP;
 
 		}
+
 	}
 
 	ImGui::End();

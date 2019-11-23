@@ -2,14 +2,17 @@
 #include "Application.h"
 #include "ModuleGui.h"
 
+#include "mmgr/mmgr.h"
+
 ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled)
 {
 	CONSOLE_LOG("Initializing Time Manager");
 
 	name = "TimeManager";
-	ms_timer.Start();
+	Realtime_clock.Start();
+	Gametime_clock.Start();
 
-	frames = 0;
+	frame_count = 0;
 	last_frame_ms = -1;
 	last_fps = -1;
 	capped_ms = 1000 / 60; // Get Display RR!!
@@ -20,14 +23,51 @@ ModuleTimeManager::~ModuleTimeManager() {}
 
 void ModuleTimeManager::PrepareUpdate()
 {
-	dt = (float)ms_timer.Read() / 1000.0f;
-	ms_timer.Start();
+	game_dt = realtime_dt = (float)Gametime_clock.Read() / 1000.0f;
+	Gametime_clock.Start();
+
+	switch (App->GetAppState())
+	{
+		case AppState::TO_PLAY:
+			App->GetAppState() = AppState::PLAY;
+			CONSOLE_LOG("APP STATE PLAY");
+			break;
+
+		case AppState::PLAY:
+
+			break;
+
+		case AppState::TO_PAUSE:
+			App->GetAppState() = AppState::PAUSE;
+			CONSOLE_LOG("APP STATE PAUSE");
+
+			break;
+
+		case AppState::PAUSE:
+			game_dt = 0.0f;
+			break;
+
+		case AppState::TO_EDITOR:
+			App->GetAppState() = AppState::EDITOR;
+			CONSOLE_LOG("APP STATE EDITOR");
+			break;
+
+		case AppState::EDITOR:
+			game_dt = 0.0f;
+			break;
+
+		case AppState::STEP:
+			CONSOLE_LOG("APP STATE STEP");
+			App->GetAppState() = AppState::PAUSE;
+			break;
+
+	}
 }
 
 void ModuleTimeManager::FinishUpdate()
 {
 	// Recap on framecount and fps
-	++frames;
+	++frame_count;
 	++fps_counter;
 
 	if (fps_timer.Read() >= 1000)
@@ -37,7 +77,7 @@ void ModuleTimeManager::FinishUpdate()
 		fps_timer.Start();
 	}
 
-	last_frame_ms = ms_timer.Read();
+	last_frame_ms = Gametime_clock.Read();
 
 	// cap fps
 	if (capped_ms > 0 && (last_frame_ms < capped_ms))
@@ -63,7 +103,12 @@ void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)
 		capped_ms = 0;
 }
 
-float ModuleTimeManager::GetDt() const
+float ModuleTimeManager::GetGameDt() const
 {
-	return dt;
+	return game_dt;
+}
+
+float ModuleTimeManager::GetRealTimeDt() const
+{
+	return realtime_dt;
 }
