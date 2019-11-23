@@ -10,6 +10,7 @@
 #include "ComponentMaterial.h"
 #include "ComponentMesh.h"
 #include "ComponentRenderer.h"
+#include "ComponentCamera.h"
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
 #include "GameObject.h"
@@ -169,6 +170,7 @@ bool ImporterScene::Load(const char * exported_file) const
 			// --- Create components to fill ---
 			ComponentMesh* mesh = nullptr;
 			ComponentMaterial* mat = nullptr;
+			ComponentCamera* camera = nullptr;
 			ResourceTexture* texture = nullptr;
 			ResourceMesh* rmesh = nullptr;
 			std::string tmp;
@@ -259,6 +261,13 @@ bool ImporterScene::Load(const char * exported_file) const
 						CONSOLE_LOG("|[error]: Could not find %s", component_path.data());
 					break;
 
+				case Component::ComponentType::Camera:
+					//camera->SetFOV();
+					//camera->SetNearPlane();
+					//camera->SetFarPlane();
+					//camera->SetAspectRatio();
+					break;
+
 			}
 		}
 
@@ -312,6 +321,8 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 
 			ComponentMesh* mesh = scene_gos[i]->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 
+			ComponentCamera* camera = scene_gos[i]->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
+
 			// --- Save Components to files ---
 
 			switch (scene_gos[i]->GetComponents()[j]->GetType())
@@ -360,6 +371,13 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 						// --- Store path to component file ---
 						file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 					}
+					break;
+
+				case Component::ComponentType::Camera:
+					//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["FOV"] = std::to_string(camera->GetFOV());
+					//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["NEARPLANE"] = std::to_string(camera->GetNearPlane());
+					//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["FARPLANE"] = std::to_string(camera->GetFarPlane());
+					//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["ASPECTRATIO"] = std::to_string(camera->GetAspectRatio());
 					break;
 				
 			}
