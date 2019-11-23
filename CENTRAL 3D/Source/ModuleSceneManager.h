@@ -56,6 +56,7 @@ public:
 	void LoadStatus(const json & file) override;
 	void SaveScene();
 	void LoadScene();
+	void RecursiveFreeScene(GameObject* go);
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>

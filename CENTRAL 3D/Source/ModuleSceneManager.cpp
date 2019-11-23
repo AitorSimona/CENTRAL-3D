@@ -308,8 +308,33 @@ void ModuleSceneManager::LoadScene()
 	std::string Scene_name = SCENES_FOLDER;
 	Scene_name.append("SampleScene.scene");
 
+	RecursiveFreeScene(root);
+
 	if(App->fs->Exists(Scene_name.data()))
 	App->importer->GetImporterScene()->Load(Scene_name.data());
+}
+
+void ModuleSceneManager::RecursiveFreeScene(GameObject* go)
+{
+	// --- Delete all objects except root (if go is root) ---
+
+	if (go->childs.size() > 0)
+	{
+		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
+		{
+			RecursiveFreeScene(*it);
+		}
+
+		go->childs.clear();
+	}
+
+	if (go->GetName() != root->GetName())
+	{
+		go->Static = true;
+		App->scene_manager->SetStatic(go);
+		App->scene_manager->tree.Erase(go);
+		delete go;
+	}
 }
 
 GameObject* ModuleSceneManager::GetSelectedGameObject() const
