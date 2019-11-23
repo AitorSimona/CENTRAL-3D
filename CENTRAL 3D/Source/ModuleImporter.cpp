@@ -47,10 +47,59 @@ bool ModuleImporter::Init(json file)
 
 bool ModuleImporter::Start()
 {
-	//LoadFromPath("Assets/BakerHouse.fbx");
-	//IScene->Load("Library/Models/BakerHouse.model");
+	std::vector<std::string> filters;
+	filters.push_back("fbx");
+	filters.push_back("FBX");
+
+	ImportAssets(ASSETS_FOLDER, filters);
+
 	return true;
 }
+
+void ModuleImporter::ImportAssets(const char * directory, std::vector<std::string>& filters)
+{
+		std::vector<std::string> files;
+		std::vector<std::string> dirs;
+
+		std::string dir((directory) ? directory : "");
+		dir += "/";
+
+		App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+
+		for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+		{
+				ImportAssets((dir + (*it)).c_str(), filters);
+		}
+
+		std::sort(files.begin(), files.end());
+
+		for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
+		{
+			const std::string& str = *it;
+
+			bool pass_filter = false;
+
+			if (filters.size() > 0)
+			{
+				for (uint i = 0; i < filters.size(); ++i)
+				{
+					if (str.substr(str.find_last_of(".") + 1) == filters[i])
+					{
+						pass_filter = true;
+						break;
+					}
+				}
+			}
+
+			if (pass_filter)
+			{
+				std::string path = directory;
+				path.append((*it).data());
+				LoadFromPath(path.data());
+			}
+		}
+}
+
 
 
 bool ModuleImporter::CleanUp()

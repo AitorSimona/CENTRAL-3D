@@ -11,11 +11,10 @@
                 "scalex": "1.000000",
                 "scaley": "1.000000",
                 "scalez": "1.000000"
-            },
-            "3": "Library/Textures/1311112673.dds"
+            }
         },
-        "Parent": "1127520348",
-        "UID": "592468136"
+        "Parent": "1695045877",
+        "UID": "120149026"
     },
     "Baker_house": {
         "Components": {
@@ -30,12 +29,12 @@
                 "scaley": "100.000000",
                 "scalez": "100.000000"
             },
-            "1": "Library/Meshes/2036940721.mesh",
+            "1": "Library/Meshes/855720768.mesh",
             "2": "",
-            "3": "Library/Textures/2123390850.dds"
+            "3": "Library/Textures/633375478.dds"
         },
-        "Parent": "592468136",
-        "UID": "1967592017"
+        "Parent": "120149026",
+        "UID": "1952429987"
     },
     "Chimney": {
         "Components": {
@@ -50,11 +49,11 @@
                 "scaley": "100.000000",
                 "scalez": "100.000000"
             },
-            "1": "Library/Meshes/274193609.mesh",
+            "1": "Library/Meshes/1175979329.mesh",
             "2": "",
-            "3": "Library/Textures/2123390850.dds"
+            "3": "Library/Textures/633375478.dds"
         },
-        "Parent": "592468136",
-        "UID": "1505688527"
+        "Parent": "120149026",
+        "UID": "446534081"
     }
 }

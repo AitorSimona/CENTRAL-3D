@@ -1,0 +1,39 @@
+{
+    "Group1": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/700345994.mesh",
+            "2": "",
+            "3": "Library/Textures/190895471.dds"
+        },
+        "Parent": "565563406",
+        "UID": "977221381"
+    },
+    "pacopepe": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Parent": "1695045877",
+        "UID": "565563406"
+    }
+}

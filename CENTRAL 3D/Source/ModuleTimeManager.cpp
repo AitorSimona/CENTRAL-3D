@@ -69,7 +69,7 @@ void ModuleTimeManager::PrepareUpdate()
 
 void ModuleTimeManager::FinishUpdate()
 {
-	// Recap on framecount and fps
+	// --- Recap on framecount and fps ---
 	++frame_count;
 	++fps_counter;
 
@@ -82,11 +82,11 @@ void ModuleTimeManager::FinishUpdate()
 
 	last_frame_ms = Gametime_clock.Read();
 
-	// cap fps
+	// --- Cap fps ---
 	if (capped_ms > 0 && (last_frame_ms < capped_ms))
 		SDL_Delay(capped_ms - last_frame_ms);
 
-	// --- Send data to GUI- PanelSettings Historiograms
+	// --- Send data to GUI-PanelSettings Historiograms
 	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
 }
 

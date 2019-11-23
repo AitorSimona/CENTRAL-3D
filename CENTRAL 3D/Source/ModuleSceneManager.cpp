@@ -179,7 +179,6 @@ void ModuleSceneManager::RedoOctree()
 
 	for (uint i = 0; i < scene_gos.size(); ++i)
 	{
-		//tree.Erase(scene_gos[i]);
 		tree.Insert(scene_gos[i]);
 	}
 
