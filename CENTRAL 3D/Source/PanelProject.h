@@ -3,6 +3,7 @@
 
 #include "Panel.h"
 #include <string>
+#include <vector>
 
 class PanelProject : public Panel
 {
@@ -16,7 +17,7 @@ public:
 	std::string dragged;
 private:
 
-	void RecursiveDirectoryDraw(const char* directory, const char* filter);
+	void RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters);
 };
 
 #endif

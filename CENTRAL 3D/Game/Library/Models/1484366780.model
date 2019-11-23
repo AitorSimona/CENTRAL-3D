@@ -12,12 +12,12 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/700345994.mesh",
+            "1": "Library/Meshes/844816484.mesh",
             "2": "",
-            "3": "Library/Textures/190895471.dds"
+            "3": "Library/Textures/1702530045.dds"
         },
-        "Parent": "565563406",
-        "UID": "977221381"
+        "Parent": "868164874",
+        "UID": "1579447939"
     },
     "pacopepe": {
         "Components": {
@@ -33,7 +33,7 @@
                 "scalez": "1.000000"
             }
         },
-        "Parent": "1695045877",
-        "UID": "565563406"
+        "Parent": "1598955270",
+        "UID": "868164874"
     }
 }

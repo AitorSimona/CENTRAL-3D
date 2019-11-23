@@ -54,8 +54,10 @@ void ModuleResources::CreateMetaFromUID(uint UID,const char* filename)
 
 	// --- Create Meta ---
 	jsonmeta["UID"] = std::to_string(UID);
+	jsonmeta["DATE"] = std::to_string(App->fs->GetLastModificationTime(filename));
 	jsondata = App->GetJLoader()->Serialize(jsonmeta);
 	meta_buffer = (char*)jsondata.data();
+
 
 	meta_path = filename;
 	meta_path.append(".meta");
@@ -120,6 +122,22 @@ uint ModuleResources::GetUIDFromMeta(const char * file)
 	}
 
 	return UID;
+}
+
+uint ModuleResources::GetModDateFromMeta(const char * file)
+{
+	std::string path = file;
+	path.append(".meta");
+	uint DATE = 0;
+
+	if (App->fs->Exists(path.data()))
+	{
+		json file = App->GetJLoader()->Load(path.data());
+		std::string date = file["DATE"];
+		DATE = std::stoi(date);
+	}
+
+	return DATE;
 }
 
 Resource * ModuleResources::CreateResource(Resource::ResourceType type)

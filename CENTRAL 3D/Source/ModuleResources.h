@@ -7,9 +7,7 @@
 
 struct ResourceMeta
 {
-	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
-	std::string original_file = "";
-	std::string resource_name = "";
+	uint Date = 0;
 	uint UID = 0;
 };
 
@@ -31,6 +29,7 @@ public:
 	Resource* GetResource(const char* original_file);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	uint GetUIDFromMeta(const char* file);
+	uint GetModDateFromMeta(const char* file);
 
 	Resource* CreateResource(Resource::ResourceType type);
 
