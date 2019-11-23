@@ -1,0 +1,617 @@
+{
+    "City_building_001": {
+        "Components": {
+            "0": {
+                "positionx": "17.707165",
+                "positiony": "20.053276",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1615515166.mesh",
+            "2": "",
+            "3": "Library/Textures/682982465.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1189357952"
+    },
+    "City_building_004": {
+        "Components": {
+            "0": {
+                "positionx": "-41.475891",
+                "positiony": "21.014099",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1382628699.mesh",
+            "2": "",
+            "3": "Library/Textures/1855025185.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1389355813"
+    },
+    "City_building_007": {
+        "Components": {
+            "0": {
+                "positionx": "16.010492",
+                "positiony": "37.493286",
+                "positionz": "-0.000002",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1111141958.mesh",
+            "2": "",
+            "3": "Library/Textures/1066697880.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "339283891"
+    },
+    "City_building_008": {
+        "Components": {
+            "0": {
+                "positionx": "40.979996",
+                "positiony": "18.270824",
+                "positionz": "-0.000002",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/424895253.mesh",
+            "2": "",
+            "3": "Library/Textures/982031040.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "293622926"
+    },
+    "City_building_010": {
+        "Components": {
+            "0": {
+                "positionx": "25.154011",
+                "positiony": "-39.153721",
+                "positionz": "0.000001",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/2111908423.mesh",
+            "2": "",
+            "3": "Library/Textures/1088446153.dds"
+        },
+        "Parent": "888140445",
+        "UID": "454166324"
+    },
+    "City_building_011": {
+        "Components": {
+            "0": {
+                "positionx": "30.134541",
+                "positiony": "37.493286",
+                "positionz": "-0.000002",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/120563361.mesh",
+            "2": "",
+            "3": "Library/Textures/1066697880.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "105955486"
+    },
+    "City_building_013": {
+        "Components": {
+            "0": {
+                "positionx": "-42.288055",
+                "positiony": "33.201576",
+                "positionz": "0.000001",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/892649285.mesh",
+            "2": "",
+            "3": "Library/Textures/202958920.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1607116899"
+    },
+    "City_building_014": {
+        "Components": {
+            "0": {
+                "positionx": "-19.439707",
+                "positiony": "32.061729",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-3.141593",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1702940921.mesh",
+            "2": "",
+            "3": "Library/Textures/1855025185.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1908055707"
+    },
+    "City_building_016": {
+        "Components": {
+            "0": {
+                "positionx": "34.270424",
+                "positiony": "-41.972748",
+                "positionz": "0.000001",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-3.141593",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1446840200.mesh",
+            "2": "",
+            "3": "Library/Textures/1088446153.dds"
+        },
+        "Parent": "1665184926",
+        "UID": "633460752"
+    },
+    "City_building_017": {
+        "Components": {
+            "0": {
+                "positionx": "44.260082",
+                "positiony": "-39.153721",
+                "positionz": "0.000001",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1606467341.mesh",
+            "2": "",
+            "3": "Library/Textures/1088446153.dds"
+        },
+        "Parent": "2104728310",
+        "UID": "2002903752"
+    },
+    "City_building_022": {
+        "Components": {
+            "0": {
+                "positionx": "-20.831324",
+                "positiony": "-27.426489",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "3.141592",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/383836407.mesh",
+            "2": "",
+            "3": "Library/Textures/1348485937.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1433018473"
+    },
+    "City_building_023": {
+        "Components": {
+            "0": {
+                "positionx": "42.130642",
+                "positiony": "37.493286",
+                "positionz": "-0.000002",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1632701590.mesh",
+            "2": "",
+            "3": "Library/Textures/1066697880.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1396823978"
+    },
+    "City_building_024": {
+        "Components": {
+            "0": {
+                "positionx": "-20.572771",
+                "positiony": "43.060829",
+                "positionz": "-0.069194",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "3.141593",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1417168241.mesh",
+            "2": "",
+            "3": "Library/Textures/982031040.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "717483041"
+    },
+    "City_building_026": {
+        "Components": {
+            "0": {
+                "positionx": "31.511889",
+                "positiony": "-16.446016",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "3.141593",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/826952508.mesh",
+            "2": "",
+            "3": "Library/Textures/1348485937.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1699713676"
+    },
+    "City_building_028": {
+        "Components": {
+            "0": {
+                "positionx": "13.387990",
+                "positiony": "-33.755039",
+                "positionz": "-0.000001",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/964648091.mesh",
+            "2": "",
+            "3": "Library/Textures/357741710.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1489227031"
+    },
+    "City_building_030": {
+        "Components": {
+            "0": {
+                "positionx": "-42.807240",
+                "positiony": "-41.835564",
+                "positionz": "-0.000001",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/909085978.mesh",
+            "2": "",
+            "3": "Library/Textures/357741710.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "243166899"
+    },
+    "City_building_031": {
+        "Components": {
+            "0": {
+                "positionx": "-34.679482",
+                "positiony": "-41.835564",
+                "positionz": "-0.000001",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/530618645.mesh",
+            "2": "",
+            "3": "Library/Textures/357741710.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1854367971"
+    },
+    "City_building_032": {
+        "Components": {
+            "0": {
+                "positionx": "-29.478403",
+                "positiony": "21.014099",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1274486158.mesh",
+            "2": "",
+            "3": "Library/Textures/1855025185.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1962954264"
+    },
+    "City_building_033": {
+        "Components": {
+            "0": {
+                "positionx": "-32.361496",
+                "positiony": "42.370422",
+                "positionz": "0.000001",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1740342104.mesh",
+            "2": "",
+            "3": "Library/Textures/202958920.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "241945025"
+    },
+    "City_building_034": {
+        "Components": {
+            "0": {
+                "positionx": "16.049517",
+                "positiony": "-16.696884",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1250387510.mesh",
+            "2": "",
+            "3": "Library/Textures/1348485937.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "731546122"
+    },
+    "City_building_035": {
+        "Components": {
+            "0": {
+                "positionx": "13.387990",
+                "positiony": "-40.802517",
+                "positionz": "-0.000001",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/2038081175.mesh",
+            "2": "",
+            "3": "Library/Textures/357741710.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1661544537"
+    },
+    "City_building_036": {
+        "Components": {
+            "0": {
+                "positionx": "-31.216331",
+                "positiony": "33.201576",
+                "positionz": "0.000001",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1830651166.mesh",
+            "2": "",
+            "3": "Library/Textures/202958920.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "2116016846"
+    },
+    "City_building_037": {
+        "Components": {
+            "0": {
+                "positionx": "-20.317694",
+                "positiony": "-16.163609",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "3.141592",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1064793130.mesh",
+            "2": "",
+            "3": "Library/Textures/1348485937.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1604281600"
+    },
+    "City_building_038": {
+        "Components": {
+            "0": {
+                "positionx": "-41.649002",
+                "positiony": "-16.495394",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/645879832.mesh",
+            "2": "",
+            "3": "Library/Textures/1348485937.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1029719373"
+    },
+    "City_building_039": {
+        "Components": {
+            "0": {
+                "positionx": "-42.807240",
+                "positiony": "-30.643888",
+                "positionz": "-0.000001",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1373545359.mesh",
+            "2": "",
+            "3": "Library/Textures/357741710.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "1977884833"
+    },
+    "City_building_040": {
+        "Components": {
+            "0": {
+                "positionx": "-34.679482",
+                "positiony": "-30.643888",
+                "positionz": "-0.000001",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/2015115905.mesh",
+            "2": "",
+            "3": "Library/Textures/357741710.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "718694598"
+    },
+    "City_building_041": {
+        "Components": {
+            "0": {
+                "positionx": "30.695278",
+                "positiony": "21.612646",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1821581210.mesh",
+            "2": "",
+            "3": "Library/Textures/682982465.dds"
+        },
+        "Parent": "1746884284",
+        "UID": "501879900"
+    },
+    "Line002": {
+        "Components": {
+            "0": {
+                "positionx": "-2.159772",
+                "positiony": "1.853838",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-1.570796",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1298588139.mesh",
+            "2": ""
+        },
+        "Parent": "1746884284",
+        "UID": "546166301"
+    },
+    "Object010": {
+        "Components": {
+            "0": {
+                "positionx": "-2.503353",
+                "positiony": "15.800846",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": "Library/Meshes/1438707200.mesh",
+            "2": ""
+        },
+        "Parent": "1746884284",
+        "UID": "1967737651"
+    },
+    "Plane001": {
+        "Components": {
+            "0": {
+                "positionx": "-0.028603",
+                "positiony": "0.026032",
+                "positionz": "0.000000",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "0.996635",
+                "scaley": "0.970616",
+                "scalez": "0.996635"
+            },
+            "1": "Library/Meshes/1298723795.mesh",
+            "2": ""
+        },
+        "Parent": "1746884284",
+        "UID": "780128232"
+    },
+    "Street environment_V01": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "3": "Library/Textures/1630067211.dds"
+        },
+        "Parent": "1786040247",
+        "UID": "1746884284"
+    }
+}

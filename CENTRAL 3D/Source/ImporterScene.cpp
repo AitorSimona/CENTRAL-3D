@@ -183,6 +183,7 @@ bool ImporterScene::Load(const char * exported_file) const
 			}
 
 			std::string diffuse_uid;
+			std::string mesh_uid;
 			uint count;
 
 			switch (type)
@@ -199,6 +200,7 @@ bool ImporterScene::Load(const char * exported_file) const
 
 				case Component::ComponentType::Material:
 					// --- Check if Library file exists ---
+
 					if (App->fs->Exists(component_path.data()))
 					{
 
@@ -243,8 +245,14 @@ bool ImporterScene::Load(const char * exported_file) const
 						}
 						else
 						{
+							mesh_uid = component_path;
+							App->fs->SplitFilePath(component_path.data(), nullptr, &mesh_uid);
+							count = mesh_uid.find_last_of(".");
+							mesh_uid = mesh_uid.substr(0, count);
+
 							mesh->resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 							IMesh->Load(component_path.data(), *mesh->resource_mesh);
+							mesh->resource_mesh->SetUID(std::stoi(mesh_uid));
 						}
 					}
 					else
@@ -302,6 +310,8 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 			float3 rotation = transform->GetRotation();
 			float3 scale = transform->GetScale();
 
+			ComponentMesh* mesh = scene_gos[i]->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+
 			// --- Save Components to files ---
 
 			switch (scene_gos[i]->GetComponents()[j]->GetType())
@@ -326,8 +336,10 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 					break;
 				case Component::ComponentType::Mesh:
 					component_path = MESHES_FOLDER;
-					component_path.append(std::to_string(App->GetRandom().Int()));
+					component_path.append(std::to_string(mesh->resource_mesh->GetUID()));
 					component_path.append(".mesh");
+
+					if(!App->fs->Exists(component_path.data()))
 					IMesh->Save(scene_gos[i]->GetComponent<ComponentMesh>(Component::ComponentType::Mesh)->resource_mesh, component_path.data());
 
 					// --- Store path to component file ---
@@ -346,8 +358,7 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 						component_path.append(".dds");
 
 						// --- Store path to component file ---
-						if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID())
-							file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
+						file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 					}
 					break;
 				

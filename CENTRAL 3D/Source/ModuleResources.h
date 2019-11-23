@@ -11,12 +11,6 @@ struct ResourceMeta
 	std::string original_file = "";
 	std::string resource_name = "";
 	uint UID = 0;
-
-	bool Compare(const char* file, const char* name, Resource::ResourceType type)
-	{
-		return (original_file == file && resource_name == name && this->type == type);
-	}
-
 };
 
 class ModuleResources : public Module
@@ -34,7 +28,6 @@ public:
 	void CreateMetaFromUID(uint UID, const char* filename);
 
 	bool IsFileImported(const char* file);
-	Resource* GetResource(uint UID);
 	Resource* GetResource(const char* original_file);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	uint GetUIDFromMeta(const char* file);

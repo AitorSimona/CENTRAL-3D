@@ -77,51 +77,6 @@ bool ModuleResources::IsFileImported(const char * file)
 	return ret;
 }
 
-Resource * ModuleResources::GetResource(uint UID)
-{
-	Resource* ret = nullptr;
-
-	// --- If resource is loaded into memory, return pointer to it, else load it ---
-
-	std::map<uint, Resource*>::iterator it = resources.find(UID);
-
-	if (it != resources.end())
-		ret = it->second;
-	else
-	{
-		// --- If resource is not in memory, search in library ---
-		std::map<uint, ResourceMeta>::iterator it = LoadedResources.find(UID);
-
-		if (it != LoadedResources.end())
-		{
-			switch (it->second.type)
-			{
-			case Resource::ResourceType::MESH:
-
-				break;
-
-			case Resource::ResourceType::TEXTURE:
-
-				break;
-
-			case Resource::ResourceType::MATERIAL:
-
-				break;
-
-			}
-		}
-
-		if (ret)
-		{
-			ret->SetOriginalFilename(it->second.original_file.data());
-			ret->SetName(it->second.resource_name.data());
-			CONSOLE_LOG("Loaded Resource: %s", ret->GetName());
-		}
-	}
-
-	return ret;
-}
-
 Resource * ModuleResources::GetResource(const char * original_file)
 {
 	// --- If resource is loaded into memory, return pointer to it, else load it ---
