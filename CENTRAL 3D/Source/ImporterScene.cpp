@@ -79,27 +79,17 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	if(!App->fs->Exists(relative_path.data()))
 	App->fs->CopyFromOutsideFS(File_path, relative_path.data());
 
-	// --- Load file from assets folder ---
-	char* buffer;
-	uint size = App->fs->Load(relative_path.data(), &buffer);
-
 	// --- Import scene from path ---
-	const aiScene* scene = aiImportFileFromMemory(buffer, size, aiProcessPreset_TargetRealtime_MaxQuality, nullptr);
+	const aiScene* scene = aiImportFileEx(relative_path.data(), aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
 
 	GameObject* rootnode = nullptr;
-	// --- Release data ---
-	if (buffer && size > 0)
-	{
-		delete[] buffer;
-
-		rootnode = App->scene_manager->CreateEmptyGameObject();
-
-		// --- Set root node name as file name with no extension ---
-		rootnode->SetName(rootnodename.data());
-	}
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
+		rootnode = App->scene_manager->CreateEmptyGameObject();
+		// --- Set root node name as file name with no extension ---
+		rootnode->SetName(rootnodename.data());
+
 		// --- Save Game objects to vector so we can save to lib later ---
 		std::vector<GameObject*> scene_gos;
 		scene_gos.push_back(rootnode);
@@ -468,6 +458,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 			if (new_mesh)
 			{
 				// --- Import mesh data (fill new_mesh)---
+				
 				ImportMeshData Mdata;
 				Mdata.mesh = mesh;
 				Mdata.new_mesh = new_mesh->resource_mesh;
