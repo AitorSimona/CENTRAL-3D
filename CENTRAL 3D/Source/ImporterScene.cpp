@@ -190,7 +190,7 @@ bool ImporterScene::Load(const char * exported_file) const
 			{
 				case Component::ComponentType::Transform:
 					transform->SetPosition(std::stof(posx),std::stof(posy), std::stof(posz));
-					transform->SetRotation(float3{ RADTODEG*std::stof(rotx), RADTODEG*std::stof(roty), RADTODEG*std::stof(rotz) });
+					transform->SetRotation(float3{std::stof(rotx), std::stof(roty), std::stof(rotz) });
 					transform->Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 					break;
 
@@ -468,7 +468,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 					quat.y = airotation.y;
 					quat.z = airotation.z;
 					quat.w = airotation.w;
-					float3 eulerangles = quat.ToEulerXYZ();
+					float3 eulerangles = quat.ToEulerXYZ()*RADTODEG;
 					transform->SetPosition(aiposition.x, aiposition.y, aiposition.z);
 					transform->SetRotation(eulerangles);
 					transform->Scale(aiscale.x, aiscale.y, aiscale.z);
