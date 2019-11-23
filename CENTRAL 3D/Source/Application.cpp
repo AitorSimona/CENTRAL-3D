@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "ModuleTimeManager.h"
 #include "ModuleHardware.h"
 #include "ModuleFileSystem.h"
 #include "ModuleImporter.h"
@@ -11,23 +12,16 @@
 #include "ModuleTextures.h"
 #include "ModuleResources.h"
 
-
 #include "mmgr/mmgr.h"
 
 Application::Application()
 {
-
-	frames = 0;
-	last_frame_ms = -1;
-	last_fps = -1;
-	capped_ms = 1000 / 60; // Get Display RR!!
-	fps_counter = 0;
 	appName = "";
-	configpath = "Settings/EditorConfig.json";
 	log = "Application Logs:";
+	configpath = "Settings/EditorConfig.json";
 	RandomNumber = new math::LCG();
 
-
+	time = new ModuleTimeManager(true);
 	hardware = new ModuleHardware(true);
 	fs =  new ModuleFileSystem(true,ASSETS_FOLDER);
 	window = new ModuleWindow(true);
@@ -45,6 +39,9 @@ Application::Application()
 	// They will CleanUp() in reverse order
 
 	// Main Modules
+	AddModule(time);
+
+
 	AddModule(textures);
 	AddModule(hardware);
 	AddModule(fs);
@@ -118,10 +115,8 @@ bool Application::Init()
 		ret = (*item)->Start();
 		item++;
 	}
-	
-	ms_timer.Start();
 
-	SetMaxFramerate(App->window->GetDisplayRefreshRate());
+	time->SetMaxFramerate(App->window->GetDisplayRefreshRate());
 
 	return ret;
 }
@@ -129,33 +124,13 @@ bool Application::Init()
 // ---------------------------------------------
 void Application::PrepareUpdate()
 {
-	dt = (float)ms_timer.Read() / 1000.0f;
-	ms_timer.Start();
+	time->PrepareUpdate();
 }
 
 // ---------------------------------------------
 void Application::FinishUpdate()
 {
-	// Recap on framecount and fps
-	++frames;
-	++fps_counter;
-
-	if (fps_timer.Read() >= 1000)
-	{
-		last_fps = fps_counter;
-		fps_counter = 0;
-		fps_timer.Start();
-	}
-
-	last_frame_ms = ms_timer.Read();
-
-	// cap fps
-	if (capped_ms > 0 && (last_frame_ms < capped_ms))
-		SDL_Delay(capped_ms - last_frame_ms);
-
-	// --- Send data to GUI- PanelSettings Historiograms
-	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
-
+	time->FinishUpdate();
 }
 
 void Application::SaveAllStatus()
@@ -215,7 +190,7 @@ update_status Application::Update()
 	
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PreUpdate(dt);
+		ret = (*item)->PreUpdate(time->GetDt());
 		item++;
 	}
 
@@ -223,7 +198,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->Update(dt);
+		ret = (*item)->Update(time->GetDt());
 		item++;
 	}
 
@@ -231,7 +206,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PostUpdate(dt);
+		ret = (*item)->PostUpdate(time->GetDt());
 		item++;
 	}
 
@@ -262,22 +237,6 @@ void Application::AddModule(Module* mod)
 }
 
 
-void Application::SetMaxFramerate(uint maxFramerate)
-{
-	if (maxFramerate > 0)
-		capped_ms = 1000 / maxFramerate;
-	else
-		capped_ms = 0;
-}
-
-uint Application::GetMaxFramerate() const
-{
-	if (capped_ms > 0)
-		return (uint)((1.0f / (float)capped_ms) * 1000.0f);
-	else
-		return 0;
-}
-
 const char * Application::GetAppName() const
 {
 	return appName.data();
@@ -295,7 +254,7 @@ void Application::SetOrganizationName(const char* name)
 }
 
 void Application::Log(const char * entry)
-{
+{	
 	// --- Append all logs to a string so we can print them on console --- 
 	log.append(entry);
 
@@ -305,13 +264,8 @@ void Application::Log(const char * entry)
 
 void Application::ClearLogsFromConsole()
 {
-	logs.erase(logs.begin(),logs.end());
+	logs.erase(logs.begin(), logs.end());
 	logs.clear();
-}
-
-std::vector<std::string> & Application::GetLogs()
-{
-	return logs;
 }
 
 const char* Application::GetOrganizationName() const
@@ -352,6 +306,11 @@ json Application::GetDefaultConfig() const
 	return config;
 }
 
+std::vector<std::string>& Application::GetLogs()
+{
+	return logs;
+}
+
 // ---------------------------------------------
 LCG & Application::GetRandom()
 {
@@ -361,6 +320,11 @@ LCG & Application::GetRandom()
 JSONLoader * Application::GetJLoader()
 {
 	return &JLoader;
+}
+
+AppState & Application::GetAppState()
+{
+	return EngineState;
 }
 
 

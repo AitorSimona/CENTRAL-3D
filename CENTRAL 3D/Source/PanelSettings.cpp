@@ -6,6 +6,7 @@
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleTimeManager.h"
 
 
 #include "Imgui/imgui.h"
@@ -89,15 +90,15 @@ inline void PanelSettings::ApplicationNode() const
 
 	ImGui::Separator();
 	// --- Cap frames ---
-	int maxFramerate = App->GetMaxFramerate();
+	int maxFramerate = App->time->GetMaxFramerate();
 	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, App->window->GetDisplayRefreshRate()))
-		App->SetMaxFramerate(maxFramerate);
+		App->time->SetMaxFramerate(maxFramerate);
 
 	ImGui::Separator();
 
 	ImGui::Text("Limit Framerate:");
 	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255,255,0,255), "%i", App->GetMaxFramerate());
+	ImGui::TextColored(ImVec4(255,255,0,255), "%i", App->time->GetMaxFramerate());
 
 	// --- Framerate && Ms ---
 	char title[25];
