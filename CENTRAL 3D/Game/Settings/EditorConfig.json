@@ -10,7 +10,7 @@
         "Inspector": true,
         "Project": true,
         "Scene": true,
-        "Settings": false,
+        "Settings": true,
         "Toolbar": true
     },
     "Input": null,

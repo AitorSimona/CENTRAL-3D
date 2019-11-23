@@ -16,7 +16,7 @@
 #define NWB 7
 
 // --- Max items before subdividing ---
-#define QUADTREE_MAX_ITEMS 4
+#define QUADTREE_MAX_ITEMS 10
 #define QUADTREE_MIN_SIZE 10.0f 
 
 
@@ -43,8 +43,8 @@ bool QuadtreeNode::IsLeaf() const
 void QuadtreeNode::Insert(GameObject* go)
 {
 	if (IsLeaf() == true &&
-		(objects.size() < QUADTREE_MAX_ITEMS /*||
-		(box.HalfSize().LengthSq() <= QUADTREE_MIN_SIZE * QUADTREE_MIN_SIZE))*/))
+		(objects.size() < QUADTREE_MAX_ITEMS ||
+		(box.HalfSize().LengthSq() <= QUADTREE_MIN_SIZE * QUADTREE_MIN_SIZE)))
 		objects.push_back(go);
 	else
 	{
@@ -136,14 +136,14 @@ void QuadtreeNode::CreateNode(uint index)
 
 void QuadtreeNode::RedistributeChilds()
 {
-	// Now redistribute ALL objects
+	// --- Redistribute all objects ---
 	for (std::list<GameObject*>::iterator it = objects.begin(); it != objects.end();)
 	{
 		GameObject* go = *it;
 
 		AABB new_box(go->GetOBB().MinimalEnclosingAABB());
 
-		// Now distribute this new gameobject onto the childs
+		// --- Distribute this new gameobject onto the childs ---
 		bool intersects[8];
 		for (int i = 0; i < 8; ++i)
 			intersects[i] = childs[i]->box.Intersects(new_box);
@@ -155,7 +155,13 @@ void QuadtreeNode::RedistributeChilds()
 		{
 			it = objects.erase(it);
 			for (int i = 0; i < 8; ++i)
-				if (intersects[i]) childs[i]->Insert(go);
+			{
+				if (intersects[i])
+				{
+					childs[i]->Insert(go);
+					break;
+				}
+			}
 		}
 	}
 }
