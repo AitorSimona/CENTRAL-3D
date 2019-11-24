@@ -2,41 +2,41 @@
     "GameObject (27)": {
         "Components": {
             "0": {
-                "positionx": "1.285000",
+                "positionx": "0.000000",
                 "positiony": "0.000000",
                 "positionz": "0.000000",
-                "rotationx": "-0.000000",
+                "rotationx": "0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "-0.000000",
+                "rotationz": "0.000000",
                 "scalex": "1.000000",
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/61669529.mesh",
+            "1": "Library/Meshes/726947571.mesh",
             "2": "",
-            "3": "Library/Textures/1124118804.dds"
+            "3": "Library/Textures/1359222715.dds"
         },
-        "Parent": "2031220595",
-        "UID": "262864141"
+        "Parent": "80379517",
+        "UID": "870085370"
     },
     "GameObject (28)": {
         "Components": {
             "0": {
-                "positionx": "-3.670000",
+                "positionx": "0.000000",
                 "positiony": "0.000000",
                 "positionz": "0.000000",
-                "rotationx": "-0.000000",
+                "rotationx": "0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "-0.000000",
+                "rotationz": "0.000000",
                 "scalex": "1.000000",
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1637271709.mesh",
+            "1": "Library/Meshes/1069731742.mesh",
             "2": "",
-            "3": "Library/Textures/1124118804.dds"
+            "3": "Library/Textures/1359222715.dds"
         },
-        "Parent": "2031220595",
-        "UID": "8720827"
+        "Parent": "80379517",
+        "UID": "2142313841"
     }
 }

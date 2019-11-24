@@ -69,6 +69,7 @@ bool ModuleSceneManager::Start()
 	cube = CreateCube(1, 1, 1);
 	sphere = CreateSphere(1.0f, 25, 25);
 
+
 	return true;
 }
 
@@ -396,9 +397,12 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	new_object->AddComponent(Component::ComponentType::Transform);
 	new_object->UpdateAABB();
 
-
 	// --- Set Parent GO ---
 	root->AddChildGO(new_object);
+
+	if(DefaultMaterial)
+		DefaultMaterial->resource_material->resource_diffuse->instances++;
+
 
 	// --- Assign Default Material ---
 	new_object->SetMaterial(DefaultMaterial);
