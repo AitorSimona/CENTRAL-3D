@@ -92,8 +92,13 @@ bool ModuleSceneManager::CleanUp()
 	root->RecursiveDelete();
 	NoStaticGo.clear();
 
-	delete CheckersMaterial;
-	delete DefaultMaterial;
+	for (uint i = 0; i < Materials.size(); ++i)
+	{
+		if (Materials[i])
+			delete Materials[i];
+	}
+	Materials.clear();
+
 	DefaultMaterial = nullptr;
 	CheckersMaterial = nullptr;
 
@@ -420,6 +425,7 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 {
 	// --- Creating Empty material to be filled out ---
 	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
+	Materials.push_back(Material);
 
 	return Material;
 }

@@ -91,6 +91,7 @@ private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
+	std::vector<ComponentMaterial*> Materials;
 	std::vector<AABB> aabb;
 
 	ResourceMesh* cube = nullptr;
