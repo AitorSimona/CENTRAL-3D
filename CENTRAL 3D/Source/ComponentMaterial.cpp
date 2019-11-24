@@ -9,11 +9,13 @@ ComponentMaterial::ComponentMaterial(Component::ComponentType type) : Component(
 
 ComponentMaterial::~ComponentMaterial()
 {	
+	if(resource_material->resource_diffuse)
 	resource_material->resource_diffuse->instances--;
 }
 
 void ComponentMaterial::FreeTexture()
 {
+	if (resource_material->resource_diffuse)
 	resource_material->resource_diffuse->FreeMemory();
 }
 
