@@ -86,7 +86,8 @@ public:
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	std::vector<GameObject*> NoStaticGo;
-
+	bool display_tree = false;
+	bool display_boundingboxes = false;
 private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
@@ -96,6 +97,8 @@ private:
 
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
+
+
 
 };
 

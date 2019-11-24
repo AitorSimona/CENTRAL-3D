@@ -47,6 +47,7 @@ void ComponentRenderer::Draw() const
 	if (camera)
 		ModuleSceneManager::DrawWire(camera->frustum, White);
 
+	if(App->scene_manager->display_boundingboxes)
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green);
 }
 

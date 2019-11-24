@@ -125,6 +125,7 @@ void ModuleSceneManager::Draw()
 
 void ModuleSceneManager::DrawScene()
 {
+	if (display_tree)
 	RecursiveDrawQuadtree(tree.root);
 
 	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
@@ -153,21 +154,21 @@ void ModuleSceneManager::DrawScene()
 	}
 
 	// --- Draw ray ---
-	if (App->camera->last_ray.IsFinite())
-	{
-		glDisable(GL_LIGHTING);
-		glBegin(GL_LINES);
+	//if (App->camera->last_ray.IsFinite())
+	//{
+	//	glDisable(GL_LIGHTING);
+	//	glBegin(GL_LINES);
 
-		glColor4f(Red.r, Red.g, Red.b, Red.a);
+	//	glColor4f(Red.r, Red.g, Red.b, Red.a);
 
-		glVertex3fv((GLfloat*)&App->camera->last_ray.a);
-		glVertex3fv((GLfloat*)&App->camera->last_ray.b);
+	//	glVertex3fv((GLfloat*)&App->camera->last_ray.a);
+	//	glVertex3fv((GLfloat*)&App->camera->last_ray.b);
 
-		glColor4f(1.0, 1.0, 1.0, 1.0);
+	//	glColor4f(1.0, 1.0, 1.0, 1.0);
 
-		glEnd();
-		glEnable(GL_LIGHTING);
-	}
+	//	glEnd();
+	//	glEnable(GL_LIGHTING);
+	//}
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const
@@ -214,6 +215,7 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 
 void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 {
+
 	if (!node->IsLeaf())
 	{
 		for (uint i = 0; i < 8; ++i)

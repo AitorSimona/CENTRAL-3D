@@ -1,6 +1,6 @@
 #include "PanelToolbar.h"
 #include "Application.h"
-
+#include "ModuleTimeManager.h"
 
 #include "Imgui/imgui.h"
 
@@ -50,6 +50,16 @@ bool PanelToolbar::Draw()
 
 		}
 
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.05f);
+
+		float scale = App->time->GetTimeScale();
+
+		ImGui::DragFloat("Time Scale", &scale, 0.005f);
+
+
+		if(scale != App->time->GetTimeScale())
+			App->time->SetTimeScale(scale);
 	}
 
 	ImGui::End();
