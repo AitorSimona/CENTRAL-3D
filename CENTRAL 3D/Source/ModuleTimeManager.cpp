@@ -36,6 +36,7 @@ void ModuleTimeManager::PrepareUpdate()
 			break;
 
 		case AppState::PLAY:
+			App->scene_manager->SetSelectedGameObject(nullptr);
 			game_dt *= Time_scale;
 			break;
 
