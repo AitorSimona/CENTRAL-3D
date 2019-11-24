@@ -55,6 +55,8 @@ All fbx in assets folder will be imported at startup.
 
 - Debug Features
 
+Game Objects - Redo Octree whenever you make some elements non-static and want it to be recalculated
+
 Head to Scene window and click DebugDraw to see available features: 
 
 - Wireframe
