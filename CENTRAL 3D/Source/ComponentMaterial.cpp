@@ -9,6 +9,7 @@ ComponentMaterial::ComponentMaterial(Component::ComponentType type) : Component(
 
 ComponentMaterial::~ComponentMaterial()
 {	
+	resource_material->resource_diffuse->instances--;
 }
 
 void ComponentMaterial::FreeTexture()

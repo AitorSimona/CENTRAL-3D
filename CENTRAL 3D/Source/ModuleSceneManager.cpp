@@ -65,6 +65,10 @@ bool ModuleSceneManager::Start()
 	CheckersMaterial->resource_material->resource_diffuse->Texture_width = CHECKERS_WIDTH;
 	CheckersMaterial->resource_material->resource_diffuse->Texture_height = CHECKERS_HEIGHT;
 
+	// --- Create primitives ---
+	cube = CreateCube(1, 1, 1);
+	sphere = CreateSphere(1.0f, 25, 25);
+
 	return true;
 }
 
@@ -86,15 +90,10 @@ update_status ModuleSceneManager::Update(float dt)
 bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
-
-	for (uint i = 0; i < Materials.size(); ++i)
-	{
-		if (Materials[i])
-			delete Materials[i];
-	}
-	Materials.clear();
 	NoStaticGo.clear();
 
+	delete CheckersMaterial;
+	delete DefaultMaterial;
 	DefaultMaterial = nullptr;
 	CheckersMaterial = nullptr;
 
@@ -421,19 +420,14 @@ ComponentMaterial * ModuleSceneManager::CreateEmptyMaterial()
 {
 	// --- Creating Empty material to be filled out ---
 	ComponentMaterial* Material = new ComponentMaterial(Component::ComponentType::Material);
-	Materials.push_back(Material);
 
 	return Material;
 }
 
 
-void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, GameObject& new_object) const
+void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new_mesh) const
 {
-	// --- Obtain data from par shapes mesh and load it into component mesh ---
-	ComponentMesh* comp_mesh = (ComponentMesh*)new_object.AddComponent(Component::ComponentType::Mesh);
-	ResourceMesh* new_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
-	comp_mesh->resource_mesh = new_mesh;
-	ComponentRenderer* Renderer = (ComponentRenderer*)new_object.AddComponent(Component::ComponentType::Renderer);
+	// --- Obtain data from par shapes mesh and load it into mesh ---
 
 	new_mesh->IndicesSize = mesh->ntriangles * 3;
 	new_mesh->VerticesSize = mesh->npoints;
@@ -541,10 +535,12 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glEnable(GL_LIGHTING);
 }
 
-GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
+ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
 {
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
 	// does not have uvs / normals 
+
+	ResourceMesh* new_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 
 	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
 	par_shapes_mesh* top = par_shapes_create_plane(1, 1);
@@ -576,31 +572,29 @@ GameObject * ModuleSceneManager::CreateCube(float sizeX, float sizeY, float size
 	par_shapes_merge_and_free(mesh, left);
 	par_shapes_merge_and_free(mesh, right);
 
-	GameObject* new_object = CreateEmptyGameObject();
-
 	if (mesh)
 	{
 		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
-		LoadParMesh(mesh, *new_object);
+		LoadParMesh(mesh, new_mesh);
 	}
 
-	return new_object;
+	return new_mesh;
 }
 
-GameObject * ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
+ResourceMesh* ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
 {
+	ResourceMesh* new_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+
 	// --- Create par shapes sphere ---
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
-
-	GameObject* new_object = CreateEmptyGameObject();
 
 	if (mesh)
 	{
 		par_shapes_scale(mesh, Radius / 2, Radius / 2, Radius / 2);
-		LoadParMesh(mesh, *new_object);
+		LoadParMesh(mesh, new_mesh);
 	}
 
-	return new_object;
+	return new_mesh;
 }
 
 void ModuleSceneManager::CreateGrid() const
@@ -630,9 +624,30 @@ void ModuleSceneManager::CreateGrid() const
 	glEnd();
 }
 
+GameObject * ModuleSceneManager::LoadCube()
+{
+	GameObject* new_object = CreateEmptyGameObject();
+	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = cube;
+	cube->instances++;
+	ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
+
+	return new_object;
+}
+
+GameObject * ModuleSceneManager::LoadSphere()
+{
+	GameObject* new_object = CreateEmptyGameObject();
+	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = sphere;
+	sphere->instances++;
+	ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
+
+	return new_object;
+}
+
 void ModuleSceneManager::DestroyGameObject(GameObject * go)
 {
-
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
 

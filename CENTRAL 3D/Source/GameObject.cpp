@@ -27,7 +27,6 @@ GameObject::~GameObject()
 	{
 		if (*it)
 		{
-			if ((*it)->GetType() != Component::ComponentType::Material)
 				delete(*it);
 
 			// MYTODO: We are not deleting materials here (should be deleted by user via project folder) All materials are deleted on app end

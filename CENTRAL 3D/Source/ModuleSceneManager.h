@@ -12,6 +12,7 @@ class ComponentMaterial;
 struct aiScene;
 struct ImportMaterialData;
 struct par_shapes_mesh_s;
+class ResourceMesh;
 
 
 class ModuleSceneManager : public Module
@@ -30,9 +31,9 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
-	GameObject* CreateCube(float sizeX, float sizeY, float sizeZ);
-	GameObject* CreateSphere(float Radius, int slices, int slacks);
 	void CreateGrid() const;
+	GameObject* LoadCube();
+	GameObject* LoadSphere();
 
 	void DestroyGameObject(GameObject* go);
 
@@ -71,7 +72,11 @@ private:
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawScene();
-	void LoadParMesh(par_shapes_mesh_s* mesh, GameObject& new_object) const;
+
+	// --- Primitives ---
+	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
+	ResourceMesh* CreateCube(float sizeX, float sizeY, float sizeZ);
+	ResourceMesh* CreateSphere(float Radius, int slices, int slacks);
 
 	static void DrawWireFromVertices(const float3* corners, Color color);
 public:
@@ -86,8 +91,10 @@ private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
-	std::vector<ComponentMaterial*> Materials;
 	std::vector<AABB> aabb;
+
+	ResourceMesh* cube = nullptr;
+	ResourceMesh* sphere = nullptr;
 
 };
 
