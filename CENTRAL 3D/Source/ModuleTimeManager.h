@@ -21,16 +21,17 @@ public:
 	float GetGameDt() const;
 	float GetRealTimeDt()const;
 	uint GetMaxFramerate() const;
+	float GetTimeScale() const;
 
 	// --- Setters ---
 	void SetMaxFramerate(uint maxFramerate);
-
+	void SetTimeScale(float scale);
 
 private:
 
 	Timer				Realtime_clock;
 	Timer				Gametime_clock;
-	float				Time_scale = 0.0f;
+	float				Time_scale = 1.0f;
 
 
 	Timer				fps_timer;

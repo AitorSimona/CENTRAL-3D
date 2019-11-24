@@ -36,7 +36,7 @@ void ModuleTimeManager::PrepareUpdate()
 			break;
 
 		case AppState::PLAY:
-
+			game_dt *= Time_scale;
 			break;
 
 		case AppState::TO_PAUSE:
@@ -98,12 +98,22 @@ uint ModuleTimeManager::GetMaxFramerate() const
 		return 0;
 }
 
+float ModuleTimeManager::GetTimeScale() const
+{
+	return Time_scale;
+}
+
 void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)
 {
 	if (maxFramerate > 0)
 		capped_ms = 1000 / maxFramerate;
 	else
 		capped_ms = 0;
+}
+
+void ModuleTimeManager::SetTimeScale(float scale)
+{
+	Time_scale = scale;
 }
 
 float ModuleTimeManager::GetGameDt() const
