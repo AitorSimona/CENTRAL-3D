@@ -1,5 +1,5 @@
 # CENTRAL 3D
-- Version 0.1
+- Version 0.2
 - Initial steps into 3D game engine development
 - By Aitor Simona 
 * GitHub account: [AitorSimona](https://github.com/AitorSimona)
@@ -12,7 +12,7 @@
 - SDL 2.0.10
 - Glew 2.1.0
 - ImGui 1.72b (with beta docking)
-- MathGeoLib 1.5
+- MathGeoLib 1.5 (commit 1994)
 - OpenGL 3.1
 - mmgr
 - par_shapes at commit 281 
@@ -29,6 +29,11 @@ There is no formal installation process, just look around and play with it
 
 Mouse and Keyboard controls are enabled both on UI and Scene, working on focused window only.
 
+- Mouse picking
+
+Self-explainable, click on an object to select it, notice how inspector info changes, but if the object is hidden
+in the hierarchy you won't notice it there, open parent to see how it is selected.
+
 - Scene Camera:
 
 - Right Mouse button enables Look Around
@@ -37,6 +42,14 @@ Mouse and Keyboard controls are enabled both on UI and Scene, working on focused
 - Right Mouse button + WASD enables free movement
 - Mouse Wheel movement enables zoom
 
+Editor camera only works when in AppState EDITOR mode.
+
+## ASSET IMPORT
+
+Drop it inside window 2 times, first for importing, second for loading, you can also drag it from project window 
+to hierarchy (on the window title).
+
+All fbx in assets folder will be imported at startup.
 
 ## DEBUG
 
@@ -47,19 +60,34 @@ Head to Scene window and click DebugDraw to see available features:
 - Wireframe
 - Color Material
 - OpenGL Lighting
+- Display Octree
+- Show AABBS
 
 There are more options in Window - > Settings
-
 
 ## Features in beta
 
 - Texture pre-visualization on Inspector
-- Transform Editing
 - Toolbar
 - Edit Menu
-
+- Load/Save cameras
+- Resource manager (initial implementation)
 
 ## CHANGELOG
+
+### 0.2
+
+- Initial Structure of Resource Manager
+- Reference Counting for ResourceMesh and ResourceTexture
+- Scene serialization to file and loading
+- New import pipeline (creates own file format files in library)
+- New Time Manager (Options to PLAY STOP STEP)
+- Spatial partitioning using Octree
+- Creation of cameras
+- Frustum culling
+- AABB's
+- Project window
+- Mouse picking 
 
 ### 0.1
 
