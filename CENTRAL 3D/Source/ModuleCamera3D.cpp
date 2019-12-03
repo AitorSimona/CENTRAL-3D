@@ -29,8 +29,6 @@ bool ModuleCamera3D::Init(json config)
 {
 	App->renderer3D->SetActiveCamera(camera);
 	App->renderer3D->SetCullingCamera(camera);
-
-
 	return true;
 }
 
@@ -38,6 +36,7 @@ bool ModuleCamera3D::Init(json config)
 bool ModuleCamera3D::Start()
 {
 	CONSOLE_LOG("Setting up the camera");
+
 	bool ret = true;
 	camera->frustum.SetPos(float3(0.0f,1.0f,-5.0f));
 	reference = camera->frustum.Pos();

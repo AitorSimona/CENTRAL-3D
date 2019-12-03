@@ -36,6 +36,8 @@ public:
 	bool GetVSync() const;
 
 public:
+	// --- Default Shader ---
+	uint shaderProgram = 0;
 
 	Light lights[MAX_LIGHTS];
 	SDL_GLContext context;

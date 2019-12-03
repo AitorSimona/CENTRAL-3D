@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "ResourceMesh.h"
 
@@ -30,8 +31,17 @@ void ComponentRenderer::Draw() const
 	ComponentCamera* camera = GO->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
 
 	// --- Send transform to OpenGL and use it to draw ---
-	glPushMatrix();
-	glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
+	//glPushMatrix();
+	//glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
+
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "view");
+	glUniformMatrix4fv(viewLoc, 1, TRUE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "projection");
+	glUniformMatrix4fv(projectLoc, 1, TRUE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
@@ -41,7 +51,7 @@ void ComponentRenderer::Draw() const
 	}
 
 	// --- Pop transform so OpenGL does not use it for other operations ---
-	glPopMatrix();
+	//glPopMatrix();
 
 	// --- Draw Frustum ---
 	if (camera)
@@ -53,40 +63,48 @@ void ComponentRenderer::Draw() const
 
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
 {
-	//// --- Draw Texture ---
+
+	// --- Draw Texture ---
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
 	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-	//glEnable(GL_TEXTURE_2D); // enable gl capability
-	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
+	glEnable(GL_TEXTURE_2D); // enable gl capability
+	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 
-	//// --- If the mesh has a material associated, use it ---
-
-	//if (mat && mat->IsEnabled())
-	//{
-	//	if(this->checkers)
-	//	glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-	//	else
-	//	glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
-	//	glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
-	//	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
-	//}
+	// --- If the mesh has a material associated, use it ---
 
 	//// --- Draw mesh ---
 	//glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
 	//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
-	//glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
+	//glUseProgram(App->renderer3D->shaderProgram);
+	glBindVertexArray(mesh.VAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+	glBindVertexArray(0);
+
+	if (mat && mat->IsEnabled())
+	{
+		if (this->checkers)
+			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+		else
+			glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
+			//glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
+			//glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
+	}
+
+	//glUseProgram(0);
 	//// ----        ----
 
 	//// --- Unbind buffers ---
 
 	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-	//glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
 	//// --- Disable capabilities ---
-	//glDisable(GL_TEXTURE_2D); // enable gl capability
+	glDisable(GL_TEXTURE_2D); // enable gl capability
 	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
 	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
