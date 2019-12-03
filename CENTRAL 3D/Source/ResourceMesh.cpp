@@ -43,10 +43,26 @@ void ResourceMesh::CreateAABB()
 
 void ResourceMesh::LoadInMemory()
 {
+	CreateVBO();
+	CreateEBO();
+	CreateVAO();
 }
 
 void ResourceMesh::FreeMemory()
 {
+	glDeleteBuffers(1, (GLuint*)&VBO);
+	glDeleteBuffers(1, (GLuint*)&EBO);
+	glDeleteVertexArrays(1, (GLuint*)&VAO);
+
+	delete[]vertices;
+	delete[]indices;
+
+	verticesSize = 0;
+	indicesSize = 0;
+
+	VBO = 0;
+	EBO = 0;
+	VAO = 0;
 }
 
 void ResourceMesh::CreateVBO()
@@ -77,6 +93,35 @@ void ResourceMesh::CreateEBO()
 
 void ResourceMesh::CreateVAO()
 {
+    // --- Create a Vertex Array Object ---
+	glGenVertexArrays(1, &VAO);
+	// --- Bind it ---
+	glBindVertexArray(VAO);
+
+	// Bind the VBO 
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	// --- Set all vertex attribute pointers ---
+
+	// --- Vertex Position ---
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, position)));
+	glEnableVertexAttribArray(0);
+
+	// --- Vertex Normal ---
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, normal)));
+	glEnableVertexAttribArray(1);
+
+	// --- Vertex Color ---
+	glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)(offsetof(Vertex, color)));
+	glEnableVertexAttribArray(2);
+
+	// --- Vertex Texture coordinates ---
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, texCoord)));
+	glEnableVertexAttribArray(3);
+
+	// --- Unbind VAO and VBO ---
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 
