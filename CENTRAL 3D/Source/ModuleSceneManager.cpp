@@ -527,7 +527,7 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 		new_mesh->Vertices[i].z = mesh->points[(3 * i) + 2];
 	}
 
-	new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * new_mesh->VerticesSize, new_mesh->Vertices);
+	//new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * new_mesh->VerticesSize, new_mesh->Vertices);
 
 	// --- Indices ---
 	new_mesh->Indices = new uint[new_mesh->IndicesSize];
@@ -535,7 +535,7 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 	{
 		new_mesh->Indices[i] = mesh->triangles[i];
 	}
-	new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * new_mesh->IndicesSize, new_mesh->Indices);
+	//new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * new_mesh->IndicesSize, new_mesh->Indices);
 
 	// --- Normals ---
 	if (mesh->normals)
@@ -563,9 +563,10 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 		new_mesh->TexCoords[(2 * i) + 1] = mesh->tcoords[(2 * i) + 1];
 	}
 
-	new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords);
+	//new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords);
 
 
+	new_mesh->LoadInMemory();
 	new_mesh->CreateAABB();
 	par_shapes_free_mesh(mesh);
 }

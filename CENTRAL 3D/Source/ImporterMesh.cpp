@@ -25,6 +25,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 
 	ImportMeshData data = (ImportMeshData&) IData;
 
+	// MISSING COLORS !!!
 
 	// --- Vertices ---
 	data.new_mesh->VerticesSize = data.mesh->mNumVertices;
@@ -38,7 +39,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 		data.new_mesh->Vertices[i].z = data.mesh->mVertices[i].z;
 	}
 
-	data.new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * data.new_mesh->VerticesSize, data.new_mesh->Vertices);
+	//data.new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * data.new_mesh->VerticesSize, data.new_mesh->Vertices);
 
 	// --- Normals ---
 	if (data.mesh->HasNormals())
@@ -69,7 +70,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 		}
 	}
 
-	data.new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * data.new_mesh->VerticesSize * 2, data.new_mesh->TexCoords);
+	//data.new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * data.new_mesh->VerticesSize * 2, data.new_mesh->TexCoords);
 
 	// --- Indices ---
 	data.new_mesh->IndicesSize = data.mesh->mNumFaces * 3;
@@ -91,8 +92,9 @@ bool ImporterMesh::Import(const ImportData & IData) const
 		data.new_mesh->Indices[j * 3 + 2] = face.mIndices[2];
 	}
 
-	data.new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * data.new_mesh->IndicesSize, data.new_mesh->Indices);
+	//data.new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * data.new_mesh->IndicesSize, data.new_mesh->Indices);
 
+	data.new_mesh->LoadInMemory();
 	data.new_mesh->CreateAABB();
 
 	return true;
@@ -146,7 +148,6 @@ void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
 
 void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 {
-
 	mesh.SetOriginalFilename(filename);
 
 	// --- Load mesh data ---
@@ -170,7 +171,7 @@ void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 	mesh.Indices = new uint[mesh.IndicesSize];
 	memcpy(mesh.Indices, cursor, bytes);
 
-	mesh.IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * mesh.IndicesSize, mesh.Indices);
+	//mesh.IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * mesh.IndicesSize, mesh.Indices);
 
 	// --- Load Vertices ---
 	cursor += bytes;
@@ -178,7 +179,7 @@ void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 	mesh.Vertices = new float3[mesh.VerticesSize];
 	memcpy(mesh.Vertices, cursor, bytes);
 
-	mesh.VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * mesh.VerticesSize, mesh.Vertices);
+	//mesh.VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * mesh.VerticesSize, mesh.Vertices);
 
 	// --- Load Normals ---
 	cursor += bytes;
@@ -192,7 +193,7 @@ void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 	mesh.TexCoords = new float[mesh.TexCoordsSize];
 	memcpy(mesh.TexCoords, cursor, bytes);
 
-	mesh.TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * mesh.TexCoordsSize, mesh.TexCoords);
+	//mesh.TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * mesh.TexCoordsSize, mesh.TexCoords);
 
 	// --- Delete buffer data ---
 	if (buffer)
@@ -202,6 +203,7 @@ void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 		cursor = nullptr;
 	}
 
+	mesh.LoadInMemory();
 	mesh.CreateAABB();
 }
 

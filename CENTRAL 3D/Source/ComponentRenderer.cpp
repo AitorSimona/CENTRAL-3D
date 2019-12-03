@@ -53,43 +53,43 @@ void ComponentRenderer::Draw() const
 
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
 {
-	// --- Draw Texture ---
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
-	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-	glEnable(GL_TEXTURE_2D); // enable gl capability
-	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
+	//// --- Draw Texture ---
+	//glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
+	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+	//glEnable(GL_TEXTURE_2D); // enable gl capability
+	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 
-	// --- If the mesh has a material associated, use it ---
+	//// --- If the mesh has a material associated, use it ---
 
-	if (mat && mat->IsEnabled())
-	{
-		if(this->checkers)
-		glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-		else
-		glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
-		glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
-	}
+	//if (mat && mat->IsEnabled())
+	//{
+	//	if(this->checkers)
+	//	glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+	//	else
+	//	glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
+	//	glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
+	//	glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
+	//}
 
-	// --- Draw mesh ---
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
-	glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
-	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+	//// --- Draw mesh ---
+	//glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
+	//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
+	//glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-	// ----        ----
+	//// ----        ----
 
-	// --- Unbind buffers ---
+	//// --- Unbind buffers ---
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
+	//glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
-	// --- Disable capabilities ---
-	glDisable(GL_TEXTURE_2D); // enable gl capability
-	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
-	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
+	//// --- Disable capabilities ---
+	//glDisable(GL_TEXTURE_2D); // enable gl capability
+	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
+	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+	//glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
 
 }
 
