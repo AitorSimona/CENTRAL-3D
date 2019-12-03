@@ -8,14 +8,30 @@
 class ResourceMesh : public Resource
 {
 public:
+	// Struct that contains all vertex related data
+	struct Vertex
+	{
+		float position[3];
+		float normal[3];
+		float color[4];
+		float texCoord[2];
+	};
+
+public:
 
 	ResourceMesh();
 	~ResourceMesh();
 
 	void CreateAABB();
 
-	void LoadOnMemory();
+	void LoadInMemory();
 	void FreeMemory();
+
+
+private:
+	void CreateVBO(); 
+	void CreateEBO(); 
+	void CreateVAO(); 
 
 public:
 
@@ -35,6 +51,17 @@ public:
 	uint TexCoordsSize = 0;
 
 	AABB aabb;
+
+	// --- New shader approach ---
+	Vertex* vertices = nullptr;
+	uint verticesSize = 0;
+
+	uint * indices = nullptr;
+	uint indicesSize = 0;
+
+	uint VBO = 0;	// Vertex Buffer Object
+	uint EBO = 0;	// Element/Index Buffer Object
+	uint VAO = 0;	// Vertex Array Object
 };
 
 #endif // __RESOURCE_MESH__

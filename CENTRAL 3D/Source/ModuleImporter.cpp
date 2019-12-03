@@ -51,7 +51,7 @@ bool ModuleImporter::Start()
 	filters.push_back("fbx");
 	filters.push_back("FBX");
 
-	ImportAssets(ASSETS_FOLDER, filters);
+	//ImportAssets(ASSETS_FOLDER, filters);
 
 	return true;
 }

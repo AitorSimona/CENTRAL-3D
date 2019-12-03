@@ -114,7 +114,6 @@ bool ModuleSceneManager::Start()
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		CONSOLE_LOG("Vertex Shader compilation error: %s", infoLog);
 	}
-	//glDeleteShader(vertexShader);
 
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -126,7 +125,6 @@ bool ModuleSceneManager::Start()
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		CONSOLE_LOG("Fragment Shader compilation error: %s", infoLog);
 	}
-	//glDeleteShader(vertexShader);
 
 	// --- Creating Shader program and linking both vertex and fragment to it ---
 	GLuint shaderProgram;
@@ -139,6 +137,10 @@ bool ModuleSceneManager::Start()
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		CONSOLE_LOG("Shader link error: %s", infoLog);
 	}
+
+	// --- We do not need this anymore ---
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	return true;
 }
