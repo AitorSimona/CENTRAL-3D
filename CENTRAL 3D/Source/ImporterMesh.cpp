@@ -25,7 +25,7 @@ bool ImporterMesh::Import(const ImportData & IData) const
 
 	ImportMeshData data = (ImportMeshData&) IData;
 
-	// MISSING COLORS !!!
+	// COULD USE MEMCPY AGAIN, JUST DECLARE AND ALLOCATE EVERYTHING FIRST
 
 	// --- Vertices ---
 	data.new_mesh->VerticesSize = data.mesh->mNumVertices;
@@ -54,6 +54,20 @@ bool ImporterMesh::Import(const ImportData & IData) const
 			data.new_mesh->Normals[i].z = data.mesh->mNormals[i].z;
 		}
 
+	}
+
+	// --- Colors ---
+	if (data.mesh->HasVertexColors(0))
+	{
+		data.new_mesh->Color = new float4[data.new_mesh->VerticesSize];
+
+		for (uint i = 0; i < data.mesh->mNumVertices; ++i)
+		{			
+			data.new_mesh->Color[i].x = data.mesh->mColors[0][i].r;
+			data.new_mesh->Color[i].y = data.mesh->mColors[0][i].g;
+			data.new_mesh->Color[i].z = data.mesh->mColors[0][i].b;
+			data.new_mesh->Color[i].w = data.mesh->mColors[0][i].a;
+		}
 	}
 
 	// --- Texture Coordinates ---
