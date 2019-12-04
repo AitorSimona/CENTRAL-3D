@@ -613,6 +613,11 @@ ResourceMesh* ModuleSceneManager::CreateSphere(float Radius, int slices, int sla
 void ModuleSceneManager::CreateGrid() const
 {
 	// --- Create Grid in direct mode (to be changed) ---
+	/*glUseProgram(App->renderer3D->shaderProgram);*/
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+
 	glLineWidth(2.0f);
 
 	glBegin(GL_LINES);
@@ -635,6 +640,9 @@ void ModuleSceneManager::CreateGrid() const
 	glLineWidth(1.0f);
 
 	glEnd();
+
+	//glUseProgram(0);
+
 
 }
 

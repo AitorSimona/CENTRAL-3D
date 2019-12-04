@@ -37,16 +37,10 @@ void ComponentRenderer::Draw() const
 
 	//glUseProgram(App->renderer3D->shaderProgram);
 
-	//GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
-	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
 
-	////float3 view_pos = view.RotatePart().Transposed().Transform(-view.TranslatePart());
-
-	//GLint viewLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "view");
-	//glUniformMatrix4fv(viewLoc, 1, FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	//GLint projectLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "projection");
-	//glUniformMatrix4fv(projectLoc, 1, FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+	//float3 view_pos = view.RotatePart().Transposed().Transform(-view.TranslatePart());
 
 
 
@@ -67,15 +61,13 @@ void ComponentRenderer::Draw() const
 	if(App->scene_manager->display_boundingboxes)
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green);
 
-	//glUseProgram(0);
 }
 
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
 {
-
 	// --- Draw Texture ---
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
-	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
 	//glEnable(GL_TEXTURE_2D); // enable gl capability
 	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 
@@ -105,6 +97,8 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 	glBindVertexArray(0);
 
 	//glUseProgram(0);
+
+	//glUseProgram(0);
 	//// ----        ----
 
 	//// --- Unbind buffers ---
@@ -116,7 +110,7 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 	//// --- Disable capabilities ---
 	//glDisable(GL_TEXTURE_2D); // enable gl capability
 	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
-	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
 
 }

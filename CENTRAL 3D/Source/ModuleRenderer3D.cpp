@@ -130,19 +130,49 @@ bool ModuleRenderer3D::Init(json file)
 
 
 	// --- Creating Default Vertex and Fragment Shaders ---
-	const char *vertexShaderSource = "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\0";
-	const char *fragmentShaderSource = "#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n\0";
+	//const char *vertexShaderSource = "#version 330 core\n"
+	//	"layout (location = 0) in vec3 aPos;\n"
+	//	"void main()\n"
+	//	"{\n"
+	//	"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+	//	"}\0";
+	//const char *fragmentShaderSource = "#version 330 core\n"
+	//	"out vec4 FragColor;\n"
+	//	"void main()\n"
+	//	"{\n"
+	//	"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	//	"}\n\0";
 
+	const char *vertexShaderSource =
+		"#version 330 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"layout(location = 1) in vec3 normal; \n"
+		"layout(location = 2) in vec3 color; \n"
+		"layout (location = 3) in vec2 texCoord; \n"
+		"out vec3 ourColor; \n"
+		"out vec2 TexCoord; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"ourColor = color; \n"
+		"TexCoord = texCoord; \n"
+		"}\n"
+		;
+
+	const char *fragmentShaderSource =
+		"#version 330 core \n"
+		"in vec3 ourColor; \n"
+		"in vec2 TexCoord; \n"
+		"out vec4 color; \n"
+		"uniform sampler2D ourTexture; \n"
+		"void main(){ \n"
+		"color = vec4(ourColor,1.0);; \n"
+		"} \n"
+		;
+	//vec4(1.0,0.0,0.0,1.0);
+	//texture(ourTexture, TexCoord);
 
 	// --- Creating GL Shaders from given code and compiling  ---
 	GLuint vertexShader;
@@ -185,7 +215,7 @@ bool ModuleRenderer3D::Init(json file)
 	glDeleteShader(fragmentShader);
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
-   // ------------------------------------------------------------------
+    //------------------------------------------------------------------
 	float vertices[] = {
 		-0.5f, -0.5f, 0.0f, // left  
 		 0.5f, -0.5f, 0.0f, // right 
@@ -211,9 +241,9 @@ bool ModuleRenderer3D::Init(json file)
 	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
 	glBindVertexArray(0);
 
-	// Projection matrix for
+	 //Projection matrix for
 	//OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
-
+	glUseProgram(App->renderer3D->shaderProgram);
 	return ret;
 }
 
@@ -225,6 +255,18 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 		UpdateProjectionMatrix();
 		active_camera->update_projection = false;
 	}
+	//glUseProgram(App->renderer3D->shaderProgram);
+
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
+
+
 
 	// --- Reset Buffers to default values ---
 	//glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -234,11 +276,13 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
+	glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f, 0.0f);
 	// draw our first triangle
-	glUseProgram(shaderProgram);
+
 	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	// glBindVertexArray(0); // no need to unbind it every time 
+	glBindVertexArray(0); // no need to unbind it every time 
 
 
 	//// --- Set Model View as current ---
