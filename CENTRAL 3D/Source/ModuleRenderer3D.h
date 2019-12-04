@@ -38,7 +38,7 @@ public:
 public:
 	// --- Default Shader ---
 	uint shaderProgram = 0;
-
+	unsigned int VAO = 0;
 	Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
 	ComponentCamera* active_camera = nullptr;
@@ -50,7 +50,7 @@ public:
 
 	// --- Flags ---
 	bool vsync = true;
-	bool depth = true;
+	bool depth = false;
 	bool cull_face = true;
 	bool lighting = true;
 	bool color_material = true;

@@ -34,14 +34,21 @@ void ComponentRenderer::Draw() const
 	//glPushMatrix();
 	//glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "view");
-	glUniformMatrix4fv(viewLoc, 1, TRUE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+	//glUseProgram(App->renderer3D->shaderProgram);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "projection");
-	glUniformMatrix4fv(projectLoc, 1, TRUE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+	//GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
+
+	////float3 view_pos = view.RotatePart().Transposed().Transform(-view.TranslatePart());
+
+	//GLint viewLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "view");
+	//glUniformMatrix4fv(viewLoc, 1, FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	//GLint projectLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "projection");
+	//glUniformMatrix4fv(projectLoc, 1, FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+
+
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
@@ -59,6 +66,8 @@ void ComponentRenderer::Draw() const
 
 	if(App->scene_manager->display_boundingboxes)
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green);
+
+	//glUseProgram(0);
 }
 
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
@@ -66,9 +75,9 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 
 	// --- Draw Texture ---
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
-	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-	glEnable(GL_TEXTURE_2D); // enable gl capability
-	glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
+	glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
+	//glEnable(GL_TEXTURE_2D); // enable gl capability
+	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
 
 	// --- If the mesh has a material associated, use it ---
 
@@ -77,12 +86,6 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 	//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
 
-	//glUseProgram(App->renderer3D->shaderProgram);
-	glBindVertexArray(mesh.VAO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
-	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
-
-	glBindVertexArray(0);
 
 	if (mat && mat->IsEnabled())
 	{
@@ -94,6 +97,13 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 			//glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 	}
 
+	//glUseProgram(App->renderer3D->shaderProgram);
+	glBindVertexArray(mesh.VAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+	glBindVertexArray(0);
+
 	//glUseProgram(0);
 	//// ----        ----
 
@@ -101,12 +111,12 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 
 	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	//glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
 	//// --- Disable capabilities ---
-	glDisable(GL_TEXTURE_2D); // enable gl capability
+	//glDisable(GL_TEXTURE_2D); // enable gl capability
 	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
-	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
+	glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
 
 }
@@ -117,7 +127,7 @@ inline void ComponentRenderer::DrawNormals(const ResourceMesh& mesh) const
 	glBegin(GL_LINES);
 	glLineWidth(1.0f);
 
-	glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+	//glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
 	if (draw_vertexnormals && mesh.Normals)
 	{
@@ -156,7 +166,7 @@ inline void ComponentRenderer::DrawNormals(const ResourceMesh& mesh) const
 	}
 
 	glLineWidth(1.0f);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnd();
 
 }
@@ -168,7 +178,7 @@ inline void ComponentRenderer::DrawAxis() const
 
 	glBegin(GL_LINES);
 
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	//glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 
 	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
@@ -191,6 +201,6 @@ inline void ComponentRenderer::DrawAxis() const
 	glEnd();
 
 	glLineWidth(1.0f);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	
 }

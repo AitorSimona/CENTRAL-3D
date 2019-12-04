@@ -504,7 +504,7 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 
-	glColor4f(color.r, color.g, color.b, color.a);
+	//glColor4f(color.r, color.g, color.b, color.a);
 
 	//Between-planes right
 	glVertex3fv((GLfloat*)&corners[1]);
@@ -542,7 +542,7 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glVertex3fv((GLfloat*)&corners[4]);
 	glVertex3fv((GLfloat*)&corners[6]);
 
-	glColor4f(1.0, 1.0, 1.0, 1.0);
+	//glColor4f(1.0, 1.0, 1.0, 1.0);
 
 	glEnd();
 	glEnable(GL_LIGHTING);
@@ -635,6 +635,7 @@ void ModuleSceneManager::CreateGrid() const
 	glLineWidth(1.0f);
 
 	glEnd();
+
 }
 
 GameObject * ModuleSceneManager::LoadCube()

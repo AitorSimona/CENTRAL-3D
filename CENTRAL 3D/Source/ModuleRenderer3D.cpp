@@ -58,63 +58,63 @@ bool ModuleRenderer3D::Init(json file)
 		}
 
 
-		//Initialize Projection Matrix
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
+		////Initialize Projection Matrix
+		//glMatrixMode(GL_PROJECTION);
+		//glLoadIdentity();
 
-		//Check for error
-		error = glGetError();
-		if(error != GL_NO_ERROR)
-		{
-			CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
-			ret = false;
-		}
+		////Check for error
+		//error = glGetError();
+		//if(error != GL_NO_ERROR)
+		//{
+		//	CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
+		//	ret = false;
+		//}
 
-		//Initialize Modelview Matrix
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		////Initialize Modelview Matrix
+		//glMatrixMode(GL_MODELVIEW);
+		//glLoadIdentity();
 
-		//Check for error
-		error = glGetError();
-		if(error != GL_NO_ERROR)
-		{
-			CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
-			ret = false;
-		}
+		////Check for error
+		//error = glGetError();
+		//if(error != GL_NO_ERROR)
+		//{
+		//	CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
+		//	ret = false;
+		//}
+		//
+		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		//glClearDepth(1.0f);
+		//
+		////Initialize clear color
+		//glClearColor(0.f, 0.f, 0.f, 1.f);
+
+		////Check for error
+		//error = glGetError();
+		//if(error != GL_NO_ERROR)
+		//{
+		//	CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
+		//	ret = false;
+		//}
+
+		//// --- Set lights and OpenGL Capabilities ---
+		//GLfloat LightModelAmbient[] = {0.0f, 0.0f, 0.0f, 1.0f};
+		//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
+		//
+		//lights[0].ref = GL_LIGHT0;
+		//lights[0].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
+		//lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
+		//lights[0].SetPos(0.0f, 0.0f, 2.5f);
+		//lights[0].Init();
+		//
+		//GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
+
+		//GLfloat MaterialDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
 		
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		glClearDepth(1.0f);
-		
-		//Initialize clear color
-		glClearColor(0.f, 0.f, 0.f, 1.f);
-
-		//Check for error
-		error = glGetError();
-		if(error != GL_NO_ERROR)
-		{
-			CONSOLE_LOG("|[error]: Error initializing OpenGL! %s\n", gluErrorString(error));
-			ret = false;
-		}
-
-		// --- Set lights and OpenGL Capabilities ---
-		GLfloat LightModelAmbient[] = {0.0f, 0.0f, 0.0f, 1.0f};
-		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
-		
-		lights[0].ref = GL_LIGHT0;
-		lights[0].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
-		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
-		lights[0].SetPos(0.0f, 0.0f, 2.5f);
-		lights[0].Init();
-		
-		GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
-
-		GLfloat MaterialDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
-		
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		lights[0].Active(true);
+		//lights[0].Active(true);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
 
@@ -130,42 +130,24 @@ bool ModuleRenderer3D::Init(json file)
 
 
 	// --- Creating Default Vertex and Fragment Shaders ---
-	const char vertexShaderSource[] =
-		"#version 330 core \n"
-		"layout (location = 0) in vec3 position; \n"
-		"layout(location = 1) in vec3 normal; \n"
-		"layout(location = 2) in vec3 color; \n"
-		"layout (location = 3) in vec2 texCoord; \n"
-		"out vec3 ourColor; \n"
-		"out vec2 TexCoord; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"ourColor = color; \n"
-		"TexCoord = texCoord; \n"
-		"}\n"
-		;
+	const char *vertexShaderSource = "#version 330 core\n"
+		"layout (location = 0) in vec3 aPos;\n"
+		"void main()\n"
+		"{\n"
+		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"}\0";
+	const char *fragmentShaderSource = "#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"void main()\n"
+		"{\n"
+		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"}\n\0";
 
-	const char fragmentShaderSource[] =
-		"#version 330 core \n"
-		"in vec3 ourColor; \n"
-		"in vec2 TexCoord; \n"
-		"out vec4 color; \n"
-		"uniform sampler2D ourTexture; \n"
-		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
-		"} \n"
-		;
-
-	GLchar const* vertexSource = vertexShaderSource;
-	GLchar const* fragmentSource = fragmentShaderSource;
 
 	// --- Creating GL Shaders from given code and compiling  ---
 	GLuint vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexSource, NULL);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 	GLint success;
 	GLchar infoLog[512];
@@ -173,18 +155,18 @@ bool ModuleRenderer3D::Init(json file)
 	if (success == 0)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		CONSOLE_LOG("Vertex Shader compilation error: %s", infoLog);
+		CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
 	}
 
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (success == 0)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		CONSOLE_LOG("Fragment Shader compilation error: %s", infoLog);
+		CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
 	}
 
 	// --- Creating Shader program and linking both vertex and fragment to it ---
@@ -195,15 +177,42 @@ bool ModuleRenderer3D::Init(json file)
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		CONSOLE_LOG("Shader link error: %s", infoLog);
+		CONSOLE_LOG("|[error]:Shader link error: %s", infoLog);
 	}
 
 	// --- We do not need this anymore ---
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	// set up vertex data (and buffer(s)) and configure vertex attributes
+   // ------------------------------------------------------------------
+	float vertices[] = {
+		-0.5f, -0.5f, 0.0f, // left  
+		 0.5f, -0.5f, 0.0f, // right 
+		 0.0f,  0.5f, 0.0f  // top   
+	};
+
+	unsigned int VBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+	glBindVertexArray(0);
+
 	// Projection matrix for
-	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	//OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
 
 	return ret;
 }
@@ -218,22 +227,32 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	}
 
 	// --- Reset Buffers to default values ---
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.f, 0.f, 0.f, 1.f);
-	glLoadIdentity();
+	//glClearColor(0.f, 0.f, 0.f, 1.f);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// --- Set Model View as current ---
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(active_camera->GetOpenGLViewMatrix().ptr());
+	//glLoadIdentity();
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// draw our first triangle
+	glUseProgram(shaderProgram);
+	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	// glBindVertexArray(0); // no need to unbind it every time 
+
+
+	//// --- Set Model View as current ---
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadMatrixf(active_camera->GetOpenGLViewMatrix().ptr());
 
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
-	// light 0 on cam pos, Render lights
-	lights[0].SetPos(active_camera->frustum.Pos().x, active_camera->frustum.Pos().y, active_camera->frustum.Pos().z);
+	//// light 0 on cam pos, Render lights
+	//lights[0].SetPos(active_camera->frustum.Pos().x, active_camera->frustum.Pos().y, active_camera->frustum.Pos().z);
 
-	for(uint i = 0; i < MAX_LIGHTS; ++i)
-		lights[i].Render();
+	//for(uint i = 0; i < MAX_LIGHTS; ++i)
+	//	lights[i].Render();
 
 	return UPDATE_CONTINUE;
 }
@@ -301,13 +320,13 @@ void ModuleRenderer3D::UpdateGLCapabilities() const
 
 void ModuleRenderer3D::UpdateProjectionMatrix() const
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
 
-	glLoadMatrixf((GLfloat*)active_camera->GetOpenGLProjectionMatrix().ptr());
+	//glLoadMatrixf((GLfloat*)active_camera->GetOpenGLProjectionMatrix().ptr());
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 }
 
 
