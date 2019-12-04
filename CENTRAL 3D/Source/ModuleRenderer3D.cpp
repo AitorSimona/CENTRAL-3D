@@ -277,7 +277,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
-	glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f, 0.0f);
+	glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f,	0.0f);
 	// draw our first triangle
 
 	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized

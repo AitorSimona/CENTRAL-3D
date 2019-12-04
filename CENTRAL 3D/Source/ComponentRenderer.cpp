@@ -79,15 +79,18 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
 
 
-	if (mat && mat->IsEnabled())
-	{
-		if (this->checkers)
-			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-		else
-			glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
-			//glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
-			//glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
-	}
+	//if (mat && mat->IsEnabled())
+	//{
+	//	if (this->checkers)
+	//		glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+	//	else
+	//		glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
+	//		//glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
+	//		//glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
+	//}
+
+	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
+	glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f, 0.0f);
 
 	//glUseProgram(App->renderer3D->shaderProgram);
 	glBindVertexArray(mesh.VAO);

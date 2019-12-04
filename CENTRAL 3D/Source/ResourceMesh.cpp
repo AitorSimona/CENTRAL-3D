@@ -80,7 +80,7 @@ void ResourceMesh::CreateEBO()
 	if (Indices != nullptr)
 	{
 		glGenBuffers(1, &EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
