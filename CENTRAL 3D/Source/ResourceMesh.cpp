@@ -28,6 +28,7 @@ void ResourceMesh::LoadInMemory()
 void ResourceMesh::FreeMemory()
 {
 	glDeleteBuffers(1, (GLuint*)&VBO);
+
 	glDeleteBuffers(1, (GLuint*)&EBO);
 	glDeleteVertexArrays(1, (GLuint*)&VAO);
 
@@ -58,6 +59,7 @@ void ResourceMesh::FreeMemory()
 	}
 
 	VBO = 0;
+
 	EBO = 0;
 	VAO = 0;
 }
@@ -70,6 +72,10 @@ void ResourceMesh::CreateVBO()
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * VerticesSize, Vertices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * NormalsSize, Normals, GL_STATIC_DRAW);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(float4) * VerticesSize, Color, GL_STATIC_DRAW);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * TexCoordsSize, TexCoords, GL_STATIC_DRAW);
 	}
 	else
 		CONSOLE_LOG("|[error]: Could not create VBO, null vertices");

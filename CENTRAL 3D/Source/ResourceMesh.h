@@ -44,6 +44,7 @@ public:
 
 	uint VBO = 0;	// Vertex Buffer Object
 	uint EBO = 0;	// Element/Index Buffer Object
+
 	uint VAO = 0;	// Vertex Array Object
 };
 

@@ -144,7 +144,7 @@ bool ModuleRenderer3D::Init(json file)
 	//	"}\n\0";
 
 	const char *vertexShaderSource =
-		"#version 330 core \n"
+		"#version 460 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
@@ -162,15 +162,16 @@ bool ModuleRenderer3D::Init(json file)
 		;
 
 	const char *fragmentShaderSource =
-		"#version 330 core \n"
+		"#version 460 core \n"
 		"in vec3 ourColor; \n"
 		"in vec2 TexCoord; \n"
 		"out vec4 color; \n"
 		"uniform sampler2D ourTexture; \n"
 		"void main(){ \n"
-		"color = vec4(ourColor,1.0);; \n"
+		"color = texture(ourTexture, TexCoord); \n"
 		"} \n"
 		;
+	//vec4(ourColor,1.0);
 	//vec4(1.0,0.0,0.0,1.0);
 	//texture(ourTexture, TexCoord);
 
