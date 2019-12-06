@@ -242,9 +242,10 @@ bool ModuleRenderer3D::Init(json file)
 	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
 	glBindVertexArray(0);
 
-	 //Projection matrix for
-	//OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	//Projection matrix for
+	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
 	glUseProgram(App->renderer3D->shaderProgram);
+
 	return ret;
 }
 
@@ -256,40 +257,6 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 		UpdateProjectionMatrix();
 		active_camera->update_projection = false;
 	}
-	//glUseProgram(App->renderer3D->shaderProgram);
-
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
-
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
-
-
-
-	// --- Reset Buffers to default values ---
-	//glClearColor(0.f, 0.f, 0.f, 1.f);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//glLoadIdentity();
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
-	glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f,	0.0f);
-	// draw our first triangle
-
-	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glBindVertexArray(0); // no need to unbind it every time 
-
-
-	//// --- Set Model View as current ---
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadMatrixf(active_camera->GetOpenGLViewMatrix().ptr());
-
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -305,16 +272,37 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	//glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
-	//glClear(GL_COLOR_BUFFER_BIT);
-	//glClear(GL_DEPTH_BUFFER_BIT);
+	// --- Set Shader Matrices ---
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
+
+	// --- Clear framebuffers ---
+	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// --- Triangle draw with shader test ---
+	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
+	glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f, 0.0f);
+	// draw our first triangle
+
+	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindVertexArray(0); // no need to unbind it every time 
 
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
 
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// --- Draw everything and swap buffers ---
 	App->gui->Draw();
@@ -380,19 +368,10 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	// --- Called by UpdateWindowSize() in Window module this when resizing windows to prevent rendering issues ---
 
 	// --- Resetting View matrices ---
-
 	glViewport(0, 0, width, height);
 	active_camera->SetAspectRatio(width / height);
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-	//glLoadMatrixf(&ProjectionMatrix);
-	 UpdateProjectionMatrix();
-
-	// glDeleteFramebuffers(1, &fbo);
-	 //CreateFramebuffer();
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
+	glDeleteFramebuffers(1, &fbo);
+	CreateFramebuffer();
 }
 
 uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void * data) const

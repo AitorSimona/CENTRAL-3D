@@ -27,7 +27,7 @@ bool PanelScene::Draw()
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 
-		//ImGui::Image((ImTextureID)App->renderer3D->rendertexture, ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
 
 		if (ImGui::BeginMenuBar())
 		{
