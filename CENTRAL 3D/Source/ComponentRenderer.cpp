@@ -128,14 +128,14 @@ inline void ComponentRenderer::DrawNormals(const ResourceMesh& mesh) const
 
 	//glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
-	if (draw_vertexnormals && mesh.Normals)
+	if (draw_vertexnormals && mesh.vertices->normal)
 	{
 		// --- Draw Vertex Normals ---
 
 		for (uint j = 0; j < mesh.IndicesSize; ++j)
 		{
-			glVertex3f(mesh.Vertices[mesh.Indices[j]].x, mesh.Vertices[mesh.Indices[j]].y, mesh.Vertices[mesh.Indices[j]].z);
-			glVertex3f(mesh.Vertices[mesh.Indices[j]].x + mesh.Normals[mesh.Indices[j]].x*NORMAL_LENGTH, mesh.Vertices[mesh.Indices[j]].y + mesh.Normals[mesh.Indices[j]].y*NORMAL_LENGTH, mesh.Vertices[mesh.Indices[j]].z + mesh.Normals[mesh.Indices[j]].z*NORMAL_LENGTH);
+			glVertex3f(mesh.vertices[mesh.Indices[j]].position[0], mesh.vertices[mesh.Indices[j]].position[1], mesh.vertices[mesh.Indices[j]].position[2]);
+			glVertex3f(mesh.vertices[mesh.Indices[j]].position[0] + mesh.vertices[mesh.Indices[j]].normal[0]*NORMAL_LENGTH, mesh.vertices[mesh.Indices[j]].position[1] + mesh.vertices[mesh.Indices[j]].normal[1]*NORMAL_LENGTH, mesh.vertices[mesh.Indices[j]].position[2] + mesh.vertices[mesh.Indices[j]].normal[2]*NORMAL_LENGTH);
 		}
 
 	}
@@ -148,9 +148,9 @@ inline void ComponentRenderer::DrawNormals(const ResourceMesh& mesh) const
 
 		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
 		{
-			face.a = mesh.Vertices[mesh.Indices[j * 3]];
-			face.b = mesh.Vertices[mesh.Indices[(j * 3) + 1]];
-			face.c = mesh.Vertices[mesh.Indices[(j * 3) + 2]];
+			face.a = float3(mesh.vertices[mesh.Indices[j * 3]].position);
+			face.b = float3(mesh.vertices[mesh.Indices[(j * 3) + 1]].position);
+			face.c = float3(mesh.vertices[mesh.Indices[(j * 3) + 2]].position);
 
 			float3 face_center = face.Centroid();
 

@@ -138,11 +138,7 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 
 		if (mesh && mesh->resource_mesh)
 		{
-			AABB aabb;
-			aabb.SetNegativeInfinity();
-			aabb.Enclose(mesh->resource_mesh->Vertices, mesh->resource_mesh->VerticesSize);
-			aabb.Translate(transform->GetPosition());
-			float3 center = aabb.CenterPoint();
+			float3 center = GO->GetAABB().CenterPoint();
 
 			reference.x = center.x;
 			reference.y = center.y;

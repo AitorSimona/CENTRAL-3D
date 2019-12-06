@@ -5,6 +5,14 @@
 #include "Globals.h"
 #include "MathGeoLib/include/Geometry/AABB.h"
 
+struct Vertex
+{
+	float position[3];
+	float normal[3];
+	unsigned char color[4];
+	float texCoord[2];
+};
+
 class ResourceMesh : public Resource
 {
 public:
@@ -26,19 +34,10 @@ private:
 public:
 	AABB aabb;
 
-	float3* Vertices = nullptr;
+	Vertex* vertices = nullptr;
 	uint VerticesSize = 0;
-
 	uint* Indices = nullptr;
 	uint IndicesSize = 0;
-
-	float3* Normals = nullptr;
-	uint NormalsSize = 0;
-
-	float4* Color = nullptr;
-
-	float* TexCoords = nullptr;
-	uint TexCoordsSize = 0;
 
 	// --- New shader approach ---
 

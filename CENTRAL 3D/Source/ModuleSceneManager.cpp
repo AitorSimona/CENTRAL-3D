@@ -265,9 +265,9 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 
 					for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
 					{
-						float3 a = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[j * 3]];
-						float3 b = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 1]];
-						float3 c = mesh->resource_mesh->Vertices[mesh->resource_mesh->Indices[(j * 3) + 2]];
+						float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
+						float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
+						float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
 						// --- Create Triangle given three vertices ---
 						Triangle triangle(a, b, c);
 
@@ -444,18 +444,26 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 	new_mesh->IndicesSize = mesh->ntriangles * 3;
 	new_mesh->VerticesSize = mesh->npoints;
 
-	// --- Vertices ---
-
-	new_mesh->Vertices = new float3[new_mesh->VerticesSize];
+	new_mesh->vertices = new Vertex[new_mesh->VerticesSize];
 
 	for (uint i = 0; i < new_mesh->VerticesSize; ++i)
 	{
-		new_mesh->Vertices[i].x = mesh->points[3 * i];
-		new_mesh->Vertices[i].y = mesh->points[(3 * i) + 1];
-		new_mesh->Vertices[i].z = mesh->points[(3 * i) + 2];
-	}
+		// --- Vertices ---
+		new_mesh->vertices[i].position[0] = mesh->points[3 * i];
+		new_mesh->vertices[i].position[1] = mesh->points[(3 * i) + 1];
+		new_mesh->vertices[i].position[2] = mesh->points[(3 * i) + 2];
 
-	//new_mesh->VerticesID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float3) * new_mesh->VerticesSize, new_mesh->Vertices);
+		// --- Normals ---
+		new_mesh->vertices[i].normal[0] = mesh->normals[3 * i];
+		new_mesh->vertices[i].normal[1] = mesh->normals[(3 * i) + 1];
+		new_mesh->vertices[i].normal[2] = mesh->normals[(3 * i) + 2];
+
+		// --- Colors ---
+
+		// --- Texture Coords ---
+		new_mesh->vertices[i].texCoord[0] = mesh->tcoords[2 * i];
+		new_mesh->vertices[i].texCoord[1] = mesh->tcoords[(2 * i) + 1];
+	}
 
 	// --- Indices ---
 	new_mesh->Indices = new uint[new_mesh->IndicesSize];
@@ -463,35 +471,6 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 	{
 		new_mesh->Indices[i] = mesh->triangles[i];
 	}
-	//new_mesh->IndicesID = App->renderer3D->CreateBufferFromData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * new_mesh->IndicesSize, new_mesh->Indices);
-
-	// --- Normals ---
-	if (mesh->normals)
-	{
-		new_mesh->NormalsSize = mesh->npoints;
-		new_mesh->Normals = new float3[new_mesh->NormalsSize];
-
-		for (uint i = 0; i < new_mesh->NormalsSize; ++i)
-		{
-			new_mesh->Normals[i].x = mesh->normals[3 * i];
-			new_mesh->Normals[i].y = mesh->normals[(3 * i) + 1];
-			new_mesh->Normals[i].z = mesh->normals[(3 * i) + 2];
-		}
-
-	}
-
-	// --- Texture Coords ---
-
-	new_mesh->TexCoordsSize = new_mesh->VerticesSize * 2;
-	new_mesh->TexCoords = new float[new_mesh->TexCoordsSize];
-
-	for (uint i = 0; i < new_mesh->VerticesSize; ++i)
-	{
-		new_mesh->TexCoords[2 * i] = mesh->tcoords[2 * i];
-		new_mesh->TexCoords[(2 * i) + 1] = mesh->tcoords[(2 * i) + 1];
-	}
-
-	//new_mesh->TextureCoordsID = App->renderer3D->CreateBufferFromData(GL_ARRAY_BUFFER, sizeof(float) * new_mesh->TexCoordsSize, new_mesh->TexCoords);
 
 
 	new_mesh->LoadInMemory();
