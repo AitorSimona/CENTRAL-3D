@@ -50,8 +50,8 @@ public:
 
 	// --- Flags ---
 	bool vsync = true;
-	bool depth = false;
-	bool cull_face = false;
+	bool depth = true;
+	bool cull_face = true;
 	bool lighting = false;
 	bool color_material = true;
 	bool wireframe = false;
