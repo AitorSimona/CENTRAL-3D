@@ -21,13 +21,20 @@ PanelScene::~PanelScene()
 bool PanelScene::Draw()
 {
 	ImGuiWindowFlags settingsFlags = 0;
-	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar;
+	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse;
 
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 
 		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
+
+		// --- Process input and update editor camera ---
+		if (ImGui::IsWindowHovered())
+			SceneHovered = true;
+		else
+			SceneHovered = false;
+
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -50,4 +57,9 @@ bool PanelScene::Draw()
 
 
 	return true;
+}
+
+void PanelScene::HandleInput()
+{
+
 }

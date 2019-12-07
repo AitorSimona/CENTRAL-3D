@@ -11,6 +11,9 @@ public:
 	~PanelScene();
 
 	bool Draw();
+
+	void HandleInput();
+	bool SceneHovered = false;
 };
 
 #endif

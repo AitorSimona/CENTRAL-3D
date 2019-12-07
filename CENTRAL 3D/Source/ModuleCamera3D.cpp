@@ -15,6 +15,8 @@
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 
+#include "PanelScene.h"
+
 #include "mmgr/mmgr.h"
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
@@ -59,7 +61,7 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	if (App->GetAppState() == AppState::EDITOR)
+	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered)
 	{
 		float3 newPos(0, 0, 0);
 		float speed = 10.0f * dt;
@@ -67,7 +69,7 @@ update_status ModuleCamera3D::Update(float dt)
 			speed *= 2.0f;
 
 		// --- Move ---
-		if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 		{
 			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * speed;
 			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * speed;
@@ -89,11 +91,11 @@ update_status ModuleCamera3D::Update(float dt)
 			CameraPan(speed);
 
 		// --- Zoom ---
-		if (!App->gui->IsMouseCaptured() && abs(App->input->GetMouseWheel()) > 0)
+		if (/*!App->gui->IsMouseCaptured() && */abs(App->input->GetMouseWheel()) > 0)
 			CameraZoom(speed);
 
 		// --- Orbit Object ---
-		if (!App->gui->IsMouseCaptured() && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
 			CameraLookAround(speed, reference);
 
 		// --- Frame object ---

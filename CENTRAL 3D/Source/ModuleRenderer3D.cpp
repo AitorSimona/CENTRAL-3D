@@ -293,11 +293,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Triangle draw with shader test ---
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
 	glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f, 0.0f);
-	// draw our first triangle
 
-	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glBindVertexArray(0); // no need to unbind it every time 
+	glBindVertexArray(0); 
 
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();

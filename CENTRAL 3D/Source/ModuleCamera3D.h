@@ -15,6 +15,7 @@ public:
 	bool Init(json config) override;
 	bool Start();
 	update_status Update(float dt);
+	
 	bool CleanUp();
 
 	void FrameObject(GameObject* GO);
