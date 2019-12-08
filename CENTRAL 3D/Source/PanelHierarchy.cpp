@@ -30,26 +30,6 @@ bool PanelHierarchy::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FBX"))
-			{
-				if (App->gui->panelProject)
-				{
-					std::string extension;
-					App->fs->SplitFilePath(App->gui->panelProject->dragged.data(), nullptr, nullptr, &extension);
-
-					if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0)
-					{
-							ImportData data;
-							App->importer->GetImporterScene()->Import(App->gui->panelProject->dragged.data(), data);
-							App->gui->panelProject->dragged = "";
-					}
-				}
-			}
-
-			ImGui::EndDragDropTarget();
-		}
 		DrawRecursive(App->scene_manager->GetRootGO());
 	}
 

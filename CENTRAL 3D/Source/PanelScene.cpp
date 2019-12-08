@@ -5,6 +5,13 @@
 #include "ModuleWindow.h"
 #include "ModuleSceneManager.h"
 
+#include "ModuleImporter.h"
+#include "ImporterScene.h"
+#include "ModuleGui.h"
+#include "ModuleFileSystem.h"
+
+#include "PanelProject.h"
+
 #include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
@@ -21,13 +28,34 @@ PanelScene::~PanelScene()
 bool PanelScene::Draw()
 {
 	ImGuiWindowFlags settingsFlags = 0;
-	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse;
-
+	settingsFlags = ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
+		ImVec2 size = ImVec2(ImGui::GetWindowWidth()*0.987, ImGui::GetWindowHeight()*0.93);
+	
+		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
-		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FBX"))
+			{
+				if (App->gui->panelProject)
+				{
+					std::string extension;
+					App->fs->SplitFilePath(App->gui->panelProject->dragged.data(), nullptr, nullptr, &extension);
+
+					if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0)
+					{
+						ImportData data;
+						App->importer->GetImporterScene()->Import(App->gui->panelProject->dragged.data(), data);
+						App->gui->panelProject->dragged = "";
+					}
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
 
 		// --- Process input and update editor camera ---
 		if (ImGui::IsWindowHovered())
