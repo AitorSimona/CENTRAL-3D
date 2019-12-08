@@ -30,19 +30,10 @@ void ComponentRenderer::Draw() const
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	ComponentCamera* camera = GO->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
 
-	// --- Send transform to OpenGL and use it to draw ---
-	//glPushMatrix();
-	//glMultMatrixf(transform->GetGlobalTransform().Transposed().ptr());
-
-
 	//glUseProgram(App->renderer3D->shaderProgram);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
-
-	//float3 view_pos = view.RotatePart().Transposed().Transform(-view.TranslatePart());
-
-
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
@@ -50,9 +41,6 @@ void ComponentRenderer::Draw() const
 		DrawNormals(*mesh->resource_mesh);
 		DrawAxis();
 	}
-
-	// --- Pop transform so OpenGL does not use it for other operations ---
-	//glPopMatrix();
 
 	// --- Draw Frustum ---
 	if (camera)
@@ -65,24 +53,6 @@ void ComponentRenderer::Draw() const
 
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
 {
-	// --- Draw Texture ---
-	//glEnableClientState(GL_TEXTURE_COORD_ARRAY); // enable gl capability
-	//glEnableClientState(GL_VERTEX_ARRAY); // enable client-side capability
-	//glEnable(GL_TEXTURE_2D); // enable gl capability
-	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should set which one is active 
-
-	// --- If the mesh has a material associated, use it ---
-
-	//// --- Draw mesh ---
-	//glBindBuffer(GL_ARRAY_BUFFER, mesh.VerticesID); // start using created buffer (vertices)
-	//glVertexPointer(3, GL_FLOAT, 0, NULL); // Use selected buffer as vertices 
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndicesID); // start using created buffer (indices)
-
-
-	//int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
-	//glVertexAttrib3f(vertexColorLocation, 0.0f, 1.0f, 0.0f);
-
-	//glUseProgram(App->renderer3D->shaderProgram);
 	glBindVertexArray(mesh.VAO);
 
 	if (mat && mat->IsEnabled())
@@ -91,40 +61,19 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
 		else
 			glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
-			//glBindBuffer(GL_ARRAY_BUFFER, mesh.TextureCoordsID); // start using created buffer (tex coords)
-			//glTexCoordPointer(2, GL_FLOAT, 0, NULL); // Specify type of data format
 	}
-
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
 	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-
-	//glUseProgram(0);
-
-	//glUseProgram(0);
-	//// ----        ----
-
-	//// --- Unbind buffers ---
-
-	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Stop using buffer (vertices)
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Stop using buffer (indices)
-
-	//// --- Disable capabilities ---
-	//glDisable(GL_TEXTURE_2D); // enable gl capability
-	//glActiveTexture(GL_TEXTURE0); // In case we had multitexturing, we should reset active texture
-	//glDisableClientState(GL_VERTEX_ARRAY); // disable client-side capability
-	//glDisableClientState(GL_TEXTURE_COORD_ARRAY); // disable client-side capability
-
 }
 
 inline void ComponentRenderer::DrawNormals(const ResourceMesh& mesh) const
 {
 	// --- Draw Mesh Normals ---
-	glBegin(GL_LINES);
-	glLineWidth(1.0f);
+	glLineWidth(2.0f);
 
 	//glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
 
@@ -166,8 +115,6 @@ inline void ComponentRenderer::DrawNormals(const ResourceMesh& mesh) const
 
 	glLineWidth(1.0f);
 	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glEnd();
-
 }
 
 inline void ComponentRenderer::DrawAxis() const

@@ -21,7 +21,6 @@ public:
 
 	// --- Utilities ---
 	void UpdateGLCapabilities() const;
-	void UpdateProjectionMatrix() const; 
 	void OnResize(int width, int height);
 
 	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;

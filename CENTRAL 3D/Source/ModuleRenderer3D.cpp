@@ -220,9 +220,9 @@ bool ModuleRenderer3D::Init(json file)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	// --- MYTODO: Remove this
 	if (active_camera->update_projection)
 	{
-		UpdateProjectionMatrix();
 		active_camera->update_projection = false;
 	}
 	// --- Update OpenGL Capabilities ---
@@ -304,17 +304,6 @@ void ModuleRenderer3D::UpdateGLCapabilities() const
 
 }
 
-void ModuleRenderer3D::UpdateProjectionMatrix() const
-{
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-
-	//glLoadMatrixf((GLfloat*)active_camera->GetOpenGLProjectionMatrix().ptr());
-
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-}
-
 
 void ModuleRenderer3D::OnResize(int width, int height)
 {
@@ -322,7 +311,12 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 	// --- Resetting View matrices ---
 	glViewport(0, 0, width, height);
-	active_camera->SetAspectRatio(width / height);
+
+	if(width > height)
+		active_camera->SetAspectRatio(width / height);
+	else
+		active_camera->SetAspectRatio(height / width);
+
 	glDeleteFramebuffers(1, &fbo);
 	CreateFramebuffer();
 }
@@ -411,8 +405,6 @@ void ModuleRenderer3D::SetActiveCamera(ComponentCamera * camera)
 	{
 		camera->active_camera = true;
 	}
-
-	UpdateProjectionMatrix();
 }
 
 void ModuleRenderer3D::SetCullingCamera(ComponentCamera * camera)

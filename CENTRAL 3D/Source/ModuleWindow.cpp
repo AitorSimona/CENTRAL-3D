@@ -125,14 +125,22 @@ void ModuleWindow::SetTitle(const char* title)
 
 void ModuleWindow::SetWindowWidth(uint width)
 {
-	screen_width = width;
-	UpdateWindowSize();
+		screen_width = width;
+
+		if (width < 950)
+			screen_width = 950;
+
+		UpdateWindowSize();
 }
 
 void ModuleWindow::SetWindowHeight(uint height)
 {
-	screen_height = height;
-	UpdateWindowSize();
+		screen_height = height;
+
+		if (height < 320)
+			screen_height = 320;
+
+		UpdateWindowSize();
 }
 
 uint ModuleWindow::GetWindowWidth() const
