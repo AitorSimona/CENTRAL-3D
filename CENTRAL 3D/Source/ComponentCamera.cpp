@@ -80,6 +80,9 @@ void ComponentCamera::SetFOV(float fov)
 
 void ComponentCamera::SetAspectRatio(float ar)
 {
+	if (ar < 1.0f)
+		ar = 1.0f;
+
 	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), ar);
 	update_projection = true;
 }
