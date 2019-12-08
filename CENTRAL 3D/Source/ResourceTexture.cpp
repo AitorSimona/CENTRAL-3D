@@ -12,7 +12,7 @@ ResourceTexture::~ResourceTexture()
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-void ResourceTexture::LoadOnMemory()
+void ResourceTexture::LoadInMemory()
 {
 }
 

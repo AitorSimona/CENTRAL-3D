@@ -5,6 +5,7 @@
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
+#include "ResourceShader.h"
 
 #include "mmgr/mmgr.h"
 
@@ -156,6 +157,10 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 
 	case Resource::ResourceType::MATERIAL:
 		resource = (Resource*)new ResourceMaterial;
+		break;
+
+	case Resource::ResourceType::SHADER:
+		resource = (Resource*)new ResourceShader;
 		break;
 	}
 

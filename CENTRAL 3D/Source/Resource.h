@@ -16,6 +16,7 @@ public:
 		TEXTURE,
 		MATERIAL,
 		META,
+		SHADER,
 		UNKNOWN,
 	};
 
