@@ -80,6 +80,7 @@ void ComponentCamera::SetFOV(float fov)
 
 void ComponentCamera::SetAspectRatio(float ar)
 {
+	// When resizing window, adjusting aspect ratio to less than 1.0f and rotating editor camera made mathgeo crash
 	if (ar < 1.0f)
 		ar = 1.0f;
 
