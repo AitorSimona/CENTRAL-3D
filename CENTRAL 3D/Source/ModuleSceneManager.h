@@ -31,7 +31,7 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	ComponentMaterial* CreateEmptyMaterial();
-	void CreateGrid() const;
+	void CreateGrid();
 	GameObject* LoadCube();
 	GameObject* LoadSphere();
 
@@ -45,6 +45,7 @@ public:
 	void SetTextureToSelectedGO(uint id);
 
 	// --- Utilities ---
+	void DrawGrid();
 	void Draw();
 	GameObject* GetRootGO() const;
 	void RedoOctree();
@@ -88,8 +89,8 @@ public:
 	std::vector<GameObject*> NoStaticGo;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
-
 private:
+	uint Grid_VAO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
@@ -98,9 +99,6 @@ private:
 
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
-
-
-
 };
 
 #endif

@@ -8,9 +8,9 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
-	frustum.SetViewPlaneDistances(0.1f, 1000.0f);
+	frustum.SetViewPlaneDistances(0.1f, 2000.0f);
 	frustum.SetPerspective(1.0f, 1.0f);
-	SetAspectRatio(1.3f);
+	SetAspectRatio(1.0f);
 
 	update_projection = true;
 }

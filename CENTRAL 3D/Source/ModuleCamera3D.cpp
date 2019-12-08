@@ -41,6 +41,7 @@ bool ModuleCamera3D::Start()
 
 	bool ret = true;
 	camera->frustum.SetPos(float3(0.0f,1.0f,-5.0f));
+	camera->SetFOV(60.0f);
 	reference = camera->frustum.Pos();
 	camera->update_projection = true;
 

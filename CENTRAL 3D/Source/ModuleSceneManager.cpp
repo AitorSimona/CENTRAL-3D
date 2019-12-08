@@ -69,6 +69,7 @@ bool ModuleSceneManager::Start()
 	cube = CreateCube(1, 1, 1);
 	sphere = CreateSphere(1.0f, 25, 25);
 
+	CreateGrid();
 
 	return true;
 }
@@ -106,10 +107,25 @@ bool ModuleSceneManager::CleanUp()
 	return true;
 }
 
-void ModuleSceneManager::Draw() 
+void ModuleSceneManager::DrawGrid()
+{
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+
+	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
+	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+
+	glLineWidth(2.0f);
+	glBindVertexArray(Grid_VAO);
+	glDrawArrays(GL_LINES, 0, 84);
+	glBindVertexArray(0);
+	glLineWidth(1.0f);
+}
+
+void ModuleSceneManager::Draw()
 {
 	// --- Draw Grid ---
-	CreateGrid();
+	DrawGrid();
 
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
@@ -589,39 +605,44 @@ ResourceMesh* ModuleSceneManager::CreateSphere(float Radius, int slices, int sla
 	return new_mesh;
 }
 
-void ModuleSceneManager::CreateGrid() const
+void ModuleSceneManager::CreateGrid() 
 {
-	// --- Create Grid in direct mode (to be changed) ---
-	/*glUseProgram(App->renderer3D->shaderProgram);*/
-
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-	glLineWidth(2.0f);
-
-	glBegin(GL_LINES);
-
+	// --- Fill vertex data ---
 	float distance = 10.0f;
+
+	float3 vertices[84];
+	uint i = 0;
 
 	for (int max_linesgrid = -distance; max_linesgrid < distance; max_linesgrid++)
 	{
-		glVertex3f((float)max_linesgrid, 0.0f, -distance);
-		glVertex3f((float)max_linesgrid, 0.0f, distance);
-		glVertex3f(-distance, 0.0f, (float)max_linesgrid);
-		glVertex3f(distance, 0.0f, (float)max_linesgrid);
+		vertices[4 * i] = float3 (max_linesgrid, 0.0f, -distance);
+		vertices[4 * i + 1] = float3(max_linesgrid, 0.0f, distance);
+		vertices[4 * i + 2] = float3(-distance, 0.0f, max_linesgrid);
+		vertices[4 * i + 3] = float3(distance, 0.0f, max_linesgrid);
+
+		i++;
 	}
 
-	glVertex3f((float)-distance, 0.0f, distance);
-	glVertex3f((float)distance, 0.0f, distance);
-	glVertex3f((float)distance, 0.0f, -distance);
-	glVertex3f((float)distance, 0.0f, distance);
+	vertices[4*i] = float3(-distance, 0.0f, distance);
+	vertices[4*i + 1] = float3(distance, 0.0f, distance);
+	vertices[4*i + 2] = float3(distance, 0.0f, -distance);
+	vertices[4*i + 3] = float3(distance, 0.0f, distance);
 
-	glLineWidth(1.0f);
+	// --- Configure vertex attributes ---
 
-	glEnd();
+	unsigned int VBO;
+	glGenVertexArrays(1, &Grid_VAO);
+	glGenBuffers(1, &VBO);
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(Grid_VAO);
 
-	//glUseProgram(0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 }
 
