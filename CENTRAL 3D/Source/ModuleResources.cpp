@@ -170,5 +170,11 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 	return resource;
 }
 
+void ModuleResources::AddResource(Resource* res)
+{
+	if (res)
+		resources[res->GetUID()] = res;
+}
+
 
 

@@ -4,6 +4,7 @@
 
 #include "Importer.h"
 #include "ImporterScene.h"
+#include "ImporterShader.h"
 #include "ModuleSceneManager.h"
 #include "ModuleFileSystem.h"
 
@@ -29,6 +30,7 @@ void MyAssimpCallback(const char * msg, char * userData)
 ModuleImporter::ModuleImporter(bool start_enabled) : Module(start_enabled)
 {
 	IScene = new ImporterScene;
+	IShader = new ImporterShader;
 }
 
 ModuleImporter::~ModuleImporter()
@@ -51,7 +53,14 @@ bool ModuleImporter::Start()
 	filters.push_back("fbx");
 	filters.push_back("FBX");
 
+
+	ImportShaderData data;
+	data.vertexPath = "";
+	data.fragmentPath = "";
+	IShader->Import(data);
+
 	//ImportAssets(ASSETS_FOLDER, filters);
+
 
 	return true;
 }
@@ -101,7 +110,6 @@ void ModuleImporter::ImportAssets(const char * directory, std::vector<std::strin
 }
 
 
-
 bool ModuleImporter::CleanUp()
 {
 	// --- Detach assimp log stream ---
@@ -112,6 +120,11 @@ bool ModuleImporter::CleanUp()
 	{
 		delete IScene;
 		IScene = nullptr;
+	}
+	if (IShader)
+	{
+		delete IShader;
+		IShader = nullptr;
 	}
 
 	return true;

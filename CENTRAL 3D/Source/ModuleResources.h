@@ -32,7 +32,7 @@ public:
 	uint GetModDateFromMeta(const char* file);
 
 	Resource* CreateResource(Resource::ResourceType type);
-
+	void AddResource(Resource* res);
 private:
 	// --- Resources in memory ---
 	std::map<uint, Resource*> resources;

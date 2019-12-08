@@ -4,6 +4,7 @@
 #include "Module.h"
 
 class ImporterScene;
+class ImporterShader;
 
 class ModuleImporter : public Module
 {
@@ -23,6 +24,7 @@ public:
 
 private:
 	ImporterScene* IScene = nullptr;
+	ImporterShader* IShader = nullptr;
 	void ImportAssets(const char * directory, std::vector<std::string>& filters);
 
 };

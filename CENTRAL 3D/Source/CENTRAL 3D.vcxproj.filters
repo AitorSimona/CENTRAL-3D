@@ -498,6 +498,9 @@
     <ClInclude Include="ResourceShader.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="ImporterShader.h">
+      <Filter>Sources\Importers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -796,6 +799,9 @@
     </ClCompile>
     <ClCompile Include="ResourceShader.cpp">
       <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterShader.cpp">
+      <Filter>Sources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

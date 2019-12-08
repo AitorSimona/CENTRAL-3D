@@ -2,17 +2,23 @@
 #include <sstream>
 #include "ResourceShader.h"
 
+#include "Application.h"
+#include "ModuleFileSystem.h"
+#include "ModuleResources.h"
+
 #include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 
 ResourceShader::ResourceShader() : Resource(Resource::ResourceType::SHADER)
 {
+
 }
 
 ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath) : Resource(Resource::ResourceType::SHADER)
 {
 	// MYTODO: Clean this and use physFS
+	bool ret = true;
 
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;
@@ -41,59 +47,79 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 	catch (std::ifstream::failure e)
 	{
 		CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+		ret = false;
 	}
-	const char* vShaderCode = vertexCode.c_str();
-	const char* fShaderCode = fragmentCode.c_str();
 
-	// 2. compile shaders
-	unsigned int vertex, fragment;
+	if (ret)
+	{
+
+		const char* vShaderCode = vertexCode.c_str();
+		const char* fShaderCode = fragmentCode.c_str();
+
+		// 2. compile shaders
+		unsigned int vertex, fragment;
+		int success;
+		char infoLog[512];
+
+		success = CreateVertexShader(vertex, vShaderCode);
+
+		if (!success)
+		{
+			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+			CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+		};
+
+		success = CreateFragmentShader(fragment, fShaderCode);
+
+		if (!success)
+		{
+			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+			CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+		};
+
+		success = CreateShaderProgram(vertex, fragment);
+
+		if (!success)
+		{
+			glGetProgramInfoLog(ID, 512, NULL, infoLog);
+			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+		}
+
+		// --- Save Shaders to lib --- 
+		SaveShader();
+
+		// delete the shaders as they're linked into our program now and no longer necessery
+		glDeleteShader(vertex);
+		glDeleteShader(fragment);
+	}
+}
+
+ResourceShader::ResourceShader(const char * binary, uint size) : Resource(Resource::ResourceType::SHADER)
+{
 	int success;
 	char infoLog[512];
 
-	// vertex Shader
-	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex, 1, &vShaderCode, NULL);
-	glCompileShader(vertex);
-	// print compile errors if any
-	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-		CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
-	};
+	success = CreateShaderProgram();
 
-	// similiar for Fragment Shader
-	fragment = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(fragment, 1, &fShaderCode, NULL);
-	glCompileShader(fragment);
-	// print compile errors if any
-	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-		CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
-	};
-
-	// shader Program
-	ID = glCreateProgram();
-	glAttachShader(ID, vertex);
-	glAttachShader(ID, fragment);
-	glLinkProgram(ID);
-	// print linking errors if any
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
 		glGetProgramInfoLog(ID, 512, NULL, infoLog);
 		CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 	}
-
-	// delete the shaders as they're linked into our program now and no longer necessery
-	glDeleteShader(vertex);
-	glDeleteShader(fragment);
+	else
+	{
+		glProgramBinary(ID, 0, binary, size);
+	}
 }
 
 ResourceShader::~ResourceShader()
 {
+	DeleteShaderProgram();
+}
+
+void ResourceShader::Save()
+{
+	SaveShader();
 }
 
 void ResourceShader::LoadInMemory()
@@ -102,6 +128,98 @@ void ResourceShader::LoadInMemory()
 
 void ResourceShader::FreeMemory()
 {
+}
+
+// Internal use only!
+bool ResourceShader::CreateVertexShader(unsigned int& vertex, const char * vShaderCode)
+{
+	GLint success = 0;
+
+	// vertex Shader
+	vertex = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex, 1, &vShaderCode, NULL);
+	glCompileShader(vertex);
+	// print compile errors if any
+	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+
+	return success;
+}
+
+// Internal use only!
+bool ResourceShader::CreateFragmentShader(unsigned int& fragment, const char * fShaderCode)
+{
+	GLint success = 0;
+
+	// similiar for Fragment Shader
+	fragment = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(fragment, 1, &fShaderCode, NULL);
+	glCompileShader(fragment);
+	// print compile errors if any
+	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+
+	return success;
+}
+
+// Internal use only!
+bool ResourceShader::CreateShaderProgram(unsigned int vertex, unsigned int fragment)
+{
+	GLint success = 0;
+
+	// shader Program
+	ID = glCreateProgram();
+	glAttachShader(ID, vertex);
+	glAttachShader(ID, fragment);
+	glLinkProgram(ID);
+	// print linking errors if any
+	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+
+	return success;
+}
+
+bool ResourceShader::CreateShaderProgram()
+{
+	GLint success = 0;
+
+	// shader Program
+	ID = glCreateProgram();
+	glLinkProgram(ID);
+	// print linking errors if any
+	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+
+	return success;
+}
+
+// Internal use only!
+void ResourceShader::SaveShader()
+{
+	std::string path = SHADERS_FOLDER;
+	path.append(std::to_string(UID));
+
+	//if(App->fs->Exists(path.data()))
+	GLint buffer_size;
+	glGetProgramiv(ID,GL_PROGRAM_BINARY_LENGTH, &buffer_size);
+
+	char* buffer = new char[buffer_size];
+	GLint bytes_written;
+
+	glGetProgramBinary(ID, buffer_size, &bytes_written, nullptr, buffer);
+
+	if (bytes_written > 0)
+	{
+		// --- Save shader to file ---
+		App->fs->Save(path.data(), buffer, buffer_size);
+	}
+
+	delete[] buffer;
+}
+
+void ResourceShader::DeleteShaderProgram()
+{
+	if (glIsProgram(ID))
+	{
+		glDeleteProgram(ID);
+		ID = 0;
+	}
 }
 
 void ResourceShader::use()

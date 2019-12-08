@@ -10,11 +10,13 @@ public:
 	// constructor reads and builds the shader
 
 	ResourceShader(const char* vertexPath, const char* fragmentPath);
+	ResourceShader(const char* binary, uint size);
 	~ResourceShader();
+
+	void Save();
 
 	void LoadInMemory();
 	void FreeMemory();
-
 public:
 	// use/activate the shader
 	void use();
@@ -25,6 +27,15 @@ public:
 
 public:
 	// the program ID
-	unsigned int ID;
+	unsigned int ID = 0;
+
+private:
+
+	bool CreateVertexShader(unsigned int& vertex, const char * vShaderCode);
+	bool CreateFragmentShader(unsigned int& fragment, const char * fShaderCode);
+	bool CreateShaderProgram(unsigned int vertex, unsigned int fragment);
+	bool CreateShaderProgram();
+	void SaveShader();
+	void DeleteShaderProgram();
 };
 #endif //__RESOURCE_SHADER_H__
