@@ -57,8 +57,8 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		const char* fShaderCode = fragmentCode.c_str();
 
 		// 2. compile shaders
-		unsigned int vertex, fragment;
-		int success;
+		unsigned int vertex, fragment = 0;
+		int success = 0;
 		char infoLog[512];
 
 		success = CreateVertexShader(vertex, vShaderCode);
@@ -151,7 +151,7 @@ bool ResourceShader::CreateFragmentShader(unsigned int& fragment, const char * f
 	GLint success = 0;
 
 	// similiar for Fragment Shader
-	fragment = glCreateShader(GL_VERTEX_SHADER);
+	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, &fShaderCode, NULL);
 	glCompileShader(fragment);
 	// print compile errors if any
@@ -200,9 +200,10 @@ void ResourceShader::SaveShader()
 	glGetProgramiv(ID,GL_PROGRAM_BINARY_LENGTH, &buffer_size);
 
 	char* buffer = new char[buffer_size];
-	GLint bytes_written;
+	GLint bytes_written = 0;
+	GLenum format = 0;
 
-	glGetProgramBinary(ID, buffer_size, &bytes_written, nullptr, buffer);
+	glGetProgramBinary(ID, buffer_size, &bytes_written, &format, buffer);
 
 	if (bytes_written > 0)
 	{

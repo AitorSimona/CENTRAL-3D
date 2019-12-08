@@ -122,8 +122,6 @@ bool ModuleRenderer3D::Init(json file)
 	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
 	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
 
-
-
 	// --- Creating Default Vertex and Fragment Shaders ---
 	//const char *vertexShaderSource = "#version 330 core\n"
 	//	"layout (location = 0) in vec3 aPos;\n"

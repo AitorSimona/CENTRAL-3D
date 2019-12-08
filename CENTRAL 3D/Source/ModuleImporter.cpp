@@ -55,8 +55,8 @@ bool ModuleImporter::Start()
 
 
 	ImportShaderData data;
-	data.vertexPath = "";
-	data.fragmentPath = "";
+	data.vertexPath = "Assets/Shaders/DefaultVertex.txt";
+	data.fragmentPath = "Assets/Shaders/DefaultFragment.txt";
 	IShader->Import(data);
 
 	//ImportAssets(ASSETS_FOLDER, filters);
