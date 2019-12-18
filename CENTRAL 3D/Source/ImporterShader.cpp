@@ -23,12 +23,58 @@ bool ImporterShader::Import(const ImportData & IData) const
 
 	if (data.vertexPath != nullptr || data.fragmentPath != nullptr)
 	{
-		ResourceShader* shader = new ResourceShader(data.vertexPath, data.fragmentPath);
+		if (App->resources->IsFileImported(data.vertexPath) || App->resources->IsFileImported(data.fragmentPath))
+		{
+			// MYTODO: Should check if we are trying to import 2 times the same (check if resource exists)
 
-		if (shader->ID != 0)
-			App->resources->AddResource(shader);
+			uint UID = App->resources->GetUIDFromMeta(data.vertexPath);
+
+			std::string path = SHADERS_FOLDER;
+			path.append(std::to_string(UID));
+			path.append(".shader");
+
+			char* buffer = nullptr;
+
+			uint size = App->fs->Load(path.data(),&buffer);
+
+			if (buffer)
+			{
+				ResourceShader* shader = new ResourceShader(buffer, size);
+				shader->SetUID(UID);
+
+				delete[] buffer;
+			}
+			else
+				CONSOLE_LOG("|[error]: Could not load shader program");
+		}
+
 		else
-			delete shader;
+		{
+
+
+			ResourceShader* shader = new ResourceShader(data.vertexPath, data.fragmentPath);
+
+			if (shader->ID != 0)
+			{
+				App->resources->AddResource(shader);
+
+				// MYTODO: This is not used...
+				std::string path = SHADERS_FOLDER;
+				path.append(std::to_string(shader->GetUID()));
+
+				Save(shader, path.data());
+
+				// --- Save metas ---
+				std::string vertexmeta = data.vertexPath;
+				std::string fragmentmeta = data.fragmentPath;
+
+				App->resources->CreateMetaFromUID(shader->GetUID(), vertexmeta.data());
+				App->resources->CreateMetaFromUID(shader->GetUID(), fragmentmeta.data());
+			}
+			else
+				delete shader;
+
+		}
 	}
 	else
 		ret = false;
@@ -38,6 +84,8 @@ bool ImporterShader::Import(const ImportData & IData) const
 
 void ImporterShader::Save(ResourceShader * shader, const char * path) const
 {
+	// --- Save Shaders to lib --- 
+	shader->Save();
 }
 
 void ImporterShader::Load(const char * filename, ResourceShader & shader) const

@@ -86,7 +86,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		}
 
 		// --- Save Shaders to lib --- 
-		SaveShader();
+		//SaveShader();
 
 		// delete the shaders as they're linked into our program now and no longer necessery
 		glDeleteShader(vertex);
@@ -178,13 +178,13 @@ bool ResourceShader::CreateShaderProgram(unsigned int vertex, unsigned int fragm
 
 bool ResourceShader::CreateShaderProgram()
 {
-	GLint success = 0;
+	GLint success = 1;
 
 	// shader Program
 	ID = glCreateProgram();
-	glLinkProgram(ID);
-	// print linking errors if any
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	//glLinkProgram(ID);
+	//// print linking errors if any
+	//glGetProgramiv(ID, GL_LINK_STATUS, &success);
 
 	return success;
 }
@@ -194,8 +194,8 @@ void ResourceShader::SaveShader()
 {
 	std::string path = SHADERS_FOLDER;
 	path.append(std::to_string(UID));
+	path.append(".shader");
 
-	//if(App->fs->Exists(path.data()))
 	GLint buffer_size;
 	glGetProgramiv(ID,GL_PROGRAM_BINARY_LENGTH, &buffer_size);
 
