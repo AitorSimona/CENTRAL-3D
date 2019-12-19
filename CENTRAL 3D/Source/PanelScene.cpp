@@ -43,6 +43,7 @@ bool PanelScene::Draw()
 		if (ImGui::GetWindowWidth() < ImGui::GetWindowHeight())
 		{
 			size.x = size.y;
+			width = height;
 			ImGui::SetWindowSize(name, size);
 		}
 		// MYTODO: limit win size
