@@ -1,4 +1,5 @@
 #include "Globals.h"
+#include "Imgui/imgui.h"
 #include "Application.h"
 #include "ModuleCamera3D.h"
 #include "ModuleGui.h"
@@ -119,12 +120,16 @@ update_status ModuleCamera3D::Update(float dt)
 
 void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 {
-	float normalized_x = mouse_x / (float)App->window->GetWindowWidth();
-	float normalized_y = 1.0f - (mouse_y / (float)App->window->GetWindowHeight());
+	// Scene window relative coords
+	float normalized_x = (mouse_x - App->gui->panelScene->posX) / App->gui->panelScene->width * (float)App->window->GetWindowWidth();
+	float normalized_y = (mouse_y - App->gui->panelScene->posY) / App->gui->panelScene->height * (float)App->window->GetWindowHeight();
 
-	// --- Normalizing mouse position --- 
-	normalized_x = (normalized_x - 0.5) / 0.5;
-	normalized_y = (normalized_y - 0.5) / 0.5;
+	// mouse pos in range -1 - 1
+	normalized_x = ((normalized_x / (float)App->window->GetWindowWidth()) - 0.5) * 2;
+	normalized_y = ((1.0f - (normalized_y / (float)App->window->GetWindowHeight())) - 0.5) * 2;
+
+	//CONSOLE_LOG("mouse_X: %f", normalized_x);
+	//CONSOLE_LOG("mouse_Y: %f", normalized_y);
 
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 	last_ray = ray;

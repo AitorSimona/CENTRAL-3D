@@ -35,8 +35,8 @@ bool PanelScene::Draw()
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 		float ar = App->renderer3D->active_camera->GetAspectRatio();
-		float width = ImGui::GetWindowWidth()*0.98;
-		float height = ImGui::GetWindowHeight()*0.90;
+		width = ImGui::GetWindowWidth()*0.98;
+		height = ImGui::GetWindowHeight()*0.90;
 		ImVec2 size = ImVec2(width, height);
 
 		// --- Force Window Size ---
@@ -56,6 +56,9 @@ bool PanelScene::Draw()
 
 	
 		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
+
+		posX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
+		posY = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
 
 		if (ImGui::BeginDragDropTarget())
 		{
