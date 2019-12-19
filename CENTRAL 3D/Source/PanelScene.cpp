@@ -12,6 +12,8 @@
 
 #include "PanelProject.h"
 
+#include "ComponentCamera.h"
+
 #include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
@@ -32,7 +34,18 @@ bool PanelScene::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		ImVec2 size = ImVec2(ImGui::GetWindowWidth()*0.987, ImGui::GetWindowHeight()*0.93);
+		float ar = App->renderer3D->active_camera->GetAspectRatio();
+		float width = ImGui::GetWindowWidth()*0.98;
+		float height = ImGui::GetWindowHeight()*0.90;
+		ImVec2 size = ImVec2(width, height);
+
+		// MYTODO: limit win size
+
+		if(width > height)
+			App->renderer3D->active_camera->SetAspectRatio(width / height);
+		else
+			App->renderer3D->active_camera->SetAspectRatio(height / width);
+
 	
 		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
