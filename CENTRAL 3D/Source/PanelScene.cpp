@@ -39,7 +39,14 @@ bool PanelScene::Draw()
 		float height = ImGui::GetWindowHeight()*0.90;
 		ImVec2 size = ImVec2(width, height);
 
+		// --- Force Window Size ---
+		if (ImGui::GetWindowWidth() < ImGui::GetWindowHeight())
+		{
+			size.x = size.y;
+			ImGui::SetWindowSize(name, size);
+		}
 		// MYTODO: limit win size
+		// DOCKING HAS NO SUPPORT FOR WINDOW SIZE CONSTRAINTS :(
 
 		if(width > height)
 			App->renderer3D->active_camera->SetAspectRatio(width / height);
