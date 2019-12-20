@@ -15,7 +15,7 @@ ResourceShader::ResourceShader() : Resource(Resource::ResourceType::SHADER)
 
 }
 
-ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath) : Resource(Resource::ResourceType::SHADER)
+ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath, bool is_extern) : Resource(Resource::ResourceType::SHADER)
 {
 	// MYTODO: Clean this and use physFS
 	bool ret = true;
@@ -28,33 +28,45 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 	// ensure ifstream objects can throw exceptions:
 	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try
+
+
+	// --- check if the shader has to be load from outside the engine ---
+	if (is_extern)
 	{
-		// open files
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-		// read file's buffer contents into streams
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		// close file handlers
-		vShaderFile.close();
-		fShaderFile.close();
-		// convert stream into string
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	}
-	catch (std::ifstream::failure e)
-	{
-		CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
-		ret = false;
+		try
+		{
+			// open files
+			vShaderFile.open(vertexPath);
+			fShaderFile.open(fragmentPath);
+			std::stringstream vShaderStream, fShaderStream;
+			// read file's buffer contents into streams
+			vShaderStream << vShaderFile.rdbuf();
+			fShaderStream << fShaderFile.rdbuf();
+			// close file handlers
+			vShaderFile.close();
+			fShaderFile.close();
+			// convert stream into string
+			vertexCode = vShaderStream.str();
+			fragmentCode = fShaderStream.str();
+		}
+		catch (std::ifstream::failure e)
+		{
+			CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+			ret = false;
+		}
+
 	}
 
 	if (ret)
 	{
-
 		const char* vShaderCode = vertexCode.c_str();
 		const char* fShaderCode = fragmentCode.c_str();
+
+		if (!is_extern)
+		{
+			vShaderCode = vertexPath;
+			fShaderCode = fragmentPath;
+		}
 
 		// 2. compile shaders
 		unsigned int vertex, fragment = 0;
@@ -84,9 +96,6 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
 			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 		}
-
-		// --- Save Shaders to lib --- 
-		//SaveShader();
 
 		// delete the shaders as they're linked into our program now and no longer necessery
 		glDeleteShader(vertex);

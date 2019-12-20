@@ -24,6 +24,7 @@
 
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
+#include "ResourceShader.h"
 
 
 #include "mmgr/mmgr.h"
@@ -109,10 +110,10 @@ bool ModuleSceneManager::CleanUp()
 
 void ModuleSceneManager::DrawGrid()
 {
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
+	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
 	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
 
 	glLineWidth(2.0f);
@@ -193,10 +194,10 @@ void ModuleSceneManager::DrawScene()
 		glBindVertexArray(0);
 
 
-		GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
-		int vertexColorLocation = glGetAttribLocation(App->renderer3D->shaderProgram, "color");
+		int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
 		glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
 
 		glBindVertexArray(line_VAO);
@@ -205,23 +206,6 @@ void ModuleSceneManager::DrawScene()
 		glLineWidth(1.0f);
 
 	}
-
-	////--- Draw ray ---
-	//if (App->camera->last_ray.IsFinite())
-	//{
-	//	glDisable(GL_LIGHTING);
-	//	glBegin(GL_LINES);
-
-	//	glColor4f(Red.r, Red.g, Red.b, Red.a);
-
-	//	glVertex3fv((GLfloat*)&App->camera->last_ray.a);
-	//	glVertex3fv((GLfloat*)&App->camera->last_ray.b);
-
-	//	glColor4f(1.0, 1.0, 1.0, 1.0);
-
-	//	glEnd();
-	//	glEnable(GL_LIGHTING);
-	//}
 
 }
 

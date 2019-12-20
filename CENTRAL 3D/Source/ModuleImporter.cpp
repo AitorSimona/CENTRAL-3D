@@ -54,10 +54,10 @@ bool ModuleImporter::Start()
 	filters.push_back("FBX");
 
 
-	ImportShaderData data;
-	data.vertexPath = "Assets/Shaders/DefaultVertex.txt";
-	data.fragmentPath = "Assets/Shaders/DefaultFragment.txt";
-	IShader->Import(data);
+	//ImportShaderData data;
+	//data.vertexPath = "Assets/Shaders/DefaultVertex.txt";
+	//data.fragmentPath = "Assets/Shaders/DefaultFragment.txt";
+	//IShader->Import(data);
 
 	//ImportAssets(ASSETS_FOLDER, filters);
 

@@ -12,6 +12,7 @@
 #include "ModuleRenderer3D.h"
 
 #include "ResourceMesh.h"
+#include "ResourceShader.h"
 
 #include "mmgr/mmgr.h"
 
@@ -32,7 +33,7 @@ void ComponentRenderer::Draw() const
 
 	//glUseProgram(App->renderer3D->shaderProgram);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->shaderProgram, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())

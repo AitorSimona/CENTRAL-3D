@@ -7,6 +7,7 @@
 #define MAX_LIGHTS 8
 
 class ComponentCamera;
+class ResourceShader;
 
 class ModuleRenderer3D : public Module
 {
@@ -36,7 +37,9 @@ public:
 
 public:
 	// --- Default Shader ---
-	uint shaderProgram = 0;
+	ResourceShader* defaultShader = nullptr;
+	/*uint shaderProgram = 0;*/
+
 	unsigned int VAO = 0;
 	Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
