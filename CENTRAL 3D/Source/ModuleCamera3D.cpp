@@ -196,8 +196,8 @@ void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 {
 	float dx = -App->input->GetMouseXMotion()*speed;
 	float dy = -App->input->GetMouseYMotion()*speed;
-
-	math::Quat rotationX = math::Quat::RotateAxisAngle(float3::unitY, dx * DEGTORAD);
+	
+	math::Quat rotationX = math::Quat::RotateAxisAngle(camera->frustum.Up(), dx * DEGTORAD);
 	math::Quat rotationY = math::Quat::RotateAxisAngle(camera->frustum.WorldRight(), dy * DEGTORAD);
 	math::Quat finalRotation = rotationX * rotationY;
 
