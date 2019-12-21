@@ -113,7 +113,8 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
-	//ImGuizmo::BeginFrame();
+	ImGuizmo::BeginFrame();
+
 
 	ImGuiIO& io = ImGui::GetIO();
 	capture_keyboard = io.WantCaptureKeyboard;

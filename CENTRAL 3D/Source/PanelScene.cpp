@@ -1,9 +1,14 @@
 #include "PanelScene.h"
 #include "Imgui/imgui.h"
+
 #include "Application.h"
+#include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleWindow.h"
 #include "ModuleSceneManager.h"
+
+#include "GameObject.h"
+#include "ComponentTransform.h"
 
 #include "ModuleImporter.h"
 #include "ImporterScene.h"
@@ -20,12 +25,14 @@
 
 PanelScene::PanelScene(char * name) : Panel(name)
 {
+	ImGuizmo::Enable(true);
 }
 
 PanelScene::~PanelScene()
 {
 }
 
+// MYTODO: Clean this
 
 bool PanelScene::Draw()
 {
@@ -34,6 +41,7 @@ bool PanelScene::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
+
 		float ar = App->renderer3D->active_camera->GetAspectRatio();
 		width = ImGui::GetWindowWidth()*0.98;
 		height = ImGui::GetWindowHeight()*0.90;
@@ -56,6 +64,8 @@ bool PanelScene::Draw()
 
 	
 		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
+
+
 
 		posX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
 		posY = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
@@ -105,10 +115,46 @@ bool PanelScene::Draw()
 
 	}
 
+	if(App->scene_manager->GetSelectedGameObject() != nullptr)
+	HandleGuizmo();
+
 	ImGui::End();
 
 
 	return true;
+}
+
+void PanelScene::HandleGuizmo()
+{
+	// --- Set Current Guizmo operation ---
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
+		guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+		guizmoOperation = ImGuizmo::OPERATION::ROTATE;
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+		guizmoOperation = ImGuizmo::OPERATION::SCALE;
+
+	GameObject* selectedGO = App->scene_manager->GetSelectedGameObject();
+
+	// --- Set drawing to this window and rendering rect (Scene Image) ---
+	ImGuizmo::SetDrawlist();
+	ImGuizmo::SetRect(posX, posY, width, height);
+
+	// --- Create temporal matrix to store results of guizmo operations ---
+	float modelMatrix[16];
+	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
+
+	// --- Process guizmo operation ---
+	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
+	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
+
+	// --- Update Selected go transform ---
+	if (ImGuizmo::IsUsing())
+	{
+		float4x4 newTransform;
+		newTransform.Set(modelMatrix);
+		selectedGO->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->SetGlobalTransform(newTransform.Transposed());
+	}
 }
 
 void PanelScene::HandleInput()

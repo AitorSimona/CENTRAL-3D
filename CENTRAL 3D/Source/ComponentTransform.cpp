@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 
+// MYTODO: Explain math begin transform ops 
+
 ComponentTransform::ComponentTransform(GameObject * ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform)
 {
 }
@@ -73,12 +75,10 @@ void ComponentTransform::Scale(float x, float y, float z)
 
 void ComponentTransform::SetGlobalTransform(float4x4 new_transform)
 {
-	// --- New transform is parent's global transform ---
-	Local_transform = new_transform.Inverted()*Global_transform;
+	float4x4 localTransform = GO->parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Inverted() * new_transform;
+	Local_transform = localTransform;
 	Global_transform = new_transform;
-	
-	// --- Force Update of Global transform ---
-	OnUpdateTransform(Global_transform);
+	update_transform = true;
 }
 
 void ComponentTransform::UpdateLocalTransform()
