@@ -6,6 +6,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleWindow.h"
 #include "ModuleSceneManager.h"
+#include "ModuleCamera3D.h"
 
 #include "GameObject.h"
 #include "ComponentTransform.h"
@@ -117,6 +118,10 @@ bool PanelScene::Draw()
 
 	if(App->scene_manager->GetSelectedGameObject() != nullptr)
 	HandleGuizmo();
+
+	if (ImGuizmo::IsUsing() == false)
+		App->camera->UpdateCamera();
+	
 
 	ImGui::End();
 

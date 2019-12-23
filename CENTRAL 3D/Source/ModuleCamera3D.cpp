@@ -65,10 +65,19 @@ update_status ModuleCamera3D::Update(float dt)
 {
 	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered)
 	{
-		float3 newPos(0, 0, 0);
-		float speed = 10.0f * dt;
+		speed = 10.0f * dt;
 		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 			speed *= 2.0f;
+	}
+
+	return UPDATE_CONTINUE;
+}
+
+void ModuleCamera3D::UpdateCamera()
+{
+	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered)
+	{
+		float3 newPos(0, 0, 0);
 
 		// --- Move ---
 		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
@@ -114,12 +123,12 @@ update_status ModuleCamera3D::Update(float dt)
 			OnMouseClick(mouse_x, mouse_y);
 		}
 	}
-
-	return UPDATE_CONTINUE;
 }
 
 void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 {
+	// MYTODO: Make this easy to understand / explain
+
 	// Scene window relative coords
 	float normalized_x = (mouse_x - App->gui->panelScene->posX) / App->gui->panelScene->width * (float)App->window->GetWindowWidth();
 	float normalized_y = (mouse_y - App->gui->panelScene->posY) / App->gui->panelScene->height * (float)App->window->GetWindowHeight();

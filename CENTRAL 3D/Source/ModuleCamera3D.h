@@ -15,6 +15,7 @@ public:
 	bool Init(json config) override;
 	bool Start();
 	update_status Update(float dt);
+	void UpdateCamera();
 	
 	bool CleanUp();
 
@@ -26,6 +27,7 @@ private:
 	void CameraZoom(float speed);
 	void CameraLookAround(float speed, float3 reference);
 public:
+	float speed = 0.0f;
 	float3 reference = { 0.0f,0.0f,0.0f };
 	ComponentCamera* camera = nullptr;
 	LineSegment last_ray;
