@@ -501,6 +501,9 @@
     <ClInclude Include="ImporterShader.h">
       <Filter>Sources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="PanelShaderEditor.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -802,6 +805,9 @@
     </ClCompile>
     <ClCompile Include="ImporterShader.cpp">
       <Filter>Sources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelShaderEditor.cpp">
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

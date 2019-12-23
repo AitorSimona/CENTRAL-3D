@@ -59,8 +59,8 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 
 	if (ret)
 	{
-		const char* vShaderCode = vertexCode.c_str();
-		const char* fShaderCode = fragmentCode.c_str();
+		vShaderCode = vertexCode.c_str();
+		fShaderCode = fragmentCode.c_str();
 
 		if (!is_extern)
 		{
@@ -73,7 +73,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		int success = 0;
 		char infoLog[512];
 
-		success = CreateVertexShader(vertex, vShaderCode);
+		success = CreateVertexShader(vertex, vShaderCode.data());
 
 		if (!success)
 		{
@@ -81,7 +81,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 			CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
 		};
 
-		success = CreateFragmentShader(fragment, fShaderCode);
+		success = CreateFragmentShader(fragment, fShaderCode.data());
 
 		if (!success)
 		{
@@ -107,6 +107,8 @@ ResourceShader::ResourceShader(const char * binary, uint size) : Resource(Resour
 {
 	int success;
 	char infoLog[512];
+
+	// MYTODO: Fill code vars
 
 	success = CreateShaderProgram();
 

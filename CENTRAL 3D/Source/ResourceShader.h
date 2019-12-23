@@ -29,6 +29,10 @@ public:
 	unsigned int ID = 0;
 	std::string name;
 
+	std::string vShaderCode;
+	std::string fShaderCode;
+
+
 private:
 
 	bool CreateVertexShader(unsigned int& vertex, const char * vShaderCode);

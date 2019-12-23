@@ -17,6 +17,7 @@
 #include "PanelScene.h"
 #include "PanelToolbar.h"
 #include "PanelProject.h"
+#include "PanelShaderEditor.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -65,6 +66,9 @@ bool ModuleGui::Init(json file)
 
 	panelProject = new PanelProject("Project");
 	panels.push_back(panelProject);
+
+	panelShaderEditor = new PanelShaderEditor("ShaderEditor");
+	panels.push_back(panelShaderEditor);
 
 	LoadStatus(file);
 
@@ -236,6 +240,11 @@ update_status ModuleGui::Update(float dt)
 					panelSettings->OnOff();
 				}
 
+				if (ImGui::MenuItem("ShaderEditor"))
+				{
+					panelShaderEditor->OnOff();
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -315,6 +324,7 @@ bool ModuleGui::CleanUp()
 	panelScene = nullptr;
 	panelToolbar = nullptr;
 	panelProject = nullptr;
+	panelShaderEditor = nullptr;
 
 	// --- ShutDown ImGui ---
 

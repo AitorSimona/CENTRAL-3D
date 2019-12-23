@@ -11,6 +11,7 @@
         "Project": true,
         "Scene": true,
         "Settings": false,
+        "ShaderEditor": true,
         "Toolbar": true
     },
     "Input": null,

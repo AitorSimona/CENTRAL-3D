@@ -182,6 +182,7 @@
     <ClInclude Include="ModuleImporter.h" />
     <ClInclude Include="ModuleTimeManager.h" />
     <ClInclude Include="PanelProject.h" />
+    <ClInclude Include="PanelShaderEditor.h" />
     <ClInclude Include="PanelToolbar.h" />
     <ClInclude Include="PanelHierarchy.h" />
     <ClInclude Include="PanelInspector.h" />
@@ -303,6 +304,7 @@
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
     <ClCompile Include="PanelProject.cpp" />
+    <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
     <ClCompile Include="PanelHierarchy.cpp" />
     <ClCompile Include="PanelInspector.cpp" />
