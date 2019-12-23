@@ -16,6 +16,8 @@ public:
 
 	void LoadInMemory();
 	void FreeMemory();
+	void ReloadAndCompileShader();
+
 public:
 	// use/activate the shader
 	void use();
@@ -34,6 +36,7 @@ public:
 
 
 private:
+	unsigned int vertex, fragment = 0;
 
 	bool CreateVertexShader(unsigned int& vertex, const char * vShaderCode);
 	bool CreateFragmentShader(unsigned int& fragment, const char * fShaderCode);

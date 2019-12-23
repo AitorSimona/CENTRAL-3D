@@ -69,7 +69,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		}
 
 		// 2. compile shaders
-		unsigned int vertex, fragment = 0;
+		/*unsigned int vertex, fragment = 0;*/
 		int success = 0;
 		char infoLog[512];
 
@@ -79,7 +79,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		{
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
 			CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
-		};
+		}
 
 		success = CreateFragmentShader(fragment, fShaderCode.data());
 
@@ -87,7 +87,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		{
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
 			CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
-		};
+		}
 
 		success = CreateShaderProgram(vertex, fragment);
 
@@ -140,6 +140,62 @@ void ResourceShader::LoadInMemory()
 void ResourceShader::FreeMemory()
 {
 }
+
+void ResourceShader::ReloadAndCompileShader()
+{
+	// --- Delete previous shader data ---
+	glDetachShader(ID, vertex);
+	glDetachShader(ID, fragment);
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+
+	// --- Compile new data ---
+
+	const char* vertexcode = vShaderCode.c_str();
+	const char* fragmentcode = fShaderCode.c_str();
+
+	GLint success = 0;
+	char infoLog[512];
+
+	// --- Compile new vertex shader ---
+
+	success = CreateVertexShader(vertex, vertexcode);
+
+	if (!success)
+	{
+		glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+		CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+	}
+	else
+		CONSOLE_LOG("Vertex Shader compiled successfully");
+
+	// --- Compile new fragment shader ---
+
+	success = CreateFragmentShader(fragment,fragmentcode);
+
+	if (!success)
+	{
+		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+		CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+	}
+	else
+		CONSOLE_LOG("Fragment Shader compiled successfully");
+
+	// --- Attach shader objects and link ---
+	glAttachShader(ID, vertex);
+	glAttachShader(ID, fragment);
+	glLinkProgram(ID);
+	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+
+	if (!success)
+	{
+		glGetProgramInfoLog(ID, 512, NULL, infoLog);
+		CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+	}
+	else
+		CONSOLE_LOG("Shader Program linked successfully");
+}
+
 
 // Internal use only!
 bool ResourceShader::CreateVertexShader(unsigned int& vertex, const char * vShaderCode)

@@ -86,21 +86,15 @@ bool PanelShaderEditor::Draw()
 
 		InputText("##VertexShader", &currentShader->vShaderCode, textflags);
 
-		//ImGui::InputTextMultiline("##VertexShader", (char*)VertexData.data(), VertexData.size(), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), textflags);
-		
 		ImGui::Separator();
 
 		ImGui::Text("Fragment Shader");
 
 		InputText("##FragmentShader", &currentShader->fShaderCode, textflags);
 
-
-		//ImGui::InputTextMultiline("##FragmentShader", (char*)FragmentData.data(), FragmentData.size(), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), textflags);
-
-
 		if (ImGui::Button("Compile"))
 		{
-
+			currentShader->ReloadAndCompileShader();
 		}
 	}
 
