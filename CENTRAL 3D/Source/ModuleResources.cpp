@@ -141,6 +141,11 @@ uint ModuleResources::GetModDateFromMeta(const char * file)
 	return DATE;
 }
 
+std::map<std::string, ResourceShader*>* ModuleResources::GetShaders()
+{
+	return &shaders;
+}
+
 Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 {
 	Resource* resource = nullptr;
@@ -161,6 +166,7 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 
 	case Resource::ResourceType::SHADER:
 		resource = (Resource*)new ResourceShader;
+		AddShader((ResourceShader*)resource);
 		break;
 	}
 
@@ -174,6 +180,12 @@ void ModuleResources::AddResource(Resource* res)
 {
 	if (res)
 		resources[res->GetUID()] = res;
+}
+
+void ModuleResources::AddShader(ResourceShader * shader)
+{
+	if(shader)
+		shaders[shader->name] = shader;
 }
 
 

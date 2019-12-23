@@ -27,6 +27,7 @@ public:
 public:
 	// the program ID
 	unsigned int ID = 0;
+	std::string name;
 
 private:
 

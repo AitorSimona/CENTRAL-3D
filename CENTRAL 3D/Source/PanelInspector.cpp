@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleResources.h"
 
 #include "GameObject.h"
 #include "ComponentTransform.h"
@@ -15,6 +16,7 @@
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
+#include "ResourceShader.h"
 
 #include "mmgr/mmgr.h"
 
@@ -273,6 +275,32 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 
 	if (ImGui::TreeNode("Material"))
 	{
+		static ImGuiComboFlags flags = 0;
+
+		ImGui::Text("Shader");
+		ImGui::SameLine();
+
+		std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
+
+		const char* item_current = material->resource_material->shader->name.data();       
+		if (ImGui::BeginCombo("##Shader", item_current, flags))
+		{
+			for (std::map<std::string, ResourceShader*>::iterator it = shaders->begin(); it != shaders->end(); ++it)
+			{
+				bool is_selected = (item_current == it->first);
+
+				if (ImGui::Selectable(it->second->name.data(), is_selected))
+				{
+					item_current = it->second->name.data();
+					material->resource_material->shader = it->second;
+				}
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
 
 		// --- Print Texture Path ---
 		std::string Path = "Path: ";

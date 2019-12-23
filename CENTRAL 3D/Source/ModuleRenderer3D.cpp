@@ -95,6 +95,7 @@ bool ModuleRenderer3D::Init(json file)
 		;
 
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
+	defaultShader->name = "Standard";
 	defaultShader->use();
 
 

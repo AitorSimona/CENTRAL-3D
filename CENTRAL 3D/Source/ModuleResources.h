@@ -5,6 +5,8 @@
 #include "Globals.h"
 #include "Resource.h"
 
+class ResourceShader;
+
 struct ResourceMeta
 {
 	uint Date = 0;
@@ -30,10 +32,20 @@ public:
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	uint GetUIDFromMeta(const char* file);
 	uint GetModDateFromMeta(const char* file);
+	std::map<std::string, ResourceShader*>* GetShaders();
+
 
 	Resource* CreateResource(Resource::ResourceType type);
 	void AddResource(Resource* res);
+
 private:
+	void AddShader(ResourceShader* shader);
+
+private:
+
+	// --- Available shaders ---
+	std::map<std::string, ResourceShader*> shaders;
+
 	// --- Resources in memory ---
 	std::map<uint, Resource*> resources;
 
