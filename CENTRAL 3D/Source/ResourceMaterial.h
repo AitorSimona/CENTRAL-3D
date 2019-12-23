@@ -3,7 +3,9 @@
 
 #include "Resource.h"
 #include "Globals.h"
+
 #include "ResourceTexture.h"
+#include "ResourceShader.h"
 
 
 class ResourceMaterial : public Resource
@@ -14,6 +16,7 @@ public:
 
 public:
 	ResourceTexture* resource_diffuse = nullptr;
+	ResourceShader* shader = nullptr;
 };
 
 #endif //__RESOURCE_MATERIAL_H__

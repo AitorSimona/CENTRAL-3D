@@ -18,14 +18,18 @@ public:
 	bool Start();
 	bool CleanUp();
 
-	uint LoadCheckImage() const;
 	uint CreateTextureFromFile(const char* path, uint &width, uint &height, uint LibUID) const;
 	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
 
 	uint GetCheckerTextureID() const;
+	uint GetDefaultTextureID() const;
+
 private:
+	uint LoadCheckImage() const;
+	uint LoadDefaultTexture() const;
 
 	uint CheckerTexID = 0;
+	uint DefaultTexture = 0;
 
 private:
 	// --- Called by CreateTextureFromPixels to split code ---

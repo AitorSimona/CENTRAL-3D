@@ -30,10 +30,11 @@ void ComponentRenderer::Draw() const
 	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	ComponentCamera* camera = GO->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
+	uint shader = GO->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->shader->ID;
 
-	//glUseProgram(App->renderer3D->shaderProgram);
+	glUseProgram(shader);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
@@ -42,6 +43,8 @@ void ComponentRenderer::Draw() const
 		DrawNormals(*mesh->resource_mesh);
 		DrawAxis();
 	}
+
+	glUseProgram(App->renderer3D->defaultShader->ID);
 
 	// --- Draw Frustum ---
 	if (camera)

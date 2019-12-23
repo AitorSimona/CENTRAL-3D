@@ -57,6 +57,7 @@ bool ModuleTextures::Start()
 {
 	// --- Load Checkers Texture ---
 	CheckerTexID = LoadCheckImage();
+	DefaultTexture = LoadDefaultTexture();
 
 	return true;
 }
@@ -87,9 +88,30 @@ uint ModuleTextures::LoadCheckImage() const
 	return CreateTextureFromPixels(GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT, GL_RGBA, checkImage, true);
 }
 
+uint ModuleTextures::LoadDefaultTexture() const
+{
+	// --- Creating pixel data for checkers texture ---
+
+	GLubyte default_tex[1][1][4];
+
+	int c = 255;
+	default_tex[0][0][0] = (GLubyte)c;
+	default_tex[0][0][1] = (GLubyte)c;
+	default_tex[0][0][2] = (GLubyte)c;
+	default_tex[0][0][3] = (GLubyte)c;
+
+	// --- Create the texture ---
+	return CreateTextureFromPixels(GL_RGBA, 1, 1, GL_RGBA, default_tex, true);
+}
+
 uint ModuleTextures::GetCheckerTextureID() const
 {
 	return CheckerTexID;
+}
+
+uint ModuleTextures::GetDefaultTextureID() const
+{
+	return DefaultTexture;
 }
 
 inline void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
