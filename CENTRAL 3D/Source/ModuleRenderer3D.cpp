@@ -5,6 +5,7 @@
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
+#include "ModuleResources.h"
 
 #include "ComponentCamera.h"
 #include "ResourceShader.h"
@@ -98,6 +99,7 @@ bool ModuleRenderer3D::Init(json file)
 	defaultShader->name = "Standard";
 	defaultShader->use();
 
+	App->resources->AddShader(defaultShader);
 
 	//Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());

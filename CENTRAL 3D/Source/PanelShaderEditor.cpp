@@ -80,6 +80,13 @@ bool PanelShaderEditor::Draw()
 			ImGui::EndCombo();
 		}
 
+		//ImGui::SameLine();
+
+		static char shadername[100];
+
+		if (ImGui::InputText("Rename Shader: ", shadername, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			currentShader->name = shadername;
+
 		ImGui::Separator();
 
 		ImGui::Text("Vertex Shader");
@@ -95,6 +102,15 @@ bool PanelShaderEditor::Draw()
 		if (ImGui::Button("Compile"))
 		{
 			currentShader->ReloadAndCompileShader();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("New"))
+		{
+			ResourceShader* new_shader = (ResourceShader*)App->resources->CreateResource(Resource::ResourceType::SHADER);
+			new_shader->name = "Shader " + std::to_string(shaders->size());
+			currentShader = new_shader;
 		}
 	}
 

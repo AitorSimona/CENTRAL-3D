@@ -37,8 +37,6 @@ public:
 
 	Resource* CreateResource(Resource::ResourceType type);
 	void AddResource(Resource* res);
-
-private:
 	void AddShader(ResourceShader* shader);
 
 private:
