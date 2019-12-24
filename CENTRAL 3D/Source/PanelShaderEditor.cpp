@@ -84,8 +84,15 @@ bool PanelShaderEditor::Draw()
 
 		static char shadername[100];
 
-		if (ImGui::InputText("Rename Shader: ", shadername, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-			currentShader->name = shadername;
+		if (currentShader->name != "Standard")
+		{
+			if (ImGui::InputText("Rename Shader: ", shadername, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				currentShader->name = shadername;
+			}
+		}
+
+
 
 		ImGui::Separator();
 
@@ -112,6 +119,14 @@ bool PanelShaderEditor::Draw()
 			new_shader->name = "Shader " + std::to_string(shaders->size());
 			currentShader = new_shader;
 		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Save All"))
+		{
+			App->resources->SaveAllShaders();
+		}
+
 	}
 
 	ImGui::End();

@@ -32,12 +32,15 @@ public:
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	uint GetUIDFromMeta(const char* file);
 	uint GetModDateFromMeta(const char* file);
+
 	std::map<std::string, ResourceShader*>* GetShaders();
+	void SaveAllShaders();
 
 
 	Resource* CreateResource(Resource::ResourceType type);
 	void AddResource(Resource* res);
 	void AddShader(ResourceShader* shader);
+
 
 private:
 

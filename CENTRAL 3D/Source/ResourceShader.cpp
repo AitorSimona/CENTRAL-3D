@@ -143,11 +143,7 @@ void ResourceShader::FreeMemory()
 
 void ResourceShader::ReloadAndCompileShader()
 {
-	// --- Delete previous shader data ---
-	glDetachShader(ID, vertex);
-	glDetachShader(ID, fragment);
-	glDeleteShader(vertex);
-	glDeleteShader(fragment);
+	uint new_vertex, new_fragment = 0;
 
 	// --- Compile new data ---
 
@@ -155,45 +151,80 @@ void ResourceShader::ReloadAndCompileShader()
 	const char* fragmentcode = fShaderCode.c_str();
 
 	GLint success = 0;
+	GLint accumulated_errors = 0;
 	char infoLog[512];
 
 	// --- Compile new vertex shader ---
 
-	success = CreateVertexShader(vertex, vertexcode);
+	success = CreateVertexShader(new_vertex, vertexcode);
 
 	if (!success)
 	{
-		glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+		glGetShaderInfoLog(new_vertex, 512, NULL, infoLog);
 		CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+		accumulated_errors++;
 	}
 	else
 		CONSOLE_LOG("Vertex Shader compiled successfully");
 
 	// --- Compile new fragment shader ---
 
-	success = CreateFragmentShader(fragment,fragmentcode);
+	success = CreateFragmentShader(new_fragment,fragmentcode);
 
 	if (!success)
 	{
-		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+		glGetShaderInfoLog(new_fragment, 512, NULL, infoLog);
 		CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+		accumulated_errors++;
 	}
 	else
 		CONSOLE_LOG("Fragment Shader compiled successfully");
 
-	// --- Attach shader objects and link ---
-	glAttachShader(ID, vertex);
-	glAttachShader(ID, fragment);
-	glLinkProgram(ID);
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
-
-	if (!success)
+	if (accumulated_errors == 0)
 	{
-		glGetProgramInfoLog(ID, 512, NULL, infoLog);
-		CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+		// --- Delete previous shader data ---
+		glDetachShader(ID, vertex);
+		glDetachShader(ID, fragment);
+
+		// --- Attach new shader objects and link ---
+		glAttachShader(ID, new_vertex);
+		glAttachShader(ID, new_fragment);
+		glLinkProgram(ID);
+		glGetProgramiv(ID, GL_LINK_STATUS, &success);
+
+		if (!success)
+		{
+			glGetProgramInfoLog(ID, 512, NULL, infoLog);
+			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+
+			// --- Detach new shader objects ---
+			glDetachShader(ID, new_vertex);
+			glDetachShader(ID, new_fragment);
+			glDeleteShader(new_vertex);
+			glDeleteShader(new_fragment);
+
+			// --- Attach old shader objects ---
+			glAttachShader(ID, vertex);
+			glAttachShader(ID, fragment);
+		}
+		else
+		{
+			// --- On success, delete old shader objects and update ids ---
+			glDeleteShader(vertex);
+			glDeleteShader(fragment);
+			vertex = new_vertex;
+			fragment = new_fragment;
+
+			CONSOLE_LOG("Shader Program linked successfully");
+		}
 	}
 	else
-		CONSOLE_LOG("Shader Program linked successfully");
+	{
+		glDeleteShader(new_vertex);
+		glDeleteShader(new_fragment);
+	}
+
+
 }
 
 
@@ -266,19 +297,24 @@ void ResourceShader::SaveShader()
 	GLint buffer_size;
 	glGetProgramiv(ID,GL_PROGRAM_BINARY_LENGTH, &buffer_size);
 
-	char* buffer = new char[buffer_size];
-	GLint bytes_written = 0;
-	GLenum format = 0;
-
-	glGetProgramBinary(ID, buffer_size, &bytes_written, &format, buffer);
-
-	if (bytes_written > 0)
+	if (buffer_size > 0)
 	{
-		// --- Save shader to file ---
-		App->fs->Save(path.data(), buffer, buffer_size);
-	}
+		char* buffer = new char[buffer_size];
+		GLint bytes_written = 0;
+		GLenum format = 0;
 
-	delete[] buffer;
+		glGetProgramBinary(ID, buffer_size, &bytes_written, &format, buffer);
+
+		if (bytes_written > 0)
+		{
+			// --- Save shader to file ---
+			App->fs->Save(path.data(), buffer, buffer_size);
+		}
+
+		delete[] buffer;
+	}
+	else
+		CONSOLE_LOG("|[error]: Could not save Shader: %s, try compiling it first", name.data());
 }
 
 void ResourceShader::DeleteShaderProgram()
