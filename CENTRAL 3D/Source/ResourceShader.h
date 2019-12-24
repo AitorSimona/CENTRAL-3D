@@ -9,7 +9,7 @@ public:
 	ResourceShader();
 	// constructor reads and builds the shader
 	ResourceShader(const char* vertexPath, const char* fragmentPath, bool is_extern = true);
-	ResourceShader(const char* binary, uint size);
+	ResourceShader(const char* binary, uint size, uint format, const char* name);
 	~ResourceShader();
 
 	void Save();

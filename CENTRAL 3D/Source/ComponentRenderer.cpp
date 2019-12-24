@@ -30,7 +30,15 @@ void ComponentRenderer::Draw() const
 	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 	ComponentCamera* camera = GO->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
-	uint shader = GO->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->shader->ID;
+	ComponentMaterial* mat = GO->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+
+	uint shader = App->renderer3D->defaultShader->ID;
+
+	if(mat)
+	shader = mat->resource_material->shader->ID;
+
+	if (shader != App->renderer3D->defaultShader->ID)
+		uint i = 3;
 
 	glUseProgram(shader);
 

@@ -37,9 +37,31 @@ bool ImporterShader::Import(const ImportData & IData) const
 
 			uint size = App->fs->Load(path.data(),&buffer);
 
+			uint format;
+			path.append(".format");
+			std::string shader_name;
+
+			if (App->fs->Exists(path.data()))
+			{
+				json file = App->GetJLoader()->Load(path.data());
+				std::string formatstring = file["FORMAT"];
+				std::string namestring = file["NAME"];
+				shader_name = namestring;
+
+				format = std::stoi(formatstring);
+			}
+
 			if (buffer)
 			{
-				ResourceShader* shader = new ResourceShader(buffer, size);
+				// NOTE: Due to openGL not wanting to properly load binary, i load own file format...
+				ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data());
+
+				if (shader->ID == 0)
+				{
+					delete shader;
+					shader = new ResourceShader(data.vertexPath, data.fragmentPath);
+				}
+
 				shader->SetUID(UID);
 
 				delete[] buffer;

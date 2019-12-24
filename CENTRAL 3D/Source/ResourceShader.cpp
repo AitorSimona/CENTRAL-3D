@@ -1,5 +1,6 @@
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 #include "ResourceShader.h"
 
 #include "Application.h"
@@ -12,7 +13,7 @@
 
 ResourceShader::ResourceShader() : Resource(Resource::ResourceType::SHADER)
 {
-
+	CreateShaderProgram();
 }
 
 ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath, bool is_extern) : Resource(Resource::ResourceType::SHADER)
@@ -30,7 +31,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
 
-	// --- check if the shader has to be load from outside the engine ---
+	// --- check if the shader has to be loaded from outside the engine ---
 	if (is_extern)
 	{
 		try
@@ -100,15 +101,17 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		// delete the shaders as they're linked into our program now and no longer necessery
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
+
+		App->resources->AddShader(this);
 	}
 }
 
-ResourceShader::ResourceShader(const char * binary, uint size) : Resource(Resource::ResourceType::SHADER)
+ResourceShader::ResourceShader(const char * binary, uint size, uint format, const char* name) : Resource(Resource::ResourceType::SHADER)
 {
 	int success;
 	char infoLog[512];
 
-	// MYTODO: Fill code vars
+	this->name = name;
 
 	success = CreateShaderProgram();
 
@@ -116,11 +119,62 @@ ResourceShader::ResourceShader(const char * binary, uint size) : Resource(Resour
 	{
 		glGetProgramInfoLog(ID, 512, NULL, infoLog);
 		CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+
+		glDeleteProgram(ID);
 	}
 	else
 	{
-		glProgramBinary(ID, 0, binary, size);
+		glProgramBinary(ID, (GLenum)format, (void*)binary, (GLint)size);
+
+		// print linking errors if any
+		glGetProgramiv(ID, GL_LINK_STATUS, &success);
+
+		if (!success)
+		{
+			glGetProgramInfoLog(ID, 512, NULL, infoLog);
+			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+		}
+
+
+		// MYTODO: Fill code vars
+		GLint num;
+		glGetProgramiv(ID, GL_ATTACHED_SHADERS, &num);
+
+		uint shaders[2];
+		GLint string_size = 0;
+		glGetAttachedShaders(ID, 2, &string_size, shaders);
+
+		if (string_size > 0)
+		{
+			glGetShaderiv(shaders[0], GL_SHADER_SOURCE_LENGTH, &string_size);
+			char* vertex_code = new char[string_size];
+			vertex = shaders[0];
+			glGetShaderSource(vertex, string_size, nullptr, vertex_code);
+
+
+			glGetShaderiv(shaders[1], GL_SHADER_SOURCE_LENGTH, &string_size);
+			char* fragment_code = new char[string_size];
+			fragment = shaders[1];
+			glGetShaderSource(fragment, string_size, nullptr, fragment_code);
+
+			vShaderCode = vertex_code;
+			fShaderCode = fragment_code;
+
+			delete[]vertex_code;
+			delete[] fragment_code;
+
+			App->resources->AddShader(this);
+		}
+		else
+		{
+			// We will have to load manually each shader object and link...
+			glDeleteProgram(ID);
+			ID = 0;
+		}
+
 	}
+
+
 }
 
 ResourceShader::~ResourceShader()
@@ -309,6 +363,73 @@ void ResourceShader::SaveShader()
 		{
 			// --- Save shader to file ---
 			App->fs->Save(path.data(), buffer, buffer_size);
+
+			std::string binary_format;
+			path.append(".format");
+			json jsonfile;
+			char* bin_buffer = nullptr;
+
+			// --- Create Meta ---
+			jsonfile["FORMAT"] = std::to_string(format);
+			jsonfile["NAME"] = name;
+			binary_format = App->GetJLoader()->Serialize(jsonfile);
+			bin_buffer = (char*)binary_format.data();
+
+			App->fs->Save(path.data(), bin_buffer, binary_format.size());
+;
+
+			// --- Save code to Assets folder, save meta ---
+			path = ASSETS_FOLDER;
+			path.append("Shaders/");
+			path.append(std::to_string(UID));
+
+			//char* vbuffer = new char[vShaderCode.size()];
+			//char* fbuffer = new char[fShaderCode.size()];
+
+
+			std::string final_name = path + ".vertex";
+
+			if(!App->resources->IsFileImported(final_name.data()))
+			App->resources->CreateMetaFromUID(UID, final_name.data());
+
+			std::ofstream file;
+			file.open(final_name);
+
+			if (!file.is_open())
+			{
+				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
+			}
+			else
+			{
+				file << std::setw(4) << vShaderCode << std::endl;
+				file.close();
+			}
+
+			//App->fs->Save(final_name.data(), vbuffer, vShaderCode.size());
+
+			final_name = path + ".fragment";
+
+			if (!App->resources->IsFileImported(final_name.data()))
+			App->resources->CreateMetaFromUID(UID, final_name.data());
+
+			std::ofstream file2;
+			file2.open(final_name);
+
+			if (!file2.is_open())
+			{
+				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
+			}
+			else
+			{
+				file2 << std::setw(4) << fShaderCode << std::endl;
+				file2.close();
+			}
+
+			//App->fs->Save(final_name.data(), fbuffer, fShaderCode.size());
+
+
+			//delete[] vbuffer;
+			//delete[] fbuffer;
 		}
 
 		delete[] buffer;

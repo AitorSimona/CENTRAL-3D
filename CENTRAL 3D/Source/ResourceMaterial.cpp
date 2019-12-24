@@ -12,5 +12,6 @@ ResourceMaterial::ResourceMaterial() : Resource(Resource::ResourceType::MATERIAL
 
 ResourceMaterial::~ResourceMaterial()
 {
+	if(shader)
 	shader->instances--;
 }

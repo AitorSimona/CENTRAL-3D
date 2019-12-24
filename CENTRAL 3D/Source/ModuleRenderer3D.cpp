@@ -61,6 +61,13 @@ bool ModuleRenderer3D::Init(json file)
 
 	}
 
+	GLint formats = 0;
+	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
+	if (formats < 1) {
+		std::cerr << "Driver does not support any binary formats." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
 	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
 	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
 

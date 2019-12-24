@@ -52,15 +52,10 @@ bool ModuleImporter::Start()
 	std::vector<std::string> filters;
 	filters.push_back("fbx");
 	filters.push_back("FBX");
+	filters.push_back("vertex");
+	filters.push_back("VERTEX");
 
-
-	//ImportShaderData data;
-	//data.vertexPath = "Assets/Shaders/DefaultVertex.txt";
-	//data.fragmentPath = "Assets/Shaders/DefaultFragment.txt";
-	//IShader->Import(data);
-
-	//ImportAssets(ASSETS_FOLDER, filters);
-
+	ImportAssets(ASSETS_FOLDER, filters);
 
 	return true;
 }
@@ -77,7 +72,7 @@ void ModuleImporter::ImportAssets(const char * directory, std::vector<std::strin
 
 		for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 		{
-				ImportAssets((dir + (*it)).c_str(), filters);
+				ImportAssets((dir + (*it) + "/").c_str(), filters);
 		}
 
 		std::sort(files.begin(), files.end());
@@ -151,6 +146,26 @@ bool ModuleImporter::LoadFromPath(const char* path) const
 		{
 			ImportData data;
 			ret = IScene->Import(DroppedFile_path.data(), data);
+		}
+		// If it is a shader object (we search for .vertex, then if a .fragment with the same name exists we import the shader) ...
+		if (DroppedFile_path.find(".vertex") != std::string::npos || DroppedFile_path.find(".VERTEX") != std::string::npos)
+		{
+			ImportShaderData data;
+			data.vertexPath = DroppedFile_path.data();
+
+
+			uint dot = DroppedFile_path.find_last_of(".");
+
+
+			std::string fpath = DroppedFile_path.substr(0, dot);
+			fpath.append(".fragment");
+			//std::string directory = ASSETS_FOLDER;
+
+			//directory.append(fpath);
+
+			data.fragmentPath = fpath.data();
+
+			IShader->Import(data);
 		}
 		// If it is a json file ...
 		else if (DroppedFile_path.find(".json") != std::string::npos || DroppedFile_path.find(".JSON") != std::string::npos)
