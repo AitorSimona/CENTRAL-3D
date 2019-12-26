@@ -2,6 +2,33 @@
 #define __RESOURCE_SHADER_H__
 
 #include "Resource.h"
+#include "Math.h"
+//
+//enum Uniforms
+//{
+//	intU,
+//	floatU,
+//	vec2U,
+//	vec3U,
+//	vec4U
+//};
+
+struct Uniform
+{
+	//Uniforms type;
+	std::string name;
+	uint location = 0;
+	//union data
+	//{
+	//	int intU;
+	//	float floatU;
+	//	float2 vec2U;
+	//	float3 vec3U;
+	//	float4 vec4U;
+	//};
+
+	//union data value;
+};
 
 class ResourceShader : public Resource
 {
@@ -17,6 +44,7 @@ public:
 	void LoadInMemory();
 	void FreeMemory();
 	void ReloadAndCompileShader();
+	void GetAllUniforms(std::vector<Uniform*>& uniforms) const;
 
 public:
 	// use/activate the shader

@@ -1,0 +1,22 @@
+{
+    "GameObject (3)": {
+        "Components": {
+            "0": {
+                "positionx": "1.012279",
+                "positiony": "0.369893",
+                "positionz": "0.220526",
+                "rotationx": "-0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "9.097135",
+                "scaley": "0.314498",
+                "scalez": "16.416557"
+            },
+            "1": "Library/Meshes/1759854222.mesh",
+            "2": "",
+            "3": "Library/Textures/150277413.dds"
+        },
+        "Parent": "134469717",
+        "UID": "954581218"
+    }
+}

@@ -14,6 +14,8 @@ public:
 
 	bool Draw();
 
+	void HandleUniforms();
+
 
 	ResourceShader* currentShader = nullptr;
 };

@@ -1,4 +1,6 @@
 #version 460 core 
+uniform float time;
+
 in vec3 fPosition;
 in vec3 fNormal;
 out vec4 color; 
@@ -15,8 +17,9 @@ return vec2(diffuse, spec);
 }
 void main()
 {
-vec3 lcolor = vec3(0.8,0.2,0.2);
+vec3 lcolor = vec3(0.8,0.8,0.8);
 vec2 inten = blinnPhongDir(vec3(1,1,0), 1.0, 0.2, 0.8, 0.8, 80.0);
 color = vec4(lcolor * inten.x + vec3(1.0) * inten.y, 1.0);
 }
+
 

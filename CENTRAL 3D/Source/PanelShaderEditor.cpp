@@ -136,3 +136,8 @@ bool PanelShaderEditor::Draw()
 
 	return true;
 }
+
+void PanelShaderEditor::HandleUniforms()
+{
+
+}

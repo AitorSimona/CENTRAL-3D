@@ -309,6 +309,64 @@ void ResourceShader::ReloadAndCompileShader()
 
 }
 
+void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) const
+{
+	int uniform_count;
+	glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &uniform_count);
+
+	char name[128];
+	GLenum type;
+	GLint size;
+
+	for (uint i = 0; i < uniform_count; ++i)
+	{
+		glGetActiveUniform(ID, i, 128, nullptr, &size, &type, name);
+
+		if (strcmp(name, "model_matrix") == 0
+			|| strcmp(name, "view") == 0
+			|| strcmp(name, "projection") == 0
+			|| strcmp(name, "Time") == 0)
+			continue;
+
+		Uniform* uniform = nullptr;
+
+		switch (type)
+		{
+		case GL_INT:
+			uniform = new Uniform();
+			uniform->name = name;
+			uniform->location = glGetUniformLocation(ID, name);
+			break;
+
+		case GL_FLOAT:
+			uniform = new Uniform();
+			uniform->name = name;
+			uniform->location = glGetUniformLocation(ID, name);
+			break;
+		
+		case GL_V2F:
+			uniform = new Uniform();
+			uniform->name = name;
+			uniform->location = glGetUniformLocation(ID, name);
+			break;
+
+		case GL_V3F:
+			uniform = new Uniform();
+			uniform->name = name;
+			uniform->location = glGetUniformLocation(ID, name);
+			break;
+
+		case GL_T4F_V4F:
+			uniform = new Uniform();
+			uniform->name = name;
+			uniform->location = glGetUniformLocation(ID, name);
+			break;
+
+		}
+		uniforms.push_back(uniform);
+	}
+}
+
 
 // Internal use only!
 bool ResourceShader::CreateVertexShader(unsigned int& vertex, const char * vShaderCode)
