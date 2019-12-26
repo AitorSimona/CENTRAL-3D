@@ -102,7 +102,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 
-		App->resources->AddShader(this);
+		//App->resources->AddShader(this);
 	}
 }
 
