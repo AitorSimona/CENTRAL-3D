@@ -1,5 +1,6 @@
 #include "PanelShaderEditor.h"
 
+#include "OpenGL.h"
 #include "Imgui/imgui.h"
 
 #include "Application.h"
@@ -95,7 +96,6 @@ bool PanelShaderEditor::Draw()
 		}
 
 
-
 		ImGui::Separator();
 
 		ImGui::Text("Vertex Shader");
@@ -111,6 +111,7 @@ bool PanelShaderEditor::Draw()
 		if (ImGui::Button("Compile"))
 		{
 			currentShader->ReloadAndCompileShader();
+			currentShader->GetAllUniforms();
 		}
 
 		ImGui::SameLine();
@@ -130,6 +131,8 @@ bool PanelShaderEditor::Draw()
 			App->resources->SaveAllShaders();
 		}
 
+		ImGui::Separator();
+		DisplayAndUpdateUniforms();
 	}
 
 	ImGui::End();
@@ -137,7 +140,53 @@ bool PanelShaderEditor::Draw()
 	return true;
 }
 
-void PanelShaderEditor::HandleUniforms()
+void PanelShaderEditor::DisplayAndUpdateUniforms()
 {
+	// Note this is being done before any render happens
 
+	static int tmp_int = 0;
+	static float tmp_float = 0.0f;
+	static float2 tmp_vec2 = { 0.0f,0.0f };
+	static float3 tmp_vec3 = { 0.0f,0.0f,0.0f };
+	static float4 tmp_vec4 = { 0.0f,0.0f,0.0f,0.0f };
+
+	glUseProgram(currentShader->ID);
+
+	for (uint i = 0; i < currentShader->uniforms.size(); ++i)
+	{
+		ImGui::Text(currentShader->uniforms[i]->name.data());
+		ImGui::SameLine();
+
+		switch (currentShader->uniforms[i]->type)
+		{
+		case GL_INT:
+			if (ImGui::InputInt("##inputintuniform", &tmp_int, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				glUniform1i(currentShader->uniforms[i]->location, tmp_int);
+			break;
+
+		case GL_FLOAT:
+			if (ImGui::InputFloat("##inputfloatuniform", &tmp_float, 1.0f, 100.0f, "%3f",ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				glUniform1f(currentShader->uniforms[i]->location, tmp_float);
+			break;
+
+		case GL_FLOAT_VEC2:
+			if (ImGui::InputFloat2("##inputfloat2uniform", tmp_vec2.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				glUniform2f(currentShader->uniforms[i]->location, tmp_vec2.x, tmp_vec2.y);
+			break;
+
+		case GL_FLOAT_VEC3:
+			if (ImGui::InputFloat3("##inputfloat3uniform", tmp_vec3.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				glUniform3f(currentShader->uniforms[i]->location, tmp_vec3.x, tmp_vec3.y, tmp_vec3.z);
+			break;
+
+		case GL_FLOAT_VEC4:
+			if (ImGui::InputFloat4("##inputfloat4uniform", tmp_vec4.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				glUniform4f(currentShader->uniforms[i]->location, tmp_vec4.x, tmp_vec4.y, tmp_vec4.z, tmp_vec4.w);
+			break;
+		}
+	}
+
+	glUseProgram(App->renderer3D->defaultShader->ID);
 }
+
+

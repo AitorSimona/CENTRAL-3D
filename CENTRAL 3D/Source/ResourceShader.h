@@ -3,31 +3,12 @@
 
 #include "Resource.h"
 #include "Math.h"
-//
-//enum Uniforms
-//{
-//	intU,
-//	floatU,
-//	vec2U,
-//	vec3U,
-//	vec4U
-//};
 
 struct Uniform
 {
-	//Uniforms type;
 	std::string name;
 	uint location = 0;
-	//union data
-	//{
-	//	int intU;
-	//	float floatU;
-	//	float2 vec2U;
-	//	float3 vec3U;
-	//	float4 vec4U;
-	//};
-
-	//union data value;
+	uint type; // GLenum
 };
 
 class ResourceShader : public Resource
@@ -44,7 +25,7 @@ public:
 	void LoadInMemory();
 	void FreeMemory();
 	void ReloadAndCompileShader();
-	void GetAllUniforms(std::vector<Uniform*>& uniforms) const;
+	void GetAllUniforms();
 
 public:
 	// use/activate the shader
@@ -61,7 +42,7 @@ public:
 
 	std::string vShaderCode;
 	std::string fShaderCode;
-
+	std::vector<Uniform*> uniforms;
 
 private:
 	unsigned int vertex, fragment = 0;
@@ -72,5 +53,7 @@ private:
 	bool CreateShaderProgram();
 	void SaveShader();
 	void DeleteShaderProgram();
+
+	void FillUniform(Uniform* uniform, const char* name, const uint type) const;
 };
 #endif //__RESOURCE_SHADER_H__

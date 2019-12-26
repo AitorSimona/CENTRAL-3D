@@ -2,8 +2,10 @@
 #define __PANEL_SHADER_EDITOR_H__
 
 #include "Panel.h"
+#include <vector>
 
 class ResourceShader;
+struct Uniform;
 
 class PanelShaderEditor : public Panel
 {
@@ -13,10 +15,9 @@ public:
 	~PanelShaderEditor();
 
 	bool Draw();
+	void DisplayAndUpdateUniforms();
 
-	void HandleUniforms();
-
-
+private:
 	ResourceShader* currentShader = nullptr;
 };
 

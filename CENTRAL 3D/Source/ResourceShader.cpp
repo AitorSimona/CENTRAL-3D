@@ -102,6 +102,8 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 
+		GetAllUniforms();
+
 		//App->resources->AddShader(this);
 	}
 }
@@ -199,6 +201,8 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 
 		}*/
 
+		GetAllUniforms();
+
 		App->resources->AddShader(this);
 	}
 
@@ -208,6 +212,13 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 ResourceShader::~ResourceShader()
 {
 	DeleteShaderProgram();
+
+	for (uint i = 0; i < uniforms.size(); ++i)
+	{
+		delete uniforms[i];
+	}
+
+	uniforms.clear();
 }
 
 void ResourceShader::Save()
@@ -309,8 +320,16 @@ void ResourceShader::ReloadAndCompileShader()
 
 }
 
-void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) const
+void ResourceShader::GetAllUniforms()
 {
+	// --- Delete previous uniforms and retrieve new ones ---
+	for (uint i = 0; i < uniforms.size(); ++i)
+	{
+		delete uniforms[i];
+	}
+
+	uniforms.clear();
+
 	int uniform_count;
 	glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &uniform_count);
 
@@ -325,41 +344,58 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) const
 		if (strcmp(name, "model_matrix") == 0
 			|| strcmp(name, "view") == 0
 			|| strcmp(name, "projection") == 0
-			|| strcmp(name, "Time") == 0)
+			|| strcmp(name, "time") == 0)
 			continue;
 
 		Uniform* uniform = nullptr;
+
+		// --- This switch prevents retrieving unwanted/unsupported uniforms ---
+		// MYTODO: we may avoid the switch by defining some filters and testing against them
 
 		switch (type)
 		{
 		case GL_INT:
 			uniform = new Uniform();
-			uniform->name = name;
-			uniform->location = glGetUniformLocation(ID, name);
+			FillUniform(uniform,name,type);
 			break;
 
 		case GL_FLOAT:
 			uniform = new Uniform();
-			uniform->name = name;
-			uniform->location = glGetUniformLocation(ID, name);
+			FillUniform(uniform, name, type);
 			break;
 		
-		case GL_V2F:
+		case GL_FLOAT_VEC2:
 			uniform = new Uniform();
-			uniform->name = name;
-			uniform->location = glGetUniformLocation(ID, name);
+			FillUniform(uniform, name, type);
 			break;
 
-		case GL_V3F:
+		case GL_FLOAT_VEC3:
 			uniform = new Uniform();
-			uniform->name = name;
-			uniform->location = glGetUniformLocation(ID, name);
+			FillUniform(uniform, name, type);
 			break;
 
-		case GL_T4F_V4F:
+		case GL_FLOAT_VEC4:
 			uniform = new Uniform();
-			uniform->name = name;
-			uniform->location = glGetUniformLocation(ID, name);
+			FillUniform(uniform, name, type);
+			break;
+
+		case GL_INT_VEC2:
+			uniform = new Uniform();
+			FillUniform(uniform, name, type);
+			break;
+
+		case GL_INT_VEC3:
+			uniform = new Uniform();
+			FillUniform(uniform, name, type);
+			break;
+
+		case GL_INT_VEC4:
+			uniform = new Uniform();
+			FillUniform(uniform, name, type);
+			break;
+
+		default:
+			continue;
 			break;
 
 		}
@@ -531,6 +567,13 @@ void ResourceShader::DeleteShaderProgram()
 		glDeleteProgram(ID);
 		ID = 0;
 	}
+}
+
+void ResourceShader::FillUniform(Uniform* uniform, const char* name, const uint type) const
+{
+	 uniform->name = name;
+	 uniform->location = glGetUniformLocation(ID, name);
+	 uniform->type = type;
 }
 
 void ResourceShader::use()
