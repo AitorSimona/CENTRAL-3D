@@ -161,12 +161,15 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
 			CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
 
-			// MYTODO: Trigger recompilation
-
+			// --- Trigger recompilation ---
+			glDeleteProgram(ID);
+			CreateShaderProgram();
+			ReloadAndCompileShader();
 		}
 
 
 		// MYTODO: OpenGL does not seem to recognize attached shaders when loading a binary program BUG!
+
 		/*GLint num;
 		glGetProgramiv(ID, GL_ATTACHED_SHADERS, &num);
 
