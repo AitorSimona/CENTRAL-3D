@@ -117,6 +117,8 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 
 	if (!success)
 	{
+		// MYTODO: Trigger recompilation
+
 		glGetProgramInfoLog(ID, 512, NULL, infoLog);
 		CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 
@@ -163,15 +165,10 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 			delete[]vertex_code;
 			delete[] fragment_code;
 
-			App->resources->AddShader(this);
-		}
-		else
-		{
-			// We will have to load manually each shader object and link...
-			glDeleteProgram(ID);
-			ID = 0;
+
 		}
 
+		App->resources->AddShader(this);
 	}
 
 

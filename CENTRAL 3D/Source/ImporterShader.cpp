@@ -53,16 +53,10 @@ bool ImporterShader::Import(const ImportData & IData) const
 
 			if (buffer)
 			{
-				// NOTE: Due to openGL not wanting to properly load binary, i load own file format...
+				// --- Load binary shader ---
 				ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data());
-
-				if (shader->ID == 0)
-				{
-					delete shader;
-					shader = new ResourceShader(data.vertexPath, data.fragmentPath);
-				}
-
 				shader->SetUID(UID);
+				App->resources->AddResource(shader);
 
 				delete[] buffer;
 			}

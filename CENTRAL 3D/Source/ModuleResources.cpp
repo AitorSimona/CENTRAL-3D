@@ -175,7 +175,6 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 
 	case Resource::ResourceType::SHADER:
 		resource = (Resource*)new ResourceShader;
-		AddShader((ResourceShader*)resource);
 		break;
 	}
 

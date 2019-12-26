@@ -37,13 +37,17 @@ void ComponentRenderer::Draw() const
 	if(mat)
 	shader = mat->resource_material->shader->ID;
 
-	if (shader != App->renderer3D->defaultShader->ID)
-		uint i = 3;
-
 	glUseProgram(shader);
 
 	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
+
+	GLint viewLoc = glGetUniformLocation(shader, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	GLint projectLoc = glGetUniformLocation(shader, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{

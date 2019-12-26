@@ -106,8 +106,6 @@ bool ModuleRenderer3D::Init(json file)
 	defaultShader->name = "Standard";
 	defaultShader->use();
 
-	App->resources->AddShader(defaultShader);
-
 	//Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
 	return ret;
