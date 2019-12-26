@@ -54,7 +54,7 @@ bool ImporterShader::Import(const ImportData & IData) const
 			if (buffer)
 			{
 				// --- Load binary shader ---
-				ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data());
+				ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data(), data.vertexPath, data.fragmentPath);
 				shader->SetUID(UID);
 				App->resources->AddResource(shader);
 

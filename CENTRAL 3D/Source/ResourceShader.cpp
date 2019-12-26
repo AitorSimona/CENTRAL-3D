@@ -106,19 +106,44 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 	}
 }
 
-ResourceShader::ResourceShader(const char * binary, uint size, uint format, const char* name) : Resource(Resource::ResourceType::SHADER)
+ResourceShader::ResourceShader(const char * binary, uint size, uint format, const char* name, const char* vertexPath, const char* fragmentPath) : Resource(Resource::ResourceType::SHADER)
 {
 	int success;
 	char infoLog[512];
 
-	this->name = name;
+	// --- Load shader's code ---
+	std::ifstream vShaderFile;
+	std::ifstream fShaderFile;
+	// ensure ifstream objects can throw exceptions:
+	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+	try
+	{
+		// open files
+		vShaderFile.open(vertexPath);
+		fShaderFile.open(fragmentPath);
+		std::stringstream vShaderStream, fShaderStream;
+		// read file's buffer contents into streams
+		vShaderStream << vShaderFile.rdbuf();
+		fShaderStream << fShaderFile.rdbuf();
+		// close file handlers
+		vShaderFile.close();
+		fShaderFile.close();
+		// convert stream into string
+		vShaderCode = vShaderStream.str();
+		fShaderCode = fShaderStream.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+	}
 
 	success = CreateShaderProgram();
+	this->name = name;
 
 	if (!success)
 	{
-		// MYTODO: Trigger recompilation
-
 		glGetProgramInfoLog(ID, 512, NULL, infoLog);
 		CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 
@@ -134,12 +159,15 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 		if (!success)
 		{
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+			CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
+
+			// MYTODO: Trigger recompilation
+
 		}
 
 
-		// MYTODO: Fill code vars
-		GLint num;
+		// MYTODO: OpenGL does not seem to recognize attached shaders when loading a binary program BUG!
+		/*GLint num;
 		glGetProgramiv(ID, GL_ATTACHED_SHADERS, &num);
 
 		uint shaders[2];
@@ -166,7 +194,7 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 			delete[] fragment_code;
 
 
-		}
+		}*/
 
 		App->resources->AddShader(this);
 	}
