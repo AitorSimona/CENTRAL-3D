@@ -88,7 +88,9 @@ bool PanelShaderEditor::Draw()
 		{
 			if (ImGui::InputText("Rename Shader: ", shadername, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				(*shaders).erase(currentShader->name);
 				currentShader->name = shadername;
+				App->resources->AddShader(currentShader);
 			}
 		}
 
@@ -116,7 +118,8 @@ bool PanelShaderEditor::Draw()
 		if (ImGui::Button("New"))
 		{
 			ResourceShader* new_shader = (ResourceShader*)App->resources->CreateResource(Resource::ResourceType::SHADER);
-			new_shader->name = "Shader " + std::to_string(shaders->size());
+			new_shader->name = "Shader " + std::to_string(shaders->size() + 1);
+			App->resources->AddShader(new_shader);
 			currentShader = new_shader;
 		}
 
