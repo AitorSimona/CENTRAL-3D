@@ -132,12 +132,15 @@ bool PanelScene::Draw()
 void PanelScene::HandleGuizmo()
 {
 	// --- Set Current Guizmo operation ---
-	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
-		guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-		guizmoOperation = ImGuizmo::OPERATION::ROTATE;
-	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
-		guizmoOperation = ImGuizmo::OPERATION::SCALE;
+	if (ImGui::IsWindowHovered())
+	{
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
+			guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+			guizmoOperation = ImGuizmo::OPERATION::ROTATE;
+		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+			guizmoOperation = ImGuizmo::OPERATION::SCALE;
+	}
 
 	GameObject* selectedGO = App->scene_manager->GetSelectedGameObject();
 

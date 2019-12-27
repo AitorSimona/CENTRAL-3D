@@ -10,6 +10,7 @@
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleTimeManager.h"
 
 #include "ResourceMesh.h"
 #include "ResourceShader.h"
@@ -47,6 +48,9 @@ void ComponentRenderer::Draw() const
 
 	GLint projectLoc = glGetUniformLocation(shader, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+
+	GLint timeLoc = glGetUniformLocation(shader, "time");
+	glUniform1f(timeLoc, App->time->time);
 
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())

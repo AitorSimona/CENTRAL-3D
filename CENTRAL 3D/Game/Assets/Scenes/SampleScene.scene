@@ -1,22 +1,25 @@
 {
-    "GameObject (3)": {
+    "GameObject (5)": {
         "Components": {
             "0": {
-                "positionx": "1.012279",
-                "positiony": "0.369893",
-                "positionz": "0.220526",
+                "positionx": "5.954946",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
                 "rotationx": "-0.000000",
                 "rotationy": "0.000000",
                 "rotationz": "-0.000000",
-                "scalex": "9.097135",
-                "scaley": "0.314498",
-                "scalez": "16.416557"
+                "scalex": "121.408775",
+                "scaley": "5.410194",
+                "scalez": "122.320877"
             },
-            "1": "Library/Meshes/1759854222.mesh",
+            "1": "Library/Meshes/92964149.mesh",
             "2": "",
-            "3": "Library/Textures/150277413.dds"
+            "3": {
+                "diffuse": "Library/Textures/310470475.dds",
+                "shader": "blinnphong"
+            }
         },
-        "Parent": "134469717",
-        "UID": "954581218"
+        "Parent": "400559832",
+        "UID": "1899137835"
     }
 }

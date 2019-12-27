@@ -170,7 +170,7 @@ bool ImporterScene::Load(const char * exported_file) const
 			// --- Get path to component file ---
 			std::string component_path;
 
-			if (type != Component::ComponentType::Transform)
+			if (type != Component::ComponentType::Transform && type != Component::ComponentType::Material)
 			{
 				std::string tmppath = components[val];
 				component_path = tmppath;
@@ -194,7 +194,10 @@ bool ImporterScene::Load(const char * exported_file) const
 
 				case Component::ComponentType::Material:
 					// --- Check if Library file exists ---
-
+				    {
+						std::string diffuse = components[val]["diffuse"];
+						component_path = diffuse;
+					}
 					if (App->fs->Exists(component_path.data()))
 					{
 
@@ -217,6 +220,10 @@ bool ImporterScene::Load(const char * exported_file) const
 							diffuse_uid = diffuse_uid.substr(0, count);
 							mat->resource_material->resource_diffuse->SetUID(std::stoi(diffuse_uid));
 						}
+						ResourceShader* shad = App->resources->GetShaders()->find(components[val]["shader"])->second;
+
+						if (shad)
+							mat->resource_material->shader = shad;
 
 						new_go->SetMaterial(mat);
 					}
@@ -361,7 +368,10 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 						component_path.append(".dds");
 
 						// --- Store path to component file ---
-						file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
+						file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())];
+						file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["diffuse"] = component_path;
+						component_path = ((scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->shader->name));
+						file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["shader"] = component_path;
 					}
 					break;
 

@@ -1,9 +1,11 @@
 #version 460 core 
-uniform float time;
-
+in vec3 ourColor; 
+in vec2 TexCoord; 
 in vec3 fPosition;
 in vec3 fNormal;
+in vec3 startPos;
 out vec4 color; 
+uniform sampler2D ourTexture; 
 
 vec2 blinnPhongDir(vec3 lightDir, float lightInt, float Ka, float Kd, float Ks, float shininess)
 {
@@ -17,10 +19,29 @@ return vec2(diffuse, spec);
 }
 void main()
 {
-vec3 lcolor = vec3(0.8,0.8,0.8);
-vec2 inten = blinnPhongDir(vec3(1,1,0), 1.0, 0.2, 0.8, 0.8, 80.0);
-color = vec4(lcolor * inten.x + vec3(1.0) * inten.y, 1.0);
+vec3 albedo = vec3(texture(ourTexture, TexCoord));
+
+float Top = startPos.y + 8;
+float Bottom = startPos.y;
+vec4 white = vec4(1.0,1.0,1.0,0.0);
+vec4 blue = vec4(0.0,0.0,1.0,1.0);
+
+float mixAmount = 0.0;
+float range = Top - Bottom;
+
+if (range > 0)
+mixAmount = (fPosition.y - Bottom) / range*1.25;
+
+vec4 color2 = mix(blue, white, mixAmount);
+albedo = vec3(mix(color2, vec4(albedo, 1.0), 0.5));
+
+vec2 inten = blinnPhongDir(vec3(1,5,0), 1.5, 2.0, 0.5, 0.0,0.0);
+color = vec4((albedo * inten.x + vec3(1.0) * inten.y ), 1.0);
 }
+
+
+
+
 
 
 

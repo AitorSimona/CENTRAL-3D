@@ -1,20 +1,40 @@
 #version 460 core 
 layout (location = 0) in vec3 position; 
 layout (location = 1) in vec3 normal; 
+layout(location = 2) in vec3 color; 
+layout (location = 3) in vec2 texCoord; 
 uniform mat4 view; 
 uniform mat4 model_matrix;
 uniform mat4 projection;
-
+uniform float time;
 out vec3 fNormal;
 out vec3 fPosition;
+out vec2 fTexCoord;
+out vec3 startPos;
+
+out vec3 ourColor; 
+out vec2 TexCoord; 
 
 void main()
 {
 fNormal = normal;
 fPosition = position;
+fTexCoord = texCoord;
 
-gl_Position = projection * view * model_matrix * vec4(position, 1.0f); 
+fTexCoord += sin((time*0.4) + (position.x*position.z*0.1))*0.2;
+
+fPosition.y += sin((time*3) + (position.x*position.z*3))*2;
+
+ourColor = color; 
+TexCoord = fTexCoord; 
+
+startPos = vec3(model_matrix * vec4(position, 1.0));
+gl_Position = projection * view * model_matrix * vec4(fPosition, 1.0f); 
 
 }
+
+
+
+
 
 

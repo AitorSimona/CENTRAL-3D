@@ -27,6 +27,7 @@ public:
 	void SetMaxFramerate(uint maxFramerate);
 	void SetTimeScale(float scale);
 
+	float time = 0.0f;
 private:
 
 	Timer				Realtime_clock;
