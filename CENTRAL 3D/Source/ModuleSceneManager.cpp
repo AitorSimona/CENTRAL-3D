@@ -72,6 +72,7 @@ bool ModuleSceneManager::Start()
 
 	CreateGrid();
 
+	App->scene_manager->LoadScene();
 
 
 	return true;
@@ -358,6 +359,8 @@ void ModuleSceneManager::LoadScene()
 {
 	std::string Scene_name = SCENES_FOLDER;
 	Scene_name.append("SampleScene.scene");
+
+	SelectedGameObject = nullptr;
 
 	RecursiveFreeScene(root);
 

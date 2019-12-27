@@ -50,8 +50,8 @@ bool ModuleImporter::Init(json file)
 bool ModuleImporter::Start()
 {
 	std::vector<std::string> filters;
-	filters.push_back("fbx");
-	filters.push_back("FBX");
+	//filters.push_back("fbx");
+	//filters.push_back("FBX");
 	filters.push_back("vertex");
 	filters.push_back("VERTEX");
 
