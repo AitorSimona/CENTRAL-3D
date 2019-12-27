@@ -17,6 +17,7 @@ public:
 public:
 	ResourceTexture* resource_diffuse = nullptr;
 	ResourceShader* shader = nullptr;
+	std::vector<Uniform*> uniforms;
 };
 
 #endif //__RESOURCE_MATERIAL_H__

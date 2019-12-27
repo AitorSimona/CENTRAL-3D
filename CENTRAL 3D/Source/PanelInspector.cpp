@@ -5,6 +5,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleResources.h"
+#include "ModuleGui.h"
 
 #include "GameObject.h"
 #include "ComponentTransform.h"
@@ -12,6 +13,8 @@
 #include "ComponentMaterial.h"
 #include "ComponentRenderer.h"
 #include "ComponentCamera.h"
+
+#include "PanelShaderEditor.h"
 
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
@@ -293,6 +296,7 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 				{
 					item_current = it->second->name.data();
 					material->resource_material->shader = it->second;
+					material->resource_material->shader->GetAllUniforms(material->resource_material->uniforms);
 				}
 				if (is_selected)
 					ImGui::SetItemDefaultFocus();
@@ -318,6 +322,12 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_width).data());
 		ImGui::SameLine();
 		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_height).data());
+
+		ImGui::Separator();
+
+		ImGui::Text("Shader Uniforms");
+
+		App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material->resource_material);
 
 		ImGui::TreePop();
 	}
@@ -354,3 +364,4 @@ inline void PanelInspector::CreateCameraNode(GameObject & Selected) const
 	}
 	
 }
+

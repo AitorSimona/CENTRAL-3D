@@ -5,7 +5,7 @@
 #include <vector>
 
 class ResourceShader;
-struct Uniform;
+class ResourceMaterial;
 
 class PanelShaderEditor : public Panel
 {
@@ -15,7 +15,7 @@ public:
 	~PanelShaderEditor();
 
 	bool Draw();
-	void DisplayAndUpdateUniforms();
+	void DisplayAndUpdateUniforms(ResourceMaterial* resource_mat);
 
 private:
 	ResourceShader* currentShader = nullptr;

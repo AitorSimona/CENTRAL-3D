@@ -25,7 +25,7 @@ public:
 	void LoadInMemory();
 	void FreeMemory();
 	void ReloadAndCompileShader();
-	void GetAllUniforms();
+	void GetAllUniforms(std::vector<Uniform*>& uniforms);
 
 public:
 	// use/activate the shader
@@ -42,8 +42,6 @@ public:
 
 	std::string vShaderCode;
 	std::string fShaderCode;
-	std::vector<Uniform*> uniforms;
-
 private:
 	unsigned int vertex, fragment = 0;
 

@@ -102,8 +102,6 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 
-		GetAllUniforms();
-
 		//App->resources->AddShader(this);
 	}
 }
@@ -201,8 +199,6 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 
 		}*/
 
-		GetAllUniforms();
-
 		App->resources->AddShader(this);
 	}
 
@@ -212,13 +208,6 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 ResourceShader::~ResourceShader()
 {
 	DeleteShaderProgram();
-
-	for (uint i = 0; i < uniforms.size(); ++i)
-	{
-		delete uniforms[i];
-	}
-
-	uniforms.clear();
 }
 
 void ResourceShader::Save()
@@ -320,7 +309,7 @@ void ResourceShader::ReloadAndCompileShader()
 
 }
 
-void ResourceShader::GetAllUniforms()
+void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 {
 	// --- Delete previous uniforms and retrieve new ones ---
 	for (uint i = 0; i < uniforms.size(); ++i)

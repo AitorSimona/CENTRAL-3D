@@ -6,7 +6,10 @@
 #include "Application.h"
 #include "ModuleResources.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleSceneManager.h"
 
+#include "GameObject.h"
+#include "ComponentMaterial.h"
 #include "ResourceShader.h"
 
 #include "mmgr/mmgr.h"
@@ -81,7 +84,6 @@ bool PanelShaderEditor::Draw()
 			ImGui::EndCombo();
 		}
 
-		//ImGui::SameLine();
 
 		static char shadername[100];
 
@@ -111,7 +113,16 @@ bool PanelShaderEditor::Draw()
 		if (ImGui::Button("Compile"))
 		{
 			currentShader->ReloadAndCompileShader();
-			currentShader->GetAllUniforms();
+
+			if (App->scene_manager->GetSelectedGameObject())
+			{
+				ComponentMaterial* material = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+
+				// --- Display uniforms ---
+				if(material)
+				material->resource_material->shader->GetAllUniforms(material->resource_material->uniforms);
+			}
+
 		}
 
 		ImGui::SameLine();
@@ -132,7 +143,6 @@ bool PanelShaderEditor::Draw()
 		}
 
 		ImGui::Separator();
-		DisplayAndUpdateUniforms();
 	}
 
 	ImGui::End();
@@ -140,7 +150,7 @@ bool PanelShaderEditor::Draw()
 	return true;
 }
 
-void PanelShaderEditor::DisplayAndUpdateUniforms()
+void PanelShaderEditor::DisplayAndUpdateUniforms(ResourceMaterial* resource_mat)
 {
 	// Note this is being done before any render happens
 
@@ -150,38 +160,38 @@ void PanelShaderEditor::DisplayAndUpdateUniforms()
 	static float3 tmp_vec3 = { 0.0f,0.0f,0.0f };
 	static float4 tmp_vec4 = { 0.0f,0.0f,0.0f,0.0f };
 
-	glUseProgram(currentShader->ID);
+	glUseProgram(resource_mat->shader->ID);
 
-	for (uint i = 0; i < currentShader->uniforms.size(); ++i)
+	for (uint i = 0; i < resource_mat->uniforms.size(); ++i)
 	{
-		ImGui::Text(currentShader->uniforms[i]->name.data());
+		ImGui::Text(resource_mat->uniforms[i]->name.data());
 		ImGui::SameLine();
 
-		switch (currentShader->uniforms[i]->type)
+		switch (resource_mat->uniforms[i]->type)
 		{
 		case GL_INT:
 			if (ImGui::InputInt("##inputintuniform", &tmp_int, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-				glUniform1i(currentShader->uniforms[i]->location, tmp_int);
+				glUniform1i(resource_mat->uniforms[i]->location, tmp_int);
 			break;
 
 		case GL_FLOAT:
 			if (ImGui::InputFloat("##inputfloatuniform", &tmp_float, 1.0f, 100.0f, "%3f",ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-				glUniform1f(currentShader->uniforms[i]->location, tmp_float);
+				glUniform1f(resource_mat->uniforms[i]->location, tmp_float);
 			break;
 
 		case GL_FLOAT_VEC2:
 			if (ImGui::InputFloat2("##inputfloat2uniform", tmp_vec2.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-				glUniform2f(currentShader->uniforms[i]->location, tmp_vec2.x, tmp_vec2.y);
+				glUniform2f(resource_mat->uniforms[i]->location, tmp_vec2.x, tmp_vec2.y);
 			break;
 
 		case GL_FLOAT_VEC3:
 			if (ImGui::InputFloat3("##inputfloat3uniform", tmp_vec3.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-				glUniform3f(currentShader->uniforms[i]->location, tmp_vec3.x, tmp_vec3.y, tmp_vec3.z);
+				glUniform3f(resource_mat->uniforms[i]->location, tmp_vec3.x, tmp_vec3.y, tmp_vec3.z);
 			break;
 
 		case GL_FLOAT_VEC4:
 			if (ImGui::InputFloat4("##inputfloat4uniform", tmp_vec4.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-				glUniform4f(currentShader->uniforms[i]->location, tmp_vec4.x, tmp_vec4.y, tmp_vec4.z, tmp_vec4.w);
+				glUniform4f(resource_mat->uniforms[i]->location, tmp_vec4.x, tmp_vec4.y, tmp_vec4.z, tmp_vec4.w);
 			break;
 		}
 	}
