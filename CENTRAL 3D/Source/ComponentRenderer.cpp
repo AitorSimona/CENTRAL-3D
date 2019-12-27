@@ -38,6 +38,8 @@ void ComponentRenderer::Draw() const
 	if(mat)
 	shader = mat->resource_material->shader->ID;
 
+	mat->resource_material->UpdateUniforms();
+
 	glUseProgram(shader);
 
 	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
@@ -51,7 +53,6 @@ void ComponentRenderer::Draw() const
 
 	GLint timeLoc = glGetUniformLocation(shader, "time");
 	glUniform1f(timeLoc, App->time->time);
-
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{

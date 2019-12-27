@@ -173,78 +173,77 @@ void PanelShaderEditor::DisplayAndUpdateUniforms(ResourceMaterial* resource_mat)
 		case GL_INT:
 			tmp_int = resource_mat->uniforms[i]->value.intU;
 
-			ImGui::InputInt("##inputintuniform", &tmp_int, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-
-			glUniform1i(resource_mat->uniforms[i]->location, tmp_int);
-			resource_mat->uniforms[i]->value.intU = tmp_int;
-
+			if (ImGui::InputInt("##inputintuniform", &tmp_int, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.intU = tmp_int;
+			}
 			break;
 
 		case GL_FLOAT:
 			tmp_float = resource_mat->uniforms[i]->value.floatU;
 
-			ImGui::InputFloat("##inputfloatuniform", &tmp_float, 1.0f, 100.0f, "%3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-
-			glUniform1f(resource_mat->uniforms[i]->location, tmp_float);
-			resource_mat->uniforms[i]->value.floatU = tmp_float;
+			if (ImGui::InputFloat("##inputfloatuniform", &tmp_float, 1.0f, 100.0f, "%3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.floatU = tmp_float;
+			}
 			
 			break;
 
 		case GL_FLOAT_VEC2:
 			tmp_vec2 = resource_mat->uniforms[i]->value.vec2U;
 
-			ImGui::InputFloat2("##inputfloat2uniform", tmp_vec2.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-			
-			glUniform2f(resource_mat->uniforms[i]->location, tmp_vec2.x, tmp_vec2.y);
-			resource_mat->uniforms[i]->value.vec2U = tmp_vec2;
+			if (ImGui::InputFloat2("##inputfloat2uniform", tmp_vec2.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.vec2U = tmp_vec2;
+			}
 			
 			break;
 
 		case GL_FLOAT_VEC3:
 			tmp_vec3 = resource_mat->uniforms[i]->value.vec3U;
 
-			ImGui::InputFloat3("##inputfloat3uniform", tmp_vec3.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-			
-			glUniform3f(resource_mat->uniforms[i]->location, tmp_vec3.x, tmp_vec3.y, tmp_vec3.z);
-			resource_mat->uniforms[i]->value.vec3U = tmp_vec3;
+			if (ImGui::InputFloat3("##inputfloat3uniform", tmp_vec3.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.vec3U = tmp_vec3;
+			}
 			
 			break;
 
 		case GL_FLOAT_VEC4:
 			tmp_vec4 = resource_mat->uniforms[i]->value.vec4U;
 
-			ImGui::InputFloat4("##inputfloat4uniform", tmp_vec4.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-			
-			glUniform4f(resource_mat->uniforms[i]->location, tmp_vec4.x, tmp_vec4.y, tmp_vec4.z, tmp_vec4.w);
-			resource_mat->uniforms[i]->value.vec4U = tmp_vec4;
+			if (ImGui::InputFloat4("##inputfloat4uniform", tmp_vec4.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.vec4U = tmp_vec4;
+			}
 			
 			break;
 
 		case GL_INT_VEC2:
 			tmp_vec2 = resource_mat->uniforms[i]->value.vec2U;
 
-			ImGui::InputInt2("##inputint2uniform", (int*)tmp_vec2.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-
-			glUniform2i(resource_mat->uniforms[i]->location, tmp_vec2.x, tmp_vec2.y);
-			resource_mat->uniforms[i]->value.vec2U = tmp_vec2;
+			if (ImGui::InputInt2("##inputint2uniform", (int*)tmp_vec2.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.vec2U = tmp_vec2;
+			}
 			break;
 
 		case GL_INT_VEC3:
 			tmp_vec3 = resource_mat->uniforms[i]->value.vec3U;
 
-			ImGui::InputInt3("##inputint3uniform", (int*)tmp_vec3.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-
-			glUniform3i(resource_mat->uniforms[i]->location, tmp_vec3.x, tmp_vec3.y, tmp_vec3.z);
-			resource_mat->uniforms[i]->value.vec3U = tmp_vec3;
+			if (ImGui::InputInt3("##inputint3uniform", (int*)tmp_vec3.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.vec3U = tmp_vec3;
+			}
 			break;
 
 		case GL_INT_VEC4:
 			tmp_vec4 = resource_mat->uniforms[i]->value.vec4U;
 
-			ImGui::InputInt4("##inputint4uniform", (int*)tmp_vec4.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-
-			glUniform4i(resource_mat->uniforms[i]->location, tmp_vec4.x, tmp_vec4.y, tmp_vec4.z, tmp_vec4.w);
-			resource_mat->uniforms[i]->value.vec4U = tmp_vec4;
+			if (ImGui::InputInt4("##inputint4uniform", (int*)tmp_vec4.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				resource_mat->uniforms[i]->value.vec4U = tmp_vec4;
+			}
 
 			break;
 		}

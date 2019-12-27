@@ -37,9 +37,10 @@ mixAmount = (fPosition.y - Bottom) / range*1.25;
 vec4 color2 = mix(blue, white, mixAmount);
 albedo = vec3(mix(color2, vec4(albedo, 1.0), 0.5));
 
-vec2 inten = blinnPhongDir(vec3(1,5,0), 1.5, 2.0, 0.5, 0.0,0.0);
+vec2 inten = blinnPhongDir(vec3(1,5,0), 1.5, 2.0, 0.5, 0.0,0.5);
 color = vec4((albedo * inten.x + vec3(1.0) * inten.y ), 1.0);
 }
+
 
 
 

@@ -14,6 +14,8 @@ public:
 	ResourceMaterial();
 	~ResourceMaterial();
 
+	void UpdateUniforms();
+
 public:
 	ResourceTexture* resource_diffuse = nullptr;
 	ResourceShader* shader = nullptr;

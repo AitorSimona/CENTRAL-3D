@@ -251,8 +251,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									}
 									tmp_int = std::stoi(tmp);
 									(*iterator)->value.intU = tmp_int;
-
-									//glUniform1i((*iterator)->location, tmp_int);
 									break;
 
 								case GL_FLOAT:
@@ -262,8 +260,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									}
 									tmp_float = std::stoi(tmp);
 									(*iterator)->value.floatU = tmp_float;
-
-									//glUniform1f((*iterator)->location, tmp_float);
 									break;
 
 								case GL_FLOAT_VEC2:
@@ -278,8 +274,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									}
 									tmp_float2 = std::stoi(tmp);
 									(*iterator)->value.vec2U = float2(tmp_float,tmp_float2);
-
-									//glUniform2f((*iterator)->location, tmp_float, tmp_float2);
 									break;
 
 								case GL_FLOAT_VEC3:
@@ -300,8 +294,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									tmp_float3 = std::stoi(tmp);
 
 									(*iterator)->value.vec3U = float3(tmp_float, tmp_float2, tmp_float3);
-
-									//glUniform3f((*iterator)->location, tmp_float, tmp_float2, tmp_float3);
 									break;
 
 								case GL_FLOAT_VEC4:
@@ -327,8 +319,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									tmp_float4 = std::stoi(tmp);
 
 									(*iterator)->value.vec4U = float4(tmp_float, tmp_float2, tmp_float3, tmp_float4);
-
-									//glUniform4f((*iterator)->location, tmp_float, tmp_float2, tmp_float3, tmp_float4);
 									break;
 
 								case GL_INT_VEC2:
@@ -344,8 +334,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									tmp_int2 = std::stoi(tmp);
 
 									(*iterator)->value.vec2U = float2(tmp_int, tmp_int2);
-
-									//glUniform2i((*iterator)->location, tmp_int, tmp_int2);
 									break;
 
 								case GL_INT_VEC3:
@@ -366,8 +354,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									tmp_int3 = std::stoi(tmp);
 
 									(*iterator)->value.vec3U = float3(tmp_int, tmp_int2, tmp_int3);
-
-									//glUniform3i((*iterator)->location, tmp_int, tmp_int2, tmp_int3);
 									break;
 
 								case GL_INT_VEC4:
@@ -393,8 +379,6 @@ bool ImporterScene::Load(const char * exported_file) const
 									tmp_int4 = std::stoi(tmp);
 
 									(*iterator)->value.vec4U = float4(tmp_int, tmp_int2, tmp_int3, tmp_int4);
-
-									//glUniform4i((*iterator)->location, tmp_int, tmp_int2, tmp_int3, tmp_int4);
 									break;
 
 								default:

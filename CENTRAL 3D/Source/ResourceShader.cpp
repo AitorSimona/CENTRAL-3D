@@ -311,13 +311,7 @@ void ResourceShader::ReloadAndCompileShader()
 
 void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 {
-	// --- Delete previous uniforms and retrieve new ones ---
-	for (uint i = 0; i < uniforms.size(); ++i)
-	{
-		delete uniforms[i];
-	}
-
-	uniforms.clear();
+	std::vector<Uniform*> new_uniforms;
 
 	int uniform_count;
 	glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &uniform_count);
@@ -388,8 +382,25 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 			break;
 
 		}
-		uniforms.push_back(uniform);
+
+		for (uint i = 0; i < uniforms.size(); ++i)
+		{
+			if (uniforms[i]->name == uniform->name && uniforms[i]->type == uniform->type)
+				uniform->value = uniforms[i]->value;
+		}
+
+		new_uniforms.push_back(uniform);
 	}
+
+	// --- Delete previous uniforms and retrieve new ones ---
+	for (uint i = 0; i < uniforms.size(); ++i)
+	{
+		delete uniforms[i];
+	}
+
+	uniforms.clear();
+
+	uniforms = new_uniforms;
 }
 
 

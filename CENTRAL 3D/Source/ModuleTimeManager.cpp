@@ -27,7 +27,7 @@ void ModuleTimeManager::PrepareUpdate()
 	game_dt = realtime_dt = (float)Gametime_clock.Read() / 1000.0f;
 	Gametime_clock.Start();
 
-	time += realtime_dt;
+	time += realtime_dt*Time_scale;
 
 	switch (App->GetAppState())
 	{
@@ -39,7 +39,7 @@ void ModuleTimeManager::PrepareUpdate()
 
 		case AppState::PLAY:
 			App->scene_manager->SetSelectedGameObject(nullptr);
-			game_dt *= Time_scale;
+			//game_dt *= Time_scale;
 			break;
 
 		case AppState::TO_PAUSE:

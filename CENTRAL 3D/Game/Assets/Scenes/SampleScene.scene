@@ -3,13 +3,13 @@
         "Components": {
             "0": {
                 "positionx": "5.588576",
-                "positiony": "0.000000",
+                "positiony": "1.722753",
                 "positionz": "-0.438792",
                 "rotationx": "-0.000000",
                 "rotationy": "0.000000",
                 "rotationz": "-0.000000",
                 "scalex": "121.408775",
-                "scaley": "5.410194",
+                "scaley": "1.000000",
                 "scalez": "122.320877"
             },
             "1": "Library/Meshes/92964149.mesh",
@@ -25,7 +25,7 @@
                 }
             }
         },
-        "Parent": "474016969",
+        "Parent": "1422170303",
         "UID": "1899137835"
     }
 }
