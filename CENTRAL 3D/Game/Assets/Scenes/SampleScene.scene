@@ -2,9 +2,9 @@
     "GameObject (5)": {
         "Components": {
             "0": {
-                "positionx": "5.954946",
+                "positionx": "5.588576",
                 "positiony": "0.000000",
-                "positionz": "0.000000",
+                "positionz": "-0.438792",
                 "rotationx": "-0.000000",
                 "rotationy": "0.000000",
                 "rotationz": "-0.000000",
@@ -16,10 +16,16 @@
             "2": "",
             "3": {
                 "diffuse": "Library/Textures/310470475.dds",
-                "shader": "blinnphong"
+                "shader": "WaterShader",
+                "uniforms": {
+                    "amplitude": {
+                        "type": "5124",
+                        "x": "2"
+                    }
+                }
             }
         },
-        "Parent": "400559832",
+        "Parent": "474016969",
         "UID": "1899137835"
     }
 }

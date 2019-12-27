@@ -4,11 +4,33 @@
 #include "Resource.h"
 #include "Math.h"
 
+union data
+{
+	data()
+	{
+		intU = 0;
+		floatU = 0;
+		vec2U = { 0,0 };
+		vec3U = { 0,0,0 };
+		vec4U = { 0,0,0,0 };
+	}
+
+	int intU;
+	float floatU;
+	float2 vec2U;
+	float3 vec3U;
+	float4 vec4U;
+};
+
 struct Uniform
 {
+	Uniform() {};
+
 	std::string name;
 	uint location = 0;
 	uint type; // GLenum
+
+	data value;
 };
 
 class ResourceShader : public Resource

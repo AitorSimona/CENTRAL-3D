@@ -10,10 +10,12 @@ uniform float time;
 out vec3 fNormal;
 out vec3 fPosition;
 out vec2 fTexCoord;
-out vec3 startPos;
+out vec3 medium_pos;
 
 out vec3 ourColor; 
 out vec2 TexCoord; 
+
+uniform int amplitude;
 
 void main()
 {
@@ -23,15 +25,17 @@ fTexCoord = texCoord;
 
 fTexCoord += sin((time*0.4) + (position.x*position.z*0.1))*0.2;
 
-fPosition.y += sin((time*3) + (position.x*position.z*3))*2;
+fPosition.y += sin((time*3) + (position.x*position.z*3))*amplitude;
 
 ourColor = color; 
 TexCoord = fTexCoord; 
 
-startPos = vec3(model_matrix * vec4(position, 1.0));
+medium_pos = vec3(model_matrix * vec4(position, 1.0));
 gl_Position = projection * view * model_matrix * vec4(fPosition, 1.0f); 
 
 }
+
+
 
 
 
