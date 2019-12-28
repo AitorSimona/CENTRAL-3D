@@ -38,7 +38,7 @@ The user does not have to handle any library file, everything is done by the eng
 
 Courtesy of Dear Imgui, the gui has been worked on to be as modular and scalable as possible. All panels inherit from a base panel class and are handled by the GUI module. Adding/modifying panels is very straightforward. 
 
-## SHADER PIPELINE
+## SHADER SUBSYSTEM
 
 <img src="docs/WaveShader.gif">
 
