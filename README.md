@@ -34,11 +34,11 @@ Resource management flow:
 
 The user does not have to handle any library file, everything is done by the engine. For a user all there is are the files he/she dropped in assets, in the original format provided.
 
-### GUI
+### Gui
 
 Courtesy of Dear Imgui, the gui has been worked on to be as modular and scalable as possible. All panels inherit from a base panel class and are handled by the GUI module. Adding/modifying panels is very straightforward. 
 
-## SHADER SUBSYSTEM
+## Shader Subsystem
 
 <img src="docs/WaveShader.gif">
 
@@ -46,7 +46,7 @@ For the third assignment, the original OpenGL rendering pipeline was replaced by
 
 There is a Shader class, which is a resource and works the same way as other resources. 
 
-### SHADER MANAGEMENT 
+### Shader management
 There are multiple ways to create a shader program:
 
 1. Write a vertex and fragment shaders, store them in separate files with the .vertex and .fragment extension. Engine will try to import them.
@@ -63,15 +63,15 @@ Steps:
 
 You have just created your own shader! 
 
-### UNIFORM EDITING
+### Uniform editing
 You can edit all int, float, and vec up to vec4 uniforms through the inspector! Head to the material node, select a shader and edit the uniforms there. Changes are applied automatically. Note that these uniforms are held by the material, so all objects with the same material will share the uniforms. 
 
 <img src="docs/UniformEditing.gif">
 
-### BINARY PROGRAM
+### Binary program
 Remember to save your shader through the SAVE ALL button in the shader Editor. The engine will save the program in binary format. Once booting the engine again it will try to load the binary, if unsuccessful it will recompile the shaders. 
 
-## OVERVIEW
+## Overview
 
 INSERT video here, focus on last assignment but show overall functionality.
 
@@ -84,7 +84,7 @@ Mouse Picking, Guizmo
 Scene is rendered to a framebuffer and displayed as texture in panelScene
 FileSystem through PhysFS (also using stl's fstream)
 
-## HOW TO USE
+## How to use
 
 There is no formal installation process, just look around and play with it
 
@@ -113,7 +113,7 @@ Editor camera only works when in AppState EDITOR mode.
 - Rotate: E
 - Scale: R
 
-## TOOLS USED
+## Tools used
 
 - Microsoft Visual Studio 2017
 - 3rd Party Libraries used:
