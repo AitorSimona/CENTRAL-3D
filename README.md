@@ -1,5 +1,5 @@
 # CENTRAL 3D
-- Version 0.2
+- Version 0.3
 - Initial steps into 3D game engine development
 - By Aitor Simona 
 * GitHub account: [AitorSimona](https://github.com/AitorSimona)
@@ -12,8 +12,9 @@
 - SDL 2.0.10
 - Glew 2.1.0
 - ImGui 1.72b (with beta docking)
+- ImGuizmo
 - MathGeoLib 1.5 (commit 1994)
-- OpenGL 3.1
+- OpenGL 4.6
 - mmgr
 - par_shapes at commit 281 
 - DevIL 1.8.0
@@ -44,12 +45,36 @@ in the hierarchy you won't notice it there, open parent to see how it is selecte
 
 Editor camera only works when in AppState EDITOR mode.
 
+- Guizmo:
+
+- Move: Q
+- Rotate: E
+- Scale: R
+
+- Shaders:
+
+You can create new shaders by putting into assets folder .vertex and .fragment files, so the engine imports them 
+at startup. 
+
+You can also create shaders on the ShaderEditor panel, next to inspector (check tabs). 
+
+Steps:
+
+- Press new 
+- Give it a cool name
+- Fill the code
+- Coompile 
+- Save 
+
+You have just created your own shader! 
+
+
 ## ASSET IMPORT
 
 Drop it inside window 2 times, first for importing, second for loading, you can also drag it from project window 
 to hierarchy (on the window title).
 
-All fbx in assets folder will be imported at startup.
+In this specific release only shaders are imported at startup, default scene is loaded.
 
 ## DEBUG
 
@@ -70,12 +95,22 @@ There are more options in Window - > Settings
 ## Features in beta
 
 - Texture pre-visualization on Inspector
-- Toolbar
 - Edit Menu
 - Load/Save cameras
 - Resource manager (initial implementation)
 
 ## CHANGELOG
+
+### 0.3
+
+- Shader pipeline to draw geometry and debug draw
+- Shader resource (save & load...)
+- Shader binary program loading
+- Water Shader
+- Editor shader support (creation, realtime changes, uniform editing)
+- Guizmo
+- Framebuffer, scene in window, code adaptation
+- Time manager improvements
 
 ### 0.2
 
@@ -109,6 +144,16 @@ There are more options in Window - > Settings
 - Load Textures through DevIL (dds and png format)
 - Docking
 
+## Innovation:
+
+Done:
+- Shader binary program loading
+
+Scheduled:
+- Shader debug draw (missing normals, aabbs, octree, camera)
+- Z-buffer visualizer
+- shader normal draw
+- reversed-z technique
 
 ## License:
 
