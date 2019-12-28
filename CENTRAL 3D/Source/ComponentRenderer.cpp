@@ -58,7 +58,7 @@ void ComponentRenderer::Draw() const
 	{
 		DrawMesh(*mesh->resource_mesh, mesh->GetContainerGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material));
 		DrawNormals(*mesh->resource_mesh);
-		DrawAxis();
+		//DrawAxis();
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
