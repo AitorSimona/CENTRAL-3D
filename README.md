@@ -1,12 +1,12 @@
 # CENTRAL 3D
 - Version 0.3
-- https://github.com/AitorSimona/CENTRAL-3D
-- https://github.com/AitorSimona/CENTRAL-3D/releases/tag/Assignment3
+- [Repository](https://github.com/AitorSimona/CENTRAL-3D)
+- [Latest Release](https://github.com/AitorSimona/CENTRAL-3D/releases/tag/Assignment3)
 
 - Initial steps into 3D game engine development, this engine was built during Barcelona - UPC - CITM - Design and Development of Videogames - Game Engines subject (university).
 
 
-- By Aitor Simona: https://github.com/AitorSimona
+- By [AitorSimona](https://github.com/AitorSimona)
 
 <img src="docs/Photo.jpg">
 
