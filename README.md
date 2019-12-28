@@ -44,6 +44,7 @@ For the third assignment, the original OpenGL rendering pipeline was replaced by
 
 There is a Shader class, which is a resource and works the same way as other resources. 
 
+### SHADER MANAGEMENT 
 There are multiple ways to create a shader program:
 
 1. Write a vertex and fragment shaders, store them in separate files with the .vertex and .fragment extension. Engine will try to import them.
@@ -60,13 +61,26 @@ Steps:
 
 You have just created your own shader! 
 
+### UNIFORM EDITING
 You can edit all int, float, and vec up to vec4 uniforms through the inspector! Head to the material node, select a shader and edit the uniforms there. Changes are applied automatically. Note that these uniforms are held by the material, so all objects with the same material will share the uniforms. 
 
-INSERT two gifs and detailed explanation here.
+### BINARY PROGRAM
+Remember to save your shader through the SAVE ALL button in the shader Editor. The engine will save the program in binary format. Once booting the engine again it will try to load the binary, if unsuccessful it will recompile the shaders. 
+
+INSERT two gifs here.
 
 ## OVERVIEW
 
 INSERT video here, focus on last assignment but show overall functionality.
+
+## Other Features
+Time Management
+Octree and Frustum Culling
+Scene Serialization and de-Serialization
+Importers (Scene, Mesh, Texture(module), Material and Shader)
+Mouse Picking, Guizmo
+Scene is rendered to a framebuffer and displayed as texture in panelScene
+FileSystem through PhysFS (also using stl's fstream)
 
 ## TOOLS USED
 
