@@ -71,6 +71,30 @@ bool ModuleRenderer3D::Init(json file)
 	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
 	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
 
+	// --- Creating point/line drawing shaders ---
+
+	const char * linePointVertShaderSrc = "#version 460 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"out vec3 ourColor; \n"
+		"in vec3 color; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"ourColor = color; \n"
+		"}\n";
+
+	const char * linePointFragShaderSrc = "#version 460 core \n"
+		"in vec3 ourColor; \n"
+		"out vec4 color; \n"
+		"void main(){ \n"
+		"color = vec4(ourColor, 1.0); \n"
+		"} \n";
+
+	linepointShader = new ResourceShader(linePointVertShaderSrc, linePointFragShaderSrc, false);
+	linepointShader->name = "LinePoint";
+
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char *vertexShaderSource =
@@ -168,6 +192,7 @@ bool ModuleRenderer3D::CleanUp()
 	CONSOLE_LOG("Destroying 3D Renderer");
 
 	delete defaultShader;
+	delete linepointShader;
 
 	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);

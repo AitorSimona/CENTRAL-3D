@@ -65,10 +65,10 @@ void ComponentRenderer::Draw() const
 
 	// --- Draw Frustum ---
 	if (camera)
-		ModuleSceneManager::DrawWire(camera->frustum, White);
+		ModuleSceneManager::DrawWire(camera->frustum, White, App->scene_manager->GetPointLineVAO());
 
 	if(App->scene_manager->display_boundingboxes)
-	ModuleSceneManager::DrawWire(GO->GetAABB(), Green);
+	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 
 }
 

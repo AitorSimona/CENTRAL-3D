@@ -39,6 +39,8 @@ public:
 
 	// --- Getters ---
 	GameObject* GetSelectedGameObject() const;
+	GameObject* GetRootGO() const;
+	uint GetPointLineVAO() const;
 
 	// --- Setters ---
 	void SetSelectedGameObject(GameObject* go);
@@ -47,7 +49,6 @@ public:
 	// --- Utilities ---
 	void DrawGrid();
 	void Draw();
-	GameObject* GetRootGO() const;
 	void RedoOctree();
 	void SetStatic(GameObject* go);
 	void RecursiveDrawQuadtree(QuadtreeNode * node) const;
@@ -62,11 +63,11 @@ public:
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
-	static void DrawWire(const Box& box, Color color)
+	static void DrawWire(const Box& box, Color color, uint VAO)
 	{
 		float3 corners[8];
 		box.GetCornerPoints(corners);
-		DrawWireFromVertices(corners, color);
+		DrawWireFromVertices(corners, color, VAO);
 	};
 
 private:
@@ -79,7 +80,7 @@ private:
 	ResourceMesh* CreateCube(float sizeX, float sizeY, float sizeZ);
 	ResourceMesh* CreateSphere(float Radius, int slices, int slacks);
 
-	static void DrawWireFromVertices(const float3* corners, Color color);
+	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 public:
 	ComponentMaterial* CheckersMaterial = nullptr;
 	ComponentMaterial* DefaultMaterial = nullptr;
@@ -89,7 +90,10 @@ public:
 	std::vector<GameObject*> NoStaticGo;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
+
+
 private:
+	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;

@@ -38,7 +38,7 @@ public:
 public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;
-	/*uint shaderProgram = 0;*/
+	ResourceShader* linepointShader = nullptr;
 
 	unsigned int VAO = 0;
 	Light lights[MAX_LIGHTS];

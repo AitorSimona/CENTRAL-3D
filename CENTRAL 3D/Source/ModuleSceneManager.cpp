@@ -74,6 +74,7 @@ bool ModuleSceneManager::Start()
 
 	App->scene_manager->LoadScene();
 
+	glGenVertexArrays(1, &PointLineVAO);
 
 	return true;
 }
@@ -107,6 +108,9 @@ bool ModuleSceneManager::CleanUp()
 
 	DefaultMaterial = nullptr;
 	CheckersMaterial = nullptr;
+
+	glDeleteVertexArrays(1, &PointLineVAO);
+	glDeleteVertexArrays(1, &Grid_VAO);
 
 	return true;
 }
@@ -221,6 +225,11 @@ GameObject * ModuleSceneManager::GetRootGO() const
 	return root;
 }
 
+uint ModuleSceneManager::GetPointLineVAO() const
+{
+	return PointLineVAO;
+}
+
 void ModuleSceneManager::RedoOctree()
 {
 	std::vector<GameObject*> scene_gos;
@@ -269,7 +278,7 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 		}
 	}
 
-	DrawWire(node->box, Red);
+	DrawWire(node->box, Red, GetPointLineVAO());
 }
 
 void ModuleSceneManager::SelectFromRay(LineSegment & ray) 
@@ -525,53 +534,88 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 	par_shapes_free_mesh(mesh);
 }
 
-void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color color)
+void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color color, uint VAO)
 {
-	glDisable(GL_LIGHTING);
-	glBegin(GL_LINES);
+	float3 vertices[24] =
+	{
+		//Between-planes right
+		corners[1],
+		corners[5],
+		corners[7],
+		corners[3],
 
-	//glColor4f(color.r, color.g, color.b, color.a);
+		//Between-planes left
+		corners[4],
+		corners[0],
+		corners[2],
+		corners[6],
 
-	//Between-planes right
-	glVertex3fv((GLfloat*)&corners[1]);
-	glVertex3fv((GLfloat*)&corners[5]);
-	glVertex3fv((GLfloat*)&corners[7]);
-	glVertex3fv((GLfloat*)&corners[3]);
+		// Far plane horizontal
+		corners[5],
+		corners[4],
+		corners[6],
+		corners[7],
 
-	//Between-planes left
-	glVertex3fv((GLfloat*)&corners[4]);
-	glVertex3fv((GLfloat*)&corners[0]);
-	glVertex3fv((GLfloat*)&corners[2]);
-	glVertex3fv((GLfloat*)&corners[6]);
+		//Near plane horizontal
+		corners[0],
+		corners[1],
+		corners[3],
+		corners[2],
 
-	//Far plane horizontal
-	glVertex3fv((GLfloat*)&corners[5]);
-	glVertex3fv((GLfloat*)&corners[4]);
-	glVertex3fv((GLfloat*)&corners[6]);
-	glVertex3fv((GLfloat*)&corners[7]);
+		//Near plane vertical
+		corners[1],
+		corners[3],
+		corners[0],
+		corners[2],
 
-	//Near plane horizontal
-	glVertex3fv((GLfloat*)&corners[0]);
-	glVertex3fv((GLfloat*)&corners[1]);
-	glVertex3fv((GLfloat*)&corners[3]);
-	glVertex3fv((GLfloat*)&corners[2]);
+		//Far plane vertical
+		corners[5],
+		corners[7],
+		corners[4],
+		corners[6]
+	};
 
-	//Near plane vertical
-	glVertex3fv((GLfloat*)&corners[1]);
-	glVertex3fv((GLfloat*)&corners[3]);
-	glVertex3fv((GLfloat*)&corners[0]);
-	glVertex3fv((GLfloat*)&corners[2]);
+	// --- Set Uniforms ---
+	glUseProgram(App->renderer3D->linepointShader->ID);
 
-	//Far plane vertical
-	glVertex3fv((GLfloat*)&corners[5]);
-	glVertex3fv((GLfloat*)&corners[7]);
-	glVertex3fv((GLfloat*)&corners[4]);
-	glVertex3fv((GLfloat*)&corners[6]);
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
-	//glColor4f(1.0, 1.0, 1.0, 1.0);
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	glEnd();
-	glEnable(GL_LIGHTING);
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+
+	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
+	glVertexAttrib3f(vertexColorLocation, color.r, color.g, color.b);
+
+	// --- Create VAO, VBO ---
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	// --- Draw lines ---
+
+	glLineWidth(3.0f);
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_LINES, 0, 24);
+	glBindVertexArray(0);
+	glLineWidth(1.0f);
+
+	// --- Delete VBO ---
+	glDeleteBuffers(1, &VBO);
+
+	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)

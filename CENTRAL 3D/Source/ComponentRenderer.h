@@ -23,7 +23,6 @@ private:
 	inline void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
 	inline void DrawNormals(const ResourceMesh& mesh) const;
 	inline void DrawAxis() const;
-	inline void DrawBoundingBox()const;
 
 public:
 	bool draw_vertexnormals = false;
