@@ -156,69 +156,49 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 	if (draw_facenormals)
 	{
 		Triangle face;
-		//float3* vertices = new float3[mesh.IndicesSize/3*2];
-		//
+		float3* vertices = new float3[mesh.IndicesSize/3*2];
+		
+		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
+		{
+			face.a = float3(mesh.vertices[mesh.Indices[j * 3]].position);
+			face.b = float3(mesh.vertices[mesh.Indices[(j * 3) + 1]].position);
+			face.c = float3(mesh.vertices[mesh.Indices[(j * 3) + 2]].position);
 
-		//for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
-		//{
-		//	face.a = float3(mesh.vertices[mesh.Indices[j * 3]].position);
-		//	face.b = float3(mesh.vertices[mesh.Indices[(j * 3) + 1]].position);
-		//	face.c = float3(mesh.vertices[mesh.Indices[(j * 3) + 2]].position);
+			float3 face_center = face.Centroid();
 
-		//	float3 face_center = face.Centroid();
+			float3 face_normal = Cross(face.b - face.a, face.c - face.b);
 
-		//	float3 face_normal = Cross(face.b - face.a, face.c - face.b);
+			face_normal.Normalize();
 
-		//	face_normal.Normalize();
+			vertices[j*2] = float3(face_center.x, face_center.y, face_center.z);
+			vertices[(j*2) + 1] = float3(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
+		}
 
-		//	vertices[j*2] = float3(face_center.x, face_center.y, face_center.z);
-		//	vertices[(j*2) + 1] = float3(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
-		//}
+		// --- Create VAO, VBO ---
+		unsigned int VBO;
+		glGenBuffers(1, &VBO);
+		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
-		//// --- Set Uniforms ---
-		//glUseProgram(App->renderer3D->linepointShader->ID);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-		//GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 
-		//GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+		// --- Draw lines ---
 
-		//GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
-		//glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+		glLineWidth(3.0f);
+		glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
+		glBindVertexArray(0);
+		glLineWidth(1.0f);
 
-		//int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
-		//glVertexAttrib3f(vertexColorLocation, 0 , 0 , 0.5);
-
-		//// --- Create VAO, VBO ---
-		//unsigned int VBO;
-		//glGenBuffers(1, &VBO);
-		//// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
-
-		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3 * mesh.IndicesSize / 3 * 2, &vertices, GL_DYNAMIC_DRAW);
-		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-		//glEnableVertexAttribArray(0);
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//glBindVertexArray(0);
-
-		//// --- Draw lines ---
-
-		//glLineWidth(3.0f);
-		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
-		//glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
-		//glBindVertexArray(0);
-		//glLineWidth(1.0f);
-
-		//// --- Delete VBO ---
-		//glDeleteBuffers(1, &VBO);
-
-		//glUseProgram(App->renderer3D->defaultShader->ID);
-
-
-		//delete[] vertices;
+		// --- Delete VBO ---
+		glDeleteBuffers(1, &VBO);
+		delete[] vertices;
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
