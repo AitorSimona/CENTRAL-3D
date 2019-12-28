@@ -40,6 +40,8 @@ Courtesy of Dear Imgui, the gui has been worked on to be as modular and scalable
 
 ## SHADER PIPELINE
 
+<img src="docs/WaveShader.gif">
+
 For the third assignment, the original OpenGL rendering pipeline was replaced by the shader pipeline. Also introducing the scene in a framebuffer meant that a lot of systems had to be adjusted. All rendering had to use shaders.
 
 There is a Shader class, which is a resource and works the same way as other resources. 
@@ -63,6 +65,8 @@ You have just created your own shader!
 
 ### UNIFORM EDITING
 You can edit all int, float, and vec up to vec4 uniforms through the inspector! Head to the material node, select a shader and edit the uniforms there. Changes are applied automatically. Note that these uniforms are held by the material, so all objects with the same material will share the uniforms. 
+
+<img src="docs/UniformEditing.gif">
 
 ### BINARY PROGRAM
 Remember to save your shader through the SAVE ALL button in the shader Editor. The engine will save the program in binary format. Once booting the engine again it will try to load the binary, if unsuccessful it will recompile the shaders. 
