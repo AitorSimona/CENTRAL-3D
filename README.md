@@ -10,7 +10,7 @@
 
 <img src="docs/Photo.jpg">
 
-## CORE SUBSYSTEMS
+## Core subsystems
 
 The engine's pillars...
 
