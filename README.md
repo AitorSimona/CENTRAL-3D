@@ -12,6 +12,19 @@
 
 ## CORE SUBSYSTEMS
 
+The engine's pillars...
+
+### Game Objects (ECS)
+
+Based on an Entity-component system, each game object is a unique entity, and has a number of components attached to it.
+The available component as of 0.3 are: Transform(fixed), Material, Renderer, Mesh, Camera. All inherit from Component base class.
+
+Every game object has a parent, and a number n of childs. This turns into a tree structure (Unity).
+
+### Resource Manager
+
+### GUI
+
 ## SHADER PIPELINE
 
 INSERT two gifs and detailed explanation here.
