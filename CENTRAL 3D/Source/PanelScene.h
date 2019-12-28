@@ -16,7 +16,6 @@ public:
 
 private:
 	void HandleGuizmo();
-	void HandleInput();
 
 	ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 	ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
@@ -31,8 +30,6 @@ public:
 
 	float posX = 0.0f;
 	float posY = 0.0f;
-
-
 };
 
 #endif

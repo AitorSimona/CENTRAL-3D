@@ -42,6 +42,8 @@ void ComponentRenderer::Draw() const
 
 	glUseProgram(shader);
 
+	// --- Set uniforms ---
+
 	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
 
@@ -58,7 +60,6 @@ void ComponentRenderer::Draw() const
 	{
 		DrawMesh(*mesh->resource_mesh, mesh->GetContainerGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material));
 		DrawNormals(*mesh->resource_mesh,*transform);
-		//DrawAxis();
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -146,7 +147,7 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 		glLineWidth(1.0f);
 
 
-		// --- Delete VBO ---
+		// --- Delete VBO and vertices ---
 		glDeleteBuffers(1, &VBO);
 		delete[] vertices;
 	}
@@ -158,6 +159,7 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 		Triangle face;
 		float3* vertices = new float3[mesh.IndicesSize/3*2];
 		
+		// --- Compute face normals ---
 		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
 		{
 			face.a = float3(mesh.vertices[mesh.Indices[j * 3]].position);
@@ -196,7 +198,7 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 		glBindVertexArray(0);
 		glLineWidth(1.0f);
 
-		// --- Delete VBO ---
+		// --- Delete VBO and vertices ---
 		glDeleteBuffers(1, &VBO);
 		delete[] vertices;
 	}
@@ -204,36 +206,3 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-inline void ComponentRenderer::DrawAxis() const
-{
-	// --- Draw Axis ---
-	glLineWidth(2.0f);
-
-	glBegin(GL_LINES);
-
-	//glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-
-	glEnd();
-
-	glLineWidth(1.0f);
-	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	
-}

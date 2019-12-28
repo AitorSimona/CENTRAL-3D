@@ -23,7 +23,6 @@ private:
 	// --- Draw Functiions accessed by main Draw ---
 	inline void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
 	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
-	inline void DrawAxis() const;
 
 public:
 	bool draw_vertexnormals = false;

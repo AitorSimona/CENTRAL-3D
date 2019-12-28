@@ -176,7 +176,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// --- Draw everything and swap buffers ---
+	// --- Draw ui and swap buffers ---
 	App->gui->Draw();
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
@@ -322,6 +322,7 @@ void ModuleRenderer3D::SetActiveCamera(ComponentCamera * camera)
 	{
 		this->active_camera->active_camera = false;
 	}
+	// if camera is not nullptr, then we set it as active camera, else we set editor camera as active camera
 	this->active_camera = camera ? camera : App->camera->camera;
 	if (camera)
 	{
@@ -335,6 +336,7 @@ void ModuleRenderer3D::SetCullingCamera(ComponentCamera * camera)
 	{
 		culling_camera->culling = false;
 	}
+	// if camera is not nullptr, then we set it as culling camera, else we set editor camera as culling camera
 	this->culling_camera = camera ? camera : App->camera->camera;
 	if (camera)
 	{

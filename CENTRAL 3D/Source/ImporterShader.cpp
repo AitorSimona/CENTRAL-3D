@@ -80,11 +80,9 @@ bool ImporterShader::Import(const ImportData & IData) const
 				count = shader->name.find_last_of(".");
 				shader->name = shader->name.substr(0,count);
 
-
 				App->resources->AddResource(shader);
 				App->resources->AddShader(shader);
 
-				// MYTODO: This is not used...
 				std::string path = SHADERS_FOLDER;
 				path.append(std::to_string(shader->GetUID()));
 

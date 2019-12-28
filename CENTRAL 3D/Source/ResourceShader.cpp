@@ -18,10 +18,9 @@ ResourceShader::ResourceShader() : Resource(Resource::ResourceType::SHADER)
 
 ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath, bool is_extern) : Resource(Resource::ResourceType::SHADER)
 {
-	// MYTODO: Clean this and use physFS
 	bool ret = true;
 
-	// 1. retrieve the vertex/fragment source code from filePath
+	// --- Load shaders ---
 	std::string vertexCode;
 	std::string fragmentCode;
 	std::ifstream vShaderFile;
@@ -29,7 +28,6 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 	// ensure ifstream objects can throw exceptions:
 	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
 
 	// --- check if the shader has to be loaded from outside the engine ---
 	if (is_extern)
@@ -70,7 +68,6 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		}
 
 		// 2. compile shaders
-		/*unsigned int vertex, fragment = 0;*/
 		int success = 0;
 		char infoLog[512];
 
@@ -98,7 +95,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 		}
 
-		// delete the shaders as they're linked into our program now and no longer necessery
+		// delete the shaders as they're linked into our program now and no longer necessary
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 	}
@@ -164,41 +161,7 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 			CreateShaderProgram();
 			ReloadAndCompileShader();
 		}
-
-
-		// MYTODO: OpenGL does not seem to recognize attached shaders when loading a binary program BUG!
-
-		/*GLint num;
-		glGetProgramiv(ID, GL_ATTACHED_SHADERS, &num);
-
-		uint shaders[2];
-		GLint string_size = 0;
-		glGetAttachedShaders(ID, 2, &string_size, shaders);
-
-		if (string_size > 0)
-		{
-			glGetShaderiv(shaders[0], GL_SHADER_SOURCE_LENGTH, &string_size);
-			char* vertex_code = new char[string_size];
-			vertex = shaders[0];
-			glGetShaderSource(vertex, string_size, nullptr, vertex_code);
-
-
-			glGetShaderiv(shaders[1], GL_SHADER_SOURCE_LENGTH, &string_size);
-			char* fragment_code = new char[string_size];
-			fragment = shaders[1];
-			glGetShaderSource(fragment, string_size, nullptr, fragment_code);
-
-			vShaderCode = vertex_code;
-			fShaderCode = fragment_code;
-
-			delete[]vertex_code;
-			delete[] fragment_code;
-
-
-		}*/
 	}
-
-
 }
 
 ResourceShader::~ResourceShader()
@@ -379,6 +342,7 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 
 		}
 
+		// --- Conserve previous uniform values if they still exist ---
 		for (uint i = 0; i < uniforms.size(); ++i)
 		{
 			if (uniforms[i]->name == uniform->name && uniforms[i]->type == uniform->type)
@@ -501,10 +465,6 @@ void ResourceShader::SaveShader()
 			path.append("Shaders/");
 			path.append(name);
 
-			//char* vbuffer = new char[vShaderCode.size()];
-			//char* fbuffer = new char[fShaderCode.size()];
-
-
 			std::string final_name = path + ".vertex";
 
 			if(!App->resources->IsFileImported(final_name.data()))
@@ -523,8 +483,6 @@ void ResourceShader::SaveShader()
 				file.close();
 			}
 
-			//App->fs->Save(final_name.data(), vbuffer, vShaderCode.size());
-
 			final_name = path + ".fragment";
 
 			if (!App->resources->IsFileImported(final_name.data()))
@@ -542,12 +500,6 @@ void ResourceShader::SaveShader()
 				file2 << std::setw(4) << fShaderCode << std::endl;
 				file2.close();
 			}
-
-			//App->fs->Save(final_name.data(), fbuffer, fShaderCode.size());
-
-
-			//delete[] vbuffer;
-			//delete[] fbuffer;
 		}
 
 		delete[] buffer;

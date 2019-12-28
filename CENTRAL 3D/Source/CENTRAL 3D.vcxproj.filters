@@ -258,9 +258,6 @@
     <ClInclude Include="ResourceMaterial.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFolder.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="PanelProject.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
@@ -654,9 +651,6 @@
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ResourceMaterial.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceFolder.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="PanelProject.cpp">

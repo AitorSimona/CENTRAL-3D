@@ -210,7 +210,6 @@
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceFolder.h" />
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceShader.h" />
@@ -314,7 +313,6 @@
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="Resource.cpp" />
-    <ClCompile Include="ResourceFolder.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceShader.cpp" />
