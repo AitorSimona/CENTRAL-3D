@@ -73,7 +73,7 @@ Remember to save your shader through the SAVE ALL button in the shader Editor. T
 
 ## Overview
 
-INSERT video here, focus on last assignment but show overall functionality.
+<video src="docs/ShadersOverview.mp4" width="600" height="500" controls preload></video>
 
 ## Other Features
 Time Management
