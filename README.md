@@ -8,7 +8,7 @@
 
 - By Aitor Simona 
 
-INSERT PHOTO
+<img src="docs/Photo.jpg">
 
 ## CORE SUBSYSTEMS
 
