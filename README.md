@@ -22,8 +22,21 @@ The available component as of 0.3 are: Transform(fixed), Material, Renderer, Mes
 Every game object has a parent, and a number n of childs. This turns into a tree structure (Unity).
 
 ### Resource Manager
+In charge of the resources, which are: Material, texture, shader, mesh.
+
+Handles reference counting, every resource is only in memory once and can be used by any number of game object components.
+
+Resource management flow:
+
+- A resource is dropped on the engine, or put in the assets folder (will need restart)
+- Engine automatically imports it, generates meta files and own file format files, the latters stored in the library.
+- When importing again, engine will detect a meta and load the resource from the library, in own file format, which is way faster.
+
+The user does not have to handle any library file, everything is done by the engine. For a user all there is are the files he/she dropped in assets, in the original format provided.
 
 ### GUI
+
+Courtesy of Dear Imgui, the gui has been worked on to be as modular and scalable as possible. All panels inherit from a base panel class and are handled by the GUI module. Adding/modifying panels is very straightforward. 
 
 ## SHADER PIPELINE
 
