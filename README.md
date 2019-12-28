@@ -71,8 +71,6 @@ You can edit all int, float, and vec up to vec4 uniforms through the inspector! 
 ### BINARY PROGRAM
 Remember to save your shader through the SAVE ALL button in the shader Editor. The engine will save the program in binary format. Once booting the engine again it will try to load the binary, if unsuccessful it will recompile the shaders. 
 
-INSERT two gifs here.
-
 ## OVERVIEW
 
 INSERT video here, focus on last assignment but show overall functionality.
