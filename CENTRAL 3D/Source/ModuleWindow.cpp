@@ -43,6 +43,9 @@ bool ModuleWindow::Init(json file)
 		RefreshRate = display.refresh_rate;
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
+		// MYTODO: Remove this after assignment 3 delivery (this was required)
+		screen_width = 1024;
+		screen_height = 768;
 
 		//Use OpenGL 3.1
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
