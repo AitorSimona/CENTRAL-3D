@@ -6,7 +6,7 @@
 - Initial steps into 3D game engine development, this engine was built during Barcelona - UPC - CITM - Design and Development of Videogames - Game Engines subject (university).
 
 
-- By Aitor Simona 
+- By Aitor Simona: https://github.com/AitorSimona
 
 <img src="docs/Photo.jpg">
 
