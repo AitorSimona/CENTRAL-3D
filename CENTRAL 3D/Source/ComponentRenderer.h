@@ -8,6 +8,7 @@
 
 class ResourceMesh;
 class ComponentMaterial;
+class ComponentTransform;
 
 class ComponentRenderer : public Component
 {
@@ -21,7 +22,7 @@ public:
 private:
 	// --- Draw Functiions accessed by main Draw ---
 	inline void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
-	inline void DrawNormals(const ResourceMesh& mesh) const;
+	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 	inline void DrawAxis() const;
 
 public:
