@@ -101,8 +101,6 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		// delete the shaders as they're linked into our program now and no longer necessery
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
-
-		//App->resources->AddShader(this);
 	}
 }
 
@@ -198,8 +196,6 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 
 
 		}*/
-
-		App->resources->AddShader(this);
 	}
 
 
@@ -503,7 +499,7 @@ void ResourceShader::SaveShader()
 			// --- Save code to Assets folder, save meta ---
 			path = ASSETS_FOLDER;
 			path.append("Shaders/");
-			path.append(std::to_string(UID));
+			path.append(name);
 
 			//char* vbuffer = new char[vShaderCode.size()];
 			//char* fbuffer = new char[fShaderCode.size()];

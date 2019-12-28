@@ -57,6 +57,8 @@ bool ImporterShader::Import(const ImportData & IData) const
 				ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data(), data.vertexPath, data.fragmentPath);
 				shader->SetUID(UID);
 				App->resources->AddResource(shader);
+				App->resources->AddShader(shader);
+
 
 				delete[] buffer;
 			}
@@ -72,7 +74,15 @@ bool ImporterShader::Import(const ImportData & IData) const
 
 			if (shader->ID != 0)
 			{
+				shader->name = data.vertexPath;
+				uint count = shader->name.find_last_of("/");
+				shader->name = shader->name.substr(count+1, shader->name.size());
+				count = shader->name.find_last_of(".");
+				shader->name = shader->name.substr(0,count);
+
+
 				App->resources->AddResource(shader);
+				App->resources->AddShader(shader);
 
 				// MYTODO: This is not used...
 				std::string path = SHADERS_FOLDER;

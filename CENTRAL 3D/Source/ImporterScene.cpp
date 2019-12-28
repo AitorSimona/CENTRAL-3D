@@ -222,7 +222,13 @@ bool ImporterScene::Load(const char * exported_file) const
 							diffuse_uid = diffuse_uid.substr(0, count);
 							mat->resource_material->resource_diffuse->SetUID(std::stoi(diffuse_uid));
 						}
-						ResourceShader* shad = App->resources->GetShaders()->find(components[val]["shader"])->second;
+						std::string tmp = components[val]["shader"];
+						std::map<std::string, ResourceShader*>::iterator it = App->resources->GetShaders()->find(tmp);
+
+						ResourceShader* shad = nullptr;
+
+						if(it != App->resources->GetShaders()->end())
+						shad = it->second;
 
 						if (shad)
 						{

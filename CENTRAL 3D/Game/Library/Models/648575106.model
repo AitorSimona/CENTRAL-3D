@@ -12,12 +12,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/89950874.mesh",
+            "1": "Library/Meshes/1633636878.mesh",
             "2": "",
-            "3": "Library/Textures/755486427.dds"
+            "3": {
+                "diffuse": "Library/Textures/678201637.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "2013195919"
+        "Parent": "980561849",
+        "UID": "1719760547"
     },
     "City_building_004": {
         "Components": {
@@ -32,12 +36,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1386314402.mesh",
+            "1": "Library/Meshes/1338834746.mesh",
             "2": "",
-            "3": "Library/Textures/728719307.dds"
+            "3": {
+                "diffuse": "Library/Textures/1674495009.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1746643827"
+        "Parent": "980561849",
+        "UID": "1231407016"
     },
     "City_building_007": {
         "Components": {
@@ -52,12 +60,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/407484102.mesh",
+            "1": "Library/Meshes/404170824.mesh",
             "2": "",
-            "3": "Library/Textures/2071786474.dds"
+            "3": {
+                "diffuse": "Library/Textures/1756697386.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1551051843"
+        "Parent": "980561849",
+        "UID": "353222988"
     },
     "City_building_008": {
         "Components": {
@@ -72,12 +84,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1191688472.mesh",
+            "1": "Library/Meshes/298711063.mesh",
             "2": "",
-            "3": "Library/Textures/2000084208.dds"
+            "3": {
+                "diffuse": "Library/Textures/708268672.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1959471952"
+        "Parent": "980561849",
+        "UID": "1687530409"
     },
     "City_building_010": {
         "Components": {
@@ -92,12 +108,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1147663323.mesh",
+            "1": "Library/Meshes/40922295.mesh",
             "2": "",
-            "3": "Library/Textures/1848164250.dds"
+            "3": {
+                "diffuse": "Library/Textures/1157815474.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "662838660",
-        "UID": "265571951"
+        "Parent": "1829395440",
+        "UID": "324941562"
     },
     "City_building_011": {
         "Components": {
@@ -112,12 +132,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/407484102.mesh",
+            "1": "Library/Meshes/404170824.mesh",
             "2": "",
-            "3": "Library/Textures/2071786474.dds"
+            "3": {
+                "diffuse": "Library/Textures/1756697386.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1152444311"
+        "Parent": "980561849",
+        "UID": "1210804968"
     },
     "City_building_013": {
         "Components": {
@@ -132,12 +156,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/44156654.mesh",
+            "1": "Library/Meshes/1487784273.mesh",
             "2": "",
-            "3": "Library/Textures/902858845.dds"
+            "3": {
+                "diffuse": "Library/Textures/869693049.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1681831477"
+        "Parent": "980561849",
+        "UID": "1148936543"
     },
     "City_building_014": {
         "Components": {
@@ -152,12 +180,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/464629587.mesh",
+            "1": "Library/Meshes/1593680237.mesh",
             "2": "",
-            "3": "Library/Textures/728719307.dds"
+            "3": {
+                "diffuse": "Library/Textures/1674495009.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1089300055"
+        "Parent": "980561849",
+        "UID": "598337264"
     },
     "City_building_016": {
         "Components": {
@@ -172,12 +204,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1147663323.mesh",
+            "1": "Library/Meshes/40922295.mesh",
             "2": "",
-            "3": "Library/Textures/1848164250.dds"
+            "3": {
+                "diffuse": "Library/Textures/1157815474.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1099949331",
-        "UID": "2050473336"
+        "Parent": "631455669",
+        "UID": "831919522"
     },
     "City_building_017": {
         "Components": {
@@ -192,12 +228,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1147663323.mesh",
+            "1": "Library/Meshes/40922295.mesh",
             "2": "",
-            "3": "Library/Textures/1848164250.dds"
+            "3": {
+                "diffuse": "Library/Textures/1157815474.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1667176008",
-        "UID": "46574509"
+        "Parent": "137447537",
+        "UID": "1646002077"
     },
     "City_building_022": {
         "Components": {
@@ -212,12 +252,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/430301766.mesh",
+            "1": "Library/Meshes/1721674275.mesh",
             "2": "",
-            "3": "Library/Textures/257989732.dds"
+            "3": {
+                "diffuse": "Library/Textures/2053370906.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "910119580"
+        "Parent": "980561849",
+        "UID": "45563415"
     },
     "City_building_023": {
         "Components": {
@@ -232,12 +276,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/407484102.mesh",
+            "1": "Library/Meshes/404170824.mesh",
             "2": "",
-            "3": "Library/Textures/2071786474.dds"
+            "3": {
+                "diffuse": "Library/Textures/1756697386.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "2097391711"
+        "Parent": "980561849",
+        "UID": "1896949483"
     },
     "City_building_024": {
         "Components": {
@@ -252,12 +300,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1191688472.mesh",
+            "1": "Library/Meshes/298711063.mesh",
             "2": "",
-            "3": "Library/Textures/2000084208.dds"
+            "3": {
+                "diffuse": "Library/Textures/708268672.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1882809114"
+        "Parent": "980561849",
+        "UID": "1301961084"
     },
     "City_building_026": {
         "Components": {
@@ -272,12 +324,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/642375036.mesh",
+            "1": "Library/Meshes/737458823.mesh",
             "2": "",
-            "3": "Library/Textures/257989732.dds"
+            "3": {
+                "diffuse": "Library/Textures/2053370906.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1978477307"
+        "Parent": "980561849",
+        "UID": "1835671040"
     },
     "City_building_028": {
         "Components": {
@@ -292,12 +348,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1181309277.mesh",
+            "1": "Library/Meshes/1450124782.mesh",
             "2": "",
-            "3": "Library/Textures/848450475.dds"
+            "3": {
+                "diffuse": "Library/Textures/564350193.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1436164879"
+        "Parent": "980561849",
+        "UID": "819841796"
     },
     "City_building_030": {
         "Components": {
@@ -312,12 +372,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1181309277.mesh",
+            "1": "Library/Meshes/1450124782.mesh",
             "2": "",
-            "3": "Library/Textures/848450475.dds"
+            "3": {
+                "diffuse": "Library/Textures/564350193.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "595392900"
+        "Parent": "980561849",
+        "UID": "2069765056"
     },
     "City_building_031": {
         "Components": {
@@ -332,12 +396,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1181309277.mesh",
+            "1": "Library/Meshes/1450124782.mesh",
             "2": "",
-            "3": "Library/Textures/848450475.dds"
+            "3": {
+                "diffuse": "Library/Textures/564350193.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1371414479"
+        "Parent": "980561849",
+        "UID": "1564938606"
     },
     "City_building_032": {
         "Components": {
@@ -352,12 +420,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1386314402.mesh",
+            "1": "Library/Meshes/1338834746.mesh",
             "2": "",
-            "3": "Library/Textures/728719307.dds"
+            "3": {
+                "diffuse": "Library/Textures/1674495009.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1658240894"
+        "Parent": "980561849",
+        "UID": "1605724663"
     },
     "City_building_033": {
         "Components": {
@@ -372,12 +444,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1378023381.mesh",
+            "1": "Library/Meshes/147787821.mesh",
             "2": "",
-            "3": "Library/Textures/902858845.dds"
+            "3": {
+                "diffuse": "Library/Textures/869693049.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "410391184"
+        "Parent": "980561849",
+        "UID": "1591186681"
     },
     "City_building_034": {
         "Components": {
@@ -392,12 +468,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/533878876.mesh",
+            "1": "Library/Meshes/541733064.mesh",
             "2": "",
-            "3": "Library/Textures/257989732.dds"
+            "3": {
+                "diffuse": "Library/Textures/2053370906.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1696523392"
+        "Parent": "980561849",
+        "UID": "146437768"
     },
     "City_building_035": {
         "Components": {
@@ -412,12 +492,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1181309277.mesh",
+            "1": "Library/Meshes/1450124782.mesh",
             "2": "",
-            "3": "Library/Textures/848450475.dds"
+            "3": {
+                "diffuse": "Library/Textures/564350193.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "312953190"
+        "Parent": "980561849",
+        "UID": "690646498"
     },
     "City_building_036": {
         "Components": {
@@ -432,12 +516,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/44156654.mesh",
+            "1": "Library/Meshes/1487784273.mesh",
             "2": "",
-            "3": "Library/Textures/902858845.dds"
+            "3": {
+                "diffuse": "Library/Textures/869693049.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1299954931"
+        "Parent": "980561849",
+        "UID": "729118610"
     },
     "City_building_037": {
         "Components": {
@@ -452,12 +540,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/534263720.mesh",
+            "1": "Library/Meshes/1889840130.mesh",
             "2": "",
-            "3": "Library/Textures/257989732.dds"
+            "3": {
+                "diffuse": "Library/Textures/2053370906.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1085237609"
+        "Parent": "980561849",
+        "UID": "1940393071"
     },
     "City_building_038": {
         "Components": {
@@ -472,12 +564,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1557684080.mesh",
+            "1": "Library/Meshes/531606334.mesh",
             "2": "",
-            "3": "Library/Textures/257989732.dds"
+            "3": {
+                "diffuse": "Library/Textures/2053370906.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1844621013"
+        "Parent": "980561849",
+        "UID": "1540853256"
     },
     "City_building_039": {
         "Components": {
@@ -492,12 +588,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1181309277.mesh",
+            "1": "Library/Meshes/1450124782.mesh",
             "2": "",
-            "3": "Library/Textures/848450475.dds"
+            "3": {
+                "diffuse": "Library/Textures/564350193.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "774610370"
+        "Parent": "980561849",
+        "UID": "674433841"
     },
     "City_building_040": {
         "Components": {
@@ -512,12 +612,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1181309277.mesh",
+            "1": "Library/Meshes/1450124782.mesh",
             "2": "",
-            "3": "Library/Textures/848450475.dds"
+            "3": {
+                "diffuse": "Library/Textures/564350193.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "893181079"
+        "Parent": "980561849",
+        "UID": "105042498"
     },
     "City_building_041": {
         "Components": {
@@ -532,12 +636,16 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/89950874.mesh",
+            "1": "Library/Meshes/1633636878.mesh",
             "2": "",
-            "3": "Library/Textures/755486427.dds"
+            "3": {
+                "diffuse": "Library/Textures/678201637.dds",
+                "shader": "Standard",
+                "uniforms": null
+            }
         },
-        "Parent": "1873627756",
-        "UID": "1956926657"
+        "Parent": "980561849",
+        "UID": "317741885"
     },
     "Line002": {
         "Components": {
@@ -552,11 +660,11 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1751944858.mesh",
+            "1": "Library/Meshes/1636234858.mesh",
             "2": ""
         },
-        "Parent": "1873627756",
-        "UID": "728006394"
+        "Parent": "980561849",
+        "UID": "2001194545"
     },
     "Object010": {
         "Components": {
@@ -571,11 +679,11 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": "Library/Meshes/1445432581.mesh",
+            "1": "Library/Meshes/581683607.mesh",
             "2": ""
         },
-        "Parent": "1873627756",
-        "UID": "1285325593"
+        "Parent": "980561849",
+        "UID": "263981341"
     },
     "Plane001": {
         "Components": {
@@ -590,11 +698,11 @@
                 "scaley": "0.970616",
                 "scalez": "0.996635"
             },
-            "1": "Library/Meshes/1524260159.mesh",
+            "1": "Library/Meshes/889510056.mesh",
             "2": ""
         },
-        "Parent": "1873627756",
-        "UID": "106774122"
+        "Parent": "980561849",
+        "UID": "1265724617"
     },
     "Street environment_V01": {
         "Components": {
@@ -610,7 +718,7 @@
                 "scalez": "1.000000"
             }
         },
-        "Parent": "987852167",
-        "UID": "1873627756"
+        "Parent": "1717278052",
+        "UID": "980561849"
     }
 }
