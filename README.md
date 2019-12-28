@@ -84,23 +84,6 @@ Mouse Picking, Guizmo
 Scene is rendered to a framebuffer and displayed as texture in panelScene
 FileSystem through PhysFS (also using stl's fstream)
 
-## TOOLS USED
-
-- Microsoft Visual Studio 2017
-- 3rd Party Libraries used:
-- SDL 2.0.10
-- Glew 2.1.0
-- ImGui 1.72b (with beta docking)
-- ImGuizmo
-- MathGeoLib 1.5 (commit 1994)
-- OpenGL 4.6
-- mmgr
-- par_shapes at commit 281 
-- DevIL 1.8.0
-- JSON for Modern C++
-- PhysFS 
-
-
 ## HOW TO USE
 
 There is no formal installation process, just look around and play with it
@@ -130,25 +113,18 @@ Editor camera only works when in AppState EDITOR mode.
 - Rotate: E
 - Scale: R
 
-## DEBUG
+## TOOLS USED
 
-- Debug Features
-
-Game Objects - Redo Octree whenever you make some elements non-static and want it to be recalculated
-
-Head to Scene window and click DebugDraw to see available features: 
-
-- Wireframe
-- Color Material
-- OpenGL Lighting
-- Display Octree
-- Show AABBS
-
-There are more options in Window - > Settings
-
-## Features in beta
-
-- Texture pre-visualization on Inspector
-- Edit Menu
-- Load/Save cameras
-- Resource manager (initial implementation)
+- Microsoft Visual Studio 2017
+- 3rd Party Libraries used:
+- SDL 2.0.10
+- Glew 2.1.0
+- ImGui 1.72b (with beta docking)
+- ImGuizmo
+- MathGeoLib 1.5 (commit 1994)
+- OpenGL 4.6
+- mmgr
+- par_shapes at commit 281 
+- DevIL 1.8.0
+- JSON for Modern C++
+- PhysFS 
