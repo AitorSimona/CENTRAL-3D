@@ -40,6 +40,28 @@ Courtesy of Dear Imgui, the gui has been worked on to be as modular and scalable
 
 ## SHADER PIPELINE
 
+For the third assignment, the original OpenGL rendering pipeline was replaced by the shader pipeline. Also introducing the scene in a framebuffer meant that a lot of systems had to be adjusted. All rendering had to use shaders.
+
+There is a Shader class, which is a resource and works the same way as other resources. 
+
+There are multiple ways to create a shader program:
+
+1. Write a vertex and fragment shaders, store them in separate files with the .vertex and .fragment extension. Engine will try to import them.
+
+2. Create a program through the editor:
+
+Steps:
+
+- Press new 
+- Give it a cool name
+- Fill the code
+- Coompile 
+- Save 
+
+You have just created your own shader! 
+
+You can edit all int, float, and vec up to vec4 uniforms through the inspector! Head to the material node, select a shader and edit the uniforms there. Changes are applied automatically. Note that these uniforms are held by the material, so all objects with the same material will share the uniforms. 
+
 INSERT two gifs and detailed explanation here.
 
 ## OVERVIEW
@@ -92,23 +114,6 @@ Editor camera only works when in AppState EDITOR mode.
 - Rotate: E
 - Scale: R
 
-- Shaders:
-
-You can create new shaders by putting into assets folder .vertex and .fragment files, so the engine imports them 
-at startup. 
-
-You can also create shaders on the ShaderEditor panel, next to inspector (check tabs). 
-
-Steps:
-
-- Press new 
-- Give it a cool name
-- Fill the code
-- Coompile 
-- Save 
-
-You have just created your own shader! 
-
 ## DEBUG
 
 - Debug Features
@@ -131,8 +136,3 @@ There are more options in Window - > Settings
 - Edit Menu
 - Load/Save cameras
 - Resource manager (initial implementation)
-
-## Innovation:
-
-Done:
-- Shader binary program loading
