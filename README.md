@@ -90,6 +90,7 @@ Head to Scene window and click DebugDraw to see available features:
 - OpenGL Lighting
 - Display Octree
 - Show AABBS
+- ZDrawer
 
 There are more options in Window - > Settings
 
@@ -113,6 +114,8 @@ There are more options in Window - > Settings
 - Guizmo
 - Framebuffer, scene in window, code adaptation
 - Time manager improvements
+- Z buffer visualizer
+- Reversed Z technique
 
 ### 0.2
 
@@ -148,13 +151,9 @@ There are more options in Window - > Settings
 
 ## Innovation:
 
-Done:
 - Shader binary program loading
 - Shader debug draw (normals, aabbs, octree, cameras)
-
-Scheduled:
 - Z-buffer visualizer
-- shader normal draw
 - reversed-z technique
 
 ## License:
