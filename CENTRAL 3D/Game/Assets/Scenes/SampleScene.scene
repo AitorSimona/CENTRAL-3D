@@ -668,12 +668,22 @@
                 "uniforms": {
                     "amplitude": {
                         "type": "5124",
-                        "x": "2"
+                        "x": "3"
+                    },
+                    "lightDirection": {
+                        "type": "35665",
+                        "x": "1.000000",
+                        "y": "5.000000",
+                        "z": "0.000000"
+                    },
+                    "lightIntensity": {
+                        "type": "5126",
+                        "x": "1.500000"
                     }
                 }
             }
         },
-        "Parent": "1916713500",
+        "Parent": "37856",
         "UID": "1899137835"
     },
     "Line002": {
@@ -692,7 +702,7 @@
             "1": "Library/Meshes/1636234858.mesh",
             "2": "",
             "3": {
-                "diffuse": "Library/Textures/1570988601.dds",
+                "diffuse": "Library/Textures/1132496625.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
@@ -716,7 +726,7 @@
             "1": "Library/Meshes/581683607.mesh",
             "2": "",
             "3": {
-                "diffuse": "Library/Textures/1570988601.dds",
+                "diffuse": "Library/Textures/1132496625.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
@@ -740,7 +750,7 @@
             "1": "Library/Meshes/889510056.mesh",
             "2": "",
             "3": {
-                "diffuse": "Library/Textures/1570988601.dds",
+                "diffuse": "Library/Textures/1132496625.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
@@ -762,12 +772,12 @@
                 "scalez": "1.000000"
             },
             "3": {
-                "diffuse": "Library/Textures/1570988601.dds",
+                "diffuse": "Library/Textures/1132496625.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
         },
-        "Parent": "1916713500",
+        "Parent": "37856",
         "UID": "980561849"
     }
 }

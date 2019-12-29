@@ -264,7 +264,7 @@ bool ImporterScene::Load(const char * exported_file) const
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["x"];
 										tmp = tmp1;
 									}
-									tmp_float = std::stoi(tmp);
+									tmp_float = std::stof(tmp);
 									(*iterator)->value.floatU = tmp_float;
 									break;
 
@@ -273,12 +273,12 @@ bool ImporterScene::Load(const char * exported_file) const
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["x"];
 										tmp = tmp1;
 									}
-									tmp_float = std::stoi(tmp);
+									tmp_float = std::stof(tmp);
 									{
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["y"];
 										tmp = tmp1;
 									}
-									tmp_float2 = std::stoi(tmp);
+									tmp_float2 = std::stof(tmp);
 									(*iterator)->value.vec2U = float2(tmp_float,tmp_float2);
 									break;
 
@@ -287,17 +287,17 @@ bool ImporterScene::Load(const char * exported_file) const
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["x"];
 										tmp = tmp1;
 									}
-									tmp_float = std::stoi(tmp);
+									tmp_float = std::stof(tmp);
 									{
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["y"];
 										tmp = tmp1;
 									}
-									tmp_float2 = std::stoi(tmp);
+									tmp_float2 = std::stof(tmp);
 									{
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["z"];
 										tmp = tmp1;
 									}
-									tmp_float3 = std::stoi(tmp);
+									tmp_float3 = std::stof(tmp);
 
 									(*iterator)->value.vec3U = float3(tmp_float, tmp_float2, tmp_float3);
 									break;
@@ -307,22 +307,22 @@ bool ImporterScene::Load(const char * exported_file) const
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["x"];
 										tmp = tmp1;
 									}
-									tmp_float = std::stoi(tmp);
+									tmp_float = std::stof(tmp);
 									{
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["y"];
 										tmp = tmp1;
 									}
-									tmp_float2 = std::stoi(tmp);
+									tmp_float2 = std::stof(tmp);
 									{
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["z"];
 										tmp = tmp1;
 									}
-									tmp_float3 = std::stoi(tmp);
+									tmp_float3 = std::stof(tmp);
 									{
 										std::string tmp1 = components[val]["uniforms"][(*iterator)->name]["w"];
 										tmp = tmp1;
 									}
-									tmp_float4 = std::stoi(tmp);
+									tmp_float4 = std::stof(tmp);
 
 									(*iterator)->value.vec4U = float4(tmp_float, tmp_float2, tmp_float3, tmp_float4);
 									break;
