@@ -113,6 +113,13 @@ Editor camera only works when in AppState EDITOR mode.
 - Rotate: E
 - Scale: R
 
+## Innovation
+
+- Shader binary program loading
+- Shader debug draw (normals, aabbs, octree, cameras)
+- Z-buffer visualizer
+- reversed-z technique
+
 ## Tools used
 
 - Microsoft Visual Studio 2017
