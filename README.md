@@ -4,6 +4,7 @@
 - By Aitor Simona 
 * GitHub account: [AitorSimona](https://github.com/AitorSimona)
 * GitHub repository: [Repository](https://github.com/AitorSimona/CENTRAL-3D)
+* GitHub website: [Website](https://aitorsimona.github.io/CENTRAL-3D/)
 
 ## TOOLS USED
 
@@ -106,6 +107,7 @@ There are more options in Window - > Settings
 - Shader pipeline to draw geometry and debug draw
 - Shader resource (save & load...)
 - Shader binary program loading
+- Shader Debug draw (normals, aabbs, octree, cameras)
 - Water Shader
 - Editor shader support (creation, realtime changes, uniform editing)
 - Guizmo
@@ -148,9 +150,9 @@ There are more options in Window - > Settings
 
 Done:
 - Shader binary program loading
+- Shader debug draw (normals, aabbs, octree, cameras)
 
 Scheduled:
-- Shader debug draw (missing normals, aabbs, octree, camera)
 - Z-buffer visualizer
 - shader normal draw
 - reversed-z technique
