@@ -101,7 +101,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	const char * zdrawervertex = "#version 460 core \n"
 		"layout (location = 0) in vec3 position; \n"
-		"in vec2 nearfar; \n"
+		"uniform vec2 nearfar; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
@@ -121,8 +121,8 @@ bool ModuleRenderer3D::Init(json file)
 		"float z =  2.0*depth - 1.0; // back to NDC \n"
 		"return 2.0* nearfarfrag.x * nearfarfrag.y / (nearfarfrag.y + nearfarfrag.x - z * (nearfarfrag.y - nearfarfrag.x)); }\n"
 		"void main(){ \n"
-		"float depth = LinearizeDepth(gl_FragCoord.z);  \n"
-		"FragColor = vec4(vec3(gl_FragCoord.z), 1.0); } \n";
+		"float depth = LinearizeDepth(gl_FragCoord.z) / nearfarfrag.y;  \n"
+		"FragColor = vec4(vec3(depth), 1.0); } \n";
 
 	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
 	ZDrawerShader->name = "ZDrawer";

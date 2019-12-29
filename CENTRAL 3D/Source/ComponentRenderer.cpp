@@ -67,8 +67,11 @@ void ComponentRenderer::Draw() const
 	// --- Give ZDrawer near and far camera frustum planes pos ---
 	if (App->renderer3D->zdrawer)
 	{
-		int nearfarLoc = glGetAttribLocation(shader, "nearfar");
-		glVertexAttrib2f(nearfarLoc, App->renderer3D->active_camera->GetNearPlane(), App->renderer3D->active_camera->GetFarPlane());
+		int nearfarLoc = glGetUniformLocation(shader, "nearfar");
+
+		float farp = App->renderer3D->active_camera->GetFarPlane();
+		float nearp = App->renderer3D->active_camera->GetNearPlane();
+		glUniform2f(nearfarLoc, nearp, farp);
 	}
 
 
