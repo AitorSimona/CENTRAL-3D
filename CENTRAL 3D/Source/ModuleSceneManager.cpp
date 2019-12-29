@@ -578,6 +578,16 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->linepointShader->ID);
 
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
@@ -585,7 +595,7 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
 	glVertexAttrib3f(vertexColorLocation, color.r, color.g, color.b);
