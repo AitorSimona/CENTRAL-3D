@@ -11,6 +11,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTimeManager.h"
+#include "ModuleWindow.h"
 
 #include "ResourceMesh.h"
 #include "ResourceShader.h"
@@ -46,8 +47,6 @@ void ComponentRenderer::Draw() const
 		shader = App->renderer3D->ZDrawerShader->ID;
 	}
 
-
-
 	glUseProgram(shader);
 
 	// --- Set uniforms ---
@@ -57,22 +56,28 @@ void ComponentRenderer::Draw() const
 	GLint viewLoc = glGetUniformLocation(shader, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	GLint projectLoc = glGetUniformLocation(shader, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
-
 	GLint timeLoc = glGetUniformLocation(shader, "time");
 	glUniform1f(timeLoc, App->time->time);
 
-
+	float farp = App->renderer3D->active_camera->GetFarPlane();
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
 	// --- Give ZDrawer near and far camera frustum planes pos ---
 	if (App->renderer3D->zdrawer)
 	{
 		int nearfarLoc = glGetUniformLocation(shader, "nearfar");
-
-		float farp = App->renderer3D->active_camera->GetFarPlane();
-		float nearp = App->renderer3D->active_camera->GetNearPlane();
 		glUniform2f(nearfarLoc, nearp, farp);
 	}
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	 float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
+	GLint projectLoc = glGetUniformLocation(shader, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
@@ -124,8 +129,18 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
 	glVertexAttrib3f(vertexColorLocation, 1.0, 1.0, 0);

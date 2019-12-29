@@ -63,6 +63,10 @@ bool ModuleRenderer3D::Init(json file)
 
 	}
 
+	// --- z values from 0 to 1 and not -1 to 1, more precision
+	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+
+
 	GLint formats = 0;
 	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
 	if (formats < 1) {
@@ -122,7 +126,8 @@ bool ModuleRenderer3D::Init(json file)
 		"return 2.0* nearfarfrag.x * nearfarfrag.y / (nearfarfrag.y + nearfarfrag.x - z * (nearfarfrag.y - nearfarfrag.x)); }\n"
 		"void main(){ \n"
 		"float depth = LinearizeDepth(gl_FragCoord.z) / nearfarfrag.y;  \n"
-		"FragColor = vec4(vec3(depth), 1.0); } \n";
+		"FragColor = vec4(vec3(gl_FragCoord.z*nearfarfrag.y*nearfarfrag.x), 1.0); } \n";
+	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z)
 
 	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
 	ZDrawerShader->name = "ZDrawer";
@@ -182,12 +187,14 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	// --- Clear framebuffers ---
 	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClearDepth(0.0f);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glClearDepth(0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return UPDATE_CONTINUE;
 }
@@ -199,8 +206,18 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
 	GLint projectLoc = glGetUniformLocation(defaultShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
@@ -209,8 +226,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+	glDepthFunc(GL_GREATER);
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
+	glDepthFunc(GL_LESS);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -297,35 +316,56 @@ uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void *
 
 void ModuleRenderer3D::CreateFramebuffer()
 {
-	// --- Generate framebuffer object (fbo) ---
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	//// --- Generate framebuffer object (fbo) ---
+	//glGenFramebuffers(1, &fbo);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-	// --- Create a texture to use it as render target ---
+	//// --- Create a texture to use it as render target ---
+	//glGenTextures(1, &rendertexture);
+	//glBindTexture(GL_TEXTURE_2D, rendertexture);
+
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, App->window->GetWindowWidth(), App->window->GetWindowHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
+
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	//// --- Generate attachments, DEPTH and STENCIL render buffer objects ---
+	//glGenRenderbuffers(1, &depthbuffer);
+	//glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
+	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthbuffer);
+
+	//glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+
+	//if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	//	CONSOLE_LOG("|[error]: Could not create framebuffer");
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	glGenTextures(1, &rendertexture);
 	glBindTexture(GL_TEXTURE_2D, rendertexture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, App->window->GetWindowWidth(), App->window->GetWindowHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
-
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// --- Generate attachments, DEPTH and STENCIL render buffer objects ---
-	glGenRenderbuffers(1, &depthbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthbuffer);
+	glGenTextures(1, &depthbuffer);
+	glBindTexture(GL_TEXTURE_2D, depthbuffer);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		CONSOLE_LOG("|[error]: Could not create framebuffer");
-
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
+	//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	//if (status != GL_FRAMEBUFFER_COMPLETE) {
+	//	fprintf(stderr, "glCheckFramebufferStatus: %x\n", status);
+	//}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
