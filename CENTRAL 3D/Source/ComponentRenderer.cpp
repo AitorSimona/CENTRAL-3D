@@ -40,13 +40,20 @@ void ComponentRenderer::Draw() const
 
 	mat->resource_material->UpdateUniforms();
 
+	// --- Display Z buffer ---
+	if (App->renderer3D->zdrawer)
+	{
+		shader = App->renderer3D->ZDrawerShader->ID;
+	}
+
+
+
 	glUseProgram(shader);
 
 	// --- Set uniforms ---
-
 	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
-
+	
 	GLint viewLoc = glGetUniformLocation(shader, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
@@ -55,6 +62,15 @@ void ComponentRenderer::Draw() const
 
 	GLint timeLoc = glGetUniformLocation(shader, "time");
 	glUniform1f(timeLoc, App->time->time);
+
+
+	// --- Give ZDrawer near and far camera frustum planes pos ---
+	if (App->renderer3D->zdrawer)
+	{
+		int nearfarLoc = glGetAttribLocation(shader, "nearfar");
+		glVertexAttrib2f(nearfarLoc, App->renderer3D->active_camera->GetNearPlane(), App->renderer3D->active_camera->GetFarPlane());
+	}
+
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{

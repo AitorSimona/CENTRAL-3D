@@ -39,6 +39,7 @@ public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;
 	ResourceShader* linepointShader = nullptr;
+	ResourceShader* ZDrawerShader = nullptr;
 
 	unsigned int VAO = 0;
 	Light lights[MAX_LIGHTS];
@@ -57,4 +58,5 @@ public:
 	bool lighting = false;
 	bool color_material = true;
 	bool wireframe = false;
+	bool zdrawer = false;
 };

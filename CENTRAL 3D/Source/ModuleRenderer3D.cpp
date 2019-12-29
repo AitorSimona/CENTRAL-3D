@@ -10,6 +10,8 @@
 #include "ComponentCamera.h"
 #include "ResourceShader.h"
 
+#include "PanelScene.h"
+
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 
@@ -95,6 +97,36 @@ bool ModuleRenderer3D::Init(json file)
 	linepointShader = new ResourceShader(linePointVertShaderSrc, linePointFragShaderSrc, false);
 	linepointShader->name = "LinePoint";
 
+	// --- Creating z buffer shader drawer ---
+
+	const char * zdrawervertex = "#version 460 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"in vec2 nearfar; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"out mat4 _projection; \n"
+		"out vec2 nearfarfrag; \n"
+		"void main(){ \n"
+		"nearfarfrag = nearfar; \n"
+		"_projection = projection; \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"}\n";
+
+	const char * zdrawerfragment = "#version 460 core \n"
+		"out vec4 FragColor; \n"
+		"in vec2 nearfarfrag; \n"
+		"in mat4 _projection; \n"
+		"float LinearizeDepth(float depth){ \n"
+		"float z =  2.0*depth - 1.0; // back to NDC \n"
+		"return 2.0* nearfarfrag.x * nearfarfrag.y / (nearfarfrag.y + nearfarfrag.x - z * (nearfarfrag.y - nearfarfrag.x)); }\n"
+		"void main(){ \n"
+		"float depth = LinearizeDepth(gl_FragCoord.z);  \n"
+		"FragColor = vec4(vec3(gl_FragCoord.z), 1.0); } \n";
+
+	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
+	ZDrawerShader->name = "ZDrawer";
+
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char *vertexShaderSource =
@@ -147,6 +179,16 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
+	// --- Clear framebuffers ---
+	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -163,18 +205,15 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
 
-	// --- Clear framebuffers ---
-	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 	// --- Draw ui and swap buffers ---
 	App->gui->Draw();
@@ -193,6 +232,7 @@ bool ModuleRenderer3D::CleanUp()
 
 	delete defaultShader;
 	delete linepointShader;
+	delete ZDrawerShader;
 
 	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);

@@ -68,6 +68,7 @@ bool PanelScene::Draw()
 		posX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
 		posY = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
 
+
 		// --- Handle drag & drop ---
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -106,6 +107,7 @@ bool PanelScene::Draw()
 				ImGui::MenuItem("WIREFRAME", NULL, &App->renderer3D->wireframe);
 				ImGui::MenuItem("BOUNDING BOXES", NULL, &App->scene_manager->display_boundingboxes);
 				ImGui::MenuItem("OCTREE", NULL, &App->scene_manager->display_tree);
+				ImGui::MenuItem("ZDRAWER", NULL, &App->renderer3D->zdrawer);
 
 				ImGui::EndMenu();
 			}
