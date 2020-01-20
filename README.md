@@ -12,7 +12,7 @@
 2. Preparing stuff for Project 3 subject in CITM Barcelona (2020).
 
 
-- By [AitorSimona](https://github.com/AitorSimona)
+## By [AitorSimona](https://github.com/AitorSimona)
 
 <img src="docs/Photo.jpg">
 
