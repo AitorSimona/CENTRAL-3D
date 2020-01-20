@@ -6,6 +6,12 @@
 * GitHub repository: [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 * GitHub website: [Website](https://aitorsimona.github.io/CENTRAL-3D/)
 
+## Expanding CENTRAL 3D
+ - After 0.3, everything was done during my holidays, twofold purpose:
+
+1. Having fun, learning.
+2. Preparing stuff for Project 3 subject in CITM Barcelona (2020).
+
 ## TOOLS USED
 
 - Microsoft Visual Studio 2017
