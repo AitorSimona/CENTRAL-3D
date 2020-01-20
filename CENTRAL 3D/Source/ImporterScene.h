@@ -4,6 +4,7 @@
 #include "Importer.h"
 #include <vector>
 #include <map>
+#include <string>
 
 class ImporterMesh;
 class ImporterMaterial;
@@ -26,7 +27,7 @@ enum ExportFileTypes
 
 class ImporterScene : public Importer
 {
-
+	
 public:
 	ImporterScene();
 	virtual ~ImporterScene();

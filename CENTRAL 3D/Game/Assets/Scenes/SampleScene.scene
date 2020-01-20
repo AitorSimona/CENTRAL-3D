@@ -175,7 +175,7 @@
                 "positionz": "0.000000",
                 "rotationx": "-0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "180.000000",
+                "rotationz": "-180.000000",
                 "scalex": "1.000000",
                 "scaley": "1.000000",
                 "scalez": "1.000000"
@@ -199,7 +199,7 @@
                 "positionz": "0.000001",
                 "rotationx": "-0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "180.000000",
+                "rotationz": "-180.000000",
                 "scalex": "1.000000",
                 "scaley": "1.000000",
                 "scalez": "1.000000"
@@ -295,7 +295,7 @@
                 "positionz": "-0.069194",
                 "rotationx": "-0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "-180.000000",
+                "rotationz": "180.000000",
                 "scalex": "1.000000",
                 "scaley": "1.000000",
                 "scalez": "1.000000"
@@ -319,7 +319,7 @@
                 "positionz": "0.000000",
                 "rotationx": "-0.000000",
                 "rotationy": "0.000000",
-                "rotationz": "-180.000000",
+                "rotationz": "180.000000",
                 "scalex": "1.000000",
                 "scaley": "1.000000",
                 "scalez": "1.000000"
@@ -683,7 +683,7 @@
                 }
             }
         },
-        "Parent": "37856",
+        "Parent": "1952501276",
         "UID": "1899137835"
     },
     "Line002": {
@@ -702,7 +702,7 @@
             "1": "Library/Meshes/1636234858.mesh",
             "2": "",
             "3": {
-                "diffuse": "Library/Textures/1132496625.dds",
+                "diffuse": "Library/Textures/1285092550.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
@@ -726,7 +726,7 @@
             "1": "Library/Meshes/581683607.mesh",
             "2": "",
             "3": {
-                "diffuse": "Library/Textures/1132496625.dds",
+                "diffuse": "Library/Textures/1285092550.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
@@ -750,7 +750,7 @@
             "1": "Library/Meshes/889510056.mesh",
             "2": "",
             "3": {
-                "diffuse": "Library/Textures/1132496625.dds",
+                "diffuse": "Library/Textures/1285092550.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
@@ -772,12 +772,12 @@
                 "scalez": "1.000000"
             },
             "3": {
-                "diffuse": "Library/Textures/1132496625.dds",
+                "diffuse": "Library/Textures/1285092550.dds",
                 "shader": "Standard",
                 "uniforms": null
             }
         },
-        "Parent": "37856",
+        "Parent": "1952501276",
         "UID": "980561849"
     }
 }

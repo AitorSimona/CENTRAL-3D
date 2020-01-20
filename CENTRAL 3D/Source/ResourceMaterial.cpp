@@ -16,8 +16,9 @@ ResourceMaterial::ResourceMaterial() : Resource(Resource::ResourceType::MATERIAL
 
 ResourceMaterial::~ResourceMaterial()
 {
-	if(shader)
-	shader->instances--;
+	// MYTODO: We may accesss an already deleted shader!
+	//if(shader)
+	//shader->instances--;
 
 	for (uint i = 0; i < uniforms.size(); ++i)
 	{
