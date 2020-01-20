@@ -130,7 +130,7 @@ Editor camera only works when in AppState EDITOR mode.
 
 ## Tools used
 
-- Microsoft Visual Studio 2017
+- Microsoft Visual Studio 2017 (2019 from version 0.3)
 - 3rd Party Libraries used:
 - SDL 2.0.10
 - Glew 2.1.0
