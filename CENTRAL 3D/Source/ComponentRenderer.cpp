@@ -27,7 +27,7 @@ ComponentRenderer::~ComponentRenderer()
 
 }
 
-void ComponentRenderer::Draw() const
+void ComponentRenderer::Draw(bool outline) const
 {
 	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
@@ -38,6 +38,17 @@ void ComponentRenderer::Draw() const
 
 	if(mat)
 	shader = mat->resource_material->shader->ID;
+
+	float4x4 model = transform->GetGlobalTransform();
+
+	if (outline)
+	{
+		shader = App->renderer3D->OutlineShader->ID;
+		// --- Draw selected, pass scaled-up matrix to shader ---
+		float3 scale = float3(1.05f, 1.05f, 1.05f);
+		
+		model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
+	}
 
 	mat->resource_material->UpdateUniforms();
 
@@ -51,7 +62,7 @@ void ComponentRenderer::Draw() const
 
 	// --- Set uniforms ---
 	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr());
 	
 	GLint viewLoc = glGetUniformLocation(shader, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
@@ -94,7 +105,6 @@ void ComponentRenderer::Draw() const
 
 	if(App->scene_manager->display_boundingboxes)
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
-
 }
 
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
@@ -108,6 +118,7 @@ inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* m
 		else
 			glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
 	}
+
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
 	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data

@@ -7,7 +7,10 @@
 #include "ModuleCamera3D.h"
 #include "ModuleResources.h"
 
+#include "GameObject.h"
 #include "ComponentCamera.h"
+#include "ComponentTransform.h"
+#include "ComponentRenderer.h"
 #include "ResourceShader.h"
 
 #include "PanelScene.h"
@@ -63,19 +66,42 @@ bool ModuleRenderer3D::Init(json file)
 
 	}
 
-	// --- z values from 0 to 1 and not -1 to 1, more precision
+	// --- z values from 0 to 1 and not -1 to 1, more precision --- 
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 
+	// --- Enable stencil testing, set to replace ---
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
-	GLint formats = 0;
-	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
-	if (formats < 1) {
-		std::cerr << "Driver does not support any binary formats." << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	//GLint formats = 0;
+	//glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
+	//if (formats < 1) {
+	//	std::cerr << "Driver does not support any binary formats." << std::endl;
+	//	exit(EXIT_FAILURE);
+	//}
 
 	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
 	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
+
+	// --- Creating outline drawing shaders ---
+	const char* OutlineVertShaderSrc = "#version 460 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"}\n";
+
+	const char* OutlineFragShaderSrc = "#version 460 core \n"
+		"in vec3 ourColor; \n"
+		"out vec4 color; \n"
+		"void main(){ \n"
+		"color = vec4(1.0,0.65,0.0, 1.0); \n"
+		"} \n";
+
+	OutlineShader = new ResourceShader(OutlineVertShaderSrc, OutlineFragShaderSrc, false);
+	OutlineShader->name = "OutlineShader";
 
 	// --- Creating point/line drawing shaders ---
 
@@ -170,6 +196,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	//Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
+
 	return ret;
 }
 
@@ -184,15 +211,19 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
+	// --- Clear stencil buffer, enable write ---
+	glStencilMask(0xFF);
+	glClearStencil(0);
+
 	// --- Clear framebuffers ---
 	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	//glClearDepth(0.0f);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
 	glClearDepth(0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -227,15 +258,42 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 	glDepthFunc(GL_GREATER);
+
+	// --- Do not write to the stencil buffer ---
+	glStencilMask(0x00);
+
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
+
+
+	// --- Selected Object Outlining ---
+	if (App->scene_manager->GetSelectedGameObject() != nullptr)
+	{
+		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
+		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
+		// differences, making it look like borders ---
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+
+		// --- Search for Renderer Component --- 
+		ComponentRenderer* Renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+
+		// --- If Found, draw the mesh ---
+		if (Renderer && Renderer->IsEnabled())
+			Renderer->Draw(true);
+
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glEnable(GL_DEPTH_TEST);
+	}
+
 	glDepthFunc(GL_LESS);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
 	// --- Draw ui and swap buffers ---
 	App->gui->Draw();
+
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context); 
@@ -252,6 +310,7 @@ bool ModuleRenderer3D::CleanUp()
 	delete defaultShader;
 	delete linepointShader;
 	delete ZDrawerShader;
+	delete OutlineShader;
 
 	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);
@@ -355,13 +414,21 @@ void ModuleRenderer3D::CreateFramebuffer()
 
 	glGenTextures(1, &depthbuffer);
 	glBindTexture(GL_TEXTURE_2D, depthbuffer);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8/*GL_DEPTH_COMPONENT32F*/, App->window->GetWindowWidth(), App->window->GetWindowHeight());
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//glGenTextures(1, &stencilbuffer);
+	//glBindTexture(GL_TEXTURE_2D, stencilbuffer);
+	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_STENCIL_INDEX, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, stencilbuffer, 0);
+
+
 	//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	//if (status != GL_FRAMEBUFFER_COMPLETE) {
 	//	fprintf(stderr, "glCheckFramebufferStatus: %x\n", status);

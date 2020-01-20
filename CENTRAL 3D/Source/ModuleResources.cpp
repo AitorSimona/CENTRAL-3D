@@ -150,7 +150,7 @@ void ModuleResources::SaveAllShaders()
 {
 	for (std::map<std::string, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end(); ++it)
 	{
-		if(it->first != "Standard" && it->first != "LinePoint" && it->first != "ZDrawer")
+		if(it->first != "Standard" && it->first != "LinePoint" && it->first != "ZDrawer" && it->first != "OutlineShader")
 		it->second->Save();
 	}
 }

@@ -159,9 +159,20 @@ void ModuleSceneManager::DrawScene()
 			// --- Search for Renderer Component --- 
 			ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
+			if(SelectedGameObject == (*it))
+			{
+					glStencilFunc(GL_ALWAYS, 1, 0xFF);
+					glStencilMask(0xFF);
+			}
+
 			// --- If Found, draw the mesh ---
 			if (Renderer && Renderer->IsEnabled())
 					Renderer->Draw();
+
+			if (SelectedGameObject == (*it))
+			{
+				glStencilMask(0x00);
+			}
 		}
 	}
 	std::vector<GameObject*> static_go;
@@ -172,9 +183,21 @@ void ModuleSceneManager::DrawScene()
 		// --- Search for Renderer Component --- 
 		ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
 
+
+		if (SelectedGameObject == (*it))
+		{
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+			glStencilMask(0xFF);
+		}
+
 		// --- If Found, draw the mesh ---
 		if (Renderer && Renderer->IsEnabled())
 			Renderer->Draw();
+
+		if (SelectedGameObject == (*it))
+		{
+			glStencilMask(0x00);
+		}
 	}
 
 	//--- Draw ray --- 

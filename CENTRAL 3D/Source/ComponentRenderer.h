@@ -17,7 +17,7 @@ public:
 	ComponentRenderer(GameObject* ContainerGO);
 	virtual ~ComponentRenderer();
 
-	void Draw() const;
+	void Draw(bool outline = false) const;
 
 private:
 	// --- Draw Functiions accessed by main Draw ---

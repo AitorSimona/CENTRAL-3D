@@ -39,6 +39,7 @@ public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;
 	ResourceShader* linepointShader = nullptr;
+	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
 
 	unsigned int VAO = 0;
