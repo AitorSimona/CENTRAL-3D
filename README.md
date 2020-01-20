@@ -3,7 +3,13 @@
 - [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 - [Latest Release](https://github.com/AitorSimona/CENTRAL-3D/releases/tag/Assignment3)
 
-- Initial steps into 3D game engine development, this engine was built during Barcelona - UPC - CITM - Design and Development of Videogames - Game Engines subject (university).
+- Initial steps into 3D game engine development, this engine, up until v0.3 was built during Barcelona - UPC - CITM - Design and Development of Videogames - Game Engines subject (university).
+
+## Expanding CENTRAL 3D
+ - After 0.3, everything was done during my holidays, twofold purpose:
+
+1. Having fun, learning.
+2. Preparing stuff for Project 3 subject in CITM Barcelona (2020).
 
 
 - By [AitorSimona](https://github.com/AitorSimona)
