@@ -175,22 +175,22 @@ update_status ModuleGui::Update(float dt)
 
 					if (ImGui::MenuItem("Cube"))
 					{
-						App->scene_manager->LoadCube();
+						//App->scene_manager->LoadCube();
 					}
 					if (ImGui::MenuItem("Sphere"))
 					{
-						App->scene_manager->LoadSphere();
+						//App->scene_manager->LoadSphere();
 					}
 					if (ImGui::MenuItem("Empty Game Object"))
 					{
-						App->scene_manager->CreateEmptyGameObject();
+						//App->scene_manager->CreateEmptyGameObject();
 					}
 					if (ImGui::MenuItem("Camera"))
 					{
-						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
-						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
-						camera->SetFarPlane(10);
-						cam->AddComponent(Component::ComponentType::Renderer);
+						//GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						//ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
+						//camera->SetFarPlane(10);
+						//cam->AddComponent(Component::ComponentType::Renderer);
 					}
 
 					if (ImGui::MenuItem("Redo Octree"))

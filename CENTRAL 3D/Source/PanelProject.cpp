@@ -90,23 +90,23 @@ void PanelProject::RecursiveDirectoryDraw(const char * directory, std::vector<st
 			std::string path = directory;
 			path.append((*it).data());
 
-			uint saved_date = App->resources->GetModDateFromMeta(path.data());
+			//uint saved_date = App->resources->GetModDateFromMeta(path.data());
 
-			// TO BE IMPLEMENTED 
-			// --- If file is changed, reimport ---
-			if (App->fs->GetLastModificationTime(path.data()) != saved_date)
-			{
+			//// TO BE IMPLEMENTED 
+			//// --- If file is changed, reimport ---
+			//if (App->fs->GetLastModificationTime(path.data()) != saved_date)
+			//{
 
-			}
-			// --- If file is deleted, delete all related files in library and meta ---
-			else if (saved_date == 0)
-			{
-				//uint uid = App->resources->GetUIDFromMeta(path.data());
+			//}
+			//// --- If file is deleted, delete all related files in library and meta ---
+			//else if (saved_date == 0)
+			//{
+			//	//uint uid = App->resources->GetUIDFromMeta(path.data());
 
-				//std::string lib_path = MODELS_FOLDER;
+			//	//std::string lib_path = MODELS_FOLDER;
 
 
-			}
+			//}
 
 			ImGui::TreePop();
 		}

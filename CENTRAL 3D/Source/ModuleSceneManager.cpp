@@ -52,23 +52,23 @@ bool ModuleSceneManager::Start()
 {
 	// --- Define Default and Checkers Materials ---
 	DefaultMaterial = CreateEmptyMaterial();
-	DefaultMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
-	DefaultMaterial->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+	//DefaultMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+	//DefaultMaterial->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 
-	DefaultMaterial->resource_material->resource_diffuse->Texture_path = "Default";
+	//DefaultMaterial->resource_material->resource_diffuse->Texture_path = "Default";
 
 	CheckersMaterial = CreateEmptyMaterial();
-	CheckersMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+	/*CheckersMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
 	CheckersMaterial->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 
 	CheckersMaterial->resource_material->resource_diffuse->buffer_id = App->textures->GetCheckerTextureID();
 	CheckersMaterial->resource_material->resource_diffuse->Texture_path = "NaN";
 	CheckersMaterial->resource_material->resource_diffuse->Texture_width = CHECKERS_WIDTH;
-	CheckersMaterial->resource_material->resource_diffuse->Texture_height = CHECKERS_HEIGHT;
+	CheckersMaterial->resource_material->resource_diffuse->Texture_height = CHECKERS_HEIGHT;*/
 
 	// --- Create primitives ---
-	cube = CreateCube(1, 1, 1);
-	sphere = CreateSphere(1.0f, 25, 25);
+	//cube = CreateCube(1, 1, 1);
+	//sphere = CreateSphere(1.0f, 25, 25);
 
 	CreateGrid();
 
@@ -552,8 +552,8 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 	}
 
 
-	new_mesh->LoadInMemory();
-	new_mesh->CreateAABB();
+	//new_mesh->LoadInMemory();
+	//new_mesh->CreateAABB();
 	par_shapes_free_mesh(mesh);
 }
 
@@ -656,7 +656,7 @@ ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float siz
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
 	// does not have uvs / normals 
 
-	ResourceMesh* new_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+	ResourceMesh* new_mesh;//= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 
 	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
 	par_shapes_mesh* top = par_shapes_create_plane(1, 1);
@@ -699,7 +699,7 @@ ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float siz
 
 ResourceMesh* ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
 {
-	ResourceMesh* new_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+	ResourceMesh* new_mesh; //= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 
 	// --- Create par shapes sphere ---
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);

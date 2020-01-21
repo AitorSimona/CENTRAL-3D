@@ -192,7 +192,7 @@ bool ModuleRenderer3D::Init(json file)
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
 	defaultShader->name = "Standard";
 	defaultShader->use();
-	App->resources->AddShader(defaultShader);
+	//App->resources->AddShader(defaultShader);
 
 	//Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());

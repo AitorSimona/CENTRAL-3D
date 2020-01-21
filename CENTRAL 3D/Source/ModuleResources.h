@@ -5,13 +5,13 @@
 #include "Globals.h"
 #include "Resource.h"
 
-class ResourceShader;
-
-struct ResourceMeta
-{
-	uint Date = 0;
-	uint UID = 0;
-};
+//class ResourceShader;
+//
+//struct ResourceMeta
+//{
+//	uint Date = 0;
+//	uint UID = 0;
+//};
 
 class ModuleResources : public Module
 {
@@ -25,7 +25,7 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void CreateMetaFromUID(uint UID, const char* filename);
+	/*void CreateMetaFromUID(uint UID, const char* filename);
 
 	bool IsFileImported(const char* file);
 	Resource* GetResource(const char* original_file);
@@ -39,19 +39,19 @@ public:
 
 	Resource* CreateResource(Resource::ResourceType type);
 	void AddResource(Resource* res);
-	void AddShader(ResourceShader* shader);
+	void AddShader(ResourceShader* shader);*/
 
 
 private:
 
-	// --- Available shaders ---
-	std::map<std::string, ResourceShader*> shaders;
+	//// --- Available shaders ---
+	//std::map<std::string, ResourceShader*> shaders;
 
 	// --- Resources in memory ---
 	std::map<uint, Resource*> resources;
 
-	// --- Resources in library ---
-	std::map<uint, ResourceMeta> LoadedResources;
+	//// --- Resources in library ---
+	//std::map<uint, ResourceMeta> LoadedResources;
 };
 
 #endif

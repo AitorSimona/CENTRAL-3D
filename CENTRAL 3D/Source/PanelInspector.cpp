@@ -276,61 +276,61 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 	if (Startup)
 		ImGui::SetNextItemOpen(true);
 
-	if (ImGui::TreeNode("Material"))
-	{
-		static ImGuiComboFlags flags = 0;
+	//if (ImGui::TreeNode("Material"))
+	//{
+	//	static ImGuiComboFlags flags = 0;
 
-		ImGui::Text("Shader");
-		ImGui::SameLine();
+	//	ImGui::Text("Shader");
+	//	ImGui::SameLine();
 
-		std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
+	//	std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
 
-		const char* item_current = material->resource_material->shader->name.data();       
-		if (ImGui::BeginCombo("##Shader", item_current, flags))
-		{
-			for (std::map<std::string, ResourceShader*>::iterator it = shaders->begin(); it != shaders->end(); ++it)
-			{
-				bool is_selected = (item_current == it->first);
+	//	const char* item_current = material->resource_material->shader->name.data();       
+	//	if (ImGui::BeginCombo("##Shader", item_current, flags))
+	//	{
+	//		for (std::map<std::string, ResourceShader*>::iterator it = shaders->begin(); it != shaders->end(); ++it)
+	//		{
+	//			bool is_selected = (item_current == it->first);
 
-				if (ImGui::Selectable(it->second->name.data(), is_selected))
-				{
-					item_current = it->second->name.data();
-					material->resource_material->shader = it->second;
-					material->resource_material->shader->GetAllUniforms(material->resource_material->uniforms);
-				}
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
+	//			if (ImGui::Selectable(it->second->name.data(), is_selected))
+	//			{
+	//				item_current = it->second->name.data();
+	//				material->resource_material->shader = it->second;
+	//				material->resource_material->shader->GetAllUniforms(material->resource_material->uniforms);
+	//			}
+	//			if (is_selected)
+	//				ImGui::SetItemDefaultFocus();
+	//		}
 
-			ImGui::EndCombo();
-		}
+	//		ImGui::EndCombo();
+	//	}
 
 
-		// --- Print Texture Path ---
-		std::string Path = "Path: ";
-		Path.append(material->resource_material->resource_diffuse->Texture_path);
+	//	// --- Print Texture Path ---
+	//	std::string Path = "Path: ";
+	//	Path.append(material->resource_material->resource_diffuse->Texture_path);
 
-		ImGui::Text(Path.data());
+	//	ImGui::Text(Path.data());
 
-		// --- Texture Preview ---
-		ImGui::Image((void*)(uint)&material->resource_material->resource_diffuse->buffer_id, ImVec2(150, 150));
-		ImGui::Text("Instances:");
-		ImGui::SameLine();
-		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->instances).data());
+	//	// --- Texture Preview ---
+	//	ImGui::Image((void*)(uint)&material->resource_material->resource_diffuse->buffer_id, ImVec2(150, 150));
+	//	ImGui::Text("Instances:");
+	//	ImGui::SameLine();
+	//	ImGui::Text(std::to_string(material->resource_material->resource_diffuse->instances).data());
 
-		// --- Print Texture Width and Height ---
-		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_width).data());
-		ImGui::SameLine();
-		ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_height).data());
+	//	// --- Print Texture Width and Height ---
+	//	ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_width).data());
+	//	ImGui::SameLine();
+	//	ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_height).data());
 
-		ImGui::Separator();
+	//	ImGui::Separator();
 
-		ImGui::Text("Shader Uniforms");
+	//	ImGui::Text("Shader Uniforms");
 
-		App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material->resource_material);
+	//	App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material->resource_material);
 
-		ImGui::TreePop();
-	}
+	//	ImGui::TreePop();
+	//}
 }
 
 inline void PanelInspector::CreateCameraNode(GameObject & Selected) const

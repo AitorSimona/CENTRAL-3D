@@ -63,85 +63,85 @@ bool PanelShaderEditor::Draw()
 		ImGui::Text("Shader");
 		ImGui::SameLine();
 
-		std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
+		//std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
 
-		const char* item_current = currentShader->name.data();
-		if (ImGui::BeginCombo("##Shader", item_current, flags))
-		{
-			for (std::map<std::string, ResourceShader*>::iterator it = shaders->begin(); it != shaders->end(); ++it)
-			{
-				bool is_selected = (item_current == it->first);
+		//const char* item_current = currentShader->name.data();
+		//if (ImGui::BeginCombo("##Shader", item_current, flags))
+		//{
+		//	for (std::map<std::string, ResourceShader*>::iterator it = shaders->begin(); it != shaders->end(); ++it)
+		//	{
+		//		bool is_selected = (item_current == it->first);
 
-				if (ImGui::Selectable(it->second->name.data(), is_selected))
-				{
-					item_current = it->second->name.data();
-					currentShader = it->second;
-				}
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
+		//		if (ImGui::Selectable(it->second->name.data(), is_selected))
+		//		{
+		//			item_current = it->second->name.data();
+		//			currentShader = it->second;
+		//		}
+		//		if (is_selected)
+		//			ImGui::SetItemDefaultFocus();
+		//	}
 
-			ImGui::EndCombo();
-		}
-
-
-		static char shadername[100];
-
-		if (currentShader->name != "Standard")
-		{
-			if (ImGui::InputText("Rename Shader: ", shadername, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-			{
-				(*shaders).erase(currentShader->name);
-				currentShader->name = shadername;
-				App->resources->AddShader(currentShader);
-				App->scene_manager->SaveScene();
-			}
-		}
+		//	ImGui::EndCombo();
+		//}
 
 
-		ImGui::Separator();
+		//static char shadername[100];
 
-		ImGui::Text("Vertex Shader");
+		//if (currentShader->name != "Standard")
+		//{
+		//	if (ImGui::InputText("Rename Shader: ", shadername, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+		//	{
+		//		(*shaders).erase(currentShader->name);
+		//		currentShader->name = shadername;
+		//		App->resources->AddShader(currentShader);
+		//		App->scene_manager->SaveScene();
+		//	}
+		//}
 
-		InputText("##VertexShader", &currentShader->vShaderCode, textflags);
 
-		ImGui::Separator();
+		//ImGui::Separator();
 
-		ImGui::Text("Fragment Shader");
+		//ImGui::Text("Vertex Shader");
 
-		InputText("##FragmentShader", &currentShader->fShaderCode, textflags);
+		//InputText("##VertexShader", &currentShader->vShaderCode, textflags);
 
-		if (ImGui::Button("Compile"))
-		{
-			currentShader->ReloadAndCompileShader();
+		//ImGui::Separator();
 
-			if (App->scene_manager->GetSelectedGameObject())
-			{
-				ComponentMaterial* material = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+		//ImGui::Text("Fragment Shader");
 
-				// --- Display uniforms ---
-				if(material)
-				material->resource_material->shader->GetAllUniforms(material->resource_material->uniforms);
-			}
+		//InputText("##FragmentShader", &currentShader->fShaderCode, textflags);
 
-		}
+		//if (ImGui::Button("Compile"))
+		//{
+		//	currentShader->ReloadAndCompileShader();
 
-		ImGui::SameLine();
+		//	if (App->scene_manager->GetSelectedGameObject())
+		//	{
+		//		ComponentMaterial* material = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 
-		if (ImGui::Button("New"))
-		{
-			ResourceShader* new_shader = (ResourceShader*)App->resources->CreateResource(Resource::ResourceType::SHADER);
-			new_shader->name = "Shader " + std::to_string(shaders->size() + 1);
-			App->resources->AddShader(new_shader);
-			currentShader = new_shader;
-		}
+		//		// --- Display uniforms ---
+		//		if(material)
+		//		material->resource_material->shader->GetAllUniforms(material->resource_material->uniforms);
+		//	}
 
-		ImGui::SameLine();
+		//}
 
-		if (ImGui::Button("Save All"))
-		{
-			App->resources->SaveAllShaders();
-		}
+		//ImGui::SameLine();
+
+		//if (ImGui::Button("New"))
+		//{
+		//	ResourceShader* new_shader = (ResourceShader*)App->resources->CreateResource(Resource::ResourceType::SHADER);
+		//	new_shader->name = "Shader " + std::to_string(shaders->size() + 1);
+		//	App->resources->AddShader(new_shader);
+		//	currentShader = new_shader;
+		//}
+
+		//ImGui::SameLine();
+
+		//if (ImGui::Button("Save All"))
+		//{
+		//	App->resources->SaveAllShaders();
+		//}
 
 		ImGui::Separator();
 	}

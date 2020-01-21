@@ -238,24 +238,24 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	name.append(std::to_string(LibUID));
 	name.append(".dds");
 
-	// --- Look for meta, if found load image from library ---
-	if (App->resources->IsFileImported(path))
-	{
-		uint uid = App->resources->GetUIDFromMeta(path);
+	//// --- Look for meta, if found load image from library ---
+	//if (App->resources->IsFileImported(path))
+	//{
+	//	uint uid = App->resources->GetUIDFromMeta(path);
 
-		std::string lib_Tex = TEXTURES_FOLDER;
-		lib_Tex.append(std::to_string(uid));
-		lib_Tex.append(".dds");
-		final_path = lib_Tex;
+	//	std::string lib_Tex = TEXTURES_FOLDER;
+	//	lib_Tex.append(std::to_string(uid));
+	//	lib_Tex.append(".dds");
+	//	final_path = lib_Tex;
 
-		load_existing = true;
-	}
-	else if (final_path.find("Library") != std::string::npos)
-		load_existing = true;
-	else
-	{
-		App->resources->CreateMetaFromUID(LibUID, path);
-	}
+	//	load_existing = true;
+	//}
+	//else if (final_path.find("Library") != std::string::npos)
+	//	load_existing = true;
+	//else
+	//{
+	//	App->resources->CreateMetaFromUID(LibUID, path);
+	//}
 
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(final_path.data()))

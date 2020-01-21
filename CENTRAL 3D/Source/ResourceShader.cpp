@@ -426,86 +426,86 @@ bool ResourceShader::CreateShaderProgram()
 // Internal use only!
 void ResourceShader::SaveShader()
 {
-	std::string path = SHADERS_FOLDER;
-	path.append(std::to_string(UID));
-	path.append(".shader");
-
-	GLint buffer_size;
-	glGetProgramiv(ID,GL_PROGRAM_BINARY_LENGTH, &buffer_size);
-
-	if (buffer_size > 0)
-	{
-		char* buffer = new char[buffer_size];
-		GLint bytes_written = 0;
-		GLenum format = 0;
-
-		glGetProgramBinary(ID, buffer_size, &bytes_written, &format, buffer);
-
-		if (bytes_written > 0)
-		{
-			// --- Save shader to file ---
-			App->fs->Save(path.data(), buffer, buffer_size);
-
-			std::string binary_format;
-			path.append(".format");
-			json jsonfile;
-			char* bin_buffer = nullptr;
-
-			// --- Create Meta ---
-			jsonfile["FORMAT"] = std::to_string(format);
-			jsonfile["NAME"] = name;
-			binary_format = App->GetJLoader()->Serialize(jsonfile);
-			bin_buffer = (char*)binary_format.data();
-
-			App->fs->Save(path.data(), bin_buffer, binary_format.size());
-;
-
-			// --- Save code to Assets folder, save meta ---
-			path = ASSETS_FOLDER;
-			path.append("Shaders/");
-			path.append(name);
-
-			std::string final_name = path + ".vertex";
-
-			if(!App->resources->IsFileImported(final_name.data()))
-			App->resources->CreateMetaFromUID(UID, final_name.data());
-
-			std::ofstream file;
-			file.open(final_name);
-
-			if (!file.is_open())
-			{
-				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
-			}
-			else
-			{
-				file << std::setw(4) << vShaderCode << std::endl;
-				file.close();
-			}
-
-			final_name = path + ".fragment";
-
-			if (!App->resources->IsFileImported(final_name.data()))
-			App->resources->CreateMetaFromUID(UID, final_name.data());
-
-			std::ofstream file2;
-			file2.open(final_name);
-
-			if (!file2.is_open())
-			{
-				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
-			}
-			else
-			{
-				file2 << std::setw(4) << fShaderCode << std::endl;
-				file2.close();
-			}
-		}
-
-		delete[] buffer;
-	}
-	else
-		CONSOLE_LOG("|[error]: Could not save Shader: %s, try compiling it first", name.data());
+//	std::string path = SHADERS_FOLDER;
+//	path.append(std::to_string(UID));
+//	path.append(".shader");
+//
+//	GLint buffer_size;
+//	glGetProgramiv(ID,GL_PROGRAM_BINARY_LENGTH, &buffer_size);
+//
+//	if (buffer_size > 0)
+//	{
+//		char* buffer = new char[buffer_size];
+//		GLint bytes_written = 0;
+//		GLenum format = 0;
+//
+//		glGetProgramBinary(ID, buffer_size, &bytes_written, &format, buffer);
+//
+//		if (bytes_written > 0)
+//		{
+//			// --- Save shader to file ---
+//			App->fs->Save(path.data(), buffer, buffer_size);
+//
+//			std::string binary_format;
+//			path.append(".format");
+//			json jsonfile;
+//			char* bin_buffer = nullptr;
+//
+//			// --- Create Meta ---
+//			jsonfile["FORMAT"] = std::to_string(format);
+//			jsonfile["NAME"] = name;
+//			binary_format = App->GetJLoader()->Serialize(jsonfile);
+//			bin_buffer = (char*)binary_format.data();
+//
+//			App->fs->Save(path.data(), bin_buffer, binary_format.size());
+//;
+//
+//			// --- Save code to Assets folder, save meta ---
+//			path = ASSETS_FOLDER;
+//			path.append("Shaders/");
+//			path.append(name);
+//
+//			std::string final_name = path + ".vertex";
+//
+//			if(!App->resources->IsFileImported(final_name.data()))
+//			App->resources->CreateMetaFromUID(UID, final_name.data());
+//
+//			std::ofstream file;
+//			file.open(final_name);
+//
+//			if (!file.is_open())
+//			{
+//				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
+//			}
+//			else
+//			{
+//				file << std::setw(4) << vShaderCode << std::endl;
+//				file.close();
+//			}
+//
+//			final_name = path + ".fragment";
+//
+//			if (!App->resources->IsFileImported(final_name.data()))
+//			App->resources->CreateMetaFromUID(UID, final_name.data());
+//
+//			std::ofstream file2;
+//			file2.open(final_name);
+//
+//			if (!file2.is_open())
+//			{
+//				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
+//			}
+//			else
+//			{
+//				file2 << std::setw(4) << fShaderCode << std::endl;
+//				file2.close();
+//			}
+//		}
+//
+//		delete[] buffer;
+//	}
+//	else
+//		CONSOLE_LOG("|[error]: Could not save Shader: %s, try compiling it first", name.data());
 }
 
 void ResourceShader::DeleteShaderProgram()
