@@ -3,9 +3,6 @@
 
 #include "Module.h"
 
-class ImporterScene;
-class ImporterShader;
-
 class ModuleImporter : public Module
 {
 public:
@@ -17,16 +14,12 @@ public:
 	bool CleanUp();
 
 	// --- Getters ---
-	ImporterScene* GetImporterScene() const;
 
 	// --- Utilities ---
-	bool LoadFromPath(const char* path) const;
 
 private:
-	ImporterScene* IScene = nullptr;
-	ImporterShader* IShader = nullptr;
-	void ImportAssets(const char * directory, std::vector<std::string>& filters);
 
+	void ImportAssets(const char * directory, std::vector<std::string>& filters);
 };
 
 #endif

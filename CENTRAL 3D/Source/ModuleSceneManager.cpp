@@ -72,7 +72,7 @@ bool ModuleSceneManager::Start()
 
 	CreateGrid();
 
-	App->scene_manager->LoadScene();
+	//App->scene_manager->LoadScene();
 
 	glGenVertexArrays(1, &PointLineVAO);
 
@@ -383,7 +383,7 @@ void ModuleSceneManager::SaveScene()
 	if (scene_gos.size() > 0)
 	{
 		std::string Scene_name = "SampleScene";
-		App->importer->GetImporterScene()->SaveSceneToFile(scene_gos, Scene_name, SCENE);
+		//App->importer->GetImporterScene()->SaveSceneToFile(scene_gos, Scene_name, SCENE);
 	}
 }
 
@@ -396,8 +396,8 @@ void ModuleSceneManager::LoadScene()
 
 	RecursiveFreeScene(root);
 
-	if(App->fs->Exists(Scene_name.data()))
-	App->importer->GetImporterScene()->Load(Scene_name.data());
+	//if(App->fs->Exists(Scene_name.data()))
+	//App->importer->GetImporterScene()->Load(Scene_name.data());
 }
 
 void ModuleSceneManager::RecursiveFreeScene(GameObject* go)

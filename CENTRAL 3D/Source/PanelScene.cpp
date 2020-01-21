@@ -82,8 +82,8 @@ bool PanelScene::Draw()
 					if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0)
 					{
 						ImportData data;
-						App->importer->GetImporterScene()->Import(App->gui->panelProject->dragged.data(), data);
-						App->gui->panelProject->dragged = "";
+						//App->importer->GetImporterScene()->Import(App->gui->panelProject->dragged.data(), data);
+						//App->gui->panelProject->dragged = "";
 					}
 				}
 			}

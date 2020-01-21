@@ -130,7 +130,7 @@ update_status ModuleInput::PreUpdate(float dt)
 
 				std::string DroppedFile_path = e.drop.file;
 
-				App->importer->LoadFromPath(e.drop.file);
+				//App->importer->LoadFromPath(e.drop.file);
 
 				SDL_free((char*)DroppedFile_path.data());
 			break;
