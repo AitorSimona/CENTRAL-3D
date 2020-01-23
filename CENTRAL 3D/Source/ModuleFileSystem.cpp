@@ -254,26 +254,26 @@ char normalize_char(char c)
 	return tolower(c);
 }
 
-void ModuleFileSystem::NormalizePath(char * full_path) const
+void ModuleFileSystem::NormalizePath(char * full_path, bool lowercase) const
 {
 	int len = strlen(full_path);
 	for (int i = 0; i < len; ++i)
 	{
 		if (full_path[i] == '\\')
 			full_path[i] = '/';
-		else
+		else if (lowercase)
 			full_path[i] = tolower(full_path[i]);
 	}
 }
 
-void ModuleFileSystem::NormalizePath(std::string & full_path) const
+void ModuleFileSystem::NormalizePath(std::string & full_path, bool lowercase) const
 {
 	for (string::iterator it = full_path.begin(); it != full_path.end(); ++it)
 	{
 		if (*it == '\\')
 			*it = '/';
-		/*else
-			*it = tolower(*it);*/
+		else if(lowercase)
+			*it = tolower(*it);
 	}
 }
 

@@ -13,9 +13,9 @@
 
 #include "mmgr/mmgr.h"
 
+// --- Get Assimp LOGS and print them to console ---
 void MyAssimpCallback(const char* msg, char* userData)
 {
-	// --- Get Assimp LOGS and print them to console ---
 	CONSOLE_LOG("[Assimp]: %s", msg);
 }
 
@@ -34,7 +34,6 @@ bool ModuleResources::Init(json file)
 	stream.callback = MyAssimpCallback;
 	aiAttachLogStream(&stream);
 
-
 	return true;
 }
 
@@ -42,7 +41,7 @@ bool ModuleResources::Start()
 {
 	// --- Import all resources in Assets at startup ---
 
-		//std::vector<std::string> filters;
+	//std::vector<std::string> filters;
 	//filters.push_back("vertex");
 	//filters.push_back("VERTEX");
 
@@ -71,7 +70,10 @@ bool ModuleResources::CleanUp()
 	return true;
 }
 
-void ModuleResources::ImportAssets(const char* directory, std::vector<std::string>& filters)
+// ------------------------------ IMPORTING --------------------------------------------------------
+
+// --- Sweep over all files in given directory, if those files pass the given filters, call Import ---
+void ModuleResources::SearchAssets(const char* directory, std::vector<std::string>& filters)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -83,7 +85,7 @@ void ModuleResources::ImportAssets(const char* directory, std::vector<std::strin
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
-		ImportAssets((dir + (*it) + "/").c_str(), filters);
+		SearchAssets((dir + (*it) + "/").c_str(), filters);
 	}
 
 	std::sort(files.begin(), files.end());
@@ -105,15 +107,92 @@ void ModuleResources::ImportAssets(const char* directory, std::vector<std::strin
 				}
 			}
 		}
+		else
+		pass_filter = true;
 
+
+		// --- If the given file has a compatible extension, try to import it ---
 		if (pass_filter)
 		{
 			std::string path = directory;
 			path.append((*it).data());
-			//LoadFromPath(path.data());
+			ImportAssets(path.data());
 		}
 	}
 }
+
+// --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
+void ModuleResources::ImportAssets(const char* path)
+{
+	// --- Identify resource type by file extension ---
+	Resource::ResourceType type = GetResourceTypeFromPath(path);
+
+	// --- Call relevant function depending on resource type ---
+
+	switch (type)
+	{
+	case Resource::ResourceType::MESH:
+		break;
+	case Resource::ResourceType::TEXTURE:
+		break;
+	case Resource::ResourceType::MATERIAL:
+		break;
+	case Resource::ResourceType::META:
+		break;
+	case Resource::ResourceType::SCENE:
+		break;
+	case Resource::ResourceType::MODEL:
+		break;
+	case Resource::ResourceType::SHADER:
+		break;
+	case Resource::ResourceType::VERTEX:
+		break;
+	case Resource::ResourceType::FRAGMENT:
+		break;
+	case Resource::ResourceType::UNKNOWN:
+		break;
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", path);
+		break;
+	}
+}
+
+Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
+{
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+
+	std::string extension = "";
+	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
+	App->fs->NormalizePath(extension,true);
+
+
+	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
+
+	if (extension == ".mesh")
+		type = Resource::ResourceType::MESH;
+	else if (extension == ".dds" || extension == ".png" || extension == ".jpg")
+		type = Resource::ResourceType::TEXTURE;
+	else if (extension == ".vertex")
+		type = Resource::ResourceType::VERTEX;
+	else if (extension == ".fragment")
+		type = Resource::ResourceType::FRAGMENT;
+	else if (extension == ".scene")
+		type = Resource::ResourceType::SCENE;
+	else if (extension == ".model" || extension == ".fbx" || extension == ".obj")
+		type = Resource::ResourceType::MODEL;
+	else if (extension == ".shader")
+		type = Resource::ResourceType::SHADER;
+	else if (extension == ".mat")
+		type = Resource::ResourceType::MATERIAL;
+	else if (extension == ".meta")
+		type = Resource::ResourceType::META;
+
+	return type;
+}
+
+
+// ----------------------------------------------------
+
 
 //void ModuleResources::CreateMetaFromUID(uint UID,const char* filename)
 //{
@@ -165,20 +244,6 @@ void ModuleResources::ImportAssets(const char* directory, std::vector<std::strin
 //	return nullptr;
 //}
 //
-//Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char * path)
-//{
-//	std::string extension = "";
-//	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
-//
-//	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
-//
-//	if (extension == ".mesh")
-//		type = Resource::ResourceType::MESH;
-//	else if (extension == ".dds")
-//		type = Resource::ResourceType::TEXTURE;
-//
-//	return type;
-//}
 //
 //uint ModuleResources::GetUIDFromMeta(const char * file)
 //{

@@ -11,16 +11,20 @@ class Resource
 public:
 	enum class ResourceType
 	{
-		FOLDER,
 		MESH,
 		TEXTURE,
 		MATERIAL,
 		META,
+		SCENE,
+		MODEL,
 		SHADER,
+		VERTEX,
+		FRAGMENT,
 		UNKNOWN,
 	};
 
 	Resource(ResourceType type);
+	Resource(ResourceType type, uint UID);
 	virtual ~Resource();
 
 	// --- Getters ---
@@ -39,7 +43,7 @@ public:
 	virtual void FreeMemory() {};
 
 public:
-	uint instances = 1;
+	uint instances = 0;
 
 protected:
 	uint UID = 0;

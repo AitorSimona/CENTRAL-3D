@@ -49,6 +49,8 @@ bool PanelConsole::Draw()
 				// --- Display error messages in red color ---
 				if(item[1] == *error_key)
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.75, 0, 0, 255));
+				else if(item[1] == *warning_key)
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.75, 0.75, 0, 255));
 				else
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 255, 255, 255));
 

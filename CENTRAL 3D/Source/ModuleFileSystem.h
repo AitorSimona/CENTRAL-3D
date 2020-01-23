@@ -34,8 +34,8 @@ public:
 	bool CopyFromOutsideFS(const char* full_path, const char* destination);
 	bool Copy(const char* source, const char* destination);
 	void SplitFilePath(const char* full_path, std::string* path, std::string* file = nullptr, std::string* extension = nullptr) const;
-	void NormalizePath(char* full_path) const;
-	void NormalizePath(std::string& full_path) const;
+	void NormalizePath(char* full_path, bool lowercase = false) const;
+	void NormalizePath(std::string& full_path, bool lowercase = false) const;
 	uint GetLastModificationTime(const char* file);
 
 	// Open for Read/Write

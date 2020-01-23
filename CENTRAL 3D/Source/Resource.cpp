@@ -9,6 +9,12 @@ Resource::Resource(ResourceType type)
 	UID = App->GetRandom().Int();
 }
 
+Resource::Resource(ResourceType type, uint UID)
+{
+	this->type = type;
+	this->UID = UID;
+}
+
 Resource::~Resource()
 {
 }

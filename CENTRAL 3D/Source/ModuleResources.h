@@ -27,7 +27,10 @@ public:
 	bool CleanUp();
 
 	// --- Importing ---
-	void ImportAssets(const char* directory, std::vector<std::string>& filters);
+	void SearchAssets(const char* directory, std::vector<std::string>& filters);
+	void ImportAssets(const char* path);
+	Resource::ResourceType GetResourceTypeFromPath(const char* path);
+
 
 	/*void CreateMetaFromUID(uint UID, const char* filename);
 
