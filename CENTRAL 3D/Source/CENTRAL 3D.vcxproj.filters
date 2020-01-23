@@ -52,9 +52,6 @@
     <Filter Include="Sources\Game Objects\Components">
       <UniqueIdentifier>{61475cf2-6c53-4b8e-babc-3bf35a2320a2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Importers">
-      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Resources">
       <UniqueIdentifier>{aabe4bfb-2742-467d-8bd9-8eb226e07829}</UniqueIdentifier>
     </Filter>
@@ -72,6 +69,9 @@
     </Filter>
     <Filter Include="Sources\3rd Party\MathGeoLib\Time">
       <UniqueIdentifier>{84330e1f-d6a5-4b2c-95d4-febee7a50355}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Resources\Importers">
+      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -199,7 +199,7 @@
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="JSONLoader.h">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="VSresource.h">
       <Filter>Sources\VSResources</Filter>
@@ -226,16 +226,16 @@
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
     <ClInclude Include="Importer.h">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterScene.h">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterMesh.h">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterMaterial.h">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ComponentTransform.h">
       <Filter>Sources\Game Objects\Components</Filter>
@@ -493,7 +493,7 @@
       <Filter>Sources\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ImporterShader.h">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="PanelShaderEditor.h">
       <Filter>Sources\EditorPanels</Filter>
@@ -508,6 +508,9 @@
       <Filter>Sources\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ResourceShaderObject.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFolder.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -606,7 +609,7 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="JSONLoader.cpp">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ModuleTextures.cpp">
       <Filter>Sources\Modules</Filter>
@@ -630,16 +633,16 @@
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
     <ClCompile Include="Importer.cpp">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ImporterScene.cpp">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ImporterMesh.cpp">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ImporterMaterial.cpp">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ComponentTransform.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
@@ -804,7 +807,7 @@
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ImporterShader.cpp">
-      <Filter>Sources\Importers</Filter>
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="PanelShaderEditor.cpp">
       <Filter>Sources\EditorPanels</Filter>
@@ -819,6 +822,9 @@
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ResourceShaderObject.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFolder.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
   </ItemGroup>

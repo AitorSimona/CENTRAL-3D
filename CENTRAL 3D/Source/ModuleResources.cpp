@@ -6,11 +6,12 @@
 #include "ImporterScene.h"
 #include "ImporterMesh.h"
 
+#include "ResourceFolder.h"
 #include "ResourceModel.h"
 #include "ResourceScene.h"
+#include "ResourceMaterial.h"
 #include "ResourceShaderProgram.h"
 #include "ResourceMesh.h"
-#include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShaderObject.h"
 #include "ResourceShader.h"
@@ -115,35 +116,38 @@ void ModuleResources::ImportAssets(const char* path)
 {
 	// --- Identify resource type by file extension ---
 	Resource::ResourceType type = GetResourceTypeFromPath(path);
+
 	Resource* resource = nullptr;
 
 	// --- Call relevant function depending on resource type ---
 
 	switch (type)
 	{
-	case Resource::ResourceType::MESH:
-		ImportMesh(path);
-		break;
-	case Resource::ResourceType::TEXTURE:
-		ImportTexture(path);
-		break;
-	case Resource::ResourceType::MATERIAL:
-		ImportMaterial(path);
-		break;
-	case Resource::ResourceType::META:
-
-		break;
+	case Resource::ResourceType::FOLDER:
+		ImportFolder(path);
 	case Resource::ResourceType::SCENE:
 		ImportScene(path);
 		break;
 	case Resource::ResourceType::MODEL:
 		ImportModel(path);
 		break;
+	case Resource::ResourceType::MATERIAL:
+		ImportMaterial(path);
+		break;
 	case Resource::ResourceType::SHADER:
 		ImportShaderProgram(path);
 		break;
+	case Resource::ResourceType::MESH:
+		ImportMesh(path);
+		break;
+	case Resource::ResourceType::TEXTURE:
+		ImportTexture(path);
+		break;
 	case Resource::ResourceType::SHADER_OBJECT:
 		ImportShaderObject(path);
+		break;
+	case Resource::ResourceType::META:
+
 		break;
 	case Resource::ResourceType::UNKNOWN:
 		break;
@@ -159,7 +163,11 @@ void ModuleResources::ImportAssets(const char* path)
 	else
 		CONSOLE_LOG("![Warning]: Could not import: %s", path);
 
+}
 
+Resource* ModuleResources::ImportFolder(const char* path)
+{
+	return nullptr;
 }
 
 Resource* ModuleResources::ImportScene(const char* path)
@@ -167,9 +175,14 @@ Resource* ModuleResources::ImportScene(const char* path)
 	ResourceScene* scene = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-
+	if (IsFileImported(path))
+	{
+		//Loadfromlib
+	}
 
 	// --- Else call relevant importer ---
+	else
+		// Import
 
 	return scene;
 }
@@ -179,9 +192,14 @@ Resource* ModuleResources::ImportModel(const char* path)
 	ResourceModel* model = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-
+	if (IsFileImported(path))
+	{
+		//Loadfromlib
+	}
 
 	// --- Else call relevant importer ---
+	else
+		// Import
 
 	return model;
 }
@@ -191,9 +209,14 @@ Resource* ModuleResources::ImportMaterial(const char* path)
 	ResourceMaterial* material = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-
+	if (IsFileImported(path))
+	{
+		//Loadfromlib
+	}
 
 	// --- Else call relevant importer ---
+	else
+		// Import
 
 	return material;
 }
@@ -203,9 +226,14 @@ Resource* ModuleResources::ImportShaderProgram(const char* path)
 	ResourceShaderProgram* shader = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-
+	if (IsFileImported(path))
+	{
+		//Loadfromlib
+	}
 
 	// --- Else call relevant importer ---
+	else
+		// Import
 
 	return shader;
 }
@@ -215,9 +243,14 @@ Resource* ModuleResources::ImportMesh(const char* path)
 	ResourceMesh* mesh = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-
+	if (IsFileImported(path))
+	{
+		//Loadfromlib
+	}
 
 	// --- Else call relevant importer ---
+	else
+		// Import
 
 	return mesh;
 }
@@ -227,9 +260,14 @@ Resource* ModuleResources::ImportTexture(const char* path)
 	ResourceTexture* texture = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-
+	if (IsFileImported(path))
+	{
+		//Loadfromlib
+	}
 
 	// --- Else call relevant importer ---
+	else
+		// Import
 
 	return texture;
 }
@@ -239,16 +277,21 @@ Resource* ModuleResources::ImportShaderObject(const char* path)
 	ResourceShaderObject* shader_object = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-
+	if (IsFileImported(path))
+	{
+		//Loadfromlib
+	}
 
 	// --- Else call relevant importer ---
+	else
+		// Import
 
 	return shader_object;
 }
 
 Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -257,7 +300,22 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 
 	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
 
-	if (extension == ".mesh")
+	if (extension == "")
+		type = Resource::ResourceType::FOLDER;
+
+	else if (extension == ".scene")
+		type = Resource::ResourceType::SCENE;
+
+	else if (extension == ".model" || extension == ".fbx" || extension == ".obj")
+		type = Resource::ResourceType::MODEL;
+	
+	else if (extension == ".mat")
+		type = Resource::ResourceType::MATERIAL;
+
+	else if (extension == ".shader")
+		type = Resource::ResourceType::SHADER;
+
+	else if (extension == ".mesh")
 		type = Resource::ResourceType::MESH;
 
 	else if (extension == ".dds" || extension == ".png" || extension == ".jpg")
@@ -266,22 +324,25 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == ".vertex" || extension == ".fragment")
 		type = Resource::ResourceType::SHADER_OBJECT;
 
-	else if (extension == ".scene")
-		type = Resource::ResourceType::SCENE;
-
-	else if (extension == ".model" || extension == ".fbx" || extension == ".obj")
-		type = Resource::ResourceType::MODEL;
-
-	else if (extension == ".shader")
-		type = Resource::ResourceType::SHADER;
-
-	else if (extension == ".mat")
-		type = Resource::ResourceType::MATERIAL;
-
 	else if (extension == ".meta")
 		type = Resource::ResourceType::META;
 
 	return type;
+}
+
+bool ModuleResources::IsFileImported(const char* file)
+{
+	bool ret = false;
+
+	std::string path = file;
+
+	path.append(".meta");
+
+	// --- PhysFS only will return true if the file is inside one of the fs predefined folders! 
+	//  using that on our advantage to know if a resource is imported or not ---
+	ret = App->fs->Exists(path.data());
+
+	return ret;
 }
 
 
@@ -331,18 +392,7 @@ bool ModuleResources::CleanUp()
 //	App->fs->Save(meta_path.data(), meta_buffer, jsondata.length());
 //}
 //
-//bool ModuleResources::IsFileImported(const char * file)
-//{
-//	bool ret = false;
-//
-//	std::string path = file;
-//
-//	path.append(".meta");
-//
-//	ret = App->fs->Exists(path.data());
-//
-//	return ret;
-//}
+
 //
 //Resource * ModuleResources::GetResource(const char * original_file)
 //{

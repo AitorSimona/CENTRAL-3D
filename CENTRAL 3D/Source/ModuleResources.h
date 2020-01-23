@@ -29,6 +29,7 @@ public:
 	// --- Importing ---
 	void SearchAssets(const char* directory, std::vector<std::string>& filters);
 	void ImportAssets(const char* path);
+	Resource* ImportFolder(const char* path);
 	Resource* ImportScene(const char* path);
 	Resource* ImportModel(const char* path);
 	Resource* ImportMaterial(const char* path);
@@ -38,7 +39,7 @@ public:
 	Resource* ImportShaderObject(const char* path);
 
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-
+	bool IsFileImported(const char* file);
 
 	/*void CreateMetaFromUID(uint UID, const char* filename);
 

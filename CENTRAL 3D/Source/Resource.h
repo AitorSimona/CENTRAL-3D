@@ -11,14 +11,15 @@ class Resource
 public:
 	enum class ResourceType
 	{
-		MESH,
-		TEXTURE,
-		MATERIAL,
-		META,
+		FOLDER,
 		SCENE,
 		MODEL,
+		MATERIAL,
 		SHADER,
+		MESH,
+		TEXTURE,
 		SHADER_OBJECT,
+		META,
 		UNKNOWN,
 	};
 
