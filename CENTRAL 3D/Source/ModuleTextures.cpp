@@ -1,6 +1,5 @@
 #include "ModuleTextures.h"
 #include "Application.h"
-#include "ModuleImporter.h"
 #include "OpenGL.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResources.h"

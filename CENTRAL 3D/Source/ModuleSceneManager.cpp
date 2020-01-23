@@ -16,7 +16,6 @@
 
 #include "ModuleGui.h"
 
-#include "ModuleImporter.h"
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
 

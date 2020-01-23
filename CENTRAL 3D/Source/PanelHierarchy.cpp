@@ -4,7 +4,6 @@
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ModuleInput.h"
-#include "ModuleImporter.h"
 #include "ImporterScene.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"

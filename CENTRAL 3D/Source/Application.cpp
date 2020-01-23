@@ -2,7 +2,6 @@
 #include "ModuleTimeManager.h"
 #include "ModuleHardware.h"
 #include "ModuleFileSystem.h"
-#include "ModuleImporter.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
@@ -26,7 +25,6 @@ Application::Application()
 	fs =  new ModuleFileSystem(true,ASSETS_FOLDER);
 	window = new ModuleWindow(true);
 	scene_manager = new ModuleSceneManager(true);
-	importer = new ModuleImporter(true);
 	input = new ModuleInput(true);
 	renderer3D = new ModuleRenderer3D(true);
 	camera = new ModuleCamera3D(true);
@@ -45,7 +43,6 @@ Application::Application()
 	AddModule(textures);
 	AddModule(hardware);
 	AddModule(fs);
-	AddModule(importer);
 	AddModule(resources);
 	AddModule(window);
 	AddModule(camera);

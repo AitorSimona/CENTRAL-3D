@@ -3,7 +3,6 @@
 #include "ModuleInput.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
-#include "ModuleImporter.h"
 
 #include "mmgr/mmgr.h"
 

@@ -32,7 +32,6 @@ class ModuleCamera3D;
 class ModuleGui;
 class ModuleHardware;
 class ModuleFileSystem;
-class ModuleImporter;
 class ModuleTextures;
 class ModuleSceneManager;
 class ModuleResources;
@@ -66,7 +65,6 @@ public:
 	ModuleGui*			gui = nullptr;
 	ModuleHardware* hardware = nullptr;
 	ModuleFileSystem* fs = nullptr;
-	ModuleImporter* importer = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleSceneManager* scene_manager = nullptr;
 	ModuleResources* resources = nullptr;

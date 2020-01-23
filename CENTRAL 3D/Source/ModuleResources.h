@@ -17,6 +17,7 @@ class ModuleResources : public Module
 {
 public:
 
+	// --- Basic ---
 	ModuleResources(bool start_enabled = true);
 	~ModuleResources();
 
@@ -24,6 +25,9 @@ public:
 	bool Start();
 	update_status Update(float dt);
 	bool CleanUp();
+
+	// --- Importing ---
+	void ImportAssets(const char* directory, std::vector<std::string>& filters);
 
 	/*void CreateMetaFromUID(uint UID, const char* filename);
 

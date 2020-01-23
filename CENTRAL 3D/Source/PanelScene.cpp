@@ -11,7 +11,6 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 
-#include "ModuleImporter.h"
 #include "ImporterScene.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"

@@ -225,9 +225,6 @@
     <ClInclude Include="ComponentMaterial.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleImporter.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Importer.h">
       <Filter>Sources\Importers</Filter>
     </ClInclude>
@@ -619,9 +616,6 @@
     </ClCompile>
     <ClCompile Include="ComponentMaterial.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleImporter.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Importer.cpp">
       <Filter>Sources\Importers</Filter>
