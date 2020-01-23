@@ -2,9 +2,17 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 
+
+#include "ImporterScene.h"
+#include "ImporterMesh.h"
+
+#include "ResourceModel.h"
+#include "ResourceScene.h"
+#include "ResourceShaderProgram.h"
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
+#include "ResourceShaderObject.h"
 #include "ResourceShader.h"
 
 #include "Assimp/include/cimport.h"
@@ -50,25 +58,6 @@ bool ModuleResources::Start()
 	return true;
 }
 
-update_status ModuleResources::Update(float dt)
-{
-	return UPDATE_CONTINUE;
-}
-
-bool ModuleResources::CleanUp()
-{
-	for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end();)
-	{
-		it->second->FreeMemory();
-		delete it->second;
-		it = resources.erase(it);
-	}
-
-	// --- Detach assimp log stream ---
-	aiDetachAllLogStreams();
-
-	return true;
-}
 
 // ------------------------------ IMPORTING --------------------------------------------------------
 
@@ -126,28 +115,35 @@ void ModuleResources::ImportAssets(const char* path)
 {
 	// --- Identify resource type by file extension ---
 	Resource::ResourceType type = GetResourceTypeFromPath(path);
+	Resource* resource = nullptr;
 
 	// --- Call relevant function depending on resource type ---
 
 	switch (type)
 	{
 	case Resource::ResourceType::MESH:
+		ImportMesh(path);
 		break;
 	case Resource::ResourceType::TEXTURE:
+		ImportTexture(path);
 		break;
 	case Resource::ResourceType::MATERIAL:
+		ImportMaterial(path);
 		break;
 	case Resource::ResourceType::META:
+
 		break;
 	case Resource::ResourceType::SCENE:
+		ImportScene(path);
 		break;
 	case Resource::ResourceType::MODEL:
+		ImportModel(path);
 		break;
 	case Resource::ResourceType::SHADER:
+		ImportShaderProgram(path);
 		break;
-	case Resource::ResourceType::VERTEX:
-		break;
-	case Resource::ResourceType::FRAGMENT:
+	case Resource::ResourceType::SHADER_OBJECT:
+		ImportShaderObject(path);
 		break;
 	case Resource::ResourceType::UNKNOWN:
 		break;
@@ -155,11 +151,104 @@ void ModuleResources::ImportAssets(const char* path)
 		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", path);
 		break;
 	}
+
+	if (resource)
+	{
+		CONSOLE_LOG("Imported successfully: %s", path);
+	}
+	else
+		CONSOLE_LOG("![Warning]: Could not import: %s", path);
+
+
+}
+
+Resource* ModuleResources::ImportScene(const char* path)
+{
+	ResourceScene* scene = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+
+
+	// --- Else call relevant importer ---
+
+	return scene;
+}
+
+Resource* ModuleResources::ImportModel(const char* path)
+{
+	ResourceModel* model = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+
+
+	// --- Else call relevant importer ---
+
+	return model;
+}
+
+Resource* ModuleResources::ImportMaterial(const char* path)
+{
+	ResourceMaterial* material = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+
+
+	// --- Else call relevant importer ---
+
+	return material;
+}
+
+Resource* ModuleResources::ImportShaderProgram(const char* path)
+{
+	ResourceShaderProgram* shader = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+
+
+	// --- Else call relevant importer ---
+
+	return shader;
+}
+
+Resource* ModuleResources::ImportMesh(const char* path)
+{
+	ResourceMesh* mesh = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+
+
+	// --- Else call relevant importer ---
+
+	return mesh;
+}
+
+Resource* ModuleResources::ImportTexture(const char* path)
+{
+	ResourceTexture* texture = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+
+
+	// --- Else call relevant importer ---
+
+	return texture;
+}
+
+Resource* ModuleResources::ImportShaderObject(const char* path)
+{
+	ResourceShaderObject* shader_object = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+
+
+	// --- Else call relevant importer ---
+
+	return shader_object;
 }
 
 Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Creation Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -170,20 +259,25 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 
 	if (extension == ".mesh")
 		type = Resource::ResourceType::MESH;
+
 	else if (extension == ".dds" || extension == ".png" || extension == ".jpg")
 		type = Resource::ResourceType::TEXTURE;
-	else if (extension == ".vertex")
-		type = Resource::ResourceType::VERTEX;
-	else if (extension == ".fragment")
-		type = Resource::ResourceType::FRAGMENT;
+
+	else if (extension == ".vertex" || extension == ".fragment")
+		type = Resource::ResourceType::SHADER_OBJECT;
+
 	else if (extension == ".scene")
 		type = Resource::ResourceType::SCENE;
+
 	else if (extension == ".model" || extension == ".fbx" || extension == ".obj")
 		type = Resource::ResourceType::MODEL;
+
 	else if (extension == ".shader")
 		type = Resource::ResourceType::SHADER;
+
 	else if (extension == ".mat")
 		type = Resource::ResourceType::MATERIAL;
+
 	else if (extension == ".meta")
 		type = Resource::ResourceType::META;
 
@@ -192,6 +286,26 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 
 
 // ----------------------------------------------------
+
+update_status ModuleResources::Update(float dt)
+{
+	return UPDATE_CONTINUE;
+}
+
+bool ModuleResources::CleanUp()
+{
+	for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = resources.erase(it);
+	}
+
+	// --- Detach assimp log stream ---
+	aiDetachAllLogStreams();
+
+	return true;
+}
 
 
 //void ModuleResources::CreateMetaFromUID(uint UID,const char* filename)

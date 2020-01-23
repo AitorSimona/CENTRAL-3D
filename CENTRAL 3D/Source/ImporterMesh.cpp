@@ -1,13 +1,10 @@
 #include "ImporterMesh.h"
 #include "Application.h"
-#include "ComponentMesh.h"
-#include "ModuleRenderer3D.h"
 #include "ModuleFileSystem.h"
 #include "ResourceMesh.h"
 
 #include "Assimp/include/scene.h"
 
-#include "OpenGL.h"
 #include "Math.h"
 
 #include "mmgr/mmgr.h"
@@ -174,7 +171,7 @@ void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
 	delete[] TexCoords;
 }
 
-void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
+void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) 
 {
 	mesh.SetOriginalFilename(filename);
 
@@ -262,7 +259,7 @@ void ImporterMesh::Load(const char * filename, ResourceMesh & mesh) const
 	delete[] Colors;
 	delete[] TexCoords;
 
-	mesh.LoadInMemory();
-	mesh.CreateAABB();
+	//mesh.LoadInMemory();
+	//mesh.CreateAABB();
 }
 

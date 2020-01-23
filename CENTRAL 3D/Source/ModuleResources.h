@@ -29,6 +29,14 @@ public:
 	// --- Importing ---
 	void SearchAssets(const char* directory, std::vector<std::string>& filters);
 	void ImportAssets(const char* path);
+	Resource* ImportScene(const char* path);
+	Resource* ImportModel(const char* path);
+	Resource* ImportMaterial(const char* path);
+	Resource* ImportShaderProgram(const char* path);
+	Resource* ImportMesh(const char* path);
+	Resource* ImportTexture(const char* path);
+	Resource* ImportShaderObject(const char* path);
+
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 
 

@@ -18,8 +18,7 @@ public:
 		SCENE,
 		MODEL,
 		SHADER,
-		VERTEX,
-		FRAGMENT,
+		SHADER_OBJECT,
 		UNKNOWN,
 	};
 

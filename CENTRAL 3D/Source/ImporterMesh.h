@@ -4,7 +4,6 @@
 #include "Importer.h"
 
 struct aiMesh;
-class ComponentMesh;
 class ResourceMesh;
 
 struct ImportMeshData : public ImportData
@@ -23,7 +22,7 @@ public:
 	bool Import(const ImportData& IData) const override;
 
 	void Save(ResourceMesh* mesh, const char* path) const;
-	void Load(const char* filename, ResourceMesh& mesh) const;
+	static void Load(const char* filename, ResourceMesh& mesh);
 };
 
 #endif
