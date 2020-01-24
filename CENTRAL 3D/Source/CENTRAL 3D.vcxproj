@@ -99,6 +99,7 @@
     <ClInclude Include="ImporterMaterial.h" />
     <ClInclude Include="ImporterMesh.h" />
     <ClInclude Include="ImporterModel.h" />
+    <ClInclude Include="Importers.h" />
     <ClInclude Include="ImporterScene.h" />
     <ClInclude Include="ImporterShader.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceModel.h" />
+    <ClInclude Include="Resources.h" />
     <ClInclude Include="ResourceScene.h" />
     <ClInclude Include="ResourceShader.h" />
     <ClInclude Include="ResourceShaderObject.h" />

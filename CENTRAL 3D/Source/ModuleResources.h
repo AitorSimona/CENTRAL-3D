@@ -2,9 +2,7 @@
 #define __MODULE_RESOURCES_H__
 
 #include "Module.h"
-#include "Globals.h"
 #include "Resource.h"
-#include "Importer.h"
 
 //class ResourceShader;
 //
@@ -14,7 +12,17 @@
 //	uint UID = 0;
 //};
 
+class Importer;
 
+class ResourceFolder;
+class ResourceFolder;
+class ResourceScene;
+class ResourceModel;
+class ResourceMaterial; 
+class ResourceShader;
+class ResourceMesh;
+class ResourceTexture;
+class ResourceShaderObject;
 
 class ModuleResources : public Module
 {
@@ -37,7 +45,6 @@ public:
 	Resource* ImportModel(const char* path);
 	Resource* ImportMaterial(const char* path);
 	Resource* ImportShaderProgram(const char* path);
-	Resource* ImportMesh(const char* path);
 	Resource* ImportTexture(const char* path);
 	Resource* ImportShaderObject(const char* path);
 
@@ -81,14 +88,15 @@ private:
 	// --- Available importers ---
 	std::vector<Importer*> importers;
 
-	//// --- Available shaders ---
-	//std::map<std::string, ResourceShader*> shaders;
-
-	// --- Resources in memory ---
-	std::map<uint, Resource*> resources;
-
-	//// --- Resources in library ---
-	//std::map<uint, ResourceMeta> LoadedResources;
+	// --- Available resources ---
+	std::map<uint, ResourceFolder*> folders;
+	std::map<uint, ResourceScene*> scenes;
+	std::map<uint, ResourceModel*> models;
+	std::map<uint, ResourceMaterial*> materials;
+	std::map<uint, ResourceShader*> shaders;
+	std::map<uint, ResourceMesh*> meshes;
+	std::map<uint, ResourceTexture*> textures;
+	std::map<uint, ResourceShaderObject*> shader_objects;
 };
 
 #endif

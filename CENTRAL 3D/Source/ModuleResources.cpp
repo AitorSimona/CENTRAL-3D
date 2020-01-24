@@ -2,21 +2,8 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 
-#include "ImporterScene.h"
-#include "ImporterModel.h"
-#include "ImporterMaterial.h"
-#include "ImporterShader.h"
-#include "ImporterMesh.h"
-
-#include "ResourceFolder.h"
-#include "ResourceModel.h"
-#include "ResourceScene.h"
-#include "ResourceMaterial.h"
-#include "ResourceShaderProgram.h"
-#include "ResourceMesh.h"
-#include "ResourceTexture.h"
-#include "ResourceShaderObject.h"
-#include "ResourceShader.h"
+#include "Importers.h"
+#include "Resources.h"
 
 #include "Assimp/include/cimport.h"
 
@@ -134,31 +121,58 @@ void ModuleResources::ImportAssets(const char* path)
 	switch (type)
 	{
 	case Resource::ResourceType::FOLDER:
-		ImportFolder(path);
+		resource = ImportFolder(path);
+
+		if (resource)
+			folders[resource->GetUID()] = (ResourceFolder*)resource;
+		break;
+
 	case Resource::ResourceType::SCENE:
-		ImportScene(path);
+		resource = ImportScene(path);
+
+		if (resource)
+			scenes[resource->GetUID()] = (ResourceScene*)resource;
 		break;
+
 	case Resource::ResourceType::MODEL:
-		ImportModel(path);
+		resource = ImportModel(path);
+
+		if (resource)
+			models[resource->GetUID()] = (ResourceModel*)resource;
 		break;
+
 	case Resource::ResourceType::MATERIAL:
-		ImportMaterial(path);
+		resource = ImportMaterial(path);
+
+		if (resource)
+			materials[resource->GetUID()] = (ResourceMaterial*)resource;
 		break;
+
 	case Resource::ResourceType::SHADER:
-		ImportShaderProgram(path);
+		resource = ImportShaderProgram(path);
+
+		if (resource)
+			shaders[resource->GetUID()] = (ResourceShader*)resource;
 		break;
-	//case Resource::ResourceType::MESH:
-	//	ImportMesh(path);
-	//	break;
+
 	case Resource::ResourceType::TEXTURE:
-		ImportTexture(path);
+		resource = ImportTexture(path);
+
+		if (resource)
+			textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
+
 	case Resource::ResourceType::SHADER_OBJECT:
-		ImportShaderObject(path);
+		resource = ImportShaderObject(path);
+
+		if (resource)
+			shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
+
 	case Resource::ResourceType::META:
 
 		break;
+
 	case Resource::ResourceType::UNKNOWN:
 		break;
 	default:
@@ -273,23 +287,6 @@ Resource* ModuleResources::ImportShaderProgram(const char* path)
 	return shader;
 }
 
-Resource* ModuleResources::ImportMesh(const char* path)
-{
-	ResourceMesh* mesh = nullptr;
-
-	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(path))
-	{
-		//Loadfromlib
-	}
-
-	// --- Else call relevant importer ---
-	else
-		// Import
-
-	return mesh;
-}
-
 Resource* ModuleResources::ImportTexture(const char* path)
 {
 	ResourceTexture* texture = nullptr;
@@ -350,9 +347,6 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == ".shader")
 		type = Resource::ResourceType::SHADER;
 
-	//else if (extension == ".mesh")
-	//	type = Resource::ResourceType::MESH;
-
 	else if (extension == ".dds" || extension == ".png" || extension == ".jpg")
 		type = Resource::ResourceType::TEXTURE;
 
@@ -397,8 +391,6 @@ bool ModuleResources::IsFileImported(const char* file)
 }
 
 
-
-
 // ----------------------------------------------------
 
 update_status ModuleResources::Update(float dt)
@@ -409,14 +401,77 @@ update_status ModuleResources::Update(float dt)
 bool ModuleResources::CleanUp()
 {
 	// --- Delete resources ---
-	for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end();)
+	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = resources.erase(it);
+		it = folders.erase(it);
 	}
 
-	resources.clear();
+	folders.clear();
+
+	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = scenes.erase(it);
+	}
+
+	scenes.clear();
+
+	for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = models.erase(it);
+	}
+
+	models.clear();
+
+	for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = materials.erase(it);
+	}
+
+	materials.clear();
+
+	for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = shaders.erase(it);
+	}
+
+	shaders.clear();
+
+	for (std::map<uint, ResourceMesh*>::iterator it = meshes.begin(); it != meshes.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = meshes.erase(it);
+	}
+
+	meshes.clear();
+
+	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = textures.erase(it);
+	}
+
+	textures.clear();
+
+	for (std::map<uint, ResourceShaderObject*>::iterator it = shader_objects.begin(); it != shader_objects.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = shader_objects.erase(it);
+	}
+
+	shader_objects.clear();
 
 	// --- Delete importers ---
 	for (uint i = 0; i < importers.size(); ++i)
