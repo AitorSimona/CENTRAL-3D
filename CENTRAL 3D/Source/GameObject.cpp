@@ -23,7 +23,7 @@ GameObject::~GameObject()
 {
 	// --- Destroy all components and game object ---
 
-	ComponentMaterial* mat = GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+	ComponentMaterial* mat = GetComponent<ComponentMaterial>();
 
 	if (mat && mat->resource_material && mat->resource_material->resource_diffuse)
 		mat->resource_material->resource_diffuse->instances--;
@@ -45,7 +45,7 @@ GameObject::~GameObject()
 
 void GameObject::Update(float dt)
 {
-	if (GetComponent<ComponentTransform>(Component::ComponentType::Transform)->update_transform)
+	if (GetComponent<ComponentTransform>()->update_transform)
 		this->OnUpdateTransform();
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
@@ -84,12 +84,12 @@ void GameObject::OnUpdateTransform()
 	if (Static)
 		return;
 
-	ComponentTransform* transform = GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	ComponentTransform* transform = GetComponent<ComponentTransform>();
 
 	if(parent)
-	transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
+	transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
 
-	ComponentCamera* camera = GetComponent<ComponentCamera>(Component::ComponentType::Camera);
+	ComponentCamera* camera = GetComponent<ComponentCamera>();
 
 	if(camera)
 	camera->OnUpdateTransform(transform->GetGlobalTransform());
@@ -293,8 +293,8 @@ void GameObject::SetMaterial(ComponentMaterial * material)
 
 void GameObject::UpdateAABB()
 {
-	ComponentMesh* mesh = GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
-	ComponentTransform* transform = GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+	ComponentMesh* mesh = GetComponent<ComponentMesh>();
+	ComponentTransform* transform = GetComponent<ComponentTransform>();
 
 	if (mesh)
 	{

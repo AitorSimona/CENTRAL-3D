@@ -12,6 +12,8 @@ public:
 	virtual ~ComponentMaterial();
 
 	void FreeTexture();
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Material; };
+
 public:
 
 	ResourceMaterial * resource_material = nullptr;

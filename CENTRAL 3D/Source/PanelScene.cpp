@@ -149,7 +149,7 @@ void PanelScene::HandleGuizmo()
 
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
+	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
@@ -160,7 +160,7 @@ void PanelScene::HandleGuizmo()
 	{
 		float4x4 newTransform;
 		newTransform.Set(modelMatrix);
-		selectedGO->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->SetGlobalTransform(newTransform.Transposed());
+		selectedGO->GetComponent<ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
 	}
 }
 

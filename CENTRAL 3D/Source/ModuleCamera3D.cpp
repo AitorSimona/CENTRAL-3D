@@ -150,8 +150,8 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 {
 	if (GO)
 	{
-		ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-		ComponentMesh* mesh = GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+		ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+		ComponentMesh* mesh = GO->GetComponent<ComponentMesh>();
 
 		if (mesh && mesh->resource_mesh)
 		{

@@ -704,7 +704,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 			// --- Create Default components ---
 			if (new_mesh)
 			{
-				ComponentTransform* transform = new_object->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+				ComponentTransform* transform = new_object->GetComponent<ComponentTransform>();
 
 				if (transform)
 				{

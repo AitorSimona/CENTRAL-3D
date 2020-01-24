@@ -179,7 +179,7 @@ void QuadtreeNode::CollectObjects(std::map<float, GameObject*>& objects, const f
 {
 	for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it)
 	{
-		ComponentTransform* transform = (*it)->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+		ComponentTransform* transform = (*it)->GetComponent<ComponentTransform>();
 
 		float dist = origin.DistanceSq(transform->GetGlobalPosition());
 		objects[dist] = *it;

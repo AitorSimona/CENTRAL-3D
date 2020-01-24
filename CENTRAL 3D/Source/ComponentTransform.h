@@ -26,6 +26,8 @@ public:
 	void			SetGlobalTransform(float4x4 new_transform);
 	void			OnUpdateTransform(const float4x4& ParentGlobal);
 
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Transform; };
+
 public:
 	bool update_transform = false;
 private:

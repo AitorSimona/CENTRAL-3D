@@ -29,10 +29,10 @@ ComponentRenderer::~ComponentRenderer()
 
 void ComponentRenderer::Draw(bool outline) const
 {
-	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
-	ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-	ComponentCamera* camera = GO->GetComponent<ComponentCamera>(Component::ComponentType::Camera);
-	ComponentMaterial* mat = GO->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>();
+	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+	ComponentCamera* camera = GO->GetComponent<ComponentCamera>();
+	ComponentMaterial* mat = GO->GetComponent<ComponentMaterial>();
 
 	uint shader = App->renderer3D->defaultShader->ID;
 
@@ -93,7 +93,7 @@ void ComponentRenderer::Draw(bool outline) const
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
-		DrawMesh(*mesh->resource_mesh, mesh->GetContainerGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material));
+		DrawMesh(*mesh->resource_mesh, mesh->GetContainerGameObject()->GetComponent<ComponentMaterial>());
 		DrawNormals(*mesh->resource_mesh,*transform);
 	}
 

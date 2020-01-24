@@ -31,12 +31,12 @@ public:
 	// --- Components ---
 
 	template<typename TComponent>
-	TComponent*	GetComponent(Component::ComponentType type)
+	TComponent*	GetComponent()
 	{
 
 		for (uint i = 0; i < components.size(); ++i)
 		{
-			if (components[i]->GetType() == type)
+			if (components[i]->GetType() == TComponent::GetType())
 			{
 				return ((TComponent*)(components[i]));
 			}

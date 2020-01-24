@@ -277,7 +277,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		glDisable(GL_DEPTH_TEST);
 
 		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+		ComponentRenderer* Renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentRenderer>();
 
 		// --- If Found, draw the mesh ---
 		if (Renderer && Renderer->IsEnabled())

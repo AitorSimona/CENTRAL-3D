@@ -13,6 +13,7 @@ public:
 	virtual ~ComponentMesh();
 	const AABB& GetAABB() const;
 
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
 public:
 	ResourceMesh* resource_mesh = nullptr;
 

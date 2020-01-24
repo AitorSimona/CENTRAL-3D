@@ -156,7 +156,7 @@ void ModuleSceneManager::DrawScene()
 		if ((*it)->GetName() != root->GetName())
 		{
 			// --- Search for Renderer Component --- 
-			ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+			ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>();
 
 			if(SelectedGameObject == (*it))
 			{
@@ -180,7 +180,7 @@ void ModuleSceneManager::DrawScene()
 	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 	{
 		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>(Component::ComponentType::Renderer);
+		ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>();
 
 
 		if (SelectedGameObject == (*it))
@@ -328,7 +328,7 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 		for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
 		{
 			// --- We have to test triangle by triangle ---
-			ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>(Component::ComponentType::Mesh);
+			ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>();
 
 			if (mesh)
 			{
@@ -337,7 +337,7 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 				{
 					// --- We need to transform the ray to local mesh space ---
 					LineSegment local = ray;
-					local.Transform(it->second->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform().Inverted());
+					local.Transform(it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted());
 
 					for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
 					{
@@ -451,7 +451,7 @@ void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 void ModuleSceneManager::SetTextureToSelectedGO(uint id)
 {
 	// --- Assign Texture to Object's Material ---
-	ComponentMaterial* Material = SelectedGameObject->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+	ComponentMaterial* Material = SelectedGameObject->GetComponent<ComponentMaterial>();
 
 	if (Material)
 	{

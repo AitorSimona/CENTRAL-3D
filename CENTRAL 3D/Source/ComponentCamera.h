@@ -32,6 +32,8 @@ public:
 
 	bool ContainsAABB(const AABB & ref);
 
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Camera; };
+
 public:
 	Frustum		frustum;
 	bool		update_projection = true;

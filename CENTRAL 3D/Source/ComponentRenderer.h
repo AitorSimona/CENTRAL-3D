@@ -19,6 +19,8 @@ public:
 
 	void Draw(bool outline = false) const;
 
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Renderer; };
+
 private:
 	// --- Draw Functiions accessed by main Draw ---
 	inline void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
