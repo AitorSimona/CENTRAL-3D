@@ -7,7 +7,7 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterShader::ImporterShader()
+ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader)
 {
 }
 
@@ -15,9 +15,8 @@ ImporterShader::~ImporterShader()
 {
 }
 
-bool ImporterShader::Import(const ImportData & IData) const
+Resource* ImporterShader::Import(const char* path) const
 {
-	ImportShaderData data = (ImportShaderData&)IData;
 
 	bool ret = true;
 
@@ -103,7 +102,7 @@ bool ImporterShader::Import(const ImportData & IData) const
 	//else
 	//	ret = false;
 
-	return ret;
+	return nullptr;
 }
 
 void ImporterShader::Save(ResourceShader * shader, const char * path) const
@@ -112,6 +111,7 @@ void ImporterShader::Save(ResourceShader * shader, const char * path) const
 	//shader->Save();
 }
 
-void ImporterShader::Load(const char * filename, ResourceShader & shader) const
+Resource* ImporterShader::Load(const char * path) const 
 {
+	return nullptr;
 }

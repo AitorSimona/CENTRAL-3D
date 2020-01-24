@@ -3,18 +3,33 @@
 
 #include "Globals.h"
 
-struct ImportData {};
+class Resource;
 
 class Importer
 {
 public:
-	Importer();
+	enum class ImporterType
+	{
+		Scene,
+		Model,
+		Material,
+		Shader,
+		Mesh,
+		Texture,
+		Shader_Object,
+		Unknown
+	};
+public:
+	Importer(ImporterType type);
 	virtual ~Importer();
 
-	virtual bool Import(const char* File_path, const ImportData& IData) const;
-	virtual bool Import(const ImportData& IData) const;
-	virtual bool Load(const char* exported_file) const;
-		
+	virtual Resource* Import(const char* path) const = 0;
+	virtual Resource* Load(const char* path) const = 0;	
+
+	ImporterType GetType() const;
+
+private:
+	ImporterType type = ImporterType::Unknown;
 };
 
 #endif

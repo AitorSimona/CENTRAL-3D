@@ -11,7 +11,7 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterMaterial::ImporterMaterial()
+ImporterMaterial::ImporterMaterial() : Importer(Importer::ImporterType::Material)
 {
 }
 
@@ -20,10 +20,8 @@ ImporterMaterial::~ImporterMaterial()
 }
 
 // --- Create Material from Scene and path to file ---
-bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) const
+Resource* ImporterMaterial::Import(const char* path) const
 {
-	ImportMaterialData MData = (ImportMaterialData&) IData;
-
 	//// --- Get Directory from filename ---
 	//std::string directory = File_path;
 	//App->fs->GetDirectoryFromPath(directory);
@@ -75,10 +73,10 @@ bool ImporterMaterial::Import(const char * File_path, const ImportData & IData) 
 	//	}
 	//}
 
-	return true;
+	return nullptr;
 }
 
-void ImporterMaterial::Load(const char * filename, ResourceMaterial& mat)
+Resource* ImporterMaterial::Load(const char * path) const
 {
 	// --- Load from Library ---
 	//// --- LibUID won't be overwritten since we are loading from library ---
@@ -86,4 +84,6 @@ void ImporterMaterial::Load(const char * filename, ResourceMaterial& mat)
 	//mat.resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(filename,mat.resource_diffuse->Texture_width, mat.resource_diffuse->Texture_height, mat.resource_diffuse->GetUID());
 	//mat.resource_diffuse->Texture_path = filename;
 	//mat.resource_diffuse->SetOriginalFilename(filename);
+
+	return nullptr;
 }

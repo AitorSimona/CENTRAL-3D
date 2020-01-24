@@ -98,6 +98,7 @@
     <ClInclude Include="Importer.h" />
     <ClInclude Include="ImporterMaterial.h" />
     <ClInclude Include="ImporterMesh.h" />
+    <ClInclude Include="ImporterModel.h" />
     <ClInclude Include="ImporterScene.h" />
     <ClInclude Include="ImporterShader.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="Importer.cpp" />
     <ClCompile Include="ImporterMaterial.cpp" />
     <ClCompile Include="ImporterMesh.cpp" />
+    <ClCompile Include="ImporterModel.cpp" />
     <ClCompile Include="ImporterScene.cpp" />
     <ClCompile Include="ImporterShader.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK.cpp" />

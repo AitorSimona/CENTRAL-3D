@@ -27,64 +27,20 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterScene::ImporterScene() 
+ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene)
 {
-	IMesh = new ImporterMesh;
-	IMaterial = new ImporterMaterial;
+
 }
 
 ImporterScene::~ImporterScene()
 {
-	delete IMesh;
-	delete IMaterial;
+
 }
 
 // MYTODO: Give some use to return type (bool) in all functions (if load fails log...)
 
-bool ImporterScene::Import(const char * File_path, const ImportData & IData) const
+Resource* ImporterScene::Import(const char * path) const
 {
-	ImportSceneData Sdata = (ImportSceneData&) IData;
-
-	//std::string rootnodename = File_path;
-
-	//// --- Remove the directory and file type, obtaining the file name ---
-	//uint count = rootnodename.find_last_of("/");
-	//rootnodename = rootnodename.substr(count + 1, rootnodename.size());
-
-	//uint countdot = rootnodename.find_last_of(".");
-	//std::string extension = rootnodename.substr(countdot,rootnodename.length());
-	//rootnodename = rootnodename.substr(0, countdot);
-
-	//// --- Duplicate File into Assets folder, save relative path ---
-	//std::string relative_path = ASSETS_FOLDER;
-	//relative_path.append(rootnodename);
-	//relative_path.append(extension);
-
-	//// --- Check if File is already imported, then load from library ---
-
-	//if (App->resources->IsFileImported(relative_path.data()))
-	//{
-	//	uint model_uid = App->resources->GetUIDFromMeta(relative_path.data());
-
-	//	if (extension == ".fbx" || extension == ".FBX")
-	//	{
-	//		std::string model_path = MODELS_FOLDER;
-	//		model_path.append(std::to_string(model_uid));
-	//		model_path.append(".model");
-	//		Load(model_path.data());
-	//	}
-
-	//	return false;
-	//}
-
-
-
-
-
-	//// --- Copy File to Assets Folder ---
-	//if(!App->fs->Exists(relative_path.data()))
-	//App->fs->CopyFromOutsideFS(File_path, relative_path.data());
-
 	//// --- Import scene from path ---
 	//const aiScene* scene = aiImportFileEx(relative_path.data(), aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
 
@@ -120,13 +76,13 @@ bool ImporterScene::Import(const char * File_path, const ImportData & IData) con
 	//else
 	//	CONSOLE_LOG("|[error]: Error loading FBX %s", &File_path);
 
-	return true;
+	return nullptr;
 }
 
-bool ImporterScene::Load(const char * exported_file) const
+Resource* ImporterScene::Load(const char * path) const
 {
 	// --- Load Scene/model file ---
-	json file = App->GetJLoader()->Load(exported_file);
+	json file = App->GetJLoader()->Load(path);
 
 
 	//std::vector<GameObject*> objects;
@@ -469,10 +425,10 @@ bool ImporterScene::Load(const char * exported_file) const
 
 	//App->scene_manager->GetRootGO()->OnUpdateTransform();
 
-	return true;
+	return nullptr;
 }
 
-std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name, ExportFileTypes exportedfile_type) const
+std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name) const
 {
 	// --- Save Scene/Model to file ---
 

@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "Resource.h"
+#include "Importer.h"
 
 //class ResourceShader;
 //
@@ -12,6 +13,8 @@
 //	uint Date = 0;
 //	uint UID = 0;
 //};
+
+
 
 class ModuleResources : public Module
 {
@@ -39,7 +42,23 @@ public:
 	Resource* ImportShaderObject(const char* path);
 
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
+	uint GetUIDFromMeta(const char* file);
 	bool IsFileImported(const char* file);
+
+	template<typename TImporter>
+	TImporter* GetImporter()
+	{
+		for (uint i = 0; i < importers.size(); ++i)
+		{
+			if (importers[i]->GetType() == TImporter::GetType())
+			{
+				return ((TImporter*)(importers[i]));
+			}
+		}
+
+		return nullptr;
+	}
+
 
 	/*void CreateMetaFromUID(uint UID, const char* filename);
 
@@ -59,6 +78,8 @@ public:
 
 
 private:
+	// --- Available importers ---
+	std::vector<Importer*> importers;
 
 	//// --- Available shaders ---
 	//std::map<std::string, ResourceShader*> shaders;

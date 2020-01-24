@@ -4,12 +4,8 @@
 #include "Importer.h"
 
 class ResourceShader;
+class Resource;
 
-struct ImportShaderData : public ImportData
-{
-	const char * vertexPath;
-	const char * fragmentPath;
-};
 
 class ImporterShader : public Importer
 {
@@ -18,10 +14,12 @@ public:
 	ImporterShader();
 	virtual ~ImporterShader();
 
-	bool Import(const ImportData& IData) const override;
+	Resource* Import(const char* path) const override;
 
 	void Save(ResourceShader* shader, const char* path) const;
-	void Load(const char* filename, ResourceShader& shader) const;
+	Resource* Load(const char* path) const override;
+
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Shader; };
 };
 
 #endif

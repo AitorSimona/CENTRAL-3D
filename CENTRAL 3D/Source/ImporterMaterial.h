@@ -6,13 +6,14 @@
 struct aiScene;
 struct aiMesh;
 class ResourceMaterial;
+class Resource;
 
-struct ImportMaterialData : public ImportData
-{
-	const aiScene* scene = nullptr;
-	const aiMesh* mesh = nullptr;
-	ResourceMaterial* new_material = nullptr;
-};
+//struct ImportMaterialData : public ImportData
+//{
+//	const aiScene* scene = nullptr;
+//	const aiMesh* mesh = nullptr;
+//	ResourceMaterial* new_material = nullptr;
+//};
 
 class ImporterMaterial : public Importer
 {
@@ -21,8 +22,10 @@ public:
 	ImporterMaterial();
 	virtual ~ImporterMaterial();
 
-	bool Import(const char* File_path, const ImportData& IData) const override;
-	void Load(const char* filename, ResourceMaterial& mat);
+	Resource* Import(const char* path) const override;
+	Resource* Load(const char* path) const override;
+
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };
 };
 
 #endif

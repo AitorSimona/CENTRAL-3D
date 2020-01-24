@@ -5,12 +5,13 @@
 
 struct aiMesh;
 class ResourceMesh;
+class Resource;
 
-struct ImportMeshData : public ImportData
-{
-	aiMesh* mesh = nullptr;
-	ResourceMesh* new_mesh = nullptr;
-};
+//struct ImportMeshData : public ImportData
+//{
+//	aiMesh* mesh = nullptr;
+//	ResourceMesh* new_mesh = nullptr;
+//};
 
 class ImporterMesh : public Importer
 {
@@ -19,10 +20,12 @@ public:
 	ImporterMesh();
 	virtual ~ImporterMesh();
 
-	bool Import(const ImportData& IData) const override;
+	Resource* Import(const char* path) const override;
 
 	void Save(ResourceMesh* mesh, const char* path) const;
-	static void Load(const char* filename, ResourceMesh& mesh);
+    Resource* Load(const char* path) const override;
+
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Mesh; };
 };
 
 #endif

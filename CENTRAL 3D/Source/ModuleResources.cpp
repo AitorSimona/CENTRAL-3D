@@ -2,8 +2,10 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 
-
 #include "ImporterScene.h"
+#include "ImporterModel.h"
+#include "ImporterMaterial.h"
+#include "ImporterShader.h"
 #include "ImporterMesh.h"
 
 #include "ResourceFolder.h"
@@ -42,6 +44,14 @@ bool ModuleResources::Init(json file)
 	struct aiLogStream stream;
 	stream.callback = MyAssimpCallback;
 	aiAttachLogStream(&stream);
+
+	// --- Create importers ---
+	importers.push_back(new ImporterScene());
+	importers.push_back(new ImporterModel());
+	importers.push_back(new ImporterMaterial());
+	importers.push_back(new ImporterShader());
+	importers.push_back(new ImporterMesh());
+
 
 	return true;
 }
@@ -137,9 +147,9 @@ void ModuleResources::ImportAssets(const char* path)
 	case Resource::ResourceType::SHADER:
 		ImportShaderProgram(path);
 		break;
-	case Resource::ResourceType::MESH:
-		ImportMesh(path);
-		break;
+	//case Resource::ResourceType::MESH:
+	//	ImportMesh(path);
+	//	break;
 	case Resource::ResourceType::TEXTURE:
 		ImportTexture(path);
 		break;
@@ -189,17 +199,42 @@ Resource* ModuleResources::ImportScene(const char* path)
 
 Resource* ModuleResources::ImportModel(const char* path)
 {
-	ResourceModel* model = nullptr;
+	ImporterModel* IModel = GetImporter<ImporterModel>();
+	Resource* model = nullptr;
+	std::string filename = "";
+	std::string extension = "";
 
-	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(path))
+	App->fs->NormalizePath((char*)path, false);
+	App->fs->SplitFilePath(path, nullptr, &filename, &extension);
+
+	if (IModel)
 	{
-		//Loadfromlib
-	}
+		// --- If the resource is already in library, load from there ---
+		if (IsFileImported(path))
+		{
+			uint model_uid = GetUIDFromMeta(path);
+			std::string model_path = MODELS_FOLDER;
 
-	// --- Else call relevant importer ---
-	else
-		// Import
+			model_path.append(std::to_string(model_uid));
+			model_path.append(".model");
+
+			model = IModel->Load(model_path.c_str());
+		}
+
+		// --- Else call relevant importer ---
+		else
+		{
+			// --- Duplicate File into Assets folder ---
+			std::string relative_path = ASSETS_FOLDER;
+			relative_path.append(filename);
+			relative_path.append(extension);
+
+			if (!App->fs->Exists(relative_path.c_str()))
+				App->fs->CopyFromOutsideFS(path, relative_path.c_str());
+
+			model = IModel->Import(relative_path.c_str());
+		}
+	}
 
 	return model;
 }
@@ -306,7 +341,7 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == ".scene")
 		type = Resource::ResourceType::SCENE;
 
-	else if (extension == ".model" || extension == ".fbx" || extension == ".obj")
+	else if (extension == ".fbx" || extension == ".obj")
 		type = Resource::ResourceType::MODEL;
 	
 	else if (extension == ".mat")
@@ -315,8 +350,8 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == ".shader")
 		type = Resource::ResourceType::SHADER;
 
-	else if (extension == ".mesh")
-		type = Resource::ResourceType::MESH;
+	//else if (extension == ".mesh")
+	//	type = Resource::ResourceType::MESH;
 
 	else if (extension == ".dds" || extension == ".png" || extension == ".jpg")
 		type = Resource::ResourceType::TEXTURE;
@@ -328,6 +363,22 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 		type = Resource::ResourceType::META;
 
 	return type;
+}
+
+uint ModuleResources::GetUIDFromMeta(const char* file)
+{
+	std::string path = file;
+	path.append(".meta");
+	uint UID = 0;
+
+	if (App->fs->Exists(path.data()))
+	{
+		json file = App->GetJLoader()->Load(path.data());
+		std::string uid = file["UID"];
+		UID = std::stoi(uid);
+	}
+
+	return UID;
 }
 
 bool ModuleResources::IsFileImported(const char* file)
@@ -346,6 +397,8 @@ bool ModuleResources::IsFileImported(const char* file)
 }
 
 
+
+
 // ----------------------------------------------------
 
 update_status ModuleResources::Update(float dt)
@@ -355,12 +408,23 @@ update_status ModuleResources::Update(float dt)
 
 bool ModuleResources::CleanUp()
 {
+	// --- Delete resources ---
 	for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
 		it = resources.erase(it);
 	}
+
+	resources.clear();
+
+	// --- Delete importers ---
+	for (uint i = 0; i < importers.size(); ++i)
+	{
+		delete importers[i];
+	}
+
+	importers.clear();
 
 	// --- Detach assimp log stream ---
 	aiDetachAllLogStreams();
@@ -409,21 +473,7 @@ bool ModuleResources::CleanUp()
 //}
 //
 //
-//uint ModuleResources::GetUIDFromMeta(const char * file)
-//{
-//	std::string path = file;
-//	path.append(".meta");
-//	uint UID = 0;
-//
-//	if (App->fs->Exists(path.data()))
-//	{
-//		json file = App->GetJLoader()->Load(path.data());
-//		std::string uid = file["UID"];
-//		UID = std::stoi(uid);
-//	}
-//
-//	return UID;
-//}
+
 //
 //uint ModuleResources::GetModDateFromMeta(const char * file)
 //{
