@@ -7,6 +7,10 @@ ResourceMesh::ResourceMesh() : Resource(Resource::ResourceType::MESH)
 {
 }
 
+ResourceMesh::ResourceMesh(uint UID) : Resource(Resource::ResourceType::MESH, UID)
+{
+}
+
 ResourceMesh::~ResourceMesh()
 {
 	FreeMemory();

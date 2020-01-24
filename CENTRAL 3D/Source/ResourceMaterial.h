@@ -12,6 +12,7 @@ class ResourceMaterial : public Resource
 {
 public:
 	ResourceMaterial();
+	ResourceMaterial(uint UID);
 	~ResourceMaterial();
 
 	void UpdateUniforms();

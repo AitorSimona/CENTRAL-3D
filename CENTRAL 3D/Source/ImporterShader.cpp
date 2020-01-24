@@ -15,7 +15,7 @@ ImporterShader::~ImporterShader()
 {
 }
 
-Resource* ImporterShader::Import(const char* path) const
+Resource* ImporterShader::Import(ImportData* IData) const
 {
 
 	bool ret = true;

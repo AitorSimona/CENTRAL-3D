@@ -14,6 +14,10 @@ ResourceMaterial::ResourceMaterial() : Resource(Resource::ResourceType::MATERIAL
 	shader->GetAllUniforms(uniforms);
 }
 
+ResourceMaterial::ResourceMaterial(uint UID) : Resource(Resource::ResourceType::MATERIAL, UID)
+{
+}
+
 ResourceMaterial::~ResourceMaterial()
 {
 	// MYTODO: We may accesss an already deleted shader!

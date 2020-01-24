@@ -7,6 +7,7 @@ class ResourceShaderObject : public Resource
 {
 public:
 	ResourceShaderObject();
+	ResourceShaderObject(uint UID);
 	~ResourceShaderObject();
 };
 

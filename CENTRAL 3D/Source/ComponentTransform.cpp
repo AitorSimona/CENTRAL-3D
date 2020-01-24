@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 
-// MYTODO: Explain math begin transform ops 
+// MYTODO: Explain math behind transform ops 
 
 ComponentTransform::ComponentTransform(GameObject * ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform)
 {

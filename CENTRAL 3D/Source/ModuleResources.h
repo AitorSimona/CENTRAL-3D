@@ -48,10 +48,6 @@ public:
 	Resource* ImportTexture(const char* path);
 	Resource* ImportShaderObject(const char* path);
 
-	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-	uint GetUIDFromMeta(const char* file);
-	bool IsFileImported(const char* file);
-
 	template<typename TImporter>
 	TImporter* GetImporter()
 	{
@@ -65,6 +61,13 @@ public:
 
 		return nullptr;
 	}
+
+	// --- Resource Handling ---
+	Resource* CreateResource(Resource::ResourceType type);
+	Resource* CreateResourceGivenUID(Resource::ResourceType type, uint UID);
+	Resource::ResourceType GetResourceTypeFromPath(const char* path);
+	uint GetUIDFromMeta(const char* file);
+	bool IsFileImported(const char* file);
 
 
 	/*void CreateMetaFromUID(uint UID, const char* filename);

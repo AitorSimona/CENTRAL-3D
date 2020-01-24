@@ -122,51 +122,30 @@ void ModuleResources::ImportAssets(const char* path)
 	{
 	case Resource::ResourceType::FOLDER:
 		resource = ImportFolder(path);
-
-		if (resource)
-			folders[resource->GetUID()] = (ResourceFolder*)resource;
 		break;
 
 	case Resource::ResourceType::SCENE:
 		resource = ImportScene(path);
-
-		if (resource)
-			scenes[resource->GetUID()] = (ResourceScene*)resource;
 		break;
 
 	case Resource::ResourceType::MODEL:
 		resource = ImportModel(path);
-
-		if (resource)
-			models[resource->GetUID()] = (ResourceModel*)resource;
 		break;
 
 	case Resource::ResourceType::MATERIAL:
 		resource = ImportMaterial(path);
-
-		if (resource)
-			materials[resource->GetUID()] = (ResourceMaterial*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER:
 		resource = ImportShaderProgram(path);
-
-		if (resource)
-			shaders[resource->GetUID()] = (ResourceShader*)resource;
 		break;
 
 	case Resource::ResourceType::TEXTURE:
 		resource = ImportTexture(path);
-
-		if (resource)
-			textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
 		resource = ImportShaderObject(path);
-
-		if (resource)
-			shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
 	case Resource::ResourceType::META:
@@ -246,7 +225,10 @@ Resource* ModuleResources::ImportModel(const char* path)
 			if (!App->fs->Exists(relative_path.c_str()))
 				App->fs->CopyFromOutsideFS(path, relative_path.c_str());
 
-			model = IModel->Import(relative_path.c_str());
+			Importer::ImportData IData;
+			IData.path = relative_path.c_str();
+
+			model = IModel->Import(&IData);
 		}
 	}
 
@@ -321,13 +303,142 @@ Resource* ModuleResources::ImportShaderObject(const char* path)
 	return shader_object;
 }
 
+
+// ----------------------------------------------------
+
+// ------------------- RESOURCE HANDLING ----------------------------------------------------------
+
+Resource * ModuleResources::CreateResource(Resource::ResourceType type)
+{
+	Resource* resource = nullptr;
+
+	switch (type)
+	{
+	case Resource::ResourceType::FOLDER:
+		resource = (Resource*)new ResourceFolder;
+		folders[resource->GetUID()] = (ResourceFolder*)resource;
+		break;
+
+	case Resource::ResourceType::SCENE:
+		resource = (Resource*)new ResourceScene;
+		scenes[resource->GetUID()] = (ResourceScene*)resource;
+		break;
+
+	case Resource::ResourceType::MODEL:
+		resource = (Resource*)new ResourceModel;
+		models[resource->GetUID()] = (ResourceModel*)resource;
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		resource = (Resource*)new ResourceMaterial;
+		materials[resource->GetUID()] = (ResourceMaterial*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER:
+		resource = (Resource*)new ResourceShader;
+		shaders[resource->GetUID()] = (ResourceShader*)resource;
+		break;
+
+	case Resource::ResourceType::MESH:
+		resource = (Resource*)new ResourceMesh;
+		meshes[resource->GetUID()] = (ResourceMesh*)resource;
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		resource = (Resource*)new ResourceTexture;
+		textures[resource->GetUID()] = (ResourceTexture*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		resource = (Resource*)new ResourceShaderObject;
+		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
+		break;
+
+	case Resource::ResourceType::META:
+
+		break;
+
+	case Resource::ResourceType::UNKNOWN:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+	}
+
+	return resource;
+}
+
+Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, uint UID)
+{
+	Resource* resource = nullptr;
+
+	switch (type)
+	{
+	case Resource::ResourceType::FOLDER:
+		resource = (Resource*)new ResourceFolder(UID);
+		folders[resource->GetUID()] = (ResourceFolder*)resource;
+		break;
+
+	case Resource::ResourceType::SCENE:
+		resource = (Resource*)new ResourceScene(UID);
+		scenes[resource->GetUID()] = (ResourceScene*)resource;
+		break;
+
+	case Resource::ResourceType::MODEL:
+		resource = (Resource*)new ResourceModel(UID);
+		models[resource->GetUID()] = (ResourceModel*)resource;
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		resource = (Resource*)new ResourceMaterial(UID);
+		materials[resource->GetUID()] = (ResourceMaterial*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER:
+		resource = (Resource*)new ResourceShader(UID);
+		shaders[resource->GetUID()] = (ResourceShader*)resource;
+		break;
+
+	case Resource::ResourceType::MESH:
+		resource = (Resource*)new ResourceMesh(UID);
+		meshes[resource->GetUID()] = (ResourceMesh*)resource;
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		resource = (Resource*)new ResourceTexture(UID);
+		textures[resource->GetUID()] = (ResourceTexture*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		resource = (Resource*)new ResourceShaderObject(UID);
+		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
+		break;
+
+	case Resource::ResourceType::META:
+
+		break;
+
+	case Resource::ResourceType::UNKNOWN:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+	}
+
+	return resource;
+}
+
 Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
-	App->fs->NormalizePath(extension,true);
+	App->fs->NormalizePath(extension, true);
 
 
 	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
@@ -340,7 +451,7 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 
 	else if (extension == ".fbx" || extension == ".obj")
 		type = Resource::ResourceType::MODEL;
-	
+
 	else if (extension == ".mat")
 		type = Resource::ResourceType::MATERIAL;
 
@@ -389,7 +500,6 @@ bool ModuleResources::IsFileImported(const char* file)
 
 	return ret;
 }
-
 
 // ----------------------------------------------------
 
@@ -560,34 +670,7 @@ bool ModuleResources::CleanUp()
 //	}
 //}
 //
-//Resource * ModuleResources::CreateResource(Resource::ResourceType type)
-//{
-//	Resource* resource = nullptr;
-//
-//	switch (type)
-//	{
-//	case Resource::ResourceType::MESH:
-//		resource = (Resource*)new ResourceMesh;
-//		break;
-//
-//	case Resource::ResourceType::TEXTURE:
-//		resource = (Resource*)new ResourceTexture;
-//		break;
-//
-//	case Resource::ResourceType::MATERIAL:
-//		resource = (Resource*)new ResourceMaterial;
-//		break;
-//
-//	case Resource::ResourceType::SHADER:
-//		resource = (Resource*)new ResourceShader;
-//		break;
-//	}
-//
-//	if (resource)
-//		resources[resource->GetUID()] = resource;
-//
-//	return resource;
-//}
+
 //
 //void ModuleResources::AddResource(Resource* res)
 //{

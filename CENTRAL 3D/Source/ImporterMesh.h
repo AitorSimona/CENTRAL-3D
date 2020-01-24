@@ -7,11 +7,11 @@ struct aiMesh;
 class ResourceMesh;
 class Resource;
 
-//struct ImportMeshData : public ImportData
-//{
-//	aiMesh* mesh = nullptr;
-//	ResourceMesh* new_mesh = nullptr;
-//};
+struct ImportMeshData : public Importer::ImportData
+{
+	aiMesh* mesh = nullptr;
+	ResourceMesh* new_mesh = nullptr;
+};
 
 class ImporterMesh : public Importer
 {
@@ -20,7 +20,7 @@ public:
 	ImporterMesh();
 	virtual ~ImporterMesh();
 
-	Resource* Import(const char* path) const override;
+	Resource* Import(ImportData* IData) const override;
 
 	void Save(ResourceMesh* mesh, const char* path) const;
     Resource* Load(const char* path) const override;

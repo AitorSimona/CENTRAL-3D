@@ -7,6 +7,7 @@ class ResourceFolder : public Resource
 {
 public:
 	ResourceFolder();
+	ResourceFolder(uint UID);
 	~ResourceFolder();
 };
 

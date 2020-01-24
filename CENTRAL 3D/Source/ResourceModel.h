@@ -7,6 +7,7 @@ class ResourceModel : public Resource
 {
 public:
 	ResourceModel();
+	ResourceModel(uint UID);
 	~ResourceModel();
 };
 

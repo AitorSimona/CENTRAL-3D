@@ -7,6 +7,7 @@ class ResourceScene : public Resource
 {
 public:
 	ResourceScene();
+	ResourceScene(uint UID);
 	~ResourceScene();
 };
 

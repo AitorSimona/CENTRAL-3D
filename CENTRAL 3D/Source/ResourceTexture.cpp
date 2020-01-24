@@ -11,6 +11,10 @@ ResourceTexture::ResourceTexture() : Resource(Resource::ResourceType::TEXTURE)
 	buffer_id = App->textures->GetDefaultTextureID();
 }
 
+ResourceTexture::ResourceTexture(uint UID) : Resource(Resource::ResourceType::TEXTURE, UID)
+{
+}
+
 ResourceTexture::~ResourceTexture()
 {
 	glDeleteTextures(1, (GLuint*)&buffer_id);

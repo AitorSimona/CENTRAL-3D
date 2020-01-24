@@ -4,6 +4,10 @@ ResourceShaderProgram::ResourceShaderProgram() : Resource(Resource::ResourceType
 {
 }
 
+ResourceShaderProgram::ResourceShaderProgram(uint UID) : Resource(Resource::ResourceType::SHADER, UID)
+{
+}
+
 ResourceShaderProgram::~ResourceShaderProgram()
 {
 }

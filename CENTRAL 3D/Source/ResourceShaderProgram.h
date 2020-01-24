@@ -7,6 +7,7 @@ class ResourceShaderProgram : public Resource
 {
 public:
 	ResourceShaderProgram();
+	ResourceShaderProgram(uint UID);
 	~ResourceShaderProgram();
 };
 

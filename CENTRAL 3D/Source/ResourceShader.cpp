@@ -16,6 +16,10 @@ ResourceShader::ResourceShader() : Resource(Resource::ResourceType::SHADER)
 	CreateShaderProgram();
 }
 
+ResourceShader::ResourceShader(uint UID) : Resource(Resource::ResourceType::SHADER, UID)
+{
+}
+
 ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath, bool is_extern) : Resource(Resource::ResourceType::SHADER)
 {
 	bool ret = true;

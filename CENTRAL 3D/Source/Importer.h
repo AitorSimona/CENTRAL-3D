@@ -19,11 +19,17 @@ public:
 		Shader_Object,
 		Unknown
 	};
+
+	struct ImportData
+	{
+		const char* path;
+	};
+
 public:
 	Importer(ImporterType type);
 	virtual ~Importer();
 
-	virtual Resource* Import(const char* path) const = 0;
+	virtual Resource* Import(ImportData* IData) const = 0;
 	virtual Resource* Load(const char* path) const = 0;	
 
 	ImporterType GetType() const;

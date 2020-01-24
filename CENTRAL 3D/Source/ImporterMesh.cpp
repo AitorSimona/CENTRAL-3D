@@ -17,68 +17,70 @@ ImporterMesh::~ImporterMesh()
 {
 }
 
-Resource* ImporterMesh::Import(const char* path) const
+Resource* ImporterMesh::Import(ImportData* IData) const
 {
+	ImportMeshData data = (ImportMeshData&)IData;
+
 	// COULD USE MEMCPY AGAIN, JUST DECLARE AND ALLOCATE EVERYTHING FIRST
 
-	//data.new_mesh->vertices = new Vertex[data.mesh->mNumVertices];
-	//data.new_mesh->VerticesSize = data.mesh->mNumVertices;
-	//
-	//data.new_mesh->IndicesSize = data.mesh->mNumFaces * 3;
-	//data.new_mesh->Indices = new uint[data.new_mesh->IndicesSize];
+	data.new_mesh->vertices = new Vertex[data.mesh->mNumVertices];
+	data.new_mesh->VerticesSize = data.mesh->mNumVertices;
+	
+	data.new_mesh->IndicesSize = data.mesh->mNumFaces * 3;
+	data.new_mesh->Indices = new uint[data.new_mesh->IndicesSize];
 
-	//for (uint i = 0; i < data.mesh->mNumVertices; ++i)
-	//{
-	//	// --- Vertices ---
-	//	data.new_mesh->vertices[i].position[0] = data.mesh->mVertices[i].x;
-	//	data.new_mesh->vertices[i].position[1] = data.mesh->mVertices[i].y;
-	//	data.new_mesh->vertices[i].position[2] = data.mesh->mVertices[i].z;
+	for (uint i = 0; i < data.mesh->mNumVertices; ++i)
+	{
+		// --- Vertices ---
+		data.new_mesh->vertices[i].position[0] = data.mesh->mVertices[i].x;
+		data.new_mesh->vertices[i].position[1] = data.mesh->mVertices[i].y;
+		data.new_mesh->vertices[i].position[2] = data.mesh->mVertices[i].z;
 
-	//	// --- Normals ---
-	//	if (data.mesh->HasNormals())
-	//	{
-	//		data.new_mesh->vertices[i].normal[0] = data.mesh->mNormals[i].x;
-	//		data.new_mesh->vertices[i].normal[1] = data.mesh->mNormals[i].y;
-	//		data.new_mesh->vertices[i].normal[2] = data.mesh->mNormals[i].z;
-	//	}
+		// --- Normals ---
+		if (data.mesh->HasNormals())
+		{
+			data.new_mesh->vertices[i].normal[0] = data.mesh->mNormals[i].x;
+			data.new_mesh->vertices[i].normal[1] = data.mesh->mNormals[i].y;
+			data.new_mesh->vertices[i].normal[2] = data.mesh->mNormals[i].z;
+		}
 
-	//	// --- Colors ---
-	//	if (data.mesh->HasVertexColors(0))
-	//	{
-	//		data.new_mesh->vertices[i].color[0] = data.mesh->mColors[0][i].r;
-	//		data.new_mesh->vertices[i].color[1] = data.mesh->mColors[0][i].g;
-	//		data.new_mesh->vertices[i].color[2] = data.mesh->mColors[0][i].b;
-	//		data.new_mesh->vertices[i].color[3] = data.mesh->mColors[0][i].a;
-	//	}
+		// --- Colors ---
+		if (data.mesh->HasVertexColors(0))
+		{
+			data.new_mesh->vertices[i].color[0] = data.mesh->mColors[0][i].r;
+			data.new_mesh->vertices[i].color[1] = data.mesh->mColors[0][i].g;
+			data.new_mesh->vertices[i].color[2] = data.mesh->mColors[0][i].b;
+			data.new_mesh->vertices[i].color[3] = data.mesh->mColors[0][i].a;
+		}
 
-	//	// --- Texture Coordinates ---
-	//	if (data.mesh->HasTextureCoords(0))
-	//	{
-	//		data.new_mesh->vertices[i].texCoord[0] = data.mesh->mTextureCoords[0][i].x;
-	//		data.new_mesh->vertices[i].texCoord[1] = data.mesh->mTextureCoords[0][i].y;
-	//	}
-	//}
+		// --- Texture Coordinates ---
+		if (data.mesh->HasTextureCoords(0))
+		{
+			data.new_mesh->vertices[i].texCoord[0] = data.mesh->mTextureCoords[0][i].x;
+			data.new_mesh->vertices[i].texCoord[1] = data.mesh->mTextureCoords[0][i].y;
+		}
+	}
 
-	//// --- Indices ---
-	//for (unsigned j = 0; j < data.mesh->mNumFaces; ++j)
-	//{
-	//	const aiFace& face = data.mesh->mFaces[j];
+	// --- Indices ---
+	for (unsigned j = 0; j < data.mesh->mNumFaces; ++j)
+	{
+		const aiFace& face = data.mesh->mFaces[j];
 
-	//	// Only triangles
-	//	if (face.mNumIndices > 3)
-	//	{
-	//		CONSOLE_LOG("|[error]: Importer Mesh found a quad in %s, ignoring it. ", data.mesh->mName);
-	//		continue;
-	//	}
+		// Only triangles
+		if (face.mNumIndices > 3)
+		{
+			CONSOLE_LOG("|[error]: Importer Mesh found a quad in %s, ignoring it. ", data.mesh->mName);
+			continue;
+		}
 
-	//	data.new_mesh->Indices[j * 3] = face.mIndices[0];
-	//	data.new_mesh->Indices[(j * 3) + 1] = face.mIndices[1];
-	//	data.new_mesh->Indices[(j * 3) + 2] = face.mIndices[2];
-	//}
+		data.new_mesh->Indices[j * 3] = face.mIndices[0];
+		data.new_mesh->Indices[(j * 3) + 1] = face.mIndices[1];
+		data.new_mesh->Indices[(j * 3) + 2] = face.mIndices[2];
+	}
 
 
-	//data.new_mesh->LoadInMemory();
-	//data.new_mesh->CreateAABB();
+	/*data.new_mesh->LoadInMemory();
+	data.new_mesh->CreateAABB();*/
 
 	return nullptr;
 }

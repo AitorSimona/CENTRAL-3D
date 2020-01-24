@@ -37,6 +37,8 @@ class ResourceShader : public Resource
 {
 public:
 	ResourceShader();
+	ResourceShader(uint UID);
+
 	// constructor reads and builds the shader
 	ResourceShader(const char* vertexPath, const char* fragmentPath, bool is_extern = true);
 	ResourceShader(const char* binary, uint size, uint format, const char* name, const char* vertexPath, const char* fragmentPath);

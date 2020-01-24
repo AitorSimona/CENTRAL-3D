@@ -7,6 +7,7 @@ class ResourceTexture : public Resource
 {
 public:
 	ResourceTexture();
+	ResourceTexture(uint UID);
 	~ResourceTexture();
 
 	void LoadInMemory();

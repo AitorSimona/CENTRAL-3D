@@ -39,7 +39,7 @@ ImporterScene::~ImporterScene()
 
 // MYTODO: Give some use to return type (bool) in all functions (if load fails log...)
 
-Resource* ImporterScene::Import(const char * path) const
+Resource* ImporterScene::Import(ImportData* IData) const
 {
 	//// --- Import scene from path ---
 	//const aiScene* scene = aiImportFileEx(relative_path.data(), aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
@@ -635,28 +635,36 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 	return path;
 }
 
-void ImporterScene::LoadSceneMeshes(const aiScene* scene) const
+void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes) const
 {
-	//for (uint i = 0; i < scene->mNumMeshes; ++i)
-	//{
-	//	ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+	for (uint i = 0; i < scene->mNumMeshes; ++i)
+	{
+		ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 
-	//	// --- Import mesh data (fill new_mesh)---
-	//	ImportMeshData Mdata;
-	//	Mdata.mesh = scene->mMeshes[i];
-	//	Mdata.new_mesh = resource_mesh;
-	//	IMesh->Import(Mdata);
+		ImportMeshData MData;
+		MData.mesh = scene->mMeshes[i];
+		MData.new_mesh = resource_mesh;
 
-	//	scene_meshes[i] = resource_mesh;
-	//}
+		// --- Import mesh data (fill new_mesh)---
+		App->resources->GetImporter<ImporterMesh>()->Import(&MData);
+
+		scene_meshes[i] = resource_mesh;
+	}
 }
 
-void ImporterScene::FreeSceneMeshes() const
+void ImporterScene::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const
 {
-	scene_meshes.clear();
+	for (std::map<uint, ResourceMesh*>::iterator it = scene_meshes->begin(); it != scene_meshes->end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = scene_meshes->erase(it);
+	}
+
+	scene_meshes->clear();
 }
 
-void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* File_path, const char* original_path) const
+void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes) const
 {
 	// --- Load Game Objects from Assimp scene ---
 
@@ -676,7 +684,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	// --- Iterate children and repeat process ---
 	for (int i = 0; i < node->mNumChildren; ++i)
 	{
-		LoadNodes(node->mChildren[i], nodeGo,scene, scene_gos, File_path, original_path);
+		LoadNodes(node->mChildren[i], nodeGo,scene, scene_gos, path, scene_meshes);
 	}
 
 	// --- Iterate and load meshes ---
