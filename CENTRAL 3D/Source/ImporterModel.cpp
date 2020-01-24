@@ -22,10 +22,10 @@ ImporterModel::~ImporterModel()
 }
 
 // --- Import external file ---
-Resource* ImporterModel::Import(ImportData* IData) const
+Resource* ImporterModel::Import(ImportData& IData) const
 {
 	// --- Import scene from path ---
-	const aiScene* model = aiImportFileEx(IData->path, aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
+	const aiScene* model = aiImportFileEx(IData.path, aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
 
 	GameObject* rootnode = nullptr;
 	ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
@@ -45,7 +45,7 @@ Resource* ImporterModel::Import(ImportData* IData) const
 		IScene->LoadSceneMeshes(model, model_meshes);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		IScene->LoadNodes(model->mRootNode,rootnode,model, model_gos, IData->path, model_meshes);
+		IScene->LoadNodes(model->mRootNode,rootnode,model, model_gos, IData.path, model_meshes);
 
 		// --- Save to Own format files in Library ---
 		Save(model_gos, rootnode->GetName());
@@ -59,7 +59,7 @@ Resource* ImporterModel::Import(ImportData* IData) const
 
 	}
 	else
-		CONSOLE_LOG("|[error]: Error loading FBX %s", &IData->path);
+		CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);
 
 	return nullptr;
 }

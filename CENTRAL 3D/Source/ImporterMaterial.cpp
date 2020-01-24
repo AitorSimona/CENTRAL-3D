@@ -20,7 +20,7 @@ ImporterMaterial::~ImporterMaterial()
 }
 
 // --- Create Material from Scene and path to file ---
-Resource* ImporterMaterial::Import(ImportData* IData) const
+Resource* ImporterMaterial::Import(ImportData& IData) const
 {
 	//// --- Get Directory from filename ---
 	//std::string directory = File_path;

@@ -47,11 +47,12 @@ bool ModuleResources::Start()
 {
 	// --- Import all resources in Assets at startup ---
 
-	//std::vector<std::string> filters;
+	std::vector<std::string> filters;
+	filters.push_back("fbx");
 	//filters.push_back("vertex");
 	//filters.push_back("VERTEX");
 
-	//ImportAssets(ASSETS_FOLDER, filters);
+	SearchAssets(ASSETS_FOLDER, filters);
 
 	return true;
 }
@@ -87,7 +88,10 @@ void ModuleResources::SearchAssets(const char* directory, std::vector<std::strin
 		{
 			for (uint i = 0; i < filters.size(); ++i)
 			{
-				if (str.substr(str.find_last_of(".") + 1) == filters[i])
+				std::string extension = (str.substr(str.find_last_of(".") + 1));
+				App->fs->NormalizePath(extension);
+
+				if (extension == filters[i])
 				{
 					pass_filter = true;
 					break;
@@ -194,11 +198,10 @@ Resource* ModuleResources::ImportModel(const char* path)
 {
 	ImporterModel* IModel = GetImporter<ImporterModel>();
 	Resource* model = nullptr;
-	std::string filename = "";
-	std::string extension = "";
+	std::string file = "";
 
 	App->fs->NormalizePath((char*)path, false);
-	App->fs->SplitFilePath(path, nullptr, &filename, &extension);
+	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
 
 	if (IModel)
 	{
@@ -219,8 +222,7 @@ Resource* ModuleResources::ImportModel(const char* path)
 		{
 			// --- Duplicate File into Assets folder ---
 			std::string relative_path = ASSETS_FOLDER;
-			relative_path.append(filename);
-			relative_path.append(extension);
+			relative_path.append(file);
 
 			if (!App->fs->Exists(relative_path.c_str()))
 				App->fs->CopyFromOutsideFS(path, relative_path.c_str());
@@ -228,7 +230,7 @@ Resource* ModuleResources::ImportModel(const char* path)
 			Importer::ImportData IData;
 			IData.path = relative_path.c_str();
 
-			model = IModel->Import(&IData);
+			model = IModel->Import(IData);
 		}
 	}
 
@@ -446,25 +448,25 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	if (extension == "")
 		type = Resource::ResourceType::FOLDER;
 
-	else if (extension == ".scene")
+	else if (extension == "scene")
 		type = Resource::ResourceType::SCENE;
 
-	else if (extension == ".fbx" || extension == ".obj")
+	else if (extension == "fbx" || extension == "obj")
 		type = Resource::ResourceType::MODEL;
 
-	else if (extension == ".mat")
+	else if (extension == "mat")
 		type = Resource::ResourceType::MATERIAL;
 
-	else if (extension == ".shader")
+	else if (extension == "shader")
 		type = Resource::ResourceType::SHADER;
 
-	else if (extension == ".dds" || extension == ".png" || extension == ".jpg")
+	else if (extension == "dds" || extension == "png" || extension == "jpg")
 		type = Resource::ResourceType::TEXTURE;
 
-	else if (extension == ".vertex" || extension == ".fragment")
+	else if (extension == "vertex" || extension == "fragment")
 		type = Resource::ResourceType::SHADER_OBJECT;
 
-	else if (extension == ".meta")
+	else if (extension == "meta")
 		type = Resource::ResourceType::META;
 
 	return type;

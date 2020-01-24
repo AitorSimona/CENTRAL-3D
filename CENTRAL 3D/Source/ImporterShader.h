@@ -14,7 +14,7 @@ public:
 	ImporterShader();
 	virtual ~ImporterShader();
 
-	Resource* Import(ImportData* IData) const override;
+	Resource* Import(ImportData& IData) const override;
 
 	void Save(ResourceShader* shader, const char* path) const;
 	Resource* Load(const char* path) const override;

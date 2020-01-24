@@ -14,7 +14,7 @@ public:
 	ImporterModel();
 	~ImporterModel();
 
-    Resource* Import(ImportData* IData) const override;
+    Resource* Import(ImportData& IData) const override;
     Resource* Load(const char* path) const override;
 
 	void Save(std::vector<GameObject*>& model_gos, std::string& model_name) const;

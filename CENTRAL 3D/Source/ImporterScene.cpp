@@ -39,7 +39,7 @@ ImporterScene::~ImporterScene()
 
 // MYTODO: Give some use to return type (bool) in all functions (if load fails log...)
 
-Resource* ImporterScene::Import(ImportData* IData) const
+Resource* ImporterScene::Import(ImportData& IData) const
 {
 	//// --- Import scene from path ---
 	//const aiScene* scene = aiImportFileEx(relative_path.data(), aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
@@ -646,9 +646,13 @@ void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 		MData.new_mesh = resource_mesh;
 
 		// --- Import mesh data (fill new_mesh)---
-		App->resources->GetImporter<ImporterMesh>()->Import(&MData);
+		ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
 
-		scene_meshes[i] = resource_mesh;
+		if (IMesh)
+		{
+			IMesh->Import(MData);
+			scene_meshes[i] = resource_mesh;
+		}
 	}
 }
 

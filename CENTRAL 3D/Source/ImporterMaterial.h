@@ -22,7 +22,7 @@ public:
 	ImporterMaterial();
 	virtual ~ImporterMaterial();
 
-	Resource* Import(ImportData* IData) const override;
+	Resource* Import(ImportData& IData) const override;
 	Resource* Load(const char* path) const override;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };

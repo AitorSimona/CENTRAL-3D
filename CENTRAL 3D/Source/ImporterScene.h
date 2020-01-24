@@ -21,7 +21,7 @@ public:
 	ImporterScene();
 	virtual ~ImporterScene();
 
-	Resource* Import(ImportData* IData) const override;
+	Resource* Import(ImportData& IData) const override;
 	Resource* Load(const char* path) const override;
 	std::string SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name) const;
 

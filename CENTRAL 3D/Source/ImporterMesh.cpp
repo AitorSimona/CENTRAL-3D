@@ -17,7 +17,7 @@ ImporterMesh::~ImporterMesh()
 {
 }
 
-Resource* ImporterMesh::Import(ImportData* IData) const
+Resource* ImporterMesh::Import(ImportData& IData) const
 {
 	ImportMeshData data = (ImportMeshData&)IData;
 

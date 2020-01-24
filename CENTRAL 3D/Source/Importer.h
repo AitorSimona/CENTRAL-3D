@@ -22,14 +22,14 @@ public:
 
 	struct ImportData
 	{
-		const char* path;
+		const char* path = "";
 	};
 
 public:
 	Importer(ImporterType type);
 	virtual ~Importer();
 
-	virtual Resource* Import(ImportData* IData) const = 0;
+	virtual Resource* Import(ImportData& IData) const = 0;
 	virtual Resource* Load(const char* path) const = 0;	
 
 	ImporterType GetType() const;
