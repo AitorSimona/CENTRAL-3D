@@ -19,6 +19,9 @@ public:
 
 	void Draw(bool outline = false) const;
 
+	// --- Save & Load ---
+	void Save(json node);
+
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Renderer; };
 
 private:

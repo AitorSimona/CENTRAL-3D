@@ -107,6 +107,10 @@ void ComponentRenderer::Draw(bool outline) const
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 }
 
+void ComponentRenderer::Save(json node)
+{
+}
+
 inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
 {
 	glBindVertexArray(mesh.VAO);

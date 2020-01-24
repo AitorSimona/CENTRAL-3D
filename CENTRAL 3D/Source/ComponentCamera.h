@@ -3,7 +3,7 @@
 
 #include "Component.h"
 #include "Math.h"
-
+ 
 class ComponentCamera : public Component
 {
 public:
@@ -33,6 +33,9 @@ public:
 	bool ContainsAABB(const AABB & ref);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Camera; };
+
+	// --- Save & Load ---
+	void Save(json node);
 
 public:
 	Frustum		frustum;

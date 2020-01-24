@@ -19,3 +19,7 @@ const AABB & ComponentMesh::GetAABB() const
 		return resource_mesh->aabb;
 }
 
+void ComponentMesh::Save(json node)
+{
+}
+

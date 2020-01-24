@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "ResourceMaterial.h"
 
+
 class ComponentMaterial : public Component
 {
 public:
@@ -12,6 +13,10 @@ public:
 	virtual ~ComponentMaterial();
 
 	void FreeTexture();
+
+	// --- Save & Load ---
+	void Save(json node);
+
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Material; };
 
 public:

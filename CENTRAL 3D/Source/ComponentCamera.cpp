@@ -149,3 +149,7 @@ bool ComponentCamera::ContainsAABB(const AABB & ref)
 	// we must be partly in then otherwise
 	return true;
 }
+
+void ComponentCamera::Save(json node)
+{
+}

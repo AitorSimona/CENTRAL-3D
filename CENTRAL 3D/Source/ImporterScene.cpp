@@ -604,7 +604,7 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 	//data = App->GetJLoader()->Serialize(file);
 
 	//// --- Set destination file given exportfile type ---
-	std::string path;
+	//std::string path;
 	//uint new_uid;
 	//std::string filename = ASSETS_FOLDER;
 	//filename.append(scene_name);
@@ -632,7 +632,7 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 
 	//App->fs->Save(path.data(), buffer, size);
 
-	return path;
+	return scene_name;
 }
 
 void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes) const

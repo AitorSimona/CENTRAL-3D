@@ -95,6 +95,10 @@ void ComponentTransform::OnUpdateTransform(const float4x4 & ParentGlobal)
 	update_transform = false;
 }
 
+void ComponentTransform::Save(json node)
+{
+}
+
 void ComponentTransform::UpdateTRS()
 {
 	Local_transform.Decompose(position, rotation, scale);

@@ -19,5 +19,9 @@ void ComponentMaterial::FreeTexture()
 	//resource_material->resource_diffuse->FreeMemory();
 }
 
+void ComponentMaterial::Save(json node)
+{
+}
+
 
 

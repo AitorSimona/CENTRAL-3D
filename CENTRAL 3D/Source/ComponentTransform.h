@@ -26,6 +26,9 @@ public:
 	void			SetGlobalTransform(float4x4 new_transform);
 	void			OnUpdateTransform(const float4x4& ParentGlobal);
 
+	// --- Save & Load ---
+	void Save(json node);
+
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Transform; };
 
 public:

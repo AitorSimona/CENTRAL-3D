@@ -2,6 +2,7 @@
 #define __COMPONENT_H__
 
 #include "Globals.h"
+#include "JSONLoader.h"
 
 class GameObject;
 
@@ -31,6 +32,9 @@ public:
 	GameObject* GetContainerGameObject() const;
 	bool& GetActive();
 	bool IsEnabled() const;
+
+	// --- Save & Load ---
+	virtual void Save(json node) = 0;
 
 protected:
 	bool active = false;

@@ -5,6 +5,7 @@
 #include "Math.h"
 #include "ResourceMesh.h"
 
+
 class ComponentMesh : public Component
 {
 public:
@@ -12,6 +13,9 @@ public:
 	ComponentMesh(GameObject* ContainerGO);
 	virtual ~ComponentMesh();
 	const AABB& GetAABB() const;
+
+	// --- Save & Load ---
+	void Save(json node);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
 public:
