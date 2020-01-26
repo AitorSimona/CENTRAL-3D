@@ -245,6 +245,7 @@ Resource* ModuleResources::ImportModel(const char* path)
 				if (meta)
 					IMeta->Save(meta);
 			}
+			else
 			CONSOLE_LOG("|[error]: Failed to import model: %s", path);
 		}
 	}
