@@ -15,12 +15,11 @@ public:
 	const AABB& GetAABB() const;
 
 	// --- Save & Load ---
-	void Save(json& file) const override;
+	json Save() const override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
 public:
 	ResourceMesh* resource_mesh = nullptr;
-
 };
 
 #endif

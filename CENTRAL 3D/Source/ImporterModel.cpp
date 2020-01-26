@@ -98,8 +98,7 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j)
 		{
 			// --- Save Components to file ---
-			file[model_gos[i]->GetName()]["Components"][std::to_string((uint)model_gos[i]->GetComponents()[j]->GetType())];
-			model_gos[i]->GetComponents()[j]->Save(file);
+			file[model_gos[i]->GetName()]["Components"][std::to_string((uint)model_gos[i]->GetComponents()[j]->GetType())] = model_gos[i]->GetComponents()[j]->Save();
 		}
 
 	}

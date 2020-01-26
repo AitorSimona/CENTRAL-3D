@@ -95,19 +95,23 @@ void ComponentTransform::OnUpdateTransform(const float4x4 & ParentGlobal)
 	update_transform = false;
 }
 
-void ComponentTransform::Save(json& file) const
+json ComponentTransform::Save() const
 {
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["positionx"] = std::to_string(position.x);
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["positiony"] = std::to_string(position.y);
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["positionz"] = std::to_string(position.z);
+	json node;
 
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["rotationx"] = std::to_string(rotation.x);
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["rotationy"] = std::to_string(rotation.y);
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["rotationz"] = std::to_string(rotation.z);
+  	node["positionx"] = std::to_string(position.x);
+  	node["positiony"] = std::to_string(position.y);
+  	node["positionz"] = std::to_string(position.z);
 
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["scalex"] = std::to_string(scale.x);
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["scaley"] = std::to_string(scale.y);
-  	file[GO->GetName()]["Components"][std::to_string((uint)type)]["scalez"] = std::to_string(scale.z);
+  	node["rotationx"] = std::to_string(rotation.x);
+  	node["rotationy"] = std::to_string(rotation.y);
+  	node["rotationz"] = std::to_string(rotation.z);
+
+  	node["scalex"] = std::to_string(scale.x);
+  	node["scaley"] = std::to_string(scale.y);
+  	node["scalez"] = std::to_string(scale.z);
+
+	return node;
 }
 
 void ComponentTransform::UpdateTRS()

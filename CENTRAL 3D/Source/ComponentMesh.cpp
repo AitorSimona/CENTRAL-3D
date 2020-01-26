@@ -19,8 +19,9 @@ const AABB & ComponentMesh::GetAABB() const
 		return resource_mesh->aabb;
 }
 
-void ComponentMesh::Save(json& file) const
+json ComponentMesh::Save() const
 {
+	json node;
 	//component_path = MESHES_FOLDER;
 //component_path.append(std::to_string(mesh->resource_mesh->GetUID()));
 //component_path.append(".mesh");
@@ -30,5 +31,7 @@ void ComponentMesh::Save(json& file) const
 
 // --- Store path to component file ---
 //file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
+
+	return node;
 }
 

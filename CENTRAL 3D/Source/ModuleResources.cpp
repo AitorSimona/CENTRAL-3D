@@ -562,6 +562,9 @@ update_status ModuleResources::Update(float dt)
 
 bool ModuleResources::CleanUp()
 {
+	// Since std map invalidates iterator on pair delete, a reverse iterator is very useful
+	// We eliminate a pair and automatically our iterator points at a new element
+
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::reverse_iterator it = folders.rbegin(); it != folders.rend();)
 	{

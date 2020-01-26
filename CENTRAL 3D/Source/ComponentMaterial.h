@@ -15,7 +15,7 @@ public:
 	void FreeTexture();
 
 	// --- Save & Load ---
-	void Save(json& file) const override;
+	json Save() const override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Material; };
 

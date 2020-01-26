@@ -19,8 +19,9 @@ void ComponentMaterial::FreeTexture()
 	//resource_material->resource_diffuse->FreeMemory();
 }
 
-void ComponentMaterial::Save(json& file) const
+json ComponentMaterial::Save() const
 {
+	json node;
 	//if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse)
 //{
 //	component_path = TEXTURES_FOLDER;
@@ -112,6 +113,8 @@ void ComponentMaterial::Save(json& file) const
 //	delete[] tmpi;
 
 //}
+
+	return node;
 }
 
 
