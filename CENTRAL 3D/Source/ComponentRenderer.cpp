@@ -255,8 +255,6 @@ json ComponentRenderer::Save() const
 {
 	json node;
 
-	// --- Store path to component file ---
-//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 
 	return node;
 }

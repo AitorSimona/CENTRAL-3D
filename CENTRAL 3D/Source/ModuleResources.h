@@ -41,6 +41,7 @@ public:
 	Resource* ImportTexture(const char* path);
 	Resource* ImportShaderObject(const char* path);
 
+	// For consistency, use this only on resource manager/importers 
 	template<typename TImporter>
 	TImporter* GetImporter()
 	{

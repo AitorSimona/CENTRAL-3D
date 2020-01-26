@@ -42,12 +42,12 @@ Resource::ResourceType Resource::GetType() const
 
 const char * Resource::GetOriginalFile() const
 {
-	return original_file.data();
+	return original_file.c_str();
 }
 
 const char * Resource::GetResourceFile() const
 {
-	return resource_file.data();
+	return resource_file.c_str();
 }
 
 const char * Resource::GetName() const

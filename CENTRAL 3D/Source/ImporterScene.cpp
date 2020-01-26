@@ -639,7 +639,9 @@ void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 {
 	for (uint i = 0; i < scene->mNumMeshes; ++i)
 	{
-		ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH,source_file,"");
+		// MYTODO: Simply set resource path in constructor instead of these two lines
+		uint UID = App->GetRandom().Int();
+		ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH,source_file, std::string(MESHES_FOLDER).append(std::to_string(UID).append(".mesh")),UID);
 
 		ImportMeshData MData;
 		MData.mesh = scene->mMeshes[i];
