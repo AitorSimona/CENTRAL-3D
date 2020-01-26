@@ -3,8 +3,10 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceMesh::ResourceMesh(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::MESH, UID, source_file, destination_file)
+ResourceMesh::ResourceMesh(uint UID, std::string source_file) : Resource(Resource::ResourceType::MESH, UID, source_file)
 {
+	extension = ".mesh";
+	resource_file = MESHES_FOLDER + std::to_string(UID) + extension;
 }
 
 ResourceMesh::~ResourceMesh()

@@ -36,7 +36,7 @@ struct Uniform
 class ResourceShader : public Resource
 {
 public:
-	ResourceShader(uint UID, std::string source_file, std::string destination_file);
+	ResourceShader(uint UID, std::string source_file);
 
 
 	// constructor reads and builds the shader

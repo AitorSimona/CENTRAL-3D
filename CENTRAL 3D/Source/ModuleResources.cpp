@@ -240,7 +240,7 @@ Resource* ModuleResources::ImportModel(const char* path)
 			// --- Create meta ---
 			if (model)
 			{
-				ResourceMeta* meta = (ResourceMeta*)CreateResourceGivenUID(Resource::ResourceType::META, path, std::string(path).append(".meta"), model->GetUID());
+				ResourceMeta* meta = (ResourceMeta*)CreateResourceGivenUID(Resource::ResourceType::META, path, model->GetUID());
 
 				if (meta)
 					IMeta->Save(meta);
@@ -326,7 +326,7 @@ Resource* ModuleResources::ImportShaderObject(const char* path)
 
 // ------------------- RESOURCE HANDLING ----------------------------------------------------------
 
-Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::string source_file, std::string destination_file)
+Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::string source_file)
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
@@ -335,42 +335,42 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::str
 	switch (type)
 	{
 	case Resource::ResourceType::FOLDER:
-		resource = (Resource*)new ResourceFolder(App->GetRandom().Int(),source_file,destination_file);
+		resource = (Resource*)new ResourceFolder(App->GetRandom().Int(),source_file);
 		folders[resource->GetUID()] = (ResourceFolder*)resource;
 		break;
 
 	case Resource::ResourceType::SCENE:
-		resource = (Resource*)new ResourceScene(App->GetRandom().Int(), source_file, destination_file);
+		resource = (Resource*)new ResourceScene(App->GetRandom().Int(), source_file);
 		scenes[resource->GetUID()] = (ResourceScene*)resource;
 		break;
 
 	case Resource::ResourceType::MODEL:
-		resource = (Resource*)new ResourceModel(App->GetRandom().Int(), source_file, destination_file);
+		resource = (Resource*)new ResourceModel(App->GetRandom().Int(), source_file);
 		models[resource->GetUID()] = (ResourceModel*)resource;
 		break;
 
 	case Resource::ResourceType::MATERIAL:
-		resource = (Resource*)new ResourceMaterial(App->GetRandom().Int(), source_file, destination_file);
+		resource = (Resource*)new ResourceMaterial(App->GetRandom().Int(), source_file);
 		materials[resource->GetUID()] = (ResourceMaterial*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER:
-		resource = (Resource*)new ResourceShader(App->GetRandom().Int(), source_file, destination_file);
+		resource = (Resource*)new ResourceShader(App->GetRandom().Int(), source_file);
 		shaders[resource->GetUID()] = (ResourceShader*)resource;
 		break;
 
 	case Resource::ResourceType::MESH:
-		resource = (Resource*)new ResourceMesh(App->GetRandom().Int(), source_file, destination_file);
+		resource = (Resource*)new ResourceMesh(App->GetRandom().Int(), source_file);
 		meshes[resource->GetUID()] = (ResourceMesh*)resource;
 		break;
 
 	case Resource::ResourceType::TEXTURE:
-		resource = (Resource*)new ResourceTexture(App->GetRandom().Int(), source_file, destination_file);
+		resource = (Resource*)new ResourceTexture(App->GetRandom().Int(), source_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject(App->GetRandom().Int(), source_file, destination_file);
+		resource = (Resource*)new ResourceShaderObject(App->GetRandom().Int(), source_file);
 		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
@@ -386,54 +386,54 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::str
 	return resource;
 }
 
-Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, std::string destination_file, uint UID)
+Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID)
 {
 	Resource* resource = nullptr;
 
 	switch (type)
 	{
 	case Resource::ResourceType::FOLDER:
-		resource = (Resource*)new ResourceFolder(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceFolder(UID, source_file);
 		folders[resource->GetUID()] = (ResourceFolder*)resource;
 		break;
 
 	case Resource::ResourceType::SCENE:
-		resource = (Resource*)new ResourceScene(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceScene(UID, source_file);
 		scenes[resource->GetUID()] = (ResourceScene*)resource;
 		break;
 
 	case Resource::ResourceType::MODEL:
-		resource = (Resource*)new ResourceModel(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceModel(UID, source_file);
 		models[resource->GetUID()] = (ResourceModel*)resource;
 		break;
 
 	case Resource::ResourceType::MATERIAL:
-		resource = (Resource*)new ResourceMaterial(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceMaterial(UID, source_file);
 		materials[resource->GetUID()] = (ResourceMaterial*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER:
-		resource = (Resource*)new ResourceShader(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceShader(UID, source_file);
 		shaders[resource->GetUID()] = (ResourceShader*)resource;
 		break;
 
 	case Resource::ResourceType::MESH:
-		resource = (Resource*)new ResourceMesh(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceMesh(UID, source_file);
 		meshes[resource->GetUID()] = (ResourceMesh*)resource;
 		break;
 
 	case Resource::ResourceType::TEXTURE:
-		resource = (Resource*)new ResourceTexture(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceTexture(UID, source_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceShaderObject(UID, source_file);
 		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
 	case Resource::ResourceType::META:
-		resource = (Resource*)new ResourceMeta(UID, source_file, destination_file);
+		resource = (Resource*)new ResourceMeta(UID, source_file);
 		metas[resource->GetUID()] = (ResourceMeta*)resource;
 		break;
 

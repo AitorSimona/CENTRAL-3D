@@ -6,8 +6,11 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceTexture::ResourceTexture(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file, destination_file)
+ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file)
 {
+	extension = ".dds";
+	resource_file = TEXTURES_FOLDER + std::to_string(UID) + extension;
+
 	buffer_id = App->textures->GetDefaultTextureID();
 }
 

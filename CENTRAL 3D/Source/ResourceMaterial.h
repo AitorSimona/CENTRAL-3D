@@ -11,7 +11,7 @@
 class ResourceMaterial : public Resource
 {
 public:
-	ResourceMaterial(uint UID, std::string source_file, std::string destination_file);
+	ResourceMaterial(uint UID, std::string source_file);
 	~ResourceMaterial();
 
 	void UpdateUniforms();

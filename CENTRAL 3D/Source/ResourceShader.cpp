@@ -11,8 +11,11 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceShader::ResourceShader(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::SHADER, UID, source_file, destination_file)
+ResourceShader::ResourceShader(uint UID, std::string source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file)
 {
+	extension = ".shader";
+	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
+
 	CreateShaderProgram();
 }
 

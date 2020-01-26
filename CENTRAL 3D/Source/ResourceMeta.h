@@ -6,7 +6,7 @@
 class ResourceMeta : public Resource
 {
 public:
-	ResourceMeta(uint UID, std::string source_file, std::string destination_file);
+	ResourceMeta(uint UID, std::string source_file);
 	~ResourceMeta();
 
 	uint Date = 0;

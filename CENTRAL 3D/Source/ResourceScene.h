@@ -6,7 +6,7 @@
 class ResourceScene : public Resource
 {
 public:
-	ResourceScene(uint UID, std::string source_file, std::string destination_file);
+	ResourceScene(uint UID, std::string source_file);
 	~ResourceScene();
 };
 

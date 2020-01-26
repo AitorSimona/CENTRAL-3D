@@ -6,7 +6,7 @@
 class ResourceModel : public Resource
 {
 public:
-	ResourceModel(uint UID, std::string source_file, std::string destination_file);
+	ResourceModel(uint UID, std::string source_file);
 	~ResourceModel();
 };
 

@@ -6,7 +6,7 @@
 class ResourceShaderObject : public Resource
 {
 public:
-	ResourceShaderObject(uint UID, std::string source_file, std::string destination_file);
+	ResourceShaderObject(uint UID, std::string source_file);
 	~ResourceShaderObject();
 };
 

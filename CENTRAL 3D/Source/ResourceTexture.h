@@ -6,7 +6,7 @@
 class ResourceTexture : public Resource
 {
 public:
-	ResourceTexture(uint UID, std::string source_file, std::string destination_file);
+	ResourceTexture(uint UID, std::string source_file);
 	~ResourceTexture();
 
 	void LoadInMemory();

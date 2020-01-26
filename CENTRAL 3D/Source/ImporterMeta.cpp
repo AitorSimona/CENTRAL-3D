@@ -24,7 +24,7 @@ Resource* ImporterMeta::Load(const char* path) const
 	// --- Load meta file ---
 	json file = App->GetJLoader()->Load(path);
 	// Date is retrieved on resource meta constructor
-	return 	App->resources->CreateResourceGivenUID(Resource::ResourceType::META, file["SOURCE"].get<std::string>(), path, std::stoi(file["UID"].get<std::string>()));
+	return 	App->resources->CreateResourceGivenUID(Resource::ResourceType::META, file["SOURCE"].get<std::string>(), std::stoi(file["UID"].get<std::string>()));
 }
 
 void ImporterMeta::Save(ResourceMeta * meta) const

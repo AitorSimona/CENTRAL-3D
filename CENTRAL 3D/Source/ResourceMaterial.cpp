@@ -2,12 +2,16 @@
 
 #include "OpenGL.h"
 #include "Application.h"
+#include "ModuleFileSystem.h"
 #include "ModuleRenderer3D.h"
 
 #include "mmgr/mmgr.h"
 
-ResourceMaterial::ResourceMaterial(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file, destination_file)
+ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file)
 {
+	extension = ".mat";
+	resource_file = App->fs->GetDirectoryFromPath(source_file) + std::to_string(UID) + extension;
+
 	shader = App->renderer3D->defaultShader;
 	shader->instances++;
 

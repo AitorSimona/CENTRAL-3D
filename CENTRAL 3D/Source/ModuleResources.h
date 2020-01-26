@@ -57,8 +57,8 @@ public:
 	}
 
 	// --- Resource Handling ---
-	Resource* CreateResource(Resource::ResourceType type, std::string source_file, std::string destination_file);
-	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, std::string destination_file, uint UID);
+	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
+	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	bool IsFileImported(const char* file);
 

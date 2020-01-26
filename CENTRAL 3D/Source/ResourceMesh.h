@@ -17,7 +17,7 @@ class ResourceMesh : public Resource
 {
 public:
 
-	ResourceMesh(uint UID, std::string source_file, std::string destination_file);
+	ResourceMesh(uint UID, std::string source_file);
 	~ResourceMesh();
 
 	void CreateAABB();

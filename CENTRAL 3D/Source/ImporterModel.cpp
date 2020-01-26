@@ -38,7 +38,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 	if (scene && IScene)
 	{
 		uint UID = App->GetRandom().Int();
-		model = (ResourceModel*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, IData.path, std::string(MODELS_FOLDER).append(std::to_string(UID).append(".model")), UID);
+		model = (ResourceModel*)App->resources->CreateResource(Resource::ResourceType::MODEL, IData.path);
 
 		rootnode = App->scene_manager->CreateEmptyGameObject();
 		//// --- Set root node name as file name with no extension ---

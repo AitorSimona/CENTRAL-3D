@@ -11,12 +11,11 @@ Resource::Resource(ResourceType type)
 	this->type = type;
 }
 
-Resource::Resource(ResourceType type, uint UID, std::string source_file, std::string destination_file)
+Resource::Resource(ResourceType type, uint UID, std::string source_file)
 {
 	this->type = type;
 	this->UID = UID;
 	original_file = source_file;
-	resource_file = destination_file;
 	name = source_file;
 }
 

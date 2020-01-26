@@ -29,7 +29,7 @@ public:
 	bool Exists(const char* file) const;
 	bool IsDirectory(const char* file) const;
 	void CreateDirectory(const char* directory);
-	void GetDirectoryFromPath(std::string & directory);
+	std::string GetDirectoryFromPath(std::string & path);
 	void DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const;
 	bool CopyFromOutsideFS(const char* full_path, const char* destination);
 	bool Copy(const char* source, const char* destination);

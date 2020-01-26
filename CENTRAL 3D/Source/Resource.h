@@ -24,7 +24,7 @@ public:
 	};
 
 	Resource(ResourceType type);
-	Resource(ResourceType type, uint UID, std::string source_file, std::string destination_file);
+	Resource(ResourceType type, uint UID, std::string source_file);
 	virtual ~Resource();
 
 	// --- Getters ---
@@ -52,6 +52,7 @@ protected:
 	std::string resource_file = "";
 	std::string original_file = "";
 	std::string name = "";
+	std::string extension = "";
 };
 
 #endif // !__RESOURCE_H__

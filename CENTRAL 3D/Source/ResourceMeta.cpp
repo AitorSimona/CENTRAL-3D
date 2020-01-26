@@ -3,8 +3,11 @@
 #include "ModuleFileSystem.h"
 
 
-ResourceMeta::ResourceMeta(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::META, UID, source_file, destination_file)
+ResourceMeta::ResourceMeta(uint UID, std::string source_file) : Resource(Resource::ResourceType::META, UID, source_file)
 {
+	extension = ".meta";
+	resource_file = source_file + extension;
+
 	Date = App->fs->GetLastModificationTime(source_file.c_str());
 }
 
