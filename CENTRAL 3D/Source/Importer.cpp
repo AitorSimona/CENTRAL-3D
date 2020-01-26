@@ -1,5 +1,6 @@
 #include "Importer.h"
 
+// MYTODO: passing type may be unneeded
 Importer::Importer(ImporterType type)
 {
 	this->type = type;

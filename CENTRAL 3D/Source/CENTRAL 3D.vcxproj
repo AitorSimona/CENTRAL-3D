@@ -96,6 +96,7 @@
     <ClInclude Include="Imgui\imstb_textedit.h" />
     <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="Importer.h" />
+    <ClInclude Include="ImporterFolder.h" />
     <ClInclude Include="ImporterMaterial.h" />
     <ClInclude Include="ImporterMesh.h" />
     <ClInclude Include="ImporterMeta.h" />
@@ -243,6 +244,7 @@
     <ClCompile Include="Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Importer.cpp" />
+    <ClCompile Include="ImporterFolder.cpp" />
     <ClCompile Include="ImporterMaterial.cpp" />
     <ClCompile Include="ImporterMesh.cpp" />
     <ClCompile Include="ImporterMeta.cpp" />

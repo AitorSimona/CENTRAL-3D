@@ -2,6 +2,7 @@
 #define __IMPORTERS_H__
 
 #include "Importer.h"
+#include "ImporterFolder.h"
 #include "ImporterScene.h"
 #include "ImporterModel.h"
 #include "ImporterMaterial.h"

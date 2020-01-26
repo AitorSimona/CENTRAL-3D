@@ -528,6 +528,9 @@
     <ClInclude Include="ImporterMeta.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ImporterFolder.h">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -849,6 +852,9 @@
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ImporterMeta.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterFolder.cpp">
       <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
   </ItemGroup>

@@ -156,6 +156,22 @@ void ModuleFileSystem::DiscoverFiles(const char* directory, vector<string> & fil
 	PHYSFS_freeList(rc);
 }
 
+void ModuleFileSystem::DiscoverDirectories(const char* directory, std::vector<std::string>& dir_list) const
+{
+	char** rc = PHYSFS_enumerateFiles(directory);
+	char** i;
+
+	string dir(directory);
+
+	for (i = rc; *i != nullptr; i++)
+	{
+		if (PHYSFS_isDirectory((dir + *i).c_str()))
+			dir_list.push_back(*i);
+	}
+
+	PHYSFS_freeList(rc);
+}
+
 bool ModuleFileSystem::CopyFromOutsideFS(const char * full_path, const char * destination)
 {
 	// Only place we acces non virtual filesystem

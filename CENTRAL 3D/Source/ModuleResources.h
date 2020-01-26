@@ -31,6 +31,7 @@ public:
 	bool CleanUp();
 
 	// --- Importing ---
+	void ImportAllFolders(const char* directory);
 	void SearchAssets(const char* directory, std::vector<std::string>& filters);
 	void ImportAssets(const char* path);
 	Resource* ImportFolder(const char* path);

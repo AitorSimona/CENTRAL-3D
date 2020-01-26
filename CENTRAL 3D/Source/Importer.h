@@ -10,6 +10,7 @@ class Importer
 public:
 	enum class ImporterType
 	{
+		Folder,
 		Scene,
 		Model,
 		Material,

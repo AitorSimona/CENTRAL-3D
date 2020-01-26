@@ -33,6 +33,7 @@ bool ModuleResources::Init(json file)
 	aiAttachLogStream(&stream);
 
 	// --- Create importers ---
+	importers.push_back(new ImporterFolder());
 	importers.push_back(new ImporterScene());
 	importers.push_back(new ImporterModel());
 	importers.push_back(new ImporterMaterial());
@@ -45,6 +46,9 @@ bool ModuleResources::Init(json file)
 
 bool ModuleResources::Start()
 {
+	// --- Import all folders in Assets/ ---
+	ImportAllFolders(ASSETS_FOLDER);
+
 	// --- Import all resources in Assets at startup ---
 
 	std::vector<std::string> filters;
@@ -59,6 +63,23 @@ bool ModuleResources::Start()
 
 
 // ------------------------------ IMPORTING --------------------------------------------------------
+
+// --- Create all ResourceFolder type resources ---
+void ModuleResources::ImportAllFolders(const char* directory)
+{
+	std::vector<std::string> dirs;
+
+	App->fs->DiscoverDirectories(directory, dirs);
+
+	std::string dir((directory) ? directory : "");
+
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+	{
+		ImportAllFolders((dir + (*it) + "/").c_str());
+	}
+
+	ImportFolder(dir.c_str());
+}
 
 // --- Sweep over all files in given directory, if those files pass the given filters, call Import ---
 void ModuleResources::SearchAssets(const char* directory, std::vector<std::string>& filters)
@@ -172,9 +193,41 @@ void ModuleResources::ImportAssets(const char* path)
 
 }
 
+
 Resource* ModuleResources::ImportFolder(const char* path)
 {
-	return nullptr;
+	ImporterFolder* IFolder = GetImporter<ImporterFolder>();
+	ImporterMeta* IMeta = GetImporter<ImporterMeta>();
+
+	Resource* folder = nullptr;
+
+	if (IFolder && IMeta)
+	{
+		std::string new_path = path;
+		new_path.pop_back();
+		App->fs->SplitFilePath(new_path.c_str(), nullptr, nullptr, nullptr);
+
+		// --- If the resource is already in library, load from there ---
+		if (IsFileImported(new_path.c_str()))
+		{
+			IFolder->Load(path);
+		}
+		// --- Else call relevant importer ---
+		else
+		{
+			Importer::ImportData IData;
+			IData.path = new_path.append("/").c_str();
+			folder = IFolder->Import(IData);
+
+			// --- Create meta ---
+			ResourceMeta* meta = (ResourceMeta*)CreateResourceGivenUID(Resource::ResourceType::META, new_path, folder->GetUID());
+
+			if (meta)
+				IMeta->Save(meta);
+		}
+	}
+
+	return folder;
 }
 
 Resource* ModuleResources::ImportScene(const char* path)
@@ -448,6 +501,7 @@ Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, s
 
 	return resource;
 }
+
 
 Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
 {

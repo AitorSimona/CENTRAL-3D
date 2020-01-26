@@ -31,6 +31,7 @@ public:
 	void CreateDirectory(const char* directory);
 	std::string GetDirectoryFromPath(std::string & path);
 	void DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const;
+	void DiscoverDirectories(const char* directory, std::vector<std::string>& dir_list) const;
 	bool CopyFromOutsideFS(const char* full_path, const char* destination);
 	bool Copy(const char* source, const char* destination);
 	void SplitFilePath(const char* full_path, std::string* path, std::string* file = nullptr, std::string* extension = nullptr) const;
