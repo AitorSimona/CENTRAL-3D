@@ -24,7 +24,7 @@ public:
 	};
 
 	Resource(ResourceType type);
-	Resource(ResourceType type, uint UID);
+	Resource(ResourceType type, uint UID, std::string source_file, std::string destination_file);
 	virtual ~Resource();
 
 	// --- Getters ---

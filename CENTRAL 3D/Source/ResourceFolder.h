@@ -6,8 +6,7 @@
 class ResourceFolder : public Resource
 {
 public:
-	ResourceFolder();
-	ResourceFolder(uint UID);
+	ResourceFolder(uint UID, std::string source_file, std::string destination_file);
 	~ResourceFolder();
 };
 

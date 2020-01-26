@@ -20,13 +20,13 @@ public:
 	void Draw(bool outline = false) const;
 
 	// --- Save & Load ---
-	void Save(json node);
+	void Save(json& file) const override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Renderer; };
 
 private:
 	// --- Draw Functiions accessed by main Draw ---
-	inline void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
+	void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
 	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 
 public:

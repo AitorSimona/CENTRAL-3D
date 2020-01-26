@@ -6,6 +6,7 @@
 #include <string>
 
 class GameObject;
+class ResourceModel;
 
 class ImporterModel : public Importer
 {
@@ -17,7 +18,7 @@ public:
     Resource* Import(ImportData& IData) const override;
     Resource* Load(const char* path) const override;
 
-	void Save(std::vector<GameObject*>& model_gos, std::string& model_name) const;
+	void Save(ResourceModel* model,std::vector<GameObject*>& model_gos, std::string& model_name) const;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Model; };
 };

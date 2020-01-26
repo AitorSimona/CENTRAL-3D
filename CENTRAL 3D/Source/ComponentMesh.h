@@ -15,7 +15,7 @@ public:
 	const AABB& GetAABB() const;
 
 	// --- Save & Load ---
-	void Save(json node);
+	void Save(json& file) const override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
 public:

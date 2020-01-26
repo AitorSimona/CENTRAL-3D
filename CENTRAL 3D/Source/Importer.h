@@ -17,6 +17,7 @@ public:
 		Mesh,
 		Texture,
 		Shader_Object,
+		Meta,
 		Unknown
 	};
 

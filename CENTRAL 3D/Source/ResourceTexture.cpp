@@ -6,13 +6,9 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceTexture::ResourceTexture() : Resource(Resource::ResourceType::TEXTURE)
+ResourceTexture::ResourceTexture(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file, destination_file)
 {
 	buffer_id = App->textures->GetDefaultTextureID();
-}
-
-ResourceTexture::ResourceTexture(uint UID) : Resource(Resource::ResourceType::TEXTURE, UID)
-{
 }
 
 ResourceTexture::~ResourceTexture()

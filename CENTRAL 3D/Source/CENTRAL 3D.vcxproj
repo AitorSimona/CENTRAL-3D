@@ -98,6 +98,7 @@
     <ClInclude Include="Importer.h" />
     <ClInclude Include="ImporterMaterial.h" />
     <ClInclude Include="ImporterMesh.h" />
+    <ClInclude Include="ImporterMeta.h" />
     <ClInclude Include="ImporterModel.h" />
     <ClInclude Include="Importers.h" />
     <ClInclude Include="ImporterScene.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="ResourceFolder.h" />
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
+    <ClInclude Include="ResourceMeta.h" />
     <ClInclude Include="ResourceModel.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ResourceScene.h" />
@@ -243,6 +245,7 @@
     <ClCompile Include="Importer.cpp" />
     <ClCompile Include="ImporterMaterial.cpp" />
     <ClCompile Include="ImporterMesh.cpp" />
+    <ClCompile Include="ImporterMeta.cpp" />
     <ClCompile Include="ImporterModel.cpp" />
     <ClCompile Include="ImporterScene.cpp" />
     <ClCompile Include="ImporterShader.cpp" />
@@ -323,6 +326,7 @@
     <ClCompile Include="ResourceFolder.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />
+    <ClCompile Include="ResourceMeta.cpp" />
     <ClCompile Include="ResourceModel.cpp" />
     <ClCompile Include="ResourceScene.cpp" />
     <ClCompile Include="ResourceShader.cpp" />

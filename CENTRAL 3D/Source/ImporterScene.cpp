@@ -635,11 +635,11 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 	return scene_name;
 }
 
-void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes) const
+void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const
 {
 	for (uint i = 0; i < scene->mNumMeshes; ++i)
 	{
-		ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+		ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH,source_file,"");
 
 		ImportMeshData MData;
 		MData.mesh = scene->mMeshes[i];

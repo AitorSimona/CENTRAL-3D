@@ -1,22 +1,28 @@
 #include "Resource.h"
 #include "Application.h"
+#include "ModuleResources.h"
 
 #include "mmgr/mmgr.h"
 
+
+// MYTODO: TO BE DELETED ONCE SHADERS REWORK IS DONE 
 Resource::Resource(ResourceType type)
 {
 	this->type = type;
-	UID = App->GetRandom().Int();
 }
 
-Resource::Resource(ResourceType type, uint UID)
+Resource::Resource(ResourceType type, uint UID, std::string source_file, std::string destination_file)
 {
 	this->type = type;
 	this->UID = UID;
+	original_file = source_file;
+	resource_file = destination_file;
+	name = source_file;
 }
 
 Resource::~Resource()
 {
+	App->resources->ONResourceDestroyed(this);
 }
 
 uint Resource::GetUID() const

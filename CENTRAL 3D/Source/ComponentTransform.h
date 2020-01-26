@@ -27,7 +27,7 @@ public:
 	void			OnUpdateTransform(const float4x4& ParentGlobal);
 
 	// --- Save & Load ---
-	void Save(json node);
+	void Save(json& file) const override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Transform; };
 

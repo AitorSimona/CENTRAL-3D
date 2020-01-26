@@ -6,16 +6,12 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceMaterial::ResourceMaterial() : Resource(Resource::ResourceType::MATERIAL)
+ResourceMaterial::ResourceMaterial(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file, destination_file)
 {
 	shader = App->renderer3D->defaultShader;
 	shader->instances++;
 
 	shader->GetAllUniforms(uniforms);
-}
-
-ResourceMaterial::ResourceMaterial(uint UID) : Resource(Resource::ResourceType::MATERIAL, UID)
-{
 }
 
 ResourceMaterial::~ResourceMaterial()

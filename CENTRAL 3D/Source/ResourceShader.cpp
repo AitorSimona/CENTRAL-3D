@@ -11,13 +11,9 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceShader::ResourceShader() : Resource(Resource::ResourceType::SHADER)
+ResourceShader::ResourceShader(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::SHADER, UID, source_file, destination_file)
 {
 	CreateShaderProgram();
-}
-
-ResourceShader::ResourceShader(uint UID) : Resource(Resource::ResourceType::SHADER, UID)
-{
 }
 
 ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath, bool is_extern) : Resource(Resource::ResourceType::SHADER)

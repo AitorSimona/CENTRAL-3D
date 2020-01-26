@@ -107,11 +107,7 @@ void ComponentRenderer::Draw(bool outline) const
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 }
 
-void ComponentRenderer::Save(json node)
-{
-}
-
-inline void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
+void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
 {
 	glBindVertexArray(mesh.VAO);
 
@@ -253,5 +249,11 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
+}
+
+void ComponentRenderer::Save(json& file) const
+{
+	// --- Store path to component file ---
+//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())] = component_path;
 }
 

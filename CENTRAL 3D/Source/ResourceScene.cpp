@@ -1,10 +1,7 @@
 #include "ResourceScene.h"
 
-ResourceScene::ResourceScene() : Resource(Resource::ResourceType::SCENE)
-{
-}
 
-ResourceScene::ResourceScene(uint UID) : Resource(Resource::ResourceType::SCENE, UID)
+ResourceScene::ResourceScene(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::SCENE, UID, source_file, destination_file)
 {
 }
 

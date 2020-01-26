@@ -38,7 +38,7 @@ bool ModuleResources::Init(json file)
 	importers.push_back(new ImporterMaterial());
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
-
+	importers.push_back(new ImporterMeta());
 
 	return true;
 }
@@ -197,24 +197,30 @@ Resource* ModuleResources::ImportScene(const char* path)
 Resource* ModuleResources::ImportModel(const char* path)
 {
 	ImporterModel* IModel = GetImporter<ImporterModel>();
+	ImporterMeta* IMeta = GetImporter<ImporterMeta>();
+
 	Resource* model = nullptr;
 	std::string file = "";
 
 	App->fs->NormalizePath((char*)path, false);
 	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
 
-	if (IModel)
+	if (IModel && IMeta)
 	{
+		// --- MYTODO: This should not be done here, user will decide when to load/ else a scene will be loaded ---
 		// --- If the resource is already in library, load from there ---
 		if (IsFileImported(path))
 		{
-			uint model_uid = GetUIDFromMeta(path);
-			std::string model_path = MODELS_FOLDER;
-
-			model_path.append(std::to_string(model_uid));
-			model_path.append(".model");
-
-			model = IModel->Load(model_path.c_str());
+			// --- Load meta first ---
+			ResourceMeta* meta = (ResourceMeta*)IMeta->Load((std::string(path).append(".meta")).c_str());
+			
+			if (meta)
+			{
+				std::string model_path = MODELS_FOLDER;
+				model_path.append(std::to_string(meta->GetUID()));
+				model_path.append(".model");
+				model = IModel->Load(model_path.c_str());
+			}
 		}
 
 		// --- Else call relevant importer ---
@@ -229,8 +235,17 @@ Resource* ModuleResources::ImportModel(const char* path)
 
 			Importer::ImportData IData;
 			IData.path = relative_path.c_str();
-
 			model = IModel->Import(IData);
+
+			// --- Create meta ---
+			if (model)
+			{
+				ResourceMeta* meta = (ResourceMeta*)CreateResourceGivenUID(Resource::ResourceType::META, path, std::string(path).append(".meta"), model->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+			}
+			CONSOLE_LOG("|[error]: Failed to import model: %s", path);
 		}
 	}
 
@@ -310,54 +325,52 @@ Resource* ModuleResources::ImportShaderObject(const char* path)
 
 // ------------------- RESOURCE HANDLING ----------------------------------------------------------
 
-Resource * ModuleResources::CreateResource(Resource::ResourceType type)
+Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::string source_file, std::string destination_file)
 {
+	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
+
 	Resource* resource = nullptr;
 
 	switch (type)
 	{
 	case Resource::ResourceType::FOLDER:
-		resource = (Resource*)new ResourceFolder;
+		resource = (Resource*)new ResourceFolder(App->GetRandom().Int(),source_file,destination_file);
 		folders[resource->GetUID()] = (ResourceFolder*)resource;
 		break;
 
 	case Resource::ResourceType::SCENE:
-		resource = (Resource*)new ResourceScene;
+		resource = (Resource*)new ResourceScene(App->GetRandom().Int(), source_file, destination_file);
 		scenes[resource->GetUID()] = (ResourceScene*)resource;
 		break;
 
 	case Resource::ResourceType::MODEL:
-		resource = (Resource*)new ResourceModel;
+		resource = (Resource*)new ResourceModel(App->GetRandom().Int(), source_file, destination_file);
 		models[resource->GetUID()] = (ResourceModel*)resource;
 		break;
 
 	case Resource::ResourceType::MATERIAL:
-		resource = (Resource*)new ResourceMaterial;
+		resource = (Resource*)new ResourceMaterial(App->GetRandom().Int(), source_file, destination_file);
 		materials[resource->GetUID()] = (ResourceMaterial*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER:
-		resource = (Resource*)new ResourceShader;
+		resource = (Resource*)new ResourceShader(App->GetRandom().Int(), source_file, destination_file);
 		shaders[resource->GetUID()] = (ResourceShader*)resource;
 		break;
 
 	case Resource::ResourceType::MESH:
-		resource = (Resource*)new ResourceMesh;
+		resource = (Resource*)new ResourceMesh(App->GetRandom().Int(), source_file, destination_file);
 		meshes[resource->GetUID()] = (ResourceMesh*)resource;
 		break;
 
 	case Resource::ResourceType::TEXTURE:
-		resource = (Resource*)new ResourceTexture;
+		resource = (Resource*)new ResourceTexture(App->GetRandom().Int(), source_file, destination_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject;
+		resource = (Resource*)new ResourceShaderObject(App->GetRandom().Int(), source_file, destination_file);
 		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
-		break;
-
-	case Resource::ResourceType::META:
-
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -372,54 +385,55 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type)
 	return resource;
 }
 
-Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, uint UID)
+Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, std::string destination_file, uint UID)
 {
 	Resource* resource = nullptr;
 
 	switch (type)
 	{
 	case Resource::ResourceType::FOLDER:
-		resource = (Resource*)new ResourceFolder(UID);
+		resource = (Resource*)new ResourceFolder(UID, source_file, destination_file);
 		folders[resource->GetUID()] = (ResourceFolder*)resource;
 		break;
 
 	case Resource::ResourceType::SCENE:
-		resource = (Resource*)new ResourceScene(UID);
+		resource = (Resource*)new ResourceScene(UID, source_file, destination_file);
 		scenes[resource->GetUID()] = (ResourceScene*)resource;
 		break;
 
 	case Resource::ResourceType::MODEL:
-		resource = (Resource*)new ResourceModel(UID);
+		resource = (Resource*)new ResourceModel(UID, source_file, destination_file);
 		models[resource->GetUID()] = (ResourceModel*)resource;
 		break;
 
 	case Resource::ResourceType::MATERIAL:
-		resource = (Resource*)new ResourceMaterial(UID);
+		resource = (Resource*)new ResourceMaterial(UID, source_file, destination_file);
 		materials[resource->GetUID()] = (ResourceMaterial*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER:
-		resource = (Resource*)new ResourceShader(UID);
+		resource = (Resource*)new ResourceShader(UID, source_file, destination_file);
 		shaders[resource->GetUID()] = (ResourceShader*)resource;
 		break;
 
 	case Resource::ResourceType::MESH:
-		resource = (Resource*)new ResourceMesh(UID);
+		resource = (Resource*)new ResourceMesh(UID, source_file, destination_file);
 		meshes[resource->GetUID()] = (ResourceMesh*)resource;
 		break;
 
 	case Resource::ResourceType::TEXTURE:
-		resource = (Resource*)new ResourceTexture(UID);
+		resource = (Resource*)new ResourceTexture(UID, source_file, destination_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject(UID);
+		resource = (Resource*)new ResourceShaderObject(UID, source_file, destination_file);
 		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
 	case Resource::ResourceType::META:
-
+		resource = (Resource*)new ResourceMeta(UID, source_file, destination_file);
+		metas[resource->GetUID()] = (ResourceMeta*)resource;
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -451,7 +465,7 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == "scene")
 		type = Resource::ResourceType::SCENE;
 
-	else if (extension == "fbx" || extension == "obj")
+	else if (extension == "fbx")
 		type = Resource::ResourceType::MODEL;
 
 	else if (extension == "mat")
@@ -466,26 +480,10 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == "vertex" || extension == "fragment")
 		type = Resource::ResourceType::SHADER_OBJECT;
 
-	else if (extension == "meta")
-		type = Resource::ResourceType::META;
+	//else if (extension == "meta")
+	//	type = Resource::ResourceType::META;
 
 	return type;
-}
-
-uint ModuleResources::GetUIDFromMeta(const char* file)
-{
-	std::string path = file;
-	path.append(".meta");
-	uint UID = 0;
-
-	if (App->fs->Exists(path.data()))
-	{
-		json file = App->GetJLoader()->Load(path.data());
-		std::string uid = file["UID"];
-		UID = std::stoi(uid);
-	}
-
-	return UID;
 }
 
 bool ModuleResources::IsFileImported(const char* file)
@@ -503,6 +501,57 @@ bool ModuleResources::IsFileImported(const char* file)
 	return ret;
 }
 
+void ModuleResources::ONResourceDestroyed(Resource* resource)
+{
+	switch (resource->GetType())
+	{
+	case Resource::ResourceType::FOLDER:
+		folders.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::SCENE:
+		scenes.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::MODEL:
+		models.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		materials.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::SHADER:
+		shaders.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::MESH:
+		meshes.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		textures.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		shader_objects.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::META:
+		metas.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::UNKNOWN:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+	}
+
+}
+
 // ----------------------------------------------------
 
 update_status ModuleResources::Update(float dt)
@@ -513,77 +562,77 @@ update_status ModuleResources::Update(float dt)
 bool ModuleResources::CleanUp()
 {
 	// --- Delete resources ---
-	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
+	for (std::map<uint, ResourceFolder*>::reverse_iterator it = folders.rbegin(); it != folders.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = folders.erase(it);
 	}
 
 	folders.clear();
 
-	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end();)
+	for (std::map<uint, ResourceScene*>::reverse_iterator it = scenes.rbegin(); it != scenes.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = scenes.erase(it);
 	}
 
 	scenes.clear();
 
-	for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end();)
+	for (std::map<uint, ResourceModel*>::reverse_iterator it = models.rbegin(); it != models.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = models.erase(it);
 	}
 
 	models.clear();
 
-	for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+	for (std::map<uint, ResourceMaterial*>::reverse_iterator it = materials.rbegin(); it != materials.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = materials.erase(it);
 	}
 
 	materials.clear();
 
-	for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end();)
+	for (std::map<uint, ResourceShader*>::reverse_iterator it = shaders.rbegin(); it != shaders.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = shaders.erase(it);
 	}
 
 	shaders.clear();
 
-	for (std::map<uint, ResourceMesh*>::iterator it = meshes.begin(); it != meshes.end();)
+	for (std::map<uint, ResourceMesh*>::reverse_iterator it = meshes.rbegin(); it != meshes.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = meshes.erase(it);
 	}
 
 	meshes.clear();
 
-	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end();)
+	for (std::map<uint, ResourceTexture*>::reverse_iterator it = textures.rbegin(); it != textures.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = textures.erase(it);
 	}
 
 	textures.clear();
 
-	for (std::map<uint, ResourceShaderObject*>::iterator it = shader_objects.begin(); it != shader_objects.end();)
+	for (std::map<uint, ResourceShaderObject*>::reverse_iterator it = shader_objects.rbegin(); it != shader_objects.rend();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = shader_objects.erase(it);
 	}
 
 	shader_objects.clear();
+
+	for (std::map<uint, ResourceMeta*>::reverse_iterator it = metas.rbegin(); it != metas.rend();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+	}
+
+	metas.clear();
 
 	// --- Delete importers ---
 	for (uint i = 0; i < importers.size(); ++i)
@@ -599,30 +648,6 @@ bool ModuleResources::CleanUp()
 	return true;
 }
 
-
-//void ModuleResources::CreateMetaFromUID(uint UID,const char* filename)
-//{
-//	ResourceMeta meta;
-//
-//	json jsonmeta;
-//	std::string jsondata;
-//	std::string meta_path;
-//	char* meta_buffer = nullptr;
-//
-//	// --- Create Meta ---
-//	jsonmeta["UID"] = std::to_string(UID);
-//	jsonmeta["DATE"] = std::to_string(App->fs->GetLastModificationTime(filename));
-//	jsondata = App->GetJLoader()->Serialize(jsonmeta);
-//	meta_buffer = (char*)jsondata.data();
-//
-//
-//	meta_path = filename;
-//	meta_path.append(".meta");
-//
-//	LoadedResources[UID] = meta;
-//	App->fs->Save(meta_path.data(), meta_buffer, jsondata.length());
-//}
-//
 
 //
 //Resource * ModuleResources::GetResource(const char * original_file)

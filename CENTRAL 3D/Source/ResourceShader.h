@@ -36,8 +36,8 @@ struct Uniform
 class ResourceShader : public Resource
 {
 public:
-	ResourceShader();
-	ResourceShader(uint UID);
+	ResourceShader(uint UID, std::string source_file, std::string destination_file);
+
 
 	// constructor reads and builds the shader
 	ResourceShader(const char* vertexPath, const char* fragmentPath, bool is_extern = true);

@@ -3,17 +3,13 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceMesh::ResourceMesh() : Resource(Resource::ResourceType::MESH)
-{
-}
-
-ResourceMesh::ResourceMesh(uint UID) : Resource(Resource::ResourceType::MESH, UID)
+ResourceMesh::ResourceMesh(uint UID, std::string source_file, std::string destination_file) : Resource(Resource::ResourceType::MESH, UID, source_file, destination_file)
 {
 }
 
 ResourceMesh::~ResourceMesh()
 {
-	FreeMemory();
+	//FreeMemory();
 }
 
 void ResourceMesh::CreateAABB()

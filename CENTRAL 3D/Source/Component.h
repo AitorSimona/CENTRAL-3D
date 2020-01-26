@@ -34,7 +34,7 @@ public:
 	bool IsEnabled() const;
 
 	// --- Save & Load ---
-	virtual void Save(json node) = 0;
+	virtual void Save(json& file) const = 0;
 
 protected:
 	bool active = false;

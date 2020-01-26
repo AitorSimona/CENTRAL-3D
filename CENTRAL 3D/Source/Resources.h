@@ -11,5 +11,6 @@
 #include "ResourceTexture.h"
 #include "ResourceShaderObject.h"
 #include "ResourceShader.h"
+#include "ResourceMeta.h"
 
 #endif // __RESOURCES_H__

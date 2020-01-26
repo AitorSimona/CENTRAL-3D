@@ -4,14 +4,6 @@
 #include "Module.h"
 #include "Resource.h"
 
-//class ResourceShader;
-//
-//struct ResourceMeta
-//{
-//	uint Date = 0;
-//	uint UID = 0;
-//};
-
 class Importer;
 
 class ResourceFolder;
@@ -23,6 +15,7 @@ class ResourceShader;
 class ResourceMesh;
 class ResourceTexture;
 class ResourceShaderObject;
+class ResourceMeta;
 
 class ModuleResources : public Module
 {
@@ -63,12 +56,12 @@ public:
 	}
 
 	// --- Resource Handling ---
-	Resource* CreateResource(Resource::ResourceType type);
-	Resource* CreateResourceGivenUID(Resource::ResourceType type, uint UID);
+	Resource* CreateResource(Resource::ResourceType type, std::string source_file, std::string destination_file);
+	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, std::string destination_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-	uint GetUIDFromMeta(const char* file);
 	bool IsFileImported(const char* file);
 
+	void ONResourceDestroyed(Resource* resource);
 
 	/*void CreateMetaFromUID(uint UID, const char* filename);
 
@@ -100,6 +93,7 @@ private:
 	std::map<uint, ResourceMesh*> meshes;
 	std::map<uint, ResourceTexture*> textures;
 	std::map<uint, ResourceShaderObject*> shader_objects;
+	std::map<uint, ResourceMeta*> metas;
 };
 
 #endif
