@@ -203,14 +203,18 @@ Resource* ModuleResources::ImportFolder(const char* path)
 
 	if (IFolder && IMeta)
 	{
+		// --- Eliminate last / so we can build the meta file name ---
 		std::string new_path = path;
 		new_path.pop_back();
-		App->fs->SplitFilePath(new_path.c_str(), nullptr, nullptr, nullptr);
 
 		// --- If the resource is already in library, load from there ---
 		if (IsFileImported(new_path.c_str()))
 		{
-			IFolder->Load(path);
+			// --- Load meta first ---
+			ResourceMeta* meta = (ResourceMeta*)IMeta->Load(new_path.c_str());
+
+			if(meta)
+			folder = IFolder->Load(new_path.c_str());
 		}
 		// --- Else call relevant importer ---
 		else
@@ -265,7 +269,7 @@ Resource* ModuleResources::ImportModel(const char* path)
 		if (IsFileImported(path))
 		{
 			// --- Load meta first ---
-			ResourceMeta* meta = (ResourceMeta*)IMeta->Load((std::string(path).append(".meta")).c_str());
+			ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 			
 			if (meta)
 			{

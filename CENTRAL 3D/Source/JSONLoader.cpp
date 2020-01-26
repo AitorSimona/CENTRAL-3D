@@ -8,6 +8,8 @@
 json JSONLoader::Load(const char * File) const 
 {
 
+	// MYTODO: Use PhysFS and check if file exists!
+
 	bool ret = true;
 
 	// --- Create JSON object ---
