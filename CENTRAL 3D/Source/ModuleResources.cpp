@@ -46,9 +46,6 @@ bool ModuleResources::Init(json file)
 
 bool ModuleResources::Start()
 {
-	// --- Import all folders in Assets/ ---
-	ImportAllFolders(ASSETS_FOLDER);
-
 	// --- Import all resources in Assets at startup ---
 
 	std::vector<std::string> filters;
@@ -61,10 +58,9 @@ bool ModuleResources::Start()
 	return true;
 }
 
-
 // ------------------------------ IMPORTING --------------------------------------------------------
 
-// --- Create all ResourceFolder type resources ---
+// DEPRECATED --- Create all ResourceFolder type resources ---
 void ModuleResources::ImportAllFolders(const char* directory)
 {
 	std::vector<std::string> dirs;
@@ -81,14 +77,13 @@ void ModuleResources::ImportAllFolders(const char* directory)
 	ImportFolder(dir.c_str());
 }
 
-// --- Sweep over all files in given directory, if those files pass the given filters, call Import ---
+// --- Sweep over all files in given directory, if those files pass the given filters, call Import and if it succeeds add them to the given resource folder ---
 void ModuleResources::SearchAssets(const char* directory, std::vector<std::string>& filters)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
 
 	std::string dir((directory) ? directory : "");
-	dir += "/";
 
 	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
 
@@ -97,6 +92,10 @@ void ModuleResources::SearchAssets(const char* directory, std::vector<std::strin
 		SearchAssets((dir + (*it) + "/").c_str(), filters);
 	}
 
+	// --- Import folder ---
+	ResourceFolder* folder = (ResourceFolder*)ImportFolder(dir.c_str());
+
+	// --- Now import all of its engine-supported files ---
 	std::sort(files.begin(), files.end());
 
 	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
@@ -128,13 +127,19 @@ void ModuleResources::SearchAssets(const char* directory, std::vector<std::strin
 		{
 			std::string path = directory;
 			path.append((*it).data());
-			ImportAssets(path.data());
+			Resource* resource = ImportAssets(path.data());
+
+			// --- If resource is imported correctly, add it to the current folder ---
+			if (resource)
+			{
+				folder->AddResource(resource);
+			}
 		}
 	}
 }
 
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
-void ModuleResources::ImportAssets(const char* path)
+Resource* ModuleResources::ImportAssets(const char* path)
 {
 	// --- Identify resource type by file extension ---
 	Resource::ResourceType type = GetResourceTypeFromPath(path);
@@ -191,6 +196,8 @@ void ModuleResources::ImportAssets(const char* path)
 	else
 		CONSOLE_LOG("![Warning]: Could not import: %s", path);
 
+
+	return resource;
 }
 
 
@@ -214,7 +221,7 @@ Resource* ModuleResources::ImportFolder(const char* path)
 			ResourceMeta* meta = (ResourceMeta*)IMeta->Load(new_path.c_str());
 
 			if(meta)
-			folder = IFolder->Load(new_path.c_str());
+			folder = IFolder->Load(meta->GetResourceFile());
 		}
 		// --- Else call relevant importer ---
 		else

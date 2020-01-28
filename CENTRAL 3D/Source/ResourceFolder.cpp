@@ -12,3 +12,8 @@ ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Res
 ResourceFolder::~ResourceFolder()
 {
 }
+
+void ResourceFolder::AddResource(Resource* resource)
+{
+	resources.push_back(resource);
+}

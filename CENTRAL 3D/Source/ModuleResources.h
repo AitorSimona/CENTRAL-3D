@@ -31,9 +31,11 @@ public:
 	bool CleanUp();
 
 	// --- Importing ---
+	//DEPRECATED
 	void ImportAllFolders(const char* directory);
+
 	void SearchAssets(const char* directory, std::vector<std::string>& filters);
-	void ImportAssets(const char* path);
+	Resource* ImportAssets(const char* path);
 	Resource* ImportFolder(const char* path);
 	Resource* ImportScene(const char* path);
 	Resource* ImportModel(const char* path);

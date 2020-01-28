@@ -10,6 +10,7 @@ public:
 	ResourceFolder(uint UID, std::string source_file);
 	~ResourceFolder();
 
+	void AddResource(Resource* resource);
 private:
 	std::vector<Resource*> resources;
 };
