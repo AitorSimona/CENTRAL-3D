@@ -36,6 +36,7 @@ public:
 
 	// --- Save & Load ---
 	json Save() const override;
+	void Load(json& node) override;
 
 public:
 	Frustum		frustum;

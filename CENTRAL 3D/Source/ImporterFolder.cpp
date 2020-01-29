@@ -28,7 +28,7 @@ Resource* ImporterFolder::Load(const char* path) const
 	{
 		json file = App->GetJLoader()->Load(path);
 
-		if (file)
+		if (!file.is_null())
 		{
 			std::string uid = file["UID"];
 			std::string source_file = path;

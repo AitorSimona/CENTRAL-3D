@@ -117,5 +117,9 @@ json ComponentMaterial::Save() const
 	return node;
 }
 
+void ComponentMaterial::Load(json& node)
+{
+}
+
 
 

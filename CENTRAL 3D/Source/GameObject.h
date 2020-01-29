@@ -47,7 +47,7 @@ public:
 
 	Component*		AddComponent(Component::ComponentType type);
 	void			RemoveComponent(Component::ComponentType type);
-	bool			HasComponent(Component::ComponentType type) const;
+	Component*		HasComponent(Component::ComponentType type) const;
 	std::vector<Component*>& GetComponents();
 
 	// --- Setters ---

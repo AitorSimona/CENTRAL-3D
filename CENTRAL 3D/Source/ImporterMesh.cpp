@@ -175,7 +175,7 @@ Resource* ImporterMesh::Load(const char * path) const
 	//mesh.SetOriginalFilename(path);
 
 	//// --- Load mesh data ---
-	//char* buffer;
+	//char* buffer = nullptr;
 	//App->fs->Load(path,&buffer);
 	//char* cursor = buffer;
 

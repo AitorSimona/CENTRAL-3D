@@ -161,43 +161,42 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 {
 	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
 
-	Component* new_component = nullptr;
+	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
 
-	if (HasComponent(type) == false)
+	if (HasComponent(type) == nullptr)
 	{
 
 		switch (type)
 		{
 		case Component::ComponentType::Transform:
-			new_component = new ComponentTransform(this);
+			component = new ComponentTransform(this);
 			break;
 		case Component::ComponentType::Mesh:
-			new_component = new ComponentMesh(this);
+			component = new ComponentMesh(this);
 			UpdateAABB();
 			break;
 		case Component::ComponentType::Renderer:
-			new_component = new ComponentRenderer(this);
+			component = new ComponentRenderer(this);
 			break;
 		case Component::ComponentType::Camera:
-			new_component = new ComponentCamera(this);
+			component = new ComponentCamera(this);
 			break;
 		}
 
-		if (new_component)
-			components.push_back(new_component);
+		if (component)
+			components.push_back(component);
 
 	}
 	else
 	{
-		// --- If we find a component of the same type, tell the user ---
-
-		CONSOLE_LOG("|[error]: The current Game Object already has a component of the type given");
-
+		// --- If we find a component of the same type, tell the user and return such component ---
+		CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
+		component = HasComponent(type);
 	}
 
-	return new_component;
+	return component;
 }
 
 void GameObject::RemoveComponent(Component::ComponentType type)
@@ -218,17 +217,21 @@ void GameObject::RemoveComponent(Component::ComponentType type)
 	}
 }
 
-bool GameObject::HasComponent(Component::ComponentType type) const
+Component* GameObject::HasComponent(Component::ComponentType type) const
 {
 	// --- Search for given type of component ---
+	Component* component = nullptr;
 
 	for (uint i = 0; i < components.size(); ++i)
 	{
 		if (components[i]->GetType() == type)
-			return true;
+		{
+			component = components[i];
+			break;
+		}
 	}
 
-	return false;
+	return component;
 }
 
 std::vector<Component*>& GameObject::GetComponents()

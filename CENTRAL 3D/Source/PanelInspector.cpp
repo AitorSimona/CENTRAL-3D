@@ -229,7 +229,7 @@ inline void PanelInspector::CreateMeshNode(GameObject& Selected) const
 	if (Startup)
 		ImGui::SetNextItemOpen(true);
 
-	if (ImGui::TreeNode("Mesh"))
+	if (mesh->resource_mesh && ImGui::TreeNode("Mesh"))
 	{
 		std::string Triangle_count = "Triangles   ";
 		Triangle_count.append(std::to_string(mesh->resource_mesh->IndicesSize / 3));

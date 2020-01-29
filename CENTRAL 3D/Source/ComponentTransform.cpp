@@ -114,6 +114,10 @@ json ComponentTransform::Save() const
 	return node;
 }
 
+void ComponentTransform::Load(json& node)
+{
+}
+
 void ComponentTransform::UpdateTRS()
 {
 	Local_transform.Decompose(position, rotation, scale);

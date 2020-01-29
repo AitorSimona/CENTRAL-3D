@@ -35,6 +35,7 @@ public:
 
 	// --- Save & Load ---
 	virtual json Save() const = 0;
+	virtual void Load(json& node) = 0;
 
 protected:
 	bool active = false;

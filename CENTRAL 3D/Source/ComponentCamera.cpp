@@ -160,3 +160,7 @@ json ComponentCamera::Save() const
 
 	return node;
 }
+
+void ComponentCamera::Load(json& node)
+{
+}

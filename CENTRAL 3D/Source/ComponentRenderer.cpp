@@ -259,3 +259,7 @@ json ComponentRenderer::Save() const
 	return node;
 }
 
+void ComponentRenderer::Load(json& node)
+{
+}
+

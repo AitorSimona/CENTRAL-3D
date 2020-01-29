@@ -16,7 +16,10 @@ ComponentMesh::~ComponentMesh()
 
 const AABB & ComponentMesh::GetAABB() const
 {
+	if (resource_mesh)
 		return resource_mesh->aabb;
+	else
+		return AABB();
 }
 
 json ComponentMesh::Save() const
@@ -27,5 +30,9 @@ json ComponentMesh::Save() const
 	node["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
 
 	return node;
+}
+
+void ComponentMesh::Load(json& node)
+{
 }
 
