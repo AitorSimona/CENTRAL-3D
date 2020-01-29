@@ -45,13 +45,13 @@ bool PanelProject::Draw()
 		// --- Draw Explorer ---
 		ImGui::SameLine();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
 
-		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y*0.9f), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
+		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y*0.9f), true, projectFlags);
 
 		DrawFolder(App->resources->GetAssetsFolder());
 
-		ImGui::PopStyleVar();
+		//ImGui::PopStyleVar();
 
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 20));
 
@@ -83,20 +83,39 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	ImGui::EndMenuBar();
 
 	//ImGui::BeginChild("Explorer");
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacingX_px, item_spacingY_px));
 
 	if (folder)
 	{
 		const std::vector<Resource*>* resources = &folder->GetResources();
+		uint i = 0;
+		uint row = 0;
+		uint maxColumns = 3;
+
+		ImVec2 vec;
 
 		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
 		{
+			vec = ImGui::GetCursorPos();
+
+			ImGui::SetCursorPosX(vec.x + (row * maxColumns)* (imageSizeX_px + item_spacingX_px));
+			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px));
+
 			std::string item_name = (*it)->GetName();
-
 			LimitText(item_name);
-
 			ImGui::Text(item_name.c_str());
+
+			if ((i + 1) % maxColumns == 0)
+				row++;
+			else
+				ImGui::SameLine();
+
+			i++;
 		}
 	}
+
+	ImGui::PopStyleVar();
+
 
 	//ImGui::EndChild();
 
@@ -105,12 +124,14 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 void PanelProject::LimitText(std::string& text)
 {
-	uint max_size = 10;
-	uint text_pxsize = ImGui::CalcTextSize(text.c_str(), "").x;
+	uint textSizeX_px = ImGui::CalcTextSize(text.c_str(),nullptr).x;
+	uint dotsSizeX_px = ImGui::CalcTextSize("...", nullptr, false, 0).x;
 
-	if (max_size < text_pxsize)
+	// --- The total pixel space available is the text picel space + dots pixel space ---
+	if (imageSizeX_px < textSizeX_px)
 	{
-		text = text.substr(0, max_size - 3);
+		uint charSize = textSizeX_px / text.size();
+		text = text.substr(0, (imageSizeX_px - dotsSizeX_px) / charSize);
 		text.append("...");
 	}
 }
