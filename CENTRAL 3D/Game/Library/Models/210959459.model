@@ -13,11 +13,11 @@
                 "scalez": "100.000000"
             },
             "1": {
-                "ResourceMesh": "Library/Meshes/1164233287.mesh"
+                "ResourceMesh": "Library/Meshes/237788686.mesh"
             }
         },
-        "Parent": "787280250",
-        "UID": "403234910"
+        "Parent": "567833206",
+        "UID": "175032941"
     },
     "Chimney": {
         "Components": {
@@ -33,11 +33,11 @@
                 "scalez": "100.000000"
             },
             "1": {
-                "ResourceMesh": "Library/Meshes/1013162869.mesh"
+                "ResourceMesh": "Library/Meshes/89177303.mesh"
             }
         },
-        "Parent": "787280250",
-        "UID": "462901859"
+        "Parent": "567833206",
+        "UID": "134673283"
     },
     "GameObject (0)": {
         "Components": {
@@ -53,7 +53,7 @@
                 "scalez": "1.000000"
             }
         },
-        "Parent": "870770180",
-        "UID": "787280250"
+        "Parent": "1007868698",
+        "UID": "567833206"
     }
 }

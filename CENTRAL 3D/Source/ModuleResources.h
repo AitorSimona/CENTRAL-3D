@@ -34,7 +34,7 @@ public:
 	//DEPRECATED
 	void ImportAllFolders(const char* directory);
 
-	void SearchAssets(const char* directory, std::vector<std::string>& filters);
+	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
 	Resource* ImportAssets(const char* path);
 	Resource* ImportFolder(const char* path);
 	Resource* ImportScene(const char* path);
@@ -63,6 +63,8 @@ public:
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
+	ResourceFolder* GetAssetsFolder();
+	const std::map<uint, ResourceFolder*>& GetAllFolders() const;
 	bool IsFileImported(const char* file);
 
 	void ONResourceDestroyed(Resource* resource);
@@ -87,6 +89,8 @@ public:
 private:
 	// --- Available importers ---
 	std::vector<Importer*> importers;
+
+	ResourceFolder* AssetsFolder = nullptr;
 
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;

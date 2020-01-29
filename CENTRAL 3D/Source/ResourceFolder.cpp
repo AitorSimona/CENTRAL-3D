@@ -17,3 +17,27 @@ void ResourceFolder::AddResource(Resource* resource)
 {
 	resources.push_back(resource);
 }
+
+void ResourceFolder::SetParent(ResourceFolder* parent)
+{
+	if (parent)
+	{
+		parent = parent;
+		parent->childs.push_back(this);
+	}
+}
+
+const std::vector<Resource*>& ResourceFolder::GetResources()
+{
+	return resources;
+}
+
+const std::vector<ResourceFolder*>& ResourceFolder::GetChilds()
+{
+	return childs;
+}
+
+const ResourceFolder* ResourceFolder::GetParent()
+{
+	return parent;
+}

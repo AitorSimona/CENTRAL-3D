@@ -53,7 +53,7 @@ bool ModuleResources::Start()
 	//filters.push_back("vertex");
 	//filters.push_back("VERTEX");
 
-	SearchAssets(ASSETS_FOLDER, filters);
+	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
 
 	return true;
 }
@@ -78,7 +78,7 @@ void ModuleResources::ImportAllFolders(const char* directory)
 }
 
 // --- Sweep over all files in given directory, if those files pass the given filters, call Import and if it succeeds add them to the given resource folder ---
-void ModuleResources::SearchAssets(const char* directory, std::vector<std::string>& filters)
+ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -87,13 +87,17 @@ void ModuleResources::SearchAssets(const char* directory, std::vector<std::strin
 
 	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
 
-	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
-	{
-		SearchAssets((dir + (*it) + "/").c_str(), filters);
-	}
-
 	// --- Import folder ---
 	ResourceFolder* folder = (ResourceFolder*)ImportFolder(dir.c_str());
+
+	// --- If parent is not nullptr add ourselves as childs ---
+	if (parent)
+		folder->SetParent(parent);
+
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+	{
+		SearchAssets(folder,(dir + (*it) + "/").c_str(), filters);
+	}
 
 	// --- Now import all of its engine-supported files ---
 	std::sort(files.begin(), files.end());
@@ -136,6 +140,8 @@ void ModuleResources::SearchAssets(const char* directory, std::vector<std::strin
 			}
 		}
 	}
+
+	return folder;
 }
 
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
@@ -550,6 +556,16 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	//	type = Resource::ResourceType::META;
 
 	return type;
+}
+
+ResourceFolder* ModuleResources::GetAssetsFolder()
+{
+	return AssetsFolder;
+}
+
+const std::map<uint, ResourceFolder*>& ModuleResources::GetAllFolders() const
+{
+	return folders;
 }
 
 bool ModuleResources::IsFileImported(const char* file)

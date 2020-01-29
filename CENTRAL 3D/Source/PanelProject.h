@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+class ResourceFolder;
+
 class PanelProject : public Panel
 {
 public:
@@ -16,6 +18,8 @@ public:
 
 	std::string dragged;
 private:
+	void DrawFolder(ResourceFolder* folder);
+	void LimitText( std::string& text);
 
 	void RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters);
 };

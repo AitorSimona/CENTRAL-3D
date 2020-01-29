@@ -3,6 +3,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResources.h"
 
+#include "ResourceFolder.h"
 
 #include "Imgui/imgui.h"
 
@@ -19,14 +20,47 @@ PanelProject::~PanelProject()
 
 bool PanelProject::Draw()
 {
-	ImGuiWindowFlags settingsFlags = 0;
-	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
+	ImGuiWindowFlags projectFlags = 0;
+	projectFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_MenuBar;
 
-	if (ImGui::Begin(name, &enabled, settingsFlags))
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+	// --- Draw project panel, Unity style ---
+	if (ImGui::Begin(name, &enabled, projectFlags))
 	{
 		static std::vector<std::string> filters;
+
+		ImGui::BeginMenuBar();
+		ImGui::EndMenuBar();
+
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + 38));
+
+		// --- Draw Directories Tree ---
+		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x*0.10f,ImGui::GetWindowSize().y));
+
 		RecursiveDirectoryDraw(ASSETS_FOLDER, filters);
+
+		ImGui::EndChild();
+
+		// --- Draw Explorer ---
+		ImGui::SameLine();
+
+		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y*0.9f), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
+
+		DrawFolder(App->resources->GetAssetsFolder());
+
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 20));
+
+		// --- Item resizer To be Implemented!! ---
+		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y * 0.1f), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
+		ImGui::BeginMenuBar();
+		ImGui::EndMenuBar();
+		ImGui::EndChild();
+
+		ImGui::EndChild();
 	}
+
+	ImGui::PopStyleVar();
 
 	ImGui::End();
 
@@ -34,6 +68,50 @@ bool PanelProject::Draw()
 	return true;
 }
 
+void PanelProject::DrawFolder(ResourceFolder* folder)
+{
+	//ImGui::BeginChild("Directory",ImVec2(0,0),true, ImGuiWindowFlags_MenuBar);
+
+	ImGui::BeginMenuBar();
+
+	ImGui::Text(folder->GetName());
+
+	ImGui::EndMenuBar();
+
+	//ImGui::BeginChild("Explorer");
+
+	if (folder)
+	{
+		const std::vector<Resource*>* resources = &folder->GetResources();
+
+		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
+		{
+			std::string item_name = (*it)->GetName();
+
+			LimitText(item_name);
+
+			ImGui::Text(item_name.c_str());
+		}
+	}
+
+	//ImGui::EndChild();
+
+	//ImGui::EndChild();
+}
+
+void PanelProject::LimitText(std::string& text)
+{
+	uint max_size = 10;
+	uint text_pxsize = ImGui::CalcTextSize(text.c_str(), "").x;
+
+	if (max_size < text_pxsize)
+	{
+		text = text.substr(0, max_size - 3);
+		text.append("...");
+	}
+}
+
+// MYTODO: To be substituted (folders/files are already loaded)
 void PanelProject::RecursiveDirectoryDraw(const char * directory, std::vector<std::string>& filters)
 {
 	std::vector<std::string> files;
