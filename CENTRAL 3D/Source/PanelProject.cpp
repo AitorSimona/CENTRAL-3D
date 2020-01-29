@@ -45,15 +45,12 @@ bool PanelProject::Draw()
 		// --- Draw Explorer ---
 		ImGui::SameLine();
 
-		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
-
 		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y*0.9f), true, projectFlags);
 
 		DrawFolder(App->resources->GetAssetsFolder());
 
-		//ImGui::PopStyleVar();
-
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 20));
+
 
 		// --- Item resizer To be Implemented!! ---
 		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y * 0.1f), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
@@ -61,7 +58,10 @@ bool PanelProject::Draw()
 		ImGui::EndMenuBar();
 		ImGui::EndChild();
 
+
 		ImGui::EndChild();
+
+
 	}
 
 	ImGui::PopStyleVar();
@@ -74,15 +74,12 @@ bool PanelProject::Draw()
 
 void PanelProject::DrawFolder(ResourceFolder* folder)
 {
-	//ImGui::BeginChild("Directory",ImVec2(0,0),true, ImGuiWindowFlags_MenuBar);
-
 	ImGui::BeginMenuBar();
 
 	ImGui::Text(folder->GetName());
 
 	ImGui::EndMenuBar();
 
-	//ImGui::BeginChild("Explorer");
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacingX_px, item_spacingY_px));
 
 	if (folder)
@@ -90,16 +87,14 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		const std::vector<Resource*>* resources = &folder->GetResources();
 		uint i = 0;
 		uint row = 0;
-		uint maxColumns = 3;
+		uint maxColumns = 2;
 
-		ImVec2 vec;
+		ImVec2 vec = ImGui::GetCursorPos();
 
 		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
 		{
-			vec = ImGui::GetCursorPos();
-
-			ImGui::SetCursorPosX(vec.x + (row * maxColumns)* (imageSizeX_px + item_spacingX_px));
-			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px));
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns)* (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px);
 
 			std::string item_name = (*it)->GetName();
 			LimitText(item_name);
@@ -116,10 +111,6 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 	ImGui::PopStyleVar();
 
-
-	//ImGui::EndChild();
-
-	//ImGui::EndChild();
 }
 
 void PanelProject::LimitText(std::string& text)
