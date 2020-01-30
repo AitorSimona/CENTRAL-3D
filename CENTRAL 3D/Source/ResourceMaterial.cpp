@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleGui.h"
 
 #include "mmgr/mmgr.h"
 
@@ -16,6 +17,8 @@ ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource
 	shader->instances++;
 
 	shader->GetAllUniforms(uniforms);
+
+	previewTexUID = App->gui->defaultfileTexUID;
 }
 
 ResourceMaterial::~ResourceMaterial()

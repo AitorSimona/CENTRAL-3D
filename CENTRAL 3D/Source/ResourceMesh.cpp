@@ -1,4 +1,7 @@
 #include "ResourceMesh.h"
+#include "Application.h"
+#include "ModuleGui.h"
+
 #include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
@@ -7,6 +10,9 @@ ResourceMesh::ResourceMesh(uint UID, std::string source_file) : Resource(Resourc
 {
 	extension = ".mesh";
 	resource_file = MESHES_FOLDER + std::to_string(UID) + extension;
+
+	previewTexUID = App->gui->defaultfileTexUID;
+
 }
 
 ResourceMesh::~ResourceMesh()

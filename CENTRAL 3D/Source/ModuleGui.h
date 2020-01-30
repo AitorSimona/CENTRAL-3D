@@ -44,6 +44,9 @@ public:
 
 	bool IsKeyboardCaptured() const;
 	bool IsMouseCaptured() const;
+
+	void CreateIcons();
+
 public:
 
 	PanelSettings*		panelSettings = nullptr;
@@ -56,8 +59,9 @@ public:
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;
 
+	uint folderTexUID = 0;
+	uint defaultfileTexUID = 0;
 private:
-
 	bool show_demo_window = false;
 
 	bool capture_keyboard = false;

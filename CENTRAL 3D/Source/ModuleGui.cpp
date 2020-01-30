@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
+#include "ModuleTextures.h"
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
@@ -417,5 +418,14 @@ bool ModuleGui::IsKeyboardCaptured() const
 bool ModuleGui::IsMouseCaptured() const
 {
 	return capture_mouse;
+}
+
+void ModuleGui::CreateIcons()
+{
+	uint width, height;
+	// --- Create Icon textures ---
+	folderTexUID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, 0);
+	defaultfileTexUID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, 0);
+
 }
 

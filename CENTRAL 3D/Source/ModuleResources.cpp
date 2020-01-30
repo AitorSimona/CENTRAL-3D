@@ -1,6 +1,7 @@
 #include "ModuleResources.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
+#include "ModuleGui.h"
 
 #include "Importers.h"
 #include "Resources.h"
@@ -47,6 +48,7 @@ bool ModuleResources::Init(json file)
 bool ModuleResources::Start()
 {
 	// --- Import all resources in Assets at startup ---
+	App->gui->CreateIcons();
 
 	std::vector<std::string> filters;
 	filters.push_back("fbx");

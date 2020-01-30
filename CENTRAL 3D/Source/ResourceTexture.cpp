@@ -1,5 +1,6 @@
 #include "ResourceTexture.h"
 #include "Application.h"
+#include "ModuleGui.h"
 #include "ModuleTextures.h"
 #include "OpenGL.h"
 
@@ -12,6 +13,9 @@ ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(R
 	resource_file = TEXTURES_FOLDER + std::to_string(UID) + extension;
 
 	buffer_id = App->textures->GetDefaultTextureID();
+
+	previewTexUID = App->gui->defaultfileTexUID;
+
 }
 
 ResourceTexture::~ResourceTexture()

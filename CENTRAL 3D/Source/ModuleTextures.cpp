@@ -179,8 +179,8 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 	width = imageInfo.Width;
 	height = imageInfo.Height;
 
-	//if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
-	//	iluFlipImage();
+	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		iluFlipImage();
 
 	// --- Convert the image into a suitable format to work with ---
 	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
@@ -188,24 +188,24 @@ inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width,
 		// --- Create the texture ---
 		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
 
-		if (!load_existing)
-		{
-			// --- Save to Lib ---
-			ILuint size;
-			ILubyte *data;
-			ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
-			size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
+		//if (!load_existing)
+		//{
+		//	// --- Save to Lib ---
+		//	ILuint size;
+		//	ILubyte *data;
+		//	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
+		//	size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
 
-			if (size > 0) {
-				data = new ILubyte[size]; // allocate data buffer
+		//	if (size > 0) {
+		//		data = new ILubyte[size]; // allocate data buffer
 
-				if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
-					App->fs->Save(path, data, size);
+		//		if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
+		//			App->fs->Save(path, data, size);
 
-				delete[] data;
-			}
+		//		delete[] data;
+		//	}
 
-		}
+		//}
 	}
 	else
 		CONSOLE_LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));

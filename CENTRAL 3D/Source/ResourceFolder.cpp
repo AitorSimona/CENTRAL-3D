@@ -1,5 +1,6 @@
 #include "ResourceFolder.h"
 #include "Application.h"
+#include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 
 
@@ -7,6 +8,7 @@ ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Res
 {
 	extension = ".folder";
 	resource_file = source_file;
+	previewTexUID = App->gui->folderTexUID;
 }
 
 ResourceFolder::~ResourceFolder()

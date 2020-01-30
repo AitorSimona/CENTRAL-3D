@@ -60,8 +60,6 @@ bool PanelProject::Draw()
 
 
 		ImGui::EndChild();
-
-
 	}
 
 	ImGui::PopStyleVar();
@@ -85,11 +83,36 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	if (folder)
 	{
 		const std::vector<Resource*>* resources = &folder->GetResources();
+		const std::vector<ResourceFolder*>* directories = &folder->GetChilds();
 		uint i = 0;
 		uint row = 0;
-		uint maxColumns = 2;
+		maxColumns = ImGui::GetWindowSize().x / (imageSizeX_px + item_spacingX_px);
 
 		ImVec2 vec = ImGui::GetCursorPos();
+
+		for (std::vector<ResourceFolder*>::const_iterator it = directories->begin(); it != directories->end(); ++it)
+		{
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px);
+
+			std::string item_name = (*it)->GetName();
+			LimitText(item_name);
+
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
+
+			ImGui::Text(item_name.c_str());
+
+			if ((i + 1) % maxColumns == 0)
+				row++;
+			else
+				ImGui::SameLine();
+
+			i++;
+		}
+
 
 		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
 		{
@@ -98,7 +121,13 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			std::string item_name = (*it)->GetName();
 			LimitText(item_name);
-			ImGui::Text(item_name.c_str());
+
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0),ImVec4(255,255,0,255));
+
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
+
+			ImGui::TextColored(ImVec4(255,255,0,255),item_name.c_str());
 
 			if ((i + 1) % maxColumns == 0)
 				row++;

@@ -4,6 +4,7 @@
 #include "ResourceShader.h"
 
 #include "Application.h"
+#include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResources.h"
 
@@ -17,6 +18,9 @@ ResourceShader::ResourceShader(uint UID, std::string source_file) : Resource(Res
 	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
 
 	CreateShaderProgram();
+
+	previewTexUID = App->gui->defaultfileTexUID;
+
 }
 
 ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPath, bool is_extern) : Resource(Resource::ResourceType::SHADER)

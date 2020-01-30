@@ -34,6 +34,7 @@ public:
 	const char* GetOriginalFile() const;
 	const char* GetResourceFile() const;
 	const char* GetName() const;
+	const uint GetPreviewTexUID() const;
 
 	void SetName(const char* name);
 	void SetOriginalFilename(const char* filename);
@@ -46,6 +47,7 @@ public:
 	uint instances = 0;
 
 protected:
+	uint previewTexUID = 0;
 	uint UID = 0;
 	ResourceType type = ResourceType::UNKNOWN;
 
