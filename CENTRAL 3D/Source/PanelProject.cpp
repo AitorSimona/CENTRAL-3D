@@ -76,11 +76,38 @@ bool PanelProject::Draw()
 void PanelProject::DrawFolder(ResourceFolder* folder)
 {
 
+	// --- Draw menuBar / path to current folder ---
 	ImGui::BeginMenuBar();
 
-	ImGui::Text(folder->GetName());
+	ResourceFolder* curr = folder;
+
+	ImGui::Text(App->resources->GetAssetsFolder()->GetName());
+
+	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+		currentDirectory = App->resources->GetAssetsFolder();
+
+	std::vector<ResourceFolder*> folders_path;
+
+	while (curr->GetParent())
+	{
+		folders_path.push_back(curr);
+		curr = curr->GetParent();
+	}
+
+	for (std::vector<ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
+	{
+		ImGui::Text((*it)->GetName());
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+			currentDirectory = *it;
+
+		ImGui::SameLine();
+	}
 
 	ImGui::EndMenuBar();
+
+
+	// --- Draw File Explorer ---
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacingX_px, item_spacingY_px));
 

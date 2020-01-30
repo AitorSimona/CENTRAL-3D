@@ -9,6 +9,12 @@ ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Res
 	extension = ".folder";
 	resource_file = source_file;
 	previewTexUID = App->gui->folderTexUID;
+
+	std::string tmp = source_file;
+	tmp.pop_back();
+	App->fs->SplitFilePath(tmp.c_str(), nullptr, &tmp);
+	tmp.append("/");
+	name = tmp;
 }
 
 ResourceFolder::~ResourceFolder()
@@ -24,7 +30,7 @@ void ResourceFolder::SetParent(ResourceFolder* parent)
 {
 	if (parent)
 	{
-		parent = parent;
+		this->parent = parent;
 		parent->childs.push_back(this);
 	}
 }
@@ -39,7 +45,7 @@ const std::vector<ResourceFolder*>& ResourceFolder::GetChilds()
 	return childs;
 }
 
-const ResourceFolder* ResourceFolder::GetParent()
+ResourceFolder* ResourceFolder::GetParent() const
 {
 	return parent;
 }
