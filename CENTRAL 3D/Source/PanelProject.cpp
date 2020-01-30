@@ -81,6 +81,9 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 	ResourceFolder* curr = folder;
 
+	if (currentDirectory == App->resources->GetAssetsFolder())
+		ImGui::TextColored(ImVec4(0, 120, 255, 255), App->resources->GetAssetsFolder()->GetName());
+	else
 	ImGui::Text(App->resources->GetAssetsFolder()->GetName());
 
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
@@ -96,6 +99,9 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 	for (std::vector<ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
 	{
+		if (currentDirectory == *it)
+			ImGui::TextColored(ImVec4(0, 120, 255, 255),(*it)->GetName());
+		else
 		ImGui::Text((*it)->GetName());
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
@@ -129,6 +135,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px);
 
 			std::string item_name = (*it)->GetName();
+			item_name.pop_back();
 			LimitText(item_name);
 
 			if (selectedUID == (*it)->GetUID())
