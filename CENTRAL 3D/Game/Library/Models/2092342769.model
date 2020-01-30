@@ -1,0 +1,59 @@
+{
+    "Baker_house": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "-0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "100.000000",
+                "scaley": "100.000000",
+                "scalez": "100.000000"
+            },
+            "1": {
+                "ResourceMesh": "Library/Meshes/1150221826.mesh"
+            }
+        },
+        "Parent": "737693598",
+        "UID": "1390781335"
+    },
+    "Chimney": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "-0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "100.000000",
+                "scaley": "100.000000",
+                "scalez": "100.000000"
+            },
+            "1": {
+                "ResourceMesh": "Library/Meshes/1894568353.mesh"
+            }
+        },
+        "Parent": "737693598",
+        "UID": "2076034963"
+    },
+    "GameObject (0)": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Parent": "1632865147",
+        "UID": "737693598"
+    }
+}

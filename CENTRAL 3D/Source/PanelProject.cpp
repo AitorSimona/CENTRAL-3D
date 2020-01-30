@@ -149,7 +149,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 				currentDirectory = *it;
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px + ((imageSizeX_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x)/2));
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
 
 			ImGui::TextColored(color, item_name.c_str());
@@ -183,7 +183,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 				selectedUID = (*it)->GetUID();
 
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px + ((imageSizeX_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
 
 			ImGui::TextColored(color,item_name.c_str());
