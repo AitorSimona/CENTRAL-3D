@@ -26,6 +26,7 @@ private:
 	uint maxColumns = 10;
 
 	uint selectedUID = 0;
+	ResourceFolder* currentDirectory = nullptr;
 
 	void DrawFolder(ResourceFolder* folder);
 	void LimitText( std::string& text);

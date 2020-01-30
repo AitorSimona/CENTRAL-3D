@@ -47,7 +47,10 @@ bool PanelProject::Draw()
 
 		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y*0.9f), true, projectFlags);
 
-		DrawFolder(App->resources->GetAssetsFolder());
+		if(currentDirectory == nullptr)
+			currentDirectory = App->resources->GetAssetsFolder();
+
+		DrawFolder(currentDirectory);
 
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 20));
 
@@ -72,6 +75,7 @@ bool PanelProject::Draw()
 
 void PanelProject::DrawFolder(ResourceFolder* folder)
 {
+
 	ImGui::BeginMenuBar();
 
 	ImGui::Text(folder->GetName());
@@ -107,6 +111,9 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			if (ImGui::IsItemClicked())
 				selectedUID = (*it)->GetUID();
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+				currentDirectory = *it;
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
