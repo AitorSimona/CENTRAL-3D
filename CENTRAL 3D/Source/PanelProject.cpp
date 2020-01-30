@@ -87,9 +87,11 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		uint i = 0;
 		uint row = 0;
 		maxColumns = ImGui::GetWindowSize().x / (imageSizeX_px + item_spacingX_px);
+		ImVec4 color = ImVec4(255, 255, 255, 255);
 
 		ImVec2 vec = ImGui::GetCursorPos();
 
+		// --- Draw sub-folders ---
 		for (std::vector<ResourceFolder*>::const_iterator it = directories->begin(); it != directories->end(); ++it)
 		{
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
@@ -98,12 +100,21 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			std::string item_name = (*it)->GetName();
 			LimitText(item_name);
 
+			if (selectedUID == (*it)->GetUID())
+				color = ImVec4(0, 120, 255, 255);
+
 			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+
+			if (ImGui::IsItemClicked())
+				selectedUID = (*it)->GetUID();
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
 
-			ImGui::Text(item_name.c_str());
+			ImGui::TextColored(color, item_name.c_str());
+
+			if (selectedUID == (*it)->GetUID())
+				color = ImVec4(255, 255, 255, 255);
 
 			if ((i + 1) % maxColumns == 0)
 				row++;
@@ -113,7 +124,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			i++;
 		}
 
-
+		// --- Draw the rest of files ---
 		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
 		{
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns)* (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
@@ -122,12 +133,22 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			std::string item_name = (*it)->GetName();
 			LimitText(item_name);
 
-			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0),ImVec4(255,255,0,255));
+			if (selectedUID == (*it)->GetUID())
+				color = ImVec4(0, 120, 255, 255);
+
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0),color);
+
+			if (ImGui::IsItemClicked())
+				selectedUID = (*it)->GetUID();
+
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
 
-			ImGui::TextColored(ImVec4(255,255,0,255),item_name.c_str());
+			ImGui::TextColored(color,item_name.c_str());
+
+			if (selectedUID == (*it)->GetUID())
+				color = ImVec4(255, 255, 255, 255);
 
 			if ((i + 1) % maxColumns == 0)
 				row++;

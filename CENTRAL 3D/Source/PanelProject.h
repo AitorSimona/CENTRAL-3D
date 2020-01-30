@@ -25,6 +25,8 @@ private:
 	uint item_spacingY_px = 15;
 	uint maxColumns = 10;
 
+	uint selectedUID = 0;
+
 	void DrawFolder(ResourceFolder* folder);
 	void LimitText( std::string& text);
 
