@@ -7,6 +7,7 @@
 #include <vector>
 
 class ResourceFolder;
+class Resource;
 
 class PanelProject : public Panel
 {
@@ -16,6 +17,7 @@ public:
 	~PanelProject();
 
 	bool Draw();
+	void SetSelected(Resource* new_selected);
 
 	std::string dragged;
 private:
@@ -25,7 +27,7 @@ private:
 	uint item_spacingY_px = 15;
 	uint maxColumns = 10;
 
-	uint selectedUID = 0;
+	Resource* selected = nullptr;
 	ResourceFolder* currentDirectory = nullptr;
 
 	void DrawFolder(ResourceFolder* folder);

@@ -75,10 +75,14 @@ bool PanelProject::Draw()
 	return true;
 }
 
+void PanelProject::SetSelected(Resource* new_selected)
+{
+	selected = new_selected;
+}
+
 
 void PanelProject::DrawFolder(ResourceFolder* folder)
 {
-
 	// --- Draw menuBar / path to current folder ---
 	ImGui::BeginMenuBar();
 
@@ -141,13 +145,13 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			item_name.pop_back();
 			LimitText(item_name);
 
-			if (selectedUID == (*it)->GetUID())
+			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
 
 			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
 
 			if (ImGui::IsItemClicked())
-				selectedUID = (*it)->GetUID();
+				SetSelected(*it);
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 				currentDirectory = *it;
@@ -157,7 +161,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			ImGui::TextColored(color, item_name.c_str());
 
-			if (selectedUID == (*it)->GetUID())
+			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(255, 255, 255, 255);
 
 			if ((i + 1) % maxColumns == 0)
@@ -177,13 +181,13 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			std::string item_name = (*it)->GetName();
 			LimitText(item_name);
 
-			if (selectedUID == (*it)->GetUID())
+			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
 
 			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0),color);
 
 			if (ImGui::IsItemClicked())
-				selectedUID = (*it)->GetUID();
+				SetSelected(*it);
 
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px + ((imageSizeX_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));
@@ -191,7 +195,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			ImGui::TextColored(color,item_name.c_str());
 
-			if (selectedUID == (*it)->GetUID())
+			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(255, 255, 255, 255);
 
 			if ((i + 1) % maxColumns == 0)
@@ -204,7 +208,6 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	}
 
 	ImGui::PopStyleVar();
-
 }
 
 void PanelProject::LimitText(std::string& text)
