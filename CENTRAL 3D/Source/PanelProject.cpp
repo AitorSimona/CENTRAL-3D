@@ -260,40 +260,40 @@ void PanelProject::RecursiveDirectoryDraw(const char * directory, std::vector<st
 		else
 			pass_filter = true;
 
-		if (pass_filter && ImGui::TreeNodeEx(str.c_str(), ImGuiTreeNodeFlags_Leaf))
-		{
-			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-			{
-				// Not using this at all due to data corruption
-				ImGui::SetDragDropPayload("FBX", str.data(), str.size()); 
+		//if (pass_filter && ImGui::TreeNodeEx(str.c_str(), ImGuiTreeNodeFlags_Leaf))
+		//{
+		//	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		//	{
+		//		// Not using this at all due to data corruption
+		//		ImGui::SetDragDropPayload("FBX", str.data(), str.size()); 
 
-				dragged = ASSETS_FOLDER;
-				dragged.append(str.data());
-				ImGui::EndDragDropSource();
-			}
+		//		dragged = ASSETS_FOLDER;
+		//		dragged.append(str.data());
+		//		ImGui::EndDragDropSource();
+		//	}
 
-			std::string path = directory;
-			path.append((*it).data());
+		//	std::string path = directory;
+		//	path.append((*it).data());
 
-			//uint saved_date = App->resources->GetModDateFromMeta(path.data());
+		//	//uint saved_date = App->resources->GetModDateFromMeta(path.data());
 
-			//// TO BE IMPLEMENTED 
-			//// --- If file is changed, reimport ---
-			//if (App->fs->GetLastModificationTime(path.data()) != saved_date)
-			//{
+		//	//// TO BE IMPLEMENTED 
+		//	//// --- If file is changed, reimport ---
+		//	//if (App->fs->GetLastModificationTime(path.data()) != saved_date)
+		//	//{
 
-			//}
-			//// --- If file is deleted, delete all related files in library and meta ---
-			//else if (saved_date == 0)
-			//{
-			//	//uint uid = App->resources->GetUIDFromMeta(path.data());
+		//	//}
+		//	//// --- If file is deleted, delete all related files in library and meta ---
+		//	//else if (saved_date == 0)
+		//	//{
+		//	//	//uint uid = App->resources->GetUIDFromMeta(path.data());
 
-			//	//std::string lib_path = MODELS_FOLDER;
+		//	//	//std::string lib_path = MODELS_FOLDER;
 
 
-			//}
+		//	//}
 
-			ImGui::TreePop();
-		}
+		//	ImGui::TreePop();
+		//}
 	}
 }
