@@ -534,6 +534,9 @@
     <ClInclude Include="Components.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleEventManager.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -859,6 +862,9 @@
     </ClCompile>
     <ClCompile Include="ImporterFolder.cpp">
       <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEventManager.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
