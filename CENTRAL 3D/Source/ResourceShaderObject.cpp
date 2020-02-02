@@ -3,6 +3,8 @@
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 
+#include "mmgr/mmgr.h"
+
 ResourceShaderObject::ResourceShaderObject(uint UID, std::string source_file) : Resource(Resource::ResourceType::SHADER_OBJECT, UID, source_file)
 {
 	// MYTODO: Should be .vert, .frag ... should go to library folder? ---

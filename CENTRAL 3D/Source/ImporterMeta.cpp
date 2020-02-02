@@ -6,6 +6,9 @@
 #include "ResourceMeta.h"
 #include "JSONLoader.h"
 
+#include "mmgr/mmgr.h"
+
+
 ImporterMeta::ImporterMeta() : Importer(Importer::ImporterType::Meta)
 {
 }

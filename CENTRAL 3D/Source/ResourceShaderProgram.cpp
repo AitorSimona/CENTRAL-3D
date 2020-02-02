@@ -2,6 +2,9 @@
 #include "Application.h"
 #include "ModuleGui.h"
 
+#include "mmgr/mmgr.h"
+
+
 ResourceShaderProgram::ResourceShaderProgram(uint UID, std::string source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file)
 {
 	// MYTODO: Should go to library folder?

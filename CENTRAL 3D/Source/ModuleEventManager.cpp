@@ -1,5 +1,7 @@
 #include "ModuleEventManager.h"
 
+#include "mmgr/mmgr.h"
+
 ModuleEventManager::ModuleEventManager(bool start_enabled)
 {
 }
@@ -16,6 +18,11 @@ bool ModuleEventManager::Init(json file)
 bool ModuleEventManager::Start()
 {
 	return true;
+}
+
+update_status ModuleEventManager::PreUpdate(float dt)
+{
+	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleEventManager::Update(float dt)

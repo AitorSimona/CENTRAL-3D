@@ -4,6 +4,9 @@
 
 #include "ModuleFileSystem.h"
 
+#include "mmgr/mmgr.h"
+
+
 
 ResourceMeta::ResourceMeta(uint UID, std::string source_file) : Resource(Resource::ResourceType::META, UID, source_file)
 {

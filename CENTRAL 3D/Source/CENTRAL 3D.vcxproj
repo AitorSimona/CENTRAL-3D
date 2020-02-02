@@ -187,6 +187,7 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleTimeManager.h" />
     <ClInclude Include="PanelProject.h" />
+    <ClInclude Include="Panels.h" />
     <ClInclude Include="PanelShaderEditor.h" />
     <ClInclude Include="PanelToolbar.h" />
     <ClInclude Include="PanelHierarchy.h" />

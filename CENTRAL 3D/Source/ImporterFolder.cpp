@@ -3,6 +3,9 @@
 #include "ModuleResources.h"
 #include "ModuleFileSystem.h"
 
+#include "mmgr/mmgr.h"
+
+
 ImporterFolder::ImporterFolder() : Importer(Importer::ImporterType::Folder)
 {
 }

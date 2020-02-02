@@ -9,16 +9,7 @@
 #include "GameObject.h"
 #include "ComponentCamera.h"
 
-#include "Panel.h"
-#include "PanelSettings.h"
-#include "PanelAbout.h"
-#include "PanelConsole.h"
-#include "PanelInspector.h"
-#include "PanelHierarchy.h"
-#include "PanelScene.h"
-#include "PanelToolbar.h"
-#include "PanelProject.h"
-#include "PanelShaderEditor.h"
+#include "Panels.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"

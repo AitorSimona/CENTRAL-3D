@@ -3,6 +3,8 @@
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 
+#include "mmgr/mmgr.h"
+
 
 ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Resource::ResourceType::FOLDER, UID, source_file)
 {

@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleGui.h"
 
+#include "mmgr/mmgr.h"
 
 ResourceModel::ResourceModel(uint UID, std::string source_file) : Resource(Resource::ResourceType::MODEL, UID, source_file)
 {

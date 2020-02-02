@@ -1,10 +1,11 @@
 #include "Application.h"
+#include "ModuleEventManager.h"
+#include "ModuleInput.h"
 #include "ModuleTimeManager.h"
 #include "ModuleHardware.h"
 #include "ModuleFileSystem.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
-#include "ModuleInput.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
@@ -20,12 +21,13 @@ Application::Application()
 	configpath = "Settings/EditorConfig.json";
 	RandomNumber = new math::LCG();
 
+	event_manager = new ModuleEventManager(true);
+	input = new ModuleInput(true);
 	time = new ModuleTimeManager(true);
 	hardware = new ModuleHardware(true);
 	fs =  new ModuleFileSystem(true,ASSETS_FOLDER);
 	window = new ModuleWindow(true);
 	scene_manager = new ModuleSceneManager(true);
-	input = new ModuleInput(true);
 	renderer3D = new ModuleRenderer3D(true);
 	camera = new ModuleCamera3D(true);
 	gui = new ModuleGui(true);
@@ -37,6 +39,8 @@ Application::Application()
 	// They will CleanUp() in reverse order
 
 	// Main Modules
+	AddModule(event_manager);
+	AddModule(input);
 	AddModule(time);
 
 
@@ -46,7 +50,6 @@ Application::Application()
 	AddModule(resources);
 	AddModule(window);
 	AddModule(camera);
-	AddModule(input);
 	AddModule(gui);
 
 	// Scenes

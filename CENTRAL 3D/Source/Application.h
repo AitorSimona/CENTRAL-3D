@@ -36,6 +36,7 @@ class ModuleTextures;
 class ModuleSceneManager;
 class ModuleResources;
 class ModuleTimeManager;
+class ModuleEventManager;
 
 class Application
 {
@@ -69,6 +70,7 @@ public:
 	ModuleSceneManager* scene_manager = nullptr;
 	ModuleResources* resources = nullptr;
 	ModuleTimeManager* time = nullptr;
+	ModuleEventManager* event_manager = nullptr;
 
 private:
 

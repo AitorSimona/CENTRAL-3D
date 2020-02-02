@@ -17,6 +17,8 @@
 
 #include "ResourceModel.h"
 
+#include "mmgr/mmgr.h"
+
 
 ImporterModel::ImporterModel() : Importer(Importer::ImporterType::Model)
 {
