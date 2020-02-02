@@ -13,11 +13,11 @@ public:
 	~ModuleCamera3D();
 
 	bool Init(json config) override;
-	bool Start();
-	update_status Update(float dt);
+	bool Start() override;
+	update_status Update(float dt) override;
 	void UpdateCamera();
 	
-	bool CleanUp();
+	bool CleanUp() override;
 
 	void FrameObject(GameObject* GO);
 	void OnMouseClick(const float mouse_x, const float mouse_y);

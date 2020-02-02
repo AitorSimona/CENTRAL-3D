@@ -25,10 +25,11 @@ public:
 	ModuleResources(bool start_enabled = true);
 	~ModuleResources();
 
-	bool Init(json file);
-	bool Start();
-	update_status Update(float dt);
-	bool CleanUp();
+	bool Init(json file) override;
+	bool Start() override;
+	//void ONEvent(const Event& event) const override;
+	update_status Update(float dt) override;
+	bool CleanUp() override;
 
 	// --- Importing ---
 	//DEPRECATED

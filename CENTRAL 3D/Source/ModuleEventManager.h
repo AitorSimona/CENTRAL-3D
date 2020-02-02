@@ -32,11 +32,11 @@ public:
 	ModuleEventManager(bool start_enabled = true);
 	~ModuleEventManager();
 
-	bool Init(json file);
-	bool Start();
-	update_status PreUpdate(float dt);
-	update_status Update(float dt);
-	bool CleanUp();
+	bool Init(json file) override;
+	bool Start() override;
+	update_status PreUpdate(float dt) override;
+	update_status Update(float dt) override;
+	bool CleanUp() override;
 };
 
 #endif

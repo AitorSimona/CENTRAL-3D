@@ -15,9 +15,9 @@ public:
 	// Destructor
 	virtual ~ModuleWindow();
 
-	bool Init(json file);
+	bool Init(json file) override;
 	bool Start() override;
-	bool CleanUp();
+	bool CleanUp() override;
 
 	// On Resize
 	void UpdateWindowSize() const;

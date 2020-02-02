@@ -14,9 +14,9 @@ public:
 	ModuleTextures(bool start_enabled = true);
 	~ModuleTextures();
 
-	bool Init(json file);
-	bool Start();
-	bool CleanUp();
+	bool Init(json file) override;
+	bool Start() override;
+	bool CleanUp() override;
 
 	uint CreateTextureFromFile(const char* path, uint &width, uint &height, uint LibUID) const;
 	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;

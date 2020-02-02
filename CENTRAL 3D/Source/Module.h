@@ -3,6 +3,8 @@
 #include <string>
 #include "JSONLoader.h"
 
+struct Event;
+
 class Module
 {
 private :
@@ -25,6 +27,8 @@ public:
 	{
 		return true;
 	}
+
+	virtual void ONEvent(const Event& event) const {}
 
 	virtual update_status PreUpdate(float dt)
 	{
