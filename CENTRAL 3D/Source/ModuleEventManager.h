@@ -2,8 +2,12 @@
 #define __MODULE_EVENT_MANAGER_H__
 
 #include "Module.h"
+#include "Globals.h"
 
 class GameObject;
+
+#define MAX_EVENTS 25
+//#define EVENT_TYPES 4
 
 struct Event
 {
@@ -13,7 +17,7 @@ struct Event
 		Window_resize,
 		File_dropped,
 		invalid
-	} type;	
+	} type = EventType::invalid;	
 
 	union
 	{
@@ -21,7 +25,7 @@ struct Event
 	};
 
 	Event(EventType type) : type(type) {}
-
+	Event() {}
 };
 
 class ModuleEventManager : public Module
@@ -37,6 +41,14 @@ public:
 	update_status PreUpdate(float dt) override;
 	update_status Update(float dt) override;
 	bool CleanUp() override;
+
+	void PushEvent(Event& new_event);
+
+private:
+	Event events[MAX_EVENTS];
+
+	uint head;
+	uint tail;
 };
 
 #endif
