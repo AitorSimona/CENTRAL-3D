@@ -4,10 +4,13 @@
 #include "Module.h"
 #include "Globals.h"
 
+#define MAX_EVENTS 25
+#define EVENT_TYPES 4
+
+typedef void (*Function)(const Event & e);
+
 class GameObject;
 
-#define MAX_EVENTS 25
-//#define EVENT_TYPES 4
 
 struct Event
 {
@@ -28,6 +31,11 @@ struct Event
 	Event() {}
 };
 
+struct Listeners
+{
+	std::vector<Function> listeners;
+};
+
 class ModuleEventManager : public Module
 {
 public:
@@ -43,9 +51,12 @@ public:
 	bool CleanUp() override;
 
 	void PushEvent(Event& new_event);
+	void AddListener(Event::EventType type, Function callback);
+	void RemoveListener(Event::EventType type, Function callback);
 
 private:
 	Event events[MAX_EVENTS];
+	Listeners listeners[EVENT_TYPES];
 
 	uint head;
 	uint tail;
