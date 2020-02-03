@@ -12,6 +12,7 @@
 #include "ModuleResources.h"
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
+#include "ModuleEventManager.h"
 #include "ComponentCamera.h"
 
 #include "ModuleGui.h"
@@ -28,7 +29,18 @@
 
 #include "mmgr/mmgr.h"
 
+// --- Event Manager Callbacks ---
 
+void ModuleSceneManager::ONResourceSelected(const Event& e)
+{
+	App->scene_manager->SetSelectedGameObject(nullptr);
+}
+
+void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
+{
+}
+
+// -------------------------------
 
 ModuleSceneManager::ModuleSceneManager(bool start_enabled)
 {
@@ -38,11 +50,17 @@ ModuleSceneManager::~ModuleSceneManager()
 {
 }
 
+
 bool ModuleSceneManager::Init(json file)
 {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
+
+	// --- Add Event Listeners ---
+	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, ONGameObjectDestroyed);
+	App->event_manager->AddListener(Event::EventType::Resource_selected, ONResourceSelected);
+
 
 	return true;
 }
@@ -110,6 +128,7 @@ bool ModuleSceneManager::CleanUp()
 
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteVertexArrays(1, &Grid_VAO);
+
 
 	return true;
 }
@@ -360,7 +379,7 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 
 		// --- Set Selected ---
 		if (toSelect)
-			SelectedGameObject = toSelect;
+			SetSelectedGameObject(toSelect);
 
 	/*}*/
 }
@@ -446,6 +465,13 @@ void ModuleSceneManager::GatherGameObjects(std::vector<GameObject*>& scene_gos, 
 void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 {
 	SelectedGameObject = go;
+
+	if (SelectedGameObject)
+	{
+		Event e(Event::EventType::GameObject_selected);
+		e.go = go;
+		App->event_manager->PushEvent(e);
+	}
 }
 
 void ModuleSceneManager::SetTextureToSelectedGO(uint id)

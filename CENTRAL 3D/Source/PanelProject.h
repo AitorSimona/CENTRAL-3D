@@ -8,6 +8,7 @@
 
 class ResourceFolder;
 class Resource;
+struct Event;
 
 class PanelProject : public Panel
 {
@@ -20,6 +21,9 @@ public:
 	void SetSelected(Resource* new_selected);
 
 	std::string dragged;
+
+private:
+	static void ONGameObjectSelected(const Event& e);
 private:
 	uint imageSizeX_px = 64;
 	uint imageSizeY_px = 64;

@@ -45,11 +45,6 @@ update_status ModuleEventManager::PreUpdate(float dt)
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleEventManager::Update(float dt)
-{
-	return update_status::UPDATE_CONTINUE;
-}
-
 bool ModuleEventManager::CleanUp()
 {
 	for (uint i = 0; i < EVENT_TYPES; ++i)

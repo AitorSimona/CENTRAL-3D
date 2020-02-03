@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleGui.h"
-#include "ModuleEventManager.h"
 
 #include "Importers.h"
 #include "Resources.h"
@@ -27,11 +26,6 @@ ModuleResources::~ModuleResources()
 {
 }
 
-void MyTestCallback(const Event& e)
-{
-	uint i = 0;
-}
-
 bool ModuleResources::Init(json file)
 {
 	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
@@ -47,10 +41,6 @@ bool ModuleResources::Init(json file)
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
 	importers.push_back(new ImporterMeta());
-
-	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, MyTestCallback);
-	App->event_manager->PushEvent(Event(Event::EventType::GameObject_destroyed));
-	//App->event_manager->RemoveListener(Event::EventType::GameObject_destroyed, MyTestCallback);
 
 	return true;
 }

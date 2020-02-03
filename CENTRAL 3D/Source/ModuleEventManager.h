@@ -5,18 +5,20 @@
 #include "Globals.h"
 
 #define MAX_EVENTS 25
-#define EVENT_TYPES 4
+#define EVENT_TYPES 6
 
 typedef void (*Function)(const Event & e);
 
 class GameObject;
-
+class Resource;
 
 struct Event
 {
 	enum class EventType
 	{
 		GameObject_destroyed,
+		GameObject_selected,
+		Resource_selected,
 		Window_resize,
 		File_dropped,
 		invalid
@@ -25,6 +27,7 @@ struct Event
 	union
 	{
 		GameObject* go = nullptr;
+		Resource* resource;
 	};
 
 	Event(EventType type) : type(type) {}
@@ -47,7 +50,6 @@ public:
 	bool Init(json file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
-	update_status Update(float dt) override;
 	bool CleanUp() override;
 
 	void PushEvent(Event& new_event);

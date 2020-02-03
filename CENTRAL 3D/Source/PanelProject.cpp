@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResources.h"
+#include "ModuleEventManager.h"
+#include "ModuleGui.h"
 
 #include "ResourceFolder.h"
 
@@ -10,13 +12,25 @@
 
 #include "mmgr/mmgr.h"
 
+// --- Event Manager Callbacks ---
+void PanelProject::ONGameObjectSelected(const Event& e)
+{
+	App->gui->panelProject->SetSelected(nullptr);
+}
+
+// -------------------------------
+
 PanelProject::PanelProject(char * name) : Panel(name)
 {
+	// --- Add Event Listeners ---
+	App->event_manager->AddListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
 }
 
 PanelProject::~PanelProject()
 {
+	App->event_manager->AddListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
 }
+
 
 // MYTODO: Clean this up
 
@@ -78,6 +92,13 @@ bool PanelProject::Draw()
 void PanelProject::SetSelected(Resource* new_selected)
 {
 	selected = new_selected;
+
+	if (selected)
+	{
+		Event e(Event::EventType::Resource_selected);
+		e.resource = selected;
+		App->event_manager->PushEvent(e);
+	}
 }
 
 

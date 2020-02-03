@@ -13,7 +13,7 @@ struct aiScene;
 struct ImportMaterialData;
 struct par_shapes_mesh_s;
 class ResourceMesh;
-
+struct Event;
 
 class ModuleSceneManager : public Module
 {
@@ -70,6 +70,11 @@ public:
 		box.GetCornerPoints(corners);
 		DrawWireFromVertices(corners, color, VAO);
 	};
+
+private:
+	// --- Event Callbacks ---
+	static void ONResourceSelected(const Event& e);
+	static void ONGameObjectDestroyed(const Event& e);
 
 private:
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
