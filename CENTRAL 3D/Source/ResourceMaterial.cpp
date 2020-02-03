@@ -14,11 +14,11 @@ ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource
 	resource_file = App->fs->GetDirectoryFromPath(source_file) + std::to_string(UID) + extension;
 
 	shader = App->renderer3D->defaultShader;
-	shader->instances++;
+	//shader->instances++;
 
 	shader->GetAllUniforms(uniforms);
 
-	previewTexUID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexUID;
 }
 
 ResourceMaterial::~ResourceMaterial()
@@ -33,6 +33,14 @@ ResourceMaterial::~ResourceMaterial()
 	}
 
 	uniforms.clear();
+}
+
+void ResourceMaterial::LoadInMemory()
+{
+}
+
+void ResourceMaterial::FreeMemory()
+{
 }
 
 void ResourceMaterial::UpdateUniforms()

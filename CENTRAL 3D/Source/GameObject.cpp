@@ -25,8 +25,8 @@ GameObject::~GameObject()
 
 	ComponentMaterial* mat = GetComponent<ComponentMaterial>();
 
-	if (mat && mat->resource_material && mat->resource_material->resource_diffuse)
-		mat->resource_material->resource_diffuse->instances--;
+	//if (mat && mat->resource_material && mat->resource_material->resource_diffuse)
+	//	mat->resource_material->resource_diffuse->instances--;
 
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{

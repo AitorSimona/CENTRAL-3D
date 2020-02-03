@@ -11,10 +11,18 @@ ResourceShaderProgram::ResourceShaderProgram(uint UID, std::string source_file) 
 	extension = ".shader";
 	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
 
-	previewTexUID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexUID;
 
 }
 
 ResourceShaderProgram::~ResourceShaderProgram()
+{
+}
+
+void ResourceShaderProgram::LoadInMemory()
+{
+}
+
+void ResourceShaderProgram::FreeMemory()
 {
 }

@@ -141,6 +141,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	ImGui::EndMenuBar();
 
 
+
+
 	// --- Draw File Explorer ---
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacingX_px, item_spacingY_px));

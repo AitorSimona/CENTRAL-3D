@@ -10,10 +10,18 @@ ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resou
 	extension = ".scene";
 	resource_file = SCENES_FOLDER + std::to_string(UID) + extension;
 
-	previewTexUID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexUID;
 
 }
 
 ResourceScene::~ResourceScene()
+{
+}
+
+void ResourceScene::LoadInMemory()
+{
+}
+
+void ResourceScene::FreeMemory()
 {
 }

@@ -8,6 +8,9 @@ class ResourceModel : public Resource
 public:
 	ResourceModel(uint UID, std::string source_file);
 	~ResourceModel();
+
+	void LoadInMemory() override;
+	void FreeMemory() override;
 };
 
 #endif //__RESOURCE_MODEL_H__

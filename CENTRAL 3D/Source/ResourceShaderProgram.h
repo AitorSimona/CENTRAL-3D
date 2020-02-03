@@ -8,6 +8,9 @@ class ResourceShaderProgram : public Resource
 public:
 	ResourceShaderProgram(uint UID, std::string source_file);
 	~ResourceShaderProgram();
+
+	void LoadInMemory() override;
+	void FreeMemory() override;
 };
 
 #endif //__RESOURCE_SHADER_PROGRAM_H__

@@ -76,7 +76,7 @@ bool PanelScene::Draw()
 				if (App->gui->panelProject)
 				{
 					std::string extension;
-					App->fs->SplitFilePath(App->gui->panelProject->dragged.data(), nullptr, nullptr, &extension);
+					//App->fs->SplitFilePath(App->gui->panelProject->dragged.data(), nullptr, nullptr, &extension);
 
 					if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0)
 					{

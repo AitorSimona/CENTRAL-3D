@@ -56,7 +56,7 @@ const char * Resource::GetName() const
 
 const uint Resource::GetPreviewTexUID() const
 {
-	return previewTexUID;
+	return previewTexID;
 }
 
 void Resource::SetName(const char * name)

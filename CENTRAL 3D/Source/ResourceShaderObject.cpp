@@ -11,10 +11,18 @@ ResourceShaderObject::ResourceShaderObject(uint UID, std::string source_file) : 
 	extension = ".shobj";
 	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
 
-	previewTexUID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexUID;
 
 }
 
 ResourceShaderObject::~ResourceShaderObject()
+{
+}
+
+void ResourceShaderObject::LoadInMemory()
+{
+}
+
+void ResourceShaderObject::FreeMemory()
 {
 }

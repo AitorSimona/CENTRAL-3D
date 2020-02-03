@@ -19,9 +19,6 @@ public:
 
 	bool Draw();
 	void SetSelected(Resource* new_selected);
-
-	std::string dragged;
-
 private:
 	static void ONGameObjectSelected(const Event& e);
 private:

@@ -22,8 +22,8 @@ public:
 
 	void CreateAABB();
 
-	void LoadInMemory();
-	void FreeMemory();
+	void LoadInMemory() override;
+	void FreeMemory() override;
 
 
 private:

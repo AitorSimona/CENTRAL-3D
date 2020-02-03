@@ -235,9 +235,9 @@ inline void PanelInspector::CreateMeshNode(GameObject& Selected) const
 		Triangle_count.append(std::to_string(mesh->resource_mesh->IndicesSize / 3));
 		ImGui::Text(Triangle_count.data());
 
-		ImGui::Text("Instances:");
-		ImGui::SameLine();
-		ImGui::Text(std::to_string(mesh->resource_mesh->instances).data());
+		//ImGui::Text("Instances:");
+		//ImGui::SameLine();
+		//ImGui::Text(std::to_string(mesh->resource_mesh->instances).data());
 
 		ImGui::TreePop();
 	}

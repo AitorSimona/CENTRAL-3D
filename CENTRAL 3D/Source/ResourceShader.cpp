@@ -19,7 +19,7 @@ ResourceShader::ResourceShader(uint UID, std::string source_file) : Resource(Res
 
 	CreateShaderProgram();
 
-	previewTexUID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexUID;
 
 }
 

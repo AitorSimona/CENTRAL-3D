@@ -14,7 +14,7 @@ ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(R
 
 	buffer_id = App->textures->GetDefaultTextureID();
 
-	previewTexUID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexUID;
 
 }
 

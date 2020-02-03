@@ -9,6 +9,9 @@ public:
 	ResourceMeta(uint UID, std::string source_file);
 	~ResourceMeta();
 
+	void LoadInMemory() override;
+	void FreeMemory() override;
+
 	uint Date = 0;
 };
 

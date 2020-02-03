@@ -186,9 +186,9 @@ Resource* ModuleResources::ImportAssets(const char* path)
 		resource = ImportShaderObject(path);
 		break;
 
-	case Resource::ResourceType::META:
+	//case Resource::ResourceType::META:
 
-		break;
+	//	break;
 
 	case Resource::ResourceType::UNKNOWN:
 		break;
@@ -279,24 +279,24 @@ Resource* ModuleResources::ImportModel(const char* path)
 
 	if (IModel && IMeta)
 	{
-		// --- MYTODO: This should not be done here, user will decide when to load/ else a scene will be loaded ---
+		// --- MYTODO: This should not be done here, user will decide when to load/ a scene will be loaded ---
 		// --- If the resource is already in library, load from there ---
-		if (IsFileImported(path))
-		{
-			// --- Load meta first ---
-			ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
-			
-			if (meta)
-			{
-				std::string model_path = MODELS_FOLDER;
-				model_path.append(std::to_string(meta->GetUID()));
-				model_path.append(".model");
-				model = IModel->Load(model_path.c_str());
-			}
-		}
+		//if (IsFileImported(path))
+		//{
+		//	// --- Load meta first ---
+		//	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+		//	
+		//	if (meta)
+		//	{
+		//		std::string model_path = MODELS_FOLDER;
+		//		model_path.append(std::to_string(meta->GetUID()));
+		//		model_path.append(".model");
+		//		model = IModel->Load(model_path.c_str());
+		//	}
+		//}
 
 		// --- Else call relevant importer ---
-		else
+		if (!IsFileImported(path))
 		{
 			// --- Duplicate File into Assets folder ---
 			std::string relative_path = ASSETS_FOLDER;

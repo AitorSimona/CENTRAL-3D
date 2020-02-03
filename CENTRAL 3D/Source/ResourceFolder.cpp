@@ -10,7 +10,7 @@ ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Res
 {
 	extension = ".folder";
 	resource_file = source_file;
-	previewTexUID = App->gui->folderTexUID;
+	previewTexID = App->gui->folderTexUID;
 
 	std::string tmp = source_file;
 	tmp.pop_back();
@@ -20,6 +20,14 @@ ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Res
 }
 
 ResourceFolder::~ResourceFolder()
+{
+}
+
+void ResourceFolder::LoadInMemory()
+{
+}
+
+void ResourceFolder::FreeMemory()
 {
 }
 

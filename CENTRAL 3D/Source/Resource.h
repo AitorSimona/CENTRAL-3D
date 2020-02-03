@@ -36,18 +36,17 @@ public:
 	const char* GetName() const;
 	const uint GetPreviewTexUID() const;
 
+protected:
+	// --- Utilities ---
+	virtual void LoadInMemory() = 0;
+	virtual void FreeMemory() = 0;
+
 	void SetName(const char* name);
 	void SetOriginalFilename(const char* filename);
 
-	// --- Utilities ---
-	virtual void LoadOnMemory() {};
-	virtual void FreeMemory() {};
-
-public:
-	uint instances = 0;
-
 protected:
-	uint previewTexUID = 0;
+	uint instances = 0;
+	uint previewTexID = 0;
 	uint UID = 0;
 	ResourceType type = ResourceType::UNKNOWN;
 
