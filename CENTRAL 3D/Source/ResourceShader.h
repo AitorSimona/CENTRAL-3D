@@ -46,7 +46,7 @@ public:
 
 	void Save();
 
-	void LoadInMemory() override;
+	bool LoadInMemory() override;
 	void FreeMemory() override;
 	void ReloadAndCompileShader();
 	void GetAllUniforms(std::vector<Uniform*>& uniforms);

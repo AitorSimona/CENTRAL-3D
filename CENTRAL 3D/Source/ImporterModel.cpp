@@ -82,77 +82,79 @@ Resource* ImporterModel::Load(const char* path) const
 {
 	Resource* resource = nullptr;
 
-	if (path)
-	{
-		// MYTODO: Define ResourceModel and .model, should be able to retrieve original file, UID...
-		resource = App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, path, App->GetRandom().Int());
-
-
-		// MYTODO: what lies below should be in Model's LoadInMemory
-
-		//// --- Load Scene/model file ---
-		//json file = App->GetJLoader()->Load(path);
-
-		//// --- Delete buffer data ---
-		//if (!file.is_null())
-		//{
-		//	std::vector<GameObject*> objects;
-
-		//	// --- Iterate main nodes ---
-		//	for (json::iterator it = file.begin(); it != file.end(); ++it)
-		//	{
-		//		// --- Create a Game Object for each node ---
-		//		GameObject* go = App->scene_manager->CreateEmptyGameObject();
-
-		//		// --- Retrieve GO's UID and name ---
-		//		go->SetName(it.key().data());
-		//		std::string uid = file[it.key()]["UID"];
-		//		go->GetUID() = std::stoi(uid);
-
-		//		// --- Iterate components ---
-		//		json components = file[it.key()]["Components"];
-
-
-		//		for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
-		//		{
-		//			// --- Determine ComponentType ---
-		//			std::string type_string = it2.key();
-		//			uint type_uint = std::stoi(type_string);
-		//			Component::ComponentType type = (Component::ComponentType)type_uint;
-
-		//			Component* component = nullptr;
-
-		//			// --- Create/Retrieve Component ---
-		//			component = go->AddComponent(type);
-
-		//			// --- Load Component Data ---
-		//			if (component)
-		//				component->Load(components[type_string]);
-
-		//		}
-
-		//		objects.push_back(go);
-		//	}
-
-		//	// --- Parent Game Objects / Build Hierarchy ---
-		//	for (uint i = 0; i < objects.size(); ++i)
-		//	{
-		//		std::string parent_uid_string = file[objects[i]->GetName()]["Parent"];
-		//		uint parent_uid = std::stoi(parent_uid_string);
-		//	
-		//		for (uint j = 0; j < objects.size(); ++j)
-		//		{
-		//			if (parent_uid == objects[j]->GetUID())
-		//			{
-		//				objects[j]->AddChildGO(objects[i]);
-		//			break;
-		//			}
-		//		}
-		//	}
-		//}
-	}
+	std::string uid;
+	App->fs->SplitFilePath(path, nullptr, &uid);
+	uid = uid.substr(0, uid.find_last_of("."));
+	resource = App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, path, std::stoi(uid));
 
 	return resource;
+}
+
+void ImporterModel::InstanceOnCurrentScene(const char* model_path) const
+{
+	if (model_path)
+	{
+		// --- Load Scene/model file ---
+		json file = App->GetJLoader()->Load(model_path);
+	
+		// --- Delete buffer data ---
+		if (!file.is_null())
+		{
+			std::vector<GameObject*> objects;
+	
+			// --- Iterate main nodes ---
+			for (json::iterator it = file.begin(); it != file.end(); ++it)
+			{
+				// --- Create a Game Object for each node ---
+				GameObject* go = App->scene_manager->CreateEmptyGameObject();
+	
+				// --- Retrieve GO's UID and name ---
+				go->SetName(it.key().data());
+				std::string uid = file[it.key()]["UID"];
+				go->GetUID() = std::stoi(uid);
+	
+				// --- Iterate components ---
+				json components = file[it.key()]["Components"];
+	
+	
+				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+				{
+					// --- Determine ComponentType ---
+					std::string type_string = it2.key();
+					uint type_uint = std::stoi(type_string);
+					Component::ComponentType type = (Component::ComponentType)type_uint;
+	
+					Component* component = nullptr;
+	
+					// --- Create/Retrieve Component ---
+					component = go->AddComponent(type);
+	
+					// --- Load Component Data ---
+					if (component)
+						component->Load(components[type_string]);
+	
+				}
+	
+				objects.push_back(go);
+			}
+	
+			// --- Parent Game Objects / Build Hierarchy ---
+			for (uint i = 0; i < objects.size(); ++i)
+			{
+				std::string parent_uid_string = file[objects[i]->GetName()]["Parent"];
+				uint parent_uid = std::stoi(parent_uid_string);
+			
+				for (uint j = 0; j < objects.size(); ++j)
+				{
+					if (parent_uid == objects[j]->GetUID())
+					{
+						objects[j]->AddChildGO(objects[i]);
+					break;
+					}
+				}
+			}
+		}
+	}
 }
 
 void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_gos, std::string& model_name) const

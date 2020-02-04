@@ -23,8 +23,9 @@ ResourceFolder::~ResourceFolder()
 {
 }
 
-void ResourceFolder::LoadInMemory()
+bool ResourceFolder::LoadInMemory()
 {
+	return true;
 }
 
 void ResourceFolder::FreeMemory()

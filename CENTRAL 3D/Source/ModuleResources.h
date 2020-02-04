@@ -61,7 +61,8 @@ public:
 	}
 
 	// --- Loading ---
-	//Resource* LoadAssets(const char* path)
+	Resource* Instance(uint UID);
+	Resource* GetResource(uint UID);
 
 	// --- Resource Handling ---
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);

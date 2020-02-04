@@ -9,7 +9,7 @@ public:
 	ResourceTexture(uint UID, std::string source_file);
 	~ResourceTexture();
 
-	void LoadInMemory() override;
+	bool LoadInMemory() override;
 	void FreeMemory() override;
 
 public:

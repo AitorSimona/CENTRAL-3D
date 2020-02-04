@@ -10,7 +10,7 @@ public:
 	ResourceFolder(uint UID, std::string source_file);
 	~ResourceFolder();
 
-	void LoadInMemory() override;
+	bool LoadInMemory() override;
 	void FreeMemory() override;
 
 	void AddResource(Resource* resource);

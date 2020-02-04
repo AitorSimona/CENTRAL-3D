@@ -30,11 +30,14 @@ void ResourceMesh::CreateAABB()
 	}
 }
 
-void ResourceMesh::LoadInMemory()
+bool ResourceMesh::LoadInMemory()
 {
 	CreateVBO();
 	CreateEBO();
 	CreateVAO();
+
+	return true;
+
 }
 
 void ResourceMesh::FreeMemory()

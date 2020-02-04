@@ -23,8 +23,10 @@ ResourceMeta::~ResourceMeta()
 {
 }
 
-void ResourceMeta::LoadInMemory()
+bool ResourceMeta::LoadInMemory()
 {
+	return true;
+
 }
 
 void ResourceMeta::FreeMemory()

@@ -64,6 +64,29 @@ const uint Resource::GetPreviewTexID() const
 	return previewTexID;
 }
 
+bool Resource::IsInMemory() const
+{
+	return instances > 1;
+}
+
+bool Resource::LoadToMemory()
+{
+	if (instances > 0)
+		instances++;
+	else
+	instances = LoadInMemory() ? 1 : 0;
+
+	return instances > 0;
+}
+
+void Resource::Release()
+{
+	if (--instances == 0)
+	{
+		FreeMemory();
+	}
+}
+
 void Resource::SetName(const char * name)
 {
 	this->name = name;

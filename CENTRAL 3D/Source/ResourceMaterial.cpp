@@ -35,8 +35,10 @@ ResourceMaterial::~ResourceMaterial()
 	uniforms.clear();
 }
 
-void ResourceMaterial::LoadInMemory()
+bool ResourceMaterial::LoadInMemory()
 {
+	return true;
+
 }
 
 void ResourceMaterial::FreeMemory()

@@ -17,8 +17,11 @@ ResourceModel::~ResourceModel()
 {
 }
 
-void ResourceModel::LoadInMemory()
+bool ResourceModel::LoadInMemory()
 {
+	// MYTODO: if we previously saved all resources in the .model, load them here (ask resource manager)
+
+		return true;
 }
 
 void ResourceModel::FreeMemory()

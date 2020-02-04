@@ -37,9 +37,13 @@ public:
 	const char* GetName() const;
 	const uint GetPreviewTexID() const;
 
+	bool IsInMemory() const;
+	bool LoadToMemory();
+	void Release();
+
 protected:
 	// --- Utilities ---
-	virtual void LoadInMemory() = 0;
+	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
 
 	void SetName(const char* name);

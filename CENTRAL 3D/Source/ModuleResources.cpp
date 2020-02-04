@@ -279,8 +279,7 @@ Resource* ModuleResources::ImportModel(const char* path)
 
 	if (IModel && IMeta)
 	{
-		// --- MYTODO: This should not be done here, user will decide when to load/ a scene will be loaded ---
-		// --- If the resource is already in library, load from there ---
+		// --- If the resource is already in library, just create the resource with no data ---
 		if (IsFileImported(path))
 		{
 			// --- Load meta first ---
@@ -395,6 +394,108 @@ Resource* ModuleResources::ImportShaderObject(const char* path)
 
 
 // ----------------------------------------------------
+
+Resource* ModuleResources::Instance(uint UID)
+{
+	Resource* resource = GetResource(UID);
+
+	if (resource)
+	{
+		switch (resource->GetType())
+		{
+
+		case Resource::ResourceType::MODEL:
+			resource = models.find(UID)->second;
+			resource->LoadToMemory();
+			GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile());
+			break;
+
+		case Resource::ResourceType::MATERIAL:
+			//resource = ImportMaterial(path);
+			break;
+
+		case Resource::ResourceType::TEXTURE:
+			resource = textures.find(UID)->second;
+			resource->LoadToMemory();
+			break;
+
+		case Resource::ResourceType::UNKNOWN:
+			break;
+
+		default:
+			CONSOLE_LOG("![Warning]: Detected unsupported file type on: %i", UID);
+			break;
+		}
+	}
+	else
+		CONSOLE_LOG("![Warning]: Could not instance: %i", UID);
+
+	return resource;
+}
+
+Resource* ModuleResources::GetResource(uint UID)
+{
+	Resource* resource = nullptr;
+	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
+
+	std::map<uint, ResourceMeta*>::iterator it = metas.find(UID);
+
+	if (it != metas.end())
+	{
+		// --- Identify resource type by file extension ---
+		type = GetResourceTypeFromPath((*it).second->GetOriginalFile());
+	}
+
+	// --- Call relevant function depending on resource type ---
+
+	switch (type)
+	{
+	case Resource::ResourceType::FOLDER:
+		//resource = ImportFolder(path);
+		break;
+
+	case Resource::ResourceType::SCENE:
+		//resource = ImportScene(path);
+		break;
+
+	case Resource::ResourceType::MODEL:
+		resource = models.find(UID)->second;
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		//resource = ImportMaterial(path);
+		break;
+
+	case Resource::ResourceType::SHADER:
+		//resource = ImportShaderProgram(path);
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		//resource = ImportTexture(path);
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		//resource = ImportShaderObject(path);
+		break;
+
+		//case Resource::ResourceType::META:
+
+		//	break;
+
+	case Resource::ResourceType::UNKNOWN:
+		break;
+
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %i", UID);
+		break;
+	}
+
+	if(!resource)
+		CONSOLE_LOG("![Warning]: Could not load: %i", UID);
+
+
+	return resource;
+}
 
 // ------------------- RESOURCE HANDLING ----------------------------------------------------------
 

@@ -18,8 +18,10 @@ ResourceScene::~ResourceScene()
 {
 }
 
-void ResourceScene::LoadInMemory()
+bool ResourceScene::LoadInMemory()
 {
+	return true;
+
 }
 
 void ResourceScene::FreeMemory()

@@ -7,6 +7,7 @@
 #include "ModuleWindow.h"
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
+#include "ModuleResources.h"
 
 #include "GameObject.h"
 #include "ComponentTransform.h"
@@ -73,8 +74,8 @@ bool PanelScene::Draw()
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
-				uint UID = (uint)payload->Data;
-
+				uint UID = *(const uint*)payload->Data;
+				App->resources->Instance(UID);
 			}
 
 			ImGui::EndDragDropTarget();

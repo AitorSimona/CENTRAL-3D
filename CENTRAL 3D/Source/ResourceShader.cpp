@@ -181,8 +181,10 @@ void ResourceShader::Save()
 	SaveShader();
 }
 
-void ResourceShader::LoadInMemory()
+bool ResourceShader::LoadInMemory()
 {
+	return true;
+
 }
 
 void ResourceShader::FreeMemory()

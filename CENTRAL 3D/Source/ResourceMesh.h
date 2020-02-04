@@ -22,7 +22,7 @@ public:
 
 	void CreateAABB();
 
-	void LoadInMemory() override;
+	bool LoadInMemory() override;
 	void FreeMemory() override;
 
 

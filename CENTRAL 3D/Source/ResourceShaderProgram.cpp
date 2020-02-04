@@ -19,8 +19,10 @@ ResourceShaderProgram::~ResourceShaderProgram()
 {
 }
 
-void ResourceShaderProgram::LoadInMemory()
+bool ResourceShaderProgram::LoadInMemory()
 {
+	return true;
+
 }
 
 void ResourceShaderProgram::FreeMemory()

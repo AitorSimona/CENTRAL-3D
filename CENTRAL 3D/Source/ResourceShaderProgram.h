@@ -9,7 +9,7 @@ public:
 	ResourceShaderProgram(uint UID, std::string source_file);
 	~ResourceShaderProgram();
 
-	void LoadInMemory() override;
+	bool LoadInMemory() override;
 	void FreeMemory() override;
 };
 

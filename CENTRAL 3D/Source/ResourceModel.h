@@ -9,7 +9,7 @@ public:
 	ResourceModel(uint UID, std::string source_file);
 	~ResourceModel();
 
-	void LoadInMemory() override;
+	bool LoadInMemory() override;
 	void FreeMemory() override;
 };
 

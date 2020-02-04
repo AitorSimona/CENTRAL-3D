@@ -23,8 +23,9 @@ ResourceTexture::~ResourceTexture()
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-void ResourceTexture::LoadInMemory()
+bool ResourceTexture::LoadInMemory()
 {
+	return true;
 }
 
 void ResourceTexture::FreeMemory()

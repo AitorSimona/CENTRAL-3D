@@ -14,7 +14,7 @@ public:
 	ResourceMaterial(uint UID, std::string source_file);
 	~ResourceMaterial();
 
-	void LoadInMemory() override;
+	bool LoadInMemory() override;
 	void FreeMemory() override;
 
 	void UpdateUniforms();
