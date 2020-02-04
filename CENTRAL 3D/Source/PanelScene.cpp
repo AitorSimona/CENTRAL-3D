@@ -71,20 +71,10 @@ bool PanelScene::Draw()
 		// --- Handle drag & drop ---
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FBX"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
-				if (App->gui->panelProject)
-				{
-					std::string extension;
-					//App->fs->SplitFilePath(App->gui->panelProject->dragged.data(), nullptr, nullptr, &extension);
+				uint UID = (uint)payload->Data;
 
-					if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0)
-					{
-						//ImportData data;
-						//App->importer->GetImporterScene()->Import(App->gui->panelProject->dragged.data(), data);
-						//App->gui->panelProject->dragged = "";
-					}
-				}
 			}
 
 			ImGui::EndDragDropTarget();

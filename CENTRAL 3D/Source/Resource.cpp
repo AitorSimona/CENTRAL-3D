@@ -49,12 +49,17 @@ const char * Resource::GetResourceFile() const
 	return resource_file.c_str();
 }
 
-const char * Resource::GetName() const
+const char* Resource::GetExtension() const
 {
-	return name.data();
+	return extension.c_str();
 }
 
-const uint Resource::GetPreviewTexUID() const
+const char * Resource::GetName() const
+{
+	return name.c_str();
+}
+
+const uint Resource::GetPreviewTexID() const
 {
 	return previewTexID;
 }

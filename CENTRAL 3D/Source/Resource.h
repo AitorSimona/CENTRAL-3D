@@ -33,8 +33,9 @@ public:
 	ResourceType GetType() const;
 	const char* GetOriginalFile() const;
 	const char* GetResourceFile() const;
+	const char* GetExtension() const;
 	const char* GetName() const;
-	const uint GetPreviewTexUID() const;
+	const uint GetPreviewTexID() const;
 
 protected:
 	// --- Utilities ---

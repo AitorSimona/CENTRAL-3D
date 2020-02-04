@@ -141,8 +141,6 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	ImGui::EndMenuBar();
 
 
-
-
 	// --- Draw File Explorer ---
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacingX_px, item_spacingY_px));
@@ -171,7 +169,21 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
 
-			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				uint UID = (*it)->GetUID();
+				ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
+				ImGui::Text((*it)->GetName());
+				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
+				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::EndDragDropSource();
+			}
+
+			ImGui::PopStyleVar();
 
 			if (ImGui::IsItemClicked())
 				SetSelected(*it);
@@ -207,7 +219,21 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
 
-			ImGui::Image((ImTextureID)(*it)->GetPreviewTexUID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0),color);
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0),color);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				uint UID = (*it)->GetUID();
+				ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
+				ImGui::Text((*it)->GetName());
+				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
+				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::EndDragDropSource();
+			}
+
+			ImGui::PopStyleVar();
 
 			if (ImGui::IsItemClicked())
 				SetSelected(*it);

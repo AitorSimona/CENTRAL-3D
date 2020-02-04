@@ -60,6 +60,9 @@ public:
 		return nullptr;
 	}
 
+	// --- Loading ---
+	//Resource* LoadAssets(const char* path)
+
 	// --- Resource Handling ---
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);

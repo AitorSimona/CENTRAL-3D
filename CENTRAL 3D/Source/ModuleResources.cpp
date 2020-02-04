@@ -281,22 +281,22 @@ Resource* ModuleResources::ImportModel(const char* path)
 	{
 		// --- MYTODO: This should not be done here, user will decide when to load/ a scene will be loaded ---
 		// --- If the resource is already in library, load from there ---
-		//if (IsFileImported(path))
-		//{
-		//	// --- Load meta first ---
-		//	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
-		//	
-		//	if (meta)
-		//	{
-		//		std::string model_path = MODELS_FOLDER;
-		//		model_path.append(std::to_string(meta->GetUID()));
-		//		model_path.append(".model");
-		//		model = IModel->Load(model_path.c_str());
-		//	}
-		//}
+		if (IsFileImported(path))
+		{
+			// --- Load meta first ---
+			ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+			
+			if (meta)
+			{
+				std::string model_path = MODELS_FOLDER;
+				model_path.append(std::to_string(meta->GetUID()));
+				model_path.append(".model");
+				model = IModel->Load(model_path.c_str());
+			}
+		}
 
 		// --- Else call relevant importer ---
-		if (!IsFileImported(path))
+		else
 		{
 			// --- Duplicate File into Assets folder ---
 			std::string relative_path = ASSETS_FOLDER;
