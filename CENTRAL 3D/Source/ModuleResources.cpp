@@ -374,14 +374,16 @@ Resource* ModuleResources::GetResource(uint UID)
 
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
 
+	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
+
 	resource = folders.find(UID) == folders.end() ? resource : (*folders.find(UID)).second;
-	resource = scenes.find(UID) == scenes.end() ? resource : (*scenes.find(UID)).second;
-	resource = models.find(UID) == models.end() ? resource : (*models.find(UID)).second;
-	resource = materials.find(UID) == materials.end() ? resource : (*materials.find(UID)).second;
-	resource = shaders.find(UID) == shaders.end() ? resource : (*shaders.find(UID)).second;
-	resource = meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second;
-	resource = textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second;
-	resource = shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second;
+	resource = resource ? resource : (scenes.find(UID) == scenes.end() ? resource : (*scenes.find(UID)).second);
+	resource = resource ? resource : (models.find(UID) == models.end() ? resource : (*models.find(UID)).second);
+	resource = resource ? resource : (materials.find(UID) == materials.end() ? resource : (*materials.find(UID)).second);
+	resource = resource ? resource : (shaders.find(UID) == shaders.end() ? resource : (*shaders.find(UID)).second);
+	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
+	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
+	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 
 	if (resource)
 		resource->LoadToMemory();
