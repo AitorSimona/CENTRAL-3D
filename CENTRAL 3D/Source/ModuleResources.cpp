@@ -182,6 +182,10 @@ Resource* ModuleResources::ImportAssets(const char* path)
 		resource = ImportTexture(path);
 		break;
 
+	case Resource::ResourceType::MESH:
+		resource = ImportMesh(path);
+		break;
+
 	case Resource::ResourceType::SHADER_OBJECT:
 		resource = ImportShaderObject(path);
 		break;
@@ -358,6 +362,21 @@ Resource* ModuleResources::ImportShaderProgram(const char* path)
 	return shader;
 }
 
+Resource* ModuleResources::ImportMesh(const char* path)
+{
+	Resource* mesh = nullptr;
+	ImporterMesh* IMesh = GetImporter<ImporterMesh>();
+
+	// --- Load the mesh directly from the lib (only declaration)---
+	if (path && IMesh)
+	{
+		mesh = IMesh->Load(path);
+	}
+
+
+	return mesh;
+}
+
 Resource* ModuleResources::ImportTexture(const char* path)
 {
 	ResourceTexture* texture = nullptr;
@@ -395,56 +414,39 @@ Resource* ModuleResources::ImportShaderObject(const char* path)
 
 // ----------------------------------------------------
 
-Resource* ModuleResources::Instance(uint UID)
-{
-	Resource* resource = GetResource(UID);
-
-	if (resource)
-	{
-		switch (resource->GetType())
-		{
-
-		case Resource::ResourceType::MODEL:
-			resource = models.find(UID)->second;
-			resource->LoadToMemory();
-			GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile());
-			break;
-
-		case Resource::ResourceType::MATERIAL:
-			//resource = ImportMaterial(path);
-			break;
-
-		case Resource::ResourceType::TEXTURE:
-			resource = textures.find(UID)->second;
-			resource->LoadToMemory();
-			break;
-
-		case Resource::ResourceType::UNKNOWN:
-			break;
-
-		default:
-			CONSOLE_LOG("![Warning]: Detected unsupported file type on: %i", UID);
-			break;
-		}
-	}
-	else
-		CONSOLE_LOG("![Warning]: Could not instance: %i", UID);
-
-	return resource;
-}
-
 Resource* ModuleResources::GetResource(uint UID)
 {
 	Resource* resource = nullptr;
 	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
 
-	std::map<uint, ResourceMeta*>::iterator it = metas.find(UID);
+	//std::map<uint, ResourceMeta*>::iterator it = metas.find(UID);
+	std::map<uint, ResourceFolder*>::iterator it2 = folders.find(UID);
+	std::map<uint, ResourceScene*>::iterator it3 = scenes.find(UID);
+	std::map<uint, ResourceModel*>::iterator it4 = models.find(UID);
+	std::map<uint, ResourceMaterial*>::iterator it5 = materials.find(UID);
+	std::map<uint, ResourceShader*>::iterator it6 = shaders.find(UID);
+	std::map<uint, ResourceMesh*>::iterator it7 = meshes.find(UID);
+	std::map<uint, ResourceTexture*>::iterator it8 = textures.find(UID);
+	std::map<uint, ResourceShaderObject*>::iterator it9 = shader_objects.find(UID);
 
-	if (it != metas.end())
-	{
-		// --- Identify resource type by file extension ---
-		type = GetResourceTypeFromPath((*it).second->GetOriginalFile());
-	}
+	//if (it != metas.end())
+	//	type = GetResourceTypeFromPath((*it).second->GetResourceFile());
+	if (it2 != folders.end())
+		type = GetResourceTypeFromPath((*it2).second->GetResourceFile());
+	else if (it3 != scenes.end())
+		type = GetResourceTypeFromPath((*it3).second->GetResourceFile());
+	else if (it4 != models.end())
+		type = GetResourceTypeFromPath((*it4).second->GetResourceFile());
+	else if (it5 != materials.end())
+		type = GetResourceTypeFromPath((*it5).second->GetResourceFile());
+	else if (it6 != shaders.end())
+		type = GetResourceTypeFromPath((*it6).second->GetResourceFile());
+	else if (it7 != meshes.end())
+		type = GetResourceTypeFromPath((*it7).second->GetResourceFile());
+	else if (it8 != textures.end())
+		type = GetResourceTypeFromPath((*it8).second->GetResourceFile());
+	else if (it9 != shader_objects.end())
+		type = GetResourceTypeFromPath((*it9).second->GetResourceFile());
 
 	// --- Call relevant function depending on resource type ---
 
@@ -460,6 +462,9 @@ Resource* ModuleResources::GetResource(uint UID)
 
 	case Resource::ResourceType::MODEL:
 		resource = models.find(UID)->second;
+		resource->LoadToMemory();
+
+		GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile());
 		break;
 
 	case Resource::ResourceType::MATERIAL:
@@ -470,8 +475,15 @@ Resource* ModuleResources::GetResource(uint UID)
 		//resource = ImportShaderProgram(path);
 		break;
 
+
+	case Resource::ResourceType::MESH:
+		resource = meshes.find(UID)->second;
+		resource->LoadToMemory();
+		break;
+
 	case Resource::ResourceType::TEXTURE:
-		//resource = ImportTexture(path);
+		resource = textures.find(UID)->second;
+		resource->LoadToMemory();
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
@@ -640,7 +652,7 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == "scene")
 		type = Resource::ResourceType::SCENE;
 
-	else if (extension == "fbx")
+	else if (extension == "fbx" || extension == "model")
 		type = Resource::ResourceType::MODEL;
 
 	else if (extension == "mat")
@@ -652,11 +664,15 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	else if (extension == "dds" || extension == "png" || extension == "jpg")
 		type = Resource::ResourceType::TEXTURE;
 
+	else if (extension == "mesh")
+		type = Resource::ResourceType::MESH;
+
 	else if (extension == "vertex" || extension == "fragment")
 		type = Resource::ResourceType::SHADER_OBJECT;
 
-	//else if (extension == "meta")
-	//	type = Resource::ResourceType::META;
+	else if (extension == "meta")
+		type = Resource::ResourceType::META;
+
 
 	return type;
 }
@@ -688,6 +704,8 @@ bool ModuleResources::IsFileImported(const char* file)
 
 void ModuleResources::ONResourceDestroyed(Resource* resource)
 {
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
+
 	switch (resource->GetType())
 	{
 	case Resource::ResourceType::FOLDER:
@@ -746,6 +764,8 @@ update_status ModuleResources::Update(float dt)
 
 bool ModuleResources::CleanUp()
 {
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
+
 	// Since std map invalidates iterator on pair delete, a reverse iterator is very useful
 	// We eliminate a pair and automatically our iterator points at a new element
 
@@ -884,20 +904,4 @@ bool ModuleResources::CleanUp()
 //		it->second->Save();
 //	}
 //}
-//
-
-//
-//void ModuleResources::AddResource(Resource* res)
-//{
-//	if (res)
-//		resources[res->GetUID()] = res;
-//}
-//
-//void ModuleResources::AddShader(ResourceShader * shader)
-//{
-//	if(shader)
-//		shaders[shader->name] = shader;
-//}
-//
-//
 //

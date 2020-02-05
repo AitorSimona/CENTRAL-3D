@@ -75,7 +75,7 @@ bool PanelScene::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				App->resources->Instance(UID);
+				App->resources->GetResource(UID);
 			}
 
 			ImGui::EndDragDropTarget();

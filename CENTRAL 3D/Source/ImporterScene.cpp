@@ -646,6 +646,7 @@ void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 		MData.new_mesh = resource_mesh;
 
 		// --- Import mesh data (fill new_mesh)---
+
 		ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
 
 		if (IMesh)
@@ -734,7 +735,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 					transform->SetRotation(eulerangles);
 					transform->Scale(aiscale.x, aiscale.y, aiscale.z);
 				}
-				//// --- Create new Component Renderer to draw mesh ---
+				// --- Create new Component Renderer to draw mesh ---
 				//ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
 
 				//// --- Create new Component Material to store scene's, meshes will use this for now since we do not want to create a material for every mesh if not needed ---

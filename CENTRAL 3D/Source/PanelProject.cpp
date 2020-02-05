@@ -177,7 +177,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			{
 				uint UID = (*it)->GetUID();
 				ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
-				ImGui::Text((*it)->GetName());
+				ImGui::Text(item_name.c_str());
 				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
 				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
 				ImGui::EndDragDropSource();
@@ -227,7 +227,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			{
 				uint UID = (*it)->GetUID();
 				ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
-				ImGui::Text((*it)->GetName());
+				ImGui::Text(item_name.c_str());
 				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
 				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
 				ImGui::EndDragDropSource();

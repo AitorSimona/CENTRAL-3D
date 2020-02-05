@@ -12,6 +12,7 @@
 #include "GameObject.h"
 #include "ImporterScene.h"
 #include "ImporterMeta.h"
+#include "ImporterMesh.h"
 
 #include "Components.h"
 
@@ -62,13 +63,22 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		// --- Save to Own format files in Library ---
 		Save(model, model_gos, rootnode->GetName());
 
+		ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
+
+		if (IMesh)
+		{
+			for (std::map<uint, ResourceMesh*>::iterator it = model_meshes.begin(); it != model_meshes.end(); ++it)
+			{
+				IMesh->Save((*it).second, (*it).second->GetResourceFile());
+			}
+		}
+
 		// --- Free everything ---
 		IScene->FreeSceneMeshes(&model_meshes);
 		rootnode->RecursiveDelete();
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
-
 	}
 	else
 		CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);

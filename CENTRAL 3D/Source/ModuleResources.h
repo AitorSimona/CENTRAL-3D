@@ -42,6 +42,7 @@ public:
 	Resource* ImportModel(const char* path);
 	Resource* ImportMaterial(const char* path);
 	Resource* ImportShaderProgram(const char* path);
+	Resource* ImportMesh(const char* path);
 	Resource* ImportTexture(const char* path);
 	Resource* ImportShaderObject(const char* path);
 
@@ -61,7 +62,6 @@ public:
 	}
 
 	// --- Loading ---
-	Resource* Instance(uint UID);
 	Resource* GetResource(uint UID);
 
 	// --- Resource Handling ---

@@ -21,6 +21,8 @@ ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Res
 
 ResourceFolder::~ResourceFolder()
 {
+	resources.clear();
+	childs.clear();
 }
 
 bool ResourceFolder::LoadInMemory()

@@ -1,6 +1,8 @@
 #include "ImporterMesh.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
+
 #include "ResourceMesh.h"
 
 #include "Assimp/include/scene.h"
@@ -79,18 +81,17 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 	}
 
 
-	/*data.new_mesh->LoadInMemory();
-	data.new_mesh->CreateAABB();*/
-
-	return nullptr;
+	return data.new_mesh;
 }
 
 void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
 {
-	// amount of indices / vertices / normals / texture_coords / AABB
-	uint ranges[2] = { mesh->IndicesSize, mesh->VerticesSize};
+	uint sourcefilename_length = std::string(mesh->GetOriginalFile()).size();
 
-	uint size = sizeof(ranges) + sizeof(uint) * mesh->IndicesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(unsigned char) * 4 * mesh->VerticesSize + sizeof(float) * 2 * mesh->VerticesSize;
+	// amount of indices / vertices / normals / texture_coords / AABB
+	uint ranges[3] = { sourcefilename_length, mesh->IndicesSize, mesh->VerticesSize};
+
+	uint size =  sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) * mesh->IndicesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(unsigned char) * 4 * mesh->VerticesSize + sizeof(float) * 2 * mesh->VerticesSize;
 
 	char* data = new char[size]; // Allocate
 	float* Vertices = new float[mesh->VerticesSize*3];
@@ -126,8 +127,15 @@ void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
 
 
 	// --- Store everything ---
-	uint bytes = sizeof(ranges); // First store ranges
+
+	// --- Store ranges ---
+	uint bytes = sizeof(ranges);
 	memcpy(cursor, ranges, bytes);
+
+	// --- Store original filename ---
+	cursor += bytes;
+	bytes = sizeof(const char) * sourcefilename_length;
+	memcpy(cursor, mesh->GetOriginalFile(), bytes);
 
 	// --- Store Indices ---
 	cursor += bytes; 
@@ -172,95 +180,41 @@ void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
 
 Resource* ImporterMesh::Load(const char * path) const
 {
-	//mesh.SetOriginalFilename(path);
+	Resource* mesh = nullptr;
+	char* buffer = nullptr;
 
-	//// --- Load mesh data ---
-	//char* buffer = nullptr;
-	//App->fs->Load(path,&buffer);
-	//char* cursor = buffer;
+	if (App->fs->Exists(path))
+	{
+		App->fs->Load(path, &buffer);
 
-	//// amount of indices / vertices / normals / texture_coords
-	//uint ranges[2];
-	//uint bytes = sizeof(ranges);
-	//memcpy(ranges, cursor, bytes);
+		if (buffer)
+		{
+			// --- Read ranges first ---
+			char* cursor = buffer;
+			uint ranges[3];
+			uint bytes = sizeof(ranges);
+			memcpy(ranges, cursor, bytes);
 
-	//mesh.IndicesSize = ranges[0];
-	//mesh.VerticesSize = ranges[1];
+			// --- Read the original file's name ---
+			std::string source_file;
+			source_file.resize(ranges[0]);
+			cursor += bytes;
+			bytes = sizeof(char) * ranges[0];
+			memcpy((char*)source_file.c_str(), cursor, bytes);
 
-	//mesh.vertices = new Vertex[mesh.VerticesSize];
-	//float* Vertices = new float[mesh.VerticesSize * 3];
-	//float* Normals = new float[mesh.VerticesSize * 3];
-	//unsigned char* Colors = new unsigned char[mesh.VerticesSize * 4];
-	//float* TexCoords = new float[mesh.VerticesSize * 2];
+			// --- Extract UID from path ---
+			std::string uid = path;
+			App->fs->SplitFilePath(path, nullptr, &uid);
+			uid = uid.substr(0, uid.find_last_of("."));
 
-	//// --- Load indices ---
-	//cursor += bytes;
-	//bytes = sizeof(uint) * mesh.IndicesSize;
-	//mesh.Indices = new uint[mesh.IndicesSize];
-	//memcpy(mesh.Indices, cursor, bytes);
+			mesh = App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, std::string(source_file), std::stoi(uid));
 
-	//// --- Load Vertices ---
-	//cursor += bytes;
-	//bytes = sizeof(float) * 3 * mesh.VerticesSize;
-	//memcpy(Vertices, cursor, bytes);
+			delete[] buffer;
+			buffer = nullptr;
+            cursor = nullptr;
+		}
+	}
 
-	//// --- Load Normals ---
-	//cursor += bytes;
-	//bytes = sizeof(float)* 3 * mesh.VerticesSize;
-	//memcpy(Normals, cursor, bytes);
-
-	//// --- Load Colors ---
-	//cursor += bytes;
-	//bytes = sizeof(unsigned char) * 4 * mesh.VerticesSize;
-	//memcpy(Colors, cursor, bytes);
-
-	//// --- Load Texture Coords ---
-	//cursor += bytes;
-	//bytes = sizeof(float) * 2 * mesh.VerticesSize;
-	//memcpy(TexCoords, cursor, bytes);
-
-	//// --- Fill Vertex array ---
-
-	//for (uint i = 0; i < mesh.VerticesSize; ++i)
-	//{
-	//	// --- Vertices ---
-	//	mesh.vertices[i].position[0] = Vertices[i * 3];
-	//	mesh.vertices[i].position[1] = Vertices[(i * 3) + 1];
-	//	mesh.vertices[i].position[2] = Vertices[(i * 3) + 2];
-
-	//	// --- Normals ---
-	//	mesh.vertices[i].normal[0] = Normals[i * 3];
-	//	mesh.vertices[i].normal[1] = Normals[(i * 3) + 1];
-	//	mesh.vertices[i].normal[2] = Normals[(i * 3) + 2];
-
-	//	// --- Colors ---
-	//	mesh.vertices[i].color[0] = Colors[i * 4];
-	//	mesh.vertices[i].color[1] = Colors[(i * 4) + 1];
-	//	mesh.vertices[i].color[2] = Colors[(i * 4) + 2];
-	//	mesh.vertices[i].color[3] = Colors[(i * 4) + 3];
-
-	//	// --- Texture Coordinates ---
-	//	mesh.vertices[i].texCoord[0] = TexCoords[i * 2];
-	//	mesh.vertices[i].texCoord[1] = TexCoords[(i * 2) + 1];
-	//}
-
-
-	//// --- Delete buffer data ---
-	//if (buffer)
-	//{
-	//	delete[] buffer;
-	//	buffer = nullptr;
-	//	cursor = nullptr;
-	//}
-
-	//delete[] Vertices;
-	//delete[] Normals;
-	//delete[] Colors;
-	//delete[] TexCoords;
-
-	//mesh.LoadInMemory();
-	//mesh.CreateAABB();
-
-	return nullptr;
+	return mesh;
 }
 

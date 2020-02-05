@@ -1,6 +1,7 @@
 #include "ComponentMesh.h"
-#include "OpenGL.h"
-#include "GameObject.h"
+#include "Application.h"
+#include "ModuleResources.h"
+#include "ModuleFileSystem.h"
 
 #include "mmgr/mmgr.h"
 
@@ -27,12 +28,17 @@ json ComponentMesh::Save() const
 	json node;
 
 	// --- Store path to component file ---
-	node["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
+	node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
 
 	return node;
 }
 
 void ComponentMesh::Load(json& node)
 {
+	std::string path = node["Resources"]["ResourceMesh"];
+	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	path = path.substr(0, path.find_last_of("."));
+
+	resource_mesh = (ResourceMesh*)App->resources->GetResource(std::stoi(path));
 }
 
