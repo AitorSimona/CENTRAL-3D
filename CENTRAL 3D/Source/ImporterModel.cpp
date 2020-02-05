@@ -49,8 +49,6 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		model = (ResourceModel*)App->resources->CreateResource(Resource::ResourceType::MODEL, IData.path);
 
 		rootnode = App->scene_manager->CreateEmptyGameObject();
-		//// --- Set root node name as file name with no extension ---
-		//rootnode->SetName(rootnodename.data());
 
 		// --- Save Game objects to vector so we can save to lib later ---
 		std::vector<GameObject*> model_gos;

@@ -31,6 +31,8 @@ public:
 	update_status Update(float dt) override;
 	bool CleanUp() override;
 
+public:
+
 	// --- Importing ---
 	std::string DuplicateIntoAssetsFolder(const char* path);
 	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
@@ -66,28 +68,13 @@ public:
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-	ResourceFolder* GetAssetsFolder();
-	const std::map<uint, ResourceFolder*>& GetAllFolders() const;
 	bool IsFileImported(const char* file);
 
 	void ONResourceDestroyed(Resource* resource);
 
-	/*void CreateMetaFromUID(uint UID, const char* filename);
-
-	bool IsFileImported(const char* file);
-	Resource* GetResource(const char* original_file);
-	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-	uint GetUIDFromMeta(const char* file);
-	uint GetModDateFromMeta(const char* file);
-
-	std::map<std::string, ResourceShader*>* GetShaders();
-	void SaveAllShaders();
-
-
-	Resource* CreateResource(Resource::ResourceType type);
-	void AddResource(Resource* res);
-	void AddShader(ResourceShader* shader);*/
-
+	// --- Getters ---
+	ResourceFolder* GetAssetsFolder();
+	const std::map<uint, ResourceFolder*>& GetAllFolders() const;
 
 private:
 	// --- Available importers ---
