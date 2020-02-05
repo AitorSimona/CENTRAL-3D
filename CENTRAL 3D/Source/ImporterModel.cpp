@@ -17,6 +17,7 @@
 #include "Components.h"
 
 #include "ResourceModel.h"
+#include "ResourceMeta.h"
 
 #include "mmgr/mmgr.h"
 
@@ -33,9 +34,11 @@ ImporterModel::~ImporterModel()
 Resource* ImporterModel::Import(ImportData& IData) const
 {
 	ResourceModel* model = nullptr;
+	const aiScene* scene = nullptr;
 
 	// --- Import scene from path ---
-	const aiScene* scene = aiImportFileEx(IData.path, aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
+	if (App->fs->Exists(IData.path))
+		scene = aiImportFileEx(IData.path, aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
 
 	GameObject* rootnode = nullptr;
 	ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
@@ -79,6 +82,14 @@ Resource* ImporterModel::Import(ImportData& IData) const
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
+
+		// --- Create meta ---
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		
+		ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, IData.path, model->GetUID());
+
+		if (meta)
+			IMeta->Save(meta);
 	}
 	else
 		CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);
@@ -92,10 +103,10 @@ Resource* ImporterModel::Load(const char* path) const
 {
 	Resource* resource = nullptr;
 
-	std::string uid;
-	App->fs->SplitFilePath(path, nullptr, &uid);
-	uid = uid.substr(0, uid.find_last_of("."));
-	resource = App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, path, std::stoi(uid));
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+
+	resource = App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, meta->GetOriginalFile(), meta->GetUID());
 
 	return resource;
 }

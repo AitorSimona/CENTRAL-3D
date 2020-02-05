@@ -32,9 +32,7 @@ public:
 	bool CleanUp() override;
 
 	// --- Importing ---
-	//DEPRECATED
-	void ImportAllFolders(const char* directory);
-
+	std::string DuplicateIntoAssetsFolder(const char* path);
 	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
 	Resource* ImportAssets(const char* path);
 	Resource* ImportFolder(const char* path);

@@ -62,21 +62,18 @@ bool ModuleResources::Start()
 
 // ------------------------------ IMPORTING --------------------------------------------------------
 
-// DEPRECATED --- Create all ResourceFolder type resources ---
-void ModuleResources::ImportAllFolders(const char* directory)
+std::string ModuleResources::DuplicateIntoAssetsFolder(const char* path)
 {
-	std::vector<std::string> dirs;
+	std::string new_path = ASSETS_FOLDER;
+	std::string file;
 
-	App->fs->DiscoverDirectories(directory, dirs);
+	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
+	new_path.append(file);
 
-	std::string dir((directory) ? directory : "");
+	if (!App->fs->Exists(new_path.c_str()))
+		App->fs->CopyFromOutsideFS(path, new_path.c_str());
 
-	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
-	{
-		ImportAllFolders((dir + (*it) + "/").c_str());
-	}
-
-	ImportFolder(dir.c_str());
+	return new_path;
 }
 
 // --- Sweep over all files in given directory, if those files pass the given filters, call Import and if it succeeds add them to the given resource folder ---
@@ -216,11 +213,10 @@ Resource* ModuleResources::ImportAssets(const char* path)
 Resource* ModuleResources::ImportFolder(const char* path)
 {
 	ImporterFolder* IFolder = GetImporter<ImporterFolder>();
-	ImporterMeta* IMeta = GetImporter<ImporterMeta>();
 
 	Resource* folder = nullptr;
 
-	if (IFolder && IMeta)
+	if (IFolder)
 	{
 		// --- Eliminate last / so we can build the meta file name ---
 		std::string new_path = path;
@@ -228,25 +224,14 @@ Resource* ModuleResources::ImportFolder(const char* path)
 
 		// --- If the resource is already in library, load from there ---
 		if (IsFileImported(new_path.c_str()))
-		{
-			// --- Load meta first ---
-			ResourceMeta* meta = (ResourceMeta*)IMeta->Load(new_path.c_str());
+			folder = IFolder->Load(path);
 
-			if(meta)
-			folder = IFolder->Load(meta->GetResourceFile());
-		}
 		// --- Else call relevant importer ---
 		else
 		{
 			Importer::ImportData IData;
 			IData.path = new_path.append("/").c_str();
 			folder = IFolder->Import(IData);
-
-			// --- Create meta ---
-			ResourceMeta* meta = (ResourceMeta*)CreateResourceGivenUID(Resource::ResourceType::META, new_path, folder->GetUID());
-
-			if (meta)
-				IMeta->Save(meta);
 		}
 	}
 
@@ -273,55 +258,22 @@ Resource* ModuleResources::ImportScene(const char* path)
 Resource* ModuleResources::ImportModel(const char* path)
 {
 	ImporterModel* IModel = GetImporter<ImporterModel>();
-	ImporterMeta* IMeta = GetImporter<ImporterMeta>();
 
 	Resource* model = nullptr;
-	std::string file = "";
 
-	App->fs->NormalizePath((char*)path, false);
-	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
-
-	if (IModel && IMeta)
+	if (IModel)
 	{
 		// --- If the resource is already in library, just create the resource with no data ---
 		if (IsFileImported(path))
-		{
-			// --- Load meta first ---
-			ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
-			
-			if (meta)
-			{
-				std::string model_path = MODELS_FOLDER;
-				model_path.append(std::to_string(meta->GetUID()));
-				model_path.append(".model");
-				model = IModel->Load(model_path.c_str());
-			}
-		}
+			model = IModel->Load(path);			
 
 		// --- Else call relevant importer ---
 		else
 		{
-			// --- Duplicate File into Assets folder ---
-			std::string relative_path = ASSETS_FOLDER;
-			relative_path.append(file);
-
-			if (!App->fs->Exists(relative_path.c_str()))
-				App->fs->CopyFromOutsideFS(path, relative_path.c_str());
-
 			Importer::ImportData IData;
-			IData.path = relative_path.c_str();
+			std::string new_path = DuplicateIntoAssetsFolder(path);
+			IData.path = new_path.c_str();
 			model = IModel->Import(IData);
-
-			// --- Create meta ---
-			if (model)
-			{
-				ResourceMeta* meta = (ResourceMeta*)CreateResourceGivenUID(Resource::ResourceType::META, path, model->GetUID());
-
-				if (meta)
-					IMeta->Save(meta);
-			}
-			else
-			CONSOLE_LOG("|[error]: Failed to import model: %s", path);
 		}
 	}
 

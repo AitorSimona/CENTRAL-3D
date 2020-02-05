@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleResources.h"
+#include "ModuleFileSystem.h"
 
 #include "mmgr/mmgr.h"
 
@@ -9,6 +10,7 @@ ResourceModel::ResourceModel(uint UID, std::string source_file) : Resource(Resou
 {
 	extension = ".model";
 	resource_file = MODELS_FOLDER + std::to_string(UID) + extension;
+	App->fs->SplitFilePath(name.c_str(), nullptr, &name);
 
 	previewTexID = App->gui->defaultfileTexUID;
 

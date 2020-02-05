@@ -3,6 +3,10 @@
 #include "ModuleResources.h"
 #include "ModuleFileSystem.h"
 
+#include "ImporterMeta.h"
+
+#include "ResourceMeta.h"
+
 #include "mmgr/mmgr.h"
 
 
@@ -20,6 +24,16 @@ Resource* ImporterFolder::Import(ImportData& IData) const
 
 	folder = App->resources->CreateResource(Resource::ResourceType::FOLDER, IData.path);
 
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	// --- Create meta ---
+	std::string new_path = IData.path;
+	new_path.pop_back();
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_path, folder->GetUID());
+
+	if (meta)
+		IMeta->Save(meta);
+
 	return folder;
 }
 
@@ -27,19 +41,14 @@ Resource* ImporterFolder::Load(const char* path) const
 {
 	Resource* folder = nullptr;
 
-	if (App->fs->Exists(path))
-	{
-		json file = App->GetJLoader()->Load(path);
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-		if (!file.is_null())
-		{
-			std::string uid = file["UID"];
-			std::string source_file = path;
+	// --- Load meta first ---
+	std::string new_path = path;
+	new_path.pop_back();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(new_path.c_str());
 
-			source_file = source_file.substr(0, source_file.find_last_of("."));
-			folder = App->resources->CreateResourceGivenUID(Resource::ResourceType::FOLDER, source_file, std::stoi(uid));
-		}
-	}
+	folder = App->resources->CreateResourceGivenUID(Resource::ResourceType::FOLDER, path, meta->GetUID());
 
 	return folder;
 }
