@@ -169,7 +169,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
 
-			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0), color);
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 

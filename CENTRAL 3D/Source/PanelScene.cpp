@@ -76,6 +76,8 @@ bool PanelScene::Draw()
 			{
 				uint UID = *(const uint*)payload->Data;
 				App->resources->GetResource(UID);
+
+				// MYTODO: Instance resource here, put it on scene (depending on resource)
 			}
 
 			ImGui::EndDragDropTarget();
