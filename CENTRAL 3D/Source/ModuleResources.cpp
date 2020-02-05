@@ -146,6 +146,8 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResources::ImportAssets(const char* path)
 {
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+
 	// --- Identify resource type by file extension ---
 	Resource::ResourceType type = GetResourceTypeFromPath(path);
 
@@ -369,92 +371,21 @@ Resource* ModuleResources::ImportShaderObject(const char* path)
 Resource* ModuleResources::GetResource(uint UID)
 {
 	Resource* resource = nullptr;
-	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
 
-	//std::map<uint, ResourceMeta*>::iterator it = metas.find(UID);
-	std::map<uint, ResourceFolder*>::iterator it2 = folders.find(UID);
-	std::map<uint, ResourceScene*>::iterator it3 = scenes.find(UID);
-	std::map<uint, ResourceModel*>::iterator it4 = models.find(UID);
-	std::map<uint, ResourceMaterial*>::iterator it5 = materials.find(UID);
-	std::map<uint, ResourceShader*>::iterator it6 = shaders.find(UID);
-	std::map<uint, ResourceMesh*>::iterator it7 = meshes.find(UID);
-	std::map<uint, ResourceTexture*>::iterator it8 = textures.find(UID);
-	std::map<uint, ResourceShaderObject*>::iterator it9 = shader_objects.find(UID);
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
 
-	//if (it != metas.end())
-	//	type = GetResourceTypeFromPath((*it).second->GetResourceFile());
-	if (it2 != folders.end())
-		type = GetResourceTypeFromPath((*it2).second->GetResourceFile());
-	else if (it3 != scenes.end())
-		type = GetResourceTypeFromPath((*it3).second->GetResourceFile());
-	else if (it4 != models.end())
-		type = GetResourceTypeFromPath((*it4).second->GetResourceFile());
-	else if (it5 != materials.end())
-		type = GetResourceTypeFromPath((*it5).second->GetResourceFile());
-	else if (it6 != shaders.end())
-		type = GetResourceTypeFromPath((*it6).second->GetResourceFile());
-	else if (it7 != meshes.end())
-		type = GetResourceTypeFromPath((*it7).second->GetResourceFile());
-	else if (it8 != textures.end())
-		type = GetResourceTypeFromPath((*it8).second->GetResourceFile());
-	else if (it9 != shader_objects.end())
-		type = GetResourceTypeFromPath((*it9).second->GetResourceFile());
+	resource = folders.find(UID) == folders.end() ? resource : (*folders.find(UID)).second;
+	resource = scenes.find(UID) == scenes.end() ? resource : (*scenes.find(UID)).second;
+	resource = models.find(UID) == models.end() ? resource : (*models.find(UID)).second;
+	resource = materials.find(UID) == materials.end() ? resource : (*materials.find(UID)).second;
+	resource = shaders.find(UID) == shaders.end() ? resource : (*shaders.find(UID)).second;
+	resource = meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second;
+	resource = textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second;
+	resource = shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second;
 
-	// --- Call relevant function depending on resource type ---
-
-	switch (type)
-	{
-	case Resource::ResourceType::FOLDER:
-		//resource = ImportFolder(path);
-		break;
-
-	case Resource::ResourceType::SCENE:
-		//resource = ImportScene(path);
-		break;
-
-	case Resource::ResourceType::MODEL:
-		resource = models.find(UID)->second;
+	if (resource)
 		resource->LoadToMemory();
-
-		GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile());
-		break;
-
-	case Resource::ResourceType::MATERIAL:
-		//resource = ImportMaterial(path);
-		break;
-
-	case Resource::ResourceType::SHADER:
-		//resource = ImportShaderProgram(path);
-		break;
-
-
-	case Resource::ResourceType::MESH:
-		resource = meshes.find(UID)->second;
-		resource->LoadToMemory();
-		break;
-
-	case Resource::ResourceType::TEXTURE:
-		resource = textures.find(UID)->second;
-		resource->LoadToMemory();
-		break;
-
-	case Resource::ResourceType::SHADER_OBJECT:
-		//resource = ImportShaderObject(path);
-		break;
-
-		//case Resource::ResourceType::META:
-
-		//	break;
-
-	case Resource::ResourceType::UNKNOWN:
-		break;
-
-	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %i", UID);
-		break;
-	}
-
-	if(!resource)
+	else
 		CONSOLE_LOG("![Warning]: Could not load: %i", UID);
 
 
@@ -466,6 +397,8 @@ Resource* ModuleResources::GetResource(uint UID)
 Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::string source_file)
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
+
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -526,6 +459,8 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::str
 Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID)
 {
 	Resource* resource = nullptr;
+
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 	switch (type)
 	{
@@ -589,7 +524,7 @@ Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, s
 
 Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);

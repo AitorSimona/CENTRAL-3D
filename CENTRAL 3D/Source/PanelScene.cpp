@@ -13,6 +13,7 @@
 #include "ComponentTransform.h"
 
 #include "ImporterScene.h"
+#include "ImporterModel.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 
@@ -75,9 +76,11 @@ bool PanelScene::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				App->resources->GetResource(UID);
+				Resource* resource = App->resources->GetResource(UID);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
+				if(resource->GetType() == Resource::ResourceType::MODEL)
+				App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile());
 			}
 
 			ImGui::EndDragDropTarget();
