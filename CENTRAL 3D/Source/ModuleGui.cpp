@@ -415,8 +415,8 @@ void ModuleGui::CreateIcons()
 {
 	uint width, height;
 	// --- Create Icon textures ---
-	folderTexUID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, 0);
-	defaultfileTexUID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, 0);
-
+	folderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, 0);
+	defaultfileTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, 0);
+	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Material Icon.png", width, height, 0);
 }
 

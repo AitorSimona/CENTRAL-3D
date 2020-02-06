@@ -640,7 +640,7 @@ void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 	{
 		ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH,source_file);
 
-		ImportMeshData MData;
+		ImportMeshData MData(source_file);
 		MData.mesh = scene->mMeshes[i];
 		MData.new_mesh = resource_mesh;
 

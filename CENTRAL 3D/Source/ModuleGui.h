@@ -58,9 +58,10 @@ public:
 	PanelToolbar*       panelToolbar = nullptr;
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;
-
-	uint folderTexUID = 0;
-	uint defaultfileTexUID = 0;
+	
+	uint materialTexID = 0;
+	uint folderTexID = 0;
+	uint defaultfileTexID = 0;
 private:
 	bool show_demo_window = false;
 

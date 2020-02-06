@@ -15,7 +15,7 @@ ResourceMeta::ResourceMeta(uint UID, std::string source_file) : Resource(Resourc
 
 	Date = App->fs->GetLastModificationTime(source_file.c_str());
 
-	previewTexID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexID;
 
 }
 

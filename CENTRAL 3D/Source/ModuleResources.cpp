@@ -105,7 +105,8 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
 
 	// --- Import folder ---
-	ResourceFolder* folder = (ResourceFolder*)ImportFolder(dir.c_str());
+	Importer::ImportData IData(dir.c_str());
+	ResourceFolder* folder = (ResourceFolder*)ImportFolder(IData);
 
 	// --- If parent is not nullptr add ourselves as childs ---
 	if (parent)
@@ -148,7 +149,8 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 		{
 			std::string path = directory;
 			path.append((*it).data());
-			Resource* resource = ImportAssets(path.data());
+			Importer::ImportData IData2(path.c_str());
+			Resource* resource = ImportAssets(IData2);
 
 			// --- If resource is imported correctly, add it to the current folder ---
 			if (resource)
@@ -162,12 +164,12 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 }
 
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
-Resource* ModuleResources::ImportAssets(const char* path)
+Resource* ModuleResources::ImportAssets(Importer::ImportData& IData)
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
 
 	// --- Identify resource type by file extension ---
-	Resource::ResourceType type = GetResourceTypeFromPath(path);
+	Resource::ResourceType type = GetResourceTypeFromPath(IData.path);
 
 	Resource* resource = nullptr;
 
@@ -176,35 +178,35 @@ Resource* ModuleResources::ImportAssets(const char* path)
 	switch (type)
 	{
 	case Resource::ResourceType::FOLDER:
-		resource = ImportFolder(path);
+		resource = ImportFolder(IData);
 		break;
 
 	case Resource::ResourceType::SCENE:
-		resource = ImportScene(path);
+		resource = ImportScene(IData);
 		break;
 
 	case Resource::ResourceType::MODEL:
-		resource = ImportModel(path);
+		resource = ImportModel(IData);
 		break;
 
 	case Resource::ResourceType::MATERIAL:
-		resource = ImportMaterial(path);
+		resource = ImportMaterial(IData);
 		break;
 
 	case Resource::ResourceType::SHADER:
-		resource = ImportShaderProgram(path);
+		resource = ImportShaderProgram(IData);
 		break;
 
 	case Resource::ResourceType::TEXTURE:
-		resource = ImportTexture(path);
+		resource = ImportTexture(IData);
 		break;
 
 	case Resource::ResourceType::MESH:
-		resource = ImportMesh(path);
+		resource = ImportMesh(IData);
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
-		resource = ImportShaderObject(path);
+		resource = ImportShaderObject(IData);
 		break;
 
 	//case Resource::ResourceType::META:
@@ -214,23 +216,23 @@ Resource* ModuleResources::ImportAssets(const char* path)
 	case Resource::ResourceType::UNKNOWN:
 		break;
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", path);
+		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
 		break;
 	}
 
 	if (resource)
 	{
-		CONSOLE_LOG("Imported successfully: %s", path);
+		CONSOLE_LOG("Imported successfully: %s", IData.path);
 	}
 	else
-		CONSOLE_LOG("![Warning]: Could not import: %s", path);
+		CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
 
 
 	return resource;
 }
 
 
-Resource* ModuleResources::ImportFolder(const char* path)
+Resource* ModuleResources::ImportFolder(Importer::ImportData& IData)
 {
 	ImporterFolder* IFolder = GetImporter<ImporterFolder>();
 
@@ -239,17 +241,16 @@ Resource* ModuleResources::ImportFolder(const char* path)
 	if (IFolder)
 	{
 		// --- Eliminate last / so we can build the meta file name ---
-		std::string new_path = path;
+		std::string new_path = IData.path;
 		new_path.pop_back();
 
 		// --- If the resource is already in library, load from there ---
 		if (IsFileImported(new_path.c_str()))
-			folder = IFolder->Load(path);
+			folder = IFolder->Load(IData.path);
 
 		// --- Else call relevant importer ---
 		else
 		{
-			Importer::ImportData IData;
 			IData.path = new_path.append("/").c_str();
 			folder = IFolder->Import(IData);
 		}
@@ -258,12 +259,12 @@ Resource* ModuleResources::ImportFolder(const char* path)
 	return folder;
 }
 
-Resource* ModuleResources::ImportScene(const char* path)
+Resource* ModuleResources::ImportScene(Importer::ImportData& IData)
 {
 	ResourceScene* scene = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(path))
+	if (IsFileImported(IData.path))
 	{
 		//Loadfromlib
 	}
@@ -275,7 +276,7 @@ Resource* ModuleResources::ImportScene(const char* path)
 	return scene;
 }
 
-Resource* ModuleResources::ImportModel(const char* path)
+Resource* ModuleResources::ImportModel(Importer::ImportData& IData)
 {
 	ImporterModel* IModel = GetImporter<ImporterModel>();
 
@@ -284,14 +285,13 @@ Resource* ModuleResources::ImportModel(const char* path)
 	if (IModel)
 	{
 		// --- If the resource is already in library, just create the resource with no data ---
-		if (IsFileImported(path))
-			model = IModel->Load(path);			
+		if (IsFileImported(IData.path))
+			model = IModel->Load(IData.path);
 
 		// --- Else call relevant importer ---
 		else
 		{
-			Importer::ImportData IData;
-			std::string new_path = DuplicateIntoAssetsFolder(path);
+			std::string new_path = DuplicateIntoAssetsFolder(IData.path);
 			IData.path = new_path.c_str();
 			model = IModel->Import(IData);
 		}
@@ -300,29 +300,32 @@ Resource* ModuleResources::ImportModel(const char* path)
 	return model;
 }
 
-Resource* ModuleResources::ImportMaterial(const char* path)
+Resource* ModuleResources::ImportMaterial(Importer::ImportData& IData)
 {
-	ResourceMaterial* material = nullptr;
+	ImporterMaterial* IMat = GetImporter<ImporterMaterial>();
 
-	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(path))
-	{
-		//Loadfromlib
-	}
+	Resource* material = nullptr;
+
+	// --- If the resource is already imported (has meta), load it ---
+	if (IsFileImported(IData.path))
+		material = IMat->Load(IData.path);
 
 	// --- Else call relevant importer ---
 	else
+	{
+		material = IMat->Import(IData);
+	}
 		// Import
 
 	return material;
 }
 
-Resource* ModuleResources::ImportShaderProgram(const char* path)
+Resource* ModuleResources::ImportShaderProgram(Importer::ImportData& IData)
 {
 	ResourceShaderProgram* shader = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(path))
+	if (IsFileImported(IData.path))
 	{
 		//Loadfromlib
 	}
@@ -334,27 +337,27 @@ Resource* ModuleResources::ImportShaderProgram(const char* path)
 	return shader;
 }
 
-Resource* ModuleResources::ImportMesh(const char* path)
+Resource* ModuleResources::ImportMesh(Importer::ImportData& IData)
 {
 	Resource* mesh = nullptr;
 	ImporterMesh* IMesh = GetImporter<ImporterMesh>();
 
 	// --- Load the mesh directly from the lib (only declaration)---
-	if (path && IMesh)
+	if (IData.path && IMesh)
 	{
-		mesh = IMesh->Load(path);
+		mesh = IMesh->Load(IData.path);
 	}
 
 
 	return mesh;
 }
 
-Resource* ModuleResources::ImportTexture(const char* path)
+Resource* ModuleResources::ImportTexture(Importer::ImportData& IData)
 {
 	ResourceTexture* texture = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(path))
+	if (IsFileImported(IData.path))
 	{
 		//Loadfromlib
 	}
@@ -366,12 +369,12 @@ Resource* ModuleResources::ImportTexture(const char* path)
 	return texture;
 }
 
-Resource* ModuleResources::ImportShaderObject(const char* path)
+Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 {
 	ResourceShaderObject* shader_object = nullptr;
 
 	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(path))
+	if (IsFileImported(IData.path))
 	{
 		//Loadfromlib
 	}
@@ -587,6 +590,11 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 ResourceFolder* ModuleResources::GetAssetsFolder()
 {
 	return AssetsFolder;
+}
+
+uint ModuleResources::GetDefaultMaterialUID()
+{
+	return DefaultMaterial->GetUID();
 }
 
 const std::map<uint, ResourceFolder*>& ModuleResources::GetAllFolders() const

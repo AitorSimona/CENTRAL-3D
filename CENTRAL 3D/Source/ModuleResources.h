@@ -3,8 +3,7 @@
 
 #include "Module.h"
 #include "Resource.h"
-
-class Importer;
+#include "Importer.h"
 
 class ResourceFolder;
 class ResourceFolder;
@@ -36,15 +35,15 @@ public:
 	// --- Importing ---
 	std::string DuplicateIntoAssetsFolder(const char* path);
 	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
-	Resource* ImportAssets(const char* path);
-	Resource* ImportFolder(const char* path);
-	Resource* ImportScene(const char* path);
-	Resource* ImportModel(const char* path);
-	Resource* ImportMaterial(const char* path);
-	Resource* ImportShaderProgram(const char* path);
-	Resource* ImportMesh(const char* path);
-	Resource* ImportTexture(const char* path);
-	Resource* ImportShaderObject(const char* path);
+	Resource* ImportAssets(Importer::ImportData& IData);
+	Resource* ImportFolder(Importer::ImportData& IData);
+	Resource* ImportScene(Importer::ImportData& IData);
+	Resource* ImportModel(Importer::ImportData& IData);
+	Resource* ImportMaterial(Importer::ImportData& IData);
+	Resource* ImportShaderProgram(Importer::ImportData& IData);
+	Resource* ImportMesh(Importer::ImportData& IData);
+	Resource* ImportTexture(Importer::ImportData& IData);
+	Resource* ImportShaderObject(Importer::ImportData& IData);
 
 	// For consistency, use this only on resource manager/importers 
 	template<typename TImporter>
@@ -74,12 +73,14 @@ public:
 
 	// --- Getters ---
 	ResourceFolder* GetAssetsFolder();
+	uint GetDefaultMaterialUID();
 	const std::map<uint, ResourceFolder*>& GetAllFolders() const;
 
 private:
 	// --- Available importers ---
 	std::vector<Importer*> importers;
 
+	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
 	ResourceMaterial* DefaultMaterial = nullptr;
 

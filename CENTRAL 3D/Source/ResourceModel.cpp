@@ -4,6 +4,8 @@
 #include "ModuleResources.h"
 #include "ModuleFileSystem.h"
 
+#include "Importer.h"
+
 #include "mmgr/mmgr.h"
 
 ResourceModel::ResourceModel(uint UID, std::string source_file) : Resource(Resource::ResourceType::MODEL, UID, source_file)
@@ -12,7 +14,7 @@ ResourceModel::ResourceModel(uint UID, std::string source_file) : Resource(Resou
 	resource_file = MODELS_FOLDER + std::to_string(UID) + extension;
 	App->fs->SplitFilePath(name.c_str(), nullptr, &name);
 
-	previewTexID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->defaultfileTexID;
 
 }
 
@@ -45,7 +47,8 @@ bool ResourceModel::LoadInMemory()
 					for (json::iterator it3 = _resources.begin(); it3 != _resources.end(); ++it3)
 					{
 						std::string value = _resources[it3.key()];
-						Resource* resource = App->resources->ImportAssets(value.c_str());
+						Importer::ImportData IData(value.c_str());
+						Resource* resource = App->resources->ImportAssets(IData);
 						resources.push_back(resource);
 					}
 				}

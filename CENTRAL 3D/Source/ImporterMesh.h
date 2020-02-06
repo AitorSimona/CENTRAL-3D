@@ -9,6 +9,8 @@ class Resource;
 
 struct ImportMeshData : public Importer::ImportData
 {
+	ImportMeshData(const char* path) : Importer::ImportData(path) {};
+
 	aiMesh* mesh = nullptr;
 	ResourceMesh* new_mesh = nullptr;
 };

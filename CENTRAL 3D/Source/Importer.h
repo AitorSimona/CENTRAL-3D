@@ -24,6 +24,11 @@ public:
 
 	struct ImportData
 	{
+		ImportData(const char* path)
+		{
+			this->path = path;
+		}
+
 		const char* path = "";
 	};
 

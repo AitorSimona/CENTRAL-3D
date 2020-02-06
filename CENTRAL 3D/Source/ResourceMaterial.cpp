@@ -12,21 +12,12 @@ ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource
 {
 	extension = ".mat";
 	resource_file = App->fs->GetDirectoryFromPath(source_file) + std::to_string(UID) + extension;
-
 	shader = App->renderer3D->defaultShader;
-	//shader->instances++;
-
-	shader->GetAllUniforms(uniforms);
-
-	previewTexID = App->gui->defaultfileTexUID;
+	previewTexID = App->gui->materialTexID;
 }
 
 ResourceMaterial::~ResourceMaterial()
 {
-	// MYTODO: We may accesss an already deleted shader!
-	//if(shader)
-	//shader->instances--;
-
 	for (uint i = 0; i < uniforms.size(); ++i)
 	{
 		delete uniforms[i];
@@ -37,8 +28,9 @@ ResourceMaterial::~ResourceMaterial()
 
 bool ResourceMaterial::LoadInMemory()
 {
-	return true;
+	shader->GetAllUniforms(uniforms);
 
+	return true;
 }
 
 void ResourceMaterial::FreeMemory()
