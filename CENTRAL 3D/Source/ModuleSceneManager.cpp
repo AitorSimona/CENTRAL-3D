@@ -3,8 +3,7 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
-#include "ComponentRenderer.h"
-#include "ComponentMaterial.h"
+#include "ComponentMeshRenderer.h"
 #include "ComponentMesh.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
@@ -147,7 +146,7 @@ void ModuleSceneManager::DrawScene()
 		if ((*it)->GetName() != root->GetName())
 		{
 			// --- Search for Renderer Component --- 
-			ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>();
+			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
 			if(SelectedGameObject == (*it))
 			{
@@ -156,8 +155,8 @@ void ModuleSceneManager::DrawScene()
 			}
 
 			// --- If Found, draw the mesh ---
-			if (Renderer && Renderer->IsEnabled())
-					Renderer->Draw();
+			if (MeshRenderer && MeshRenderer->IsEnabled())
+					MeshRenderer->Draw();
 
 			if (SelectedGameObject == (*it))
 			{
@@ -171,7 +170,7 @@ void ModuleSceneManager::DrawScene()
 	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 	{
 		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = (*it)->GetComponent<ComponentRenderer>();
+		ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
 
 		if (SelectedGameObject == (*it))
@@ -181,8 +180,8 @@ void ModuleSceneManager::DrawScene()
 		}
 
 		// --- If Found, draw the mesh ---
-		if (Renderer && Renderer->IsEnabled())
-			Renderer->Draw();
+		if (MeshRenderer && MeshRenderer->IsEnabled())
+			MeshRenderer->Draw();
 
 		if (SelectedGameObject == (*it))
 		{
@@ -719,7 +718,7 @@ GameObject * ModuleSceneManager::LoadCube()
 	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = cube;
 	//cube->instances++;
-	ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
+	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 
 	return new_object;
 }
@@ -730,7 +729,7 @@ GameObject * ModuleSceneManager::LoadSphere()
 	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = sphere;
 	//sphere->instances++;
-	ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
+	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 
 	return new_object;
 }

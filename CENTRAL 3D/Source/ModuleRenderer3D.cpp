@@ -10,7 +10,7 @@
 #include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
-#include "ComponentRenderer.h"
+#include "ComponentMeshRenderer.h"
 #include "ResourceShader.h"
 
 #include "PanelScene.h"
@@ -277,11 +277,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		glDisable(GL_DEPTH_TEST);
 
 		// --- Search for Renderer Component --- 
-		ComponentRenderer* Renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentRenderer>();
+		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
 
 		// --- If Found, draw the mesh ---
-		if (Renderer && Renderer->IsEnabled())
-			Renderer->Draw(true);
+		if (MeshRenderer && MeshRenderer->IsEnabled())
+			MeshRenderer->Draw(true);
 
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		glEnable(GL_DEPTH_TEST);

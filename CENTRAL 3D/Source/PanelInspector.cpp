@@ -10,8 +10,7 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
-#include "ComponentMaterial.h"
-#include "ComponentRenderer.h"
+#include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 
 #include "PanelShaderEditor.h"
@@ -70,18 +69,18 @@ bool PanelInspector::Draw()
 		}
 
 		// --- Renderer ---
-		if (Selected->GetComponent<ComponentRenderer>())
+		if (Selected->GetComponent<ComponentMeshRenderer>())
 		{
 			CreateRendererNode(*Selected);
 			ImGui::Separator();
 		}
 
 		// --- Material ---
-		if (Selected->GetComponent<ComponentMaterial>())
-		{
-			CreateMaterialNode(*Selected);
-			ImGui::Separator();
-		}
+		//if (Selected->GetComponent<ComponentMaterial>())
+		//{
+		//	CreateMaterialNode(*Selected);
+		//	ImGui::Separator();
+		//}
 
 		// --- Camera ---
 		if (Selected->GetComponent<ComponentCamera>())
@@ -245,7 +244,7 @@ inline void PanelInspector::CreateMeshNode(GameObject& Selected) const
 
 inline void PanelInspector::CreateRendererNode(GameObject& Selected) const
 {
-	ComponentRenderer* renderer = Selected.GetComponent<ComponentRenderer>();
+	ComponentMeshRenderer* renderer = Selected.GetComponent<ComponentMeshRenderer>();
 
 	ImGui::Checkbox("##RenActive", &renderer->GetActive());
 	ImGui::SameLine();
@@ -268,9 +267,9 @@ inline void PanelInspector::CreateRendererNode(GameObject& Selected) const
 
 inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 {
-	ComponentMaterial* material = Selected.GetComponent<ComponentMaterial>();
+	//ComponentMaterial* material = Selected.GetComponent<ComponentMaterial>();
 
-	ImGui::Checkbox("##MatActive", &material->GetActive());
+	//ImGui::Checkbox("##MatActive", &material->GetActive());
 	ImGui::SameLine();
 
 	if (Startup)

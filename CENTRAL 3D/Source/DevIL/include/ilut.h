@@ -204,7 +204,7 @@ ILAPI void          ILAPIENTRY ilutPopAttrib(void);
 ILAPI void          ILAPIENTRY ilutPushAttrib(ILuint Bits);
 ILAPI void          ILAPIENTRY ilutSetInteger(ILenum Mode, ILint Param);
 
-ILAPI ILboolean     ILAPIENTRY ilutRenderer(ILenum Renderer);
+ILAPI ILboolean     ILAPIENTRY ilutRenderer(ILenum MeshRenderer);
 
 
 // ImageLib Utility Toolkit's OpenGL Functions

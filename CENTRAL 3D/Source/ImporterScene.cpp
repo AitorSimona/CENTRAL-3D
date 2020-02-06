@@ -9,9 +9,8 @@
 #include "Assimp/include/cfileio.h"
 
 #include "ComponentTransform.h"
-#include "ComponentMaterial.h"
 #include "ComponentMesh.h"
-#include "ComponentRenderer.h"
+#include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"

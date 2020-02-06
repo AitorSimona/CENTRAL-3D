@@ -13,8 +13,7 @@ public:
 	{
 		Transform,
 		Mesh,
-		Renderer,
-		Material,
+		MeshRenderer,
 		Camera,
 		Unknown
 	};

@@ -72,6 +72,8 @@ bool ModuleResources::Start()
 	//filters.push_back("VERTEX");
 
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
+	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
+
 
 	return true;
 }

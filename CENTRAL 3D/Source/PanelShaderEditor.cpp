@@ -9,8 +9,8 @@
 #include "ModuleSceneManager.h"
 
 #include "GameObject.h"
-#include "ComponentMaterial.h"
 #include "ResourceShader.h"
+#include "ResourceMaterial.h"
 
 #include "mmgr/mmgr.h"
 

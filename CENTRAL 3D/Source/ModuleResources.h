@@ -81,6 +81,7 @@ private:
 	std::vector<Importer*> importers;
 
 	ResourceFolder* AssetsFolder = nullptr;
+	ResourceMaterial* DefaultMaterial = nullptr;
 
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;

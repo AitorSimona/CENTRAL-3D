@@ -2,8 +2,7 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
-#include "ComponentRenderer.h"
-#include "ComponentMaterial.h"
+#include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ModuleSceneManager.h"
 
@@ -154,7 +153,7 @@ bool GameObject::FindChildGO(GameObject * GO)
 
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
-	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
 
 	Component* component = nullptr;
 
@@ -172,14 +171,11 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 			component = new ComponentMesh(this);
 			UpdateAABB();
 			break;
-		case Component::ComponentType::Renderer:
-			component = new ComponentRenderer(this);
+		case Component::ComponentType::MeshRenderer:
+			component = new ComponentMeshRenderer(this);
 			break;
 		case Component::ComponentType::Camera:
 			component = new ComponentCamera(this);
-			break;
-		case Component::ComponentType::Material:
-			component = new ComponentMaterial(this);
 			break;
 		}
 

@@ -4,8 +4,7 @@
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
-#include "ComponentRenderer.h"
-#include "ComponentMaterial.h"
+#include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 
 #endif // __COMPONENTS_H__

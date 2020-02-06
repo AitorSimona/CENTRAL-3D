@@ -1,5 +1,5 @@
-#ifndef __COMPONENT_RENDERER_H__
-#define __COMPONENT_RENDERER_H__
+#ifndef __COMPONENT_MESHRENDERER_H__
+#define __COMPONENT_MESHRENDERER_H__
 
 #include "Component.h"
 
@@ -7,15 +7,14 @@
 #define NORMAL_LENGTH 0.5
 
 class ResourceMesh;
-class ComponentMaterial;
 class ComponentTransform;
 
-class ComponentRenderer : public Component
+class ComponentMeshRenderer : public Component
 {
 public:
 
-	ComponentRenderer(GameObject* ContainerGO);
-	virtual ~ComponentRenderer();
+	ComponentMeshRenderer(GameObject* ContainerGO);
+	virtual ~ComponentMeshRenderer();
 
 	void Draw(bool outline = false) const;
 
@@ -24,11 +23,11 @@ public:
 	void Load(json& node) override;
 
 
-	static inline Component::ComponentType GetType() { return Component::ComponentType::Renderer; };
+	static inline Component::ComponentType GetType() { return Component::ComponentType::MeshRenderer; };
 
 private:
 	// --- Draw Functiions accessed by main Draw ---
-	void DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const;
+	void DrawMesh(ResourceMesh& mesh) const;
 	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 
 public:

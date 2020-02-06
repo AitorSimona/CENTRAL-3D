@@ -1,5 +1,4 @@
-#include "ComponentRenderer.h"
-#include "ComponentMaterial.h"
+#include "ComponentMeshRenderer.h"
 #include "ComponentMesh.h"
 #include "ComponentTransform.h"
 #include "ComponentCamera.h"
@@ -18,21 +17,20 @@
 
 #include "mmgr/mmgr.h"
 
-ComponentRenderer::ComponentRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::Renderer)
+ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::MeshRenderer)
 {
 }
 
-ComponentRenderer::~ComponentRenderer()
+ComponentMeshRenderer::~ComponentMeshRenderer()
 {
 
 }
 
-void ComponentRenderer::Draw(bool outline) const
+void ComponentMeshRenderer::Draw(bool outline) const
 {
 	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>();
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 	ComponentCamera* camera = GO->GetComponent<ComponentCamera>();
-	ComponentMaterial* mat = GO->GetComponent<ComponentMaterial>();
 
 	uint shader = App->renderer3D->defaultShader->ID;
 
@@ -91,9 +89,9 @@ void ComponentRenderer::Draw(bool outline) const
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 
-	if (mesh && mesh->resource_mesh && mesh->IsEnabled() && mat)
+	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
-		DrawMesh(*mesh->resource_mesh, mat);
+		DrawMesh(*mesh->resource_mesh);
 		DrawNormals(*mesh->resource_mesh,*transform);
 	}
 
@@ -107,17 +105,15 @@ void ComponentRenderer::Draw(bool outline) const
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 }
 
-void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) const
+void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
 {
 	glBindVertexArray(mesh.VAO);
 
-	if (mat && mat->IsEnabled())
-	{
 		if (this->checkers)
 			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
 		else
-			glBindTexture(GL_TEXTURE_2D, mat->resource_material->resource_diffuse->buffer_id); // start using texture
-	}
+			glBindTexture(GL_TEXTURE_2D, 0 /*mat->resource_material->resource_diffuse->buffer_id*/); // start using texture
+	
 
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
@@ -127,7 +123,7 @@ void ComponentRenderer::DrawMesh(ResourceMesh& mesh, ComponentMaterial* mat) con
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 }
 
-void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
+void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
 {
 	// --- Draw Mesh Normals ---
 
@@ -251,15 +247,106 @@ void ComponentRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTra
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-json ComponentRenderer::Save() const
+json ComponentMeshRenderer::Save() const
 {
 	json node;
 
+	//if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse)
+//{
+//	component_path = TEXTURES_FOLDER;
+//	component_path.append(std::to_string(scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse->GetUID()));
+//	component_path.append(".dds");
+
+//	// --- Store path to component file ---
+//	file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())];
+//	file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["diffuse"] = component_path;
+//	component_path = ((scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->shader->name));
+//	file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["shader"] = component_path;
+//	file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"];
+
+//	std::vector<Uniform*>* uniforms = &((scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->uniforms));
+//	uint shader = ((scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->shader->ID));
+
+//	float* tmpf = new float[4];
+//	int* tmpi = new int[4];
+
+
+//	for (std::vector<Uniform*>::const_iterator iterator = uniforms->begin(); iterator != uniforms->end(); ++iterator)
+//	{
+//		file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name];
+//		file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["type"] = std::to_string((*iterator)->type);
+
+//		switch ((*iterator)->type)
+//		{
+//		case GL_INT:				
+//			glGetUniformiv(shader, (*iterator)->location, tmpi);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpi[0]);
+//			break;
+
+//		case GL_FLOAT:
+//			glGetUniformfv(shader, (*iterator)->location, tmpf);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpf[0]);
+//			break;
+
+//		case GL_FLOAT_VEC2:
+//			glGetUniformfv(shader, (*iterator)->location, tmpf);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpf[0]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["y"] = std::to_string(tmpf[1]);
+//			break;
+
+//		case GL_FLOAT_VEC3:
+//			glGetUniformfv(shader, (*iterator)->location, tmpf);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpf[0]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["y"] = std::to_string(tmpf[1]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["z"] = std::to_string(tmpf[2]);
+//			break;
+
+//		case GL_FLOAT_VEC4:
+//			glGetUniformfv(shader, (*iterator)->location, tmpf);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpf[0]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["y"] = std::to_string(tmpf[1]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["z"] = std::to_string(tmpf[2]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["w"] = std::to_string(tmpf[3]);
+//			break;
+
+//		case GL_INT_VEC2:
+//			glGetUniformiv(shader, (*iterator)->location, tmpi);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpi[0]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["y"] = std::to_string(tmpi[1]);
+//			break;
+
+//		case GL_INT_VEC3:
+//			glGetUniformiv(shader, (*iterator)->location, tmpi);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpi[0]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["y"] = std::to_string(tmpi[1]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["z"] = std::to_string(tmpi[2]);
+//			break;
+
+//		case GL_INT_VEC4:
+//			glGetUniformiv(shader, (*iterator)->location, tmpi);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["x"] = std::to_string(tmpi[0]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["y"] = std::to_string(tmpi[1]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["z"] = std::to_string(tmpi[2]);
+//			file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["uniforms"][(*iterator)->name]["w"] = std::to_string(tmpi[3]);
+//			break;
+
+//		default:
+//			continue;
+//			break;
+
+//		}
+
+//	}
+
+//	delete[] tmpf;
+//	delete[] tmpi;
+
+//}
 
 	return node;
 }
 
-void ComponentRenderer::Load(json& node)
+void ComponentMeshRenderer::Load(json& node)
 {
 }
 

@@ -4,7 +4,6 @@
 #include "ModuleTextures.h"
 #include "ModuleResources.h"
 
-#include "ComponentMaterial.h"
 #include "ResourceMaterial.h"
 
 #include "Assimp/include/scene.h"

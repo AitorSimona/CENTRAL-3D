@@ -219,12 +219,6 @@
     <ClInclude Include="ModuleSceneManager.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentRenderer.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentMaterial.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Importer.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
@@ -540,6 +534,9 @@
     <ClInclude Include="Panels.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentMeshRenderer.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -652,12 +649,6 @@
     </ClCompile>
     <ClCompile Include="ModuleSceneManager.cpp">
       <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentRenderer.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentMaterial.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
     <ClCompile Include="Importer.cpp">
       <Filter>Sources\Resources\Importers</Filter>
@@ -868,6 +859,9 @@
     </ClCompile>
     <ClCompile Include="ModuleEventManager.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMeshRenderer.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
