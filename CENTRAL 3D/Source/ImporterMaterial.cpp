@@ -21,6 +21,8 @@ ImporterMaterial::~ImporterMaterial()
 // --- Create Material from Scene and path to file ---
 Resource* ImporterMaterial::Import(ImportData& IData) const
 {
+	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, IData.path);
+
 	//// --- Get Directory from filename ---
 	//std::string directory = File_path;
 	//App->fs->GetDirectoryFromPath(directory);
@@ -72,7 +74,12 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 	//	}
 	//}
 
-	return nullptr;
+	// --- Create meta ---
+
+	// --- Save data ---
+	Save(resource_mat);
+
+	return resource_mat;
 }
 
 Resource* ImporterMaterial::Load(const char * path) const
@@ -85,4 +92,8 @@ Resource* ImporterMaterial::Load(const char * path) const
 	//mat.resource_diffuse->SetOriginalFilename(filename);
 
 	return nullptr;
+}
+
+void ImporterMaterial::Save(ResourceMaterial* mat) const
+{
 }

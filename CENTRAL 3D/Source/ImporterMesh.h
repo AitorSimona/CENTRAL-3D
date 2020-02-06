@@ -12,7 +12,6 @@ struct ImportMeshData : public Importer::ImportData
 	ImportMeshData(const char* path) : Importer::ImportData(path) {};
 
 	aiMesh* mesh = nullptr;
-	ResourceMesh* new_mesh = nullptr;
 };
 
 class ImporterMesh : public Importer
@@ -24,7 +23,7 @@ public:
 
 	Resource* Import(ImportData& IData) const override;
 
-	void Save(ResourceMesh* mesh, const char* path) const;
+	void Save(ResourceMesh* mesh) const;
     Resource* Load(const char* path) const override;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Mesh; };

@@ -3,17 +3,16 @@
 
 #include "Importer.h"
 
-struct aiScene;
-struct aiMesh;
+struct aiMaterial;
 class ResourceMaterial;
 class Resource;
 
-//struct ImportMaterialData : public ImportData
-//{
-//	const aiScene* scene = nullptr;
-//	const aiMesh* mesh = nullptr;
-//	ResourceMaterial* new_material = nullptr;
-//};
+struct ImportMaterialData : public Importer::ImportData
+{
+	ImportMaterialData(const char* path) : Importer::ImportData(path) {};
+
+	const aiMaterial* mat = nullptr;
+};
 
 class ImporterMaterial : public Importer
 {
@@ -24,6 +23,8 @@ public:
 
 	Resource* Import(ImportData& IData) const override;
 	Resource* Load(const char* path) const override;
+
+	void Save(ResourceMaterial* mat) const;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };
 };

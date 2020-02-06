@@ -11,6 +11,7 @@ struct aiScene;
 class ComponentMaterial;
 class GameObject;
 class ResourceMesh;
+class ResourceMaterial;
 class Resource;
 
 
@@ -29,6 +30,10 @@ public:
 
 	void LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const;
 	void FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const;
+	void LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file) const;
+	void FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const;
+
+
 	void LoadNodes(const aiNode* node, GameObject* parent ,const aiScene* scene,  std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes) const;
 };
 

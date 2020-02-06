@@ -58,23 +58,18 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		std::map<uint, ResourceMesh*> model_meshes;
 		IScene->LoadSceneMeshes(scene, model_meshes, IData.path);
 
+		// --- Load all materials ---
+		std::map<uint, ResourceMaterial*> model_mats;
+		IScene->LoadSceneMaterials(scene, model_mats, IData.path);
+
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 		IScene->LoadNodes(scene->mRootNode,rootnode, scene, model_gos, IData.path, model_meshes);
 
-		// --- Save to Own format files in Library ---
+		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
 
-		ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
-
-		if (IMesh)
-		{
-			for (std::map<uint, ResourceMesh*>::iterator it = model_meshes.begin(); it != model_meshes.end(); ++it)
-			{
-				IMesh->Save((*it).second, (*it).second->GetResourceFile());
-			}
-		}
-
 		// --- Free everything ---
+		IScene->FreeSceneMaterials(&model_mats);
 		IScene->FreeSceneMeshes(&model_meshes);
 		rootnode->RecursiveDelete();
 

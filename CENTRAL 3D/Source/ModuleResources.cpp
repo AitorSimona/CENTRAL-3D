@@ -311,11 +311,11 @@ Resource* ModuleResources::ImportMaterial(Importer::ImportData& IData)
 		material = IMat->Load(IData.path);
 
 	// --- Else call relevant importer ---
-	else
-	{
-		material = IMat->Import(IData);
-	}
-		// Import
+	//else
+	//{
+	//	material = IMat->Import(IData);
+	//}
+
 
 	return material;
 }

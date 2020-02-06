@@ -23,6 +23,7 @@
 #include "ModuleResources.h"
 
 #include "ResourceMesh.h"
+#include "ResourceMaterial.h"
 
 #include "mmgr/mmgr.h"
 
@@ -638,21 +639,15 @@ void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 {
 	for (uint i = 0; i < scene->mNumMeshes; ++i)
 	{
-		ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH,source_file);
-
 		ImportMeshData MData(source_file);
 		MData.mesh = scene->mMeshes[i];
-		MData.new_mesh = resource_mesh;
 
 		// --- Import mesh data (fill new_mesh)---
 
 		ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
 
 		if (IMesh)
-		{
-			IMesh->Import(MData);
-			scene_meshes[i] = resource_mesh;
-		}
+			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
 	}
 }
 
@@ -666,6 +661,36 @@ void ImporterScene::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes)
 	}
 
 	scene_meshes->clear();
+}
+
+void ImporterScene::LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file) const
+{
+	for (uint i = 0; i < scene->mNumMaterials; ++i)
+	{
+
+		ImportMaterialData MatData(source_file);
+		MatData.mat = scene->mMaterials[i];
+
+		// --- Import material data ---
+
+		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+		if (IMat)
+			scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
+		
+	}
+}
+
+void ImporterScene::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const
+{
+	for (std::map<uint, ResourceMaterial*>::iterator it = scene_mats->begin(); it != scene_mats->end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = scene_mats->erase(it);
+	}
+
+	scene_mats->clear();
 }
 
 void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes) const

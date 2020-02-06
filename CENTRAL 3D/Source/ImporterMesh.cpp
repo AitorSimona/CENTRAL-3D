@@ -23,43 +23,45 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 {
 	ImportMeshData data = (ImportMeshData&)IData;
 
+	ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, IData.path);
+
 	// COULD USE MEMCPY AGAIN, JUST DECLARE AND ALLOCATE EVERYTHING FIRST
 
-	data.new_mesh->vertices = new Vertex[data.mesh->mNumVertices];
-	data.new_mesh->VerticesSize = data.mesh->mNumVertices;
-	
-	data.new_mesh->IndicesSize = data.mesh->mNumFaces * 3;
-	data.new_mesh->Indices = new uint[data.new_mesh->IndicesSize];
+	resource_mesh->vertices = new Vertex[data.mesh->mNumVertices];
+	resource_mesh->VerticesSize = data.mesh->mNumVertices;
+
+	resource_mesh->IndicesSize = data.mesh->mNumFaces * 3;
+	resource_mesh->Indices = new uint[resource_mesh->IndicesSize];
 
 	for (uint i = 0; i < data.mesh->mNumVertices; ++i)
 	{
 		// --- Vertices ---
-		data.new_mesh->vertices[i].position[0] = data.mesh->mVertices[i].x;
-		data.new_mesh->vertices[i].position[1] = data.mesh->mVertices[i].y;
-		data.new_mesh->vertices[i].position[2] = data.mesh->mVertices[i].z;
+		resource_mesh->vertices[i].position[0] = data.mesh->mVertices[i].x;
+		resource_mesh->vertices[i].position[1] = data.mesh->mVertices[i].y;
+		resource_mesh->vertices[i].position[2] = data.mesh->mVertices[i].z;
 
 		// --- Normals ---
 		if (data.mesh->HasNormals())
 		{
-			data.new_mesh->vertices[i].normal[0] = data.mesh->mNormals[i].x;
-			data.new_mesh->vertices[i].normal[1] = data.mesh->mNormals[i].y;
-			data.new_mesh->vertices[i].normal[2] = data.mesh->mNormals[i].z;
+			resource_mesh->vertices[i].normal[0] = data.mesh->mNormals[i].x;
+			resource_mesh->vertices[i].normal[1] = data.mesh->mNormals[i].y;
+			resource_mesh->vertices[i].normal[2] = data.mesh->mNormals[i].z;
 		}
 
 		// --- Colors ---
 		if (data.mesh->HasVertexColors(0))
 		{
-			data.new_mesh->vertices[i].color[0] = data.mesh->mColors[0][i].r;
-			data.new_mesh->vertices[i].color[1] = data.mesh->mColors[0][i].g;
-			data.new_mesh->vertices[i].color[2] = data.mesh->mColors[0][i].b;
-			data.new_mesh->vertices[i].color[3] = data.mesh->mColors[0][i].a;
+			resource_mesh->vertices[i].color[0] = data.mesh->mColors[0][i].r;
+			resource_mesh->vertices[i].color[1] = data.mesh->mColors[0][i].g;
+			resource_mesh->vertices[i].color[2] = data.mesh->mColors[0][i].b;
+			resource_mesh->vertices[i].color[3] = data.mesh->mColors[0][i].a;
 		}
 
 		// --- Texture Coordinates ---
 		if (data.mesh->HasTextureCoords(0))
 		{
-			data.new_mesh->vertices[i].texCoord[0] = data.mesh->mTextureCoords[0][i].x;
-			data.new_mesh->vertices[i].texCoord[1] = data.mesh->mTextureCoords[0][i].y;
+			resource_mesh->vertices[i].texCoord[0] = data.mesh->mTextureCoords[0][i].x;
+			resource_mesh->vertices[i].texCoord[1] = data.mesh->mTextureCoords[0][i].y;
 		}
 	}
 
@@ -75,16 +77,18 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 			continue;
 		}
 
-		data.new_mesh->Indices[j * 3] = face.mIndices[0];
-		data.new_mesh->Indices[(j * 3) + 1] = face.mIndices[1];
-		data.new_mesh->Indices[(j * 3) + 2] = face.mIndices[2];
+		resource_mesh->Indices[j * 3] = face.mIndices[0];
+		resource_mesh->Indices[(j * 3) + 1] = face.mIndices[1];
+		resource_mesh->Indices[(j * 3) + 2] = face.mIndices[2];
 	}
 
+	// --- Save to library ---
+	Save(resource_mesh);
 
-	return data.new_mesh;
+	return resource_mesh;
 }
 
-void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
+void ImporterMesh::Save(ResourceMesh * mesh) const
 {
 	uint sourcefilename_length = std::string(mesh->GetOriginalFile()).size();
 
@@ -162,7 +166,7 @@ void ImporterMesh::Save(ResourceMesh * mesh, const char* path) const
 	bytes = sizeof(float) * mesh->VerticesSize * 2;
 	memcpy(cursor, TexCoords, bytes);
 	
-	App->fs->Save(path, data, size);
+	App->fs->Save(mesh->GetResourceFile(), data, size);
 
 	// --- Delete buffer data ---
 	if (data)
