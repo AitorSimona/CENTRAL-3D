@@ -22,7 +22,6 @@ public:
 public:
 
 	Component(GameObject* ContainerGO,Component::ComponentType type);
-	Component(Component::ComponentType type);
 	virtual ~Component();
 	virtual void Enable();
 	virtual void Disable();

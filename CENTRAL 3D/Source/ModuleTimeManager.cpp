@@ -33,7 +33,7 @@ void ModuleTimeManager::PrepareUpdate()
 	{
 		case AppState::TO_PLAY:
 			App->GetAppState() = AppState::PLAY;
-			App->scene_manager->SaveScene();
+			//App->scene_manager->SaveScene();
 			CONSOLE_LOG("APP STATE PLAY");
 			break;
 
@@ -55,7 +55,7 @@ void ModuleTimeManager::PrepareUpdate()
 
 		case AppState::TO_EDITOR:
 			App->GetAppState() = AppState::EDITOR;
-			App->scene_manager->LoadScene();
+			//App->scene_manager->LoadScene();
 			CONSOLE_LOG("APP STATE EDITOR");
 			break;
 

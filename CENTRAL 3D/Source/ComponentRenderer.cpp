@@ -36,8 +36,8 @@ void ComponentRenderer::Draw(bool outline) const
 
 	uint shader = App->renderer3D->defaultShader->ID;
 
-	if(mat)
-	shader = mat->resource_material->shader->ID;
+	//if(mat)
+	//shader = mat->resource_material->shader->ID;
 
 	float4x4 model = transform->GetGlobalTransform();
 
@@ -50,7 +50,7 @@ void ComponentRenderer::Draw(bool outline) const
 		model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
 	}
 
-	mat->resource_material->UpdateUniforms();
+	//mat->resource_material->UpdateUniforms();
 
 	// --- Display Z buffer ---
 	if (App->renderer3D->zdrawer)
@@ -91,9 +91,9 @@ void ComponentRenderer::Draw(bool outline) const
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 
-	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
+	if (mesh && mesh->resource_mesh && mesh->IsEnabled() && mat)
 	{
-		DrawMesh(*mesh->resource_mesh, mesh->GetContainerGameObject()->GetComponent<ComponentMaterial>());
+		DrawMesh(*mesh->resource_mesh, mat);
 		DrawNormals(*mesh->resource_mesh,*transform);
 	}
 

@@ -10,12 +10,6 @@ Component::Component(GameObject* ContainerGO,Component::ComponentType type)
 	Enable();
 }
 
-Component::Component(Component::ComponentType type)
-{
-	this->type = type;
-	Enable();
-}
-
 Component::~Component()
 {
 	Disable();

@@ -2,21 +2,13 @@
 
 #include "mmgr/mmgr.h"
 
-ComponentMaterial::ComponentMaterial(Component::ComponentType type) : Component(type)
+ComponentMaterial::ComponentMaterial(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Material)
 {
-	// MYTODO: We are not setting any container GO, should point to future root?
 }
 
 ComponentMaterial::~ComponentMaterial()
 {	
-	/*if(resource_material->resource_diffuse)
-	resource_material->resource_diffuse->instances--;*/
-}
 
-void ComponentMaterial::FreeTexture()
-{
-	//if (resource_material->resource_diffuse)
-	//resource_material->resource_diffuse->FreeMemory();
 }
 
 json ComponentMaterial::Save() const

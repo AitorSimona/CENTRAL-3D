@@ -6,7 +6,6 @@
 #include "Math.h"
 #include <vector>
 
-class ComponentMaterial;
 
 class GameObject
 {
@@ -52,7 +51,6 @@ public:
 
 	// --- Setters ---
 	void			SetName(const char* name);
-	void			SetMaterial(ComponentMaterial* material);
 
 	// --- Utilities ---
 	void RecursiveDelete(bool target = true);

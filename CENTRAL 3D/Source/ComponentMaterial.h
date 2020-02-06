@@ -4,20 +4,18 @@
 #include "Component.h"
 #include "ResourceMaterial.h"
 
+class GameObject;
 
 class ComponentMaterial : public Component
 {
 public:
 
-	ComponentMaterial(Component::ComponentType type);
+	ComponentMaterial(GameObject* ContainerGO);
 	virtual ~ComponentMaterial();
-
-	void FreeTexture();
 
 	// --- Save & Load ---
 	json Save() const override;
 	void Load(json& node) override;
-
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Material; };
 

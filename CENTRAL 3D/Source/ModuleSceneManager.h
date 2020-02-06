@@ -8,7 +8,6 @@
 #include "Quadtree.h"
 
 class GameObject;
-class ComponentMaterial;
 struct aiScene;
 struct ImportMaterialData;
 struct par_shapes_mesh_s;
@@ -31,7 +30,6 @@ public:
 
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
-	ComponentMaterial* CreateEmptyMaterial();
 	void CreateGrid();
 	GameObject* LoadCube();
 	GameObject* LoadSphere();
@@ -45,7 +43,6 @@ public:
 
 	// --- Setters ---
 	void SetSelectedGameObject(GameObject* go);
-	void SetTextureToSelectedGO(uint id);
 
 	// --- Utilities ---
 	void DrawGrid();
@@ -58,9 +55,9 @@ public:
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;
 	void LoadStatus(const json & file) override;
-	void SaveScene();
-	void LoadScene();
-	void RecursiveFreeScene(GameObject* go);
+	//void SaveScene();
+	//void LoadScene();
+	//void RecursiveFreeScene(GameObject* go);
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -88,9 +85,6 @@ private:
 
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 public:
-	ComponentMaterial* CheckersMaterial = nullptr;
-	ComponentMaterial* DefaultMaterial = nullptr;
-
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	std::vector<GameObject*> NoStaticGo;
@@ -104,8 +98,6 @@ private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
-	std::vector<ComponentMaterial*> Materials;
-	std::vector<AABB> aabb;
 
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;

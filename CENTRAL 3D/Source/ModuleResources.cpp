@@ -42,6 +42,22 @@ bool ModuleResources::Init(json file)
 	importers.push_back(new ImporterMesh());
 	importers.push_back(new ImporterMeta());
 
+	// --- Define Default and Checkers Materials ---
+	//DefaultMaterial = CreateEmptyMaterial();
+	//DefaultMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+	//DefaultMaterial->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+
+	//DefaultMaterial->resource_material->resource_diffuse->Texture_path = "Default";
+
+	//CheckersMaterial = CreateEmptyMaterial();
+	/*CheckersMaterial->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
+	CheckersMaterial->resource_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+
+	CheckersMaterial->resource_material->resource_diffuse->buffer_id = App->textures->GetCheckerTextureID();
+	CheckersMaterial->resource_material->resource_diffuse->Texture_path = "NaN";
+	CheckersMaterial->resource_material->resource_diffuse->Texture_width = CHECKERS_WIDTH;
+	CheckersMaterial->resource_material->resource_diffuse->Texture_height = CHECKERS_HEIGHT;*/
+
 	return true;
 }
 

@@ -16,6 +16,10 @@ GameObject::GameObject(const char* name)
 {
 	UID = App->GetRandom().Int();
 	this->name = name;
+	// --- Add transform ---
+	AddComponent(Component::ComponentType::Transform);
+	UpdateAABB();
+
 	Enable();
 }
 
@@ -23,20 +27,11 @@ GameObject::~GameObject()
 {
 	// --- Destroy all components and game object ---
 
-	ComponentMaterial* mat = GetComponent<ComponentMaterial>();
-
-	//if (mat && mat->resource_material && mat->resource_material->resource_diffuse)
-	//	mat->resource_material->resource_diffuse->instances--;
-
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
 		{
-			if ((*it)->GetType() != Component::ComponentType::Material)
-				delete(*it);
-
-			// MYTODO: We are not deleting materials here (should be deleted by user via project folder) All materials are deleted on app end
-
+			delete(*it);
 			*it = nullptr;
 		}
 	}
@@ -183,6 +178,9 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		case Component::ComponentType::Camera:
 			component = new ComponentCamera(this);
 			break;
+		case Component::ComponentType::Material:
+			component = new ComponentMaterial(this);
+			break;
 		}
 
 		if (component)
@@ -281,17 +279,8 @@ bool GameObject::IsEnabled() const
 
 void GameObject::SetName(const char* name)
 {
-	if (name)
+	if (name && name != "root")
 		this->name = name;
-}
-
-void GameObject::SetMaterial(ComponentMaterial * material)
-{
-	if (material)
-	{
-		RemoveComponent(Component::ComponentType::Material);
-		components.push_back(material);
-	}
 }
 
 void GameObject::UpdateAABB()
