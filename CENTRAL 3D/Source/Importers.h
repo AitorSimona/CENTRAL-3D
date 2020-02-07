@@ -8,6 +8,7 @@
 #include "ImporterMaterial.h"
 #include "ImporterShader.h"
 #include "ImporterMesh.h"
+#include "ImporterTexture.h"
 #include "ImporterMeta.h"
 
 #endif // __IMPORTERS_H__

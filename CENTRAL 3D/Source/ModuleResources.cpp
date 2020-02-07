@@ -40,6 +40,7 @@ bool ModuleResources::Init(json file)
 	importers.push_back(new ImporterMaterial());
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
+	importers.push_back(new ImporterTexture());
 	importers.push_back(new ImporterMeta());
 
 	// --- Define Default and Checkers Materials ---
@@ -69,6 +70,7 @@ bool ModuleResources::Start()
 	std::vector<std::string> filters;
 	filters.push_back("fbx");
 	filters.push_back("mat");
+	filters.push_back("png");
 	//filters.push_back("vertex");
 	//filters.push_back("VERTEX");
 
@@ -152,12 +154,6 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 			path.append((*it).data());
 			Importer::ImportData IData2(path.c_str());
 			Resource* resource = ImportAssets(IData2);
-
-			//// --- If resource is imported correctly, add it to the current folder ---
-			//if (resource)
-			//{
-			//	folder->AddResource(resource);
-			//}
 		}
 	}
 
@@ -168,6 +164,8 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 Resource* ModuleResources::ImportAssets(Importer::ImportData& IData)
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+
+	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
 	// --- Identify resource type by file extension ---
 	Resource::ResourceType type = GetResourceTypeFromPath(IData.path);
@@ -352,16 +350,16 @@ Resource* ModuleResources::ImportMesh(Importer::ImportData& IData)
 Resource* ModuleResources::ImportTexture(Importer::ImportData& IData)
 {
 	Resource* texture = nullptr;
+	ImporterTexture* ITex = GetImporter<ImporterTexture>();
 	
 	// --- If the resource is already in library, load from there ---
 	if (IsFileImported(IData.path))
-	{
-		//Loadfromlib
-	}
+		texture = ITex->Load(IData.path);
+	
 
 	// --- Else call relevant importer ---
 	else
-		// Import
+		texture = ITex->Import(IData);
 
 	return texture;
 }
@@ -385,6 +383,11 @@ Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 
 
 // ----------------------------------------------------
+
+// ------------------------------ LOADING --------------------------------------------------------
+
+
+// ------------------- RESOURCE HANDLING ----------------------------------------------------------
 
 Resource* ModuleResources::GetResource(uint UID)
 {
@@ -411,8 +414,6 @@ Resource* ModuleResources::GetResource(uint UID)
 
 	return resource;
 }
-
-// ------------------- RESOURCE HANDLING ----------------------------------------------------------
 
 Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::string source_file)
 {
@@ -482,6 +483,7 @@ Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, s
 
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
+
 	switch (type)
 	{
 	case Resource::ResourceType::FOLDER:
@@ -525,8 +527,14 @@ Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, s
 		break;
 
 	case Resource::ResourceType::META:
-		resource = (Resource*)new ResourceMeta(UID, source_file);
-		metas[resource->GetUID()] = (ResourceMeta*)resource;
+		if (metas.find(UID) == metas.end())
+		{
+			resource = (Resource*)new ResourceMeta(UID, source_file);
+			metas[resource->GetUID()] = (ResourceMeta*)resource;
+		}
+		else
+			resource = metas[UID];
+
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -594,11 +602,6 @@ uint ModuleResources::GetDefaultMaterialUID()
 	return DefaultMaterial->GetUID();
 }
 
-const std::map<uint, ResourceFolder*>& ModuleResources::GetAllFolders() const
-{
-	return folders;
-}
-
 void ModuleResources::AddResourceToFolder(Resource* resource)
 {
 	if (resource)
@@ -627,13 +630,16 @@ bool ModuleResources::IsFileImported(const char* file)
 {
 	bool ret = false;
 
-	std::string path = file;
+	if (file)
+	{
+		std::string path = file;
 
-	path.append(".meta");
+		path.append(".meta");
 
-	// --- PhysFS only will return true if the file is inside one of the fs predefined folders! 
-	//  using that on our advantage to know if a resource is imported or not ---
-	ret = App->fs->Exists(path.data());
+		// --- PhysFS only will return true if the file is inside one of the fs predefined folders! 
+		//  using that on our advantage to know if a resource is imported or not ---
+		ret = App->fs->Exists(path.data());
+	}
 
 	return ret;
 }

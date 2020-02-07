@@ -10,6 +10,8 @@
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
+#include "ImporterTexture.h"
+
 #include "Assimp/include/scene.h"
 
 #include "mmgr/mmgr.h"
@@ -25,6 +27,8 @@ ImporterMaterial::~ImporterMaterial()
 // --- Create Material from Scene and path to file ---
 Resource* ImporterMaterial::Import(ImportData& IData) const
 {
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
 	ImportMaterialData* MatData = (ImportMaterialData*)&IData;
 
 	// --- Get Directory from filename ---
@@ -59,7 +63,11 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 
 		// --- Finally ask resource manager to import texture ---
 		ImportData TexData(Assets_path.c_str());
-		resource_mat->resource_diffuse = (ResourceTexture*)App->resources->ImportAssets(TexData);
+		ImporterTexture* ITex = App->resources->GetImporter<ImporterTexture>();
+
+		if (ITex)
+				resource_mat->resource_diffuse = (ResourceTexture*)ITex->Import(TexData);
+		
 		// MYTODO: Note we are only assigning one diffuse, and not caring about other texture types, create vector to store texture pointers
 
 
@@ -67,8 +75,6 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 	}
 
 	// --- Create meta ---
-
-	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
 	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_mat->GetResourceFile(), resource_mat->GetUID());
 
@@ -88,6 +94,15 @@ Resource* ImporterMaterial::Load(const char * path) const
 {
 	Resource* mat = nullptr;
 
+	json file = App->GetJLoader()->Load(path);
+
+	if (!file.is_null())
+	{
+		std::string texture_path = file["ResourceDiffuse"];
+		Importer::ImportData IData(texture_path.c_str());
+		App->resources->ImportAssets(IData);
+	}
+
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
@@ -102,6 +117,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	json file;
 
 	file[mat->GetName()];
+	file["ResourceDiffuse"] = mat->resource_diffuse->GetOriginalFile();
 
 	// --- Serialize JSON to string ---
 	std::string data;

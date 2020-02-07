@@ -19,8 +19,9 @@ public:
 	const std::vector<ResourceFolder*>& GetChilds();
 	ResourceFolder* GetParent() const;
 
-
 private:
+	bool HasResource(Resource* resource);
+
 	std::vector<Resource*> resources;
 	std::vector<ResourceFolder*> childs;
 	ResourceFolder* parent = nullptr;

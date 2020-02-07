@@ -104,6 +104,7 @@
     <ClInclude Include="Importers.h" />
     <ClInclude Include="ImporterScene.h" />
     <ClInclude Include="ImporterShader.h" />
+    <ClInclude Include="ImporterTexture.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK2D.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\Random\LCG.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="ImporterModel.cpp" />
     <ClCompile Include="ImporterScene.cpp" />
     <ClCompile Include="ImporterShader.cpp" />
+    <ClCompile Include="ImporterTexture.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK2D.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\Random\LCG.cpp" />

@@ -12,11 +12,14 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 
-public:
-	uint buffer_id = 0;
+	void SetTextureID(uint ID);
+	uint GetTexID();
 
+public:
 	std::string Texture_path;
 	uint Texture_width = 0;
 	uint Texture_height = 0;
+private:
+	uint buffer_id = 0;
 };
 #endif //__RESOURCE_TEXTURE_H__

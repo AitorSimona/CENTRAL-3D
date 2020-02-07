@@ -18,7 +18,7 @@ public:
 	bool Start() override;
 	bool CleanUp() override;
 
-	uint CreateTextureFromFile(const char* path, uint &width, uint &height, uint LibUID) const;
+	uint CreateTextureFromFile(const char* path, uint &width, uint &height, int UID = -1) const;
 	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
 
 	uint GetCheckerTextureID() const;
@@ -35,7 +35,7 @@ private:
 	// --- Called by CreateTextureFromPixels to split code ---
 	inline void SetTextureParameters(bool CheckersTexture = false) const;
 
-	inline void CreateTextureFromImage(uint & TextureID, uint &width, uint &height, const char* path, bool load_existing = false) const;
+	inline void CreateTextureFromImage(uint & TextureID, uint &width, uint &height, std::string& path) const;
 };
 
 #endif

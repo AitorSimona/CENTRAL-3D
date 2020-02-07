@@ -18,6 +18,7 @@ class ResourceMeta;
 
 class ModuleResources : public Module
 {
+	friend class ImporterTexture;
 public:
 
 	// --- Basic ---
@@ -74,7 +75,6 @@ public:
 	// --- Getters ---
 	ResourceFolder* GetAssetsFolder();
 	uint GetDefaultMaterialUID();
-	const std::map<uint, ResourceFolder*>& GetAllFolders() const;
 
 	void AddResourceToFolder(Resource* resource);
 private:

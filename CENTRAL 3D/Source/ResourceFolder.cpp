@@ -36,7 +36,10 @@ void ResourceFolder::FreeMemory()
 
 void ResourceFolder::AddResource(Resource* resource)
 {
-	resources.push_back(resource);
+	if(!HasResource(resource))
+		resources.push_back(resource);
+	else
+		CONSOLE_LOG("![Warning]: Trying to add an already contained resource to folder: %s", this->GetName());
 }
 
 void ResourceFolder::SetParent(ResourceFolder* parent)
@@ -61,4 +64,20 @@ const std::vector<ResourceFolder*>& ResourceFolder::GetChilds()
 ResourceFolder* ResourceFolder::GetParent() const
 {
 	return parent;
+}
+
+bool ResourceFolder::HasResource(Resource* resource)
+{
+	bool found = false;
+
+	for (std::vector<Resource*>::const_iterator it = resources.begin(); it != resources.end(); ++it)
+	{
+		if ((*it)->GetUID() == resource->GetUID())
+		{
+			found = true;
+			break;
+		}
+	}
+
+	return found;
 }

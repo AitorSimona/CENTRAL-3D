@@ -3,7 +3,8 @@
 #include "ModuleGui.h"
 #include "ModuleTextures.h"
 #include "OpenGL.h"
-
+#include "ModuleResources.h"
+#include "ModuleFileSystem.h"
 
 #include "mmgr/mmgr.h"
 
@@ -11,11 +12,15 @@ ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(R
 {
 	extension = ".dds";
 	resource_file = TEXTURES_FOLDER + std::to_string(UID) + extension;
-
 	buffer_id = App->textures->GetDefaultTextureID();
-
 	previewTexID = App->gui->defaultfileTexID;
 
+	if(App->resources->IsFileImported(source_file.c_str()))
+		SetTextureID(App->textures->CreateTextureFromFile(source_file.c_str(), Texture_width, Texture_height, -1));
+	else
+		SetTextureID(App->textures->CreateTextureFromFile(App->resources->DuplicateIntoAssetsFolder(source_file.c_str()).c_str(), Texture_width, Texture_height, GetUID()));
+
+	App->fs->SplitFilePath(source_file.c_str(), nullptr, &name);
 }
 
 ResourceTexture::~ResourceTexture()
@@ -31,4 +36,14 @@ bool ResourceTexture::LoadInMemory()
 void ResourceTexture::FreeMemory()
 {
 	glDeleteTextures(1, (GLuint*)&buffer_id);
+}
+
+void ResourceTexture::SetTextureID(uint ID)
+{
+	buffer_id = previewTexID = ID;
+}
+
+uint ResourceTexture::GetTexID()
+{
+	return buffer_id;
 }
