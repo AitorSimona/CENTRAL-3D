@@ -11,14 +11,18 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTimeManager.h"
 #include "ModuleWindow.h"
+#include "ModuleResources.h"
 
 #include "ResourceMesh.h"
 #include "ResourceShader.h"
+#include "ResourceTexture.h"
+#include "ResourceMaterial.h"
 
 #include "mmgr/mmgr.h"
 
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::MeshRenderer)
 {
+	material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 }
 
 ComponentMeshRenderer::~ComponentMeshRenderer()
@@ -34,8 +38,7 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	uint shader = App->renderer3D->defaultShader->ID;
 
-	//if(mat)
-	//shader = mat->resource_material->shader->ID;
+	shader = material->shader->ID;
 
 	float4x4 model = transform->GetGlobalTransform();
 
@@ -112,7 +115,10 @@ void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
 		if (this->checkers)
 			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
 		else
-			glBindTexture(GL_TEXTURE_2D, 0 /*mat->resource_material->resource_diffuse->buffer_id*/); // start using texture
+		{
+			if(material->resource_diffuse)
+			glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
+		}
 	
 
 

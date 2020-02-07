@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleGui.h"
+#include "ModuleTextures.h"
 
 #include "Importers.h"
 #include "Resources.h"
@@ -60,7 +61,8 @@ bool ModuleResources::Start()
 
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
-
+	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture"); 
+	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
 
 	return true;
 }

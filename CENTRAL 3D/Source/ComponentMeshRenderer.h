@@ -8,6 +8,7 @@
 
 class ResourceMesh;
 class ComponentTransform;
+class ResourceMaterial;
 
 class ComponentMeshRenderer : public Component
 {
@@ -34,7 +35,7 @@ public:
 	bool draw_vertexnormals = false;
 	bool draw_facenormals = false;
 	bool checkers = false;
-	
+	ResourceMaterial* material = nullptr;
 };
 
 #endif
