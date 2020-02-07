@@ -76,7 +76,9 @@ public:
 	uint GetDefaultMaterialUID();
 	const std::map<uint, ResourceFolder*>& GetAllFolders() const;
 
+	void AddResourceToFolder(Resource* resource);
 private:
+
 	// --- Available importers ---
 	std::vector<Importer*> importers;
 

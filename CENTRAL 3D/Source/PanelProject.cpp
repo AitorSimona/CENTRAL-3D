@@ -210,6 +210,9 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		// --- Draw the rest of files ---
 		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
 		{
+			if (!*it)
+				continue;
+
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns)* (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px);
 

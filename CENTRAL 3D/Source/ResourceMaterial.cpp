@@ -11,9 +11,10 @@
 ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file)
 {
 	extension = ".mat";
-	resource_file = App->fs->GetDirectoryFromPath(source_file) + std::to_string(UID) + extension;
+	resource_file = source_file + extension;
 	shader = App->renderer3D->defaultShader;
 	previewTexID = App->gui->materialTexID;
+	App->fs->SplitFilePath(source_file.c_str(), nullptr, &name);
 }
 
 ResourceMaterial::~ResourceMaterial()

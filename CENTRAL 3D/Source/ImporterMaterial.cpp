@@ -5,6 +5,10 @@
 #include "ModuleResources.h"
 
 #include "ResourceMaterial.h"
+#include "ResourceFolder.h"
+
+#include "ImporterMeta.h"
+#include "ResourceMeta.h"
 
 #include "Assimp/include/scene.h"
 
@@ -21,79 +25,91 @@ ImporterMaterial::~ImporterMaterial()
 // --- Create Material from Scene and path to file ---
 Resource* ImporterMaterial::Import(ImportData& IData) const
 {
-	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, IData.path);
+	ImportMaterialData* MatData = (ImportMaterialData*)&IData;
 
-	//// --- Get Directory from filename ---
-	//std::string directory = File_path;
-	//App->fs->GetDirectoryFromPath(directory);
+	// --- Get Directory from filename ---
+	std::string directory = MatData->path;
+	directory = App->fs->GetDirectoryFromPath(directory);
 
-	//if (MData.scene->HasMaterials())
-	//{
-	//	// --- Get scene's first material ---
-	//	aiMaterial* material = MData.scene->mMaterials[MData.mesh->mMaterialIndex];
+	aiString Texture_relative_path;
+	aiString material_name;
+	std::string Texture_path;
 
-	//	if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-	//	{
-	//		aiString Texture_path;
+	// --- Get material's name ---
+	MatData->mat->Get(AI_MATKEY_NAME, material_name);
+	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()));
 
-	//		// --- Specify type of texture to retrieve (in this case DIFFUSE/ALBEDO)---
-	//		material->GetTexture(aiTextureType_DIFFUSE, 0, &Texture_path);
+	// --- Get number of Diffuse textures ---
+	uint num_diffuse = MatData->mat->GetTextureCount(aiTextureType_DIFFUSE);
 
-	//		std::string final_path = Texture_path.C_Str();
-	//		App->fs->SplitFilePath(final_path.data(), nullptr, &final_path);
+	// --- Import them ---
+	while (num_diffuse > 0)
+	{
+		MatData->mat->GetTexture(aiTextureType_DIFFUSE, num_diffuse - 1, &Texture_relative_path);
 
-	//		// --- Build whole path to texture file ---
-	//		directory.append(final_path);
+		// --- First actual retrieve texture path ---
+		Texture_path = directory + Texture_relative_path.C_Str();
 
-	//		// --- Duplicate texture in assets folder ---
-	//		std::string assetpath = ASSETS_FOLDER;
-	//		assetpath.append(final_path);
+		// --- Duplicate into Assets folder ---
+		std::string Assets_path = ASSETS_FOLDER;
+		Assets_path.append(Texture_relative_path.C_Str());
 
-	//		if (!App->fs->Exists(assetpath.data()))
-	//			App->fs->CopyFromOutsideFS(directory.data(), assetpath.data());
+		if (!App->fs->Exists(Assets_path.c_str()))
+				App->fs->CopyFromOutsideFS(Texture_path.c_str(), Assets_path.c_str());
 
-	//		// --- If we find the texture file, load it ---
+		// --- Finally ask resource manager to import texture ---
+		ImportData TexData(Assets_path.c_str());
+		resource_mat->resource_diffuse = (ResourceTexture*)App->resources->ImportAssets(TexData);
+		// MYTODO: Note we are only assigning one diffuse, and not caring about other texture types, create vector to store texture pointers
 
-	//		ResourceTexture* texture = (ResourceTexture*) App->resources->GetResource(directory.data());
 
-	//		if (texture)
-	//		{
-	//			MData.new_material->resource_diffuse = texture;
-	//			texture->instances++;
-	//		}
-	//		else
-	//		{
-	//			MData.new_material->resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
-	//			MData.new_material->resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(directory.data(), MData.new_material->resource_diffuse->Texture_width, MData.new_material->resource_diffuse->Texture_height, MData.new_material->resource_diffuse->GetUID());
-	//			MData.new_material->resource_diffuse->SetOriginalFilename(directory.data());
-	//			MData.new_material->resource_diffuse->Texture_path = directory.data();
-	//			App->resources->CreateMetaFromUID(MData.new_material->resource_diffuse->GetUID(), assetpath.data());
-	//		}
-	//		
-
-	//	}
-	//}
+		num_diffuse--;
+	}
 
 	// --- Create meta ---
 
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_mat->GetResourceFile(), resource_mat->GetUID());
+
+	if (meta)
+		IMeta->Save(meta);
+
 	// --- Save data ---
 	Save(resource_mat);
+
+	// --- Add resource to relevant folder, some resources need to do it at the end of import since they do not go through ImportAssets, due to being part of a bigger resource (MODEL...) ---
+	App->resources->AddResourceToFolder(resource_mat);
 
 	return resource_mat;
 }
 
 Resource* ImporterMaterial::Load(const char * path) const
 {
-	// --- Load from Library ---
-	//// --- LibUID won't be overwritten since we are loading from library ---
-	//mat.resource_diffuse = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
-	//mat.resource_diffuse->buffer_id = App->textures->CreateTextureFromFile(filename,mat.resource_diffuse->Texture_width, mat.resource_diffuse->Texture_height, mat.resource_diffuse->GetUID());
-	//mat.resource_diffuse->Texture_path = filename;
-	//mat.resource_diffuse->SetOriginalFilename(filename);
+	Resource* mat = nullptr;
 
-	return nullptr;
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+
+	// --- Extract data from .mat file (json) and create mat ---
+	mat = App->resources->CreateResourceGivenUID(Resource::ResourceType::MATERIAL, meta->GetOriginalFile(), meta->GetUID());
+
+	return mat;
 }
 
 void ImporterMaterial::Save(ResourceMaterial* mat) const
 {
+	json file;
+
+	file[mat->GetName()];
+
+	// --- Serialize JSON to string ---
+	std::string data;
+	data = App->GetJLoader()->Serialize(file);
+
+	// --- Finally Save to file ---
+	char* buffer = (char*)data.data();
+	uint size = data.length();
+
+	App->fs->Save(mat->GetResourceFile(), buffer, size);
 }

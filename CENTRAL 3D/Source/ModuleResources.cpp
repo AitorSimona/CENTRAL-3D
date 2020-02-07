@@ -68,6 +68,7 @@ bool ModuleResources::Start()
 
 	std::vector<std::string> filters;
 	filters.push_back("fbx");
+	filters.push_back("mat");
 	//filters.push_back("vertex");
 	//filters.push_back("VERTEX");
 
@@ -152,11 +153,11 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 			Importer::ImportData IData2(path.c_str());
 			Resource* resource = ImportAssets(IData2);
 
-			// --- If resource is imported correctly, add it to the current folder ---
-			if (resource)
-			{
-				folder->AddResource(resource);
-			}
+			//// --- If resource is imported correctly, add it to the current folder ---
+			//if (resource)
+			//{
+			//	folder->AddResource(resource);
+			//}
 		}
 	}
 
@@ -222,6 +223,9 @@ Resource* ModuleResources::ImportAssets(Importer::ImportData& IData)
 
 	if (resource)
 	{
+		if(type != Resource::ResourceType::FOLDER)
+		AddResourceToFolder(resource);
+
 		CONSOLE_LOG("Imported successfully: %s", IData.path);
 	}
 	else
@@ -310,13 +314,6 @@ Resource* ModuleResources::ImportMaterial(Importer::ImportData& IData)
 	if (IsFileImported(IData.path))
 		material = IMat->Load(IData.path);
 
-	// --- Else call relevant importer ---
-	//else
-	//{
-	//	material = IMat->Import(IData);
-	//}
-
-
 	return material;
 }
 
@@ -354,8 +351,8 @@ Resource* ModuleResources::ImportMesh(Importer::ImportData& IData)
 
 Resource* ModuleResources::ImportTexture(Importer::ImportData& IData)
 {
-	ResourceTexture* texture = nullptr;
-
+	Resource* texture = nullptr;
+	
 	// --- If the resource is already in library, load from there ---
 	if (IsFileImported(IData.path))
 	{
@@ -600,6 +597,30 @@ uint ModuleResources::GetDefaultMaterialUID()
 const std::map<uint, ResourceFolder*>& ModuleResources::GetAllFolders() const
 {
 	return folders;
+}
+
+void ModuleResources::AddResourceToFolder(Resource* resource)
+{
+	if (resource)
+	{
+		std::string directory;
+		std::string original_file;
+
+		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
+		{
+			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
+			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+			directory.pop_back();
+			original_file = (*it).second->GetName();
+			original_file.pop_back();
+
+			if (directory == original_file)
+			{
+				(*it).second->AddResource(resource);
+			}
+
+		}
+	}
 }
 
 bool ModuleResources::IsFileImported(const char* file)

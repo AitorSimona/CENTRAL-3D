@@ -686,7 +686,6 @@ void ImporterScene::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_
 	for (std::map<uint, ResourceMaterial*>::iterator it = scene_mats->begin(); it != scene_mats->end();)
 	{
 		it->second->FreeMemory();
-		delete it->second;
 		it = scene_mats->erase(it);
 	}
 

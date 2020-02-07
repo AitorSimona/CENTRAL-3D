@@ -61,7 +61,6 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		// --- Load all materials ---
 		std::map<uint, ResourceMaterial*> model_mats;
 		IScene->LoadSceneMaterials(scene, model_mats, IData.path);
-
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 		IScene->LoadNodes(scene->mRootNode,rootnode, scene, model_gos, IData.path, model_meshes);
 
