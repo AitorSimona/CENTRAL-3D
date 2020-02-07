@@ -1,6 +1,7 @@
 #include "Resource.h"
 #include "Application.h"
 #include "ModuleResources.h"
+#include "ModuleFileSystem.h"
 
 #include "mmgr/mmgr.h"
 
@@ -16,7 +17,7 @@ Resource::Resource(ResourceType type, uint UID, std::string source_file)
 	this->type = type;
 	this->UID = UID;
 	original_file = source_file;
-	name = source_file;
+	App->fs->SplitFilePath(source_file.c_str(), nullptr, &name);
 }
 
 Resource::~Resource()

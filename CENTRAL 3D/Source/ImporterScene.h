@@ -34,7 +34,7 @@ public:
 	void FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const;
 
 
-	void LoadNodes(const aiNode* node, GameObject* parent ,const aiScene* scene,  std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes) const;
+	void LoadNodes(const aiNode* node, GameObject* parent ,const aiScene* scene,  std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats) const;
 };
 
 #endif

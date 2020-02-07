@@ -2,7 +2,6 @@
 
 #include "OpenGL.h"
 #include "Application.h"
-#include "ModuleFileSystem.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleGui.h"
 
@@ -14,7 +13,6 @@ ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource
 	resource_file = source_file + extension;
 	shader = App->renderer3D->defaultShader;
 	previewTexID = App->gui->materialTexID;
-	App->fs->SplitFilePath(source_file.c_str(), nullptr, &name);
 }
 
 ResourceMaterial::~ResourceMaterial()

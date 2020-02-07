@@ -14,13 +14,17 @@
             },
             "1": {
                 "Resources": {
-                    "ResourceMesh": "Library/Meshes/331653414.mesh"
+                    "ResourceMesh": "Library/Meshes/1840199669.mesh"
                 }
             },
-            "2": null
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
         },
-        "Parent": "1299946606",
-        "UID": "1179687492"
+        "Parent": "392147013",
+        "UID": "1578258969"
     },
     "Chimney": {
         "Components": {
@@ -37,13 +41,17 @@
             },
             "1": {
                 "Resources": {
-                    "ResourceMesh": "Library/Meshes/31837158.mesh"
+                    "ResourceMesh": "Library/Meshes/707587762.mesh"
                 }
             },
-            "2": null
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
         },
-        "Parent": "1299946606",
-        "UID": "1846480886"
+        "Parent": "392147013",
+        "UID": "771588087"
     },
     "GameObject (0)": {
         "Components": {
@@ -59,7 +67,7 @@
                 "scalez": "1.000000"
             }
         },
-        "Parent": "1374258250",
-        "UID": "1299946606"
+        "Parent": "1424806025",
+        "UID": "392147013"
     }
 }

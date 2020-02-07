@@ -656,7 +656,6 @@ void ImporterScene::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes)
 	for (std::map<uint, ResourceMesh*>::iterator it = scene_meshes->begin(); it != scene_meshes->end();)
 	{
 		it->second->FreeMemory();
-		delete it->second;
 		it = scene_meshes->erase(it);
 	}
 
@@ -692,7 +691,7 @@ void ImporterScene::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_
 	scene_mats->clear();
 }
 
-void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes) const
+void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats) const
 {
 	// --- Load Game Objects from Assimp scene ---
 
@@ -712,7 +711,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	// --- Iterate children and repeat process ---
 	for (int i = 0; i < node->mNumChildren; ++i)
 	{
-		LoadNodes(node->mChildren[i], nodeGo,scene, scene_gos, path, scene_meshes);
+		LoadNodes(node->mChildren[i], nodeGo,scene, scene_gos, path, scene_meshes, scene_mats);
 	}
 
 	// --- Iterate and load meshes ---
@@ -725,8 +724,9 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		scene_gos.push_back(new_object);
 
 		// --- Get Scene mesh associated to node's mesh at index ---
-		uint mesh_index = node->mMeshes[j];
+		uint mesh_index = node->mMeshes[j]; 
 		aiMesh* mesh = scene->mMeshes[mesh_index];
+		uint mat_index = mesh->mMaterialIndex;
 
 		if (mesh)
 		{
@@ -760,13 +760,8 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 				}
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
-
-				//// --- Set Object's Material ---
-				//new_object->SetMaterial(Material);			
+				Renderer->material = scene_mats[mat_index];		
 			}
-
-			//// --- When the mesh is loaded, frame it with the camera ---
-			//App->camera->FrameObject(new_object);
 
 		}
 	}

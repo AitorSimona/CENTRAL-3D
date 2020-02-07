@@ -85,6 +85,8 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 	// --- Save to library ---
 	Save(resource_mesh);
 
+	App->resources->AddResourceToFolder(resource_mesh);
+
 	return resource_mesh;
 }
 

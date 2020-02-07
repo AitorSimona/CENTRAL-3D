@@ -92,7 +92,8 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 
 Resource* ImporterMaterial::Load(const char * path) const
 {
-	Resource* mat = nullptr;
+	ResourceMaterial* mat = nullptr;
+	ResourceTexture* diffuse = nullptr;
 
 	json file = App->GetJLoader()->Load(path);
 
@@ -100,14 +101,17 @@ Resource* ImporterMaterial::Load(const char * path) const
 	{
 		std::string texture_path = file["ResourceDiffuse"];
 		Importer::ImportData IData(texture_path.c_str());
-		App->resources->ImportAssets(IData);
+		diffuse = (ResourceTexture*)App->resources->ImportAssets(IData);
 	}
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
 	// --- Extract data from .mat file (json) and create mat ---
-	mat = App->resources->CreateResourceGivenUID(Resource::ResourceType::MATERIAL, meta->GetOriginalFile(), meta->GetUID());
+	mat = (ResourceMaterial*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MATERIAL, meta->GetOriginalFile(), meta->GetUID());
+
+	if (diffuse)
+		mat->resource_diffuse = diffuse;
 
 	return mat;
 }

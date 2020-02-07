@@ -14,10 +14,12 @@
 #include "ImporterMeta.h"
 #include "ImporterMesh.h"
 
+
 #include "Components.h"
 
 #include "ResourceModel.h"
 #include "ResourceMeta.h"
+#include "ResourceMaterial.h"
 
 #include "mmgr/mmgr.h"
 
@@ -38,7 +40,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 
 	// --- Import scene from path ---
 	if (App->fs->Exists(IData.path))
-		scene = aiImportFileEx(IData.path, aiProcessPreset_TargetRealtime_MaxQuality | aiPostProcessSteps::aiProcess_FlipUVs, App->fs->GetAssimpIO());
+		scene = aiImportFileEx(IData.path, aiProcessPreset_TargetRealtime_MaxQuality /*| aiPostProcessSteps::aiProcess_FlipUVs*/, App->fs->GetAssimpIO());
 
 	GameObject* rootnode = nullptr;
 	ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
@@ -61,8 +63,18 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		// --- Load all materials ---
 		std::map<uint, ResourceMaterial*> model_mats;
 		IScene->LoadSceneMaterials(scene, model_mats, IData.path);
+
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		IScene->LoadNodes(scene->mRootNode,rootnode, scene, model_gos, IData.path, model_meshes);
+		IScene->LoadNodes(scene->mRootNode,rootnode, scene, model_gos, IData.path, model_meshes, model_mats);
+
+		for (uint i = 0; i < model_meshes.size(); ++i)
+		{
+			model->AddResource(model_meshes[i]);
+		}
+		for (uint j = 0; j < model_mats.size(); ++j)
+		{
+			model->AddResource(model_mats[j]);
+		}
 
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
@@ -93,12 +105,42 @@ Resource* ImporterModel::Import(ImportData& IData) const
 // --- Load file from library ---
 Resource* ImporterModel::Load(const char* path) const
 {
-	Resource* resource = nullptr;
+	ResourceModel* resource = nullptr;
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
-	resource = App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, meta->GetOriginalFile(), meta->GetUID());
+	resource = (ResourceModel*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, meta->GetOriginalFile(), meta->GetUID());
+
+	json file = App->GetJLoader()->Load(resource->GetResourceFile());
+
+	if (!file.is_null())
+	{
+		// --- Iterate main nodes ---
+		for (json::iterator it = file.begin(); it != file.end(); ++it)
+		{
+			// --- Iterate components ---
+			json components = file[it.key()]["Components"];
+
+			for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+			{
+				// --- Iterate and load resources ---
+				json _resources = components[it2.key()]["Resources"];
+
+				if (!_resources.is_null())
+				{
+					for (json::iterator it3 = _resources.begin(); it3 != _resources.end(); ++it3)
+					{
+						std::string value = _resources[it3.key()];
+						Importer::ImportData IData(value.c_str());
+						resource->AddResource(App->resources->ImportAssets(IData));
+					}
+				}
+
+			}
+
+		}
+	}
 
 	return resource;
 }

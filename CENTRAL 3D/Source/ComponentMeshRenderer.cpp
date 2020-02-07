@@ -12,11 +12,15 @@
 #include "ModuleTimeManager.h"
 #include "ModuleWindow.h"
 #include "ModuleResources.h"
+#include "ModuleFileSystem.h"
 
 #include "ResourceMesh.h"
 #include "ResourceShader.h"
 #include "ResourceTexture.h"
 #include "ResourceMaterial.h"
+
+#include "ImporterMeta.h"
+#include "ResourceMeta.h"
 
 #include "mmgr/mmgr.h"
 
@@ -257,6 +261,8 @@ json ComponentMeshRenderer::Save() const
 {
 	json node;
 
+	node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
+
 	//if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse)
 //{
 //	component_path = TEXTURES_FOLDER;
@@ -354,5 +360,15 @@ json ComponentMeshRenderer::Save() const
 
 void ComponentMeshRenderer::Load(json& node)
 {
+	std::string mat_path = node["Resources"]["ResourceMaterial"];
+
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	if(IMeta)
+	{
+		// MYTODO: should Release after use! TBD when resource viewer is implemented
+		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat_path.c_str());
+		material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
+	}
 }
 

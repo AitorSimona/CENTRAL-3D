@@ -52,6 +52,11 @@ bool ModuleResources::Start()
 	// --- Import all resources in Assets at startup ---
 	App->gui->CreateIcons();
 
+	// --- Create default material ---
+	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
+	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
+
 	std::vector<std::string> filters;
 	filters.push_back("fbx");
 	filters.push_back("mat");
@@ -60,9 +65,7 @@ bool ModuleResources::Start()
 	//filters.push_back("VERTEX");
 
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
-	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
-	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture"); 
-	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
+
 
 	return true;
 }
