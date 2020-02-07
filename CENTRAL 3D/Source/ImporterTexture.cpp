@@ -7,6 +7,8 @@
 #include "ResourceMeta.h"
 #include "ResourceTexture.h"
 
+#include "mmgr/mmgr.h"
+
 ImporterTexture::ImporterTexture() : Importer(Importer::ImporterType::Texture)
 {
 }
@@ -47,5 +49,5 @@ Resource* ImporterTexture::Load(const char* path) const
 
 void ImporterTexture::Save(ResourceTexture* texture) const
 {
-	// Nothing to save ?
+	// Nothing to save ? (being saved by ModuleTextures)
 }

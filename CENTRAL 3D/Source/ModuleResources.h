@@ -61,10 +61,9 @@ public:
 		return nullptr;
 	}
 
-	// --- Loading ---
-	Resource* GetResource(uint UID);
-
 	// --- Resource Handling ---
+	Resource* GetResource(uint UID);
+	void AddResourceToFolder(Resource* resource);
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
@@ -75,8 +74,6 @@ public:
 	// --- Getters ---
 	ResourceFolder* GetAssetsFolder();
 	uint GetDefaultMaterialUID();
-
-	void AddResourceToFolder(Resource* resource);
 private:
 
 	// --- Available importers ---

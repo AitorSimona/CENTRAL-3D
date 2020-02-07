@@ -759,19 +759,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 					transform->Scale(aiscale.x, aiscale.y, aiscale.z);
 				}
 				// --- Create new Component Renderer to draw mesh ---
-				//ComponentRenderer* Renderer = (ComponentRenderer*)new_object->AddComponent(Component::ComponentType::Renderer);
-
-				//// --- Create new Component Material to store scene's, meshes will use this for now since we do not want to create a material for every mesh if not needed ---
-				//ComponentMaterial* Material = App->scene_manager->CreateEmptyMaterial();
-				//Material->resource_material = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL);
-
-				//// --- Import Material Data (fill Material) --- 
-
-				//ImportMaterialData MData;
-				//MData.scene = scene;
-				//MData.mesh = mesh;
-				//MData.new_material = Material->resource_material;
-				//IMaterial->Import(original_path, MData);
+				ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 
 				//// --- Set Object's Material ---
 				//new_object->SetMaterial(Material);			

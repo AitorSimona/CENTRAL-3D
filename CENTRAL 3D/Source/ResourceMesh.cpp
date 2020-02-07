@@ -42,15 +42,17 @@ bool ResourceMesh::LoadInMemory()
 	uint ranges[3]; 
 	uint bytes = sizeof(ranges);
 	memcpy(ranges, cursor, bytes);
+	bytes += ranges[0];
 
-	IndicesSize = ranges[0];
-	VerticesSize = ranges[1];
+	IndicesSize = ranges[1];
+	VerticesSize = ranges[2];
 
 	vertices = new Vertex[VerticesSize];
 	float* Vertices = new float[VerticesSize * 3];
 	float* Normals = new float[VerticesSize * 3];
 	unsigned char* Colors = new unsigned char[VerticesSize * 4];
 	float* TexCoords = new float[VerticesSize * 2];
+
 
 	// --- Load indices ---
 	cursor += bytes;

@@ -253,8 +253,9 @@ std::string GameObject::GetName() const
 	return name;
 }
 
-const AABB & GameObject::GetAABB() const
+const AABB & GameObject::GetAABB()
 {
+	UpdateAABB();
 	return aabb;
 }
 

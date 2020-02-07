@@ -21,7 +21,7 @@ public:
 	// --- Getters ---
 	uint&			GetUID();
 	std::string		GetName() const;
-	const AABB&	    GetAABB() const;
+	const AABB&	    GetAABB();
 	const OBB&      GetOBB() const;
 
 	bool&			GetActive();
