@@ -2,6 +2,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
 
 #include "PhysFS/include/physfs.h"
 #include "Assimp/include/cfileio.h"
@@ -92,58 +93,45 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 {
 	// Wait for notification.
 
-	printf("\nWaiting for notification...\n");
-
-	dwWaitStatus = WaitForMultipleObjects(2, dwChangeHandles,
+	dwWaitStatus = WaitForMultipleObjects(1, dwChangeHandles,
 		FALSE, 0);
 
 	switch (dwWaitStatus)
 	{
-	case WAIT_OBJECT_0:
+		case WAIT_OBJECT_0:
 
-		// A file was created, renamed, or deleted in the directory.
-		// Refresh this directory and restart the notification.
+			// A file was created, renamed, or deleted in the directory.
+			// Refresh this directory and restart the notification.
 
-		CONSOLE_LOG("CHANGE!!.");
+			// A directory was created, renamed, or deleted.
+			// Refresh the tree and restart the notification.
 
+			CONSOLE_LOG("Importing files... Rebuilding links...");
+			App->resources->HandleFsChanges();
 
-		//RefreshDirectory(lpDir);
-		if (FindNextChangeNotification(dwChangeHandles[0]) == FALSE)
-		{
-			CONSOLE_LOG("ERROR: FindNextChangeNotification function failed.");
-			//ExitProcess(GetLastError());
-		}
+			if (FindNextChangeNotification(dwChangeHandles[0]) == FALSE)
+			{
+				CONSOLE_LOG("ERROR: FindNextChangeNotification function failed.");
+				FindCloseChangeNotification(dwChangeHandles[0]);
+				CONSOLE_LOG("%i", GetLastError());
+			}
+
+			FindCloseChangeNotification(dwChangeHandles[0]);
+			WatchDirectory(ASSETS_FOLDER);
+
 		break;
 
-	case WAIT_OBJECT_0 + 1:
+		case WAIT_TIMEOUT:
 
-		// A directory was created, renamed, or deleted.
-		// Refresh the tree and restart the notification.
+			// A timeout occurred, this would happen if some value other 
+			// than INFINITE is used in the Wait call and no changes occur.
+			// In a single-threaded environment you might not want an
+			// INFINITE wait.
 
-		CONSOLE_LOG("CHANGE!!.");
-
-
-		//RefreshTree(lpDrive);
-		if (FindNextChangeNotification(dwChangeHandles[1]) == FALSE)
-		{
-			CONSOLE_LOG("ERROR: FindNextChangeNotification function failed.");
-			//ExitProcess(GetLastError());
-		}
 		break;
 
-	case WAIT_TIMEOUT:
-
-		// A timeout occurred, this would happen if some value other 
-		// than INFINITE is used in the Wait call and no changes occur.
-		// In a single-threaded environment you might not want an
-		// INFINITE wait.
-
-		//CONSOLE_LOG("No changes in the timeout period.");
-		break;
-
-	default:
-		CONSOLE_LOG("ERROR: Unhandled dwWaitStatus.");
-		//ExitProcess(GetLastError());
+		default:
+			 CONSOLE_LOG("ERROR: Unhandled dwWaitStatus.");
 		break;
 	}
 
@@ -366,21 +354,13 @@ uint ModuleFileSystem::GetLastModificationTime(const char * file)
 
 void ModuleFileSystem::WatchDirectory(const char* directory)
 {
-	//char lpDrive[4];
-	//char lpFile[_MAX_FNAME];
-	//char lpExt[_MAX_EXT];
-
-	//_tsplitpath_s(directory, lpDrive, 4, NULL, 0, lpFile, _MAX_FNAME, lpExt, _MAX_EXT);
-
-	//lpDrive[2] = '\\';
-	//lpDrive[3] = '\0';
-
 	// Watch the directory for file creation and deletion. 
+	// Watch the subtree for directory creation and deletion. 
 
 	dwChangeHandles[0] = FindFirstChangeNotification(
-		directory,                         // directory to watch 
-		FALSE,                         // do not watch subtree 
-		FILE_NOTIFY_CHANGE_FILE_NAME); // watch file name changes 
+		directory,                       // directory to watch 
+		TRUE,                          // watch the subtree 
+		FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_FILE_NAME);
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
 	{
@@ -389,28 +369,12 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 		CONSOLE_LOG("%i", GetLastError());
 	}
 
-	// Watch the subtree for directory creation and deletion. 
-
-	dwChangeHandles[1] = FindFirstChangeNotification(
-		directory,                       // directory to watch 
-		TRUE,                          // watch the subtree 
-		FILE_NOTIFY_CHANGE_DIR_NAME);  // watch directory name changes 
-
-	if (dwChangeHandles[1] == INVALID_HANDLE_VALUE)
-	{
-		CONSOLE_LOG("ERROR: FindFirstChangeNotification function failed.");
-		FindCloseChangeNotification(dwChangeHandles[1]);
-		CONSOLE_LOG("%i", GetLastError());
-	}
-
 	// Make a final validation check on our handles.
 
-	if ((dwChangeHandles[0] == NULL) || (dwChangeHandles[1] == NULL))
+	if ((dwChangeHandles[0] == NULL) )
 	{
-		printf("\n ERROR: Unexpected NULL from FindFirstChangeNotification.\n");
+		CONSOLE_LOG("ERROR: Unexpected NULL from FindFirstChangeNotification.");
 		FindCloseChangeNotification(dwChangeHandles[0]);
-		CONSOLE_LOG("%i", GetLastError());
-		FindCloseChangeNotification(dwChangeHandles[1]);
 		CONSOLE_LOG("%i", GetLastError());
 	}
 

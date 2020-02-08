@@ -46,6 +46,9 @@ public:
 	Resource* ImportTexture(Importer::ImportData& IData);
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 
+	void HandleFsChanges();
+	void RetrieveFilesAndDirectories(const char* directory, std::vector<std::string>& retfiles, std::vector<std::string>& retdirs);
+
 	// For consistency, use this only on resource manager/importers 
 	template<typename TImporter>
 	TImporter* GetImporter()
@@ -78,6 +81,7 @@ private:
 
 	// --- Available importers ---
 	std::vector<Importer*> importers;
+	std::vector<std::string> filters;
 
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;

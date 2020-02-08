@@ -10,7 +10,7 @@
         "Inspector": true,
         "Project": true,
         "Scene": true,
-        "Settings": true,
+        "Settings": false,
         "ShaderEditor": true,
         "Toolbar": true
     },

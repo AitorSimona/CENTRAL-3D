@@ -19,6 +19,7 @@ void _log(const char file[], int line, const char* format, ...);
 
 
 typedef unsigned int uint;
+typedef unsigned long ulong;
 typedef unsigned __int64 uint64;
 typedef unsigned __int32 uint32;
 

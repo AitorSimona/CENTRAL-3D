@@ -59,8 +59,9 @@ public:
 	const char* GetReadPaths() const;
 
 private:
-	uint32 dwWaitStatus; 
-	HANDLE dwChangeHandles[2]; // void*
+	// --- FS Windows Watcher ---
+	ulong dwWaitStatus; 
+	HANDLE dwChangeHandles[1]; // void*
 
 	void CreateAssimpIO();
 

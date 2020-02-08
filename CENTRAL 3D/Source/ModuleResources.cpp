@@ -57,7 +57,6 @@ bool ModuleResources::Start()
 	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
 
-	std::vector<std::string> filters;
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
@@ -368,6 +367,81 @@ Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 		// Import
 
 	return shader_object;
+}
+
+void ModuleResources::HandleFsChanges()
+{
+	std::vector<std::string> files;
+	std::vector<std::string> dirs;
+
+	RetrieveFilesAndDirectories(ASSETS_FOLDER, files, dirs);
+
+	ResourceFolder* folder;
+
+	std::string test = "test";
+	
+	// --- Iterate all folders to find current ---
+	//for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end(); ++it)
+	//{
+	//	// --- Get all new files in given folder and compare them to current ones ---
+	//	if (dir.c_str() == (*it).second->GetName())
+	//	{
+	//		folder = (*it).second;
+	//	}
+	//
+	//}
+}
+
+void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::vector<std::string>& retfiles, std::vector<std::string>& retdirs)
+{
+	std::vector<std::string> files;
+	std::vector<std::string> dirs;
+
+	std::string dir((directory) ? directory : "");
+
+	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+	{
+		RetrieveFilesAndDirectories((dir + (*it) + "/").c_str(), retfiles, retdirs);
+	}
+
+	// --- Add directory to list ---
+	retdirs.push_back(dir);
+
+	// --- Now iterate all of its engine-supported files ---
+	std::sort(files.begin(), files.end());
+
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
+	{
+		const std::string& str = *it;
+
+		bool pass_filter = false;
+
+		if (filters.size() > 0)
+		{
+			for (uint i = 0; i < filters.size(); ++i)
+			{
+				std::string extension = (str.substr(str.find_last_of(".") + 1));
+				App->fs->NormalizePath(extension);
+
+				if (extension == filters[i])
+				{
+					pass_filter = true;
+					break;
+				}
+			}
+		}
+		else
+			pass_filter = true;
+
+
+		// --- If the given file does not have a compatible extension, get it ---
+		if (pass_filter)
+		{
+			retfiles.push_back(*it);
+		}
+	}
 }
 
 
