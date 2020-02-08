@@ -21,6 +21,8 @@ public:
 	// Called before render is available
 	bool Init(json config) override;
 
+	update_status PreUpdate(float dt) override;
+
 	// Called before quitting
 	bool CleanUp() override;
 
@@ -38,6 +40,7 @@ public:
 	void NormalizePath(char* full_path, bool lowercase = false) const;
 	void NormalizePath(std::string& full_path, bool lowercase = false) const;
 	uint GetLastModificationTime(const char* file);
+	void WatchDirectory(const char* directory);
 
 	// Open for Read/Write
 	unsigned int Load(const char* path, const char* file, char** buffer) const;
@@ -56,6 +59,8 @@ public:
 	const char* GetReadPaths() const;
 
 private:
+	uint32 dwWaitStatus; 
+	HANDLE dwChangeHandles[2]; // void*
 
 	void CreateAssimpIO();
 
