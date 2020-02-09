@@ -371,28 +371,96 @@ Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 
 void ModuleResources::HandleFsChanges()
 {
-	std::vector<std::string> files;
-	std::vector<std::string> dirs;
+	// --- First retrieve all windows fs files and directories in ASSETS ---
+	std::map<std::string, std::vector<std::string>> dirs;
 
-	RetrieveFilesAndDirectories(ASSETS_FOLDER, files, dirs);
+	// MYTODO: Add only files/dirs that have been modified (getmoddate?)
+	RetrieveFilesAndDirectories(ASSETS_FOLDER, dirs);
 
-	ResourceFolder* folder;
+	// --- Now compare to engine's, we need to handle overwrite/creation/deletion ---
+	// Same strategy as Unity, no support for movement/rename of elements
 
-	std::string test = "test";
-	
-	// --- Iterate all folders to find current ---
-	//for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end(); ++it)
-	//{
-	//	// --- Get all new files in given folder and compare them to current ones ---
-	//	if (dir.c_str() == (*it).second->GetName())
-	//	{
-	//		folder = (*it).second;
-	//	}
-	//
-	//}
+	for (std::map<uint, ResourceMeta*>::iterator meta = metas.begin(); meta != metas.end(); ++meta)
+	{
+		// Check if meta exists
+		if (!App->fs->Exists((*meta).second->GetResourceFile()))
+		{
+			// Recreate meta, only if directory exists (if dir does not exist)
+
+
+			// continue only if directory exists, after recreating meta so file is not imported again
+			continue;
+		}
+
+		bool found = false;
+
+		for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
+		{
+			for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
+			{
+				// --- If the meta corresponds to the file ---
+				if ((*meta).second->GetOriginalFile() == *files)
+				{
+					found = true;
+
+					// --- Check given file modification date against meta's ---
+					uint date = App->fs->GetLastModificationTime((*files).c_str());
+
+					// --- If dates are not equal, file has been overwritten ---
+					if (date != (*meta).second->Date)
+					{
+						CONSOLE_LOG("Reimported file: %s", (*files).c_str());
+					}
+
+					(*dir).second.erase(files);
+				}
+			}
+
+			// --- If the meta corresponds to the directory ---
+			if ((*meta).second->GetOriginalFile() == (*dir).first)
+			{
+				found = true;
+
+				// --- Check given file modification date against meta's ---
+				uint date = App->fs->GetLastModificationTime((*dir).first.c_str());
+
+				// --- If dates are not equal, dir has been overwritten ---
+				if (date != (*meta).second->Date)
+				{	
+					// --- Basically update meta, files inside will be taken care of  ---
+					CONSOLE_LOG("Reimported directory: %s", (*dir).first.c_str());
+				}
+			}
+		}
+
+		// --- Meta associated file has been deleted, print warning and eliminate lib files ---
+		if (!found)
+		{
+			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
+
+			// --- Eliminate all lib files (force load then ask it to remove all files) ---
+
+		}
+	}
+
+	// --- Now handle all new files, basically import them ---
+	for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
+	{
+		// --- Check if dir has a meta, if not import directory ---
+		if (!App->resources->IsFileImported((*dir).first.c_str()))
+		{
+			CONSOLE_LOG("Imported directory: %s", (*dir).first.c_str());
+
+		}
+
+		for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
+		{
+			// --- Import files ---
+		}
+	}
 }
 
-void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::vector<std::string>& retfiles, std::vector<std::string>& retdirs)
+void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -403,14 +471,13 @@ void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::ve
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
-		RetrieveFilesAndDirectories((dir + (*it) + "/").c_str(), retfiles, retdirs);
+		RetrieveFilesAndDirectories((dir + (*it) + "/").c_str(), ret);
 	}
-
-	// --- Add directory to list ---
-	retdirs.push_back(dir);
 
 	// --- Now iterate all of its engine-supported files ---
 	std::sort(files.begin(), files.end());
+
+	std::vector<std::string> compatible_files;
 
 	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
 	{
@@ -436,12 +503,16 @@ void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::ve
 			pass_filter = true;
 
 
-		// --- If the given file does not have a compatible extension, get it ---
+		// --- If the given file does not have a compatible extension, erase it ---
 		if (pass_filter)
 		{
-			retfiles.push_back(*it);
+			std::string full_path = dir + (*it);
+			compatible_files.push_back(full_path);
 		}
 	}
+
+	// --- Add directory to list ---
+	ret[dir] = compatible_files;
 }
 
 

@@ -15,8 +15,8 @@ public:
 
 	void AddResource(Resource* resource);
 	void SetParent(ResourceFolder* parent);
-	const std::vector<Resource*>& GetResources();
-	const std::vector<ResourceFolder*>& GetChilds();
+	std::vector<Resource*>& GetResources();
+	std::vector<ResourceFolder*>& GetChilds();
 	ResourceFolder* GetParent() const;
 
 private:

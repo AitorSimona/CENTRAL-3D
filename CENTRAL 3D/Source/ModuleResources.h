@@ -47,7 +47,7 @@ public:
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 
 	void HandleFsChanges();
-	void RetrieveFilesAndDirectories(const char* directory, std::vector<std::string>& retfiles, std::vector<std::string>& retdirs);
+	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string,std::vector<std::string>> & ret);
 
 	// For consistency, use this only on resource manager/importers 
 	template<typename TImporter>

@@ -51,12 +51,12 @@ void ResourceFolder::SetParent(ResourceFolder* parent)
 	}
 }
 
-const std::vector<Resource*>& ResourceFolder::GetResources()
+std::vector<Resource*>& ResourceFolder::GetResources()
 {
 	return resources;
 }
 
-const std::vector<ResourceFolder*>& ResourceFolder::GetChilds()
+std::vector<ResourceFolder*>& ResourceFolder::GetChilds()
 {
 	return childs;
 }
