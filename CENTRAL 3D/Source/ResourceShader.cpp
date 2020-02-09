@@ -533,6 +533,15 @@ void ResourceShader::FillUniform(Uniform* uniform, const char* name, const uint 
 	 uniform->type = type;
 }
 
+void ResourceShader::OnOverwrite()
+{
+}
+
+void ResourceShader::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
+}
+
 void ResourceShader::use()
 {
 	glUseProgram(ID);

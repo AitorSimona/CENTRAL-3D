@@ -6,6 +6,7 @@
 #include "ImporterMeta.h"
 
 #include "ResourceMeta.h"
+#include "ResourceFolder.h"
 
 #include "mmgr/mmgr.h"
 
@@ -31,6 +32,7 @@ Resource* ImporterFolder::Import(ImportData& IData) const
 	new_path.pop_back();
 	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_path, folder->GetUID());
 
+
 	if (meta)
 		IMeta->Save(meta);
 
@@ -39,7 +41,7 @@ Resource* ImporterFolder::Import(ImportData& IData) const
 
 Resource* ImporterFolder::Load(const char* path) const
 {
-	Resource* folder = nullptr;
+	ResourceFolder* folder = nullptr;
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
@@ -48,7 +50,15 @@ Resource* ImporterFolder::Load(const char* path) const
 	new_path.pop_back();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(new_path.c_str());
 
-	folder = App->resources->CreateResourceGivenUID(Resource::ResourceType::FOLDER, path, meta->GetUID());
+	folder = App->resources->folders.find(meta->GetUID()) != App->resources->folders.end() ? App->resources->folders.find(meta->GetUID())->second : (ResourceFolder*)App->resources->CreateResourceGivenUID(Resource::ResourceType::FOLDER, path, meta->GetUID());
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(folder->GetOriginalFile()))
+	{
+		folder->SetOriginalFile(path);
+		meta->SetOriginalFile(path);
+		App->resources->AddResourceToFolder(folder);
+	}
 
 	return folder;
 }

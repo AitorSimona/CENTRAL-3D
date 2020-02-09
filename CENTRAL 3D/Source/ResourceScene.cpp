@@ -1,6 +1,8 @@
 #include "ResourceScene.h"
 #include "Application.h"
 #include "ModuleGui.h"
+#include "ModuleFileSystem.h"
+
 
 #include "mmgr/mmgr.h"
 
@@ -26,4 +28,13 @@ bool ResourceScene::LoadInMemory()
 
 void ResourceScene::FreeMemory()
 {
+}
+
+void ResourceScene::OnOverwrite()
+{
+}
+
+void ResourceScene::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
 }

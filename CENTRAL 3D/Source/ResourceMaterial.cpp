@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleGui.h"
+#include "ModuleFileSystem.h"
 
 #include "mmgr/mmgr.h"
 
@@ -80,4 +81,18 @@ void ResourceMaterial::UpdateUniforms()
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
+}
+
+void ResourceMaterial::OnOverwrite()
+{
+}
+
+void ResourceMaterial::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
+}
+
+void ResourceMaterial::Repath()
+{
+	resource_file = original_file + extension;
 }

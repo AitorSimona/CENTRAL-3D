@@ -25,6 +25,10 @@ private:
 	std::vector<Resource*> resources;
 	std::vector<ResourceFolder*> childs;
 	ResourceFolder* parent = nullptr;
+
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
 };
 
 #endif //__RESOURCE_FOLDER_H__

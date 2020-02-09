@@ -19,6 +19,11 @@ class ResourceMeta;
 class ModuleResources : public Module
 {
 	friend class ImporterTexture;
+	friend class ImporterModel;
+	friend class ImporterMeta;
+	friend class ImporterMesh;
+	friend class ImporterMaterial;
+	friend class ImporterFolder;
 public:
 
 	// --- Basic ---
@@ -65,7 +70,7 @@ public:
 	}
 
 	// --- Resource Handling ---
-	Resource* GetResource(uint UID);
+	Resource* GetResource(uint UID, bool loadinmemory = true);
 	void AddResourceToFolder(Resource* resource);
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);

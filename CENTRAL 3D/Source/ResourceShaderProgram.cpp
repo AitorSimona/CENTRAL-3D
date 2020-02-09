@@ -1,6 +1,8 @@
 #include "ResourceShaderProgram.h"
 #include "Application.h"
 #include "ModuleGui.h"
+#include "ModuleFileSystem.h"
+
 
 #include "mmgr/mmgr.h"
 
@@ -27,4 +29,13 @@ bool ResourceShaderProgram::LoadInMemory()
 
 void ResourceShaderProgram::FreeMemory()
 {
+}
+
+void ResourceShaderProgram::OnOverwrite()
+{
+}
+
+void ResourceShaderProgram::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
 }

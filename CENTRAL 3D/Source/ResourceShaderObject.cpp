@@ -28,3 +28,12 @@ bool ResourceShaderObject::LoadInMemory()
 void ResourceShaderObject::FreeMemory()
 {
 }
+
+void ResourceShaderObject::OnOverwrite()
+{
+}
+
+void ResourceShaderObject::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
+}

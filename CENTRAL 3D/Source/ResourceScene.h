@@ -11,6 +11,10 @@ public:
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
+
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
 };
 
 #endif //__RESOURCE_SCENE_H__

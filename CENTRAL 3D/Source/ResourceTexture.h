@@ -21,5 +21,9 @@ public:
 	uint Texture_height = 0;
 private:
 	uint buffer_id = 0;
+
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
 };
 #endif //__RESOURCE_TEXTURE_H__

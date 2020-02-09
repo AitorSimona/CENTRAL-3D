@@ -4,6 +4,7 @@
 #include "ModuleTextures.h"
 #include "OpenGL.h"
 #include "ModuleResources.h"
+#include "ModuleFileSystem.h"
 
 #include "mmgr/mmgr.h"
 
@@ -15,7 +16,7 @@ ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(R
 	previewTexID = App->gui->defaultfileTexID;
 
 	if(App->resources->IsFileImported(source_file.c_str()))
-		SetTextureID(App->textures->CreateTextureFromFile(source_file.c_str(), Texture_width, Texture_height, -1));
+		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, -1));
 	else if (source_file != "DefaultTexture")
 		SetTextureID(App->textures->CreateTextureFromFile(App->resources->DuplicateIntoAssetsFolder(source_file.c_str()).c_str(), Texture_width, Texture_height, GetUID()));
 }
@@ -43,4 +44,20 @@ void ResourceTexture::SetTextureID(uint ID)
 uint ResourceTexture::GetTexID()
 {
 	return buffer_id;
+}
+
+void ResourceTexture::OnOverwrite()
+{
+	FreeMemory();
+	App->fs->Remove(resource_file.c_str());
+
+
+
+	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
+}
+
+void ResourceTexture::OnDelete()
+{
+	FreeMemory();
+	App->fs->Remove(resource_file.c_str());
 }

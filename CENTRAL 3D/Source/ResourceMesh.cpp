@@ -210,4 +210,18 @@ void ResourceMesh::CreateVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void ResourceMesh::OnOverwrite()
+{
+	//FreeMemory();
+
+	// --- Delete lib file ---
+
+}
+
+void ResourceMesh::OnDelete()
+{
+	FreeMemory();
+	App->fs->Remove(resource_file.c_str());
+}
+
 

@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleResources.h"
 #include "ModuleTextures.h"
+#include "ModuleFileSystem.h"
 
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
@@ -43,6 +44,14 @@ Resource* ImporterTexture::Load(const char* path) const
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
 	texture = App->resources->textures.find(meta->GetUID()) != App->resources->textures.end() ? App->resources->textures.find(meta->GetUID())->second : (ResourceTexture*)App->resources->CreateResourceGivenUID(Resource::ResourceType::TEXTURE, path, meta->GetUID());
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(texture->GetOriginalFile()))
+	{
+		texture->SetOriginalFile(path);
+		meta->SetOriginalFile(path);
+		App->resources->AddResourceToFolder(texture);
+	}
 
 	return texture;
 }

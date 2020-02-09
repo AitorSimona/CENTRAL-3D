@@ -65,6 +65,13 @@ const uint Resource::GetPreviewTexID() const
 	return previewTexID;
 }
 
+void Resource::SetOriginalFile(const char* new_path)
+{
+	original_file = new_path;
+	// Redo resource file
+	Repath();
+}
+
 bool Resource::IsInMemory() const
 {
 	return instances > 1;
@@ -93,8 +100,4 @@ void Resource::SetName(const char * name)
 	this->name = name;
 }
 
-void Resource::SetOriginalFilename(const char * filename)
-{
-	std::string new_name = filename;
-	this->original_file = new_name;
-}
+

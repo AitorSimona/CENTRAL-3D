@@ -13,6 +13,10 @@ public:
 	void FreeMemory() override;
 
 	uint Date = 0;
+
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
 };
 
 #endif //__RESOURCE_META_H__

@@ -24,6 +24,8 @@ Resource* ImporterMeta::Import(ImportData& IData) const
 
 Resource* ImporterMeta::Load(const char* path) const
 {
+	Resource* resource = nullptr;
+
 	std::string meta = path;
 	meta.append(".meta");
 
@@ -32,8 +34,19 @@ Resource* ImporterMeta::Load(const char* path) const
 
 	// --- Load meta file ---
 	json file = App->GetJLoader()->Load(meta.c_str());
+	uint UID = std::stoi(file["UID"].get<std::string>());
+	std::string source_file = file["SOURCE"].get<std::string>();
+
 	// Date is retrieved on resource meta constructor
-	return 	App->resources->CreateResourceGivenUID(Resource::ResourceType::META, file["SOURCE"].get<std::string>(), std::stoi(file["UID"].get<std::string>()));
+	resource = App->resources->metas.find(UID) != App->resources->metas.end() ? App->resources->metas.find(UID)->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::META, source_file, UID);
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(source_file.c_str()))
+	{
+		resource->SetOriginalFile(path);
+	}
+
+	return resource;
 }
 
 void ImporterMeta::Save(ResourceMeta * meta) const

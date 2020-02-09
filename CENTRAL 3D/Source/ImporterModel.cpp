@@ -35,20 +35,28 @@ ImporterModel::~ImporterModel()
 // --- Import external file ---
 Resource* ImporterModel::Import(ImportData& IData) const
 {
+	ImportModelData MData = (ImportModelData&)IData;
 	ResourceModel* model = nullptr;
 	const aiScene* scene = nullptr;
 
 	// --- Import scene from path ---
-	if (App->fs->Exists(IData.path))
-		scene = aiImportFileEx(IData.path, aiProcessPreset_TargetRealtime_MaxQuality /*| aiPostProcessSteps::aiProcess_FlipUVs*/, App->fs->GetAssimpIO());
+	if (App->fs->Exists(MData.path))
+		scene = aiImportFileEx(MData.path, aiProcessPreset_TargetRealtime_MaxQuality /*| aiPostProcessSteps::aiProcess_FlipUVs*/, App->fs->GetAssimpIO());
 
 	GameObject* rootnode = nullptr;
 	ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
 
 	if (scene && IScene)
 	{
-		uint UID = App->GetRandom().Int();
-		model = (ResourceModel*)App->resources->CreateResource(Resource::ResourceType::MODEL, IData.path);
+		if (MData.model_overwrite)
+		{
+			model = MData.model_overwrite;
+		}
+		else
+		{
+			uint UID = App->GetRandom().Int();
+			model = (ResourceModel*)App->resources->CreateResource(Resource::ResourceType::MODEL, MData.path);
+		}
 
 		rootnode = App->scene_manager->CreateEmptyGameObject();
 
@@ -58,14 +66,14 @@ Resource* ImporterModel::Import(ImportData& IData) const
 
 		// --- Load all meshes ---
 		std::map<uint, ResourceMesh*> model_meshes;
-		IScene->LoadSceneMeshes(scene, model_meshes, IData.path);
+		IScene->LoadSceneMeshes(scene, model_meshes, MData.path);
 
 		// --- Load all materials ---
 		std::map<uint, ResourceMaterial*> model_mats;
-		IScene->LoadSceneMaterials(scene, model_mats, IData.path);
+		IScene->LoadSceneMaterials(scene, model_mats, MData.path);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		IScene->LoadNodes(scene->mRootNode,rootnode, scene, model_gos, IData.path, model_meshes, model_mats);
+		IScene->LoadNodes(scene->mRootNode,rootnode, scene, model_gos, MData.path, model_meshes, model_mats);
 
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
@@ -88,12 +96,15 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		aiReleaseImport(scene);
 
 		// --- Create meta ---
-		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-		
-		ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, IData.path, model->GetUID());
+		if (MData.model_overwrite == nullptr)
+		{
+			ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-		if (meta)
-			IMeta->Save(meta);
+			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, IData.path, model->GetUID());
+
+			if (meta)
+				IMeta->Save(meta);
+		}
 	}
 	else
 		CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);
@@ -110,7 +121,15 @@ Resource* ImporterModel::Load(const char* path) const
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
-	resource = (ResourceModel*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, meta->GetOriginalFile(), meta->GetUID());
+	resource = App->resources->models.find(meta->GetUID()) != App->resources->models.end() ? App->resources->models.find(meta->GetUID())->second : (ResourceModel*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, meta->GetOriginalFile(), meta->GetUID());
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(resource->GetOriginalFile()))
+	{
+		resource->SetOriginalFile(path);
+		meta->SetOriginalFile(path);
+		App->resources->AddResourceToFolder(resource);
+	}
 
 	json file = App->GetJLoader()->Load(resource->GetResourceFile());
 

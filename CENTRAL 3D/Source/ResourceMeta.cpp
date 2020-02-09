@@ -33,5 +33,14 @@ void ResourceMeta::FreeMemory()
 {
 }
 
+void ResourceMeta::OnOverwrite()
+{
+}
+
+void ResourceMeta::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
+}
+
 
 

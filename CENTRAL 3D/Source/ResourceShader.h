@@ -77,5 +77,9 @@ private:
 	void DeleteShaderProgram();
 
 	void FillUniform(Uniform* uniform, const char* name, const uint type) const;
+
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
 };
 #endif //__RESOURCE_SHADER_H__

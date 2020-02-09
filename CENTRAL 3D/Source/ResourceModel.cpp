@@ -2,8 +2,10 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleResources.h"
+#include "ModuleFileSystem.h"
 
 #include "Importer.h"
+#include "ImporterModel.h"
 
 #include "mmgr/mmgr.h"
 
@@ -38,9 +40,58 @@ bool ResourceModel::LoadInMemory()
 
 void ResourceModel::FreeMemory()
 {
+
 }
 
 void ResourceModel::AddResource(Resource* resource)
 {
+	if(!HasResource(resource))
 	resources.push_back(resource);
+}
+
+bool ResourceModel::HasResource(Resource* resource)
+{
+	bool found = false;
+
+	for (std::vector<Resource*>::const_iterator it = resources.begin(); it != resources.end(); ++it)
+	{
+		if ((*it)->GetUID() == resource->GetUID())
+		{
+			found = true;
+			break;
+		}
+	}
+
+	return found;
+}
+
+void ResourceModel::OnOverwrite()
+{
+	// --- Free Everything ---
+	FreeMemory();
+
+	for (uint i = 0; i < resources.size(); ++i)
+	{
+		resources[i]->OnDelete();
+		delete resources[i];
+	}
+
+	// --- Delete lib file ---
+	OnDelete();
+
+	// --- Ask for reimport ---
+	ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
+	
+	ImportModelData MData(GetOriginalFile());
+	MData.model_overwrite = this;
+
+	IModel->Import(MData);
+
+	if (instances > 0)
+		LoadInMemory();
+}
+
+void ResourceModel::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
 }

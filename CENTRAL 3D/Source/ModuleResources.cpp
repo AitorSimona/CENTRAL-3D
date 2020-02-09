@@ -283,7 +283,8 @@ Resource* ModuleResources::ImportModel(Importer::ImportData& IData)
 		{
 			std::string new_path = DuplicateIntoAssetsFolder(IData.path);
 			IData.path = new_path.c_str();
-			model = IModel->Import(IData);
+			ImportModelData MData(IData.path);
+			model = IModel->Import(MData);
 		}
 	}
 
@@ -371,6 +372,8 @@ Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 
 void ModuleResources::HandleFsChanges()
 {
+	//SDL_Delay(3000);
+
 	// --- First retrieve all windows fs files and directories in ASSETS ---
 	std::map<std::string, std::vector<std::string>> dirs;
 
@@ -382,13 +385,35 @@ void ModuleResources::HandleFsChanges()
 
 	for (std::map<uint, ResourceMeta*>::iterator meta = metas.begin(); meta != metas.end(); ++meta)
 	{
-		// Check if meta exists
+		// --- Check if meta exists ---
 		if (!App->fs->Exists((*meta).second->GetResourceFile()))
 		{
-			// Recreate meta, only if directory exists (if dir does not exist)
-
+			// Recreate meta, only if directory exists 
+			std::string metadir;
+			App->fs->SplitFilePath((*meta).second->GetResourceFile(), &metadir);
 
 			// continue only if directory exists, after recreating meta so file is not imported again
+			if (App->fs->Exists(metadir.c_str()) && App->fs->Exists((*meta).second->GetOriginalFile()))
+			{
+				ImporterMeta* IMeta = GetImporter<ImporterMeta>();
+
+				IMeta->Save((*meta).second);
+				continue;
+			}
+
+		}
+
+		// --- Meta's associated file has been deleted, print warning and eliminate lib files ---
+		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
+		{
+			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
+
+			// --- Eliminate all lib files (force load then ask it to remove all files) ---
+			Resource* resource = GetResource((*meta).second->GetUID(), false);
+
+			if (resource)
+				resource->OnDelete();
+
 			continue;
 		}
 
@@ -410,52 +435,67 @@ void ModuleResources::HandleFsChanges()
 					if (date != (*meta).second->Date)
 					{
 						CONSOLE_LOG("Reimported file: %s", (*files).c_str());
+
+						Resource* resource = GetResource((*meta).second->GetUID(), false);
+
+						if (resource)
+							resource->OnOverwrite();
 					}
 
-					(*dir).second.erase(files);
+					files = (*dir).second.erase(files);
+
+					break;
 				}
 			}
 
+			std::string dir_name = std::string((*meta).second->GetOriginalFile()).append("/");
+
 			// --- If the meta corresponds to the directory ---
-			if ((*meta).second->GetOriginalFile() == (*dir).first)
+			if (!found && dir_name == (*dir).first)
 			{
 				found = true;
 
 				// --- Check given file modification date against meta's ---
-				uint date = App->fs->GetLastModificationTime((*dir).first.c_str());
+				uint date = App->fs->GetLastModificationTime(dir_name.c_str());
 
 				// --- If dates are not equal, dir has been overwritten ---
 				if (date != (*meta).second->Date)
 				{	
 					// --- Basically update meta, files inside will be taken care of  ---
-					CONSOLE_LOG("Reimported directory: %s", (*dir).first.c_str());
+					CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
+
+					Resource* resource = GetResource((*meta).second->GetUID(), false);
+
+					if (resource)
+						resource->OnOverwrite();
 				}
 			}
-		}
 
-		// --- Meta associated file has been deleted, print warning and eliminate lib files ---
-		if (!found)
-		{
-			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
-
-			// --- Eliminate all lib files (force load then ask it to remove all files) ---
+			if (found)
+				break;
 
 		}
+
 	}
 
 	// --- Now handle all new files, basically import them ---
 	for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
 	{
-		// --- Check if dir has a meta, if not import directory ---
-		if (!App->resources->IsFileImported((*dir).first.c_str()))
-		{
-			CONSOLE_LOG("Imported directory: %s", (*dir).first.c_str());
+		std::string dir_name = (*dir).first;
+		dir_name.pop_back();
 
+		// --- Check if dir has a meta, if not import directory ---
+		if (!App->resources->IsFileImported(dir_name.c_str()))
+		{	
+			Importer::ImportData IData((*dir).first.c_str());
+			ImportAssets(IData);
 		}
 
 		for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
 		{
 			// --- Import files ---
+			Importer::ImportData IData((*files).c_str());
+			ImportAssets(IData);
 		}
 	}
 }
@@ -523,7 +563,7 @@ void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::ma
 
 // ------------------- RESOURCE HANDLING ----------------------------------------------------------
 
-Resource* ModuleResources::GetResource(uint UID)
+Resource* ModuleResources::GetResource(uint UID, bool loadinmemory)
 {
 	Resource* resource = nullptr;
 
@@ -540,7 +580,7 @@ Resource* ModuleResources::GetResource(uint UID)
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 
-	if (resource)
+	if (resource && loadinmemory)
 		resource->LoadToMemory();
 	else
 		CONSOLE_LOG("![Warning]: Could not load: %i", UID);

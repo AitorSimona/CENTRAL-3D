@@ -108,7 +108,15 @@ Resource* ImporterMaterial::Load(const char * path) const
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
 	// --- Extract data from .mat file (json) and create mat ---
-	mat = (ResourceMaterial*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MATERIAL, meta->GetOriginalFile(), meta->GetUID());
+	mat = App->resources->materials.find(meta->GetUID()) != App->resources->materials.end() ? App->resources->materials.find(meta->GetUID())->second : (ResourceMaterial*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MATERIAL, meta->GetOriginalFile(), meta->GetUID());
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(mat->GetOriginalFile()))
+	{
+		mat->SetOriginalFile(path);
+		meta->SetOriginalFile(path);
+		App->resources->AddResourceToFolder(mat);
+	}
 
 	if (diffuse)
 		mat->resource_diffuse = diffuse;

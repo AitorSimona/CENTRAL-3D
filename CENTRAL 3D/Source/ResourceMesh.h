@@ -45,6 +45,10 @@ public:
 	uint EBO = 0;	// Element/Index Buffer Object
 
 	uint VAO = 0;	// Vertex Array Object
+
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
 };
 
 #endif // __RESOURCE_MESH__

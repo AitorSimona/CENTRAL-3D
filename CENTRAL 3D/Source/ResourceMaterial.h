@@ -23,6 +23,11 @@ public:
 	ResourceTexture* resource_diffuse = nullptr;
 	ResourceShader* shader = nullptr;
 	std::vector<Uniform*> uniforms;
+
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
+	void Repath() override;
 };
 
 #endif //__RESOURCE_MATERIAL_H__

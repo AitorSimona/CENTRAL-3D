@@ -15,9 +15,12 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 	void AddResource(Resource* resource);
-
 private:
 	std::vector<Resource*> resources;
+	bool HasResource(Resource* resource);
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
 };
 
 #endif //__RESOURCE_MODEL_H__

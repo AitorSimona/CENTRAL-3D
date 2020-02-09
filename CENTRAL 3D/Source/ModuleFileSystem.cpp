@@ -94,7 +94,7 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 	// Wait for notification.
 
 	dwWaitStatus = WaitForMultipleObjects(1, dwChangeHandles,
-		FALSE, 0);
+		TRUE, 0);
 
 	switch (dwWaitStatus)
 	{
@@ -106,9 +106,6 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 			// A directory was created, renamed, or deleted.
 			// Refresh the tree and restart the notification.
 
-			CONSOLE_LOG("Importing files... Rebuilding links...");
-			App->resources->HandleFsChanges();
-
 			if (FindNextChangeNotification(dwChangeHandles[0]) == FALSE)
 			{
 				CONSOLE_LOG("ERROR: FindNextChangeNotification function failed.");
@@ -117,6 +114,10 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 			}
 
 			FindCloseChangeNotification(dwChangeHandles[0]);
+
+			CONSOLE_LOG("Importing files... Rebuilding links...");
+			//App->resources->HandleFsChanges();
+
 			WatchDirectory(ASSETS_FOLDER);
 
 		break;
@@ -177,6 +178,7 @@ void ModuleFileSystem::CreateDirectory(const char* directory)
 {
 	PHYSFS_mkdir(directory);
 }
+
 
 std::string ModuleFileSystem::GetDirectoryFromPath(std::string & path)
 {
@@ -360,7 +362,8 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 	dwChangeHandles[0] = FindFirstChangeNotification(
 		directory,                       // directory to watch 
 		TRUE,                          // watch the subtree 
-		FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_FILE_NAME);
+		FILE_NOTIFY_CHANGE_LAST_WRITE
+	);
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
 	{

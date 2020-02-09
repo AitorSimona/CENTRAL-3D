@@ -8,6 +8,13 @@
 class GameObject;
 class ResourceModel;
 
+struct ImportModelData : public Importer::ImportData
+{
+	ImportModelData(const char* path) : Importer::ImportData(path) {};
+
+	ResourceModel* model_overwrite = nullptr;
+};
+
 class ImporterModel : public Importer
 {
 

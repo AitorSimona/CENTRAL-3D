@@ -81,3 +81,12 @@ bool ResourceFolder::HasResource(Resource* resource)
 
 	return found;
 }
+
+void ResourceFolder::OnOverwrite()
+{
+}
+
+void ResourceFolder::OnDelete()
+{
+	App->fs->Remove(resource_file.c_str());
+}

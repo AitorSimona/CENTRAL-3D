@@ -37,17 +37,23 @@ public:
 	const char* GetName() const;
 	const uint GetPreviewTexID() const;
 
+	void SetOriginalFile(const char* new_path);
+
 	bool IsInMemory() const;
 	bool LoadToMemory();
 	void Release();
+
+	virtual void OnOverwrite() = 0;
+	virtual void OnDelete() = 0;
+
 
 protected:
 	// --- Utilities ---
 	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
+	virtual void Repath() {};
 
 	void SetName(const char* name);
-	void SetOriginalFilename(const char* filename);
 
 protected:
 	uint instances = 0;
