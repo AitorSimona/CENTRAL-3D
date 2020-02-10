@@ -14,6 +14,7 @@ public:
 	void FreeMemory() override;
 
 	void AddResource(Resource* resource);
+	void RemoveResource(Resource* resource);
 	void SetParent(ResourceFolder* parent);
 	std::vector<Resource*>& GetResources();
 	std::vector<ResourceFolder*>& GetChilds();

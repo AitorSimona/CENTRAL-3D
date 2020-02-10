@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
+
 
 #include "mmgr/mmgr.h"
 
@@ -36,4 +38,7 @@ void ResourceShaderObject::OnOverwrite()
 void ResourceShaderObject::OnDelete()
 {
 	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }

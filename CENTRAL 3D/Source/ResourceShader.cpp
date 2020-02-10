@@ -540,6 +540,9 @@ void ResourceShader::OnOverwrite()
 void ResourceShader::OnDelete()
 {
 	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }
 
 void ResourceShader::use()

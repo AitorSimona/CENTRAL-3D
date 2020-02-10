@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
 
 #include "mmgr/mmgr.h"
 
@@ -40,6 +41,18 @@ void ResourceFolder::AddResource(Resource* resource)
 		resources.push_back(resource);
 	else
 		CONSOLE_LOG("![Warning]: Trying to add an already contained resource to folder: %s", this->GetName());
+}
+
+void ResourceFolder::RemoveResource(Resource* resource)
+{
+	for (std::vector<Resource*>::const_iterator it = resources.begin(); it != resources.end(); ++it)
+	{
+		if ((*it)->GetUID() == resource->GetUID())
+		{
+			resources.erase(it);
+			break;
+		}
+	}
 }
 
 void ResourceFolder::SetParent(ResourceFolder* parent)
@@ -84,9 +97,19 @@ bool ResourceFolder::HasResource(Resource* resource)
 
 void ResourceFolder::OnOverwrite()
 {
+
 }
 
 void ResourceFolder::OnDelete()
 {
+	for (uint i = 0; i < resources.size(); ++i)
+	{
+		resources[i]->OnDelete();
+		delete resources[i];
+	}
+
 	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }

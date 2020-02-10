@@ -51,8 +51,6 @@ void ResourceTexture::OnOverwrite()
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
-
-
 	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
 }
 
@@ -60,4 +58,7 @@ void ResourceTexture::OnDelete()
 {
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }

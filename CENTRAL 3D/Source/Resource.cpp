@@ -22,7 +22,7 @@ Resource::Resource(ResourceType type, uint UID, std::string source_file)
 
 Resource::~Resource()
 {
-	App->resources->ONResourceDestroyed(this);
+
 }
 
 uint Resource::GetUID() const

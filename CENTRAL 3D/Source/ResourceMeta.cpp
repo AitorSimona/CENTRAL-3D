@@ -1,6 +1,9 @@
 #include "ResourceMeta.h"
 #include "Application.h"
 #include "ModuleGui.h"
+#include "ModuleResources.h"
+
+#include "ImporterMeta.h"
 
 #include "ModuleFileSystem.h"
 
@@ -35,11 +38,26 @@ void ResourceMeta::FreeMemory()
 
 void ResourceMeta::OnOverwrite()
 {
+	// If a file is overwritten, its meta is notified so it can update the last modification time of its assigned resource
+
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	Resource* resource = App->resources->GetResource(UID, false);
+
+	if (resource)
+		Date = App->fs->GetLastModificationTime(resource->GetOriginalFile());
+
+	IMeta->Save(this);
+
 }
 
 void ResourceMeta::OnDelete()
 {
+	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }
 
 

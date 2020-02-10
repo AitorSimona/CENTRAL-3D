@@ -72,6 +72,7 @@ public:
 	// --- Resource Handling ---
 	Resource* GetResource(uint UID, bool loadinmemory = true);
 	void AddResourceToFolder(Resource* resource);
+	void RemoveResourceFromFolder(Resource* resource);
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);

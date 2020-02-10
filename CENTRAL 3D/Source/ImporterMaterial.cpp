@@ -41,7 +41,7 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 
 	// --- Get material's name ---
 	MatData->mat->Get(AI_MATKEY_NAME, material_name);
-	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()));
+	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat"));
 
 	// --- Get number of Diffuse textures ---
 	uint num_diffuse = MatData->mat->GetTextureCount(aiTextureType_DIFFUSE);

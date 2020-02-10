@@ -5,25 +5,23 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
+
+#include "ResourceTexture.h"
 
 #include "mmgr/mmgr.h"
 
 ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file)
 {
 	extension = ".mat";
-	resource_file = source_file + extension;
+	resource_file = source_file;
 	shader = App->renderer3D->defaultShader;
 	previewTexID = App->gui->materialTexID;
 }
 
 ResourceMaterial::~ResourceMaterial()
 {
-	for (uint i = 0; i < uniforms.size(); ++i)
-	{
-		delete uniforms[i];
-	}
 
-	uniforms.clear();
 }
 
 bool ResourceMaterial::LoadInMemory()
@@ -35,6 +33,12 @@ bool ResourceMaterial::LoadInMemory()
 
 void ResourceMaterial::FreeMemory()
 {
+	for (uint i = 0; i < uniforms.size(); ++i)
+	{
+		delete uniforms[i];
+	}
+
+	uniforms.clear();
 }
 
 void ResourceMaterial::UpdateUniforms()
@@ -85,11 +89,25 @@ void ResourceMaterial::UpdateUniforms()
 
 void ResourceMaterial::OnOverwrite()
 {
+
 }
 
 void ResourceMaterial::OnDelete()
 {
+	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+
+	Resource* diffuse = resource_diffuse;
+
+	if (diffuse && has_parent)
+	{
+		diffuse->OnDelete();
+		App->fs->Remove(diffuse->GetOriginalFile());
+		delete diffuse;
+	}
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }
 
 void ResourceMaterial::Repath()

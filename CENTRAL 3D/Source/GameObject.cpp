@@ -29,10 +29,8 @@ GameObject::~GameObject()
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
-		{
-			delete(*it);
-			*it = nullptr;
-		}
+			delete *it;
+		
 	}
 	components.clear();
 }

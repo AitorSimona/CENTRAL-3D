@@ -93,5 +93,19 @@ void ResourceModel::OnOverwrite()
 
 void ResourceModel::OnDelete()
 {
+	FreeMemory();
+
 	App->fs->Remove(resource_file.c_str());
+
+	for (uint i = 0; i < resources.size(); ++i)
+	{
+		resources[i]->has_parent = true; // so sons know they have to delete their sons (like mat deleting textures)
+		resources[i]->OnDelete();
+		delete resources[i];
+	}
+
+	resources.clear();
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }

@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResources.h"
+
 
 #include "OpenGL.h"
 
@@ -18,7 +20,6 @@ ResourceMesh::ResourceMesh(uint UID, std::string source_file) : Resource(Resourc
 
 ResourceMesh::~ResourceMesh()
 {
-	//FreeMemory();
 }
 
 void ResourceMesh::CreateAABB()
@@ -212,16 +213,17 @@ void ResourceMesh::CreateVAO()
 
 void ResourceMesh::OnOverwrite()
 {
-	//FreeMemory();
-
-	// --- Delete lib file ---
-
+	// Since mesh is not a standalone resource (which means it is always owned by a model) the model is in charge
+	// of overwriting it (see ResourceModel OnOverwrite for details)
 }
 
 void ResourceMesh::OnDelete()
 {
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }
 
 

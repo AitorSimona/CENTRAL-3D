@@ -46,6 +46,7 @@ public:
 	virtual void OnOverwrite() = 0;
 	virtual void OnDelete() = 0;
 
+	bool has_parent = false; // currently used to know if a material has to delete its textures (if it is part of a model)
 
 protected:
 	// --- Utilities ---
@@ -54,6 +55,7 @@ protected:
 	virtual void Repath() {};
 
 	void SetName(const char* name);
+
 
 protected:
 	uint instances = 0;

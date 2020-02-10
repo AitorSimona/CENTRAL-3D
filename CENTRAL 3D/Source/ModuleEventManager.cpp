@@ -36,6 +36,7 @@ update_status ModuleEventManager::PreUpdate(float dt)
 
 		for (std::vector<Function>::iterator it = listeners[EventType].listeners.begin(); it != listeners[EventType].listeners.end(); ++it)
 		{
+			// MYTODO: check if we can call the function first, delete listener if it is inaccessible
 			(*it)(events[head]);
 		}
 

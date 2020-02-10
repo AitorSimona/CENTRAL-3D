@@ -63,7 +63,11 @@ bool ModuleResources::Start()
 	//filters.push_back("vertex");
 	//filters.push_back("VERTEX");
 
+	// MYTODO: We could delete search assets, call handlefschanges after importing all metas!
+
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
+
+	//HandleFsChanges();
 
 	App->fs->WatchDirectory(ASSETS_FOLDER);
 
@@ -375,6 +379,7 @@ void ModuleResources::HandleFsChanges()
 {
 	// --- First retrieve all windows fs files and directories in ASSETS ---
 	std::map<std::string, std::vector<std::string>> dirs;
+	std::vector<Resource*> metas_to_delete;
 
 	// MYTODO: Add only files/dirs that have been modified (getmoddate?)
 	RetrieveFilesAndDirectories(ASSETS_FOLDER, dirs);
@@ -406,12 +411,19 @@ void ModuleResources::HandleFsChanges()
 		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
 		{
 			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
-
-			// --- Eliminate all lib files (force load then ask it to remove all files) ---
+			
+			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);
 
 			if (resource)
+			{
 				resource->OnDelete();
+				delete resource;
+
+				// --- Mark this meta as orphan ---
+				metas_to_delete.push_back((*meta).second);
+			}
+
 
 			continue;
 		}
@@ -438,7 +450,13 @@ void ModuleResources::HandleFsChanges()
 						Resource* resource = GetResource((*meta).second->GetUID(), false);
 
 						if (resource)
+						{
 							resource->OnOverwrite();
+
+							// Update meta 
+							Resource* meta_res = (*meta).second;
+							meta_res->OnOverwrite();
+						}
 					}
 
 					files = (*dir).second.erase(files);
@@ -466,7 +484,13 @@ void ModuleResources::HandleFsChanges()
 					Resource* resource = GetResource((*meta).second->GetUID(), false);
 
 					if (resource)
+					{
 						resource->OnOverwrite();
+
+						// Update meta 
+						Resource* meta_res = (*meta).second;
+						meta_res->OnOverwrite();
+					}
 				}
 			}
 
@@ -477,7 +501,23 @@ void ModuleResources::HandleFsChanges()
 
 	}
 
-	// --- Now handle all new files, basically import them ---
+	// ---  Delete all metas that are now orphan :( ---
+	for (std::map<uint, ResourceMeta*>::iterator meta = metas.begin(); meta != metas.end();)
+	{
+		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
+		{
+			Resource* meta_res = (*meta).second;
+			meta = metas.erase(meta);
+			meta_res->OnDelete();
+			delete meta_res;
+		}
+		else
+		{
+			meta++;
+		}
+	}
+
+	// --- Finally handle all new files, basically import them ---
 	for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
 	{
 		std::string dir_name = (*dir).first;
@@ -493,10 +533,17 @@ void ModuleResources::HandleFsChanges()
 		for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
 		{
 			// --- Import files ---
-			Importer::ImportData IData((*files).c_str());
-			ImportAssets(IData);
+			if (App->fs->Exists((*files).c_str()))
+			{
+				Importer::ImportData IData((*files).c_str());
+				ImportAssets(IData);
+			}
 		}
 	}
+
+	
+
+	metas_to_delete.clear();
 }
 
 void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret)
@@ -799,6 +846,30 @@ void ModuleResources::AddResourceToFolder(Resource* resource)
 	}
 }
 
+void ModuleResources::RemoveResourceFromFolder(Resource* resource)
+{
+	if (resource)
+	{
+		std::string directory;
+		std::string original_file;
+
+		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
+		{
+			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
+			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+			directory.pop_back();
+			original_file = (*it).second->GetName();
+			original_file.pop_back();
+
+			if (directory == original_file)
+			{
+				(*it).second->RemoveResource(resource);
+			}
+
+		}
+	}
+}
+
 bool ModuleResources::IsFileImported(const char* file)
 {
 	bool ret = false;
@@ -881,78 +952,84 @@ bool ModuleResources::CleanUp()
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
 
-	// Since std map invalidates iterator on pair delete, a reverse iterator is very useful
-	// We eliminate a pair and automatically our iterator points at a new element
-
 	// --- Delete resources ---
-	for (std::map<uint, ResourceFolder*>::reverse_iterator it = folders.rbegin(); it != folders.rend();)
+	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = folders.erase(it);
 	}
 
 	folders.clear();
 
-	for (std::map<uint, ResourceScene*>::reverse_iterator it = scenes.rbegin(); it != scenes.rend();)
+	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = scenes.erase(it);
 	}
 
 	scenes.clear();
 
-	for (std::map<uint, ResourceModel*>::reverse_iterator it = models.rbegin(); it != models.rend();)
+	for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = models.erase(it);
 	}
 
 	models.clear();
 
-	for (std::map<uint, ResourceMaterial*>::reverse_iterator it = materials.rbegin(); it != materials.rend();)
+	for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = materials.erase(it);
 	}
 
 	materials.clear();
 
-	for (std::map<uint, ResourceShader*>::reverse_iterator it = shaders.rbegin(); it != shaders.rend();)
+	for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = shaders.erase(it);
 	}
 
 	shaders.clear();
 
-	for (std::map<uint, ResourceMesh*>::reverse_iterator it = meshes.rbegin(); it != meshes.rend();)
+	for (std::map<uint, ResourceMesh*>::iterator it = meshes.begin(); it != meshes.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = meshes.erase(it);
 	}
 
 	meshes.clear();
 
-	for (std::map<uint, ResourceTexture*>::reverse_iterator it = textures.rbegin(); it != textures.rend();)
+	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = textures.erase(it);
 	}
 
 	textures.clear();
 
-	for (std::map<uint, ResourceShaderObject*>::reverse_iterator it = shader_objects.rbegin(); it != shader_objects.rend();)
+	for (std::map<uint, ResourceShaderObject*>::iterator it = shader_objects.begin(); it != shader_objects.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = shader_objects.erase(it);
 	}
 
 	shader_objects.clear();
 
-	for (std::map<uint, ResourceMeta*>::reverse_iterator it = metas.rbegin(); it != metas.rend();)
+	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
+		it = metas.erase(it);
 	}
 
 	metas.clear();

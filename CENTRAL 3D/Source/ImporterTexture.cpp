@@ -20,6 +20,9 @@ ImporterTexture::~ImporterTexture()
 
 Resource* ImporterTexture::Import(ImportData& IData) const
 {
+	if (!App->fs->Exists(IData.path))
+		return nullptr;
+
 	ResourceTexture* texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, IData.path);;
 
 	// --- Create Meta ---
