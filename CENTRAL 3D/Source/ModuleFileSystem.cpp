@@ -29,6 +29,8 @@ ModuleFileSystem::ModuleFileSystem(bool start_enabled, const char* game_path) : 
 
 	if (0 && game_path != nullptr)
 		AddPath(game_path);
+
+	AddPath(LIBRARY_FOLDER);
 }
 
 // Destructor
@@ -84,8 +86,6 @@ bool ModuleFileSystem::Init(json config)
 
 	SDL_free(write_path);
 
-	WatchDirectory(ASSETS_FOLDER);
-
 	return ret;
 }
 
@@ -124,7 +124,7 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 
 				CONSOLE_LOG("Importing files... Rebuilding links...");
 
-				//App->resources->HandleFsChanges();			
+				App->resources->HandleFsChanges();			
 
 				started_wait = false;
 			}
@@ -526,7 +526,7 @@ bool ModuleFileSystem::Remove(const char * file)
 
 	if (file != nullptr)
 	{
-		if (PHYSFS_delete(file) == 0)
+		if (PHYSFS_delete(file) != 0)
 		{
 			CONSOLE_LOG("File deleted: [%s]", file);
 			ret = true;

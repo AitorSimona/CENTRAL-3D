@@ -65,6 +65,7 @@ bool ModuleResources::Start()
 
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
 
+	App->fs->WatchDirectory(ASSETS_FOLDER);
 
 	return true;
 }
@@ -372,8 +373,6 @@ Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 
 void ModuleResources::HandleFsChanges()
 {
-	//SDL_Delay(3000);
-
 	// --- First retrieve all windows fs files and directories in ASSETS ---
 	std::map<std::string, std::vector<std::string>> dirs;
 
@@ -582,7 +581,7 @@ Resource* ModuleResources::GetResource(uint UID, bool loadinmemory)
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
-	else
+	else if (!resource)
 		CONSOLE_LOG("![Warning]: Could not load: %i", UID);
 
 
