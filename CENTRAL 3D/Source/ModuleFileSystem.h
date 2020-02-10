@@ -65,6 +65,11 @@ private:
 	ulong dwWaitStatus; 
 	HANDLE dwChangeHandles[1]; // void*
 
+	bool started_wait = false;
+	Timer wait_timer;
+	uint32 wait_time = 1000; // ms
+
+
 	void CreateAssimpIO();
 
 private:

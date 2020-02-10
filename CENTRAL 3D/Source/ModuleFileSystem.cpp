@@ -94,17 +94,13 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 	// Wait for notification.
 
 	dwWaitStatus = WaitForMultipleObjects(1, dwChangeHandles,
-		TRUE, 0);
+		FALSE, 0);
 
 	switch (dwWaitStatus)
 	{
 		case WAIT_OBJECT_0:
-
-			// A file was created, renamed, or deleted in the directory.
-			// Refresh this directory and restart the notification.
-
-			// A directory was created, renamed, or deleted.
-			// Refresh the tree and restart the notification.
+			started_wait = true;
+			wait_timer.Start();
 
 			if (FindNextChangeNotification(dwChangeHandles[0]) == FALSE)
 			{
@@ -113,16 +109,25 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 				CONSOLE_LOG("%i", GetLastError());
 			}
 
-			FindCloseChangeNotification(dwChangeHandles[0]);
-
-			CONSOLE_LOG("Importing files... Rebuilding links...");
-			//App->resources->HandleFsChanges();
-
-			WatchDirectory(ASSETS_FOLDER);
-
 		break;
 
 		case WAIT_TIMEOUT:
+
+			// --- When the changes on watched directory are completed, react ---
+			if (started_wait && wait_timer.Read() > wait_time)
+			{
+				// A file was created, renamed, or deleted in the directory.
+				// Refresh this directory and restart the notification.
+				
+				// A directory was created, renamed, or deleted.
+				// Refresh the tree and restart the notification.
+
+				CONSOLE_LOG("Importing files... Rebuilding links...");
+
+				//App->resources->HandleFsChanges();			
+
+				started_wait = false;
+			}
 
 			// A timeout occurred, this would happen if some value other 
 			// than INFINITE is used in the Wait call and no changes occur.
@@ -362,7 +367,7 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 	dwChangeHandles[0] = FindFirstChangeNotification(
 		directory,                       // directory to watch 
 		TRUE,                          // watch the subtree 
-		FILE_NOTIFY_CHANGE_LAST_WRITE
+		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME
 	);
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
