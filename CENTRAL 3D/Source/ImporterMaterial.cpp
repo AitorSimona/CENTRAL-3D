@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleTextures.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "ResourceMaterial.h"
 #include "ResourceFolder.h"

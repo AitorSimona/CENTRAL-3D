@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "OpenGL.h"
 #include "ModuleFileSystem.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ResourceTexture.h"
 
 #include "DevIL/include/il.h"

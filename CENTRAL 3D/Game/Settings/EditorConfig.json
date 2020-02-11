@@ -9,6 +9,7 @@
         "Hierarchy": true,
         "Inspector": true,
         "Project": true,
+        "Resources": true,
         "Scene": true,
         "Settings": false,
         "ShaderEditor": true,

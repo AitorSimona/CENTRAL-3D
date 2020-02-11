@@ -36,6 +36,7 @@ public:
 	const char* GetExtension() const;
 	const char* GetName() const;
 	const uint GetPreviewTexID() const;
+	const uint GetNumInstances() const;
 
 	void SetOriginalFile(const char* new_path);
 

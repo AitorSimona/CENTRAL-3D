@@ -1,7 +1,7 @@
 #include "ResourceMeta.h"
 #include "Application.h"
 #include "ModuleGui.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "ImporterMeta.h"
 

@@ -62,6 +62,9 @@ bool ModuleGui::Init(json file)
 	panelShaderEditor = new PanelShaderEditor("ShaderEditor");
 	panels.push_back(panelShaderEditor);
 
+	panelResources = new PanelResources("Resources");
+	panels.push_back(panelResources);
+
 	LoadStatus(file);
 
 	return true;
@@ -235,6 +238,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("ShaderEditor"))
 				{
 					panelShaderEditor->OnOff();
+				}
+
+				if (ImGui::MenuItem("Resources"))
+				{
+					panelResources->OnOff();
 				}
 
 				ImGui::EndMenu();

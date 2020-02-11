@@ -4,7 +4,7 @@
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleGui.h"
 
 #include "GameObject.h"

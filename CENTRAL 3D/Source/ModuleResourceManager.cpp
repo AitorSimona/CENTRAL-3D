@@ -1,4 +1,4 @@
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleGui.h"
@@ -19,15 +19,15 @@ void MyAssimpCallback(const char* msg, char* userData)
 	CONSOLE_LOG("[Assimp]: %s", msg);
 }
 
-ModuleResources::ModuleResources(bool start_enabled)
+ModuleResourceManager::ModuleResourceManager(bool start_enabled)
 {
 }
 
-ModuleResources::~ModuleResources()
+ModuleResourceManager::~ModuleResourceManager()
 {
 }
 
-bool ModuleResources::Init(json file)
+bool ModuleResourceManager::Init(json file)
 {
 	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
 	struct aiLogStream stream;
@@ -47,7 +47,7 @@ bool ModuleResources::Init(json file)
 	return true;
 }
 
-bool ModuleResources::Start()
+bool ModuleResourceManager::Start()
 {
 	// --- Import all resources in Assets at startup ---
 	App->gui->CreateIcons();
@@ -74,7 +74,7 @@ bool ModuleResources::Start()
 
 // ------------------------------ IMPORTING --------------------------------------------------------
 
-std::string ModuleResources::DuplicateIntoAssetsFolder(const char* path)
+std::string ModuleResourceManager::DuplicateIntoAssetsFolder(const char* path)
 {
 	std::string new_path = ASSETS_FOLDER;
 	std::string file;
@@ -89,7 +89,7 @@ std::string ModuleResources::DuplicateIntoAssetsFolder(const char* path)
 }
 
 // --- Sweep over all files in given directory, if those files pass the given filters, call Import and if it succeeds add them to the given resource folder ---
-ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters)
+ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -152,7 +152,7 @@ ResourceFolder* ModuleResources::SearchAssets(ResourceFolder* parent, const char
 }
 
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
-Resource* ModuleResources::ImportAssets(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
 
@@ -225,7 +225,7 @@ Resource* ModuleResources::ImportAssets(Importer::ImportData& IData)
 }
 
 
-Resource* ModuleResources::ImportFolder(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportFolder(Importer::ImportData& IData)
 {
 	ImporterFolder* IFolder = GetImporter<ImporterFolder>();
 
@@ -252,7 +252,7 @@ Resource* ModuleResources::ImportFolder(Importer::ImportData& IData)
 	return folder;
 }
 
-Resource* ModuleResources::ImportScene(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportScene(Importer::ImportData& IData)
 {
 	ResourceScene* scene = nullptr;
 
@@ -269,7 +269,7 @@ Resource* ModuleResources::ImportScene(Importer::ImportData& IData)
 	return scene;
 }
 
-Resource* ModuleResources::ImportModel(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportModel(Importer::ImportData& IData)
 {
 	ImporterModel* IModel = GetImporter<ImporterModel>();
 
@@ -294,7 +294,7 @@ Resource* ModuleResources::ImportModel(Importer::ImportData& IData)
 	return model;
 }
 
-Resource* ModuleResources::ImportMaterial(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportMaterial(Importer::ImportData& IData)
 {
 	ImporterMaterial* IMat = GetImporter<ImporterMaterial>();
 
@@ -307,7 +307,7 @@ Resource* ModuleResources::ImportMaterial(Importer::ImportData& IData)
 	return material;
 }
 
-Resource* ModuleResources::ImportShaderProgram(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportShaderProgram(Importer::ImportData& IData)
 {
 	ResourceShaderProgram* shader = nullptr;
 
@@ -324,7 +324,7 @@ Resource* ModuleResources::ImportShaderProgram(Importer::ImportData& IData)
 	return shader;
 }
 
-Resource* ModuleResources::ImportMesh(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportMesh(Importer::ImportData& IData)
 {
 	Resource* mesh = nullptr;
 	ImporterMesh* IMesh = GetImporter<ImporterMesh>();
@@ -339,7 +339,7 @@ Resource* ModuleResources::ImportMesh(Importer::ImportData& IData)
 	return mesh;
 }
 
-Resource* ModuleResources::ImportTexture(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 {
 	Resource* texture = nullptr;
 	ImporterTexture* ITex = GetImporter<ImporterTexture>();
@@ -356,7 +356,7 @@ Resource* ModuleResources::ImportTexture(Importer::ImportData& IData)
 	return texture;
 }
 
-Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportShaderObject(Importer::ImportData& IData)
 {
 	ResourceShaderObject* shader_object = nullptr;
 
@@ -373,7 +373,7 @@ Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 	return shader_object;
 }
 
-Resource* ModuleResources::ImportMeta(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportMeta(Importer::ImportData& IData)
 {
 	Resource* resource = nullptr;
 
@@ -392,7 +392,7 @@ Resource* ModuleResources::ImportMeta(Importer::ImportData& IData)
 	return resource;
 }
 
-void ModuleResources::HandleFsChanges()
+void ModuleResourceManager::HandleFsChanges()
 {
 	// --- First retrieve all windows fs files and directories in ASSETS ---
 	std::map<std::string, std::vector<std::string>> dirs;
@@ -555,7 +555,7 @@ void ModuleResources::HandleFsChanges()
 	}
 }
 
-void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret)
+void ModuleResourceManager::RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -618,7 +618,7 @@ void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::ma
 
 // ------------------- RESOURCE HANDLING ----------------------------------------------------------
 
-Resource* ModuleResources::GetResource(uint UID, bool loadinmemory)
+Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory)
 {
 	Resource* resource = nullptr;
 
@@ -644,7 +644,7 @@ Resource* ModuleResources::GetResource(uint UID, bool loadinmemory)
 	return resource;
 }
 
-Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::string source_file)
+Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, std::string source_file)
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
@@ -706,7 +706,7 @@ Resource * ModuleResources::CreateResource(Resource::ResourceType type, std::str
 	return resource;
 }
 
-Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID)
+Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID)
 {
 	Resource* resource = nullptr;
 
@@ -779,7 +779,7 @@ Resource* ModuleResources::CreateResourceGivenUID(Resource::ResourceType type, s
 }
 
 
-Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
+Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
 
@@ -821,17 +821,17 @@ Resource::ResourceType ModuleResources::GetResourceTypeFromPath(const char* path
 	return type;
 }
 
-ResourceFolder* ModuleResources::GetAssetsFolder()
+ResourceFolder* ModuleResourceManager::GetAssetsFolder()
 {
 	return AssetsFolder;
 }
 
-uint ModuleResources::GetDefaultMaterialUID()
+uint ModuleResourceManager::GetDefaultMaterialUID()
 {
 	return DefaultMaterial->GetUID();
 }
 
-void ModuleResources::AddResourceToFolder(Resource* resource)
+void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 {
 	if (resource)
 	{
@@ -855,7 +855,7 @@ void ModuleResources::AddResourceToFolder(Resource* resource)
 	}
 }
 
-void ModuleResources::RemoveResourceFromFolder(Resource* resource)
+void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
 {
 	if (resource)
 	{
@@ -879,7 +879,7 @@ void ModuleResources::RemoveResourceFromFolder(Resource* resource)
 	}
 }
 
-bool ModuleResources::IsFileImported(const char* file)
+bool ModuleResourceManager::IsFileImported(const char* file)
 {
 	bool ret = false;
 
@@ -897,7 +897,7 @@ bool ModuleResources::IsFileImported(const char* file)
 	return ret;
 }
 
-void ModuleResources::ONResourceDestroyed(Resource* resource)
+void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
 
@@ -952,12 +952,12 @@ void ModuleResources::ONResourceDestroyed(Resource* resource)
 
 // ----------------------------------------------------
 
-update_status ModuleResources::Update(float dt)
+update_status ModuleResourceManager::Update(float dt)
 {
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleResources::CleanUp()
+bool ModuleResourceManager::CleanUp()
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
 

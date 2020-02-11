@@ -1,7 +1,7 @@
 #include "ImporterMesh.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "ResourceMesh.h"
 

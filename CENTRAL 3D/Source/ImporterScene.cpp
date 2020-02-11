@@ -20,7 +20,7 @@
 #include "ImporterMesh.h"
 #include "ImporterMaterial.h"
 
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"

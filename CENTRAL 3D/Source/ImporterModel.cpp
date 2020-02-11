@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleSceneManager.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"

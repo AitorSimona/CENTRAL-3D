@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 
 #include "mmgr/mmgr.h"

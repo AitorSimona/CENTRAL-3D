@@ -4,7 +4,7 @@
 #include "Imgui/imgui.h"
 
 #include "Application.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
 

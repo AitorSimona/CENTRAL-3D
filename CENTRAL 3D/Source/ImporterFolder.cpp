@@ -1,6 +1,6 @@
 #include "ImporterFolder.h"
 #include "Application.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 
 #include "ImporterMeta.h"

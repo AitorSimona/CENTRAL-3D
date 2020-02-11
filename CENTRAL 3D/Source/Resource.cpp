@@ -1,6 +1,6 @@
 #include "Resource.h"
 #include "Application.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 
 #include "mmgr/mmgr.h"
@@ -63,6 +63,11 @@ const char * Resource::GetName() const
 const uint Resource::GetPreviewTexID() const
 {
 	return previewTexID;
+}
+
+const uint Resource::GetNumInstances() const
+{
+	return instances;
 }
 
 void Resource::SetOriginalFile(const char* new_path)

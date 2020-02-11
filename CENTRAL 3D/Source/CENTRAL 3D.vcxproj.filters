@@ -234,9 +234,6 @@
     <ClInclude Include="ComponentTransform.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleResources.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
@@ -540,6 +537,12 @@
     <ClInclude Include="ImporterTexture.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="PanelResources.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleResourceManager.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -667,9 +670,6 @@
     </ClCompile>
     <ClCompile Include="ComponentTransform.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleResources.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Resource.cpp">
       <Filter>Sources\Resources</Filter>
@@ -868,6 +868,12 @@
     </ClCompile>
     <ClCompile Include="ImporterTexture.cpp">
       <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelResources.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleResourceManager.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

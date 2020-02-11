@@ -1,7 +1,7 @@
 #include "ResourceModel.h"
 #include "Application.h"
 #include "ModuleGui.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 
 #include "Importer.h"

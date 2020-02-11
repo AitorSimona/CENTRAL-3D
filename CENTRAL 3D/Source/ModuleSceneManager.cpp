@@ -8,7 +8,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 #include "ModuleFileSystem.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"

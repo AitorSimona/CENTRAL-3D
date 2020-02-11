@@ -2,7 +2,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "PhysFS/include/physfs.h"
 #include "Assimp/include/cfileio.h"

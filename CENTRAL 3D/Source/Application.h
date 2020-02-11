@@ -34,7 +34,7 @@ class ModuleHardware;
 class ModuleFileSystem;
 class ModuleTextures;
 class ModuleSceneManager;
-class ModuleResources;
+class ModuleResourceManager;
 class ModuleTimeManager;
 class ModuleEventManager;
 
@@ -68,7 +68,7 @@ public:
 	ModuleFileSystem* fs = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleSceneManager* scene_manager = nullptr;
-	ModuleResources* resources = nullptr;
+	ModuleResourceManager* resources = nullptr;
 	ModuleTimeManager* time = nullptr;
 	ModuleEventManager* event_manager = nullptr;
 

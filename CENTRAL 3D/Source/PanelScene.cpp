@@ -7,7 +7,7 @@
 #include "ModuleWindow.h"
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "GameObject.h"
 #include "ComponentTransform.h"

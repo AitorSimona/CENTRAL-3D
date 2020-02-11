@@ -180,13 +180,14 @@
     <ClInclude Include="MathGeoLib\include\SystemInfo.h" />
     <ClInclude Include="MathGeoLib\include\Time\Clock.h" />
     <ClInclude Include="ModuleEventManager.h" />
-    <ClInclude Include="ModuleResources.h" />
+    <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleSceneManager.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleTimeManager.h" />
     <ClInclude Include="PanelProject.h" />
+    <ClInclude Include="PanelResources.h" />
     <ClInclude Include="Panels.h" />
     <ClInclude Include="PanelShaderEditor.h" />
     <ClInclude Include="PanelToolbar.h" />
@@ -298,7 +299,7 @@
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp" />
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
     <ClCompile Include="ModuleEventManager.cpp" />
-    <ClCompile Include="ModuleResources.cpp" />
+    <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleSceneManager.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -319,6 +320,7 @@
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
     <ClCompile Include="PanelProject.cpp" />
+    <ClCompile Include="PanelResources.cpp" />
     <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
     <ClCompile Include="PanelHierarchy.cpp" />

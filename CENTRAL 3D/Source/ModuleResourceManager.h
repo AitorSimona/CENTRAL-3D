@@ -16,7 +16,7 @@ class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
 
-class ModuleResources : public Module
+class ModuleResourceManager : public Module
 {
 	friend class ImporterTexture;
 	friend class ImporterModel;
@@ -24,11 +24,12 @@ class ModuleResources : public Module
 	friend class ImporterMesh;
 	friend class ImporterMaterial;
 	friend class ImporterFolder;
+	friend class PanelResources;
 public:
 
 	// --- Basic ---
-	ModuleResources(bool start_enabled = true);
-	~ModuleResources();
+	ModuleResourceManager(bool start_enabled = true);
+	~ModuleResourceManager();
 
 	bool Init(json file) override;
 	bool Start() override;

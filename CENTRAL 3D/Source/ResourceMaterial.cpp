@@ -5,7 +5,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 
 #include "ResourceTexture.h"
 

@@ -11,7 +11,8 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTimeManager.h"
 #include "ModuleWindow.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
+
 #include "ModuleFileSystem.h"
 
 #include "ResourceMesh.h"

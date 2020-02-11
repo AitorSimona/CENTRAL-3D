@@ -1,6 +1,6 @@
 #include "ImporterTexture.h"
 #include "Application.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleTextures.h"
 #include "ModuleFileSystem.h"
 

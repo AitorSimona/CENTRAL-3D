@@ -1,7 +1,7 @@
 #include "PanelProject.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
-#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleEventManager.h"
 #include "ModuleGui.h"
 
@@ -159,6 +159,9 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		// --- Draw sub-folders ---
 		for (std::vector<ResourceFolder*>::const_iterator it = directories->begin(); it != directories->end(); ++it)
 		{
+			if (!*it)
+				continue;
+
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
 			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px);
 
