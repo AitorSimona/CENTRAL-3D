@@ -70,7 +70,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 
 		// --- Load all materials ---
 		std::map<uint, ResourceMaterial*> model_mats;
-		IScene->LoadSceneMaterials(scene, model_mats, MData.path);
+		IScene->LoadSceneMaterials(scene, model_mats, MData.path, MData.library_deleted);
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
 		IScene->LoadNodes(scene->mRootNode,rootnode, scene, model_gos, MData.path, model_meshes, model_mats);
@@ -131,7 +131,19 @@ Resource* ImporterModel::Load(const char* path) const
 		App->resources->AddResourceToFolder(resource);
 	}
 
-	json file = App->GetJLoader()->Load(resource->GetResourceFile());
+	json file;
+
+	if(App->fs->Exists(resource->GetResourceFile()))
+		file = App->GetJLoader()->Load(resource->GetResourceFile());
+	else
+	{
+		// --- Library has been deleted, rebuild ---
+		ImportModelData MData(path);
+		MData.model_overwrite = resource;
+		MData.library_deleted = true;
+		Import(MData);
+	}
+	
 
 	if (!file.is_null())
 	{

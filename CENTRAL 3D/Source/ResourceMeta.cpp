@@ -60,5 +60,11 @@ void ResourceMeta::OnDelete()
 	App->resources->ONResourceDestroyed(this);
 }
 
+void ResourceMeta::Repath()
+{
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	IMeta->Save(this);
+}
+
 
 

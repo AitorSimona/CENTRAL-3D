@@ -49,6 +49,7 @@ public:
 private:
 	void OnOverwrite() override;
 	void OnDelete() override;
+	void Repath() override;
 };
 
 #endif // __RESOURCE_MESH__

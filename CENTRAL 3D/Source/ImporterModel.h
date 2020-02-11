@@ -13,6 +13,7 @@ struct ImportModelData : public Importer::ImportData
 	ImportModelData(const char* path) : Importer::ImportData(path) {};
 
 	ResourceModel* model_overwrite = nullptr;
+	bool library_deleted = false;
 };
 
 class ImporterModel : public Importer

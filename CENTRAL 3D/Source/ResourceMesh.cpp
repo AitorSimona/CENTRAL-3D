@@ -4,6 +4,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResources.h"
 
+#include "ImporterMesh.h"
 
 #include "OpenGL.h"
 
@@ -224,6 +225,12 @@ void ResourceMesh::OnDelete()
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
+}
+
+void ResourceMesh::Repath()
+{
+	ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
+	IMesh->Save(this);
 }
 
 

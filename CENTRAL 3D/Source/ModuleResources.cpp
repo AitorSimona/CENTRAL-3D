@@ -60,15 +60,13 @@ bool ModuleResources::Start()
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
-	//filters.push_back("vertex");
-	//filters.push_back("VERTEX");
 
-	// MYTODO: We could delete search assets, call handlefschanges after importing all metas!
-
+	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
 
 	//HandleFsChanges();
 
+	// --- Tell Windows to notify us when changes to given directory and subtree occur ---
 	App->fs->WatchDirectory(ASSETS_FOLDER);
 
 	return true;
@@ -201,9 +199,9 @@ Resource* ModuleResources::ImportAssets(Importer::ImportData& IData)
 		resource = ImportShaderObject(IData);
 		break;
 
-	//case Resource::ResourceType::META:
-
-	//	break;
+	case Resource::ResourceType::META:
+		resource = ImportMeta(IData);
+		break;
 
 	case Resource::ResourceType::UNKNOWN:
 		break;
@@ -214,7 +212,7 @@ Resource* ModuleResources::ImportAssets(Importer::ImportData& IData)
 
 	if (resource)
 	{
-		if(type != Resource::ResourceType::FOLDER)
+		if(type != Resource::ResourceType::FOLDER && type != Resource::ResourceType::META)
 		AddResourceToFolder(resource);
 
 		CONSOLE_LOG("Imported successfully: %s", IData.path);
@@ -375,11 +373,29 @@ Resource* ModuleResources::ImportShaderObject(Importer::ImportData& IData)
 	return shader_object;
 }
 
+Resource* ModuleResources::ImportMeta(Importer::ImportData& IData)
+{
+	Resource* resource = nullptr;
+
+	ImporterMeta* IMeta = GetImporter<ImporterMeta>();
+
+	if (IMeta)
+	{
+		std::string filepath = IData.path;
+		filepath = filepath.substr(0, filepath.find_last_of("."));
+		IData.path = filepath.c_str();
+
+		resource = IMeta->Load(IData.path);
+	}
+
+
+	return resource;
+}
+
 void ModuleResources::HandleFsChanges()
 {
 	// --- First retrieve all windows fs files and directories in ASSETS ---
 	std::map<std::string, std::vector<std::string>> dirs;
-	std::vector<Resource*> metas_to_delete;
 
 	// MYTODO: Add only files/dirs that have been modified (getmoddate?)
 	RetrieveFilesAndDirectories(ASSETS_FOLDER, dirs);
@@ -419,9 +435,6 @@ void ModuleResources::HandleFsChanges()
 			{
 				resource->OnDelete();
 				delete resource;
-
-				// --- Mark this meta as orphan ---
-				metas_to_delete.push_back((*meta).second);
 			}
 
 
@@ -540,10 +553,6 @@ void ModuleResources::HandleFsChanges()
 			}
 		}
 	}
-
-	
-
-	metas_to_delete.clear();
 }
 
 void ModuleResources::RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret)

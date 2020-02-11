@@ -15,7 +15,7 @@ ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(R
 	buffer_id = App->textures->GetDefaultTextureID();
 	previewTexID = App->gui->defaultfileTexID;
 
-	if(App->resources->IsFileImported(source_file.c_str()))
+	if(App->resources->IsFileImported(source_file.c_str()) && App->fs->Exists(resource_file.c_str()))
 		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, -1));
 	else if (source_file != "DefaultTexture")
 		SetTextureID(App->textures->CreateTextureFromFile(App->resources->DuplicateIntoAssetsFolder(source_file.c_str()).c_str(), Texture_width, Texture_height, GetUID()));

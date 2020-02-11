@@ -19,6 +19,7 @@ ImporterMeta::~ImporterMeta()
 
 Resource* ImporterMeta::Import(ImportData& IData) const
 {
+
 	return nullptr;
 }
 

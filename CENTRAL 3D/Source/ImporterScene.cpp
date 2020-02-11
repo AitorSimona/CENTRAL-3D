@@ -662,7 +662,7 @@ void ImporterScene::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes)
 	scene_meshes->clear();
 }
 
-void ImporterScene::LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file) const
+void ImporterScene::LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const
 {
 	for (uint i = 0; i < scene->mNumMaterials; ++i)
 	{
@@ -670,13 +670,25 @@ void ImporterScene::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 		ImportMaterialData MatData(source_file);
 		MatData.mat = scene->mMaterials[i];
 
-		// --- Import material data ---
+		aiString material_name;
+
+		// --- Get material's name ---
+		MatData.mat->Get(AI_MATKEY_NAME, material_name);
+
+		std::string material_destination = std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat");
 
 		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
 
-		if (IMat)
-			scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
-		
+		if (App->fs->Exists(material_destination.c_str()))
+		{
+			scene_mats[i] = (ResourceMaterial*)IMat->Load(material_destination.c_str());
+		}
+		else
+		{
+			// --- Import material data ---
+			if (IMat)
+				scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
+		}
 	}
 }
 

@@ -30,7 +30,7 @@ public:
 
 	void LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const;
 	void FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const;
-	void LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file) const;
+	void LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const;
 	void FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const;
 
 
