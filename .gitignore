@@ -328,3 +328,9 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# Engine Meta Files (do not ignore)
+!CENTRAL 3D/Game/Assets/**/*.meta
+
+# Engine Library 
+CENTRAL 3D/Game/Library
