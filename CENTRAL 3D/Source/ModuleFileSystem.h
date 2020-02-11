@@ -41,6 +41,7 @@ public:
 	void NormalizePath(std::string& full_path, bool lowercase = false) const;
 	uint GetLastModificationTime(const char* file);
 	void WatchDirectory(const char* directory);
+	void HideFile(const char* file);
 
 	// Open for Read/Write
 	unsigned int Load(const char* path, const char* file, char** buffer) const;

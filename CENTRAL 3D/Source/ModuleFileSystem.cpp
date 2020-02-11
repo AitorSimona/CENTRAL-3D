@@ -388,6 +388,15 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 
 }
 
+void ModuleFileSystem::HideFile(const char* file)
+{
+	if (Exists(file))
+	{
+		ulong attributes = GetFileAttributesA(file);
+		SetFileAttributesA(file, attributes + FILE_ATTRIBUTE_HIDDEN);
+	}
+}
+
 unsigned int ModuleFileSystem::Load(const char * path, const char * file, char ** buffer) const
 {
 	string full_path(path);

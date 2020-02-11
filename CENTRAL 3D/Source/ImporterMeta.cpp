@@ -64,4 +64,7 @@ void ImporterMeta::Save(ResourceMeta * meta) const
 	meta_buffer = (char*)jsondata.c_str();
 
 	App->fs->Save(meta->GetResourceFile(), meta_buffer, jsondata.length());
+
+	// --- Hide meta ---
+	App->fs->HideFile(meta->GetResourceFile());
 }
