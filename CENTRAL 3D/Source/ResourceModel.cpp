@@ -99,7 +99,6 @@ void ResourceModel::OnDelete()
 
 	for (uint i = 0; i < resources.size(); ++i)
 	{
-		resources[i]->has_parent = true; // so sons know they have to delete their sons (like mat deleting textures)
 		resources[i]->OnDelete();
 		delete resources[i];
 	}

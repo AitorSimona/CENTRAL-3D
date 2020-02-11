@@ -25,5 +25,7 @@ private:
 private:
 	void OnOverwrite() override;
 	void OnDelete() override;
+	void OnUse() override;
+	void OnUnuse() override;
 };
 #endif //__RESOURCE_TEXTURE_H__

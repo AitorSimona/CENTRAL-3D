@@ -32,7 +32,8 @@ ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO): Component
 
 ComponentMeshRenderer::~ComponentMeshRenderer()
 {
-
+	if (material)
+		material->Release();
 }
 
 void ComponentMeshRenderer::Draw(bool outline) const
@@ -367,8 +368,11 @@ void ComponentMeshRenderer::Load(json& node)
 
 	if(IMeta)
 	{
-		// MYTODO: should Release after use! TBD when resource viewer is implemented
 		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat_path.c_str());
+
+		if (material)
+			material->Release();
+
 		material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
 	}
 }

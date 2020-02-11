@@ -618,7 +618,7 @@ void ModuleResourceManager::RetrieveFilesAndDirectories(const char* directory, s
 
 // ------------------- RESOURCE HANDLING ----------------------------------------------------------
 
-Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory)
+Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loadinmem is used only when absolutely needed
 {
 	Resource* resource = nullptr;
 

@@ -77,6 +77,11 @@ void Resource::SetOriginalFile(const char* new_path)
 	Repath();
 }
 
+void Resource::SetParent(Resource* resource)
+{
+	parent = resource;
+}
+
 bool Resource::IsInMemory() const
 {
 	return instances > 1;
@@ -84,10 +89,16 @@ bool Resource::IsInMemory() const
 
 bool Resource::LoadToMemory()
 {
+	OnUse();
+
 	if (instances > 0)
+	{
 		instances++;
+	}
 	else
-	instances = LoadInMemory() ? 1 : 0;
+	{
+		instances = LoadInMemory() ? 1 : 0;
+	}
 
 	return instances > 0;
 }
@@ -98,6 +109,8 @@ void Resource::Release()
 	{
 		FreeMemory();
 	}
+
+	OnUnuse();
 }
 
 void Resource::SetName(const char * name)

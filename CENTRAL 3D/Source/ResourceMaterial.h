@@ -28,6 +28,8 @@ private:
 	void OnOverwrite() override;
 	void OnDelete() override;
 	void Repath() override;
+	void OnUse() override;
+	void OnUnuse() override;
 };
 
 #endif //__RESOURCE_MATERIAL_H__

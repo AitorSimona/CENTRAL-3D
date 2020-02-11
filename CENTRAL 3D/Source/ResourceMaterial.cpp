@@ -99,7 +99,7 @@ void ResourceMaterial::OnDelete()
 
 	Resource* diffuse = resource_diffuse;
 
-	if (diffuse && has_parent)
+	if (diffuse && parent)
 	{
 		diffuse->OnDelete();
 		App->fs->Remove(diffuse->GetOriginalFile());
@@ -113,4 +113,22 @@ void ResourceMaterial::OnDelete()
 void ResourceMaterial::Repath()
 {
 	resource_file = original_file + extension;
+}
+
+void ResourceMaterial::OnUse()
+{
+	if (resource_diffuse)
+	{
+		Resource* resource = resource_diffuse;
+		resource->OnUse();
+	}
+}
+
+void ResourceMaterial::OnUnuse()
+{
+	if (resource_diffuse)
+	{
+		Resource* resource = resource_diffuse;
+		resource->OnUnuse();
+	}
 }

@@ -78,10 +78,12 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
 			model->AddResource(model_meshes[i]);
+			model_meshes[i]->SetParent(model);
 		}
 		for (uint j = 0; j < model_mats.size(); ++j)
 		{
 			model->AddResource(model_mats[j]);
+			model_mats[j]->SetParent(model);
 		}
 
 		// --- Save to Own format file in Library ---
@@ -164,7 +166,9 @@ Resource* ImporterModel::Load(const char* path) const
 					{
 						std::string value = _resources[it3.key()];
 						Importer::ImportData IData(value.c_str());
-						resource->AddResource(App->resources->ImportAssets(IData));
+						Resource* to_Add = App->resources->ImportAssets(IData);
+						to_Add->SetParent(resource);
+						resource->AddResource(to_Add);
 					}
 				}
 

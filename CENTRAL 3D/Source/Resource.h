@@ -39,6 +39,7 @@ public:
 	const uint GetNumInstances() const;
 
 	void SetOriginalFile(const char* new_path);
+	void SetParent(Resource* resource);
 
 	bool IsInMemory() const;
 	bool LoadToMemory();
@@ -46,8 +47,8 @@ public:
 
 	virtual void OnOverwrite() = 0;
 	virtual void OnDelete() = 0;
-
-	bool has_parent = false; // currently used to know if a material has to delete its textures (if it is part of a model)
+	virtual void OnUse() {};
+	virtual void OnUnuse() {};
 
 protected:
 	// --- Utilities ---
@@ -59,6 +60,7 @@ protected:
 
 
 protected:
+	Resource* parent = nullptr;
 	uint instances = 0;
 	uint previewTexID = 0;
 	uint UID = 0;

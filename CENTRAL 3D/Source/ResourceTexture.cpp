@@ -15,6 +15,8 @@ ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(R
 	buffer_id = App->textures->GetDefaultTextureID();
 	previewTexID = App->gui->defaultfileTexID;
 
+	LoadToMemory();
+
 	if(App->resources->IsFileImported(source_file.c_str()) && App->fs->Exists(resource_file.c_str()))
 		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, -1));
 	else if (source_file != "DefaultTexture")
@@ -61,4 +63,16 @@ void ResourceTexture::OnDelete()
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
+}
+
+void ResourceTexture::OnUse()
+{
+	if(parent)
+		instances++;
+}
+
+void ResourceTexture::OnUnuse()
+{
+	if (parent)
+		instances--;
 }

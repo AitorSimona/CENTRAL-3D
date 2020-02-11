@@ -12,7 +12,8 @@ ComponentMesh::ComponentMesh(GameObject* ContainerGO) : Component(ContainerGO,Co
 
 ComponentMesh::~ComponentMesh()
 {
-	//resource_mesh->instances--;
+	if (resource_mesh)
+		resource_mesh->Release();
 }
 
 const AABB & ComponentMesh::GetAABB() const
@@ -38,6 +39,9 @@ void ComponentMesh::Load(json& node)
 	std::string path = node["Resources"]["ResourceMesh"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
+
+	if (resource_mesh)
+		resource_mesh->Release();
 
 	resource_mesh = (ResourceMesh*)App->resources->GetResource(std::stoi(path));
 }

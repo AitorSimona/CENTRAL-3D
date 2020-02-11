@@ -67,6 +67,9 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 
 		if (ITex)
 				resource_mat->resource_diffuse = (ResourceTexture*)ITex->Import(TexData);
+
+		if (resource_mat->resource_diffuse)
+			resource_mat->resource_diffuse->SetParent(resource_mat);
 		
 		// MYTODO: Note we are only assigning one diffuse, and not caring about other texture types, create vector to store texture pointers
 
@@ -119,7 +122,10 @@ Resource* ImporterMaterial::Load(const char * path) const
 	}
 
 	if (diffuse)
+	{
 		mat->resource_diffuse = diffuse;
+		mat->resource_diffuse->SetParent(mat);
+	}
 
 	return mat;
 }
