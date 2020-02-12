@@ -29,7 +29,6 @@ public:
 
 	// --- Getters ---
 	uint GetUID() const;
-	void SetUID(uint UID);
 	ResourceType GetType() const;
 	const char* GetOriginalFile() const;
 	const char* GetResourceFile() const;
@@ -37,9 +36,12 @@ public:
 	const char* GetName() const;
 	const uint GetPreviewTexID() const;
 	const uint GetNumInstances() const;
+	Resource* GetParent();
+
 
 	void SetOriginalFile(const char* new_path);
 	void SetParent(Resource* resource);
+	void SetUID(uint UID);
 
 	bool IsInMemory() const;
 	bool LoadToMemory();

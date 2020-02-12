@@ -6,6 +6,7 @@
 #include "Math.h"
 #include <vector>
 
+class ResourceModel;
 
 class GameObject
 {
@@ -65,6 +66,8 @@ public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childs;
 	bool Static = false;
+	ResourceModel* model = nullptr;
+
 private:
 	// Unique Identifier
 	uint UID = 0;

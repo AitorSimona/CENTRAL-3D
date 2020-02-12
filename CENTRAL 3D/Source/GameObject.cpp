@@ -8,6 +8,7 @@
 
 #include "Math.h"
 
+#include "ResourceModel.h"
 
 #include "mmgr/mmgr.h"
 
@@ -33,6 +34,9 @@ GameObject::~GameObject()
 		
 	}
 	components.clear();
+
+	if (model)
+		model->Release();
 }
 
 void GameObject::Update(float dt)

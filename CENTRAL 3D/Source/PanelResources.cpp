@@ -139,7 +139,7 @@ bool PanelResources::Draw()
 	}
 	ImGui::End();
 
-	return false;
+	return true;
 }
 
 void PanelResources::DrawResourceNode(Resource* resource, ImVec4& color)

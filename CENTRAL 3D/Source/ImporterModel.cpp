@@ -180,7 +180,7 @@ Resource* ImporterModel::Load(const char* path) const
 	return resource;
 }
 
-void ImporterModel::InstanceOnCurrentScene(const char* model_path) const
+void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const
 {
 	if (model_path)
 	{
@@ -228,6 +228,7 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path) const
 				objects.push_back(go);
 			}
 	
+
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
@@ -243,6 +244,10 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path) const
 					}
 				}
 			}
+
+			// --- Add pointer to model ---
+			if(objects[0])
+			objects[0]->model = model;
 		}
 	}
 }

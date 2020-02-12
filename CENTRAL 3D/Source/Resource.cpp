@@ -70,6 +70,11 @@ const uint Resource::GetNumInstances() const
 	return instances;
 }
 
+Resource* Resource::GetParent()
+{
+	return parent;
+}
+
 void Resource::SetOriginalFile(const char* new_path)
 {
 	original_file = new_path;

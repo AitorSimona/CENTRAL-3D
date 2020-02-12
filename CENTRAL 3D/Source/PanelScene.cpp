@@ -80,7 +80,7 @@ bool PanelScene::Draw()
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
 				if(resource->GetType() == Resource::ResourceType::MODEL)
-				App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile());
+				App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), (ResourceModel*)resource);
 			}
 
 			ImGui::EndDragDropTarget();
