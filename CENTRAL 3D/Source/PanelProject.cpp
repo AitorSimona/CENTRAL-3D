@@ -52,7 +52,7 @@ bool PanelProject::Draw()
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + 38));
 
 		// --- Draw Directories Tree ---
-		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x*0.10f,ImGui::GetWindowSize().y));
+		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x*0.1,ImGui::GetWindowSize().y));
 
 		RecursiveDirectoryDraw(ASSETS_FOLDER, filters);
 
@@ -61,18 +61,18 @@ bool PanelProject::Draw()
 		// --- Draw Explorer ---
 		ImGui::SameLine();
 
-		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y*0.9f), true, projectFlags);
+		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y), true, projectFlags);
 
 		if(currentDirectory == nullptr)
 			currentDirectory = App->resources->GetAssetsFolder();
 
 		DrawFolder(currentDirectory);
 
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 20));
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
 
 
 		// --- Item resizer To be Implemented!! ---
-		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y * 0.1f), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
+		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
 		ImGui::BeginMenuBar();
 		ImGui::EndMenuBar();
 		ImGui::EndChild();
