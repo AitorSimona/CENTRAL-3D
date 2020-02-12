@@ -25,8 +25,6 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 
 	ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, IData.path);
 
-	// COULD USE MEMCPY AGAIN, JUST DECLARE AND ALLOCATE EVERYTHING FIRST
-
 	resource_mesh->vertices = new Vertex[data.mesh->mNumVertices];
 	resource_mesh->VerticesSize = data.mesh->mNumVertices;
 

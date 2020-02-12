@@ -183,6 +183,7 @@ void Application::LoadAllStatus(json & file)
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
+
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 	
@@ -255,7 +256,7 @@ void Application::SetOrganizationName(const char* name)
 
 void Application::Log(const char * entry)
 {	
-	if (log.size() > 1000)
+	if (logs.size() > 1000)
 		logs.erase(logs.begin());
 
 	// --- Append all logs to a string so we can print them on console --- 
