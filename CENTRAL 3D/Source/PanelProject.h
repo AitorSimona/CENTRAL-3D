@@ -22,8 +22,7 @@ public:
 private:
 	static void ONGameObjectSelected(const Event& e);
 private:
-	uint imageSizeX_px = 48;
-	uint imageSizeY_px = 48;
+	uint imageSize_px = 48;
 	uint item_spacingX_px = 10;
 	uint item_spacingY_px = 15;
 	uint maxColumns = 10;

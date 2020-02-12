@@ -71,9 +71,24 @@ bool PanelProject::Draw()
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
 
 
-		// --- Item resizer To be Implemented!! ---
+		// --- Item resizer and selected resource path display ---
 		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
 		ImGui::BeginMenuBar();
+
+		if (selected)
+			ImGui::Text(selected->GetOriginalFile());
+
+		ImGui::Spacing();
+
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
+
+		int imageSize_modifier = imageSize_px;
+		ImGui::SetNextItemWidth(100.0f);
+		if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64))
+		{
+			imageSize_px = imageSize_modifier;
+		}
+
 		ImGui::EndMenuBar();
 		ImGui::EndChild();
 
@@ -151,7 +166,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		const std::vector<ResourceFolder*>* directories = &folder->GetChilds();
 		uint i = 0;
 		uint row = 0;
-		maxColumns = ImGui::GetWindowSize().x / (imageSizeX_px + item_spacingX_px);
+		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px);
 		ImVec4 color = ImVec4(255, 255, 255, 255);
 
 		ImVec2 vec = ImGui::GetCursorPos();
@@ -162,8 +177,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (!*it)
 				continue;
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
-			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px);
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);
 
 			std::string item_name = (*it)->GetName();
 			item_name.pop_back();
@@ -172,7 +187,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
 
-			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0), color);
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), color);
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
@@ -182,7 +197,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 				ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
 				ImGui::Text(item_name.c_str());
 				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
-				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0));
 				ImGui::EndDragDropSource();
 			}
 
@@ -194,8 +209,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 				currentDirectory = *it;
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px + ((imageSizeX_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x)/2));
-			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x)/2));
+			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);
 
 			ImGui::TextColored(color, item_name.c_str());
 
@@ -216,8 +231,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (!*it)
 				continue;
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns)* (imageSizeX_px + item_spacingX_px) + item_spacingX_px);
-			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px);
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns)* (imageSize_px + item_spacingX_px) + item_spacingX_px);
+			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);
 
 			std::string item_name = (*it)->GetName();
 			LimitText(item_name);
@@ -225,7 +240,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
 
-			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0),color);
+			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0),color);
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
@@ -235,7 +250,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 				ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
 				ImGui::Text(item_name.c_str());
 				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
-				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSizeX_px, imageSizeY_px), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0));
 				ImGui::EndDragDropSource();
 			}
 
@@ -245,8 +260,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 				SetSelected(*it);
 
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSizeX_px + item_spacingX_px) + item_spacingX_px + ((imageSizeX_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));
-			ImGui::SetCursorPosY(vec.y + row * (imageSizeY_px + item_spacingY_px) + item_spacingY_px + imageSizeY_px);
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));
+			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);
 
 			ImGui::TextColored(color,item_name.c_str());
 
@@ -271,10 +286,10 @@ void PanelProject::LimitText(std::string& text)
 	uint dotsSizeX_px = ImGui::CalcTextSize("...", nullptr, false, 0).x;
 
 	// --- The total pixel space available is the text picel space + dots pixel space ---
-	if (imageSizeX_px < textSizeX_px)
+	if (imageSize_px < textSizeX_px)
 	{
 		uint charSizeX_px = textSizeX_px / text.size();
-		text = text.substr(0, (imageSizeX_px - dotsSizeX_px) / charSizeX_px);
+		text = text.substr(0, (imageSize_px - dotsSizeX_px) / charSizeX_px);
 		text.append("...");
 	}
 }
