@@ -64,7 +64,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 		node_flags |= ImGuiTreeNodeFlags_Selected;
 
 	// --- Avoid displaying root ---
-	if (Go->GetName().data() == App->scene_manager->GetRootGO()->GetName())
+	if (Go->GetName().c_str() == App->scene_manager->GetRootGO()->GetName())
 	{
 		if (Go->childs.size() > 0)
 		{
@@ -83,7 +83,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 
 		// --- Create current node and get if it is opened or not ---
 
-		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName().data());
+		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName().c_str());
 
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
@@ -108,7 +108,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 		// --- Set Game Object to be destroyed ---
 		if (ImGui::IsWindowFocused() && Go == App->scene_manager->GetSelectedGameObject() && App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 		{
-			CONSOLE_LOG("Destroying: %s ...", Go->GetName().data());
+			CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
 			to_destroy = Go;
 		}
 

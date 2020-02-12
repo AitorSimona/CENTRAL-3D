@@ -145,7 +145,7 @@ bool GameObject::FindChildGO(GameObject * GO)
 
 		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
 		{
-			if (*go == GO)
+			if ((*go)->GetUID() == GO->GetUID())
 				ret = true;
 		}
 	}

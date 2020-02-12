@@ -245,6 +245,12 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				}
 			}
 
+			// --- Now give unique uids to all gos ---
+			for (uint i = 0; i < objects.size(); ++i)
+			{
+				objects[i]->GetUID() = App->GetRandom().Int();
+			}
+
 			// --- Add pointer to model ---
 			if(objects[0])
 			objects[0]->model = model;
