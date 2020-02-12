@@ -255,6 +255,9 @@ void Application::SetOrganizationName(const char* name)
 
 void Application::Log(const char * entry)
 {	
+	if (log.size() > 1000)
+		logs.erase(logs.begin());
+
 	// --- Append all logs to a string so we can print them on console --- 
 	log.append(entry);
 

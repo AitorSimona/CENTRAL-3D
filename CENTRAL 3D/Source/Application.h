@@ -10,6 +10,8 @@
 #include "MathGeoLib/include/Algorithm/Random/LCG.h"
 #include "JSONLoader.h"
 
+#define MAX_CONSOLE_LOGS 1000
+
 enum AppState
 {
 	PLAY = 0,
