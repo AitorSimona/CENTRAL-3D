@@ -70,7 +70,10 @@ bool ModuleSceneManager::Start()
 	//cube = CreateCube(1, 1, 1);
 	//sphere = CreateSphere(1.0f, 25, 25);
 
-	CreateGrid();
+	// --- Create adaptive grid ---
+	glGenVertexArrays(1, &Grid_VAO);
+	glGenBuffers(1, &Grid_VBO);
+	CreateGrid(10.0f);
 
 	glGenVertexArrays(1, &PointLineVAO);
 
@@ -98,6 +101,7 @@ bool ModuleSceneManager::CleanUp()
 	NoStaticGo.clear();
 
 	glDeleteVertexArrays(1, &PointLineVAO);
+	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
 
 
@@ -672,39 +676,42 @@ ResourceMesh* ModuleSceneManager::CreateSphere(float Radius, int slices, int sla
 	return new_mesh;
 }
 
-void ModuleSceneManager::CreateGrid() 
+void ModuleSceneManager::CreateGrid(float target_distance)
 {
 	// --- Fill vertex data ---
-	float distance = 10.0f;
+
+	float distance = target_distance/4;
+
+	if (distance < 1)
+		distance = 1;
 
 	float3 vertices[84];
+
 	uint i = 0;
+	int lines = -10;
 
-	for (int max_linesgrid = -distance; max_linesgrid < distance; max_linesgrid++)
+	for (i = 0; i < 20; i++)
 	{
-		vertices[4 * i] = float3 (max_linesgrid, 0.0f, -distance);
-		vertices[4 * i + 1] = float3(max_linesgrid, 0.0f, distance);
-		vertices[4 * i + 2] = float3(-distance, 0.0f, max_linesgrid);
-		vertices[4 * i + 3] = float3(distance, 0.0f, max_linesgrid);
+		vertices[4 * i] = float3 (lines*-distance, 0.0f, 10*-distance);
+		vertices[4 * i + 1] = float3(lines*-distance, 0.0f, 10*distance);
+		vertices[4 * i + 2] = float3(10*-distance, 0.0f, lines*distance);
+		vertices[4 * i + 3] = float3(10*distance, 0.0f, lines*distance);
 
-		i++;
+		lines++;
 	}
 
-	vertices[4*i] = float3(-distance, 0.0f, distance);
-	vertices[4*i + 1] = float3(distance, 0.0f, distance);
-	vertices[4*i + 2] = float3(distance, 0.0f, -distance);
-	vertices[4*i + 3] = float3(distance, 0.0f, distance);
+	vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
+	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
+	vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
+	vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
 
 	// --- Configure vertex attributes ---
 
-	unsigned int VBO;
-	glGenVertexArrays(1, &Grid_VAO);
-	glGenBuffers(1, &VBO);
 	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 	glBindVertexArray(Grid_VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, Grid_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	glEnableVertexAttribArray(0);

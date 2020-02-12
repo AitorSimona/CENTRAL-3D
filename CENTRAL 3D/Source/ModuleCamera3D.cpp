@@ -122,6 +122,8 @@ void ModuleCamera3D::UpdateCamera()
 
 			OnMouseClick(mouse_x, mouse_y);
 		}
+
+		App->scene_manager->CreateGrid(camera->frustum.Pos().Length());
 	}
 }
 

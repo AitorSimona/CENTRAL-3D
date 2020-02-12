@@ -30,7 +30,7 @@ public:
 
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
-	void CreateGrid();
+	void CreateGrid(float target_distance);
 	GameObject* LoadCube();
 	GameObject* LoadSphere();
 
@@ -95,6 +95,7 @@ public:
 private:
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
+	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
