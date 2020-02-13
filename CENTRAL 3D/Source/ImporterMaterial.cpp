@@ -135,6 +135,8 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	json file;
 
 	file[mat->GetName()];
+
+	if(mat->resource_diffuse)
 	file["ResourceDiffuse"] = mat->resource_diffuse->GetOriginalFile();
 
 	// --- Serialize JSON to string ---

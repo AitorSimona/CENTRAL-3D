@@ -67,16 +67,7 @@ bool ResourceModel::HasResource(Resource* resource)
 
 void ResourceModel::OnOverwrite()
 {
-	// --- Free Everything ---
-	FreeMemory();
-
-	for (uint i = 0; i < resources.size(); ++i)
-	{
-		resources[i]->OnDelete();
-		delete resources[i];
-	}
-
-	// --- Delete lib file ---
+	// --- Delete everything ---
 	OnDelete();
 
 	// --- Ask for reimport ---

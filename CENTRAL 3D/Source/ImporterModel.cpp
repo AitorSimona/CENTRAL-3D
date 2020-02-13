@@ -167,8 +167,12 @@ Resource* ImporterModel::Load(const char* path) const
 						std::string value = _resources[it3.key()];
 						Importer::ImportData IData(value.c_str());
 						Resource* to_Add = App->resources->ImportAssets(IData);
-						to_Add->SetParent(resource);
-						resource->AddResource(to_Add);
+
+						if (to_Add)
+						{
+							to_Add->SetParent(resource);
+							resource->AddResource(to_Add);
+						}
 					}
 				}
 
