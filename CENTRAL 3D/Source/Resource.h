@@ -2,12 +2,13 @@
 #define __RESOURCE_H__
 
 #include <string>
+#include <vector>
 #include "Globals.h"
 
+class GameObject;
 
 class Resource 
 {
-
 public:
 	enum class ResourceType
 	{
@@ -22,6 +23,12 @@ public:
 		META,
 		UNKNOWN,
 	};
+	enum class ResourceNotificationType
+	{
+		Overwrite,
+		Deletion
+	};
+
 
 	Resource(ResourceType type);
 	Resource(ResourceType type, uint UID, std::string source_file);
@@ -36,38 +43,36 @@ public:
 	const char* GetName() const;
 	const uint GetPreviewTexID() const;
 	const uint GetNumInstances() const;
-	Resource* GetParent();
-
 
 	void SetOriginalFile(const char* new_path);
-	void SetParent(Resource* resource);
 	void SetUID(uint UID);
 
 	bool IsInMemory() const;
 	bool LoadToMemory();
 	void Release();
+	void AddUser(GameObject* user);
+	void RemoveUser(GameObject* user);
 
 	virtual void OnOverwrite() = 0;
 	virtual void OnDelete() = 0;
-	virtual void OnUse() {};
-	virtual void OnUnuse() {};
 
 protected:
 	// --- Utilities ---
 	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
 	virtual void Repath() {};
+	void NotifyUsers(ResourceNotificationType type);
 
 	void SetName(const char* name);
 
 
 protected:
-	Resource* parent = nullptr;
 	uint instances = 0;
 	uint previewTexID = 0;
 	uint UID = 0;
 	ResourceType type = ResourceType::UNKNOWN;
 
+	std::vector<GameObject*> users; // Resource notifies all interested objects of overwrites/deletes
 	std::string resource_file = "";
 	std::string original_file = "";
 	std::string name = "";

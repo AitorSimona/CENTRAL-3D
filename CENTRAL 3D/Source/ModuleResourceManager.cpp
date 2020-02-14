@@ -889,7 +889,7 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 
 		path.append(".meta");
 
-		// --- PhysFS only will return true if the file is inside one of the fs predefined folders! 
+		// --- PhysFS will only return true if the file is inside one of the fs predefined folders! 
 		//  using that on our advantage to know if a resource is imported or not ---
 		ret = App->fs->Exists(path.data());
 	}

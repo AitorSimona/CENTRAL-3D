@@ -39,6 +39,7 @@ Application::Application()
 	// They will CleanUp() in reverse order
 
 	// Main Modules
+	AddModule(fs);
 	AddModule(event_manager);
 	AddModule(input);
 	AddModule(time);
@@ -46,7 +47,7 @@ Application::Application()
 
 	AddModule(textures);
 	AddModule(hardware);
-	AddModule(fs);
+
 	AddModule(resources);
 	AddModule(window);
 	AddModule(camera);

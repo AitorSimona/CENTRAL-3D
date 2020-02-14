@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Math.h"
 #include <vector>
+#include "Resource.h"
 
 class ResourceModel;
 
@@ -61,6 +62,8 @@ public:
 	bool FindChildGO(GameObject* GO);
 
 	void UpdateAABB();
+
+	void ONResourceEvent(uint uid, Resource::ResourceNotificationType type);
 
 public:
 	GameObject* parent = nullptr;

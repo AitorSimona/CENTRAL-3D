@@ -38,6 +38,8 @@ void ResourceMeta::FreeMemory()
 
 void ResourceMeta::OnOverwrite()
 {
+	NotifyUsers(ResourceNotificationType::Overwrite);
+
 	// If a file is overwritten, its meta is notified so it can update the last modification time of its assigned resource
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
@@ -53,6 +55,8 @@ void ResourceMeta::OnOverwrite()
 
 void ResourceMeta::OnDelete()
 {
+	NotifyUsers(ResourceNotificationType::Deletion);
+
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 

@@ -421,7 +421,7 @@ void ImDrawList::AddDrawCmd()
     CmdBuffer.push_back(draw_cmd);
 }
 
-void ImDrawList::AddCallback(ImDrawCallback callback, void* callback_data)
+void ImDrawList::AddUser(ImDrawCallback callback, void* callback_data)
 {
     ImDrawCmd* current_cmd = CmdBuffer.Size ? &CmdBuffer.back() : NULL;
     if (!current_cmd || current_cmd->ElemCount != 0 || current_cmd->UserCallback != NULL)

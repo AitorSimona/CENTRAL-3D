@@ -24,6 +24,7 @@
 
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
+#include "ResourceModel.h"
 
 #include "mmgr/mmgr.h"
 
@@ -636,18 +637,18 @@ std::string ImporterScene::SaveSceneToFile(std::vector<GameObject*>& scene_gos, 
 }
 
 void ImporterScene::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const
-{
+{		
+	ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
+
 	for (uint i = 0; i < scene->mNumMeshes; ++i)
 	{
 		ImportMeshData MData(source_file);
 		MData.mesh = scene->mMeshes[i];
 
-		// --- Import mesh data (fill new_mesh)---
-
-		ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
-
+		// --- Else, Import mesh data (fill new_mesh) ---
 		if (IMesh)
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
+
 	}
 }
 
@@ -666,6 +667,7 @@ void ImporterScene::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 {
 	for (uint i = 0; i < scene->mNumMaterials; ++i)
 	{
+		// MYTODO: Check if mat is being overwritten...
 
 		ImportMaterialData MatData(source_file);
 		MatData.mat = scene->mMaterials[i];
@@ -772,6 +774,7 @@ void ImporterScene::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 				}
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
+				Renderer->material->Release();
 				Renderer->material = scene_mats[mat_index];		
 			}
 

@@ -3,6 +3,7 @@
 
 #include "Globals.h"
 #include "JSONLoader.h"
+#include "Resource.h"
 
 class GameObject;
 
@@ -34,6 +35,7 @@ public:
 	// --- Save & Load ---
 	virtual json Save() const = 0;
 	virtual void Load(json& node) = 0;
+	virtual void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) {};
 
 protected:
 	bool active = false;

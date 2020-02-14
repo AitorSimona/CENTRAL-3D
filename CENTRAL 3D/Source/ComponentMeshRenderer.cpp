@@ -32,8 +32,11 @@ ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO): Component
 
 ComponentMeshRenderer::~ComponentMeshRenderer()
 {
-	if (material)
+	if (material && material->IsInMemory())
+	{
 		material->Release();
+		material->RemoveUser(GO);
+	}
 }
 
 void ComponentMeshRenderer::Draw(bool outline) const
@@ -44,6 +47,7 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	uint shader = App->renderer3D->defaultShader->ID;
 
+	if(material)
 	shader = material->shader->ID;
 
 	float4x4 model = transform->GetGlobalTransform();
@@ -116,23 +120,28 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
 {
-	glBindVertexArray(mesh.VAO);
+	if (mesh.vertices && mesh.Indices)
+	{
+		glBindVertexArray(mesh.VAO);
 
 		if (this->checkers)
 			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
 		else
 		{
-			if(material->resource_diffuse)
-			glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
+			if (material->resource_diffuse)
+				glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
+			else
+				glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 		}
-	
 
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
-	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+		glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	}
 }
 
 void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
@@ -374,6 +383,29 @@ void ComponentMeshRenderer::Load(json& node)
 			material->Release();
 
 		material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
+
+		// --- We want to be notified of any resource event ---
+		if (material)
+			material->AddUser(GO);
+	}
+}
+
+void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
+{
+	switch (type)
+	{
+	case Resource::ResourceNotificationType::Overwrite:
+		if (UID == material->GetUID())
+			material = (ResourceMaterial*)App->resources->GetResource(UID);
+		break;
+
+	case Resource::ResourceNotificationType::Deletion:
+		if (UID == material->GetUID())
+			material = nullptr;
+		break;
+
+	default:
+		break;
 	}
 }
 

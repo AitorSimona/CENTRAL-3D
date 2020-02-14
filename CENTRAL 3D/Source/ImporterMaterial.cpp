@@ -35,47 +35,47 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 	std::string directory = MatData->path;
 	directory = App->fs->GetDirectoryFromPath(directory);
 
-	aiString Texture_relative_path;
+	//aiString Texture_relative_path;
 	aiString material_name;
-	std::string Texture_path;
+	//std::string Texture_path;
 
 	// --- Get material's name ---
 	MatData->mat->Get(AI_MATKEY_NAME, material_name);
 	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat"));
 
-	// --- Get number of Diffuse textures ---
-	uint num_diffuse = MatData->mat->GetTextureCount(aiTextureType_DIFFUSE);
+	//// --- Get number of Diffuse textures ---
+	//uint num_diffuse = MatData->mat->GetTextureCount(aiTextureType_DIFFUSE);
 
-	// --- Import them ---
-	while (num_diffuse > 0)
-	{
-		MatData->mat->GetTexture(aiTextureType_DIFFUSE, num_diffuse - 1, &Texture_relative_path);
+	//// --- Import them ---
+	//while (num_diffuse > 0)
+	//{
+	//	MatData->mat->GetTexture(aiTextureType_DIFFUSE, num_diffuse - 1, &Texture_relative_path);
 
-		// --- First actual retrieve texture path ---
-		Texture_path = directory + Texture_relative_path.C_Str();
+	//	// --- First actual retrieve texture path ---
+	//	Texture_path = directory + Texture_relative_path.C_Str();
 
-		// --- Duplicate into Assets folder ---
-		std::string Assets_path = ASSETS_FOLDER;
-		Assets_path.append(Texture_relative_path.C_Str());
+	//	// --- Duplicate into Assets folder ---
+	//	std::string Assets_path = ASSETS_FOLDER;
+	//	Assets_path.append(Texture_relative_path.C_Str());
 
-		if (!App->fs->Exists(Assets_path.c_str()))
-				App->fs->CopyFromOutsideFS(Texture_path.c_str(), Assets_path.c_str());
+	//	if (!App->fs->Exists(Assets_path.c_str()))
+	//			App->fs->CopyFromOutsideFS(Texture_path.c_str(), Assets_path.c_str());
 
-		// --- Finally ask resource manager to import texture ---
-		ImportData TexData(Assets_path.c_str());
-		ImporterTexture* ITex = App->resources->GetImporter<ImporterTexture>();
+	//	// --- Finally ask resource manager to import texture ---
+	//	ImportData TexData(Assets_path.c_str());
+	//	ImporterTexture* ITex = App->resources->GetImporter<ImporterTexture>();
 
-		if (ITex)
-				resource_mat->resource_diffuse = (ResourceTexture*)ITex->Import(TexData);
+	//	if (ITex)
+	//			resource_mat->resource_diffuse = (ResourceTexture*)ITex->Import(TexData);
 
-		if (resource_mat->resource_diffuse)
-			resource_mat->resource_diffuse->SetParent(resource_mat);
-		
-		// MYTODO: Note we are only assigning one diffuse, and not caring about other texture types, create vector to store texture pointers
+	//	if (resource_mat->resource_diffuse)
+	//		resource_mat->resource_diffuse->SetParent(resource_mat);
+	//	
+	//	// MYTODO: Note we are only assigning one diffuse, and not caring about other texture types, create vector to store texture pointers
 
 
-		num_diffuse--;
-	}
+	//	num_diffuse--;
+	//}
 
 	// --- Create meta ---
 
@@ -100,7 +100,7 @@ Resource* ImporterMaterial::Load(const char * path) const
 
 	json file = App->GetJLoader()->Load(path);
 
-	if (!file.is_null())
+	if (!file.is_null() && !file["ResourceDiffuse"].is_null())
 	{
 		std::string texture_path = file["ResourceDiffuse"];
 		Importer::ImportData IData(texture_path.c_str());
@@ -124,7 +124,7 @@ Resource* ImporterMaterial::Load(const char * path) const
 	if (diffuse)
 	{
 		mat->resource_diffuse = diffuse;
-		mat->resource_diffuse->SetParent(mat);
+		//mat->resource_diffuse->SetParent(mat);
 	}
 
 	return mat;
@@ -135,6 +135,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	json file;
 
 	file[mat->GetName()];
+	file["ResourceDiffuse"];
 
 	if(mat->resource_diffuse)
 	file["ResourceDiffuse"] = mat->resource_diffuse->GetOriginalFile();

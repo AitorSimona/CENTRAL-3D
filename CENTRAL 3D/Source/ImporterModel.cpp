@@ -39,6 +39,9 @@ Resource* ImporterModel::Import(ImportData& IData) const
 	ResourceModel* model = nullptr;
 	const aiScene* scene = nullptr;
 
+
+	// MYTODO: change scene load function for the old one (i think assimp/physfs lock files on import)
+
 	// --- Import scene from path ---
 	if (App->fs->Exists(MData.path))
 		scene = aiImportFileEx(MData.path, aiProcessPreset_TargetRealtime_MaxQuality /*| aiPostProcessSteps::aiProcess_FlipUVs*/, App->fs->GetAssimpIO());
@@ -78,12 +81,10 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
 			model->AddResource(model_meshes[i]);
-			model_meshes[i]->SetParent(model);
 		}
 		for (uint j = 0; j < model_mats.size(); ++j)
 		{
 			model->AddResource(model_mats[j]);
-			model_mats[j]->SetParent(model);
 		}
 
 		// --- Save to Own format file in Library ---
@@ -170,7 +171,7 @@ Resource* ImporterModel::Load(const char* path) const
 
 						if (to_Add)
 						{
-							to_Add->SetParent(resource);
+							//to_Add->SetParent(resource);
 							resource->AddResource(to_Add);
 						}
 					}
@@ -256,8 +257,11 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			}
 
 			// --- Add pointer to model ---
-			if(objects[0])
-			objects[0]->model = model;
+			if (objects[0])
+			{
+				objects[0]->model = model;
+				model->AddUser(objects[0]);
+			}
 		}
 	}
 }

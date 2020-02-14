@@ -6,6 +6,7 @@
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
+#include "ModuleEventManager.h"
 
 #include "ResourceTexture.h"
 
@@ -89,22 +90,20 @@ void ResourceMaterial::UpdateUniforms()
 
 void ResourceMaterial::OnOverwrite()
 {
-
+	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
 void ResourceMaterial::OnDelete()
 {
+	NotifyUsers(ResourceNotificationType::Deletion);
+
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
 	Resource* diffuse = resource_diffuse;
 
-	if (diffuse && parent)
-	{
-		diffuse->OnDelete();
-		App->fs->Remove(diffuse->GetOriginalFile());
-		delete diffuse;
-	}
+	if (diffuse)
+		diffuse->Release();
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
@@ -113,22 +112,4 @@ void ResourceMaterial::OnDelete()
 void ResourceMaterial::Repath()
 {
 	resource_file = original_file + extension;
-}
-
-void ResourceMaterial::OnUse()
-{
-	if (resource_diffuse)
-	{
-		Resource* resource = resource_diffuse;
-		resource->OnUse();
-	}
-}
-
-void ResourceMaterial::OnUnuse()
-{
-	if (resource_diffuse)
-	{
-		Resource* resource = resource_diffuse;
-		resource->OnUnuse();
-	}
 }

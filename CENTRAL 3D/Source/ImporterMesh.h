@@ -6,6 +6,7 @@
 struct aiMesh;
 class ResourceMesh;
 class Resource;
+class ResourceMesh;
 
 struct ImportMeshData : public Importer::ImportData
 {

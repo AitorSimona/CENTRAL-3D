@@ -9,6 +9,7 @@
 
 typedef void (*Function)(const Event & e);
 
+
 class GameObject;
 class Resource;
 
@@ -28,6 +29,7 @@ struct Event
 	{
 		GameObject* go = nullptr;
 		Resource* resource;
+		uint uid; // For overwrite case
 	};
 
 	Event(EventType type) : type(type) {}

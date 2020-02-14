@@ -51,6 +51,8 @@ uint ResourceTexture::GetTexID()
 
 void ResourceTexture::OnOverwrite()
 {
+	NotifyUsers(ResourceNotificationType::Overwrite);
+
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
@@ -59,21 +61,11 @@ void ResourceTexture::OnOverwrite()
 
 void ResourceTexture::OnDelete()
 {
+	NotifyUsers(ResourceNotificationType::Deletion);
+
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
-}
-
-void ResourceTexture::OnUse()
-{
-	if(parent)
-		instances++;
-}
-
-void ResourceTexture::OnUnuse()
-{
-	if (parent)
-		instances--;
 }

@@ -3,6 +3,8 @@
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 
+#include "GameObject.h"
+
 #include "mmgr/mmgr.h"
 
 
@@ -12,8 +14,11 @@ ComponentMesh::ComponentMesh(GameObject* ContainerGO) : Component(ContainerGO,Co
 
 ComponentMesh::~ComponentMesh()
 {
-	if (resource_mesh)
+	if (resource_mesh && resource_mesh->IsInMemory())
+	{
 		resource_mesh->Release();
+		resource_mesh->RemoveUser(GO);
+	}
 }
 
 const AABB & ComponentMesh::GetAABB() const
@@ -44,5 +49,28 @@ void ComponentMesh::Load(json& node)
 		resource_mesh->Release();
 
 	resource_mesh = (ResourceMesh*)App->resources->GetResource(std::stoi(path));
+
+	// --- We want to be notified of any resource event ---
+	if (resource_mesh)
+		resource_mesh->AddUser(GO);
+}
+
+void ComponentMesh::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
+{
+	switch (type)
+	{
+	case Resource::ResourceNotificationType::Overwrite:
+		if (UID == resource_mesh->GetUID())
+			resource_mesh = (ResourceMesh*)App->resources->GetResource(UID);
+		break;
+
+	case Resource::ResourceNotificationType::Deletion:
+		if (UID == resource_mesh->GetUID())
+			resource_mesh = nullptr;
+		break;
+
+	default:
+		break;
+	}
 }
 

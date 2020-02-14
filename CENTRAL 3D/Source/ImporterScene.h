@@ -12,6 +12,7 @@ class ComponentMaterial;
 class GameObject;
 class ResourceMesh;
 class ResourceMaterial;
+class ResourceModel;
 class Resource;
 
 

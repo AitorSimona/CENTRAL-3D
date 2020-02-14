@@ -302,3 +302,13 @@ void GameObject::UpdateAABB()
 		obb = aabb;
 	}
 }
+
+void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType type)
+{
+	for (uint i = 0; i < components.size(); ++i)
+	{
+		components[i]->ONResourceEvent(uid, type);
+	}
+}
+
+

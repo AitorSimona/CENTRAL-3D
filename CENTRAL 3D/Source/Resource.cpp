@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
+#include "GameObject.h"
 
 #include "mmgr/mmgr.h"
 
@@ -70,11 +71,6 @@ const uint Resource::GetNumInstances() const
 	return instances;
 }
 
-Resource* Resource::GetParent()
-{
-	return parent;
-}
-
 void Resource::SetOriginalFile(const char* new_path)
 {
 	original_file = new_path;
@@ -82,20 +78,13 @@ void Resource::SetOriginalFile(const char* new_path)
 	Repath();
 }
 
-void Resource::SetParent(Resource* resource)
-{
-	parent = resource;
-}
-
 bool Resource::IsInMemory() const
 {
-	return instances > 1;
+	return instances >= 1;
 }
 
 bool Resource::LoadToMemory()
 {
-	OnUse();
-
 	if (instances > 0)
 	{
 		instances++;
@@ -110,12 +99,40 @@ bool Resource::LoadToMemory()
 
 void Resource::Release()
 {
-	if (--instances == 0)
+	if (instances != 0)
 	{
-		FreeMemory();
+		if (--instances == 0)
+		{
+			FreeMemory();
+		}
 	}
+	else
+		CONSOLE_LOG("![Warning]: Trying to release an already released resource: %s", name.c_str());
+}
 
-	OnUnuse();
+void Resource::AddUser(GameObject* user)
+{
+	users.push_back(user);
+}
+
+void Resource::RemoveUser(GameObject* user)
+{
+	for (std::vector<GameObject*>::iterator it = users.begin(); it != users.end(); ++it)
+	{
+		if ((*it)->GetUID() == user->GetUID())
+		{
+			users.erase(it);
+			break;
+		}
+	}
+}
+
+void Resource::NotifyUsers(ResourceNotificationType type)
+{
+	for (uint i = 0; i < users.size(); ++i)
+	{
+		users[i]->ONResourceEvent(UID, type);
+	}
 }
 
 void Resource::SetName(const char * name)

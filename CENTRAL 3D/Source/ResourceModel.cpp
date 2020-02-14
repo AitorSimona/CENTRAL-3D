@@ -67,8 +67,7 @@ bool ResourceModel::HasResource(Resource* resource)
 
 void ResourceModel::OnOverwrite()
 {
-	// --- Delete everything ---
-	OnDelete();
+	NotifyUsers(ResourceNotificationType::Overwrite);
 
 	// --- Ask for reimport ---
 	ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
@@ -78,12 +77,25 @@ void ResourceModel::OnOverwrite()
 
 	IModel->Import(MData);
 
+	// --- Overwrite childs ---
+	for (uint i = 0; i < resources.size(); ++i)
+	{
+		resources[i]->OnOverwrite();
+		delete resources[i];
+	}
+
+	resources.clear();
+
+
 	if (instances > 0)
 		LoadInMemory();
 }
 
 void ResourceModel::OnDelete()
 {
+	NotifyUsers(ResourceNotificationType::Deletion);
+
+
 	FreeMemory();
 
 	App->fs->Remove(resource_file.c_str());

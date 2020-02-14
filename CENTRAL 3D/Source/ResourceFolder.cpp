@@ -97,11 +97,14 @@ bool ResourceFolder::HasResource(Resource* resource)
 
 void ResourceFolder::OnOverwrite()
 {
+	NotifyUsers(ResourceNotificationType::Overwrite);
 
 }
 
 void ResourceFolder::OnDelete()
 {
+	NotifyUsers(ResourceNotificationType::Deletion);
+
 	for (uint i = 0; i < resources.size(); ++i)
 	{
 		resources[i]->OnDelete();
