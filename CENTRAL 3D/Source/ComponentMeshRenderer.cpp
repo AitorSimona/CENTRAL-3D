@@ -382,6 +382,7 @@ void ComponentMeshRenderer::Load(json& node)
 		if (material)
 			material->Release();
 
+		if(meta)
 		material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
 
 		// --- We want to be notified of any resource event ---
