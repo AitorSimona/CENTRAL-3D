@@ -6,6 +6,7 @@
 
 #include "Importer.h"
 #include "ImporterModel.h"
+#include "ImporterMaterial.h"
 
 #include "mmgr/mmgr.h"
 
@@ -69,7 +70,11 @@ void ResourceModel::OnOverwrite()
 {
 	NotifyUsers(ResourceNotificationType::Overwrite);
 
-	// --- Ask for reimport ---
+	// --- Keep a copy of current resources pointers ---
+	std::vector<Resource*> old_resources = resources;
+	resources.clear();
+
+	// --- Ask for reimport, filling resources list with the new ones ---
 	ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
 	
 	ImportModelData MData(GetOriginalFile());
@@ -78,13 +83,19 @@ void ResourceModel::OnOverwrite()
 	IModel->Import(MData);
 
 	// --- Overwrite childs ---
-	for (uint i = 0; i < resources.size(); ++i)
+	for (uint i = 0; i < old_resources.size(); ++i)
 	{
-		resources[i]->OnOverwrite();
-		delete resources[i];
+		App->resources->RemoveResourceFromFolder(old_resources[i]);
+		App->resources->ONResourceDestroyed(old_resources[i]);
+		old_resources[i]->OnOverwrite();
+		old_resources[i]->ClearUsers();
+		old_resources[i]->OnDelete();
+
+
+		delete old_resources[i];
 	}
 
-	resources.clear();
+	old_resources.clear();
 
 
 	if (instances > 0)

@@ -127,6 +127,11 @@ void Resource::RemoveUser(GameObject* user)
 	}
 }
 
+void Resource::ClearUsers()
+{
+	users.clear();
+}
+
 void Resource::NotifyUsers(ResourceNotificationType type)
 {
 	for (uint i = 0; i < users.size(); ++i)

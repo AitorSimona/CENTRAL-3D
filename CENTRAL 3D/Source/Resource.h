@@ -52,6 +52,8 @@ public:
 	void Release();
 	void AddUser(GameObject* user);
 	void RemoveUser(GameObject* user);
+	void ClearUsers();
+	void NotifyUsers(ResourceNotificationType type);
 
 	virtual void OnOverwrite() = 0;
 	virtual void OnDelete() = 0;
@@ -61,7 +63,6 @@ protected:
 	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
 	virtual void Repath() {};
-	void NotifyUsers(ResourceNotificationType type);
 
 	void SetName(const char* name);
 

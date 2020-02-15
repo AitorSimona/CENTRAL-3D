@@ -309,6 +309,9 @@ void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType ty
 	{
 		components[i]->ONResourceEvent(uid, type);
 	}
+
+	if (model && type == Resource::ResourceNotificationType::Deletion && model->GetUID() == uid)
+		model = nullptr;
 }
 
 

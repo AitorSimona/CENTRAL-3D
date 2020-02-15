@@ -392,15 +392,17 @@ void ComponentMeshRenderer::Load(json& node)
 
 void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
 {
+	// --- Always check if your resources are already invalidated, since go sends events from all of its components resources ---
+
 	switch (type)
 	{
 	case Resource::ResourceNotificationType::Overwrite:
-		if (UID == material->GetUID())
+		if (material && UID == material->GetUID())
 			material = (ResourceMaterial*)App->resources->GetResource(UID);
 		break;
 
 	case Resource::ResourceNotificationType::Deletion:
-		if (UID == material->GetUID())
+		if (material && UID == material->GetUID())
 			material = nullptr;
 		break;
 

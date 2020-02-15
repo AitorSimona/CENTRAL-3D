@@ -216,7 +216,6 @@ void ResourceMesh::OnOverwrite()
 {
 	// Since mesh is not a standalone resource (which means it is always owned by a model) the model is in charge
 	// of overwriting it (see ResourceModel OnOverwrite for details)
-
 	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
