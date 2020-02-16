@@ -19,7 +19,6 @@ ImporterMeta::~ImporterMeta()
 
 Resource* ImporterMeta::Import(ImportData& IData) const
 {
-
 	return nullptr;
 }
 
@@ -47,9 +46,6 @@ Resource* ImporterMeta::Load(const char* path) const
 		resource->SetOriginalFile(path);
 	}
 
-	// --- Hide meta ---
-	//App->fs->HideFile(resource->GetResourceFile());
-
 	return resource;
 }
 
@@ -68,6 +64,4 @@ void ImporterMeta::Save(ResourceMeta * meta) const
 
 	App->fs->Save(meta->GetResourceFile(), meta_buffer, jsondata.length());
 
-	// --- Hide meta ---
-	//App->fs->HideFile(meta->GetResourceFile());
 }

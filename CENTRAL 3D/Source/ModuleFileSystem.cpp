@@ -388,24 +388,6 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 
 }
 
-// Windows seems to completely hide files the second time, even when checking that the attribute is not set...
-// so that means metas will not be hidden, nice work fs...
-void ModuleFileSystem::HideFile(const char* file)
-{
-	if (Exists(file))
-	{
-		ulong attributes = GetFileAttributesA(file);
-
-		//if ((attributes & FILE_ATTRIBUTE_HIDDEN) == 0)
-		//	SetFileAttributes(file, attributes | FILE_ATTRIBUTE_HIDDEN);
-		
-
-		// --- Uncomment if you want to unhide files ---
-		//if ((attributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN)
-		//	SetFileAttributes(file, attributes & ~FILE_ATTRIBUTE_HIDDEN);
-		
-	}
-}
 
 unsigned int ModuleFileSystem::Load(const char * path, const char * file, char ** buffer) const
 {
