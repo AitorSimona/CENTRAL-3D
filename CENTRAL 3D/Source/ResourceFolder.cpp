@@ -64,6 +64,18 @@ void ResourceFolder::SetParent(ResourceFolder* parent)
 	}
 }
 
+void ResourceFolder::RemoveChild(ResourceFolder* child)
+{
+	for (std::vector<ResourceFolder*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		if ((*it)->GetUID() == child->GetUID())
+		{
+			childs.erase(it);
+			break;
+		}
+	}
+}
+
 std::vector<Resource*>& ResourceFolder::GetResources()
 {
 	return resources;
@@ -115,4 +127,7 @@ void ResourceFolder::OnDelete()
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
+
+	if (parent)
+		parent->RemoveChild(this);
 }
