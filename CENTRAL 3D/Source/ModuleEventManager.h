@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "Globals.h"
 
-#define MAX_EVENTS 50
+#define MAX_EVENTS 1000
 #define EVENT_TYPES 7
 
 typedef void (*Function)(const Event & e);
