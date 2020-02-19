@@ -32,9 +32,10 @@ Resource* ImporterFolder::Import(ImportData& IData) const
 	new_path.pop_back();
 	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_path, folder->GetUID());
 
-
 	if (meta)
 		IMeta->Save(meta);
+
+	App->resources->AddResourceToFolder(folder);
 
 	return folder;
 }

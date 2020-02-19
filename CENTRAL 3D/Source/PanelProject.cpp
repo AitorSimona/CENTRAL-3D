@@ -18,17 +18,28 @@ void PanelProject::ONGameObjectSelected(const Event& e)
 	App->gui->panelProject->SetSelected(nullptr);
 }
 
+void PanelProject::ONResourceDestroyed(const Event& e)
+{
+	if (e.uid == App->gui->panelProject->selected_uid)
+		App->gui->panelProject->SetSelected(nullptr);
+
+	CONSOLE_LOG("yikes");
+}
+
 // -------------------------------
 
 PanelProject::PanelProject(char * name) : Panel(name)
 {
 	// --- Add Event Listeners ---
 	App->event_manager->AddListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
+	App->event_manager->AddListener(Event::EventType::Resource_destroyed, ONResourceDestroyed);
+
 }
 
 PanelProject::~PanelProject()
 {
-	App->event_manager->AddListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
+	App->event_manager->RemoveListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
+	App->event_manager->RemoveListener(Event::EventType::Resource_destroyed, ONResourceDestroyed);
 }
 
 
@@ -110,10 +121,13 @@ void PanelProject::SetSelected(Resource* new_selected)
 
 	if (selected)
 	{
+		selected_uid = new_selected->GetUID();
 		Event e(Event::EventType::Resource_selected);
 		e.resource = selected;
 		App->event_manager->PushEvent(e);
 	}
+	else
+		selected_uid = 0;
 }
 
 

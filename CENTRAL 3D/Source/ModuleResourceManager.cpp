@@ -846,9 +846,23 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 			original_file = (*it).second->GetName();
 			original_file.pop_back();
 
-			if (directory == original_file)
+
+
+			if (resource->GetType() == Resource::ResourceType::FOLDER)
+			{
+				App->fs->SplitFilePath(directory.c_str(), &directory);
+
+				if (directory == (*it).second->GetOriginalFile())
+				{
+					ResourceFolder* folder = (ResourceFolder*)resource;
+					folder->SetParent((*it).second);
+					break;
+				}
+			}
+			else if (directory == original_file)
 			{
 				(*it).second->AddResource(resource);
+				break;
 			}
 
 		}

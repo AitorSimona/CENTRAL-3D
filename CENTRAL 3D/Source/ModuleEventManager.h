@@ -4,8 +4,8 @@
 #include "Module.h"
 #include "Globals.h"
 
-#define MAX_EVENTS 25
-#define EVENT_TYPES 6
+#define MAX_EVENTS 50
+#define EVENT_TYPES 7
 
 typedef void (*Function)(const Event & e);
 
@@ -20,6 +20,7 @@ struct Event
 		GameObject_destroyed,
 		GameObject_selected,
 		Resource_selected,
+		Resource_destroyed,
 		Window_resize,
 		File_dropped,
 		invalid

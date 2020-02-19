@@ -1,6 +1,7 @@
 #include "Resource.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
+#include "ModuleEventManager.h"
 #include "ModuleFileSystem.h"
 #include "GameObject.h"
 
@@ -23,7 +24,9 @@ Resource::Resource(ResourceType type, uint UID, std::string source_file)
 
 Resource::~Resource()
 {
-
+	Event e(Event::EventType::Resource_destroyed);
+	e.uid = UID;
+	App->event_manager->PushEvent(e);
 }
 
 uint Resource::GetUID() const

@@ -21,6 +21,7 @@ public:
 	void SetSelected(Resource* new_selected);
 private:
 	static void ONGameObjectSelected(const Event& e);
+	static void ONResourceDestroyed(const Event& e);
 private:
 	uint imageSize_px = 48;
 	uint item_spacingX_px = 10;
@@ -28,6 +29,7 @@ private:
 	uint maxColumns = 10;
 
 	Resource* selected = nullptr;
+	uint selected_uid = 0;
 	ResourceFolder* currentDirectory = nullptr;
 
 	void DrawFolder(ResourceFolder* folder);
