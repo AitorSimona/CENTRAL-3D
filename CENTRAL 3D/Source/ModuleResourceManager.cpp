@@ -64,7 +64,7 @@ bool ModuleResourceManager::Start()
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
 
-	//HandleFsChanges();
+	HandleFsChanges();
 
 	// --- Tell Windows to notify us when changes to given directory and subtree occur ---
 	App->fs->WatchDirectory(ASSETS_FOLDER);

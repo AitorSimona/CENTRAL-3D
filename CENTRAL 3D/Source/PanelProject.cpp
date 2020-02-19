@@ -22,8 +22,6 @@ void PanelProject::ONResourceDestroyed(const Event& e)
 {
 	if (e.uid == App->gui->panelProject->selected_uid)
 		App->gui->panelProject->SetSelected(nullptr);
-
-	CONSOLE_LOG("yikes");
 }
 
 // -------------------------------
