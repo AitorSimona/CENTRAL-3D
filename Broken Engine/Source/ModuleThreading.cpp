@@ -38,8 +38,9 @@ update_status ModuleThreading::Update(float dt)
 		//If our task queue is empty we check that our thread pool has finished processing
 		if (tasksQueue.empty()) {
 			tQueueMutex.unlock();
-			std::lock_guard<std::mutex> threadPoolLock(threadPoolMutex);
+			std::unique_lock<std::mutex> threadPoolLock(threadPoolMutex);
 
+			threadStatus[0];
 			bool threadsProcessing = false;
 			for (int i = 0; i < concurrentThreads && !threadsProcessing; ++i)
 				threadsProcessing = threadsProcessing || threadStatus[i];
