@@ -11,6 +11,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
+#include "ModuleThreading.h"
 
 #include "mmgr/mmgr.h"
 
@@ -33,12 +34,14 @@ Application::Application()
 	gui = new ModuleGui(true);
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
+	threading = new ModuleThreading(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
 
 	// Main Modules
+	AddModule(threading);
 	AddModule(fs);
 	AddModule(event_manager);
 	AddModule(input);
