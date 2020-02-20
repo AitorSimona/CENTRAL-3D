@@ -1,10 +1,10 @@
 {
     "Application": {
         "Organization": "CITM - UPC",
-        "Title": "CENTRAL 3D"
+        "Title": "Broken Engine"
     },
     "GUI": {
-        "About": false,
+        "About": true,
         "Console": true,
         "Hierarchy": true,
         "Inspector": true,

@@ -877,11 +877,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="CENTRAL 3D.rc">
-      <Filter>Sources\VSResources</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="EXE ICON.ico">
       <Filter>Sources\VSResources</Filter>
     </Image>
@@ -908,5 +903,10 @@
     <None Include="MathGeoLib\include\Math\Matrix.inl">
       <Filter>Sources\3rd Party\MathGeoLib\Math</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Broken Engine.rc">
+      <Filter>Sources\VSResources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
