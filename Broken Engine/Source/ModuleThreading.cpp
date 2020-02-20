@@ -40,7 +40,6 @@ update_status ModuleThreading::Update(float dt)
 			tQueueMutex.unlock();
 			std::unique_lock<std::mutex> threadPoolLock(threadPoolMutex);
 
-			threadStatus[0];
 			bool threadsProcessing = false;
 			for (int i = 0; i < concurrentThreads && !threadsProcessing; ++i)
 				threadsProcessing = threadsProcessing || threadStatus[i];
