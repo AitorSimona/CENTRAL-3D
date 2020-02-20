@@ -84,7 +84,7 @@ bool ModuleRenderer3D::Init(json file)
 	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
 
 	// --- Creating outline drawing shaders ---
-	const char* OutlineVertShaderSrc = "#version 460 core \n"
+	const char* OutlineVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
@@ -93,7 +93,7 @@ bool ModuleRenderer3D::Init(json file)
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
 		"}\n";
 
-	const char* OutlineFragShaderSrc = "#version 460 core \n"
+	const char* OutlineFragShaderSrc = "#version 440 core \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
@@ -105,7 +105,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	// --- Creating point/line drawing shaders ---
 
-	const char * linePointVertShaderSrc = "#version 460 core \n"
+	const char * linePointVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"out vec3 ourColor; \n"
 		"in vec3 color; \n"
@@ -117,7 +117,7 @@ bool ModuleRenderer3D::Init(json file)
 		"ourColor = color; \n"
 		"}\n";
 
-	const char * linePointFragShaderSrc = "#version 460 core \n"
+	const char * linePointFragShaderSrc = "#version 440 core \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
@@ -129,7 +129,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	// --- Creating z buffer shader drawer ---
 
-	const char * zdrawervertex = "#version 460 core \n"
+	const char * zdrawervertex = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform vec2 nearfar; \n"
 		"uniform mat4 model_matrix; \n"
@@ -143,7 +143,7 @@ bool ModuleRenderer3D::Init(json file)
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
 		"}\n";
 
-	const char * zdrawerfragment = "#version 460 core \n"
+	const char * zdrawerfragment = "#version 440 core \n"
 		"out vec4 FragColor; \n"
 		"in vec2 nearfarfrag; \n"
 		"in mat4 _projection; \n"
@@ -161,7 +161,7 @@ bool ModuleRenderer3D::Init(json file)
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char *vertexShaderSource =
-		"#version 460 core \n"
+		"#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
@@ -179,13 +179,13 @@ bool ModuleRenderer3D::Init(json file)
 		;
 
 	const char *fragmentShaderSource =
-		"#version 460 core \n"
+		"#version 440 core \n"
 		"in vec3 ourColor; \n"
 		"in vec2 TexCoord; \n"
-		"out vec4 color; \n"
+		"out vec4 fcolor; \n"
 		"uniform sampler2D ourTexture; \n"
 		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
+		"fcolor = texture(ourTexture, TexCoord); \n"
 		"} \n"
 		;
 
