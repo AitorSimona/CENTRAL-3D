@@ -11,7 +11,7 @@
 #pragma comment( lib, "PhysFS/libx86/physfs.lib" )
 
 #include "mmgr/mmgr.h"
-#include <tchar.h>
+
 
 using namespace std;
 

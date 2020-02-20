@@ -16,6 +16,7 @@
 #include "mmgr/mmgr.h"
 
 
+
 ModuleTextures::ModuleTextures(bool start_enabled) : Module(start_enabled)
 {
 	name = "Textures";
@@ -48,6 +49,7 @@ bool ModuleTextures::Init(json file)
 	// Initialize ILUT with OpenGL support.
 	ilutInit();
 	ilutRenderer(ILUT_OPENGL);
+
 
 	return ret;
 }
