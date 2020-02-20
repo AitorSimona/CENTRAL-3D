@@ -114,7 +114,7 @@ update_status ModuleGui::PreUpdate(float dt)
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
-
+	// --- Ask ImGui if input should be controlled (not using it though) ---
 	ImGuiIO& io = ImGui::GetIO();
 	capture_keyboard = io.WantCaptureKeyboard;
 	capture_mouse = io.WantCaptureMouse;
@@ -178,7 +178,7 @@ update_status ModuleGui::Update(float dt)
 					}
 					if (ImGui::MenuItem("Empty Game Object"))
 					{
-						//App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->CreateEmptyGameObject();
 					}
 					if (ImGui::MenuItem("Camera"))
 					{
@@ -379,7 +379,6 @@ void ModuleGui::RequestBrowser(const char * url) const
 {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
-
 
 void ModuleGui::LogFPS(float fps, float ms)
 {
