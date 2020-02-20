@@ -20,6 +20,7 @@ public:
 	bool Init(json file) override;
 	bool Start() override;
 	update_status Update(float dt) override;
+	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
 
 	void AddTask(std::function<void()> newTask);
@@ -27,6 +28,7 @@ public:
 private:
 	void ShutdownPool();
 	void ProcessTasks(int threadID, std::atomic<bool>& stop);
+	void FinishProcessing();
 
 private:
 	std::queue <std::function<void()>> tasksQueue;

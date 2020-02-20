@@ -32,29 +32,13 @@ bool ModuleThreading::Start()
 
 update_status ModuleThreading::Update(float dt)
 {
-	bool processing = true;
-	while (processing) {
-		tQueueMutex.lock();
-		//If our task queue is empty we check that our thread pool has finished processing
-		if (tasksQueue.empty()) {
-			tQueueMutex.unlock();
-			std::unique_lock<std::mutex> threadPoolLock(threadPoolMutex);
+	FinishProcessing();
+	return UPDATE_CONTINUE;
+}
 
-			bool threadsProcessing = false;
-			for (int i = 0; i < concurrentThreads && !threadsProcessing; ++i)
-				threadsProcessing = threadsProcessing || threadStatus[i];
-
-			processing = threadsProcessing;
-		}
-		//Otherwise we process a task ourselves
-		else {
-			std::function<void()> Task;
-			Task = tasksQueue.front();
-			tasksQueue.pop();
-			tQueueMutex.unlock();
-			Task();
-		}
-	}
+update_status ModuleThreading::PostUpdate(float dt) 
+{
+	FinishProcessing();
 	return UPDATE_CONTINUE;
 }
 
@@ -91,6 +75,7 @@ void ModuleThreading::ShutdownPool()
 	threadVector.empty();
 	threadStatus.empty();
 	poolTerminated = true;
+	CONSOLE_LOG("Thread pool has been shutdown, all %d threads are joined.", concurrentThreads);
 }
 
 void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop)
@@ -121,5 +106,32 @@ void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop)
 		}
 
 		Task();
+	}
+}
+
+void ModuleThreading::FinishProcessing() 
+{
+	bool processing = true;
+	while (processing) {
+		tQueueMutex.lock();
+		//If our task queue is empty we check that our thread pool has finished processing
+		if (tasksQueue.empty()) {
+			tQueueMutex.unlock();
+			std::unique_lock<std::mutex> threadPoolLock(threadPoolMutex);
+
+			bool threadsProcessing = false;
+			for (int i = 0; i < concurrentThreads && !threadsProcessing; ++i)
+				threadsProcessing = threadsProcessing || threadStatus[i];
+
+			processing = threadsProcessing;
+		}
+		//Otherwise we process a task ourselves
+		else {
+			std::function<void()> Task;
+			Task = tasksQueue.front();
+			tasksQueue.pop();
+			tQueueMutex.unlock();
+			Task();
+		}
 	}
 }
