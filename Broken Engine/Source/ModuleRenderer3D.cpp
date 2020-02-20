@@ -26,7 +26,7 @@
 
 ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
 {
-	
+
 }
 
 // Destructor
@@ -39,7 +39,7 @@ bool ModuleRenderer3D::Init(json file)
 	CONSOLE_LOG("Creating 3D Renderer context");
 
 	bool ret = true;
-	
+
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 
@@ -48,7 +48,7 @@ bool ModuleRenderer3D::Init(json file)
 		CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-	
+
 	if(ret == true)
 	{
 		//Use Vsync
@@ -66,7 +66,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	}
 
-	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges --- 
+	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges ---
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 
 	// --- Enable stencil testing, set to replace ---
@@ -104,12 +104,13 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glClearStencil(0);
 
 	// --- Clear framebuffers ---
-	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	float backColor = 0.65f;
+	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	//glClearDepth(0.0f);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClearDepth(0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -167,7 +168,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->gui->Draw();
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
-	SDL_GL_MakeCurrent(App->window->window, context); 
+	SDL_GL_MakeCurrent(App->window->window, context);
 	SDL_GL_SwapWindow(App->window->window);
 
 	return UPDATE_CONTINUE;
@@ -195,7 +196,7 @@ void ModuleRenderer3D::UpdateGLCapabilities() const
 
 		if (!depth)
 			glDisable(GL_DEPTH_TEST);
-		else 
+		else
 			glEnable(GL_DEPTH_TEST);
 
 		if (!cull_face)
@@ -339,7 +340,7 @@ void ModuleRenderer3D::HandleObjectOutlining()
 		glStencilMask(0x00);
 		glDisable(GL_DEPTH_TEST);
 
-		// --- Search for Renderer Component --- 
+		// --- Search for Renderer Component ---
 		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
 
 		// --- If Found, draw the mesh ---

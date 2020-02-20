@@ -116,13 +116,12 @@ void ModuleSceneManager::DrawGrid()
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+	glVertexAttrib3f(vertexColorLocation, 1.0f, 0.0f, 0.0f);
 
 	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
 	glUniform1i(TextureSupportLocation, -1);
 
-
-	glLineWidth(2.0f);
+	glLineWidth(1.4f);
 	glBindVertexArray(Grid_VAO);
 	glDrawArrays(GL_LINES, 0, 84);
 	glBindVertexArray(0);
@@ -159,7 +158,7 @@ void ModuleSceneManager::DrawScene()
 	{
 		if ((*it)->GetName() != root->GetName())
 		{
-			// --- Search for Renderer Component --- 
+			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
 			if(SelectedGameObject == (*it))
@@ -183,7 +182,7 @@ void ModuleSceneManager::DrawScene()
 
 	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 	{
-		// --- Search for Renderer Component --- 
+		// --- Search for Renderer Component ---
 		ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
 
@@ -266,7 +265,7 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 	DrawWire(node->box, Red, GetPointLineVAO());
 }
 
-void ModuleSceneManager::SelectFromRay(LineSegment & ray) 
+void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 
@@ -415,7 +414,7 @@ void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 	}
 }
 
-GameObject * ModuleSceneManager::CreateEmptyGameObject() 
+GameObject * ModuleSceneManager::CreateEmptyGameObject()
 {
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
@@ -582,8 +581,8 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 
 ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
 {
-	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
-	// does not have uvs / normals 
+	// --- Generating 6 planes and merging them to create a cube, since par shapes cube
+	// does not have uvs / normals
 
 	ResourceMesh* new_mesh;//= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 
