@@ -1,8 +1,6 @@
 # Broken Engine by Broken Gem Studio
 A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 3 subject
 
-- Version 0.3
-
 ## TOOLS USED
 
 - Microsoft Visual Studio 2019 
@@ -72,7 +70,6 @@ There are more options in Window - > Settings
 
 ## Features in beta
 
-- Texture pre-visualization on Inspector
 - Edit Menu
 - Load/Save cameras
 
