@@ -110,17 +110,24 @@ bool ModuleSceneManager::CleanUp()
 
 void ModuleSceneManager::DrawGrid()
 {
+	App->renderer3D->defaultShader->use();
+
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+	glVertexAttrib3f(vertexColorLocation, 1.0f, 0.0f, 0.0f);
 
-	glLineWidth(2.0f);
+	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureSupportLocation, -1);
+
+	glLineWidth(1.4f);
 	glBindVertexArray(Grid_VAO);
 	glDrawArrays(GL_LINES, 0, 84);
 	glBindVertexArray(0);
 	glLineWidth(1.0f);
+
+	glUniform1i(TextureSupportLocation, 0);
 }
 
 void ModuleSceneManager::Draw()
@@ -145,11 +152,13 @@ void ModuleSceneManager::DrawScene()
 	if (display_tree)
 	RecursiveDrawQuadtree(tree.root);
 
+	// MYTODO: Support multiple go selection and draw outline accordingly
+
 	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
 	{
 		if ((*it)->GetName() != root->GetName())
 		{
-			// --- Search for Renderer Component --- 
+			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
 			if(SelectedGameObject == (*it))
@@ -173,7 +182,7 @@ void ModuleSceneManager::DrawScene()
 
 	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 	{
-		// --- Search for Renderer Component --- 
+		// --- Search for Renderer Component ---
 		ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
 
@@ -192,47 +201,6 @@ void ModuleSceneManager::DrawScene()
 			glStencilMask(0x00);
 		}
 	}
-
-	//--- Draw ray --- 
-	
-	// MYTODO: MEMORY LEAK (should search for a better way of drawing lines (shader?))
-
-
-	//if (App->camera->last_ray.IsFinite())
-	//{
-	//	glLineWidth(3.0f);
-
-	//	float3 vertices[2] = { App->camera->last_ray.a,
-	//		App->camera->last_ray.b };
-
-	//	unsigned int VBO;
-	//	uint line_VAO;
-	//	glGenVertexArrays(1, &line_VAO);
-	//	glGenBuffers(1, &VBO);
-	//	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	//	glBindVertexArray(line_VAO);
-
-	//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	//	glEnableVertexAttribArray(0);
-	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	glBindVertexArray(0);
-
-
-	//	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-	//	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-	//	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	//	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
-
-	//	glBindVertexArray(line_VAO);
-	//	glDrawArrays(GL_LINES, 0, 2);
-	//	glBindVertexArray(0);
-	//	glLineWidth(1.0f);
-
-	//}
 
 }
 
@@ -297,66 +265,63 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 	DrawWire(node->box, Red, GetPointLineVAO());
 }
 
-void ModuleSceneManager::SelectFromRay(LineSegment & ray) 
+void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 
-	//if (!App->gui->IsMouseCaptured())
-	//{
-		// --- Gather static gos ---
-		std::map<float, GameObject*> candidate_gos;
-		tree.CollectIntersections(candidate_gos, ray);
+	// --- Gather static gos ---
+	std::map<float, GameObject*> candidate_gos;
+	tree.CollectIntersections(candidate_gos, ray);
 
-		// --- Gather non-static gos ---
-		for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+	// --- Gather non-static gos ---
+	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+	{
+		if (ray.Intersects((*it)->GetAABB()))
 		{
-			if (ray.Intersects((*it)->GetAABB()))
-			{
-				float hit_near, hit_far;
-				if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
-					candidate_gos[hit_near] = *it;
-			}
+			float hit_near, hit_far;
+			if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
+				candidate_gos[hit_near] = *it;
 		}
+	}
 
-		GameObject* toSelect = nullptr;
-		for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
+	GameObject* toSelect = nullptr;
+	for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
+	{
+		// --- We have to test triangle by triangle ---
+		ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>();
+
+		if (mesh)
 		{
-			// --- We have to test triangle by triangle ---
-			ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>();
 
-			if (mesh)
+			if (mesh->resource_mesh)
 			{
+				// --- We need to transform the ray to local mesh space ---
+				LineSegment local = ray;
+				local.Transform(it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted());
 
-				if (mesh->resource_mesh)
+				for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
 				{
-					// --- We need to transform the ray to local mesh space ---
-					LineSegment local = ray;
-					local.Transform(it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted());
+					float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
+					float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
+					float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
+					// --- Create Triangle given three vertices ---
+					Triangle triangle(a, b, c);
 
-					for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
+					// --- Test ray/triangle intersection ---
+					if (local.Intersects(triangle, nullptr, nullptr))
 					{
-						float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
-						float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
-						float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
-						// --- Create Triangle given three vertices ---
-						Triangle triangle(a, b, c);
-
-						// --- Test ray/triangle intersection ---
-						if (local.Intersects(triangle, nullptr, nullptr))
-						{
-							toSelect = it->second;
-							break;
-						}
+						toSelect = it->second;
+						break;
 					}
 				}
 			}
 		}
+	}
 
-		// --- Set Selected ---
-		if (toSelect)
-			SetSelectedGameObject(toSelect);
+	// --- Set Selected ---
+	if (toSelect)
+		SetSelectedGameObject(toSelect);
 
-	/*}*/
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
@@ -449,7 +414,7 @@ void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 	}
 }
 
-GameObject * ModuleSceneManager::CreateEmptyGameObject() 
+GameObject * ModuleSceneManager::CreateEmptyGameObject()
 {
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
@@ -616,8 +581,8 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 
 ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
 {
-	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
-	// does not have uvs / normals 
+	// --- Generating 6 planes and merging them to create a cube, since par shapes cube
+	// does not have uvs / normals
 
 	ResourceMesh* new_mesh;//= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 

@@ -11,8 +11,6 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 	frustum.SetViewPlaneDistances(0.1f, 2000.0f);
 	frustum.SetPerspective(1.0f, 1.0f);
 	SetAspectRatio(1.0f);
-
-	update_projection = true;
 }
 
 ComponentCamera::~ComponentCamera()
@@ -54,28 +52,20 @@ float4x4 ComponentCamera::GetOpenGLProjectionMatrix()
 void ComponentCamera::SetNearPlane(float distance)
 {
 	if (distance > 0 && distance < frustum.FarPlaneDistance())
-	{
 		frustum.SetViewPlaneDistances(distance, frustum.FarPlaneDistance());
-		update_projection = true;
-	}
-
 }
 
 void ComponentCamera::SetFarPlane(float distance)
 {
 	if (distance > 0 && distance > frustum.NearPlaneDistance())
-	{
 		frustum.SetViewPlaneDistances(frustum.NearPlaneDistance(), distance);
-		update_projection = true;
-	}
+
 }
 
 void ComponentCamera::SetFOV(float fov)
 {
 	float aspect_ratio = frustum.AspectRatio();
-
 	frustum.SetVerticalFovAndAspectRatio(fov * DEGTORAD, frustum.AspectRatio());
-	update_projection = true;
 }
 
 void ComponentCamera::SetAspectRatio(float ar)
@@ -85,7 +75,6 @@ void ComponentCamera::SetAspectRatio(float ar)
 		ar = 1.0f;
 
 	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), ar);
-	update_projection = true;
 }
 
 
@@ -97,8 +86,6 @@ void ComponentCamera::Look(const float3 & position)
 
 	frustum.SetFront(matrix.MulDir(frustum.Front()).Normalized());
 	frustum.SetUp(matrix.MulDir(frustum.Up()).Normalized());
-
-	update_projection = true;
 }
 
 void ComponentCamera::OnUpdateTransform(const float4x4 & global)
@@ -112,7 +99,6 @@ void ComponentCamera::OnUpdateTransform(const float4x4 & global)
 	global.Decompose(position, quat, scale);
 
 	frustum.SetPos(position);
-	update_projection = true;
 }
 
 bool ComponentCamera::ContainsAABB(const AABB & ref)

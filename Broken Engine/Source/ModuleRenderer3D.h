@@ -35,6 +35,10 @@ public:
 	// --- Getters ---
 	bool GetVSync() const;
 
+private:
+	void HandleObjectOutlining();
+	void CreateDefaultShaders();
+
 public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;

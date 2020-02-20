@@ -1,4 +1,4 @@
-#version 460 core 
+#version 440 core 
 in vec3 ourColor; 
 in vec2 TexCoord; 
 in vec3 fPosition;

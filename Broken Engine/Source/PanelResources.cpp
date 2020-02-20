@@ -18,7 +18,7 @@ PanelResources::~PanelResources()
 
 bool PanelResources::Draw()
 {
-
+	// --- Simply print on screen all resources references number (debug purposes) ---
 
 	ImGuiWindowFlags resourcesFlags = 0;
 	resourcesFlags = ImGuiWindowFlags_NoFocusOnAppearing;
