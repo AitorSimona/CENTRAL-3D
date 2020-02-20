@@ -4,7 +4,7 @@
         "Title": "Broken Engine"
     },
     "GUI": {
-        "About": true,
+        "About": false,
         "Console": true,
         "Hierarchy": true,
         "Inspector": true,
