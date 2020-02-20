@@ -66,13 +66,14 @@ bool ModuleRenderer3D::Init(json file)
 
 	}
 
-	// --- z values from 0 to 1 and not -1 to 1, more precision --- 
+	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges --- 
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 
 	// --- Enable stencil testing, set to replace ---
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
+	// --- Check if graphics driver supports shaders in binary format ---
 	//GLint formats = 0;
 	//glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
 	//if (formats < 1) {
@@ -83,116 +84,8 @@ bool ModuleRenderer3D::Init(json file)
 	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
 	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
 
-	// --- Creating outline drawing shaders ---
-	const char* OutlineVertShaderSrc = "#version 460 core \n"
-		"layout (location = 0) in vec3 position; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"}\n";
-
-	const char* OutlineFragShaderSrc = "#version 460 core \n"
-		"in vec3 ourColor; \n"
-		"out vec4 color; \n"
-		"void main(){ \n"
-		"color = vec4(1.0,0.65,0.0, 1.0); \n"
-		"} \n";
-
-	OutlineShader = new ResourceShader(OutlineVertShaderSrc, OutlineFragShaderSrc, false);
-	OutlineShader->name = "OutlineShader";
-
-	// --- Creating point/line drawing shaders ---
-
-	const char * linePointVertShaderSrc = "#version 460 core \n"
-		"layout (location = 0) in vec3 position; \n"
-		"out vec3 ourColor; \n"
-		"in vec3 color; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"ourColor = color; \n"
-		"}\n";
-
-	const char * linePointFragShaderSrc = "#version 460 core \n"
-		"in vec3 ourColor; \n"
-		"out vec4 color; \n"
-		"void main(){ \n"
-		"color = vec4(ourColor, 1.0); \n"
-		"} \n";
-
-	linepointShader = new ResourceShader(linePointVertShaderSrc, linePointFragShaderSrc, false);
-	linepointShader->name = "LinePoint";
-
-	// --- Creating z buffer shader drawer ---
-
-	const char * zdrawervertex = "#version 460 core \n"
-		"layout (location = 0) in vec3 position; \n"
-		"uniform vec2 nearfar; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"out mat4 _projection; \n"
-		"out vec2 nearfarfrag; \n"
-		"void main(){ \n"
-		"nearfarfrag = nearfar; \n"
-		"_projection = projection; \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"}\n";
-
-	const char * zdrawerfragment = "#version 460 core \n"
-		"out vec4 FragColor; \n"
-		"in vec2 nearfarfrag; \n"
-		"in mat4 _projection; \n"
-		"float LinearizeDepth(float depth){ \n"
-		"float z =  2.0*depth - 1.0; // back to NDC \n"
-		"return 2.0* nearfarfrag.x * nearfarfrag.y / (nearfarfrag.y + nearfarfrag.x - z * (nearfarfrag.y - nearfarfrag.x)); }\n"
-		"void main(){ \n"
-		"float depth = LinearizeDepth(gl_FragCoord.z) / nearfarfrag.y;  \n"
-		"FragColor = vec4(vec3(gl_FragCoord.z*nearfarfrag.y*nearfarfrag.x), 1.0); } \n";
-	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z)
-
-	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
-	ZDrawerShader->name = "ZDrawer";
-
-	// --- Creating Default Vertex and Fragment Shaders ---
-
-	const char *vertexShaderSource =
-		"#version 460 core \n"
-		"layout (location = 0) in vec3 position; \n"
-		"layout(location = 1) in vec3 normal; \n"
-		"layout(location = 2) in vec3 color; \n"
-		"layout (location = 3) in vec2 texCoord; \n"
-		"out vec3 ourColor; \n"
-		"out vec2 TexCoord; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"ourColor = color; \n"
-		"TexCoord = texCoord; \n"
-		"}\n"
-		;
-
-	const char *fragmentShaderSource =
-		"#version 460 core \n"
-		"in vec3 ourColor; \n"
-		"in vec2 TexCoord; \n"
-		"out vec4 color; \n"
-		"uniform sampler2D ourTexture; \n"
-		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
-		"} \n"
-		;
-
-	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
-	defaultShader->name = "Standard";
-	defaultShader->use();
-	//App->resources->AddShader(defaultShader);
+	// --- Set engine's basic shaders ---
+	CreateDefaultShaders();
 
 	//Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
@@ -203,11 +96,6 @@ bool ModuleRenderer3D::Init(json file)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-	// --- MYTODO: Remove this
-	if (active_camera->update_projection)
-	{
-		active_camera->update_projection = false;
-	}
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -239,7 +127,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
-	// right handed projection matrix
+	// right handed projection matrix (just different standard)
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
@@ -253,10 +141,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
 
-	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+	// --- Bind fbo ---
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
 	glDepthFunc(GL_GREATER);
 
 	// --- Do not write to the stencil buffer ---
@@ -265,35 +154,17 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
 
-
 	// --- Selected Object Outlining ---
-	if (App->scene_manager->GetSelectedGameObject() != nullptr)
-	{
-		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
-		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
-		// differences, making it look like borders ---
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		glDisable(GL_DEPTH_TEST);
+	HandleObjectOutlining();
 
-		// --- Search for Renderer Component --- 
-		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
-
-		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled())
-			MeshRenderer->Draw(true);
-
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glEnable(GL_DEPTH_TEST);
-	}
-
+	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);
 
+	// --- Unbind fbo ---
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// --- Draw ui and swap buffers ---
 	App->gui->Draw();
-
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context); 
@@ -375,64 +246,24 @@ uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void *
 
 void ModuleRenderer3D::CreateFramebuffer()
 {
-	//// --- Generate framebuffer object (fbo) ---
-	//glGenFramebuffers(1, &fbo);
-	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	//// --- Create a texture to use it as render target ---
-	//glGenTextures(1, &rendertexture);
-	//glBindTexture(GL_TEXTURE_2D, rendertexture);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, App->window->GetWindowWidth(), App->window->GetWindowHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
-
-	//glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	//// --- Generate attachments, DEPTH and STENCIL render buffer objects ---
-	//glGenRenderbuffers(1, &depthbuffer);
-	//glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
-	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
-	//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthbuffer);
-
-	//glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-
-	//if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	//	CONSOLE_LOG("|[error]: Could not create framebuffer");
-
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+	// --- Create a texture to use it as render target ---
 	glGenTextures(1, &rendertexture);
 	glBindTexture(GL_TEXTURE_2D, rendertexture);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	// --- Generate attachments, DEPTH and STENCIL ---
 	glGenTextures(1, &depthbuffer);
 	glBindTexture(GL_TEXTURE_2D, depthbuffer);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8/*GL_DEPTH_COMPONENT32F*/, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	//glGenTextures(1, &stencilbuffer);
-	//glBindTexture(GL_TEXTURE_2D, stencilbuffer);
-	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_STENCIL_INDEX, App->window->GetWindowWidth(), App->window->GetWindowHeight());
-	//glBindTexture(GL_TEXTURE_2D, 0);
-
+	// --- Generate framebuffer object (fbo) ---
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, stencilbuffer, 0);
 
-
-	//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	//if (status != GL_FRAMEBUFFER_COMPLETE) {
-	//	fprintf(stderr, "glCheckFramebufferStatus: %x\n", status);
-	//}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -494,4 +325,144 @@ void ModuleRenderer3D::SetCullingCamera(ComponentCamera * camera)
 bool ModuleRenderer3D::GetVSync() const
 {
 	return vsync;
+}
+
+void ModuleRenderer3D::HandleObjectOutlining()
+{
+	// --- Selected Object Outlining ---
+	if (App->scene_manager->GetSelectedGameObject() != nullptr)
+	{
+		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
+		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
+		// differences, making it look like borders ---
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+
+		// --- Search for Renderer Component --- 
+		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+
+		// --- If Found, draw the mesh ---
+		if (MeshRenderer && MeshRenderer->IsEnabled())
+			MeshRenderer->Draw(true);
+
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glEnable(GL_DEPTH_TEST);
+	}
+}
+
+void ModuleRenderer3D::CreateDefaultShaders()
+{
+	// --- Creating outline drawing shaders ---
+	const char* OutlineVertShaderSrc = "#version 460 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"}\n";
+
+	const char* OutlineFragShaderSrc = "#version 460 core \n"
+		"in vec3 ourColor; \n"
+		"out vec4 color; \n"
+		"void main(){ \n"
+		"color = vec4(1.0,0.65,0.0, 1.0); \n"
+		"} \n";
+
+	OutlineShader = new ResourceShader(OutlineVertShaderSrc, OutlineFragShaderSrc, false);
+	OutlineShader->name = "OutlineShader";
+
+	// --- Creating point/line drawing shaders ---
+
+	const char* linePointVertShaderSrc = "#version 460 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"out vec3 ourColor; \n"
+		"in vec3 color; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"ourColor = color; \n"
+		"}\n";
+
+	const char* linePointFragShaderSrc = "#version 460 core \n"
+		"in vec3 ourColor; \n"
+		"out vec4 color; \n"
+		"void main(){ \n"
+		"color = vec4(ourColor, 1.0); \n"
+		"} \n";
+
+	linepointShader = new ResourceShader(linePointVertShaderSrc, linePointFragShaderSrc, false);
+	linepointShader->name = "LinePoint";
+
+	// --- Creating z buffer shader drawer ---
+
+	const char* zdrawervertex = "#version 460 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"uniform vec2 nearfar; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"out mat4 _projection; \n"
+		"out vec2 nearfarfrag; \n"
+		"void main(){ \n"
+		"nearfarfrag = nearfar; \n"
+		"_projection = projection; \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"}\n";
+
+	const char* zdrawerfragment = "#version 460 core \n"
+		"out vec4 FragColor; \n"
+		"in vec2 nearfarfrag; \n"
+		"in mat4 _projection; \n"
+		"float LinearizeDepth(float depth){ \n"
+		"float z =  2.0*depth - 1.0; // back to NDC \n"
+		"return 2.0* nearfarfrag.x * nearfarfrag.y / (nearfarfrag.y + nearfarfrag.x - z * (nearfarfrag.y - nearfarfrag.x)); }\n"
+		"void main(){ \n"
+		"float depth = LinearizeDepth(gl_FragCoord.z) / nearfarfrag.y;  \n"
+		"FragColor = vec4(vec3(gl_FragCoord.z*nearfarfrag.y*nearfarfrag.x), 1.0); } \n";
+	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z), just in case I need it again (doubt it though)
+
+	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
+	ZDrawerShader->name = "ZDrawer";
+
+	// --- Creating Default Vertex and Fragment Shaders ---
+
+	const char* vertexShaderSource =
+		"#version 460 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"layout(location = 1) in vec3 normal; \n"
+		"layout(location = 2) in vec3 color; \n"
+		"layout (location = 3) in vec2 texCoord; \n"
+		"out vec3 ourColor; \n"
+		"out vec2 TexCoord; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"ourColor = color; \n"
+		"TexCoord = texCoord; \n"
+		"}\n"
+		;
+
+	const char* fragmentShaderSource =
+		"#version 460 core \n"
+		"uniform int Texture;\n"
+		"in vec3 ourColor; \n"
+		"in vec2 TexCoord; \n"
+		"out vec4 color; \n"
+		"uniform sampler2D ourTexture; \n"
+		"void main(){ \n"
+		"color = texture(ourTexture, TexCoord); \n"
+		"if(Texture == -1)\n"
+		"color = vec4(ourColor, 1);\n"
+		"} \n"
+		;
+
+	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
+	defaultShader->name = "Standard";
+	defaultShader->use();
 }
