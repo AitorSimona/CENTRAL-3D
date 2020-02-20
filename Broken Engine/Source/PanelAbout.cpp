@@ -27,11 +27,11 @@ bool PanelAbout::Draw()
 		ImGui::SameLine();
 		ImGui::Text("Version 0.0");
 		ImGui::SameLine();
-		if (ImGui::Button("GitHub")) { App->gui->RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D"); }
-		ImGui::Text("Initial steps into game engine development");
+		if (ImGui::Button("GitHub")) { App->gui->RequestBrowser("https://github.com/Broken-Gem-Studio/Broken-Engine"); }
+		ImGui::Text("A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 3 subject");
 		ImGui::Text("By: ");
 		ImGui::SameLine();
-		if (ImGui::Button("Aitor Simona")) { App->gui->RequestBrowser("https://github.com/AitorSimona"); }
+		if (ImGui::Button("Broken Gem Studio")) { App->gui->RequestBrowser("https://github.com/Broken-Gem-Studio"); }
 
 		ImGui::Spacing();
 		ImGui::Separator();
