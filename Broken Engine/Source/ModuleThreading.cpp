@@ -11,7 +11,7 @@ ModuleThreading::~ModuleThreading()
 
 bool ModuleThreading::Init(json file)
 {
-	concurrentThreads = std::thread::hardware_concurrency() - 1;
+	concurrentThreads = std::thread::hardware_concurrency();
 	return true;
 }
 
@@ -22,7 +22,7 @@ bool ModuleThreading::Start()
 		threadVector.push_back(std::thread(&ModuleThreading::ProcessTasks, this, i, std::ref(stopPool)));
 	}
 
-	CONSOLE_LOG("Created %d threads.", concurrentThreads);
+	CONSOLE_LOG("Created %d threads.", concurrentThreads - 1);
 	
 	poolTerminated = false;
 	stopPool = false;
@@ -99,6 +99,7 @@ void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop)
 			{
 				std::lock_guard<std::mutex> lk(threadPoolMutex);
 				threadStatus[threadID] = true;
+				//CONSOLE_LOG("Processing task in thread %d", threadID + 1);
 			}
 
 			Task = tasksQueue.front();
@@ -127,6 +128,7 @@ void ModuleThreading::FinishProcessing()
 		}
 		//Otherwise we process a task ourselves
 		else {
+			//CONSOLE_LOG("Processing a task on main thread");
 			std::function<void()> Task;
 			Task = tasksQueue.front();
 			tasksQueue.pop();

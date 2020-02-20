@@ -10,7 +10,7 @@
 #include <condition_variable>
 #include <atomic>
 
-#define ADDTASK(function, ...) ModuleThreading::AddTask(std::bind(&function, this, __VA_ARGS__))
+#define ADDTASK(object, function, ...) ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
 
 class ModuleThreading : public Module {
 public:
