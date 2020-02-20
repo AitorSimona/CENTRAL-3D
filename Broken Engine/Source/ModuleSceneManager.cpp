@@ -114,9 +114,9 @@ void ModuleSceneManager::DrawGrid()
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+	glVertexAttrib3f(vertexColorLocation, 1.0f, 0.0f, 0.0f);
 
-	glLineWidth(2.0f);
+	glLineWidth(1.35f);
 	glBindVertexArray(Grid_VAO);
 	glDrawArrays(GL_LINES, 0, 84);
 	glBindVertexArray(0);

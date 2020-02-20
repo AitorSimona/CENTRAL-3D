@@ -208,6 +208,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	{
 		active_camera->update_projection = false;
 	}
+
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -216,12 +217,13 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glClearStencil(0);
 
 	// --- Clear framebuffers ---
-	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	float backColor = 0.65f;
+	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	//glClearDepth(0.0f);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glClearColor(0.278f, 0.278f, 0.278f, 0.278f);
+	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClearDepth(0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
