@@ -543,6 +543,9 @@
     <ClInclude Include="ModuleResourceManager.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleThreading.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -873,6 +876,9 @@
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="ModuleResourceManager.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleThreading.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
