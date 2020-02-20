@@ -80,8 +80,8 @@ private:
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-	ResourceMesh* CreateCube(float sizeX, float sizeY, float sizeZ);
-	ResourceMesh* CreateSphere(float Radius, int slices, int slacks);
+	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 public:

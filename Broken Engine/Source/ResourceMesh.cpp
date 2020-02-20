@@ -35,102 +35,107 @@ void ResourceMesh::CreateAABB()
 
 bool ResourceMesh::LoadInMemory()
 {
-	// --- Load mesh data ---
-	char* buffer = nullptr;
-	App->fs->Load(resource_file.c_str(),&buffer);
-	char* cursor = buffer;
+	bool ret = true;
 
-	// amount of indices / vertices / normals / texture_coords
-	uint ranges[3]; 
-	uint bytes = sizeof(ranges);
-	memcpy(ranges, cursor, bytes);
-	bytes += ranges[0];
-
-	IndicesSize = ranges[1];
-	VerticesSize = ranges[2];
-
-	vertices = new Vertex[VerticesSize];
-	float* Vertices = new float[VerticesSize * 3];
-	float* Normals = new float[VerticesSize * 3];
-	unsigned char* Colors = new unsigned char[VerticesSize * 4];
-	float* TexCoords = new float[VerticesSize * 2];
-
-
-	// --- Load indices ---
-	cursor += bytes;
-	bytes = sizeof(uint) * IndicesSize;
-	Indices = new uint[IndicesSize];
-	memcpy(Indices, cursor, bytes);
-
-	// --- Load Vertices ---
-	cursor += bytes;
-	bytes = sizeof(float) * 3 * VerticesSize;
-	memcpy(Vertices, cursor, bytes);
-
-	// --- Load Normals ---
-	cursor += bytes;
-	bytes = sizeof(float)* 3 * VerticesSize;
-	memcpy(Normals, cursor, bytes);
-
-	// --- Load Colors ---
-	cursor += bytes;
-	bytes = sizeof(unsigned char) * 4 * VerticesSize;
-	memcpy(Colors, cursor, bytes);
-
-	// --- Load Texture Coords ---
-	cursor += bytes;
-	bytes = sizeof(float) * 2 * VerticesSize;
-	memcpy(TexCoords, cursor, bytes);
-
-	// --- Fill Vertex array ---
-
-	for (uint i = 0; i < VerticesSize; ++i)
+	if (App->fs->Exists(resource_file.c_str()))
 	{
-		// --- Vertices ---
-		vertices[i].position[0] = Vertices[i * 3];
-		vertices[i].position[1] = Vertices[(i * 3) + 1];
-		vertices[i].position[2] = Vertices[(i * 3) + 2];
+		// --- Load mesh data ---
+		char* buffer = nullptr;
+			App->fs->Load(resource_file.c_str(), &buffer);
+			char* cursor = buffer;
 
-		// --- Normals ---
-		vertices[i].normal[0] = Normals[i * 3];
-		vertices[i].normal[1] = Normals[(i * 3) + 1];
-		vertices[i].normal[2] = Normals[(i * 3) + 2];
+			// amount of indices / vertices / normals / texture_coords
+			uint ranges[3];
+			uint bytes = sizeof(ranges);
+			memcpy(ranges, cursor, bytes);
+			bytes += ranges[0];
 
-		// --- Colors ---
-		vertices[i].color[0] = Colors[i * 4];
-		vertices[i].color[1] = Colors[(i * 4) + 1];
-		vertices[i].color[2] = Colors[(i * 4) + 2];
-		vertices[i].color[3] = Colors[(i * 4) + 3];
+		IndicesSize = ranges[1];
+		VerticesSize = ranges[2];
 
-		// --- Texture Coordinates ---
-		vertices[i].texCoord[0] = TexCoords[i * 2];
-		vertices[i].texCoord[1] = TexCoords[(i * 2) + 1];
+		vertices = new Vertex[VerticesSize];
+		float* Vertices = new float[VerticesSize * 3];
+		float* Normals = new float[VerticesSize * 3];
+		unsigned char* Colors = new unsigned char[VerticesSize * 4];
+		float* TexCoords = new float[VerticesSize * 2];
+
+
+		// --- Load indices ---
+		cursor += bytes;
+		bytes = sizeof(uint) * IndicesSize;
+		Indices = new uint[IndicesSize];
+		memcpy(Indices, cursor, bytes);
+
+		// --- Load Vertices ---
+		cursor += bytes;
+		bytes = sizeof(float) * 3 * VerticesSize;
+		memcpy(Vertices, cursor, bytes);
+
+		// --- Load Normals ---
+		cursor += bytes;
+		bytes = sizeof(float) * 3 * VerticesSize;
+		memcpy(Normals, cursor, bytes);
+
+		// --- Load Colors ---
+		cursor += bytes;
+		bytes = sizeof(unsigned char) * 4 * VerticesSize;
+		memcpy(Colors, cursor, bytes);
+
+		// --- Load Texture Coords ---
+		cursor += bytes;
+		bytes = sizeof(float) * 2 * VerticesSize;
+		memcpy(TexCoords, cursor, bytes);
+
+		// --- Fill Vertex array ---
+
+		for (uint i = 0; i < VerticesSize; ++i)
+		{
+			// --- Vertices ---
+			vertices[i].position[0] = Vertices[i * 3];
+			vertices[i].position[1] = Vertices[(i * 3) + 1];
+			vertices[i].position[2] = Vertices[(i * 3) + 2];
+
+			// --- Normals ---
+			vertices[i].normal[0] = Normals[i * 3];
+			vertices[i].normal[1] = Normals[(i * 3) + 1];
+			vertices[i].normal[2] = Normals[(i * 3) + 2];
+
+			// --- Colors ---
+			vertices[i].color[0] = Colors[i * 4];
+			vertices[i].color[1] = Colors[(i * 4) + 1];
+			vertices[i].color[2] = Colors[(i * 4) + 2];
+			vertices[i].color[3] = Colors[(i * 4) + 3];
+
+			// --- Texture Coordinates ---
+			vertices[i].texCoord[0] = TexCoords[i * 2];
+			vertices[i].texCoord[1] = TexCoords[(i * 2) + 1];
+		}
+
+		// --- Delete buffer data ---
+		if (buffer)
+		{
+			delete[] buffer;
+			buffer = nullptr;
+			cursor = nullptr;
+		}
+
+		delete[] Vertices;
+		delete[] Normals;
+		delete[] Colors;
+		delete[] TexCoords;
 	}
-
-	// --- Delete buffer data ---
-	if (buffer)
-	{
-		delete[] buffer;
-		buffer = nullptr;
-		cursor = nullptr;
-	}
-
-	delete[] Vertices;
-	delete[] Normals;
-	delete[] Colors;
-	delete[] TexCoords;
 
 	CreateAABB();
-
 	CreateVBO();
 	CreateEBO();
 	CreateVAO();
 
-	return true;
+	return ret;
 }
 
 void ResourceMesh::FreeMemory()
 {
+
 	glDeleteBuffers(1, (GLuint*)&VBO);
 
 	glDeleteBuffers(1, (GLuint*)&EBO);

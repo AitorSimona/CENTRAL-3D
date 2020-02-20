@@ -67,8 +67,12 @@ bool ModuleSceneManager::Init(json file)
 bool ModuleSceneManager::Start()
 {
 	// --- Create primitives ---
-	//cube = CreateCube(1, 1, 1);
-	//sphere = CreateSphere(1.0f, 25, 25);
+	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
+	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
+
+	// Not needed since we are checking if resources are in Memory in LoadCube and LoadSphere, which are called by ModuleGui
+	//CreateCube(1, 1, 1, cube);
+	//CreateSphere(1.0f, 25, 25, sphere);
 
 	// --- Create adaptive grid ---
 	glGenVertexArrays(1, &Grid_VAO);
@@ -253,7 +257,6 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 
 void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 {
-
 	if (!node->IsLeaf())
 	{
 		for (uint i = 0; i < 8; ++i)
@@ -479,9 +482,6 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 		new_mesh->Indices[i] = mesh->triangles[i];
 	}
 
-
-	//new_mesh->LoadInMemory();
-	//new_mesh->CreateAABB();
 	par_shapes_free_mesh(mesh);
 }
 
@@ -579,12 +579,10 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
+void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
 {
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube
 	// does not have uvs / normals
-
-	ResourceMesh* new_mesh;//= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
 
 	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
 	par_shapes_mesh* top = par_shapes_create_plane(1, 1);
@@ -619,26 +617,20 @@ ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float siz
 	if (mesh)
 	{
 		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
-		LoadParMesh(mesh, new_mesh);
+		LoadParMesh(mesh, rmesh);
 	}
-
-	return new_mesh;
 }
 
-ResourceMesh* ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
+void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh)
 {
-	ResourceMesh* new_mesh; //= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
-
 	// --- Create par shapes sphere ---
 	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
 	if (mesh)
 	{
 		par_shapes_scale(mesh, Radius / 2, Radius / 2, Radius / 2);
-		LoadParMesh(mesh, new_mesh);
+		LoadParMesh(mesh, rmesh);
 	}
-
-	return new_mesh;
 }
 
 void ModuleSceneManager::CreateGrid(float target_distance)
@@ -686,22 +678,32 @@ void ModuleSceneManager::CreateGrid(float target_distance)
 
 GameObject * ModuleSceneManager::LoadCube()
 {
+	// --- If the cube was unloaded, create par shape and extract data again ---
+	if (!cube->IsInMemory())
+		CreateCube(1, 1, 1, cube);
+
 	GameObject* new_object = CreateEmptyGameObject();
 	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = cube;
-	//cube->instances++;
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(cube->GetUID());
+
 	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
+	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 
 	return new_object;
 }
 
 GameObject * ModuleSceneManager::LoadSphere()
 {
+	// --- If the sphere was unloaded, create par shape and extract data again ---
+	if (!sphere->IsInMemory())
+		CreateSphere(1.0f, 25, 25, sphere);
+
 	GameObject* new_object = CreateEmptyGameObject();
 	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = sphere;
-	//sphere->instances++;
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(sphere->GetUID());
+
 	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
+	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 
 	return new_object;
 }

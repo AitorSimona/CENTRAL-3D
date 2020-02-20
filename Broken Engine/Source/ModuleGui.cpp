@@ -170,11 +170,11 @@ update_status ModuleGui::Update(float dt)
 
 					if (ImGui::MenuItem("Cube"))
 					{
-						//App->scene_manager->LoadCube();
+						App->scene_manager->LoadCube();
 					}
 					if (ImGui::MenuItem("Sphere"))
 					{
-						//App->scene_manager->LoadSphere();
+						App->scene_manager->LoadSphere();
 					}
 					if (ImGui::MenuItem("Empty Game Object"))
 					{
