@@ -57,17 +57,19 @@ bool PanelInspector::Draw()
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
 
+			ImGui::NewLine();
+
 			(*it)->CreateInspectorNode();
 
 			ImGui::Separator();
 		}
 
-		ImGui::Separator();
-
 		static ImGuiComboFlags flags = 0;
 
 		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer" };
 		static const char* item_current = items[0];
+
+		ImGui::NewLine();
 
 		// --- Add component ---
 		if (ImGui::BeginCombo("##Components Combo", "Add Component", flags)) // The second parameter is the label previewed before opening the combo.
@@ -110,7 +112,7 @@ bool PanelInspector::Draw()
 	return true;
 }
 
-inline void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
+void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 {
 	ImGui::BeginChild("child", ImVec2(0, 35), true);
 
@@ -132,7 +134,7 @@ inline void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 }
 
 
-inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
+void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 {
 	//ComponentMaterial* material = Selected.GetComponent<ComponentMaterial>();
 
@@ -199,35 +201,4 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 	//}
 }
 
-inline void PanelInspector::CreateCameraNode(GameObject & Selected) const
-{
-	if (Startup)
-		ImGui::SetNextItemOpen(true);
-
-	ComponentCamera* camera = Selected.GetComponent<ComponentCamera>();
-
-	if (ImGui::TreeNode("Camera"))
-	{
-		if (ImGui::Checkbox("Active Camera", &camera->active_camera))
-			camera->active_camera ? App->renderer3D->SetActiveCamera(camera) : App->renderer3D->SetActiveCamera(nullptr);
-
-
-		if (ImGui::Checkbox("Culling Camera", &camera->culling))
-			camera->culling ? App->renderer3D->SetCullingCamera(camera) : App->renderer3D->SetCullingCamera(nullptr);
-
-		ImGui::Text("FOV");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-		float fov = camera->GetFOV();
-
-		ImGui::DragFloat("##FOV", &fov, 0.005f);
-
-		if (fov != camera->GetFOV())
-			camera->SetFOV(fov);
-
-		ImGui::TreePop();
-	}
-	
-}
 

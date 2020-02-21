@@ -17,10 +17,8 @@ public:
 	bool Startup = true;
 
 private:
-	inline void CreateGameObjectNode(GameObject& Selected) const;
-	inline void CreateMaterialNode(GameObject& Selected) const;
-	inline void CreateCameraNode(GameObject& Selected) const;
-
+	void CreateGameObjectNode(GameObject& Selected) const;
+	void CreateMaterialNode(GameObject& Selected) const;
 };
 
 #endif

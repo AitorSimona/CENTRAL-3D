@@ -944,6 +944,14 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 	case Resource::ResourceType::TEXTURE:
 		textures.erase(resource->GetUID());
+
+		// --- Tell mats ---
+		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+		{
+			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
+				(*it).second->resource_diffuse = nullptr;	
+		}
+
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
