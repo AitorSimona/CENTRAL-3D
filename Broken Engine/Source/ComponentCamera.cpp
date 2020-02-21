@@ -150,3 +150,7 @@ json ComponentCamera::Save() const
 void ComponentCamera::Load(json& node)
 {
 }
+
+void ComponentCamera::CreateInspectorNode()
+{
+}

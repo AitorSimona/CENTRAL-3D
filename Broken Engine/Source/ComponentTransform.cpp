@@ -1,6 +1,9 @@
 #include "ComponentTransform.h"
 
 #include "GameObject.h"
+#include "Imgui/imgui.h"
+
+#include "mmgr/mmgr.h"
 
 // MYTODO: Explain math behind transform ops 
 
@@ -116,6 +119,101 @@ json ComponentTransform::Save() const
 
 void ComponentTransform::Load(json& node)
 {
+}
+
+void ComponentTransform::CreateInspectorNode()
+{
+	// --- Transform Position ---
+	ImGui::Text("Position  ");
+	ImGui::SameLine();
+
+	float3 position = GetPosition();
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##PX", &position.x, 0.005f);
+
+	ImGui::SameLine();
+
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##PY", &position.y, 0.005f);
+
+	ImGui::SameLine();
+
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##PZ", &position.z, 0.005f);
+
+	// --- Transform Rotation ---
+	ImGui::Text("Rotation  ");
+	ImGui::SameLine();
+
+	float3 rotation = GetRotation();
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##RX", &rotation.x, 0.005f);
+
+	ImGui::SameLine();
+
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##RY", &rotation.y, 0.005f);
+
+	ImGui::SameLine();
+
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##RZ", &rotation.z, 0.005f);
+
+	// --- Transform Scale ---
+	ImGui::Text("Scale     ");
+	ImGui::SameLine();
+
+	float3 scale = GetScale();
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##SX", &scale.x, 0.005f);
+
+	ImGui::SameLine();
+
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##SY", &scale.y, 0.005f);
+
+	ImGui::SameLine();
+
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	ImGui::DragFloat("##SZ", &scale.z, 0.005f);
+
+	// --- Transform Set ---
+	if (!GO->Static)
+	{
+		if (!GetPosition().Equals(position))
+			SetPosition(position.x, position.y, position.z);
+		if (!GetScale().Equals(scale))
+			Scale(scale.x, scale.y, scale.z);
+		if (!GetRotation().Equals(rotation))
+			SetRotation(rotation);
+	}
 }
 
 void ComponentTransform::UpdateTRS()
