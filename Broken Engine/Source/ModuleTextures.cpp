@@ -115,7 +115,7 @@ uint ModuleTextures::GetDefaultTextureID() const
 	return DefaultTexture;
 }
 
-inline void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
+void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
 {
 	// --- Set texture clamping method ---
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -172,7 +172,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
-inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, std::string& path) const
+void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, std::string& path) const
 {
 	// --- Attention!! If the image is flipped, we flip it back --- 
 	ILinfo imageInfo;
