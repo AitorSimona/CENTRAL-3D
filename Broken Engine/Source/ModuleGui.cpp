@@ -182,10 +182,10 @@ update_status ModuleGui::Update(float dt)
 					}
 					if (ImGui::MenuItem("Camera"))
 					{
-						//GameObject* cam = App->scene_manager->CreateEmptyGameObject();
-						//ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
-						//camera->SetFarPlane(10);
-						//cam->AddComponent(Component::ComponentType::Renderer);
+						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
+						cam->AddComponent(Component::ComponentType::MeshRenderer);
+						camera->SetFarPlane(10);
 					}
 
 					if (ImGui::MenuItem("Redo Octree"))

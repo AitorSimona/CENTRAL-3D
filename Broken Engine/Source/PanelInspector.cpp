@@ -66,7 +66,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer" };
+		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer" };
 		static const char* item_current = items[0];
 
 		// --- Add component ---
@@ -83,7 +83,6 @@ bool PanelInspector::Draw()
 			ImGui::EndCombo();
 		}
 
-
 		// --- Add here temporal conditions to know which component to add ---
 
 		// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
@@ -98,22 +97,7 @@ bool PanelInspector::Draw()
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
 		}
 
-		// MYTODO: move this to the component itself 
-
-		// --- Material ---
-		//if (Selected->GetComponent<ComponentMaterial>())
-		//{
-		//	CreateMaterialNode(*Selected);
-		//	ImGui::Separator();
-		//}
-
-		// --- Camera ---
-		//if (Selected->GetComponent<ComponentCamera>())
-		//{
-		//	CreateCameraNode(*Selected);
-		//	ImGui::Separator();
-		//}
-
+		item_current = items[0];
 
 
 		if(Startup)
