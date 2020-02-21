@@ -46,3 +46,7 @@ json ComponentCollider::Save() const
 void ComponentCollider::Load(json& node)
 {
 }
+
+void ComponentCollider::CreateInspectorNode()
+{
+}

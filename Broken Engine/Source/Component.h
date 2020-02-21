@@ -15,8 +15,8 @@ public:
 		Transform,
 		Mesh,
 		MeshRenderer,
-		Camera,
 		Collider,
+		Camera,
 		Unknown
 	};
 
