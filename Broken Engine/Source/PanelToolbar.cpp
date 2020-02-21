@@ -1,10 +1,10 @@
 #include "PanelToolbar.h"
 #include "Application.h"
 #include "ModuleTimeManager.h"
+#include "ModuleGui.h"
+#include "PanelScene.h"
 
 #include "Imgui/imgui.h"
-
-
 #include "mmgr/mmgr.h"
 
 PanelToolbar::PanelToolbar(char * name) : Panel(name)
@@ -22,6 +22,18 @@ bool PanelToolbar::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
+		if (ImGui::Button("TRANSLATE"))
+			App->gui->panelScene->guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+		ImGui::SameLine();
+
+		if (ImGui::Button("ROTATE"))
+			App->gui->panelScene->guizmoOperation = ImGuizmo::OPERATION::ROTATE;
+		ImGui::SameLine();
+
+		if (ImGui::Button("SCALE"))
+			App->gui->panelScene->guizmoOperation = ImGuizmo::OPERATION::SCALE;
+		ImGui::SameLine();
+
 		ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
 
 		if(ImGui::Button("PLAY"))
