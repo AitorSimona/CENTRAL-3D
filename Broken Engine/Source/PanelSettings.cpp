@@ -318,8 +318,8 @@ inline void PanelSettings::LibrariesNode() const
 	if (ImGui::Button("OpenGL")) { App->gui->RequestBrowser("https://www.opengl.org/"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glGetString(GL_VERSION));
 
-	if (ImGui::Button("Glew")) { App->gui->RequestBrowser("http://glew.sourceforge.net/"); }
-	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glewGetString(GLEW_VERSION));
+	if (ImGui::Button("Glad")) { App->gui->RequestBrowser("https://github.com/Dav1dde/glad"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "0.1.33");
 
 	if (ImGui::Button("ImGui")) { App->gui->RequestBrowser("https://github.com/ocornut/imgui"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", ImGui::GetVersion());
