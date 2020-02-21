@@ -15,6 +15,8 @@ public:
 		Transform,
 		Mesh,
 		MeshRenderer,
+		Camera,
+		RigidBody,
 		Collider,
 		Camera,
 		Unknown

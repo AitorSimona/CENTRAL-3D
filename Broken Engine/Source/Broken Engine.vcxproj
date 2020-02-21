@@ -78,6 +78,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentCollider.h" />
+    <ClInclude Include="ComponentRigidBody.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="ComponentTransform.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
+    <ClCompile Include="ComponentRigidBody.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="GameObject.cpp" />

@@ -546,6 +546,9 @@
     <ClInclude Include="ComponentCollider.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentRigidBody.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -888,6 +891,9 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ComponentCollider.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentRigidBody.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
