@@ -79,8 +79,7 @@ bool ModuleRenderer3D::Init(json file)
 	//}
 
 	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
-	//CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
-
+	CONSOLE_LOG("Glad Version: 0.1.33"); //Glad has no way to check its version
 	// --- Set engine's basic shaders ---
 	CreateDefaultShaders();
 
