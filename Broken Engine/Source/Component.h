@@ -36,10 +36,12 @@ public:
 	virtual json Save() const = 0;
 	virtual void Load(json& node) = 0;
 	virtual void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) {};
+	virtual void CreateInspectorNode() = 0;
 
 protected:
 	bool active = false;
 	GameObject* GO = nullptr;
+
 	ComponentType type = ComponentType::Unknown;
 };
 

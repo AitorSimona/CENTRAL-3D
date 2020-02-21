@@ -50,30 +50,55 @@ bool PanelInspector::Draw()
 
 		// --- Components ---
 
-		if(Startup)
-		ImGui::SetNextItemOpen(true);
+		std::vector<Component*>* components = &Selected->GetComponents();
 
-		// --- Transform ---
-		if (ImGui::TreeNode("Transform"))
+		for (std::vector<Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
 		{
-			CreateTransformNode(*Selected);
-			ImGui::TreePop();
+			if (Startup)
+				ImGui::SetNextItemOpen(true);
+
+			(*it)->CreateInspectorNode();
+
 			ImGui::Separator();
 		}
 
-		// --- Mesh ---
-		if (Selected->GetComponent<ComponentMesh>())
+		ImGui::Separator();
+
+		static ImGuiComboFlags flags = 0;
+
+		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer" };
+		static const char* item_current = items[0];
+
+		// --- Add component ---
+		if (ImGui::BeginCombo("##Components Combo", "Add Component", flags)) // The second parameter is the label previewed before opening the combo.
 		{
-			CreateMeshNode(*Selected);
-			ImGui::Separator();
+			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			{
+				bool is_selected = (item_current == items[n]);
+				if (ImGui::Selectable(items[n], is_selected))
+					item_current = items[n];
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+			}
+			ImGui::EndCombo();
 		}
 
-		// --- Renderer ---
-		if (Selected->GetComponent<ComponentMeshRenderer>())
+
+		// --- Add here temporal conditions to know which component to add ---
+
+		// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
+
+		if (item_current == "ComponentMesh")
 		{
-			CreateRendererNode(*Selected);
-			ImGui::Separator();
+			Selected->AddComponent(Component::ComponentType::Mesh);
 		}
+
+		if (item_current == "ComponentMeshRenderer")
+		{
+			Selected->AddComponent(Component::ComponentType::MeshRenderer);
+		}
+
+		// MYTODO: move this to the component itself 
 
 		// --- Material ---
 		//if (Selected->GetComponent<ComponentMaterial>())
@@ -83,11 +108,13 @@ bool PanelInspector::Draw()
 		//}
 
 		// --- Camera ---
-		if (Selected->GetComponent<ComponentCamera>())
-		{
-			CreateCameraNode(*Selected);
-			ImGui::Separator();
-		}
+		//if (Selected->GetComponent<ComponentCamera>())
+		//{
+		//	CreateCameraNode(*Selected);
+		//	ImGui::Separator();
+		//}
+
+
 
 		if(Startup)
 		Startup = false;
@@ -120,150 +147,6 @@ inline void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 	ImGui::EndChild();
 }
 
-inline void PanelInspector::CreateTransformNode(GameObject& Selected) const
-{
-	ComponentTransform* transform = Selected.GetComponent<ComponentTransform>();
-
-	// --- Transform Position ---
-	ImGui::Text("Position  ");
-	ImGui::SameLine();
-
-	float3 position = transform->GetPosition();
-	ImGui::Text("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##PX", &position.x, 0.005f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##PY", &position.y, 0.005f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##PZ", &position.z, 0.005f);
-
-	// --- Transform Rotation ---
-	ImGui::Text("Rotation  ");
-	ImGui::SameLine();
-
-	float3 rotation = transform->GetRotation();
-	ImGui::Text("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##RX", &rotation.x, 0.005f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##RY", &rotation.y, 0.005f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##RZ", &rotation.z, 0.005f);
-
-	// --- Transform Scale ---
-	ImGui::Text("Scale     ");
-	ImGui::SameLine();
-
-	float3 scale = transform->GetScale();
-	ImGui::Text("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##SX", &scale.x, 0.005f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##SY", &scale.y, 0.005f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-	ImGui::DragFloat("##SZ", &scale.z, 0.005f);
-
-	// --- Transform Set ---
-	if (!Selected.Static)
-	{
-		if (!transform->GetPosition().Equals(position))
-			transform->SetPosition(position.x, position.y, position.z);
-		if (!transform->GetScale().Equals(scale))
-			transform->Scale(scale.x, scale.y, scale.z);
-		if (!transform->GetRotation().Equals(rotation))
-			transform->SetRotation(rotation);
-	}
-
-}
-
-inline void PanelInspector::CreateMeshNode(GameObject& Selected) const
-{
-	ComponentMesh* mesh = Selected.GetComponent<ComponentMesh>();
-
-	ImGui::Checkbox("##MeshActive", &mesh->GetActive());
-	ImGui::SameLine();
-
-	if (Startup)
-		ImGui::SetNextItemOpen(true);
-
-	if (mesh->resource_mesh && ImGui::TreeNode("Mesh"))
-	{
-		std::string Triangle_count = "Triangles   ";
-		Triangle_count.append(std::to_string(mesh->resource_mesh->IndicesSize / 3));
-		ImGui::Text(Triangle_count.data());
-
-		//ImGui::Text("Instances:");
-		//ImGui::SameLine();
-		//ImGui::Text(std::to_string(mesh->resource_mesh->instances).data());
-
-		ImGui::TreePop();
-	}
-}
-
-inline void PanelInspector::CreateRendererNode(GameObject& Selected) const
-{
-	ComponentMeshRenderer* renderer = Selected.GetComponent<ComponentMeshRenderer>();
-
-	ImGui::Checkbox("##RenActive", &renderer->GetActive());
-	ImGui::SameLine();
-
-	if (Startup)
-		ImGui::SetNextItemOpen(true);
-
-	if (ImGui::TreeNode("Mesh Renderer"))
-	{
-
-		ImGui::Checkbox("Vertex Normals", &renderer->draw_vertexnormals);
-		ImGui::SameLine();
-		ImGui::Checkbox("Face Normals  ", &renderer->draw_facenormals);
-		ImGui::SameLine();
-		ImGui::Checkbox("Checkers", &renderer->checkers);
-
-		ImGui::TreePop();
-	}
-}
 
 inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 {

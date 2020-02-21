@@ -23,6 +23,8 @@
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
+#include "Imgui/imgui.h"
+
 #include "mmgr/mmgr.h"
 
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::MeshRenderer)
@@ -409,6 +411,25 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 
 	default:
 		break;
+	}
+}
+
+void ComponentMeshRenderer::CreateInspectorNode()
+{
+	ImGui::Checkbox("##RenActive", &GetActive());
+	ImGui::SameLine();
+
+
+	if (ImGui::TreeNode("Mesh Renderer"))
+	{
+
+		ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
+		ImGui::SameLine();
+		ImGui::Checkbox("Face Normals  ", &draw_facenormals);
+		ImGui::SameLine();
+		ImGui::Checkbox("Checkers", &checkers);
+
+		ImGui::TreePop();
 	}
 }
 
