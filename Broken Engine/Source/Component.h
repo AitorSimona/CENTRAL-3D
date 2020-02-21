@@ -18,7 +18,6 @@ public:
 		Camera,
 		RigidBody,
 		Collider,
-		Camera,
 		Unknown
 	};
 
