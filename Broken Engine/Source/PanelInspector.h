@@ -18,7 +18,6 @@ public:
 
 private:
 	void CreateGameObjectNode(GameObject& Selected) const;
-	void CreateMaterialNode(GameObject& Selected) const;
 };
 
 #endif
