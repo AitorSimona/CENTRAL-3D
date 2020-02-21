@@ -4,6 +4,8 @@
 #include "ComponentMesh.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
+#include "ComponentCollider.h"
+
 #include "ModuleSceneManager.h"
 
 #include "Math.h"
@@ -30,8 +32,8 @@ GameObject::~GameObject()
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
-			delete *it;
-		
+			delete* it;
+
 	}
 	components.clear();
 
@@ -59,7 +61,7 @@ void GameObject::RecursiveDelete(bool target)
 	{
 		for (std::vector<GameObject*>::iterator it = this->childs.begin(); it != this->childs.end(); ++it)
 		{
-			(*it)->RecursiveDelete(false);			
+			(*it)->RecursiveDelete(false);
 		}
 
 		this->childs.clear();
@@ -82,27 +84,27 @@ void GameObject::OnUpdateTransform()
 
 	ComponentTransform* transform = GetComponent<ComponentTransform>();
 
-	if(parent)
-	transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
+	if (parent)
+		transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
 
 	ComponentCamera* camera = GetComponent<ComponentCamera>();
 
-	if(camera)
-	camera->OnUpdateTransform(transform->GetGlobalTransform());
+	if (camera)
+		camera->OnUpdateTransform(transform->GetGlobalTransform());
 
 	// --- Update all children ---
 	if (childs.size() > 0)
 	{
 		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 		{
-			(*it)->OnUpdateTransform();	
+			(*it)->OnUpdateTransform();
 		}
 	}
 
 	UpdateAABB();
 }
 
-void GameObject::RemoveChildGO(GameObject * GO)
+void GameObject::RemoveChildGO(GameObject* GO)
 {
 	// --- Remove given child from list ---
 	if (childs.size() > 0)
@@ -110,7 +112,7 @@ void GameObject::RemoveChildGO(GameObject * GO)
 		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
 		{
 			if ((*go)->GetUID() == GO->GetUID())
-			{				
+			{
 				childs.erase(go);
 				break;
 			}
@@ -118,7 +120,7 @@ void GameObject::RemoveChildGO(GameObject * GO)
 	}
 }
 
-void GameObject::AddChildGO(GameObject * GO)
+void GameObject::AddChildGO(GameObject* GO)
 {
 	// --- Add a child GO to a Game Object this ---
 	if (!FindChildGO(GO))
@@ -134,7 +136,7 @@ void GameObject::AddChildGO(GameObject * GO)
 	}
 }
 
-bool GameObject::FindChildGO(GameObject * GO)
+bool GameObject::FindChildGO(GameObject* GO)
 {
 	// --- Look for given GO in child list and return true if found ---
 	bool ret = false;
@@ -153,9 +155,9 @@ bool GameObject::FindChildGO(GameObject * GO)
 	return ret;
 }
 
-Component * GameObject::AddComponent(Component::ComponentType type)
+Component* GameObject::AddComponent(Component::ComponentType type)
 {
-	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
 
 	Component* component = nullptr;
 
@@ -163,7 +165,6 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 
 	if (HasComponent(type) == nullptr)
 	{
-
 		switch (type)
 		{
 		case Component::ComponentType::Transform:
@@ -178,6 +179,9 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 			break;
 		case Component::ComponentType::Camera:
 			component = new ComponentCamera(this);
+			break;
+		case Component::ComponentType::Collider:
+			component = new ComponentCollider(this);
 			break;
 		}
 
@@ -255,18 +259,18 @@ std::string GameObject::GetName() const
 	return name;
 }
 
-const AABB & GameObject::GetAABB()
+const AABB& GameObject::GetAABB()
 {
 	UpdateAABB();
 	return aabb;
 }
 
-const OBB & GameObject::GetOBB() const
+const OBB& GameObject::GetOBB() const
 {
 	return obb;
 }
 
-bool & GameObject::GetActive()
+bool& GameObject::GetActive()
 {
 	return active;
 }
@@ -295,7 +299,7 @@ void GameObject::UpdateAABB()
 		aabb.SetNegativeInfinity();
 		aabb.Enclose(obb);
 	}
-	if(!mesh)
+	if (!mesh)
 	{
 		aabb.SetNegativeInfinity();
 		aabb.SetFromCenterAndSize(transform->GetGlobalPosition(), float3(1, 1, 1));
@@ -313,5 +317,3 @@ void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType ty
 	if (model && type == Resource::ResourceNotificationType::Deletion && model->GetUID() == uid)
 		model = nullptr;
 }
-
-

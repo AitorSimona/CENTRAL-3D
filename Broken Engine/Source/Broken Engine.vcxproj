@@ -77,6 +77,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentCamera.h" />
+    <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="ComponentTransform.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="MathGeoLib\include\SystemInfo.h" />
     <ClInclude Include="MathGeoLib\include\Time\Clock.h" />
     <ClInclude Include="ModuleEventManager.h" />
+    <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleSceneManager.h" />
     <ClInclude Include="ModuleTextures.h" />
@@ -234,6 +236,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
+    <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -299,6 +302,7 @@
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp" />
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
     <ClCompile Include="ModuleEventManager.cpp" />
+    <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleSceneManager.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />

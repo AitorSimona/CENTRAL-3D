@@ -12,6 +12,7 @@
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 #include "ModuleThreading.h"
+#include "ModulePhysics.h"
 
 #include "mmgr/mmgr.h"
 
@@ -47,7 +48,6 @@ Application::Application()
 	AddModule(input);
 	AddModule(time);
 
-
 	AddModule(textures);
 	AddModule(hardware);
 
@@ -58,6 +58,9 @@ Application::Application()
 
 	// Scenes
 	AddModule(scene_manager);
+
+	// Physics
+	AddModule(physics);
 
 	// Renderer last!
 	AddModule(renderer3D);
