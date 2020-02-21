@@ -115,7 +115,7 @@ uint ModuleTextures::GetDefaultTextureID() const
 	return DefaultTexture;
 }
 
-inline void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
+void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
 {
 	// --- Set texture clamping method ---
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -133,13 +133,13 @@ inline void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
+	
 		// --- Enabling anisotropic filtering for highest quality at oblique angles---
-		if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
-		{
+		#ifdef  GL_EXT_texture_filter_anisotropic
 			GLfloat largest_supported_anisotropy;
 			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest_supported_anisotropy);
-		}
+		#endif
 	}
 }
 
@@ -172,7 +172,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
-inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, std::string& path) const
+void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, std::string& path) const
 {
 	// --- Attention!! If the image is flipped, we flip it back --- 
 	ILinfo imageInfo;
