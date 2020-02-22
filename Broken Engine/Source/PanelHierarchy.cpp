@@ -57,7 +57,7 @@ bool PanelHierarchy::Draw()
 void PanelHierarchy::DrawRecursive(GameObject * Go)
 {
 	// --- Set node flags ---
-	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow;
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 	ImGuiTreeNodeFlags node_flags = base_flags;
 
 	if (Go == App->scene_manager->GetSelectedGameObject())
@@ -83,7 +83,16 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 
 		// --- Create current node and get if it is opened or not ---
 
+		if(!Go->GetActive())
+		ImGui::PushStyleColor(ImGuiCol(), ImVec4(0.5, 0.5, 0.5, 1));
+
+		ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::SameLine();
+
 		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName().c_str());
+
+		if (!Go->GetActive())
+		ImGui::PopStyleColor();
 
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))

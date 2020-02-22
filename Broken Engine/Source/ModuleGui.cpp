@@ -326,6 +326,12 @@ bool ModuleGui::CleanUp()
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
 
+	// --- Delete editor textures ---
+	glDeleteTextures(1, &materialTexID);
+	glDeleteTextures(1, &folderTexID);
+	glDeleteTextures(1, &defaultfileTexID);
+	glDeleteTextures(1, &prefabTexID);
+
 	// --- ShutDown ImGui ---
 
 	ImGui_ImplOpenGL3_Shutdown();
@@ -425,5 +431,8 @@ void ModuleGui::CreateIcons()
 	folderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, -1);
 	defaultfileTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, -1);
 	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Material Icon.png", width, height, -1);
+	prefabTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Prefab.png", width, height, -1);
+
+	// REMEMBER to gldeletetex them at cleanup!
 }
 

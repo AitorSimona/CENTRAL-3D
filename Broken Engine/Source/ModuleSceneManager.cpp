@@ -173,7 +173,7 @@ void ModuleSceneManager::DrawScene()
 			}
 
 			// --- If Found, draw the mesh ---
-			if (MeshRenderer && MeshRenderer->IsEnabled())
+			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 					MeshRenderer->Draw();
 
 			if (SelectedGameObject == (*it))
@@ -198,7 +198,7 @@ void ModuleSceneManager::DrawScene()
 		}
 
 		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled())
+		if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 			MeshRenderer->Draw();
 
 		if (SelectedGameObject == (*it))
@@ -280,7 +280,7 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 	// --- Gather non-static gos ---
 	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
 	{
-		if (ray.Intersects((*it)->GetAABB()))
+		if ((*it)->GetActive() && ray.Intersects((*it)->GetAABB()))
 		{
 			float hit_near, hit_far;
 			if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))

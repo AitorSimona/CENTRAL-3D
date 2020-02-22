@@ -15,7 +15,7 @@ ResourceModel::ResourceModel(uint UID, std::string source_file) : Resource(Resou
 	extension = ".model";
 	resource_file = MODELS_FOLDER + std::to_string(UID) + extension;
 
-	previewTexID = App->gui->defaultfileTexID;
+	previewTexID = App->gui->prefabTexID;
 
 }
 
