@@ -46,8 +46,16 @@ void ResourceModel::FreeMemory()
 
 void ResourceModel::AddResource(Resource* resource)
 {
-	if(!HasResource(resource))
-	resources.push_back(resource);
+	if (!HasResource(resource))
+	{
+		resource->has_parent = true;
+		resources.push_back(resource);
+	}
+}
+
+std::vector<Resource*>* ResourceModel::GetResources() 
+{
+	return &resources;
 }
 
 bool ResourceModel::HasResource(Resource* resource)

@@ -331,6 +331,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &folderTexID);
 	glDeleteTextures(1, &defaultfileTexID);
 	glDeleteTextures(1, &prefabTexID);
+	glDeleteTextures(1, &playbuttonTexID);
 
 	// --- ShutDown ImGui ---
 
@@ -432,6 +433,7 @@ void ModuleGui::CreateIcons()
 	defaultfileTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, -1);
 	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Material Icon.png", width, height, -1);
 	prefabTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Prefab.png", width, height, -1);
+	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
 }
