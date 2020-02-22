@@ -85,7 +85,7 @@ bool PanelProject::Draw()
 		ImGui::BeginMenuBar();
 
 		if (selected)
-			ImGui::Text(selected->GetOriginalFile());
+			ImGui::Text(selected->GetName());
 
 		ImGui::Spacing();
 

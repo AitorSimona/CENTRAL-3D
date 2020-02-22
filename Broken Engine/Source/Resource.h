@@ -46,6 +46,7 @@ public:
 
 	void SetOriginalFile(const char* new_path);
 	void SetUID(uint UID);
+	void SetName(const char* name);
 
 	bool IsInMemory() const;
 	bool LoadToMemory();
@@ -63,8 +64,6 @@ protected:
 	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
 	virtual void Repath() {};
-
-	void SetName(const char* name);
 
 
 protected:
