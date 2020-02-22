@@ -1,0 +1,1115 @@
+#include "ModuleResourceManager.h"
+#include "Application.h"
+#include "ModuleFileSystem.h"
+#include "ModuleGui.h"
+#include "ModuleTextures.h"
+
+#include "Importers.h"
+#include "Resources.h"
+
+#include "Assimp/include/cimport.h"
+
+#pragma comment (lib, "Assimp/libx86/assimp.lib")
+
+#include "mmgr/mmgr.h"
+
+// --- Get Assimp LOGS and print them to console ---
+void MyAssimpCallback(const char* msg, char* userData)
+{
+	CONSOLE_LOG("[Assimp]: %s", msg);
+}
+
+ModuleResourceManager::ModuleResourceManager(bool start_enabled)
+{
+}
+
+ModuleResourceManager::~ModuleResourceManager()
+{
+}
+
+bool ModuleResourceManager::Init(json file)
+{
+
+	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
+	struct aiLogStream stream;
+	stream.callback = MyAssimpCallback;
+	aiAttachLogStream(&stream);
+
+	// --- Create importers ---
+	importers.push_back(new ImporterFolder());
+	importers.push_back(new ImporterScene());
+	importers.push_back(new ImporterModel());
+	importers.push_back(new ImporterMaterial());
+	importers.push_back(new ImporterShader());
+	importers.push_back(new ImporterMesh());
+	importers.push_back(new ImporterTexture());
+	importers.push_back(new ImporterMeta());
+
+	return true;
+}
+
+bool ModuleResourceManager::Start()
+{
+	// --- Import all resources in Assets at startup ---
+	App->gui->CreateIcons();
+
+	// --- Create default material ---
+	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
+	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
+
+	filters.push_back("fbx");
+	filters.push_back("mat");
+	filters.push_back("png");
+
+	// --- Import files and folders ---
+	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
+
+	HandleFsChanges();
+
+	// --- Tell Windows to notify us when changes to given directory and subtree occur ---
+	App->fs->WatchDirectory(ASSETS_FOLDER);
+
+	return true;
+}
+
+// ------------------------------ IMPORTING --------------------------------------------------------
+
+std::string ModuleResourceManager::DuplicateIntoAssetsFolder(const char* path)
+{
+	std::string new_path = ASSETS_FOLDER;
+	std::string file;
+
+	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
+	new_path.append(file);
+
+	if (!App->fs->Exists(new_path.c_str()))
+		App->fs->CopyFromOutsideFS(path, new_path.c_str());
+
+	return new_path;
+}
+
+// --- Sweep over all files in given directory, if those files pass the given filters, call Import and if it succeeds add them to the given resource folder ---
+ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters)
+{
+	std::vector<std::string> files;
+	std::vector<std::string> dirs;
+
+	std::string dir((directory) ? directory : "");
+
+	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+
+	// --- Import folder ---
+	Importer::ImportData IData(dir.c_str());
+	ResourceFolder* folder = (ResourceFolder*)ImportFolder(IData);
+
+	// --- If parent is not nullptr add ourselves as childs ---
+	if (parent)
+		folder->SetParent(parent);
+
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+	{
+		SearchAssets(folder,(dir + (*it) + "/").c_str(), filters);
+	}
+
+	// --- Now import all of its engine-supported files ---
+	std::sort(files.begin(), files.end());
+
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
+	{
+		const std::string& str = *it;
+
+		bool pass_filter = false;
+
+		if (filters.size() > 0)
+		{
+			for (uint i = 0; i < filters.size(); ++i)
+			{
+				std::string extension = (str.substr(str.find_last_of(".") + 1));
+				App->fs->NormalizePath(extension);
+
+				if (extension == filters[i])
+				{
+					pass_filter = true;
+					break;
+				}
+			}
+		}
+		else
+		pass_filter = true;
+
+
+		// --- If the given file has a compatible extension, try to import it ---
+		if (pass_filter)
+		{
+			std::string path = directory;
+			path.append((*it).data());
+			Importer::ImportData IData2(path.c_str());
+			Resource* resource = ImportAssets(IData2);
+		}
+	}
+
+	return folder;
+}
+
+// --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
+Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
+{
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Import Switch needs to be updated");
+
+	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
+
+	// --- Identify resource type by file extension ---
+	Resource::ResourceType type = GetResourceTypeFromPath(IData.path);
+
+	Resource* resource = nullptr;
+
+	// --- Call relevant function depending on resource type ---
+
+	switch (type)
+	{
+	case Resource::ResourceType::FOLDER:
+		resource = ImportFolder(IData);
+		break;
+
+	case Resource::ResourceType::SCENE:
+		resource = ImportScene(IData);
+		break;
+
+	case Resource::ResourceType::MODEL:
+		resource = ImportModel(IData);
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		resource = ImportMaterial(IData);
+		break;
+
+	case Resource::ResourceType::SHADER:
+		resource = ImportShaderProgram(IData);
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		resource = ImportTexture(IData);
+		break;
+
+	case Resource::ResourceType::MESH:
+		resource = ImportMesh(IData);
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		resource = ImportShaderObject(IData);
+		break;
+
+	case Resource::ResourceType::META:
+		resource = ImportMeta(IData);
+		break;
+
+	case Resource::ResourceType::SCRIPT:
+		//resource = ImportFolder(IData); //MYTODO: Dídac I assume I must create a new Importer to handle scripts importing
+		break;
+
+	case Resource::ResourceType::UNKNOWN:
+		break;
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
+		break;
+	}
+
+	if (resource)
+	{
+		if(type != Resource::ResourceType::FOLDER && type != Resource::ResourceType::META)
+		AddResourceToFolder(resource);
+
+		CONSOLE_LOG("Imported successfully: %s", IData.path);
+	}
+	else
+		CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
+
+
+	return resource;
+}
+
+
+Resource* ModuleResourceManager::ImportFolder(Importer::ImportData& IData)
+{
+	ImporterFolder* IFolder = GetImporter<ImporterFolder>();
+
+	Resource* folder = nullptr;
+
+	if (IFolder)
+	{
+		// --- Eliminate last / so we can build the meta file name ---
+		std::string new_path = IData.path;
+		new_path.pop_back();
+
+		// --- If the resource is already in library, load from there ---
+		if (IsFileImported(new_path.c_str()))
+			folder = IFolder->Load(IData.path);
+
+		// --- Else call relevant importer ---
+		else
+		{
+			IData.path = new_path.append("/").c_str();
+			folder = IFolder->Import(IData);
+		}
+	}
+
+	return folder;
+}
+
+Resource* ModuleResourceManager::ImportScene(Importer::ImportData& IData)
+{
+	ResourceScene* scene = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+	{
+		//Loadfromlib
+	}
+
+	// --- Else call relevant importer ---
+	else
+		// Import
+
+	return scene;
+}
+
+Resource* ModuleResourceManager::ImportModel(Importer::ImportData& IData)
+{
+	ImporterModel* IModel = GetImporter<ImporterModel>();
+
+	Resource* model = nullptr;
+
+	if (IModel)
+	{
+		// --- If the resource is already in library, just create the resource with no data ---
+		if (IsFileImported(IData.path))
+			model = IModel->Load(IData.path);
+
+		// --- Else call relevant importer ---
+		else
+		{
+			std::string new_path = DuplicateIntoAssetsFolder(IData.path);
+			IData.path = new_path.c_str();
+			ImportModelData MData(IData.path);
+			model = IModel->Import(MData);
+		}
+	}
+
+	return model;
+}
+
+Resource* ModuleResourceManager::ImportMaterial(Importer::ImportData& IData)
+{
+	ImporterMaterial* IMat = GetImporter<ImporterMaterial>();
+
+	Resource* material = nullptr;
+
+	// --- If the resource is already imported (has meta), load it ---
+	if (IsFileImported(IData.path))
+		material = IMat->Load(IData.path);
+
+	return material;
+}
+
+Resource* ModuleResourceManager::ImportShaderProgram(Importer::ImportData& IData)
+{
+	ResourceShaderProgram* shader = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+	{
+		//Loadfromlib
+	}
+
+	// --- Else call relevant importer ---
+	else
+		// Import
+
+	return shader;
+}
+
+Resource* ModuleResourceManager::ImportMesh(Importer::ImportData& IData)
+{
+	Resource* mesh = nullptr;
+	ImporterMesh* IMesh = GetImporter<ImporterMesh>();
+
+	// --- Load the mesh directly from the lib (only declaration)---
+	if (IData.path && IMesh)
+	{
+		mesh = IMesh->Load(IData.path);
+	}
+
+
+	return mesh;
+}
+
+Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
+{
+	Resource* texture = nullptr;
+	ImporterTexture* ITex = GetImporter<ImporterTexture>();
+	
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+		texture = ITex->Load(IData.path);
+	
+
+	// --- Else call relevant importer ---
+	else
+		texture = ITex->Import(IData);
+
+	return texture;
+}
+
+Resource* ModuleResourceManager::ImportShaderObject(Importer::ImportData& IData)
+{
+	ResourceShaderObject* shader_object = nullptr;
+
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+	{
+		//Loadfromlib
+	}
+
+	// --- Else call relevant importer ---
+	else
+		// Import
+
+	return shader_object;
+}
+
+Resource* ModuleResourceManager::ImportMeta(Importer::ImportData& IData)
+{
+	Resource* resource = nullptr;
+
+	ImporterMeta* IMeta = GetImporter<ImporterMeta>();
+
+	if (IMeta)
+	{
+		std::string filepath = IData.path;
+		filepath = filepath.substr(0, filepath.find_last_of("."));
+		IData.path = filepath.c_str();
+
+		resource = IMeta->Load(IData.path);
+	}
+
+
+	return resource;
+}
+
+void ModuleResourceManager::HandleFsChanges()
+{
+	// --- First retrieve all windows fs files and directories in ASSETS ---
+	std::map<std::string, std::vector<std::string>> dirs;
+
+	// MYTODO: Add only files/dirs that have been modified (getmoddate?)
+	RetrieveFilesAndDirectories(ASSETS_FOLDER, dirs);
+
+	// --- Now compare to engine's, we need to handle overwrite/creation/deletion ---
+	// Same strategy as Unity, no support for movement/rename of elements
+
+	for (std::map<uint, ResourceMeta*>::iterator meta = metas.begin(); meta != metas.end(); ++meta)
+	{
+		// --- Check if meta exists ---
+		if (!App->fs->Exists((*meta).second->GetResourceFile()))
+		{
+			// Recreate meta, only if directory exists 
+			std::string metadir;
+			App->fs->SplitFilePath((*meta).second->GetResourceFile(), &metadir);
+
+			// continue only if directory exists, after recreating meta so file is not imported again
+			if (App->fs->Exists(metadir.c_str()) && App->fs->Exists((*meta).second->GetOriginalFile()))
+			{
+				ImporterMeta* IMeta = GetImporter<ImporterMeta>();
+
+				IMeta->Save((*meta).second);
+				continue;
+			}
+
+		}
+
+		// --- Meta's associated file has been deleted, print warning and eliminate lib files ---
+		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
+		{
+			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
+			
+			// --- Eliminate all lib files ---
+			Resource* resource = GetResource((*meta).second->GetUID(), false);
+
+			if (resource)
+			{
+				resource->OnDelete();
+				delete resource;
+			}
+
+
+			continue;
+		}
+
+		bool found = false;
+
+		for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
+		{
+			for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
+			{
+				// --- If the meta corresponds to the file ---
+				if ((*meta).second->GetOriginalFile() == *files)
+				{
+					found = true;
+
+					// --- Check given file modification date against meta's ---
+					uint date = App->fs->GetLastModificationTime((*files).c_str());
+
+					// --- If dates are not equal, file has been overwritten ---
+					if (date != (*meta).second->Date)
+					{
+						CONSOLE_LOG("Reimported file: %s", (*files).c_str());
+
+						Resource* resource = GetResource((*meta).second->GetUID(), false);
+
+						if (resource)
+						{
+							resource->OnOverwrite();
+
+							// Update meta 
+							Resource* meta_res = (*meta).second;
+							meta_res->OnOverwrite();
+						}
+					}
+
+					files = (*dir).second.erase(files);
+
+					break;
+				}
+			}
+
+			std::string dir_name = std::string((*meta).second->GetOriginalFile()).append("/");
+
+			// --- If the meta corresponds to the directory ---
+			if (!found && dir_name == (*dir).first)
+			{
+				found = true;
+
+				// --- Check given file modification date against meta's ---
+				uint date = App->fs->GetLastModificationTime(dir_name.c_str());
+
+				// --- If dates are not equal, dir has been overwritten ---
+				if (date != (*meta).second->Date)
+				{	
+					// --- Basically update meta, files inside will be taken care of  ---
+					CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
+
+					Resource* resource = GetResource((*meta).second->GetUID(), false);
+
+					if (resource)
+					{
+						resource->OnOverwrite();
+
+						// Update meta 
+						Resource* meta_res = (*meta).second;
+						meta_res->OnOverwrite();
+					}
+				}
+			}
+
+			if (found)
+				break;
+
+		}
+
+	}
+
+	// ---  Delete all metas that are now orphan :( ---
+	for (std::map<uint, ResourceMeta*>::iterator meta = metas.begin(); meta != metas.end();)
+	{
+		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
+		{
+			Resource* meta_res = (*meta).second;
+			meta = metas.erase(meta);
+			meta_res->OnDelete();
+			delete meta_res;
+		}
+		else
+		{
+			meta++;
+		}
+	}
+
+	// --- Finally handle all new files, basically import them ---
+	for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
+	{
+		std::string dir_name = (*dir).first;
+		dir_name.pop_back();
+
+		// --- Check if dir has a meta, if not import directory ---
+		if (!App->resources->IsFileImported(dir_name.c_str()))
+		{	
+			Importer::ImportData IData((*dir).first.c_str());
+			ImportAssets(IData);
+		}
+
+		for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
+		{
+			// --- Import files ---
+			if (App->fs->Exists((*files).c_str()))
+			{
+				Importer::ImportData IData((*files).c_str());
+				ImportAssets(IData);
+			}
+		}
+	}
+}
+
+void ModuleResourceManager::RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret)
+{
+	std::vector<std::string> files;
+	std::vector<std::string> dirs;
+
+	std::string dir((directory) ? directory : "");
+
+	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+	{
+		RetrieveFilesAndDirectories((dir + (*it) + "/").c_str(), ret);
+	}
+
+	// --- Now iterate all of its engine-supported files ---
+	std::sort(files.begin(), files.end());
+
+	std::vector<std::string> compatible_files;
+
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
+	{
+		const std::string& str = *it;
+
+		bool pass_filter = false;
+
+		if (filters.size() > 0)
+		{
+			for (uint i = 0; i < filters.size(); ++i)
+			{
+				std::string extension = (str.substr(str.find_last_of(".") + 1));
+				App->fs->NormalizePath(extension);
+
+				if (extension == filters[i])
+				{
+					pass_filter = true;
+					break;
+				}
+			}
+		}
+		else
+			pass_filter = true;
+
+
+		// --- If the given file does not have a compatible extension, erase it ---
+		if (pass_filter)
+		{
+			std::string full_path = dir + (*it);
+			compatible_files.push_back(full_path);
+		}
+	}
+
+	// --- Add directory to list ---
+	ret[dir] = compatible_files;
+}
+
+
+// ----------------------------------------------------
+
+// ------------------------------ LOADING --------------------------------------------------------
+
+
+// ------------------- RESOURCE HANDLING ----------------------------------------------------------
+
+Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loadinmem is used only when absolutely needed
+{
+	Resource* resource = nullptr;
+
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Get Switch needs to be updated");
+
+	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
+
+	resource = folders.find(UID) == folders.end() ? resource : (*folders.find(UID)).second;
+	resource = resource ? resource : (scenes.find(UID) == scenes.end() ? resource : (*scenes.find(UID)).second);
+	resource = resource ? resource : (models.find(UID) == models.end() ? resource : (*models.find(UID)).second);
+	resource = resource ? resource : (materials.find(UID) == materials.end() ? resource : (*materials.find(UID)).second);
+	resource = resource ? resource : (shaders.find(UID) == shaders.end() ? resource : (*shaders.find(UID)).second);
+	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
+	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
+	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
+	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
+
+	if (resource && loadinmemory)
+		resource->LoadToMemory();
+	else if (!resource)
+		CONSOLE_LOG("![Warning]: Could not load: %i", UID);
+
+
+	return resource;
+}
+
+Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, std::string source_file)
+{
+	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
+
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Creation Switch needs to be updated");
+
+	Resource* resource = nullptr;
+
+	switch (type)
+	{
+	case Resource::ResourceType::FOLDER:
+		resource = (Resource*)new ResourceFolder(App->GetRandom().Int(),source_file);
+		folders[resource->GetUID()] = (ResourceFolder*)resource;
+		break;
+
+	case Resource::ResourceType::SCENE:
+		resource = (Resource*)new ResourceScene(App->GetRandom().Int(), source_file);
+		scenes[resource->GetUID()] = (ResourceScene*)resource;
+		break;
+
+	case Resource::ResourceType::MODEL:
+		resource = (Resource*)new ResourceModel(App->GetRandom().Int(), source_file);
+		models[resource->GetUID()] = (ResourceModel*)resource;
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		resource = (Resource*)new ResourceMaterial(App->GetRandom().Int(), source_file);
+		materials[resource->GetUID()] = (ResourceMaterial*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER:
+		resource = (Resource*)new ResourceShader(App->GetRandom().Int(), source_file);
+		shaders[resource->GetUID()] = (ResourceShader*)resource;
+		break;
+
+	case Resource::ResourceType::MESH:
+		resource = (Resource*)new ResourceMesh(App->GetRandom().Int(), source_file);
+		meshes[resource->GetUID()] = (ResourceMesh*)resource;
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		resource = (Resource*)new ResourceTexture(App->GetRandom().Int(), source_file);
+		textures[resource->GetUID()] = (ResourceTexture*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		resource = (Resource*)new ResourceShaderObject(App->GetRandom().Int(), source_file);
+		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
+		break;
+
+	case Resource::ResourceType::SCRIPT:
+		//MYTODO: Dídac fill code following Aitor's Guidelines
+		resource = (Resource*)new ResourceScript(App->GetRandom().Int(), source_file);
+		scripts[resource->GetUID()] = (ResourceScript*)resource;
+		break;
+
+	case Resource::ResourceType::UNKNOWN:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+	}
+
+	return resource;
+}
+
+Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID)
+{
+	Resource* resource = nullptr;
+
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Creation Switch needs to be updated");
+
+
+	switch (type)
+	{
+	case Resource::ResourceType::FOLDER:
+		resource = (Resource*)new ResourceFolder(UID, source_file);
+		folders[resource->GetUID()] = (ResourceFolder*)resource;
+		break;
+
+	case Resource::ResourceType::SCENE:
+		resource = (Resource*)new ResourceScene(UID, source_file);
+		scenes[resource->GetUID()] = (ResourceScene*)resource;
+		break;
+
+	case Resource::ResourceType::MODEL:
+		resource = (Resource*)new ResourceModel(UID, source_file);
+		models[resource->GetUID()] = (ResourceModel*)resource;
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		resource = (Resource*)new ResourceMaterial(UID, source_file);
+		materials[resource->GetUID()] = (ResourceMaterial*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER:
+		resource = (Resource*)new ResourceShader(UID, source_file);
+		shaders[resource->GetUID()] = (ResourceShader*)resource;
+		break;
+
+	case Resource::ResourceType::MESH:
+		resource = (Resource*)new ResourceMesh(UID, source_file);
+		meshes[resource->GetUID()] = (ResourceMesh*)resource;
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		resource = (Resource*)new ResourceTexture(UID, source_file);
+		textures[resource->GetUID()] = (ResourceTexture*)resource;
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		resource = (Resource*)new ResourceShaderObject(UID, source_file);
+		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
+		break;
+
+	case Resource::ResourceType::META:
+		if (metas.find(UID) == metas.end())
+		{
+			resource = (Resource*)new ResourceMeta(UID, source_file);
+			metas[resource->GetUID()] = (ResourceMeta*)resource;
+		}
+		else
+			resource = metas[UID];
+
+		break;
+	
+	case Resource::ResourceType::SCRIPT:
+		//MYTODO: Dídac Follow Aitor's Guidelines
+
+		break;
+
+
+	case Resource::ResourceType::UNKNOWN:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+	}
+
+	return resource;
+}
+
+
+Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
+{
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Switch needs to be updated");
+
+	std::string extension = "";
+	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
+	App->fs->NormalizePath(extension, true);
+
+
+	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
+
+	if (extension == "")
+		type = Resource::ResourceType::FOLDER;
+
+	else if (extension == "scene")
+		type = Resource::ResourceType::SCENE;
+
+	else if (extension == "fbx" || extension == "model")
+		type = Resource::ResourceType::MODEL;
+
+	else if (extension == "mat")
+		type = Resource::ResourceType::MATERIAL;
+
+	else if (extension == "shader")
+		type = Resource::ResourceType::SHADER;
+
+	else if (extension == "dds" || extension == "png" || extension == "jpg")
+		type = Resource::ResourceType::TEXTURE;
+
+	else if (extension == "mesh")
+		type = Resource::ResourceType::MESH;
+
+	else if (extension == "vertex" || extension == "fragment")
+		type = Resource::ResourceType::SHADER_OBJECT;
+
+	else if (extension == "lua")
+		type = Resource::ResourceType::SCRIPT;
+
+	else if (extension == "meta")
+		type = Resource::ResourceType::META;
+
+
+	return type;
+}
+
+ResourceFolder* ModuleResourceManager::GetAssetsFolder()
+{
+	return AssetsFolder;
+}
+
+uint ModuleResourceManager::GetDefaultMaterialUID()
+{
+	return DefaultMaterial->GetUID();
+}
+
+void ModuleResourceManager::AddResourceToFolder(Resource* resource)
+{
+	if (resource)
+	{
+		std::string directory;
+		std::string original_file;
+
+		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
+		{
+			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
+			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+			directory.pop_back();
+			original_file = (*it).second->GetName();
+			original_file.pop_back();
+
+
+
+			if (resource->GetType() == Resource::ResourceType::FOLDER)
+			{
+				App->fs->SplitFilePath(directory.c_str(), &directory);
+
+				if (directory == (*it).second->GetOriginalFile())
+				{
+					ResourceFolder* folder = (ResourceFolder*)resource;
+					folder->SetParent((*it).second);
+					break;
+				}
+			}
+			else if (directory == original_file)
+			{
+				(*it).second->AddResource(resource);
+				break;
+			}
+
+		}
+	}
+}
+
+void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
+{
+	if (resource)
+	{
+		std::string directory;
+		std::string original_file;
+
+		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
+		{
+			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
+			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+			directory.pop_back();
+			original_file = (*it).second->GetName();
+			original_file.pop_back();
+
+			if (directory == original_file)
+			{
+				(*it).second->RemoveResource(resource);
+			}
+
+		}
+	}
+}
+
+bool ModuleResourceManager::IsFileImported(const char* file)
+{
+	bool ret = false;
+
+	if (file)
+	{
+		std::string path = file;
+
+		path.append(".meta");
+
+		// --- PhysFS will only return true if the file is inside one of the fs predefined folders! 
+		//  using that on our advantage to know if a resource is imported or not ---
+		ret = App->fs->Exists(path.data());
+	}
+
+	return ret;
+}
+
+void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
+{
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Destruction Switch needs to be updated");
+
+	switch (resource->GetType())
+	{
+	case Resource::ResourceType::FOLDER:
+		folders.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::SCENE:
+		scenes.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::MODEL:
+		models.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		materials.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::SHADER:
+		shaders.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::MESH:
+		meshes.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::TEXTURE:
+		textures.erase(resource->GetUID());
+
+		// --- Tell mats ---
+		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+		{
+			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
+				(*it).second->resource_diffuse = nullptr;	
+		}
+
+		break;
+
+	case Resource::ResourceType::SHADER_OBJECT:
+		shader_objects.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::SCRIPT:
+		//scripts.erase(resource->GetUID());  // Uncomment when scripts map is implemented
+		break;
+
+	case Resource::ResourceType::META:
+		metas.erase(resource->GetUID());  
+		break;
+
+	case Resource::ResourceType::UNKNOWN:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+
+	default:
+		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		break;
+	}
+
+}
+
+// ----------------------------------------------------
+
+update_status ModuleResourceManager::Update(float dt)
+{
+	return UPDATE_CONTINUE;
+}
+
+bool ModuleResourceManager::CleanUp()
+{
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Clean Up needs to be updated");
+
+	// --- Delete resources ---
+	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = folders.erase(it);
+	}
+
+	folders.clear();
+
+	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = scenes.erase(it);
+	}
+
+	scenes.clear();
+
+	for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = models.erase(it);
+	}
+
+	models.clear();
+
+	for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = materials.erase(it);
+	}
+
+	materials.clear();
+
+	for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = shaders.erase(it);
+	}
+
+	shaders.clear();
+
+	for (std::map<uint, ResourceMesh*>::iterator it = meshes.begin(); it != meshes.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = meshes.erase(it);
+	}
+
+	meshes.clear();
+
+	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = textures.erase(it);
+	}
+
+	textures.clear();
+
+	for (std::map<uint, ResourceShaderObject*>::iterator it = shader_objects.begin(); it != shader_objects.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = shader_objects.erase(it);
+	}
+
+	shader_objects.clear();
+
+	//MYTODO: Dídac uncomment when scripts is uncommented
+	/*for (std::map<uint, ResourceShaderObject*>::iterator it = scripts.begin(); it != scripts.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = scripts.erase(it);
+	}
+
+	scripts.clear();*/
+
+	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = metas.erase(it);
+	}
+
+	metas.clear();
+
+	// --- Delete importers ---
+	for (uint i = 0; i < importers.size(); ++i)
+	{
+		delete importers[i];
+	}
+
+	importers.clear();
+
+	// --- Detach assimp log stream ---
+	aiDetachAllLogStreams();
+
+	return true;
+}

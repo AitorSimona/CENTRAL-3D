@@ -330,7 +330,7 @@ ASALocalRun/
 .mfractor/
 
 # Engine Meta Files (do not ignore)
-!CENTRAL 3D/Game/Assets/**/*.meta
+!Broken Engine/Game/Assets/**/*.meta
 
 # Engine Library 
-CENTRAL 3D/Game/Library
+Broken Engine/Game/Library
