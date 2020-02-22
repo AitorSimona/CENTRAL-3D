@@ -7,7 +7,8 @@
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTimeManager.h"
-
+#include "ModuleCamera3D.h"
+#include "ComponentCamera.h"
 
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
@@ -52,6 +53,11 @@ bool PanelSettings::Draw()
 		if (ImGui::CollapsingHeader("Renderer"))
 		{
 			RendererNode();
+			ImGui::Separator();
+		}
+		if (ImGui::CollapsingHeader("Camera Settings"))
+		{
+			EngineCameraNode();
 			ImGui::Separator();
 		}
 		if (ImGui::CollapsingHeader("Hardware"))
@@ -235,6 +241,102 @@ inline void PanelSettings::RendererNode() const
 
 }
 
+inline void PanelSettings::EngineCameraNode() const
+{
+	ComponentCamera* cam = App->camera->camera;
+
+	// --- Camera Speed ---
+	float camSpeed = App->camera->m_CameraSpeed;
+	float camScroll = App->camera->m_ScrollSpeed;
+
+	ImGui::Text("Camera Speed");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);	
+	ImGui::DragFloat("##CamSpeed", &camSpeed, 0.05f, 1.0f, 30.0f);
+	
+	ImGui::Text("Camera Scroll Speed");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##CamScroll", &camScroll, 0.05f, 1.0f, 10.0f);
+
+	if (camSpeed != App->camera->m_CameraSpeed)
+		App->camera->m_CameraSpeed = camSpeed;
+	if (camScroll != App->camera->m_ScrollSpeed)
+		App->camera->m_ScrollSpeed = camScroll;
+
+	// --- Camera FOV ---
+	ImGui::Text("FOV");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	float fov = cam->GetFOV();
+	ImGui::DragFloat("##FOV", &fov, 0.005f, 0.005f, 179.0f);
+
+	if (fov != cam->GetFOV())
+		App->camera->camera->SetFOV(fov);
+
+	ImGui::SameLine();
+	if (ImGui::Button("DefFOV", { 50.0f, 15.0f }))
+		App->camera->m_CustomDefaultCameraValues.x = fov;
+
+	// --- Camera Planes ---
+	float nearPlane = cam->GetNearPlane();
+	float farPlane = cam->GetFarPlane();
+
+	ImGui::Text("Camera Planes");
+	ImGui::SameLine();
+
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##NearPlane", &nearPlane, 0.005f, 0.01f, farPlane - 0.01f);
+
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##FarPlane", &farPlane, 0.005f, nearPlane + 0.01f, 10000.0f);
+
+
+	if (nearPlane != cam->GetNearPlane())
+		App->camera->camera->SetNearPlane(nearPlane);
+	if (farPlane != cam->GetFarPlane())
+		App->camera->camera->SetFarPlane(farPlane);
+
+	ImGui::SameLine();
+	if (ImGui::Button("DefPlanes", { 75.0f, 15.0f }))
+	{
+		App->camera->m_CustomDefaultCameraValues.y = nearPlane;
+		App->camera->m_CustomDefaultCameraValues.z = farPlane;
+	}
+
+	// --- Camera Aspect Ratio ---
+	float aspectRatio = cam->GetAspectRatio();
+
+	ImGui::Text("Aspect Ratio");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);
+
+	if (aspectRatio != cam->GetAspectRatio())
+		App->camera->camera->SetAspectRatio(aspectRatio);
+
+	ImGui::SameLine();
+	if (ImGui::Button("DefAR", { 50.0f, 15.0f }))
+		App->camera->m_CustomDefaultCameraValues.w = aspectRatio;
+
+	// --- Set Values to Default ---
+	if (ImGui::Button("Custom Default Values", { 150.0f, 25.0f }))
+	{
+		App->camera->camera->SetCameraValues(App->camera->m_CustomDefaultCameraValues);
+		App->camera->m_CameraSpeed = 10.0f;
+		App->camera->m_ScrollSpeed = 3.0f;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Default Values", { 150.0f, 25.0f }))
+	{
+		App->camera->camera->SetCameraValues(App->camera->GetCameraDefaultValues());
+		App->camera->m_CameraSpeed = 10.0f;
+		App->camera->m_ScrollSpeed = 3.0f;
+	}
+}
 
 inline void PanelSettings::HardwareNode() const
 {

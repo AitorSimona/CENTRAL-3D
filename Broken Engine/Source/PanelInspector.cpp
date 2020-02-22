@@ -57,10 +57,8 @@ bool PanelInspector::Draw()
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
 
-			ImGui::NewLine();
-
 			(*it)->CreateInspectorNode();
-
+			ImGui::NewLine();
 			ImGui::Separator();
 		}
 
@@ -101,9 +99,8 @@ bool PanelInspector::Draw()
 
 		item_current = items[0];
 
-
 		if(Startup)
-		Startup = false;
+			Startup = false;
 	}
 
 	ImGui::End();

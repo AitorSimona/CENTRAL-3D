@@ -11,7 +11,7 @@
         "Project": true,
         "Resources": true,
         "Scene": true,
-        "Settings": false,
+        "Settings": true,
         "ShaderEditor": true,
         "Toolbar": true
     },

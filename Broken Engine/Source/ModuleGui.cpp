@@ -230,11 +230,6 @@ update_status ModuleGui::Update(float dt)
 					panelToolbar->OnOff();
 				}
 
-				if (ImGui::MenuItem("Settings"))
-				{
-					panelSettings->OnOff();
-				}
-
 				if (ImGui::MenuItem("ShaderEditor"))
 				{
 					panelShaderEditor->OnOff();

@@ -109,7 +109,6 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClearDepth(0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return UPDATE_CONTINUE;

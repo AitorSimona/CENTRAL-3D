@@ -20,7 +20,6 @@ public:
 	void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) override;
 	void CreateInspectorNode() override;
 
-
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
 public:
 	ResourceMesh* resource_mesh = nullptr;

@@ -121,6 +121,32 @@ bool PanelScene::Draw()
 	// --- Update editor camera ---
 	if (ImGuizmo::IsUsing() == false)
 		App->camera->UpdateCamera();
+
+
+	if (App->camera->m_ScrollingSpeedChange)
+	{
+		CurrentSpeedScrollLabel = 0.75;
+		App->camera->m_ScrollingSpeedChange = false;
+	}
+
+	if (CurrentSpeedScrollLabel > 0)
+	{
+		bool open = true;
+	//	ImVec2 CursorPos(App->input->GetMouseX() + (SizeGame.x / 2), App->window->cursorPositionY + (SizeGame.y / 2));
+		
+		ImGui::SetNextWindowBgAlpha(CurrentSpeedScrollLabel);
+		//ImGui::SetNextWindowPos(CursorPos);
+		ImGui::SetNextWindowPos({ 600.0f, 250.0f });
+		CurrentSpeedScrollLabel -= 0.015f;
+		
+		if (ImGui::Begin("Example: Simple overlay", &open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+		{
+			ImGui::SetWindowFontScale(3);
+			ImGui::Text(" x%.2f", App->camera->m_SpeedMultiplicator);
+		}
+		
+		ImGui::End();
+	}
 	
 	ImGui::End();
 
@@ -130,7 +156,7 @@ bool PanelScene::Draw()
 void PanelScene::HandleGuizmo()
 {
 	// --- Set Current Guizmo operation ---
-	if (ImGui::IsWindowHovered())
+	if (ImGui::IsWindowHovered() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_IDLE)
 	{
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
