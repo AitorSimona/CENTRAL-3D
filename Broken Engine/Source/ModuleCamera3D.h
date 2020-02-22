@@ -24,6 +24,8 @@ public:
 	void FrameObject(float3 posToLook);
 	void OnMouseClick(const float mouse_x, const float mouse_y);
 
+	const float4 GetCameraDefaultValues() const { return m_CameraDefaultValues; }
+
 private:
 
 	void CameraPan(float speed);
@@ -42,6 +44,8 @@ public:
 	ComponentCamera* camera = nullptr;
 	LineSegment last_ray;
 
+	float4 m_CustomDefaultCameraValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
+
 private:
 
 	float m_CameraSpeedDeltaTime = 0.0f;
@@ -50,4 +54,6 @@ private:
 
 	bool m_ScrollingSpeedChange = false;
 	float m_SpeedMultiplicator = 1.0f;
+
+	float4 m_CameraDefaultValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
 };
