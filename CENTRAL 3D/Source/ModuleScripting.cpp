@@ -315,7 +315,7 @@ void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript * 
 //	ie_scripts.CreateMeta(relative_path.data(), &ie_scripts.ie_data);
 //}
 
-bool ModuleScripting::Init()
+bool ModuleScripting::Init(json file)
 {
 	//Create the Virtual Machine
 	L = luaL_newstate();

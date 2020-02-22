@@ -58,6 +58,8 @@ Application::Application()
 	// Scenes
 	AddModule(scene_manager);
 
+	//Gameplay (Scripting)
+	AddModule(scripting);
 	// Renderer last!
 	AddModule(renderer3D);
 }

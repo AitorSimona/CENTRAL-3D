@@ -29,11 +29,11 @@ public:
 	void ManageOrphanScript(std::string relative_path);
 
 public:
-	bool Init();
+	bool Init(json file) override;
 	bool Start();
 	bool CleanUp();
 
-	update_status Update(float realDT);
+	update_status Update(float dt) override;
 	update_status GameUpdate(float gameDT);
 
 	void Stop();
