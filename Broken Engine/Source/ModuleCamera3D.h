@@ -39,6 +39,8 @@ public:
 
 	float m_CameraSpeed = 10.0f;
 	float m_ScrollSpeed = 3.0f;
+	float m_SpeedMultiplicator = 1.0f;
+	bool m_ScrollingSpeedChange = false;
 
 	float3 reference = { 0.0f,0.0f,0.0f };
 	ComponentCamera* camera = nullptr;
@@ -52,8 +54,6 @@ private:
 	float m_ScrollSpeedDeltaTime = 0.0f;
 	float m_FinalSpeed = 0.0f;
 
-	bool m_ScrollingSpeedChange = false;
-	float m_SpeedMultiplicator = 1.0f;
 
 	float4 m_CameraDefaultValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
 };

@@ -227,8 +227,7 @@ void ModuleCamera3D::CameraZoom(float speed)
 void ModuleCamera3D::ModifySpeedMultiplicator()
 {
 	m_ScrollingSpeedChange = true;
-
-	m_SpeedMultiplicator += (m_ScrollSpeedDeltaTime * App->input->GetMouseWheel());
+	m_SpeedMultiplicator += (m_ScrollSpeedDeltaTime * App->input->GetMouseWheel() * 5.0f);
 
 	if (m_SpeedMultiplicator > 15.0f)
 		m_SpeedMultiplicator = 15.0f;

@@ -24,12 +24,13 @@ public:
 
 	bool SceneHovered = false;
 
-
 	float width = 0.0f;
 	float height = 0.0f;
 
 	float posX = 0.0f;
 	float posY = 0.0f;
+
+	float CurrentSpeedScrollLabel = 1.0f;
 };
 
 #endif
