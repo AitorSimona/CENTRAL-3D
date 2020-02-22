@@ -19,6 +19,8 @@ public:
 
 	bool Draw();
 	void SetSelected(Resource* new_selected);
+	const Resource* GetcurrentDirectory() const;
+
 private:
 	static void ONGameObjectSelected(const Event& e);
 	static void ONResourceDestroyed(const Event& e);

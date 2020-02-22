@@ -41,7 +41,7 @@ public:
 public:
 
 	// --- Importing ---
-	std::string DuplicateIntoAssetsFolder(const char* path);
+	std::string DuplicateIntoGivenFolder(const char* path, const char* folder_path);
 	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
 	Resource* ImportAssets(Importer::ImportData& IData);
 	Resource* ImportFolder(Importer::ImportData& IData);

@@ -128,6 +128,11 @@ void PanelProject::SetSelected(Resource* new_selected)
 		selected_uid = 0;
 }
 
+const Resource* PanelProject::GetcurrentDirectory() const
+{
+	return currentDirectory;
+}
+
 
 void PanelProject::DrawFolder(ResourceFolder* folder)
 {

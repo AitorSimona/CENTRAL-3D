@@ -29,7 +29,7 @@ bool ResourceTexture::LoadInMemory()
 	if (App->resources->IsFileImported(original_file.c_str()) && App->fs->Exists(resource_file.c_str()))
 		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, -1));
 	else if (original_file != "DefaultTexture")
-		SetTextureID(App->textures->CreateTextureFromFile(App->resources->DuplicateIntoAssetsFolder(original_file.c_str()).c_str(), Texture_width, Texture_height, GetUID()));
+		SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
 
 	return true;
 }

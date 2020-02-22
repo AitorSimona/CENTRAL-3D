@@ -131,6 +131,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				std::string DroppedFile_path = e.drop.file;
 
 				Importer::ImportData IData(DroppedFile_path.c_str());
+				IData.dropped = true;
 				App->resources->ImportAssets(IData);
 
 				SDL_free((char*)DroppedFile_path.data());

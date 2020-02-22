@@ -7,6 +7,8 @@
 #include "Importers.h"
 #include "Resources.h"
 
+#include "PanelProject.h"
+
 #include "Assimp/include/cimport.h"
 
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
@@ -58,6 +60,7 @@ bool ModuleResourceManager::Start()
 	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
 
+	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
@@ -65,6 +68,7 @@ bool ModuleResourceManager::Start()
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
 
+	// --- Manage changes ---
 	HandleFsChanges();
 
 	// --- Tell Windows to notify us when changes to given directory and subtree occur ---
@@ -75,9 +79,9 @@ bool ModuleResourceManager::Start()
 
 // ------------------------------ IMPORTING --------------------------------------------------------
 
-std::string ModuleResourceManager::DuplicateIntoAssetsFolder(const char* path)
+std::string ModuleResourceManager::DuplicateIntoGivenFolder(const char* path, const char* folder_path)
 {
-	std::string new_path = ASSETS_FOLDER;
+	std::string new_path = folder_path;
 	std::string file;
 
 	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
@@ -245,7 +249,12 @@ Resource* ModuleResourceManager::ImportFolder(Importer::ImportData& IData)
 		// --- Else call relevant importer ---
 		else
 		{
-			IData.path = new_path.append("/").c_str();
+			new_path = IData.path = new_path.append("/").c_str();
+
+			if (IData.dropped)
+				new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
+			IData.path = new_path.c_str();
 			folder = IFolder->Import(IData);
 		}
 	}
@@ -267,6 +276,8 @@ Resource* ModuleResourceManager::ImportScene(Importer::ImportData& IData)
 	else
 		// Import
 
+
+
 	return scene;
 }
 
@@ -285,7 +296,11 @@ Resource* ModuleResourceManager::ImportModel(Importer::ImportData& IData)
 		// --- Else call relevant importer ---
 		else
 		{
-			std::string new_path = DuplicateIntoAssetsFolder(IData.path);
+			std::string new_path = IData.path;
+
+			if(IData.dropped)
+				new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
 			IData.path = new_path.c_str();
 			ImportModelData MData(IData.path);
 			model = IModel->Import(MData);
@@ -352,7 +367,15 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 
 	// --- Else call relevant importer ---
 	else
+	{
+		std::string new_path = IData.path;
+
+		if (IData.dropped)
+			new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
+		IData.path = new_path.c_str();
 		texture = ITex->Import(IData);
+	}
 
 	return texture;
 }
@@ -844,7 +867,7 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
 			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
 			directory.pop_back();
-			original_file = (*it).second->GetName();
+			original_file = (*it).second->GetOriginalFile();
 			original_file.pop_back();
 
 
@@ -882,7 +905,7 @@ void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
 			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
 			directory.pop_back();
-			original_file = (*it).second->GetName();
+			original_file = (*it).second->GetOriginalFile();
 			original_file.pop_back();
 
 			if (directory == original_file)
@@ -946,7 +969,7 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		textures.erase(resource->GetUID());
 
 		// --- Tell mats ---
-		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
 			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
 				(*it).second->resource_diffuse = nullptr;	

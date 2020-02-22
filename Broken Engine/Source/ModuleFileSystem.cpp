@@ -361,8 +361,8 @@ uint ModuleFileSystem::GetLastModificationTime(const char * file)
 
 void ModuleFileSystem::WatchDirectory(const char* directory)
 {
-	// Watch the directory for file creation and deletion. 
-	// Watch the subtree for directory creation and deletion. 
+	// --- Watch the directory for file creation and deletion ---
+	// --- Watch the subtree for directory creation and deletion ---
 
 	dwChangeHandles[0] = FindFirstChangeNotification(
 		directory,                       // directory to watch 
@@ -377,7 +377,7 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 		CONSOLE_LOG("%i", GetLastError());
 	}
 
-	// Make a final validation check on our handles.
+	// --- Make a final validation check on our handles ---
 
 	if ((dwChangeHandles[0] == NULL) )
 	{
