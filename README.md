@@ -17,6 +17,7 @@
 - Microsoft Visual Studio 2017 (2019 from version 0.3)
 - 3rd Party Libraries used:
 - SDL 2.0.10
+- Assimp 3.3
 - Glew 2.1.0
 - ImGui 1.72b (with beta docking)
 - ImGuizmo
