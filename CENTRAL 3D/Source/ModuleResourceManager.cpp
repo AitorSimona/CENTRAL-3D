@@ -154,7 +154,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -201,6 +201,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::META:
 		resource = ImportMeta(IData);
+		break;
+
+	case Resource::ResourceType::SCRIPT:
+		//resource = ImportFolder(IData); //MYTODO: Dídac I assume I must create a new Importer to handle scripts importing
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -622,7 +626,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -634,6 +638,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
+	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
@@ -648,7 +653,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -694,6 +699,12 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
+	case Resource::ResourceType::SCRIPT:
+		//MYTODO: Dídac fill code following Aitor's Guidelines
+		resource = (Resource*)new ResourceScript(App->GetRandom().Int(), source_file);
+		scripts[resource->GetUID()] = (ResourceScript*)resource;
+		break;
+
 	case Resource::ResourceType::UNKNOWN:
 		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
@@ -710,7 +721,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -765,6 +776,12 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 			resource = metas[UID];
 
 		break;
+	
+	case Resource::ResourceType::SCRIPT:
+		//MYTODO: Dídac Follow Aitor's Guidelines
+
+		break;
+
 
 	case Resource::ResourceType::UNKNOWN:
 		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
@@ -781,7 +798,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -813,6 +830,9 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 
 	else if (extension == "vertex" || extension == "fragment")
 		type = Resource::ResourceType::SHADER_OBJECT;
+
+	else if (extension == "lua")
+		type = Resource::ResourceType::SCRIPT;
 
 	else if (extension == "meta")
 		type = Resource::ResourceType::META;
@@ -913,7 +933,7 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -949,8 +969,12 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		shader_objects.erase(resource->GetUID());
 		break;
 
+	case Resource::ResourceType::SCRIPT:
+		//scripts.erase(resource->GetUID());  // Uncomment when scripts map is implemented
+		break;
+
 	case Resource::ResourceType::META:
-		metas.erase(resource->GetUID());
+		metas.erase(resource->GetUID());  
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -973,7 +997,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
@@ -1047,6 +1071,16 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	shader_objects.clear();
+
+	//MYTODO: Dídac uncomment when scripts is uncommented
+	/*for (std::map<uint, ResourceShaderObject*>::iterator it = scripts.begin(); it != scripts.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = scripts.erase(it);
+	}
+
+	scripts.clear();*/
 
 	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end();)
 	{

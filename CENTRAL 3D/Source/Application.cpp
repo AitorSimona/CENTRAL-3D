@@ -11,6 +11,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
+#include "ModuleScripting.h"
 
 #include "mmgr/mmgr.h"
 
@@ -29,6 +30,7 @@ Application::Application()
 	window = new ModuleWindow(true);
 	scene_manager = new ModuleSceneManager(true);
 	renderer3D = new ModuleRenderer3D(true);
+	scripting = new ModuleScripting(true);
 	camera = new ModuleCamera3D(true);
 	gui = new ModuleGui(true);
 	textures = new ModuleTextures(true);

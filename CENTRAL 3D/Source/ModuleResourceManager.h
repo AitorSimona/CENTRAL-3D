@@ -15,6 +15,7 @@ class ResourceMesh;
 class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
+class ResourceScript;
 
 class ModuleResourceManager : public Module
 {
@@ -104,6 +105,7 @@ private:
 	std::map<uint, ResourceMesh*> meshes;
 	std::map<uint, ResourceTexture*> textures;
 	std::map<uint, ResourceShaderObject*> shader_objects;
+	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 };
 
