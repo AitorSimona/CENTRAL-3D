@@ -1,4 +1,8 @@
 #include "ComponentCamera.h"
+#include "Application.h"
+#include "ModuleRenderer3D.h"
+
+#include "Imgui/imgui.h"
 
 
 ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Camera)
@@ -149,4 +153,30 @@ json ComponentCamera::Save() const
 
 void ComponentCamera::Load(json& node)
 {
+}
+
+void ComponentCamera::CreateInspectorNode()
+{
+	if (ImGui::TreeNode("Camera"))
+	{
+		if (ImGui::Checkbox("Active Camera", &active_camera))
+			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
+
+
+		if (ImGui::Checkbox("Culling Camera", &culling))
+			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
+
+		ImGui::Text("FOV");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		float fov = GetFOV();
+
+		ImGui::DragFloat("##FOV", &fov, 0.005f);
+
+		if (fov != GetFOV())
+			SetFOV(fov);
+
+		ImGui::TreePop();
+	}
 }

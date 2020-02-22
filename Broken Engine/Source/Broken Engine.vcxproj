@@ -81,10 +81,8 @@
     <ClInclude Include="Components.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="glew\include\GL\eglew.h" />
-    <ClInclude Include="glew\include\GL\glew.h" />
-    <ClInclude Include="glew\include\GL\glxew.h" />
-    <ClInclude Include="glew\include\GL\wglew.h" />
+    <ClInclude Include="glad\include\glad\glad.h" />
+    <ClInclude Include="glad\include\KHR\khrplatform.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Imgui\imconfig.h" />
     <ClInclude Include="Imgui\imgui.h" />
@@ -239,6 +237,7 @@
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="Imgui\imgui.cpp" />
     <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp" />

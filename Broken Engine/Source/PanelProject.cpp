@@ -251,8 +251,20 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(0, 120, 255, 255);
-
+			
 			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0),color);
+
+			if (selected && selected->GetUID() == (*it)->GetUID()
+				&& wasclicked && ImGui::IsMouseReleased(0))
+			{
+				if (ImGui::IsItemHovered())
+				{
+					SetSelected(*it);
+					wasclicked = false;
+				}
+				else
+				SetSelected(nullptr);
+			}
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
@@ -266,10 +278,15 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 				ImGui::EndDragDropSource();
 			}
 
-			ImGui::PopStyleVar();
 
 			if (ImGui::IsItemClicked())
-				SetSelected(*it);
+			{
+				selected = *it;
+				wasclicked = true;
+			}
+
+			ImGui::PopStyleVar();
+
 
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));

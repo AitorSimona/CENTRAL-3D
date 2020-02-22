@@ -12,6 +12,7 @@
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 #include "DevIL/include/il.h"
+#include "Assimp/include/version.h"
 
 #include "mmgr/mmgr.h"
 
@@ -315,11 +316,14 @@ inline void PanelSettings::LibrariesNode() const
 	if (ImGui::Button("SDL")) { App->gui->RequestBrowser("https://www.libsdl.org/"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i.%i.%i", version.major, version.minor, version.patch);
 
+	if (ImGui::Button("Assimp")) { App->gui->RequestBrowser("http://www.assimp.org/"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i.%i", aiGetVersionMajor(), aiGetVersionMinor());
+
 	if (ImGui::Button("OpenGL")) { App->gui->RequestBrowser("https://www.opengl.org/"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glGetString(GL_VERSION));
 
-	if (ImGui::Button("Glew")) { App->gui->RequestBrowser("http://glew.sourceforge.net/"); }
-	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glewGetString(GLEW_VERSION));
+	if (ImGui::Button("Glad")) { App->gui->RequestBrowser("https://github.com/Dav1dde/glad"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "0.1.33");
 
 	if (ImGui::Button("ImGui")) { App->gui->RequestBrowser("https://github.com/ocornut/imgui"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", ImGui::GetVersion());

@@ -20,7 +20,6 @@
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
-#pragma comment(lib, "glew/libx86/glew32.lib")
 
 #include "mmgr/mmgr.h"
 
@@ -55,12 +54,10 @@ bool ModuleRenderer3D::Init(json file)
 		if(vsync && SDL_GL_SetSwapInterval(1) < 0)
 			CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
-		// Initialize glew
-		GLenum error = glewInit();
-
-		if (error != GL_NO_ERROR)
+		// Initialize glad
+		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) 
 		{
-			CONSOLE_LOG("|[error]: Error initializing glew! %s\n"/*, glewGetErrorString(error)*/);
+			CONSOLE_LOG("|[error]: Error initializing glad! %s\n");
 			ret = false;
 		}
 
@@ -82,8 +79,7 @@ bool ModuleRenderer3D::Init(json file)
 	//}
 
 	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
-	CONSOLE_LOG("Glew Version: %s", glewGetString(GLEW_VERSION));
-
+	CONSOLE_LOG("Glad Version: 0.1.33"); //Glad has no way to check its version
 	// --- Set engine's basic shaders ---
 	CreateDefaultShaders();
 

@@ -4,6 +4,7 @@
 #include "ModuleFileSystem.h"
 
 #include "GameObject.h"
+#include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
 
@@ -72,6 +73,26 @@ void ComponentMesh::ONResourceEvent(uint UID, Resource::ResourceNotificationType
 
 	default:
 		break;
+	}
+}
+
+void ComponentMesh::CreateInspectorNode()
+{
+	ImGui::Checkbox("##MeshActive", &GetActive());
+	ImGui::SameLine();
+
+
+	if (resource_mesh && ImGui::TreeNode("Mesh"))
+	{
+		std::string Triangle_count = "Triangles   ";
+		Triangle_count.append(std::to_string(resource_mesh->IndicesSize / 3));
+		ImGui::Text(Triangle_count.data());
+
+		//ImGui::Text("Instances:");
+		//ImGui::SameLine();
+		//ImGui::Text(std::to_string(mesh->resource_mesh->instances).data());
+
+		ImGui::TreePop();
 	}
 }
 

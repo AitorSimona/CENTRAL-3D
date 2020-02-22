@@ -23,6 +23,7 @@ private:
 	static void ONGameObjectSelected(const Event& e);
 	static void ONResourceDestroyed(const Event& e);
 private:
+	bool wasclicked = false;
 	uint imageSize_px = 48;
 	uint item_spacingX_px = 10;
 	uint item_spacingY_px = 15;

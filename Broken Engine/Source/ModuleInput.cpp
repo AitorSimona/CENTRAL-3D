@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
+#include "ModuleResourceManager.h"
 
 #include "mmgr/mmgr.h"
 
@@ -125,11 +126,12 @@ update_status ModuleInput::PreUpdate(float dt)
 			break;
 
 			case SDL_DROPFILE:
-				// --- Call Importer on file drop ---
+				// --- Call Resource Manager on file drop ---
 
 				std::string DroppedFile_path = e.drop.file;
 
-				//App->importer->LoadFromPath(e.drop.file);
+				Importer::ImportData IData(DroppedFile_path.c_str());
+				App->resources->ImportAssets(IData);
 
 				SDL_free((char*)DroppedFile_path.data());
 			break;

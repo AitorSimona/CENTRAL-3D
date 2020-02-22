@@ -29,6 +29,7 @@ ModuleResourceManager::~ModuleResourceManager()
 
 bool ModuleResourceManager::Init(json file)
 {
+
 	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
 	struct aiLogStream stream;
 	stream.callback = MyAssimpCallback;
@@ -943,6 +944,14 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 	case Resource::ResourceType::TEXTURE:
 		textures.erase(resource->GetUID());
+
+		// --- Tell mats ---
+		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+		{
+			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
+				(*it).second->resource_diffuse = nullptr;	
+		}
+
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:

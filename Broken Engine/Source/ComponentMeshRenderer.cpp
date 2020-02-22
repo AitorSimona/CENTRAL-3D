@@ -23,6 +23,8 @@
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
+#include "Imgui/imgui.h"
+
 #include "mmgr/mmgr.h"
 
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::MeshRenderer)
@@ -410,5 +412,121 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 	default:
 		break;
 	}
+}
+
+void ComponentMeshRenderer::CreateInspectorNode()
+{
+	ImGui::Checkbox("##RenActive", &GetActive());
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("Mesh Renderer"))
+	{
+
+		ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
+		ImGui::SameLine();
+		ImGui::Checkbox("Face Normals  ", &draw_facenormals);
+		ImGui::SameLine();
+		ImGui::Checkbox("Checkers", &checkers);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::NewLine();
+
+	ImGui::Separator();
+
+	ImGui::PushID("Material");
+
+	if (material)
+	{
+		// --- Mat preview
+		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
+
+		ImGui::SameLine();
+		
+		if (ImGui::TreeNode(material->GetName()))
+		{
+			static ImGuiComboFlags flags = 0;
+
+			ImGui::Text("Shader");
+			ImGui::SameLine();
+
+			const char* item_current = material->shader->name.c_str();
+			if (ImGui::BeginCombo("##Shader", item_current, flags))
+			{
+				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+				{
+					bool is_selected = (item_current == it->second->name);
+
+					if (ImGui::Selectable(it->second->name.c_str(), is_selected))
+					{
+						item_current = it->second->name.c_str();
+						material->shader = it->second;
+						material->shader->GetAllUniforms(material->uniforms);
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+
+			// --- Print Texture Path ---
+			//std::string Path = "Path: ";
+			//Path.append(material->resource_diffuse->Texture_path);
+
+			//ImGui::Text(Path.data());
+
+
+			if (material->resource_diffuse)
+			{
+				// --- Print Texture Width and Height ---
+				ImGui::Text(std::to_string(material->resource_diffuse->Texture_width).c_str());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(material->resource_diffuse->Texture_height).c_str());
+			}
+
+			//ImGui::Text("Shader Uniforms");
+
+			//App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material);
+
+			//ImGui::TreePop();
+
+			ImGui::Separator();
+			// --- Texture Preview ---
+			if (material->resource_diffuse)
+				ImGui::ImageButton((void*)(uint)material->resource_diffuse->GetPreviewTexID(), ImVec2(20, 20));
+			else
+				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+	
+			// --- Handle drag & drop ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					Resource* resource = App->resources->GetResource(UID, false);
+
+					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+					{
+						if (material->resource_diffuse)
+							material->resource_diffuse->Release();
+
+						material->resource_diffuse = (ResourceTexture*)App->resources->GetResource(UID);
+					}
+						
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::SameLine();
+			ImGui::Text("Albedo");
+
+			ImGui::TreePop();
+		}
+	}
+
+	ImGui::PopID();
 }
 
