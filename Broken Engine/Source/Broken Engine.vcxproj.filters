@@ -901,9 +901,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="CENTRAL 3D.rc">
-      <Filter>Sources\VSResources</Filter>
-    </ResourceCompile>
     <ClCompile Include="ModuleThreading.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>

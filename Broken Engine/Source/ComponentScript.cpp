@@ -25,6 +25,10 @@ void ComponentScript::Disable()
 	active = false;
 }
 
+void ComponentScript::CreateInspectorNode()
+{
+}
+
 void ComponentScript::AssignScript(std::string relative_path)
 {
 	//MYTODO: Dídac trying to compile

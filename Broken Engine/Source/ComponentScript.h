@@ -14,6 +14,7 @@ public:
 public:
 	void Enable() override;
 	void Disable() override;
+	void CreateInspectorNode() override;
 
 	void AssignScript(std::string path);
 
