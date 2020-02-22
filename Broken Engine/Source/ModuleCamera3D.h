@@ -35,10 +35,18 @@ private:
 
 public:
 
-	float speed = 0.0f;
+	float m_CameraSpeed = 10.0f;
+	float m_ScrollSpeed = 3.0f;
+
 	float3 reference = { 0.0f,0.0f,0.0f };
 	ComponentCamera* camera = nullptr;
 	LineSegment last_ray;
+
+private:
+
+	float m_CameraSpeedDeltaTime = 0.0f;
+	float m_ScrollSpeedDeltaTime = 0.0f;
+	float m_FinalSpeed = 0.0f;
 
 	bool m_ScrollingSpeedChange = false;
 	float m_SpeedMultiplicator = 1.0f;

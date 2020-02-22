@@ -64,9 +64,12 @@ update_status ModuleCamera3D::Update(float dt)
 {
 	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered)
 	{
-		speed = 10.0f * m_SpeedMultiplicator * dt;
+		m_CameraSpeedDeltaTime = m_CameraSpeed * dt;
+		m_ScrollSpeedDeltaTime = m_ScrollSpeed * dt;
+		m_FinalSpeed = m_CameraSpeedDeltaTime * m_SpeedMultiplicator;
+
 		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-			speed *= 2.0f;
+			m_FinalSpeed *= 2.0f;
 	}
 
 	return UPDATE_CONTINUE;
@@ -81,37 +84,35 @@ void ModuleCamera3D::UpdateCamera()
 		// --- Move ---
 		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 		{
-			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * speed;
-			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * speed;
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * m_FinalSpeed;
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * m_FinalSpeed;
 
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * m_FinalSpeed;
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * m_FinalSpeed;
 
-			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * speed;
-			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * speed;
-
-			if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) newPos -= camera->frustum.Up() * speed * 0.7f;
-			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) newPos += camera->frustum.Up() * speed * 0.7f;
-
+			if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) newPos -= camera->frustum.Up() * m_FinalSpeed * 0.7f;
+			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) newPos += camera->frustum.Up() * m_FinalSpeed * 0.7f;
 
 			if (abs(App->input->GetMouseWheel()) > 0)
 				ModifySpeedMultiplicator();
 
 			// --- Look Around ---
-			CameraLookAround(speed, camera->frustum.Pos());
+			CameraLookAround(m_CameraSpeedDeltaTime, camera->frustum.Pos());
 		}
 		// --- Zoom ---
 		else if (/*!App->gui->IsMouseCaptured() && */abs(App->input->GetMouseWheel()) > 0)
-			CameraZoom(speed);
+			CameraZoom(m_ScrollSpeedDeltaTime);
 
 		camera->frustum.SetPos(camera->frustum.Pos() + newPos);
 		reference += newPos;
 
 		// --- Camera Pan ---
 		if (App->input->GetMouseButton(2) == KEY_REPEAT)
-			CameraPan(speed/3.0f);		
+			CameraPan(m_ScrollSpeedDeltaTime);
 
 		// --- Orbit Object ---
 		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
-			CameraLookAround(speed, reference);
+			CameraLookAround(m_CameraSpeedDeltaTime, reference);
 
 		// --- Frame object ---
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
@@ -227,10 +228,7 @@ void ModuleCamera3D::ModifySpeedMultiplicator()
 {
 	m_ScrollingSpeedChange = true;
 
-	int mouse_wheel = App->input->GetMouseWheel();
-	float scroll = speed * mouse_wheel;
-
-	m_SpeedMultiplicator += scroll;
+	m_SpeedMultiplicator += (m_ScrollSpeedDeltaTime * App->input->GetMouseWheel());
 
 	if (m_SpeedMultiplicator > 15.0f)
 		m_SpeedMultiplicator = 15.0f;
