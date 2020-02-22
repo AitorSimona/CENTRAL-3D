@@ -32,7 +32,8 @@
 
 void ModuleSceneManager::ONResourceSelected(const Event& e)
 {
-	App->scene_manager->SetSelectedGameObject(nullptr);
+	if (App->scene_manager->SelectedGameObject)
+		App->scene_manager->SetSelectedGameObject(nullptr);
 }
 
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
@@ -296,7 +297,6 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 
 		if (mesh)
 		{
-
 			if (mesh->resource_mesh)
 			{
 				// --- We need to transform the ray to local mesh space ---
@@ -323,9 +323,8 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 	}
 
 	// --- Set Selected ---
-	if (toSelect)
+	//if (toSelect)
 		SetSelectedGameObject(toSelect);
-
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
@@ -410,12 +409,13 @@ void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 {
 	SelectedGameObject = go;
 
-	if (SelectedGameObject)
-	{
+	// MYTODO: Temporal adjustment for GameObject deselection
+	//if (SelectedGameObject)
+	//{
 		Event e(Event::EventType::GameObject_selected);
 		e.go = go;
 		App->event_manager->PushEvent(e);
-	}
+	//}
 }
 
 GameObject * ModuleSceneManager::CreateEmptyGameObject()
@@ -606,7 +606,7 @@ void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, Resou
 	par_shapes_rotate(left, float(-PAR_PI * 0.5), (float*)&float3::unitY);
 	par_shapes_translate(left, -0.5f, -0.5f, -0.5f);
 
-	par_shapes_rotate(right, float(PAR_PI*0.5), (float*)&float3::unitY);
+	par_shapes_rotate(right, float(PAR_PI * 0.5), (float*)&float3::unitY);
 	par_shapes_translate(right, 0.5f, -0.5f, 0.5f);
 
 	par_shapes_merge_and_free(mesh, top);

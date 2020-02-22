@@ -130,7 +130,7 @@ bool PanelScene::Draw()
 void PanelScene::HandleGuizmo()
 {
 	// --- Set Current Guizmo operation ---
-	if (ImGui::IsWindowHovered())
+	if (ImGui::IsWindowHovered() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_IDLE)
 	{
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;

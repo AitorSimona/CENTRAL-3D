@@ -4,7 +4,6 @@
 #include "Panel.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 
-
 class PanelScene : public Panel
 {
 public:
@@ -17,13 +16,11 @@ public:
 private:
 	void HandleGuizmo();
 
+public:
 	ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 	ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
 
-public:
-
 	bool SceneHovered = false;
-
 
 	float width = 0.0f;
 	float height = 0.0f;
