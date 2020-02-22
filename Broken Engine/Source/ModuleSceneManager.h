@@ -45,7 +45,7 @@ public:
 	void SetSelectedGameObject(GameObject* go);
 
 	// --- Utilities ---
-	void DrawGrid();
+	void DrawGrid(bool drawAxis, float size);
 	void Draw();
 	void RedoOctree();
 	void SetStatic(GameObject* go);
