@@ -65,6 +65,16 @@ bool PanelSettings::Draw()
 			HardwareNode();
 			ImGui::Separator();
 		}
+		if (ImGui::CollapsingHeader("Software"))
+		{
+			SoftwareNode();
+			ImGui::Separator();
+		}
+		if (ImGui::CollapsingHeader("Memory"))
+		{
+			RAMMemoryNode();
+			ImGui::Separator();
+		}
 		if (ImGui::CollapsingHeader("Libraries"))
 		{
 			LibrariesNode();
@@ -338,17 +348,77 @@ inline void PanelSettings::EngineCameraNode() const
 	}
 }
 
+inline void PanelSettings::SoftwareNode() const
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+	ImVec4 Color = ImVec4(255, 255, 0, 255);	
+	SoftwareInfo swInfo = App->hardware->GetSwInfo();
+
+	// --- INFO
+	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate().c_str());
+	ImGui::SameLine(); ImGui::Text("and Time: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationTime().c_str());
+	ImGui::Text("%s", swInfo.MultithreadedSpecified().c_str());
+
+	ImGui::Separator();
+	ImGui::Text("Windows OS: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetWindowsVersion().c_str());
+	ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetSDLVersion().c_str());
+	ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (const char*)(swInfo.GetOGLVersion()));
+	ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (const char*)(swInfo.GetOGLShadingVersion()));
+
+	ImGui::Separator();
+	ImGui::Text("C++ Minimum Version Supported by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCppVersionImplementedByCompiler().c_str());
+	ImGui::SameLine(); ImGui::Text(" ("); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCPPNumericalVersion().c_str()); ImGui::SameLine(); ImGui::Text(")");
+
+	ImGui::Text("C++ Used Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (swInfo.GetCppCompilerVersion()).c_str());
+	ImGui::Text("Visual Studio Compiler Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetVSCompilerVersion().c_str());
+	// ---
+
+	ImGui::PopStyleVar();
+}
+
+
+inline void PanelSettings::RAMMemoryNode() const
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+	ImVec4 Color = ImVec4(255, 255, 0, 255);
+
+	MemoryHardware HardwareInfo = App->hardware->GetMemInfo();
+
+	// --- INFO
+	ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetRAMSizeFromSDL()) + " GB").c_str()));
+	ImGui::Text("Total Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetPhysicalMemory()) + " GB").c_str()));
+	ImGui::Text("Available Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetFreePhysicalMemory()) + " GB").c_str()));
+	ImGui::Text("Used Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetUsedPhysicalMemory()) + " GB").c_str()));
+	ImGui::Text("Percentage of Memory Load: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetPercentageOfMemoryLoad()) + " " + "%%").c_str()));
+	ImGui::Text("");
+	ImGui::Text("Physical Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetPhysMemoryUsedByProcess()) + " MB").c_str()));
+	ImGui::Text("Virtual Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetVirtualMemoryUsedByProcess()) + " MB").c_str()));
+
+	ImGui::Text(" MMGR Memory Statistics"); ImGui::SameLine(); ImGui::Separator();
+	ImGui::Text("Total Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetMemStatsFromMMGR_TotalReportedMemory()) + " Bytes").c_str()));
+	ImGui::Text("Total Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetMemStatsFromMMGR_TotalActualMemory()) + " Bytes").c_str()));
+	ImGui::Text("Peak Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetMemStatsFromMMGR_PeakReportedMemory()) + " Bytes").c_str()));
+	ImGui::Text("Peak Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetMemStatsFromMMGR_PeakActualMemory()) + " Bytes").c_str()));
+	ImGui::Text("Accumulated Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetMemStatsFromMMGR_AccumulatedReportedMemory())).c_str()));
+	ImGui::Text("Accumulated Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetMemStatsFromMMGR_AccumulatedActualMemory())).c_str()));
+
+	ImGui::Text(" MMGR Allocated Unit Count Statistics"); ImGui::SameLine(); ImGui::Separator();
+	ImGui::Text("Total Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (std::to_string(HardwareInfo.GetMemStatsFromMMGR_TotalAllocUnitCount()).c_str()));
+	ImGui::Text("Peak Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (std::to_string(HardwareInfo.GetMemStatsFromMMGR_PeakAllocUnitCount()).c_str()));
+	ImGui::Text("Accumulated Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (std::to_string(HardwareInfo.GetMemStatsFromMMGR_AccumulatedAllocUnitCount()).c_str()));
+	// ---
+
+	ImGui::PopStyleVar();
+}
+
 inline void PanelSettings::HardwareNode() const
 {
 	hw_info hardware_info = App->hardware->GetInfo();
 
-	ImGui::Separator();
-	// --- SDL Version ---
-	ImGui::Text("SDL Version:");	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.sdl_version); 
-	ImGui::Separator();
-
 	// --- CPU ---
+	ImGui::Separator();
+	ImGui::Text("PROCESSOR INFORMATION (CPU)");
+	
 	ImGui::Text("CPU Logic Cores:");	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.cpu_count);
 
@@ -358,36 +428,32 @@ inline void PanelSettings::HardwareNode() const
 	ImGui::Text("CPU Instruction Support:");ImGui::SameLine();
 
 	if(hardware_info.rdtsc)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "rdtsc");ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "RDTSC");ImGui::SameLine();
 	if (hardware_info.altivec)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "altivec");ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "ALTIVEC");ImGui::SameLine();
 	if (hardware_info.now3d)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "now3d");ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "NOW3D");ImGui::SameLine();
 	if (hardware_info.mmx)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "mmx");	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "MMX");	ImGui::SameLine();
 	if (hardware_info.sse)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse");	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE");	ImGui::SameLine();
 	if (hardware_info.sse2)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse2");ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE2");ImGui::SameLine();
 	if (hardware_info.sse3)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse3");ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE3");ImGui::SameLine();
 	if (hardware_info.sse41)						   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse41"); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE41"); ImGui::SameLine();
 	if (hardware_info.sse42)						   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "sse42");ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE42");ImGui::SameLine();
 	if (hardware_info.avx)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "avx");	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "AVX");	ImGui::SameLine();
 	if (hardware_info.avx2)						
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "avx2");
-
-	ImGui::Separator();
-	// --- RAM ---
-	ImGui::Text("RAM Memory (Gb)");ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.ram_gb);
-
-	ImGui::Separator();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "AVX2");
 
 	// --- GPU --- 
+	ImGui::Separator();
+	ImGui::Text("GRAPHICS CARD INFORMATION (GPU)");
+
 	ImGui::Text("GPU Vendor");	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_vendor.data());
 
