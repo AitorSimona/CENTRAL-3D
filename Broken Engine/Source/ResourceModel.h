@@ -15,6 +15,7 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 	void AddResource(Resource* resource);
+	void RemoveResource(Resource* resource);
 	std::vector<Resource*>* GetResources();
 
 	bool openInProject = false;

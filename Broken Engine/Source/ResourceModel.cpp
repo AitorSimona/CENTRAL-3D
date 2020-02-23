@@ -53,6 +53,19 @@ void ResourceModel::AddResource(Resource* resource)
 	}
 }
 
+void ResourceModel::RemoveResource(Resource* resource)
+{
+	for (std::vector<Resource*>::iterator it = resources.begin(); it != resources.end(); ++it)
+	{
+		if ((*it)->GetUID() == resource->GetUID())
+		{
+			resources.erase(it);
+			CONSOLE_LOG("Bye!");
+			break;
+		}
+	}
+}
+
 std::vector<Resource*>* ResourceModel::GetResources() 
 {
 	return &resources;
