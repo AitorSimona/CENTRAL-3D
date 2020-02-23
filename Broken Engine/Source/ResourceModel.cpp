@@ -60,7 +60,6 @@ void ResourceModel::RemoveResource(Resource* resource)
 		if ((*it)->GetUID() == resource->GetUID())
 		{
 			resources.erase(it);
-			CONSOLE_LOG("Bye!");
 			break;
 		}
 	}
