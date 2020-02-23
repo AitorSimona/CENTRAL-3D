@@ -543,6 +543,8 @@
     <ClInclude Include="Errors.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="gpudetect\DeviceId.h" />
+    <ClInclude Include="gpudetect\dxgi1_4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -878,6 +880,7 @@
     <ClCompile Include="glad\src\glad.c">
       <Filter>Sources\3rd Party\glad</Filter>
     </ClCompile>
+    <ClCompile Include="gpudetect\DeviceId.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="EXE ICON.ico">

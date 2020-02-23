@@ -381,7 +381,6 @@ inline void PanelSettings::RAMMemoryNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-
 	MemoryHardware HardwareInfo = App->hardware->GetMemInfo();
 
 	// --- INFO
@@ -413,66 +412,120 @@ inline void PanelSettings::RAMMemoryNode() const
 
 inline void PanelSettings::HardwareNode() const
 {
-	hw_info hardware_info = App->hardware->GetInfo();
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+	ImVec4 Color = ImVec4(255, 255, 0, 255);
+	ProcessorHardware CPUData = App->hardware->GetProcessorInfo();
+	GPUHardware GPUData = App->hardware->GetGraphicsCardInfo();
 
-	// --- CPU ---
-	ImGui::Separator();
+	// --- INFO
 	ImGui::Text("PROCESSOR INFORMATION (CPU)");
-	
-	ImGui::Text("CPU Logic Cores:");	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.cpu_count);
+	ImGui::Separator();
 
-	ImGui::Text("CPU L1 Cache (Kb):");	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.l1_cachekb);
+	ImGui::Text("CPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUBrand().c_str()));
+	ImGui::Text("CPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUVendor().c_str()));
+	ImGui::Text("CPU Arhitecture: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUArchitecture().c_str()));
+	ImGui::SameLine(); ImGui::Text("    CPU Cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(CPUData.GetCPUCores()).c_str());
+	ImGui::SameLine(); ImGui::Text("    CPU Processors: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetNumberOfProcessors().c_str());
+	ImGui::Text("");
+	ImGui::Text("CPU Revision: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetProcessorRevision().c_str());
+	ImGui::Text("CPU Line L1 Cache Size: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(CPUData.GetCPUCacheLine1Size()) + " Bytes").c_str());
+	ImGui::Text("");
+	ImGui::Text("CPU Instructions Set: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetCPUInstructionSet().c_str());
+	// ---
 
-	ImGui::Text("CPU Instruction Support:");ImGui::SameLine();
-
-	if(hardware_info.rdtsc)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "RDTSC");ImGui::SameLine();
-	if (hardware_info.altivec)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "ALTIVEC");ImGui::SameLine();
-	if (hardware_info.now3d)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "NOW3D");ImGui::SameLine();
-	if (hardware_info.mmx)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "MMX");	ImGui::SameLine();
-	if (hardware_info.sse)
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE");	ImGui::SameLine();
-	if (hardware_info.sse2)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE2");ImGui::SameLine();
-	if (hardware_info.sse3)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE3");ImGui::SameLine();
-	if (hardware_info.sse41)						   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE41"); ImGui::SameLine();
-	if (hardware_info.sse42)						   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE42");ImGui::SameLine();
-	if (hardware_info.avx)							   
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "AVX");	ImGui::SameLine();
-	if (hardware_info.avx2)						
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "AVX2");
-
-	// --- GPU --- 
 	ImGui::Separator();
 	ImGui::Text("GRAPHICS CARD INFORMATION (GPU)");
+	ImGui::Separator();
 
-	ImGui::Text("GPU Vendor");	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_vendor.data());
-
-	ImGui::Text("GPU Model"); ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_brand.data());
-
+	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(GPUData.GetGPUBenchmark()));
+	ImGui::Text("GPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUInfo_GPUDet().m_GPUBrand.c_str());
+	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(GPUData.GetGPUModel()));
 	ImGui::Text("GPU Driver"); ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_driver.data());
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", App->hardware->GetInfo().gpu_driver.data());
+	ImGui::Text("GPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(GPUData.GetGPUInfo_GPUDet().m_GPUVendor).c_str());
+	ImGui::SameLine(); ImGui::Text("   GPU ID: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(GPUData.GetGPUInfo_GPUDet().m_GPUID).c_str());
 
 	// (Currently NVIDIA only)
-	ImGui::Text("VRAM Budget");	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_budget);
+	ImGui::Text("GPU VRAM"); ImGui::SameLine(); ImGui::Separator();
 
+	ImGui::Text("Total VRAM: ");	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", (std::to_string(App->hardware->GetInfo().vram_mb_budget) + " GB").c_str());
+	ImGui::Text("VRAM Without System Usage: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB) + " GB").c_str());
 	ImGui::Text("VRAM Available"); ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_available);
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", (std::to_string(App->hardware->GetInfo().vram_mb_available) + " GB").c_str());
+	ImGui::Text("Actual/Real VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB) + " GB").c_str());
+	ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " GB").c_str());
+	ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " GB").c_str());
 
-	ImGui::Text("VRAM Usage"); ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_usage);
+
+	if (ImGui::Button("Recalculate Parameters"))
+		App->hardware->RecalculateParameters();
+
+	ImGui::PopStyleVar();
 }
+
+//inline void PanelSettings::HardwareNode() const
+//{
+//	hw_info hardware_info = App->hardware->GetInfo();
+//
+//	// --- CPU ---
+//	ImGui::Separator();
+//	ImGui::Text("PROCESSOR INFORMATION (CPU)");
+//	
+//	ImGui::Text("CPU Logic Cores:");	ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.cpu_count);
+//
+//	ImGui::Text("CPU L1 Cache (Kb):");	ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", hardware_info.l1_cachekb);
+//
+//	ImGui::Text("CPU Instruction Support:");ImGui::SameLine();
+//
+//	if(hardware_info.rdtsc)
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "RDTSC");ImGui::SameLine();
+//	if (hardware_info.altivec)
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "ALTIVEC");ImGui::SameLine();
+//	if (hardware_info.now3d)
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "NOW3D");ImGui::SameLine();
+//	if (hardware_info.mmx)							   
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "MMX");	ImGui::SameLine();
+//	if (hardware_info.sse)
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE");	ImGui::SameLine();
+//	if (hardware_info.sse2)							   
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE2");ImGui::SameLine();
+//	if (hardware_info.sse3)							   
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE3");ImGui::SameLine();
+//	if (hardware_info.sse41)						   
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE41"); ImGui::SameLine();
+//	if (hardware_info.sse42)						   
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "SSE42");ImGui::SameLine();
+//	if (hardware_info.avx)							   
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "AVX");	ImGui::SameLine();
+//	if (hardware_info.avx2)						
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", "AVX2");
+//
+//	// --- GPU --- 
+//	ImGui::Separator();
+//	ImGui::Text("GRAPHICS CARD INFORMATION (GPU)");
+//
+//	ImGui::Text("GPU Vendor");	ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_vendor.data());
+//
+//	ImGui::Text("GPU Model"); ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_brand.data());
+//
+//	ImGui::Text("GPU Driver"); ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", hardware_info.gpu_driver.data());
+//
+//	// (Currently NVIDIA only)
+//	ImGui::Text("VRAM Budget");	ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_budget);
+//
+//	ImGui::Text("VRAM Available"); ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_available);
+//
+//	ImGui::Text("VRAM Usage"); ImGui::SameLine();
+//	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", hardware_info.vram_mb_usage);
+//}
 
 inline void PanelSettings::LibrariesNode() const
 {
