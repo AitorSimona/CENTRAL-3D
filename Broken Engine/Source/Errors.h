@@ -82,8 +82,8 @@ static void SetErrorHandler(int MajV, int minV)
 {
 	if (MajV < 4 || minV < 3) {
 
-		std::cout << "glDebugMessageCallback not Available because of OpenGL Version!" << std::endl << "	Error Handler NOT running - Unsuccessful Operation" << std::endl;
-		std::cout << "	OpenGL Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl;
+		std::cout << "\n\n\n\nglDebugMessageCallback not Available because of OpenGL Version!" << std::endl << "	Error Handler NOT running - Unsuccessful Operation" << std::endl;
+		std::cout << "	OpenGL Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl << std::endl << std::endl;
 		return;
 	}
 
@@ -98,8 +98,8 @@ static void SetErrorHandler(int MajV, int minV)
 	//__debugbreak();
 	// To Output a Message: glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0, GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Vary dangerous error");
 
-	std::cout << "---- Registering OpenGL debug Callback - Error Handler ----" << std::endl << "	Error Handler Running Successfully" << std::endl;
-	std::cout << "	Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl;
+	std::cout << std::endl << std::endl << std::endl << std::endl <<	"---- Registering OpenGL debug Callback - Error Handler ----" << std::endl << "	Error Handler Running Successfully" << std::endl;
+	std::cout <<														"	Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl << std::endl << std::endl;
 }
 
 #endif

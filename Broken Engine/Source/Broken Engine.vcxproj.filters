@@ -540,7 +540,9 @@
     <ClInclude Include="glad\include\glad\glad.h">
       <Filter>Sources\3rd Party\glad</Filter>
     </ClInclude>
-    <ClInclude Include="Errors.h" />
+    <ClInclude Include="Errors.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">

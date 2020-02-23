@@ -45,10 +45,10 @@ void SystemConsoleLog(const char file[], int line, const char* format, ...)
 
 void LogCompilationFirstMessage()
 {
-	std::cout				<<	"-- Compilation Start Succeeded --"	<<		std::endl			<<
-								"	Compilation at Date "			<<		__DATE__			<<
-								" and Time "						<<		__TIME__			<<
-	std::endl;
+	std::cout << std::endl << std::endl << std::endl << std::endl <<	"-- Compilation Start Succeeded --"	<<		std::endl			<<
+																		"	Compilation at Date "			<<		__DATE__			<<
+																		" and Time "						<<		__TIME__			<<
+	std::endl << std::endl << std::endl << std::endl;
 
 	if (App)
 	{
