@@ -43,6 +43,7 @@ bool ModuleResourceManager::Init(json file)
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
 	importers.push_back(new ImporterTexture());
+	importers.push_back(new ImporterScript);
 	importers.push_back(new ImporterMeta());
 
 	return true;
@@ -61,6 +62,7 @@ bool ModuleResourceManager::Start()
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
+	filters.push_back("lua");
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -205,7 +207,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		break;
 
 	case Resource::ResourceType::SCRIPT:
-		//resource = ImportFolder(IData); //MYTODO: Dídac I assume I must create a new Importer to handle scripts importing
+		resource = ImportScript(IData); //MYTODO: Dídac I assume I must create a new Importer to handle scripts importing
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -376,6 +378,23 @@ Resource* ModuleResourceManager::ImportShaderObject(Importer::ImportData& IData)
 		// Import
 
 	return shader_object;
+}
+
+Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
+{
+	Resource* script = nullptr;
+
+	ImporterScript* IScr = GetImporter<ImporterScript>();
+
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+		script = IScr->Load(IData.path);
+	// --- Else call relevant importer ---
+	else
+		script = IScr->Import(IData);
+
+
+	return script;
 }
 
 Resource* ModuleResourceManager::ImportMeta(Importer::ImportData& IData)
@@ -779,8 +798,8 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		break;
 	
 	case Resource::ResourceType::SCRIPT:
-		//MYTODO: Dídac Follow Aitor's Guidelines
-
+		resource = (Resource*)new ResourceScript(UID, source_file);
+		scripts[resource->GetUID()] = (ResourceScript*)resource;
 		break;
 
 
@@ -979,7 +998,7 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		break;
 
 	case Resource::ResourceType::SCRIPT:
-		//scripts.erase(resource->GetUID());  // Uncomment when scripts map is implemented
+		scripts.erase(resource->GetUID());
 		break;
 
 	case Resource::ResourceType::META:
@@ -1081,15 +1100,14 @@ bool ModuleResourceManager::CleanUp()
 
 	shader_objects.clear();
 
-	//MYTODO: Dídac uncomment when scripts is uncommented
-	/*for (std::map<uint, ResourceShaderObject*>::iterator it = scripts.begin(); it != scripts.end();)
+	for (std::map<uint, ResourceScript*>::iterator it = scripts.begin(); it != scripts.end();)
 	{
 		it->second->FreeMemory();
 		delete it->second;
 		it = scripts.erase(it);
 	}
 
-	scripts.clear();*/
+	scripts.clear();
 
 	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end();)
 	{

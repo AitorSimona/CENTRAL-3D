@@ -555,6 +555,9 @@
     <ClInclude Include="glad\include\glad\glad.h">
       <Filter>Sources\3rd Party\glad</Filter>
     </ClInclude>
+    <ClInclude Include="ImporterScript.h">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -898,6 +901,9 @@
     </ClCompile>
     <ClCompile Include="ResourceScript.cpp">
       <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterScript.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

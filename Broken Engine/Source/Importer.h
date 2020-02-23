@@ -18,6 +18,7 @@ public:
 		Mesh,
 		Texture,
 		Shader_Object,
+		Script,
 		Meta,
 		Unknown
 	};

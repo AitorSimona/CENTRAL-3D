@@ -3,8 +3,7 @@
 ResourceScript::ResourceScript(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCRIPT, UID, source_file)
 {
 	extension = ".lua";
-	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
-
+	resource_file = SCRIPTS_FOLDER + std::to_string(UID) + extension;
 }
 
 ResourceScript::~ResourceScript()
@@ -13,15 +12,18 @@ ResourceScript::~ResourceScript()
 
 bool ResourceScript::LoadInMemory()
 {
-	return false;
+	//Script doesn't generate any additional memory than the resource cretion itself
+	return true;
 }
 
 void ResourceScript::OnOverwrite()
 {
+	// Here we have to manage hot Reloading
 }
 
 void ResourceScript::OnDelete()
 {
+	//Script Resource doesn't generate any additional memory
 }
 
 void ResourceScript::FreeMemory()

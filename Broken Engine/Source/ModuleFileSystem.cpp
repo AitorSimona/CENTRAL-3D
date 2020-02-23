@@ -389,6 +389,13 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 
 }
 
+//Returns a filename without extension
+void ModuleFileSystem::RemoveFileExtension(std::string& file)
+{
+	std::size_t pos = file.find(".");    // position of "." in str
+	file = file.substr(0, pos);     // get from the beginning to "."
+}
+
 
 unsigned int ModuleFileSystem::Load(const char * path, const char * file, char ** buffer) const
 {
