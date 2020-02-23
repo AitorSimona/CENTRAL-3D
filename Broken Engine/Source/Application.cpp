@@ -12,6 +12,7 @@
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 #include "ModuleThreading.h"
+#include "ModuleAudio.h"
 
 #include "mmgr/mmgr.h"
 
@@ -35,6 +36,7 @@ Application::Application()
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
+	audio = new ModuleAudio(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -58,6 +60,8 @@ Application::Application()
 
 	// Scenes
 	AddModule(scene_manager);
+
+	AddModule(audio);
 
 	// Renderer last!
 	AddModule(renderer3D);
