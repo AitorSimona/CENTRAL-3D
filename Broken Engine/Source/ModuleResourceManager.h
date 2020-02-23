@@ -23,6 +23,7 @@ class ModuleResourceManager : public Module
 	friend class ImporterMeta;
 	friend class ImporterMesh;
 	friend class ImporterMaterial;
+	friend class ImporterScene;
 	friend class ImporterFolder;
 	friend class PanelResources;
 	friend class ComponentMeshRenderer;
