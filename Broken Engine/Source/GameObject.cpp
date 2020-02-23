@@ -188,7 +188,7 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	else
 	{
 		// --- If we find a component of the same type, tell the user and return such component ---
-		CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
+		ENGINE_CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
 		component = HasComponent(type);
 	}
 

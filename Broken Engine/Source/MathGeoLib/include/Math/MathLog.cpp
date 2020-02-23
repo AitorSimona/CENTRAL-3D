@@ -15,6 +15,9 @@
 /** @file Log.cpp
 	@author Jukka Jylänki
 	@brief The LOG and LOGUSER macros. Provides an unified mechanism for logging. */
+
+#ifndef LOGGING_SUPPORT_DISABLED
+
 #include "MathLog.h"
 
 #include <cstring>
@@ -152,4 +155,5 @@ void PrintToConsoleVariadic(MathLogChannel channel, const char *format, ...)
 	va_end(args);
 }
 
+#endif
 MATH_END_NAMESPACE

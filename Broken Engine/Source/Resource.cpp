@@ -110,7 +110,7 @@ void Resource::Release()
 		}
 	}
 	else
-		CONSOLE_LOG("![Warning]: Trying to release an already released resource: %s", name.c_str());
+		ENGINE_CONSOLE_LOG("![Warning]: Trying to release an already released resource: %s", name.c_str());
 }
 
 void Resource::AddUser(GameObject* user)

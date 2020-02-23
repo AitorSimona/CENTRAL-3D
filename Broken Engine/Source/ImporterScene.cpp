@@ -52,7 +52,7 @@ Resource* ImporterScene::Import(ImportData& IData) const
 
 	//}
 	//else
-	//	CONSOLE_LOG("|[error]: Error loading FBX %s", &File_path);
+	//	ENGINE_CONSOLE_LOG("|[error]: Error loading FBX %s", &File_path);
 
 	return nullptr;
 }
@@ -339,7 +339,7 @@ Resource* ImporterScene::Load(const char * path) const
 	//					new_go->SetMaterial(mat);
 	//				}
 	//				else
-	//					CONSOLE_LOG("|[error]: Could not find %s", component_path.data());
+	//					ENGINE_CONSOLE_LOG("|[error]: Could not find %s", component_path.data());
 
 	//				break;
 
@@ -368,7 +368,7 @@ Resource* ImporterScene::Load(const char * path) const
 	//					}
 	//				}
 	//				else
-	//					CONSOLE_LOG("|[error]: Could not find %s", component_path.data());
+	//					ENGINE_CONSOLE_LOG("|[error]: Could not find %s", component_path.data());
 	//				break;
 
 	//			case Component::ComponentType::Camera:

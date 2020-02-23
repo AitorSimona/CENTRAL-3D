@@ -108,7 +108,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 		// --- Set Game Object to be destroyed ---
 		if (ImGui::IsWindowFocused() && Go == App->scene_manager->GetSelectedGameObject() && App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 		{
-			CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
+			ENGINE_CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
 			to_destroy = Go;
 		}
 

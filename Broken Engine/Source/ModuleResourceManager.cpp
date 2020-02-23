@@ -16,7 +16,7 @@
 // --- Get Assimp LOGS and print them to console ---
 void MyAssimpCallback(const char* msg, char* userData)
 {
-	CONSOLE_LOG("[Assimp]: %s", msg);
+	ENGINE_CONSOLE_LOG("[Assimp]: %s", msg);
 }
 
 ModuleResourceManager::ModuleResourceManager(bool start_enabled)
@@ -207,7 +207,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 	case Resource::ResourceType::UNKNOWN:
 		break;
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
 		break;
 	}
 
@@ -216,10 +216,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		if(type != Resource::ResourceType::FOLDER && type != Resource::ResourceType::META)
 		AddResourceToFolder(resource);
 
-		CONSOLE_LOG("Imported successfully: %s", IData.path);
+		ENGINE_CONSOLE_LOG("Imported successfully: %s", IData.path);
 	}
 	else
-		CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
+		ENGINE_CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
 
 
 	return resource;
@@ -427,7 +427,7 @@ void ModuleResourceManager::HandleFsChanges()
 		// --- Meta's associated file has been deleted, print warning and eliminate lib files ---
 		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
 		{
-			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
+			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
 			
 			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);
@@ -459,7 +459,7 @@ void ModuleResourceManager::HandleFsChanges()
 					// --- If dates are not equal, file has been overwritten ---
 					if (date != (*meta).second->Date)
 					{
-						CONSOLE_LOG("Reimported file: %s", (*files).c_str());
+						ENGINE_CONSOLE_LOG("Reimported file: %s", (*files).c_str());
 
 						Resource* resource = GetResource((*meta).second->GetUID(), false);
 
@@ -493,7 +493,7 @@ void ModuleResourceManager::HandleFsChanges()
 				if (date != (*meta).second->Date)
 				{	
 					// --- Basically update meta, files inside will be taken care of  ---
-					CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
+					ENGINE_CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
 
 					Resource* resource = GetResource((*meta).second->GetUID(), false);
 
@@ -639,7 +639,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
 	else if (!resource)
-		CONSOLE_LOG("![Warning]: Could not load: %i", UID);
+		ENGINE_CONSOLE_LOG("![Warning]: Could not load: %i", UID);
 
 
 	return resource;
@@ -696,11 +696,11 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -768,11 +768,11 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -963,11 +963,11 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 

@@ -38,7 +38,7 @@ bool ModuleCamera3D::Init(json config)
 // -----------------------------------------------------------------
 bool ModuleCamera3D::Start()
 {
-	CONSOLE_LOG("Setting up the camera");
+	ENGINE_CONSOLE_LOG("Setting up the camera");
 
 	bool ret = true;
 	camera->frustum.SetPos(float3(0.0f, 25.0f,-50.0f));
@@ -52,7 +52,7 @@ bool ModuleCamera3D::Start()
 // -----------------------------------------------------------------
 bool ModuleCamera3D::CleanUp()
 {
-	CONSOLE_LOG("Cleaning camera");
+	ENGINE_CONSOLE_LOG("Cleaning camera");
 
 	delete camera;
 
@@ -148,8 +148,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 	normalized_x = ((normalized_x / (float)App->window->GetWindowWidth()) - 0.5) * 2;
 	normalized_y = ((1.0f - (normalized_y / (float)App->window->GetWindowHeight())) - 0.5) * 2;
 
-	//CONSOLE_LOG("mouse_X: %f", normalized_x);
-	//CONSOLE_LOG("mouse_Y: %f", normalized_y);
+	//ENGINE_CONSOLE_LOG("mouse_X: %f", normalized_x);
+	//ENGINE_CONSOLE_LOG("mouse_Y: %f", normalized_y);
 
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 	last_ray = ray;
