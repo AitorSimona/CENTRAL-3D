@@ -67,7 +67,8 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer"};
+		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer", "ComponentCollider"};
+
 		static const char* item_current = items[0];
 
 		// --- Add component ---
@@ -97,6 +98,11 @@ bool PanelInspector::Draw()
 		if (item_current == "ComponentMeshRenderer")
 		{
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
+		}
+
+		if (item_current == "ComponentCollider")
+		{
+			Selected->AddComponent(Component::ComponentType::Collider);
 		}
 
 		// MYTODO: move this to the component itself 
@@ -246,57 +252,4 @@ inline void PanelInspector::CreateCameraNode(GameObject & Selected) const
 		ImGui::TreePop();
 	}
 	
-}
-
-inline void PanelInspector::CreateColliderNode(GameObject& Selected) const
-{
-	ComponentCollider* collider = Selected.GetComponent<ComponentCollider>();
-
-	if (Startup)
-		ImGui::SetNextItemOpen(true);
-
-	if (ImGui::TreeNode("Collider"))
-	{
-		static int colliderType = 0;
-		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0\0");
-
-		switch (colliderType)
-		{
-		case 0:
-			collider->type = ComponentCollider::COLLIDER_TYPE::NONE;
-			break;
-		case 1:
-			collider->type = ComponentCollider::COLLIDER_TYPE::BOX;
-			break;
-		case 2:
-			collider->type = ComponentCollider::COLLIDER_TYPE::SPHERE;
-			break;
-		}
-
-		if (ImGui::Checkbox("Edit Collider", &collider->editCollider))
-		{
-			float3* position = &collider->localPosition;
-			ImGui::Text("X");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-			ImGui::DragFloat("##PX", &position->x, 0.005f);
-
-			ImGui::SameLine();
-
-			ImGui::Text("Y");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-			ImGui::DragFloat("##PY", &position->y, 0.005f);
-
-			ImGui::SameLine();
-
-			ImGui::Text("Z");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-			ImGui::DragFloat("##PZ", &position->z, 0.005f);
-		}
-	}
 }
