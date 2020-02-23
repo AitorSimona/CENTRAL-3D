@@ -60,7 +60,8 @@ bool ModuleRenderer3D::Init(json file)
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Error initializing glad! %s\n");
 			ret = false;
 		}
-
+		else
+			GL_SETERRORHANDLER(4, 4); //OpenGL Error Handler
 	}
 
 	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges ---

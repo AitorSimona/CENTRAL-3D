@@ -4,7 +4,9 @@
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
 #pragma warning( disable : 4530 )
 
+#include "glad/include/glad/glad.h"
 #include <windows.h>
+#include "Errors.h"
 #include <stdio.h>
 
 //Just in case -- Null redefinition
@@ -16,7 +18,7 @@
 
 
 // LOGGING -----------------------------------------------------------------------
-//Visual Studio Console will log both system & engine consoles!!!!!!!!!!!
+// Visual Studio Console will log both system & engine consoles!!!!!!!!!!!
 /// Print only in Engine Console
 #define ENGINE_CONSOLE_LOG(format, ...) EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// Print only in System Console
@@ -34,8 +36,18 @@ void SystemConsoleLog(const char file[], int line, const char* format, ...);
 
 
 // ERROR HANDLING ----------------------------------------------------------------
-
-
+/// Error Handling Macros
+#ifdef _DEBUG
+#define GLCall(x) GLClearError(); x; CRONOS_ASSERT(GLLogCall(#x, __FILE__, __LINE__));
+#define GL_SETERRORHANDLER(majV, minV) SetErrorHandler(majV, minV)
+#define BROKEN_ASSERT(x, ...) if(!x) { SYSTEM_CONSOLE_LOG("BROKEN ENGINE ASSERT: ", __VA_ARGS__); __debugbreak(); }
+#define BROKEN_WARN(x, ...) if(!x) { SYSTEM_CONSOLE_LOG("BROKEN ENGINE WARN: ",  __VA_ARGS__); }
+#else
+#define GLCall(x) x;
+#define GL_SETERRORHANDLER(majV, minV) SYSTEM_CONSOLE_LOG("\n\n\nGL_SETERROHANDLER (glDebugMessageCallback) not Available IN DEBUG CONTEXT\n\n\n");
+#define BROKEN_ASSERT(x, ...) if(!x) { ENGINE_AND_SYSTEM_CONSOLE_LOG("BROKEN ENGINE ASSERT: ", __VA_ARGS__); __debugbreak(); }
+#define BROKEN_WARN(x, ...) if(!x) { ENGINE_AND_SYSTEM_CONSOLE_LOG("BROKEN ENGINE WARN: ",  __VA_ARGS__) }
+#endif
 // -------------------------------------------------------------------------------
 
 

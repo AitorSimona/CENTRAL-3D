@@ -80,6 +80,7 @@
     <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="ComponentTransform.h" />
+    <ClInclude Include="Errors.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="glad\include\glad\glad.h" />
     <ClInclude Include="glad\include\KHR\khrplatform.h" />

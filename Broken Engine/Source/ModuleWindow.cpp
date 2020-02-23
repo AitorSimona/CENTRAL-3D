@@ -51,7 +51,6 @@ bool ModuleWindow::Init(json file)
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-
 		if(fullscreen == true)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;

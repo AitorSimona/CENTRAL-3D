@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+// INFORMATION LOG ----------------------------------------------------------------------------
 void EngineConsoleLog(const char file[], int line, const char* format, ...)
 {
 	static char tmp_string[MAX_BUF_SIZE];
