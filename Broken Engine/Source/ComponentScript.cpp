@@ -4,6 +4,7 @@
 //#include "ModuleResources.h"
 #include "ModuleScripting.h"
 #include "ModuleFileSystem.h"
+#include "ResourceScript.h"
 
 ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Script)
 {
@@ -29,8 +30,16 @@ void ComponentScript::CreateInspectorNode()
 {
 }
 
-void ComponentScript::AssignScript(std::string relative_path)
+//Assigns the resource to the component and sends the script to the module so it can be compiled & used
+void ComponentScript::AssignScript(ResourceScript* script_resource)
 {
+	if (script_resource != nullptr)
+		this->script = script_resource;
+
+	script_name = this->script->script_name;
+
+	//Send Component info to scripting to create a Script Instance / Lua class
+	App->scripting->SendScriptToModule(this);
 	//MYTODO: Dídac trying to compile
 	/*ResourceScript* new_script = (ResourceScript*)App->resources->CreateNewResource(Resource::SCRIPT);
 	this->script = new_script;

@@ -124,11 +124,11 @@ bool ModuleScripting::JustCompile(std::string relative_path)
 
 	//MYTODO: Dídac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
-		/*.beginNamespace("Debug")
+		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
 		.addConstructor<void(*) (void)>()
 		.addFunction("LOG", &Scripting::LogFromLua)
-		.endClass()*/
+		.endClass()
 		.endNamespace();
 
 	Scripting Scripting;
@@ -156,11 +156,11 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 {
 	//MYTODO: Dídac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
-		/*.beginNamespace("Debug")
+		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
 		.addConstructor<void(*) (void)>()
 		.addFunction("LOG", &Scripting::LogFromLua)
-		.endClass()*/
+		.endClass()
 		.endNamespace();
 
 	Scripting Scripting;
@@ -195,10 +195,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 	}
 }
 
-void ModuleScripting::SendScriptToModule(ComponentScript * script_component, std::string full_file_path)
+void ModuleScripting::SendScriptToModule(ComponentScript * script_component)
 {
-	//ScriptFile* s_file = AddScriptFile(script_component, full_file_path);
-
 	ScriptInstance* s_instance = new ScriptInstance;
 	s_instance->my_component = script_component;
 	s_instance->my_resource = script_component->script;
@@ -524,10 +522,10 @@ Scripting::~Scripting()
 // General
 
 //Function that Lua will be able to call as LOG
-//void Scripting::LogFromLua(const char * string)
-//{
-//	LOG("[Script]: %s", string);
-//}
+void Scripting::LogFromLua(const char * string)
+{
+	CONSOLE_LOG("[Script]: %s", string);
+}
 //
 //void Scripting::TestFunc()
 //{

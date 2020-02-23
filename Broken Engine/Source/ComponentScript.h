@@ -16,7 +16,7 @@ public:
 	void Disable() override;
 	void CreateInspectorNode() override;
 
-	void AssignScript(std::string path);
+	void AssignScript(ResourceScript* script_resource);
 
 	//This function returns the index inside the vector of scriptvars of Script variable using its name as reference
 	//Returns -1 if the ScriptVar was not found in the vector

@@ -21,6 +21,23 @@ Resource* ImporterScript::Import(ImportData& IData) const
 
 	//Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
 	std::string abs_path = App->fs->GetBasePath();
+
+	std::size_t d_pos = 0;
+	d_pos = abs_path.find("Debug");
+	std::size_t r_pos = 0;
+	r_pos = abs_path.find("Release");
+
+	if (d_pos != 4294967295)  // If we are in DEBUG
+	{
+		abs_path = abs_path.substr(0,d_pos);
+	}
+
+	if (r_pos != 4294967295) // If we are in RELEASE
+	{
+		abs_path = abs_path.substr(0,r_pos);
+	}
+
+	abs_path += "Game/";
 	abs_path += IData.path;
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();

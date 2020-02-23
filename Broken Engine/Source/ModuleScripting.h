@@ -20,7 +20,7 @@ public:
 	bool DoHotReloading();
 	bool JustCompile(std::string relative_path);
 	void CompileScriptTableClass(ScriptInstance* script);
-	void SendScriptToModule(ComponentScript* script_component, std::string full_file_path);
+	void SendScriptToModule(ComponentScript* script_component);
 	ScriptFile* AddScriptFile(ComponentScript* script_component, std::string full_file_path);
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
@@ -67,7 +67,7 @@ public:
 	// General
 
 	//--------------------------------------------------Comented all functions for now, since we are testing in the 1st place the module itself------------------------//
-	//void LogFromLua(const char* string);
+	void LogFromLua(const char* string);
 	//void TestFunc();
 
 	//uint GetRealTime() const;
