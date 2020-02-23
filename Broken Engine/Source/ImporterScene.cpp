@@ -26,14 +26,12 @@ ImporterScene::~ImporterScene()
 Resource* ImporterScene::Import(ImportData& IData) const
 {
 	// --- Meta was deleted, just trigger a load with a new uid ---
-
 	return Load(IData.path);
 }
 
 Resource* ImporterScene::Load(const char * path) const
 {
 	ResourceScene* scene = nullptr;
-
 
 	// --- Load Scene file ---
 	if (path)
@@ -50,7 +48,7 @@ Resource* ImporterScene::Load(const char * path) const
 			scene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, path);
 		}
 
-		
+
 	}
 
 	return scene;
@@ -90,5 +88,3 @@ std::string ImporterScene::SaveSceneToFile(ResourceScene* scene, std::string& sc
 
 	return scene_name;
 }
-
-

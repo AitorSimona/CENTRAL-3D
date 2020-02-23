@@ -35,7 +35,7 @@ ModuleRenderer3D::~ModuleRenderer3D()
 // Called before render is available
 bool ModuleRenderer3D::Init(json file)
 {
-	CONSOLE_LOG("Creating 3D Renderer context");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Creating 3D Renderer context");
 
 	bool ret = true;
 
@@ -44,7 +44,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	if(context == NULL)
 	{
-		CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -52,15 +52,16 @@ bool ModuleRenderer3D::Init(json file)
 	{
 		//Use Vsync
 		if(vsync && SDL_GL_SetSwapInterval(1) < 0)
-			CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		// Initialize glad
 		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) 
 		{
-			CONSOLE_LOG("|[error]: Error initializing glad! %s\n");
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Error initializing glad! %s\n");
 			ret = false;
 		}
-
+		else
+			GL_SETERRORHANDLER(4, 4); //OpenGL Error Handler
 	}
 
 	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges ---
@@ -78,8 +79,8 @@ bool ModuleRenderer3D::Init(json file)
 	//	exit(EXIT_FAILURE);
 	//}
 
-	CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
-	CONSOLE_LOG("Glad Version: 0.1.33"); //Glad has no way to check its version
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Glad Version: 0.1.33"); //Glad has no way to check its version
 	// --- Set engine's basic shaders ---
 	CreateDefaultShaders();
 
@@ -172,7 +173,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 // Called before quitting
 bool ModuleRenderer3D::CleanUp()
 {
-	CONSOLE_LOG("Destroying 3D Renderer");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
 
 	delete defaultShader;
 	delete linepointShader;
@@ -275,7 +276,7 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 		if (SDL_GL_SetSwapInterval(1) == -1)
 		{
 			ret = false;
-			CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 	else {
@@ -283,7 +284,7 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 		if (SDL_GL_SetSwapInterval(0) == -1)
 		{
 			ret = false;
-			CONSOLE_LOG("|[error]: Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 

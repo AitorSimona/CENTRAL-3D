@@ -18,7 +18,7 @@
 // --- Get Assimp LOGS and print them to console ---
 void MyAssimpCallback(const char* msg, char* userData)
 {
-	CONSOLE_LOG("[Assimp]: %s", msg);
+	ENGINE_CONSOLE_LOG("[Assimp]: %s", msg);
 }
 
 ModuleResourceManager::ModuleResourceManager(bool start_enabled)
@@ -159,7 +159,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -211,7 +211,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 	case Resource::ResourceType::UNKNOWN:
 		break;
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
 		break;
 	}
 
@@ -220,10 +220,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		if(type != Resource::ResourceType::FOLDER && type != Resource::ResourceType::META)
 		AddResourceToFolder(resource);
 
-		CONSOLE_LOG("Imported successfully: %s", IData.path);
+		ENGINE_CONSOLE_LOG("Imported successfully: %s", IData.path);
 	}
 	else
-		CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
+		ENGINE_CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
 
 
 	return resource;
@@ -450,7 +450,7 @@ void ModuleResourceManager::HandleFsChanges()
 		// --- Meta's associated file has been deleted, print warning and eliminate lib files ---
 		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
 		{
-			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
+			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
 			
 			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);
@@ -482,7 +482,7 @@ void ModuleResourceManager::HandleFsChanges()
 					// --- If dates are not equal, file has been overwritten ---
 					if (date != (*meta).second->Date)
 					{
-						CONSOLE_LOG("Reimported file: %s", (*files).c_str());
+						ENGINE_CONSOLE_LOG("Reimported file: %s", (*files).c_str());
 
 						Resource* resource = GetResource((*meta).second->GetUID(), false);
 
@@ -516,7 +516,7 @@ void ModuleResourceManager::HandleFsChanges()
 				if (date != (*meta).second->Date)
 				{	
 					// --- Basically update meta, files inside will be taken care of  ---
-					CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
+					ENGINE_CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
 
 					Resource* resource = GetResource((*meta).second->GetUID(), false);
 
@@ -646,7 +646,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -662,7 +662,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
 	else if (!resource)
-		CONSOLE_LOG("![Warning]: Could not load: %i", UID);
+		ENGINE_CONSOLE_LOG("![Warning]: Could not load: %i", UID);
 
 
 	return resource;
@@ -672,7 +672,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -719,11 +719,11 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -734,7 +734,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -791,11 +791,11 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -805,7 +805,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -937,7 +937,7 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -1005,11 +1005,11 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -1024,7 +1024,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)

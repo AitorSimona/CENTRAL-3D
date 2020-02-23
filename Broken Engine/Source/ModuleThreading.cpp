@@ -22,7 +22,7 @@ bool ModuleThreading::Start()
 		threadVector.push_back(std::thread(&ModuleThreading::ProcessTasks, this, i, std::ref(stopPool)));
 	}
 
-	CONSOLE_LOG("Created %d threads.", concurrentThreads - 1);
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Created %d threads.", concurrentThreads - 1);
 	
 	poolTerminated = false;
 	stopPool = false;
@@ -75,7 +75,7 @@ void ModuleThreading::ShutdownPool()
 	threadVector.empty();
 	threadStatus.empty();
 	poolTerminated = true;
-	CONSOLE_LOG("Thread pool has been shutdown, all %d threads are joined.", concurrentThreads);
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Thread pool has been shutdown, all %d threads are joined.", concurrentThreads);
 }
 
 void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop)
@@ -99,7 +99,7 @@ void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop)
 			{
 				std::lock_guard<std::mutex> lk(threadPoolMutex);
 				threadStatus[threadID] = true;
-				//CONSOLE_LOG("Processing task in thread %d", threadID + 1);
+				//ENGINE_CONSOLE_LOG("Processing task in thread %d", threadID + 1);
 			}
 
 			Task = tasksQueue.front();
@@ -128,7 +128,7 @@ void ModuleThreading::FinishProcessing()
 		}
 		//Otherwise we process a task ourselves
 		else {
-			//CONSOLE_LOG("Processing a task on main thread");
+			//ENGINE_CONSOLE_LOG("Processing a task on main thread");
 			std::function<void()> Task;
 			Task = tasksQueue.front();
 			tasksQueue.pop();

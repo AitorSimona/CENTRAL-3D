@@ -106,7 +106,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		}
 	}
 	else
-		CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);
+		ENGINE_CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);
 
 	return model;
 }

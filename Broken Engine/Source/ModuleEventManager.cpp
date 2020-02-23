@@ -4,7 +4,7 @@
 
 ModuleEventManager::ModuleEventManager(bool start_enabled)
 {
-	static_assert(static_cast<int>(Event::EventType::invalid) == EVENT_TYPES-1, "EVENT_TYPES macro needs to be updated!");
+	BROKEN_ASSERT(static_cast<int>(Event::EventType::invalid) == EVENT_TYPES-1, "EVENT_TYPES macro needs to be updated!");
 
 	head = 0;
 	tail = 0;

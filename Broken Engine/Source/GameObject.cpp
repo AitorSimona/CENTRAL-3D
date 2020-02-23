@@ -155,30 +155,28 @@ bool GameObject::FindChildGO(GameObject * GO)
 
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
-	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
-
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
 
 	if (HasComponent(type) == nullptr)
 	{
-
 		switch (type)
 		{
-		case Component::ComponentType::Transform:
-			component = new ComponentTransform(this);
-			break;
-		case Component::ComponentType::Mesh:
-			component = new ComponentMesh(this);
-			UpdateAABB();
-			break;
-		case Component::ComponentType::MeshRenderer:
-			component = new ComponentMeshRenderer(this);
-			break;
-		case Component::ComponentType::Camera:
-			component = new ComponentCamera(this);
-			break;
+			case Component::ComponentType::Transform:
+				component = new ComponentTransform(this);
+				break;
+			case Component::ComponentType::Mesh:
+				component = new ComponentMesh(this);
+				UpdateAABB();
+				break;
+			case Component::ComponentType::MeshRenderer:
+				component = new ComponentMeshRenderer(this);
+				break;
+			case Component::ComponentType::Camera:
+				component = new ComponentCamera(this);
+				break;
 		}
 
 		if (component)
@@ -188,7 +186,7 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	else
 	{
 		// --- If we find a component of the same type, tell the user and return such component ---
-		CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
+		ENGINE_CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
 		component = HasComponent(type);
 	}
 

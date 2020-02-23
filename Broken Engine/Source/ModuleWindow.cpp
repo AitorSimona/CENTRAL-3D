@@ -19,17 +19,17 @@ ModuleWindow::~ModuleWindow()
 // Called before render is available
 bool ModuleWindow::Init(json file)
 {
-	CONSOLE_LOG("Init SDL window & surface");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Init SDL window & surface");
 	bool ret = true;
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		CONSOLE_LOG("|[error]: SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 	else
 	{
-		CONSOLE_LOG("SDL_Init Video success");
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("SDL_Init Video success");
 
 		// --- Get Display Data ---
 		SDL_DisplayMode display;
@@ -50,7 +50,6 @@ bool ModuleWindow::Init(json file)
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
 
 		if(fullscreen == true)
 		{
@@ -77,12 +76,12 @@ bool ModuleWindow::Init(json file)
 
 		if(window == NULL)
 		{
-			CONSOLE_LOG("|[error]: Window could not be created! SDL_Error: %s\n", SDL_GetError());
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
 		}
 		else
 		{
-			CONSOLE_LOG("Successfully created Window: %s", App->GetAppName());
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("Successfully created Window: %s", App->GetAppName());
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
 		}
@@ -104,7 +103,7 @@ bool ModuleWindow::Start()
 // Called before quitting
 bool ModuleWindow::CleanUp()
 {
-	CONSOLE_LOG("Destroying SDL window and quitting all SDL systems");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying SDL window and quitting all SDL systems");
 
 	//Destroy window
 	if(window != NULL)
@@ -160,7 +159,7 @@ uint ModuleWindow::GetDisplayRefreshRate()
 	if (SDL_GetDesktopDisplayMode(0, &desktopDisplay) == 0)
 		refreshRate = desktopDisplay.refresh_rate;
 	else
-		CONSOLE_LOG("|[error]: SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+		ENGINE_CONSOLE_LOG("|[error]: SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 
 	RefreshRate = refreshRate;
 
@@ -179,7 +178,7 @@ void ModuleWindow::GetWinMaxMinSize(uint & min_width, uint & min_height, uint & 
 	SDL_DisplayMode dm;
 	if (SDL_GetDesktopDisplayMode(0, &dm) != 0)
 	{
-		CONSOLE_LOG("|[error]: SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+		ENGINE_CONSOLE_LOG("|[error]: SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 	}
 	else
 	{
@@ -206,14 +205,14 @@ void ModuleWindow::SetFullscreen(bool value)
 		if (fullscreen == true)
 		{
 			if (SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN) != 0)
-				CONSOLE_LOG("|[error]: Could not switch to fullscreen: %s\n", SDL_GetError());
+				ENGINE_CONSOLE_LOG("|[error]: Could not switch to fullscreen: %s\n", SDL_GetError());
 			fullscreen_desktop = false;
 
 		}
 		else
 		{
 			if (SDL_SetWindowFullscreen(window, 0) != 0)
-				CONSOLE_LOG("|[error]: Could not switch to windowed: %s\n", SDL_GetError());
+				ENGINE_CONSOLE_LOG("|[error]: Could not switch to windowed: %s\n", SDL_GetError());
 
 			//  --- To keep a default window size on deactivation ---
 			SetWindowWidth(uint(display_Width *0.75f));
@@ -246,14 +245,14 @@ void ModuleWindow::SetFullscreenDesktop(bool value)
 		if (fullscreen_desktop == true)
 		{
 			if (SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
-				CONSOLE_LOG("|[error]: Could not switch to fullscreen desktop: %s\n", SDL_GetError());
+				ENGINE_CONSOLE_LOG("|[error]: Could not switch to fullscreen desktop: %s\n", SDL_GetError());
 			fullscreen = false;
 
 		}
 		else
 		{
 			if (SDL_SetWindowFullscreen(window, 0) != 0)
-				CONSOLE_LOG("|[error]: Could not switch to windowed: %s\n", SDL_GetError());
+				ENGINE_CONSOLE_LOG("|[error]: Could not switch to windowed: %s\n", SDL_GetError());
 
 			//  --- To keep a default window size on deactivation ---
 			SetWindowWidth(uint(display_Width *0.75f));
@@ -286,7 +285,7 @@ void ModuleWindow::SetWinBrightness(float value)
 {
 	CAP(value); // Force values from 0 to 1
 	if (SDL_SetWindowBrightness(window, value) != 0)
-		CONSOLE_LOG("|[error]: Could not change window brightness: %s\n", SDL_GetError());
+		ENGINE_CONSOLE_LOG("|[error]: Could not change window brightness: %s\n", SDL_GetError());
 }
 
 void ModuleWindow::SetWinTitle(const char * name)
