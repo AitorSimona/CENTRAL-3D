@@ -21,8 +21,6 @@ function lua_table:Update ()
 
 	lua_table["LOG"]:LOG ("This Log was called from LUA testing a table on UPDATE")
 	lua_table["LOG"]:LOG ("Position X = " .. lua_table["position_x"])
-
-	lua_table["LOG"]:LOG ("GameDT = " .. lua_table["GetDT"]:GetDT ())
 end
 
 return lua_table
