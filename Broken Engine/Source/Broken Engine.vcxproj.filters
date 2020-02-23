@@ -73,6 +73,9 @@
     <Filter Include="Sources\3rd Party\glad">
       <UniqueIdentifier>{cc415a8f-0896-47ec-871d-3acac291c44d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Tools\DeviceID">
+      <UniqueIdentifier>{7c511496-d653-456c-8542-c8926a418e2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -543,8 +546,12 @@
     <ClInclude Include="Errors.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="gpudetect\DeviceId.h" />
-    <ClInclude Include="gpudetect\dxgi1_4.h" />
+    <ClInclude Include="gpudetect\DeviceId.h">
+      <Filter>Sources\Tools\DeviceID</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\dxgi1_4.h">
+      <Filter>Sources\Tools\DeviceID</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -880,7 +887,9 @@
     <ClCompile Include="glad\src\glad.c">
       <Filter>Sources\3rd Party\glad</Filter>
     </ClCompile>
-    <ClCompile Include="gpudetect\DeviceId.cpp" />
+    <ClCompile Include="gpudetect\DeviceId.cpp">
+      <Filter>Sources\Tools\DeviceID</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="EXE ICON.ico">
