@@ -221,7 +221,9 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.z = position->z;
 
 					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
-
+					
+					float prevRadius = radius;
+					
 					ImGui::Text("Radius");
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
@@ -231,11 +233,16 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.scaleY = radius;						
 					localMatrix.scaleZ = radius;
 
+					if (prevRadius != radius)
+						//CreateCollider(COLLIDER_TYPE::SPHERE, true);
+								
 					break;
 				}
 
 				case PxGeometryType::eBOX:
 				{
+					float3 prevScale = scale;
+
 					ImGui::Text("X");
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
@@ -258,6 +265,9 @@ void ComponentCollider::CreateInspectorNode()
 
 					ImGui::DragFloat("##SZ", &scale.z, 0.005f);
 
+					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z)
+						//CreateCollider(COLLIDER_TYPE::BOX, true);
+
 					break;
 				}
 
@@ -268,6 +278,9 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.z = position->z;
 
 					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
+
+					float prevRadius = radius;
+					float prevheight = height;
 
 					ImGui::Text("Radius");
 					ImGui::SameLine();
@@ -283,10 +296,16 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.scaleY = height;
 					localMatrix.scaleZ = radius;
 
+					if (prevRadius != radius || prevheight != height)
+						//CreateCollider(COLLIDER_TYPE::CAPSULE, true);
+
 					break;
 				}
 
 			}
+			PxTransform transform(position->x, position->y, position->z);
+			shape->setLocalPose(transform);
+
 			SetPosition();
 		}
 
@@ -297,8 +316,8 @@ void ComponentCollider::CreateInspectorNode()
 
 }
 
-void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type) {
-	if (shape != nullptr && lastIndex != (int)type) {
+void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain) {
+	if (shape != nullptr && (lastIndex != (int)type || createAgain)) {
 		shape->release();
 
 		if (mesh)
@@ -313,28 +332,28 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type) {
 
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
-			PxBoxGeometry boxGeometry(PxVec3(1.0f, 1.0f, 1.0f));
+			PxBoxGeometry boxGeometry(PxVec3(scale.x, scale.y, scale.z));
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::BOX;
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::SPHERE: {
-			PxSphereGeometry SphereGeometry(1.0f);
+			PxSphereGeometry SphereGeometry(radius);
 			shape = App->physics->mPhysics->createShape(SphereGeometry, *App->physics->mMaterial);
 			shape->setGeometry(SphereGeometry);
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::SPHERE;
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::PLANE: {
-			PxBoxGeometry planeGeometry(PxVec3(1.0f, 0.0001f, 1.0f));
+			PxBoxGeometry planeGeometry(PxVec3(scale.x, 0.0001f, scale.z));
 			shape = App->physics->mPhysics->createShape(planeGeometry, *App->physics->mMaterial);
 			shape->setGeometry(planeGeometry);
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::PLANE;
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::CAPSULE: {
-			PxCapsuleGeometry CapsukeGeometry(1.0f, 3.0f);
+			PxCapsuleGeometry CapsukeGeometry(radius, height);
 			shape = App->physics->mPhysics->createShape(CapsukeGeometry, *App->physics->mMaterial);
 			shape->setGeometry(CapsukeGeometry);
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;

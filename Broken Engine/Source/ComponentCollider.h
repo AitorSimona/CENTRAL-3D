@@ -33,7 +33,7 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
-	void CreateCollider(ComponentCollider::COLLIDER_TYPE type);
+	void CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain = false);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
