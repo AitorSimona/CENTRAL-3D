@@ -67,8 +67,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer", "ComponentCollider"};
-
+		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer", "Dynamic RigidBody", "ComponentCollider"};
 		static const char* item_current = items[0];
 
 		// --- Add component ---
@@ -100,12 +99,17 @@ bool PanelInspector::Draw()
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
 		}
 
+		if (item_current == "Dynamic RigidBody")
+		{
+			Selected->AddComponent(Component::ComponentType::DynamicRigidBody);
+		}
+
 		if (item_current == "ComponentCollider")
 		{
 			Selected->AddComponent(Component::ComponentType::Collider);
 		}
 
-		// MYTODO: move this to the component itself 
+		// MYTODO: move this to the component itself
 
 		// --- Material ---
 		//if (Selected->GetComponent<ComponentMaterial>())
@@ -174,7 +178,7 @@ inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
 
 	//	std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
 
-	//	const char* item_current = material->resource_material->shader->name.data();       
+	//	const char* item_current = material->resource_material->shader->name.data();
 	//	if (ImGui::BeginCombo("##Shader", item_current, flags))
 	//	{
 	//		for (std::map<std::string, ResourceShader*>::iterator it = shaders->begin(); it != shaders->end(); ++it)
@@ -251,5 +255,5 @@ inline void PanelInspector::CreateCameraNode(GameObject & Selected) const
 
 		ImGui::TreePop();
 	}
-	
+
 }
