@@ -21,12 +21,10 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 {
 	/*ComponentTransform* transform = ContainerGO->GetComponent<ComponentTransform>();
 	float3 pos = transform->GetPosition();
-
 	globalPosition = PxTransform(PxVec3(pos.x, pos.y, pos.z));
 	PxBoxGeometry geometry(PxVec3(0.5f, 0.5f, 0.5f));
 	shape = App->physics->mPhysics->createShape(;
 	shape->setGeometry(geometry);
-
 	App->physics->mScene->addActor(*shape->getActor());*/
 }
 
@@ -220,8 +218,6 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.y = position->y;
 					localMatrix.z = position->z;
 
-					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
-					
 					float prevRadius = radius;
 					
 					ImGui::Text("Radius");
@@ -276,9 +272,7 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.x = position->x;
 					localMatrix.y = position->y;
 					localMatrix.z = position->z;
-
-					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
-
+					
 					float prevRadius = radius;
 					float prevheight = height;
 
@@ -290,14 +284,16 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::Text("Height");
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##H", &height, 0.005f);
+					ImGui::DragFloat("##Height", &height, 0.005f);
 
 					localMatrix.scaleX = radius;
 					localMatrix.scaleY = height;
 					localMatrix.scaleZ = radius;
 
-					//if (prevRadius != radius || prevheight != height)
-						//CreateCollider(COLLIDER_TYPE::CAPSULE, true);
+					if (prevRadius != radius || prevheight != height) {
+						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
+						mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->capsule->GetUID());
+					}
 
 					break;
 				}
@@ -327,7 +323,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		}
 	}
 
-	if (lastIndex == (int)type)
+	if (lastIndex == (int)type && !createAgain)
 		return;
 
 	switch (type) {
