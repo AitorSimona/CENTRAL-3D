@@ -230,6 +230,7 @@
     <ClInclude Include="ResourceShaderObject.h" />
     <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
+    <ClInclude Include="UI_Element.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
@@ -346,6 +347,7 @@
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="UI_Element.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Broken Engine.rc" />
