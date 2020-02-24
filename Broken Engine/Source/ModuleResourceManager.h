@@ -25,6 +25,7 @@ class ModuleResourceManager : public Module
 	friend class ImporterMesh;
 	friend class ImporterMaterial;
 	friend class ImporterFolder;
+	friend class ImporterScript;
 	friend class PanelResources;
 	friend class ComponentMeshRenderer;
 public:
