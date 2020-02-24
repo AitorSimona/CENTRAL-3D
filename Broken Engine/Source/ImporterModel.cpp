@@ -13,6 +13,8 @@
 #include "ImporterMeta.h"
 #include "ImporterMesh.h"
 #include "ImporterMaterial.h"
+#include "ImporterAnimation.h"
+#include "ImporterBone.h"
 
 
 #include "Components.h"
@@ -66,6 +68,10 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		// --- Load all meshes ---
 		std::map<uint, ResourceMesh*> model_meshes;
 		LoadSceneMeshes(scene, model_meshes, MData.path);
+
+		// --- Load animation ---
+		ResourceAnimation* anim = nullptr;
+		LoadSceneAnimations(scene, rootnode, anim, MData.path);
 
 		// --- Load all materials ---
 		std::map<uint, ResourceMaterial*> model_mats;
@@ -168,6 +174,29 @@ void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 			// --- Import material data ---
 			if (IMat)
 				scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
+		}
+	}
+}
+
+void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, ResourceAnimation* anim, const char* source_file) const
+{
+	if (scene->HasAnimations())
+	{
+		ImporterAnimation* IAnim = App->resources->GetImporter<ImporterAnimation>();
+
+		//Creating animator component
+		GO->AddComponent(Component::ComponentType::Animation);
+
+		for (int i = 0; i < scene->mNumAnimations; i++)
+		{
+			ImportAnimationData AData(source_file);
+			AData.animation = scene->mAnimations[i];
+
+			if (IAnim)
+			{
+				anim = (ResourceAnimation*)IAnim->Import(AData);
+				anim->SetName(scene->mAnimations[i]->mName.C_Str());
+			}
 		}
 	}
 }

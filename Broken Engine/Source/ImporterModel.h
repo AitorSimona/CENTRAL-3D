@@ -9,6 +9,7 @@
 class GameObject;
 class Resource;
 class ResourceMesh;
+class ResourceAnimation;
 class ResourceModel;
 class ResourceMaterial;
 struct aiNode;
@@ -43,6 +44,7 @@ private:
 	void LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const;
 	void FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const;
 	void LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const;
+	void LoadSceneAnimations(const aiScene* scene, GameObject* GO, ResourceAnimation* anim, const char* source_file) const;
 	void FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const;
 };
 

@@ -25,6 +25,50 @@ Resource* ImporterAnimation::Import(ImportData& IData) const
 
 	ResourceAnimation* resource_anim = (ResourceAnimation*)App->resources->CreateResource(Resource::ResourceType::ANIMATION, IData.path);
 
+	//Basic animation info
+	resource_anim->duration = data.animation->mDuration;
+	resource_anim->ticksPerSecond = data.animation->mTicksPerSecond;
+	resource_anim->numChannels = data.animation->mNumChannels;
+
+	//Creating space for channels
+	resource_anim->channels = new Channel[data.animation->mNumChannels];
+
+	//Loading channels info
+	for (uint i = 0; i < data.animation->mNumChannels; i++)
+	{
+		for (uint j = 0; j < data.animation->mChannels[i]->mNumPositionKeys; j++)
+			resource_anim->channels[i].PositionKeys[data.animation->mChannels[i]->mPositionKeys[j].mTime] = float3(data.animation->mChannels[i]->mPositionKeys[j].mValue.x,
+				data.animation->mChannels[i]->mPositionKeys[j].mValue.y, data.animation->mChannels[i]->mPositionKeys[j].mValue.z);
+
+		for (uint j = 0; j < data.animation->mChannels[i]->mNumRotationKeys; j++)
+			resource_anim->channels[i].RotationKeys[data.animation->mChannels[i]->mRotationKeys[i].mTime] = Quat(data.animation->mChannels[i]->mRotationKeys[i].mValue.x,
+				data.animation->mChannels[i]->mRotationKeys[i].mValue.y, data.animation->mChannels[i]->mRotationKeys[i].mValue.z, data.animation->mChannels[i]->mRotationKeys[i].mValue.w);
+
+		for (uint j = 0; j < data.animation->mChannels[i]->mNumScalingKeys; j++)
+			resource_anim->channels[i].ScaleKeys[data.animation->mChannels[i]->mScalingKeys[i].mTime] = float3(data.animation->mChannels[i]->mScalingKeys[i].mValue.x,
+				data.animation->mChannels[i]->mScalingKeys[i].mValue.y, data.animation->mChannels[i]->mScalingKeys[i].mValue.z);
+
+		resource_anim->channels[i].name = data.animation->mChannels[i]->mNodeName.C_Str();
+
+		//------------------------------- Delete _$AssimpFbx$_ -----------------------
+		// Search for the substring in string
+		size_t pos = resource_anim->channels[i].name.find("_$AssimpFbx$_");
+
+		if (pos != std::string::npos)
+		{
+			std::string ToDelete = "_$AssimpFbx$_";
+
+			// If found then erase it from string
+			resource_anim->channels[i].name.erase(pos, ToDelete.length());
+		}
+	}
+
+	// --- Save to library ---
+	Save(resource_anim);
+
+	App->resources->AddResourceToFolder(resource_anim);
+
+
 	return resource_anim;
 }
 

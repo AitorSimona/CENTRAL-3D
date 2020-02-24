@@ -3,7 +3,7 @@
 
 #include "Importer.h"
 
-//struct aiMesh;
+struct aiAnimation;
 class ResourceAnimation;
 class Resource;
 
@@ -11,7 +11,7 @@ struct ImportAnimationData : public Importer::ImportData
 {
 	ImportAnimationData(const char* path) : Importer::ImportData(path) {};
 
-	//aiMesh* mesh = nullptr;
+	aiAnimation* animation = nullptr;
 };
 
 class ImporterAnimation : public Importer
