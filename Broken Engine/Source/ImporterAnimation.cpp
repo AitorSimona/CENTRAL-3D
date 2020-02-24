@@ -74,10 +74,112 @@ Resource* ImporterAnimation::Import(ImportData& IData) const
 
 void ImporterAnimation::Save(ResourceAnimation* anim) const
 {
+	//----------------------------- CALCULATE SIZE ----------------------------------
 
+	//Animation Duration, TicksperSec, numChannels
+	uint size = sizeof(float) + sizeof(float) + sizeof(uint);
+
+	for (int i = 0; i < anim->numChannels; i++)
+	{
+
+		//Size name + Name
+		size += sizeof(uint) + anim->channels[i].name.size() + sizeof(uint) * 3;
+
+		//PositionsKeys size
+		size += sizeof(double) * anim->channels[i].PositionKeys.size();
+		size += sizeof(float) * 3 * anim->channels[i].PositionKeys.size();
+		//RotationsKeys size
+		size += sizeof(double) * anim->channels[i].RotationKeys.size();
+		size += sizeof(float) * 4 * anim->channels[i].RotationKeys.size();
+		//ScalesKeys size
+		size += sizeof(double) * anim->channels[i].ScaleKeys.size();
+		size += sizeof(float) * 3 * anim->channels[i].ScaleKeys.size();
+	}
+	//-------------------------------------------------------------------------------
+
+	//---------------------------------- Allocate -----------------------------------
+	char* data = new char[size];
+	char* cursor = data;
+
+	//Duration
+	memcpy(cursor, &anim->duration, sizeof(float));
+	cursor += sizeof(float);
+
+	//TicksperSec
+	memcpy(cursor, &anim->ticksPerSecond, sizeof(float));
+	cursor += sizeof(float);
+
+	//numChannels
+	memcpy(cursor, &anim->numChannels, sizeof(uint));
+	cursor += sizeof(uint);
+
+	//Channels
+	for (int i = 0; i < anim->numChannels; i++)
+	{
+		//Name size 
+		uint SizeofName = anim->channels[i].name.size();
+		memcpy(cursor, &SizeofName, sizeof(uint));
+		cursor += sizeof(uint);
+
+		//name data
+		memcpy(cursor, anim->channels[i].name.c_str(), anim->channels[i].name.size());
+		cursor += anim->channels[i].name.size();
+
+		//Poskeys, Rotkeys and Scalekeys SIZES
+		uint ranges[3] = { anim->channels[i].PositionKeys.size(), anim->channels[i].RotationKeys.size(), anim->channels[i].ScaleKeys.size() };
+		memcpy(cursor, ranges, sizeof(ranges));
+		cursor += sizeof(ranges);
+
+		//PositionKeys
+		std::map<double, float3>::const_iterator it = anim->channels[i].PositionKeys.begin();
+		for (it = anim->channels[i].PositionKeys.begin(); it != anim->channels[i].PositionKeys.end(); it++)
+		{
+			memcpy(cursor, &it->first, sizeof(double));
+			cursor += sizeof(double);
+
+			memcpy(cursor, &it->second, sizeof(float) * 3);
+			cursor += sizeof(float) * 3;
+		}
+
+		//RotationKeys
+		std::map<double, Quat>::const_iterator it2 = anim->channels[i].RotationKeys.begin();
+		for (it2 = anim->channels[i].RotationKeys.begin(); it2 != anim->channels[i].RotationKeys.end(); it2++)
+		{
+			memcpy(cursor, &it2->first, sizeof(double));
+			cursor += sizeof(double);
+
+			memcpy(cursor, &it2->second, sizeof(float) * 4);
+			cursor += sizeof(float) * 4;
+		}
+
+		//ScaleKeys
+		std::map<double, float3>::const_iterator it3 = anim->channels[i].ScaleKeys.begin();
+		for (it3 = anim->channels[i].ScaleKeys.begin(); it3 != anim->channels[i].ScaleKeys.end(); it3++)
+		{
+			memcpy(cursor, &it3->first, sizeof(double));
+			cursor += sizeof(double);
+
+			memcpy(cursor, &it3->second, sizeof(float) * 3);
+			cursor += sizeof(float) * 3;
+		}
+	}
+
+	App->fs->Save(anim->GetResourceFile(), data, size);
+
+
+	if (data)
+	{
+		delete[] data;
+		data = nullptr;
+		cursor = nullptr;
+	}
 }
 
 Resource* ImporterAnimation::Load(const char* path) const
 {
-	return nullptr;
+
+	Resource* anim = nullptr;
+	
+
+	return anim;
 }
