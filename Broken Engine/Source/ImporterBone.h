@@ -3,15 +3,16 @@
 
 #include "Importer.h"
 
-//struct aiMesh;
+struct aiBone;
 class ResourceBone;
 class Resource;
+
 
 struct ImportBoneData : public Importer::ImportData
 {
 	ImportBoneData(const char* path) : Importer::ImportData(path) {};
 
-	//aiMesh* mesh = nullptr;
+	aiBone* bone = nullptr;
 };
 
 class ImporterBone : public Importer

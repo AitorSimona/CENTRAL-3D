@@ -22,12 +22,66 @@ ResourceBone::~ResourceBone()
 
 bool ResourceBone::LoadInMemory()
 {
-	return true;
+	bool ret = true;
+
+	char* buffer = nullptr;
+
+	if (App->fs->Exists(resource_file.c_str()))
+	{
+		// --- Load mesh data ---
+		char* buffer = nullptr;
+		App->fs->Load(resource_file.c_str(), &buffer);
+		char* cursor = buffer;
+
+		// meshID
+		memcpy(&this->meshID, cursor, sizeof(uint));
+		cursor += sizeof(uint);
+
+		// NumWeights
+		memcpy(&this->NumWeights, cursor, sizeof(uint));
+		cursor += sizeof(uint);
+
+		// matrix
+		float* matrix = new float[16];
+		memcpy(matrix, cursor, sizeof(float) * 16);
+		cursor += sizeof(float) * 16;
+
+		this->matrix = float4x4(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], matrix[6], matrix[7],
+			matrix[8], matrix[9], matrix[10], matrix[11], matrix[12], matrix[13], matrix[14], matrix[15]);
+
+		// Weights
+		this->weight = new float[this->NumWeights];
+		memcpy(this->weight, cursor, sizeof(float) * this->NumWeights);
+		cursor += sizeof(float) * this->NumWeights;
+
+		// index_weights
+		this->index_weight = new uint[this->NumWeights];
+		memcpy(this->index_weight, cursor, sizeof(uint) * this->NumWeights);
+		cursor += sizeof(uint) * this->NumWeights;
+
+
+		delete[] matrix;
+		delete[] buffer;
+		
+		cursor = nullptr;
+
+		return ret;
+	}
 }
 
 void ResourceBone::FreeMemory()
 {
-
+	if (weight)
+	{
+		delete[] weight;
+		weight = nullptr;
+	}
+	
+	if (index_weight)
+	{
+		delete[] index_weight;
+		index_weight = nullptr;
+	}
 }
 
 void ResourceBone::OnOverwrite()
