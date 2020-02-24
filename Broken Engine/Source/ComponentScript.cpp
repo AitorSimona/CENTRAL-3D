@@ -5,6 +5,8 @@
 #include "ModuleScripting.h"
 #include "ModuleFileSystem.h"
 #include "ResourceScript.h"
+#include "Imgui/imgui.h"
+#include "ModuleGui.h"
 
 ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Script)
 {
@@ -28,6 +30,56 @@ void ComponentScript::Disable()
 
 void ComponentScript::CreateInspectorNode()
 {
+	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+	std::string name = script->script_name + "(Script)";
+	ImGui::Checkbox("Active", &active); ImGui::SameLine();
+	if (ImGui::TreeNodeEx(name.data(), base_flags)) {
+		if (ImGui::Button("Open Script File")) {
+			App->gui->RequestBrowser(std::string(script->absolute_path).data());
+		}
+
+		char auxBuffer[256];
+
+		//Display Variables
+		for (int i = 0; i < script_variables.size(); ++i)
+		{
+			std::string auxName = script_variables[i].name.c_str();
+			ImGui::Text(auxName.c_str()); ImGui::SameLine(200.f); ImGui::SetNextItemWidth(ImGui::GetWindowWidth() / 7.0f);
+			auxName.assign("##Var" + auxName);
+
+			VarType type = script_variables[i].type;
+			if (type == VarType::DOUBLE)
+			{
+				float auxVal(script_variables[i].editor_value.as_double_number);
+
+				if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f)) {
+					script_variables[i].editor_value.as_double_number = auxVal;
+					script_variables[i].changed_value = true;
+				}
+
+			}
+			else if (type == VarType::BOOLEAN)
+			{
+				if (ImGui::Checkbox(auxName.c_str(), &script_variables[i].editor_value.as_boolean))
+					script_variables[i].changed_value = true;
+			}
+			else if (type == VarType::STRING)
+			{
+				strcpy(auxBuffer, script_variables[i].editor_value.as_string);
+
+				ImGui::InputText(auxName.c_str(), auxBuffer, IM_ARRAYSIZE(auxBuffer));
+
+				if (strcmp(script_variables[i].editor_value.as_string, auxBuffer) != 0) {
+					strcpy(script_variables[i].editor_value.as_string, auxBuffer);
+					script_variables[i].changed_value = true;
+				}
+			}
+
+		}
+
+		ImGui::TreePop();
+	}
 }
 
 //Assigns the resource to the component and sends the script to the module so it can be compiled & used
