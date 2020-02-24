@@ -8,6 +8,19 @@
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 
+//Trick to tell AMD and NVIDIA drivers to use the most powerful GPU instead of a lower-performance (such as integrated) GPU
+#ifdef _WIN32
+//else: Use GPU by default.
+extern "C" {
+	// http://developer.download.nvidia.com/devzone/devcenter/gamegraphics/files/OptimusRenderingPolicies.pdf
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+
+	// http://developer.amd.com/community/blog/2015/10/02/amd-enduro-system-for-developers/
+	// or (if the 1st doesn't works): https://gpuopen.com/amdpowerxpressrequesthighperformance/
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#endif
+
 enum main_states
 {
 	MAIN_CREATION,
