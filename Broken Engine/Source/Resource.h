@@ -18,6 +18,8 @@ public:
 		MATERIAL,
 		SHADER,
 		MESH,
+		BONE, 
+		ANIMATION,
 		TEXTURE,
 		SHADER_OBJECT,
 		META,

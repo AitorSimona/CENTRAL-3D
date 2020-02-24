@@ -44,6 +44,8 @@ bool ModuleResourceManager::Init(json file)
 	importers.push_back(new ImporterMaterial());
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
+	importers.push_back(new ImporterBone());
+	importers.push_back(new ImporterAnimation());
 	importers.push_back(new ImporterTexture());
 	importers.push_back(new ImporterMeta());
 
@@ -200,6 +202,14 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		resource = ImportMesh(IData);
 		break;
 
+	case Resource::ResourceType::BONE:
+		resource = ImportMesh(IData);
+		break;
+
+	case Resource::ResourceType::ANIMATION:
+		resource = ImportMesh(IData);
+		break;
+
 	case Resource::ResourceType::SHADER_OBJECT:
 		resource = ImportShaderObject(IData);
 		break;
@@ -353,6 +363,34 @@ Resource* ModuleResourceManager::ImportMesh(Importer::ImportData& IData)
 
 
 	return mesh;
+}
+
+Resource* ModuleResourceManager::ImportBone(Importer::ImportData& IData)
+{
+	Resource* bone = nullptr;
+	ImporterBone* IBone = GetImporter<ImporterBone>();
+
+	// --- Load the mesh directly from the lib (only declaration)---
+	if (IData.path && IBone)
+	{
+		bone = IBone->Load(IData.path);
+	}
+
+	return bone;
+}
+
+Resource* ModuleResourceManager::ImportAnimation(Importer::ImportData& IData)
+{
+	Resource* anim = nullptr;
+	ImporterAnimation* IAnim = GetImporter<ImporterAnimation>();
+
+	// --- Load the mesh directly from the lib (only declaration)---
+	if (IData.path && IAnim)
+	{
+		anim = IAnim->Load(IData.path);
+	}
+
+	return anim;
 }
 
 Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
@@ -646,7 +684,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 11, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -656,6 +694,8 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (materials.find(UID) == materials.end() ? resource : (*materials.find(UID)).second);
 	resource = resource ? resource : (shaders.find(UID) == shaders.end() ? resource : (*shaders.find(UID)).second);
 	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
+	resource = resource ? resource : (bones.find(UID) == bones.end() ? resource : (*bones.find(UID)).second);
+	resource = resource ? resource : (animations.find(UID) == animations.end() ? resource : (*animations.find(UID)).second);
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 
@@ -672,7 +712,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 11, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -708,6 +748,16 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 		meshes[resource->GetUID()] = (ResourceMesh*)resource;
 		break;
 
+	case Resource::ResourceType::BONE:
+		resource = (Resource*)new ResourceBone(App->GetRandom().Int(), source_file);
+		bones[resource->GetUID()] = (ResourceBone*)resource;
+		break;
+
+	case Resource::ResourceType::ANIMATION:
+		resource = (Resource*)new ResourceAnimation(App->GetRandom().Int(), source_file);
+		animations[resource->GetUID()] = (ResourceAnimation*)resource;
+		break;
+
 	case Resource::ResourceType::TEXTURE:
 		resource = (Resource*)new ResourceTexture(App->GetRandom().Int(), source_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
@@ -734,7 +784,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 11, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -767,6 +817,16 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 	case Resource::ResourceType::MESH:
 		resource = (Resource*)new ResourceMesh(UID, source_file);
 		meshes[resource->GetUID()] = (ResourceMesh*)resource;
+		break;
+
+	case Resource::ResourceType::BONE:
+		resource = (Resource*)new ResourceBone(UID, source_file);
+		bones[resource->GetUID()] = (ResourceBone*)resource;
+		break;
+
+	case Resource::ResourceType::ANIMATION:
+		resource = (Resource*)new ResourceAnimation(UID, source_file);
+		animations[resource->GetUID()] = (ResourceAnimation*)resource;
 		break;
 
 	case Resource::ResourceType::TEXTURE:
@@ -805,7 +865,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 11, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -834,6 +894,12 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 
 	else if (extension == "mesh")
 		type = Resource::ResourceType::MESH;
+
+	else if (extension == "bone")
+		type = Resource::ResourceType::BONE;
+
+	else if (extension == "anim")
+		type = Resource::ResourceType::ANIMATION;
 
 	else if (extension == "vertex" || extension == "fragment")
 		type = Resource::ResourceType::SHADER_OBJECT;
@@ -937,7 +1003,7 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 11, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -984,6 +1050,14 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		meshes.erase(resource->GetUID());
 		break;
 
+	case Resource::ResourceType::BONE:
+		bones.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::ANIMATION:
+		animations.erase(resource->GetUID());
+		break;
+
 	case Resource::ResourceType::TEXTURE:
 		textures.erase(resource->GetUID());
 
@@ -1024,7 +1098,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 11, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
@@ -1080,6 +1154,24 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	meshes.clear();
+
+	for (std::map<uint, ResourceBone*>::iterator it = bones.begin(); it != bones.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = bones.erase(it);
+	}
+
+	bones.clear();
+
+	for (std::map<uint, ResourceAnimation*>::iterator it = animations.begin(); it != animations.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = animations.erase(it);
+	}
+
+	animations.clear();
 
 	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end();)
 	{

@@ -63,7 +63,7 @@ bool ModuleFileSystem::Init(json config)
 	// Make sure standard paths exist
 	const char* dirs[] = {
 		SETTINGS_FOLDER, ASSETS_FOLDER, LIBRARY_FOLDER, MODELS_FOLDER, 
-		MESHES_FOLDER, TEXTURES_FOLDER, SCENES_FOLDER, SHADERS_FOLDER
+		MESHES_FOLDER, BONES_FOLDER, ANIMATIONS_FOLDER, TEXTURES_FOLDER, SCENES_FOLDER, SHADERS_FOLDER
 	};
 
 	for (uint i = 0; i < sizeof(dirs) / sizeof(const char*); ++i)

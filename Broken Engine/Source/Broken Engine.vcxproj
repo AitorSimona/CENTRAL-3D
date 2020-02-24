@@ -76,6 +76,8 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="ComponentAnimation.h" />
+    <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="Components.h" />
@@ -97,6 +99,8 @@
     <ClInclude Include="Imgui\imstb_textedit.h" />
     <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="Importer.h" />
+    <ClInclude Include="ImporterAnimation.h" />
+    <ClInclude Include="ImporterBone.h" />
     <ClInclude Include="ImporterFolder.h" />
     <ClInclude Include="ImporterMaterial.h" />
     <ClInclude Include="ImporterMesh.h" />
@@ -219,6 +223,8 @@
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceAnimation.h" />
+    <ClInclude Include="ResourceBone.h" />
     <ClInclude Include="ResourceFolder.h" />
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
@@ -236,6 +242,8 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="ComponentAnimation.cpp" />
+    <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
@@ -251,6 +259,8 @@
     <ClCompile Include="Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Importer.cpp" />
+    <ClCompile Include="ImporterAnimation.cpp" />
+    <ClCompile Include="ImporterBone.cpp" />
     <ClCompile Include="ImporterFolder.cpp" />
     <ClCompile Include="ImporterMaterial.cpp" />
     <ClCompile Include="ImporterMesh.cpp" />
@@ -335,6 +345,8 @@
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceAnimation.cpp" />
+    <ClCompile Include="ResourceBone.cpp" />
     <ClCompile Include="ResourceFolder.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />

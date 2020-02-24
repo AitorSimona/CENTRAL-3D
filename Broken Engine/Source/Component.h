@@ -16,6 +16,8 @@ public:
 		Mesh,
 		MeshRenderer,
 		Camera,
+		Bone,
+		Animation,
 		Unknown
 	};
 
