@@ -45,7 +45,7 @@ public:
 
 private:
 	physx::PxShape* shape = nullptr;
-	physx::PxTransform globalPosition;
+	float3 globalPosition;
 	int lastIndex = -1;
 };
 

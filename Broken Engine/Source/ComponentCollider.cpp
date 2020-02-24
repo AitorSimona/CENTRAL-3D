@@ -36,7 +36,6 @@ ComponentCollider::~ComponentCollider()
 
 void ComponentCollider::Draw() 
 {
-
 	if (shape)
 	{
 
@@ -74,8 +73,7 @@ void ComponentCollider::Draw()
 
 				// --- Use data to create an AABB and draw it ---
 				AABB aabb;
-				aabb.SetFromCenterAndSize(vec(globalPosition.p.x, globalPosition.p.y, globalPosition.p.z), vec(dimensions.x, dimensions.y, dimensions.z));
-
+				aabb.SetFromCenterAndSize(vec(globalPosition.x, globalPosition.y, globalPosition.z), vec(dimensions.x, dimensions.y, dimensions.z));
 
 				ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
 			}
@@ -132,7 +130,7 @@ void ComponentCollider::Draw()
 			// --- Set uniforms back to defaults ---
 			glUniform1i(TextureSupportLocation, 0);
 		}
-
+		SetPosition();
 	}
 }
 
@@ -140,6 +138,8 @@ void ComponentCollider::SetPosition()
 {
 	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
 	shape->setLocalPose(localTransform);
+	globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
+	globalPosition += localPosition;
 }
 
 json ComponentCollider::Save() const
@@ -224,10 +224,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type) {
 			mesh = nullptr;
 		}
 	}
-
-	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
-	float3 pos = transform->GetPosition();
-	globalPosition = PxTransform(PxVec3(pos.x, pos.y, pos.z));
 
 	if (lastIndex == (int)type)
 		return;
