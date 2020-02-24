@@ -34,6 +34,12 @@ public:
 	GameObject* LoadCube();
 	GameObject* LoadSphere();
 
+	// PHYSICS TEST 
+	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
+	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
+	void CreatePlane(float sizeX, float sizeY, float sizeZ,ResourceMesh* rmesh);
+
 	void DestroyGameObject(GameObject* go);
 
 	// --- Getters ---
@@ -80,8 +86,6 @@ private:
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
-	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 public:

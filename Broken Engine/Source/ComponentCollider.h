@@ -6,6 +6,8 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
+class ResourceMesh;
+
 class ComponentCollider : public Component
 {
 public:
@@ -33,7 +35,7 @@ public:
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
-
+	ResourceMesh* mesh = nullptr;
 	bool editCollider = false;
 	float3 localPosition = float3::zero;
 
