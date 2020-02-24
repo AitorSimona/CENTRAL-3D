@@ -43,9 +43,9 @@ public:
 	UI_Element(GameObject* gameObject, UI_Element::Type type);
 	virtual ~UI_Element();
 
-	UI_Element::Type GetType() { return type; }
+	UI_Element::Type GetType() const { return type; }
 	UI_Element::State GetState() { return state; }
-	UI_Element::Action GetAction() { return action; }
+	UI_Element::Action GetAction() const { return action; }
 
 	void ChangeActionTo(Action new_action) { action = new_action; }
 	void ChangeStateTo(State new_state) { state = new_state; }
@@ -58,8 +58,8 @@ public:
 	void UpdateState();
 	void DoLogic(Action action);
 
-	//virtual void Draw(ComponentCamera* camera) {};
-	virtual void DrawInspector() {};
+	virtual void Draw() const {};
+	virtual void CreateInspectorNode() {};
 
 private:
 	bool CheckMousePos();
@@ -84,7 +84,7 @@ protected:
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;
 
-	SDL_Rect collider;
+	SDL_Rect collider = { 0,0,0,0 };
 
 	const char* action_list[NUM_ACTIONS] = {
 	"None",

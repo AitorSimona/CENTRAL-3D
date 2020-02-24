@@ -1,5 +1,6 @@
 #include "UI_Element.h"
 #include "Application.h"
+#include "ModuleInput.h"
 
 UI_Element::UI_Element(GameObject* gameObject, UI_Element::Type Type) : Component(gameObject, Component::ComponentType::UI_Element), type(Type)
 {
@@ -19,36 +20,36 @@ void UI_Element::UpdateCollider()
 
 bool UI_Element::CheckMousePos()
 {
-	//UpdateCollider();
-	//App->input->GetMousePosition(mouse_pos);
-	////LOG("BEFORE [%f,%f] VIEWPORT[%d,%d,%d,%d]", mouse_pos.x, mouse_pos.y, App->editor->tab_viewport->pos_x, App->editor->tab_viewport->pos_y, App->editor->tab_viewport->width, App->editor->tab_viewport->height, 'd');
+	UpdateCollider();
+	mouse_pos.x = App->input->GetMouseX();
+	mouse_pos.y = App->input->GetMouseY();
 
 	//mouse_pos.x -= App->editor->tab_viewport->pos_x + 7;
 	//mouse_pos.y = math::Abs(mouse_pos.y - (App->editor->tab_viewport->pos_y + 26 + App->editor->tab_viewport->height));// -mouse_pos.y + App->editor->focused_panel->pos_x;
 
-	////LOG("MOUSE [%f,%f] COLLIDER[%d,%d,%d,%d]", mouse_pos.x, mouse_pos.y, collider.x,collider.y,collider.w,collider.h, 'd');
-	//SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
-	//if (SDL_HasIntersection(&MouseCollider, &collider))
-	//	return true;
+	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
+	if (SDL_HasIntersection(&MouseCollider, &collider))
+		return true;
 
-	//return false;
+	return false;
 }
 
 bool UI_Element::CheckClick()
 {
-	//if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
-	//{
-	//	App->input->GetMousePosition(drag_start);
-	//	return true;
-	//}
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+	{
+		drag_start.x = App->input->GetMouseX();
+		drag_start.y = App->input->GetMouseY();
+		return true;
+	}
 
-	//if (draggable && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
-	//	return true;
+	if (draggable && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+		return true;
 
-	//if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
-	//	return false;
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
+		return false;
 
-	//return false;
+	return false;
 }
 
 void UI_Element::UpdateState()
