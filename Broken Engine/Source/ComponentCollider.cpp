@@ -28,6 +28,10 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 	shape->setGeometry(geometry);
 
 	App->physics->mScene->addActor(*shape->getActor());*/
+
+	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCollider");
+
+
 }
 
 ComponentCollider::~ComponentCollider()
@@ -241,8 +245,10 @@ void ComponentCollider::CreateInspectorNode()
 }
 
 void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type) {
-	if (shape != nullptr && lastIndex != (int)type)
+	if (shape != nullptr && lastIndex != (int)type) {
 		shape->release();
+		//RELEASE MESH
+	}
 
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 	float3 pos = transform->GetPosition();
