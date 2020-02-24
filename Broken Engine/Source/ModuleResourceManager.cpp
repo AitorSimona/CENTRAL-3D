@@ -161,7 +161,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 11, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -203,11 +203,11 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		break;
 
 	case Resource::ResourceType::BONE:
-		resource = ImportMesh(IData);
+		resource = ImportBone(IData);
 		break;
 
 	case Resource::ResourceType::ANIMATION:
-		resource = ImportMesh(IData);
+		resource = ImportAnimation(IData);
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:

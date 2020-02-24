@@ -22,12 +22,117 @@ ResourceAnimation::~ResourceAnimation()
 
 bool ResourceAnimation::LoadInMemory()
 {
-	return true;
+	bool ret = true;
+
+	if (App->fs->Exists(resource_file.c_str()))
+	{
+		char* buffer = nullptr;
+		uint bytes = 0;
+
+		App->fs->Load(resource_file.c_str(), &buffer);
+		char* cursor = buffer;
+
+		//Duration
+		memcpy(&this->duration, cursor, sizeof(float));
+		cursor += sizeof(float);
+
+		//TicksperSec
+		memcpy(&this->ticksPerSecond, cursor, sizeof(float));
+		cursor += sizeof(float);
+
+		//numChannels
+		memcpy(&this->numChannels, cursor, sizeof(uint));
+		cursor += sizeof(uint);
+
+
+		this->channels = new Channel[this->numChannels];
+		for (uint i = 0; i < this->numChannels; i++)
+		{
+			bytes = 0;
+
+			// Load channel name -----------------------
+			uint SizeofName = 0;
+			memcpy(&SizeofName, cursor, sizeof(uint));
+			cursor += sizeof(uint);
+
+			char* string = new char[SizeofName + 1];
+			bytes = sizeof(char) * SizeofName;
+			memcpy(string, cursor, bytes);
+			cursor += bytes;
+
+			string[SizeofName] = '\0';
+			this->channels[i].name = string;
+			delete[] string;
+			//-------------------------------------------
+
+			//Poskeys, Rotkeys and Scalekeys SIZES
+			uint ranges[3];
+			memcpy(&ranges, cursor, sizeof(uint) * 3);
+			cursor += sizeof(uint) * 3;
+
+			//Load PosKeys
+			for (int j = 0; j < ranges[0]; j++)
+			{
+				double key;
+				memcpy(&key, cursor, sizeof(double));
+				cursor += sizeof(double);
+
+				float pos[3];
+				memcpy(&pos, cursor, sizeof(float) * 3);
+				cursor += sizeof(float) * 3;
+
+				this->channels[i].PositionKeys[key] = (float3)pos;
+			}
+
+			//Load RotKeys
+			for (int j = 0; j < ranges[1]; j++)
+			{
+				double key;
+				memcpy(&key, cursor, sizeof(double));
+				cursor += sizeof(double);
+
+				float rot[4];
+				memcpy(&rot, cursor, sizeof(float) * 4);
+				cursor += sizeof(float) * 4;
+
+				this->channels[i].RotationKeys[key] = (Quat)rot;
+			}
+
+			//Load ScaleKeys
+			for (int j = 0; j < ranges[2]; j++)
+			{
+				double key;
+				memcpy(&key, cursor, sizeof(double));
+				cursor += sizeof(double);
+
+				float scale[3];
+				memcpy(&scale, cursor, sizeof(float) * 3);
+				cursor += sizeof(float) * 3;
+
+				this->channels[i].ScaleKeys[key] = (float3)scale;
+			}
+
+		}
+
+		// --- Delete buffer data ---
+		if (buffer)
+		{
+			delete[] buffer;
+			buffer = nullptr;
+			cursor = nullptr;
+		}
+	}
+	return ret;
 }
 
 void ResourceAnimation::FreeMemory()
 {
-
+	if (channels)
+	{
+		delete[] this->channels;
+		this->channels = nullptr;
+	}
+	
 }
 
 void ResourceAnimation::OnOverwrite()
