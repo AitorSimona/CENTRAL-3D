@@ -16,6 +16,8 @@ public:
 		Mesh,
 		MeshRenderer,
 		Camera,
+		AudioSource,
+		AudioListener,
 		Unknown
 	};
 

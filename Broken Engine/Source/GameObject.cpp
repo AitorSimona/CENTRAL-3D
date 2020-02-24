@@ -5,6 +5,8 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ModuleSceneManager.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "Math.h"
 
@@ -176,6 +178,12 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 				break;
 			case Component::ComponentType::Camera:
 				component = new ComponentCamera(this);
+				break;
+			case Component::ComponentType::AudioSource:
+				component = new ComponentAudioSource(this);
+				break;
+			case Component::ComponentType::AudioListener:
+				component = new ComponentAudioListener(this);
 				break;
 		}
 
