@@ -7,7 +7,7 @@
 
 ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled)
 {
-	CONSOLE_LOG("Initializing Time Manager");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing Time Manager");
 
 	name = "TimeManager";
 	Realtime_clock.Start();
@@ -34,7 +34,7 @@ void ModuleTimeManager::PrepareUpdate()
 		case AppState::TO_PLAY:
 			App->GetAppState() = AppState::PLAY;
 			//App->scene_manager->SaveScene();
-			CONSOLE_LOG("APP STATE PLAY");
+			ENGINE_CONSOLE_LOG("APP STATE PLAY");
 			break;
 
 		case AppState::PLAY:
@@ -44,7 +44,7 @@ void ModuleTimeManager::PrepareUpdate()
 
 		case AppState::TO_PAUSE:
 			App->GetAppState() = AppState::PAUSE;
-			CONSOLE_LOG("APP STATE PAUSE");
+			ENGINE_CONSOLE_LOG("APP STATE PAUSE");
 
 			break;
 
@@ -56,7 +56,7 @@ void ModuleTimeManager::PrepareUpdate()
 		case AppState::TO_EDITOR:
 			App->GetAppState() = AppState::EDITOR;
 			//App->scene_manager->LoadScene();
-			CONSOLE_LOG("APP STATE EDITOR");
+			ENGINE_CONSOLE_LOG("APP STATE EDITOR");
 			break;
 
 		case AppState::EDITOR:
@@ -65,7 +65,7 @@ void ModuleTimeManager::PrepareUpdate()
 			break;
 
 		case AppState::STEP:
-			CONSOLE_LOG("APP STATE STEP");
+			ENGINE_CONSOLE_LOG("APP STATE STEP");
 			App->GetAppState() = AppState::PAUSE;
 			break;
 

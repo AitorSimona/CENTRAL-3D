@@ -38,12 +38,13 @@ bool ModuleCamera3D::Init(json config)
 // -----------------------------------------------------------------
 bool ModuleCamera3D::Start()
 {
-	CONSOLE_LOG("Setting up the camera");
+	ENGINE_CONSOLE_LOG("Setting up the camera");
 
 	bool ret = true;
 	camera->frustum.SetPos(float3(0.0f, 25.0f,-50.0f));
 	camera->SetFOV(60.0f);
 	reference = camera->frustum.Pos();
+	camera->Look({ 0.0f, 0.0f, 0.0f });
 
 	return ret;
 }
@@ -51,7 +52,7 @@ bool ModuleCamera3D::Start()
 // -----------------------------------------------------------------
 bool ModuleCamera3D::CleanUp()
 {
-	CONSOLE_LOG("Cleaning camera");
+	ENGINE_CONSOLE_LOG("Cleaning camera");
 
 	delete camera;
 
@@ -63,9 +64,12 @@ update_status ModuleCamera3D::Update(float dt)
 {
 	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered)
 	{
-		speed = 10.0f * dt;
+		m_CameraSpeedDeltaTime = m_CameraSpeed * dt;
+		m_ScrollSpeedDeltaTime = m_ScrollSpeed * dt;
+		m_FinalSpeed = m_CameraSpeedDeltaTime * m_SpeedMultiplicator;
+
 		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-			speed *= 2.0f;
+			m_FinalSpeed *= 2.0f;
 	}
 
 	return UPDATE_CONTINUE;
@@ -80,38 +84,45 @@ void ModuleCamera3D::UpdateCamera()
 		// --- Move ---
 		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 		{
-			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * speed;
-			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * speed;
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * m_FinalSpeed;
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * m_FinalSpeed;
 
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * m_FinalSpeed;
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * m_FinalSpeed;
 
-			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= camera->frustum.WorldRight() * speed;
-			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += camera->frustum.WorldRight() * speed;
+			if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) newPos -= camera->frustum.Up() * m_FinalSpeed * 0.7f;
+			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) newPos += camera->frustum.Up() * m_FinalSpeed * 0.7f;
 
+			if (abs(App->input->GetMouseWheel()) > 0)
+				ModifySpeedMultiplicator();
 
 			// --- Look Around ---
-			CameraLookAround(speed, camera->frustum.Pos());
+			CameraLookAround(m_CameraSpeedDeltaTime, camera->frustum.Pos());
 		}
+		// --- Zoom ---
+		else if (/*!App->gui->IsMouseCaptured() && */abs(App->input->GetMouseWheel()) > 0)
+			CameraZoom(m_ScrollSpeedDeltaTime);
 
 		camera->frustum.SetPos(camera->frustum.Pos() + newPos);
 		reference += newPos;
 
 		// --- Camera Pan ---
 		if (App->input->GetMouseButton(2) == KEY_REPEAT)
-			CameraPan(speed);
-
-		// --- Zoom ---
-		if (/*!App->gui->IsMouseCaptured() && */abs(App->input->GetMouseWheel()) > 0)
-			CameraZoom(speed);
+			CameraPan(m_ScrollSpeedDeltaTime);
 
 		// --- Orbit Object ---
 		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
-			CameraLookAround(speed, reference);
+			CameraLookAround(m_CameraSpeedDeltaTime, reference);
 
 		// --- Frame object ---
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-			FrameObject(App->scene_manager->GetSelectedGameObject());
-
-
+		{
+			if (GameObject* GO = App->scene_manager->GetSelectedGameObject())
+				FrameObject(GO);
+			else
+				FrameObject(float3(0.0f));
+		}
+		
 		// --- Mouse picking ---
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 		{
@@ -137,8 +148,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 	normalized_x = ((normalized_x / (float)App->window->GetWindowWidth()) - 0.5) * 2;
 	normalized_y = ((1.0f - (normalized_y / (float)App->window->GetWindowHeight())) - 0.5) * 2;
 
-	//CONSOLE_LOG("mouse_X: %f", normalized_x);
-	//CONSOLE_LOG("mouse_Y: %f", normalized_y);
+	//ENGINE_CONSOLE_LOG("mouse_X: %f", normalized_x);
+	//ENGINE_CONSOLE_LOG("mouse_Y: %f", normalized_y);
 
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 	last_ray = ray;
@@ -161,13 +172,22 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 			reference.y = center.y;
 			reference.z = center.z;
 
-			float3 Movement = camera->frustum.Front() * (2 * mesh->GetAABB().HalfDiagonal().Length());
+			float3 Movement = camera->frustum.Front() * (10.0f * mesh->GetAABB().HalfDiagonal().Length());
 
 			if(Movement.IsFinite())
 			camera->frustum.SetPos(reference - Movement);
-		}
-		
+		}		
 	}
+}
+
+void ModuleCamera3D::FrameObject(float3 posToLook)
+{
+	reference = posToLook;
+	float3 Movement = camera->frustum.Front() * 30.0f;
+
+	if (Movement.IsFinite())
+		camera->frustum.SetPos(reference - Movement);
+
 }
 
 
@@ -202,6 +222,19 @@ void ModuleCamera3D::CameraZoom(float speed)
 	float3 Movement = camera->frustum.Front() * mouse_wheel*speed*factor;
 	camera->frustum.SetPos(camera->frustum.Pos() + Movement);
 }
+
+
+void ModuleCamera3D::ModifySpeedMultiplicator()
+{
+	m_ScrollingSpeedChange = true;
+	m_SpeedMultiplicator += (m_ScrollSpeedDeltaTime * App->input->GetMouseWheel() * 5.0f);
+
+	if (m_SpeedMultiplicator > 15.0f)
+		m_SpeedMultiplicator = 15.0f;
+	if (m_SpeedMultiplicator < 0.3f)
+		m_SpeedMultiplicator = 0.3f;
+}
+
 
 void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 {

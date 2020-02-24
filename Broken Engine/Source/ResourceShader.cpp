@@ -57,7 +57,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		}
 		catch (std::ifstream::failure e)
 		{
-			CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+			ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
 			ret = false;
 		}
 
@@ -83,7 +83,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		if (!success)
 		{
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+			ENGINE_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
 		}
 
 		success = CreateFragmentShader(fragment, fShaderCode.data());
@@ -91,7 +91,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		if (!success)
 		{
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+			ENGINE_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
 		}
 
 		success = CreateShaderProgram(vertex, fragment);
@@ -99,7 +99,7 @@ ResourceShader::ResourceShader(const char * vertexPath, const char * fragmentPat
 		if (!success)
 		{
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+			ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 		}
 
 		// delete the shaders as they're linked into our program now and no longer necessary
@@ -138,7 +138,7 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 	}
 	catch (std::ifstream::failure e)
 	{
-		CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+		ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
 	}
 
 	success = CreateShaderProgram();
@@ -147,7 +147,7 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 	if (!success)
 	{
 		glGetProgramInfoLog(ID, 512, NULL, infoLog);
-		CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+		ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 
 		glDeleteProgram(ID);
 	}
@@ -161,7 +161,7 @@ ResourceShader::ResourceShader(const char * binary, uint size, uint format, cons
 		if (!success)
 		{
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
+			ENGINE_CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
 
 			// --- Trigger recompilation ---
 			glDeleteProgram(ID);
@@ -211,11 +211,11 @@ void ResourceShader::ReloadAndCompileShader()
 	if (!success)
 	{
 		glGetShaderInfoLog(new_vertex, 512, NULL, infoLog);
-		CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+		ENGINE_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
 		accumulated_errors++;
 	}
 	else
-		CONSOLE_LOG("Vertex Shader compiled successfully");
+		ENGINE_CONSOLE_LOG("Vertex Shader compiled successfully");
 
 	// --- Compile new fragment shader ---
 
@@ -224,11 +224,11 @@ void ResourceShader::ReloadAndCompileShader()
 	if (!success)
 	{
 		glGetShaderInfoLog(new_fragment, 512, NULL, infoLog);
-		CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+		ENGINE_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
 		accumulated_errors++;
 	}
 	else
-		CONSOLE_LOG("Fragment Shader compiled successfully");
+		ENGINE_CONSOLE_LOG("Fragment Shader compiled successfully");
 
 	if (accumulated_errors == 0)
 	{
@@ -245,7 +245,7 @@ void ResourceShader::ReloadAndCompileShader()
 		if (!success)
 		{
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+			ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 
 			// --- Detach new shader objects ---
 			glDetachShader(ID, new_vertex);
@@ -265,7 +265,7 @@ void ResourceShader::ReloadAndCompileShader()
 			vertex = new_vertex;
 			fragment = new_fragment;
 
-			CONSOLE_LOG("Shader Program linked successfully");
+			ENGINE_CONSOLE_LOG("Shader Program linked successfully");
 		}
 	}
 	else
@@ -484,7 +484,7 @@ void ResourceShader::SaveShader()
 //
 //			if (!file.is_open())
 //			{
-//				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
+//				ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
 //			}
 //			else
 //			{
@@ -502,7 +502,7 @@ void ResourceShader::SaveShader()
 //
 //			if (!file2.is_open())
 //			{
-//				CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
+//				ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
 //			}
 //			else
 //			{
@@ -514,7 +514,7 @@ void ResourceShader::SaveShader()
 //		delete[] buffer;
 //	}
 //	else
-//		CONSOLE_LOG("|[error]: Could not save Shader: %s, try compiling it first", name.data());
+//		ENGINE_CONSOLE_LOG("|[error]: Could not save Shader: %s, try compiling it first", name.data());
 }
 
 void ResourceShader::DeleteShaderProgram()

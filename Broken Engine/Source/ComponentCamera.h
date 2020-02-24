@@ -25,6 +25,8 @@ public:
 	void SetFOV(float fov);
 	void SetAspectRatio(float ar);
 
+	void SetCameraValues(float4 values);
+
 	
 	// --- Utilities ---
 	void Look(const float3& position);
@@ -40,6 +42,7 @@ public:
 	void CreateInspectorNode() override;
 
 public:
+
 	Frustum		frustum;
 	bool		culling = false;
 	bool		active_camera = false;

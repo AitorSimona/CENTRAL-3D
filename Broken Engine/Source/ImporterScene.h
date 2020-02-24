@@ -7,7 +7,7 @@
 
 class GameObject;
 class Resource;
-
+class ResourceScene;
 
 class ImporterScene : public Importer
 {
@@ -18,8 +18,10 @@ public:
 
 	Resource* Import(ImportData& IData) const override;
 	Resource* Load(const char* path) const override;
-	std::string SaveSceneToFile(std::vector<GameObject*>& scene_gos, std::string& scene_name) const;
+	std::string SaveSceneToFile(ResourceScene* scene, std::string& scene_name) const;
 
-	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Scene; };};
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Scene; };
+
+};
 
 #endif

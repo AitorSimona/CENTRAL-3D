@@ -23,8 +23,10 @@ class ModuleResourceManager : public Module
 	friend class ImporterMeta;
 	friend class ImporterMesh;
 	friend class ImporterMaterial;
+	friend class ImporterScene;
 	friend class ImporterFolder;
 	friend class PanelResources;
+	friend class ComponentMeshRenderer;
 public:
 
 	// --- Basic ---
@@ -40,7 +42,7 @@ public:
 public:
 
 	// --- Importing ---
-	std::string DuplicateIntoAssetsFolder(const char* path);
+	std::string DuplicateIntoGivenFolder(const char* path, const char* folder_path);
 	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
 	Resource* ImportAssets(Importer::ImportData& IData);
 	Resource* ImportFolder(Importer::ImportData& IData);

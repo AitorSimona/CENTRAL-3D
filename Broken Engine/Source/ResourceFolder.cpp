@@ -40,7 +40,7 @@ void ResourceFolder::AddResource(Resource* resource)
 	if(!HasResource(resource))
 		resources.push_back(resource);
 	else
-		CONSOLE_LOG("![Warning]: Trying to add an already contained resource to folder: %s", this->GetName());
+		ENGINE_CONSOLE_LOG("![Warning]: Trying to add an already contained resource to folder: %s", this->GetName());
 }
 
 void ResourceFolder::RemoveResource(Resource* resource)

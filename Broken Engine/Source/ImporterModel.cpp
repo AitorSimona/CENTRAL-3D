@@ -106,7 +106,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		}
 	}
 	else
-		CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);
+		ENGINE_CONSOLE_LOG("|[error]: Error loading FBX %s", IData.path);
 
 	return model;
 }
@@ -122,7 +122,10 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 
 		// --- Else, Import mesh data (fill new_mesh) ---
 		if (IMesh)
+		{
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
+			scene_meshes[i]->SetName(scene->mMeshes[i]->mName.C_Str());
+		}
 
 	}
 }
@@ -313,7 +316,10 @@ Resource* ImporterModel::Load(const char* path) const
 
 						if (to_Add)
 						{
-							//to_Add->SetParent(resource);
+							// --- Give mesh a name ---
+							if (to_Add->GetType() == Resource::ResourceType::MESH)
+								to_Add->SetName(it.key().c_str());
+
 							resource->AddResource(to_Add);
 						}
 					}
@@ -346,7 +352,7 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				GameObject* go = App->scene_manager->CreateEmptyGameObject();
 	
 				// --- Retrieve GO's UID and name ---
-				go->SetName(it.key().data());
+				go->SetName(it.key().c_str());
 				std::string uid = file[it.key()]["UID"];
 				go->GetUID() = std::stoi(uid);
 	

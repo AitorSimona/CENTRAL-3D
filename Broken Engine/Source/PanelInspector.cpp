@@ -59,16 +59,16 @@ bool PanelInspector::Draw()
 				ImGui::SetNextItemOpen(true);
 
 			(*it)->CreateInspectorNode();
-
+			ImGui::NewLine();
 			ImGui::Separator();
 		}
 
-		ImGui::Separator();
-
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer", "Dynamic RigidBody", "ComponentCollider"};
+		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer", "Dynamic RigidBody", "ComponentCollider" };
 		static const char* item_current = items[0];
+
+		ImGui::NewLine();
 
 		// --- Add component ---
 		if (ImGui::BeginCombo("##Components Combo", "Add Component", flags)) // The second parameter is the label previewed before opening the combo.
@@ -83,7 +83,6 @@ bool PanelInspector::Draw()
 			}
 			ImGui::EndCombo();
 		}
-
 
 		// --- Add here temporal conditions to know which component to add ---
 
@@ -109,6 +108,7 @@ bool PanelInspector::Draw()
 			Selected->AddComponent(Component::ComponentType::Collider);
 		}
 
+		item_current = items[0];
 		// MYTODO: move this to the component itself
 
 		// --- Material ---
@@ -128,7 +128,7 @@ bool PanelInspector::Draw()
 
 
 		if(Startup)
-		Startup = false;
+			Startup = false;
 	}
 
 	ImGui::End();
@@ -137,7 +137,7 @@ bool PanelInspector::Draw()
 	return true;
 }
 
-inline void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
+void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 {
 	ImGui::BeginChild("child", ImVec2(0, 35), true);
 
@@ -156,104 +156,4 @@ inline void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 	App->scene_manager->SetStatic(&Selected);
 
 	ImGui::EndChild();
-}
-
-
-inline void PanelInspector::CreateMaterialNode(GameObject& Selected) const
-{
-	//ComponentMaterial* material = Selected.GetComponent<ComponentMaterial>();
-
-	//ImGui::Checkbox("##MatActive", &material->GetActive());
-	ImGui::SameLine();
-
-	if (Startup)
-		ImGui::SetNextItemOpen(true);
-
-	//if (ImGui::TreeNode("Material"))
-	//{
-	//	static ImGuiComboFlags flags = 0;
-
-	//	ImGui::Text("Shader");
-	//	ImGui::SameLine();
-
-	//	std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
-
-	//	const char* item_current = material->resource_material->shader->name.data();
-	//	if (ImGui::BeginCombo("##Shader", item_current, flags))
-	//	{
-	//		for (std::map<std::string, ResourceShader*>::iterator it = shaders->begin(); it != shaders->end(); ++it)
-	//		{
-	//			bool is_selected = (item_current == it->first);
-
-	//			if (ImGui::Selectable(it->second->name.data(), is_selected))
-	//			{
-	//				item_current = it->second->name.data();
-	//				material->resource_material->shader = it->second;
-	//				material->resource_material->shader->GetAllUniforms(material->resource_material->uniforms);
-	//			}
-	//			if (is_selected)
-	//				ImGui::SetItemDefaultFocus();
-	//		}
-
-	//		ImGui::EndCombo();
-	//	}
-
-
-	//	// --- Print Texture Path ---
-	//	std::string Path = "Path: ";
-	//	Path.append(material->resource_material->resource_diffuse->Texture_path);
-
-	//	ImGui::Text(Path.data());
-
-	//	// --- Texture Preview ---
-	//	ImGui::Image((void*)(uint)&material->resource_material->resource_diffuse->buffer_id, ImVec2(150, 150));
-	//	ImGui::Text("Instances:");
-	//	ImGui::SameLine();
-	//	ImGui::Text(std::to_string(material->resource_material->resource_diffuse->instances).data());
-
-	//	// --- Print Texture Width and Height ---
-	//	ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_width).data());
-	//	ImGui::SameLine();
-	//	ImGui::Text(std::to_string(material->resource_material->resource_diffuse->Texture_height).data());
-
-	//	ImGui::Separator();
-
-	//	ImGui::Text("Shader Uniforms");
-
-	//	App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material->resource_material);
-
-	//	ImGui::TreePop();
-	//}
-}
-
-inline void PanelInspector::CreateCameraNode(GameObject & Selected) const
-{
-	if (Startup)
-		ImGui::SetNextItemOpen(true);
-
-	ComponentCamera* camera = Selected.GetComponent<ComponentCamera>();
-
-	if (ImGui::TreeNode("Camera"))
-	{
-		if (ImGui::Checkbox("Active Camera", &camera->active_camera))
-			camera->active_camera ? App->renderer3D->SetActiveCamera(camera) : App->renderer3D->SetActiveCamera(nullptr);
-
-
-		if (ImGui::Checkbox("Culling Camera", &camera->culling))
-			camera->culling ? App->renderer3D->SetCullingCamera(camera) : App->renderer3D->SetCullingCamera(nullptr);
-
-		ImGui::Text("FOV");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.15f);
-
-		float fov = camera->GetFOV();
-
-		ImGui::DragFloat("##FOV", &fov, 0.005f);
-
-		if (fov != camera->GetFOV())
-			camera->SetFOV(fov);
-
-		ImGui::TreePop();
-	}
-
 }

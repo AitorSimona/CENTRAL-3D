@@ -136,8 +136,6 @@ void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
 				glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 		}
 
-
-
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
 		glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
@@ -171,14 +169,13 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, 1.0, 1.0, 0);
 
 	if (draw_vertexnormals && mesh.vertices->normal)
 	{
-		// --- Draw Vertex Normals ---
+		glVertexAttrib3f(vertexColorLocation, 1.0, 1.0, 0);
 
+		// --- Draw Vertex Normals ---
 		float3* vertices = new float3[mesh.IndicesSize * 2];
 
 		for (uint i = 0; i < mesh.IndicesSize; ++i)
@@ -218,8 +215,9 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 	if (draw_facenormals)
 	{
+		glVertexAttrib3f(vertexColorLocation, 0, 1.0, 1.0);
 		Triangle face;
-		float3* vertices = new float3[mesh.IndicesSize/3*2];
+		float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
 		
 		// --- Compute face normals ---
 		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
@@ -234,8 +232,8 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 			face_normal.Normalize();
 
-			vertices[j*2] = float3(face_center.x, face_center.y, face_center.z);
-			vertices[(j*2) + 1] = float3(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
+			vertices[j * 2] = float3(face_center.x, face_center.y, face_center.z);
+			vertices[(j * 2) + 1] = float3(face_center.x + face_normal.x * NORMAL_LENGTH, face_center.y + face_normal.y * NORMAL_LENGTH, face_center.z + face_normal.z * NORMAL_LENGTH);
 		}
 
 		// --- Create VAO, VBO ---
@@ -253,11 +251,12 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindVertexArray(0);
 
 		// --- Draw lines ---
-
 		glLineWidth(3.0f);
+		glColor3f(255, 255, 0);
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 		glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
 		glBindVertexArray(0);
+		glColor3f(255, 255, 255);
 		glLineWidth(1.0f);
 
 		// --- Delete VBO and vertices ---
@@ -417,7 +416,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	ImGui::Checkbox("##RenActive", &GetActive());
 	ImGui::SameLine();
 
-
 	if (ImGui::TreeNode("Mesh Renderer"))
 	{
 
@@ -429,5 +427,96 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 		ImGui::TreePop();
 	}
+
+	ImGui::NewLine();
+	ImGui::Separator();
+	ImGui::PushID("Material");
+
+	if (material)
+	{
+		// --- Mat preview
+		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
+		ImGui::SameLine();
+		
+		if (ImGui::TreeNode(material->GetName()))
+		{
+			static ImGuiComboFlags flags = 0;
+
+			ImGui::Text("Shader");
+			ImGui::SameLine();
+
+			const char* item_current = material->shader->name.c_str();
+			if (ImGui::BeginCombo("##Shader", item_current, flags))
+			{
+				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+				{
+					bool is_selected = (item_current == it->second->name);
+
+					if (ImGui::Selectable(it->second->name.c_str(), is_selected))
+					{
+						item_current = it->second->name.c_str();
+						material->shader = it->second;
+						material->shader->GetAllUniforms(material->uniforms);
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+
+			// --- Print Texture Path ---
+			//std::string Path = "Path: ";
+			//Path.append(material->resource_diffuse->Texture_path);
+
+			//ImGui::Text(Path.data());
+
+			if (material->resource_diffuse)
+			{
+				// --- Print Texture Width and Height ---
+				ImGui::Text(std::to_string(material->resource_diffuse->Texture_width).c_str());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(material->resource_diffuse->Texture_height).c_str());
+			}
+
+			//ImGui::Text("Shader Uniforms");
+			//App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material);
+			//ImGui::TreePop();
+
+			ImGui::NewLine();
+
+			// --- Texture Preview ---
+			if (material->resource_diffuse)
+				ImGui::ImageButton((void*)(uint)material->resource_diffuse->GetPreviewTexID(), ImVec2(20, 20));
+			else
+				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+	
+			// --- Handle drag & drop ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					Resource* resource = App->resources->GetResource(UID, false);
+
+					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+					{
+						if (material->resource_diffuse)
+							material->resource_diffuse->Release();
+
+						material->resource_diffuse = (ResourceTexture*)App->resources->GetResource(UID);
+					}						
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::SameLine();
+			ImGui::Text("Albedo");
+			ImGui::TreePop();
+		}
+	}
+
+	ImGui::PopID();
 }
 

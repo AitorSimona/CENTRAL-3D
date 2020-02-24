@@ -47,7 +47,6 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 
 	unsigned int VAO = 0;
-	Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
