@@ -155,14 +155,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Selected Object Outlining ---
 	HandleObjectOutlining();
 
-	glBegin(GL_TRIANGLES);
-	glLineWidth(10);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 100, 0);
-	glVertex3f(100, 0, 0);
-
-	glEnd();
-
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);
 

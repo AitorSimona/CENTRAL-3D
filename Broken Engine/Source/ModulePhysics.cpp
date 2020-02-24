@@ -40,14 +40,14 @@ bool ModulePhysics::Init(json config)
 
 	mFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
 	if (!mFoundation)
-		CONSOLE_LOG("PxCreateFoundation failed!");
+		ENGINE_CONSOLE_LOG("PxCreateFoundation failed!");
 
 	bool recordMemoryAllocations = true;
 
 	mPhysics = PxCreateBasePhysics(PX_PHYSICS_VERSION, *mFoundation,
 		PxTolerancesScale(), recordMemoryAllocations);
 	if (!mPhysics) {
-		CONSOLE_LOG("PxCreateBasePhysics failed!");
+		ENGINE_CONSOLE_LOG("PxCreateBasePhysics failed!");
 		return false;
 	}
 
@@ -112,7 +112,7 @@ void ModulePhysics::BoxCollider(float posX, float posY, float posZ)
 	box = PxCreateDynamic(*mPhysics, position, geometry, *mMaterial, 1.0f);
 	mScene->addActor(*box);
 
-	CONSOLE_LOG("box created");
+	ENGINE_CONSOLE_LOG("box created");
 }
 
 void ModulePhysics::SimulatePhysics(float dt, float speed)

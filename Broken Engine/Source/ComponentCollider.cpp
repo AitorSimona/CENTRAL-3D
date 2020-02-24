@@ -233,7 +233,7 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.scaleY = radius;						
 					localMatrix.scaleZ = radius;
 
-					if (prevRadius != radius)
+					//if (prevRadius != radius)
 						//CreateCollider(COLLIDER_TYPE::SPHERE, true);
 								
 					break;
@@ -265,7 +265,7 @@ void ComponentCollider::CreateInspectorNode()
 
 					ImGui::DragFloat("##SZ", &scale.z, 0.005f);
 
-					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z)
+					//if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z)
 						//CreateCollider(COLLIDER_TYPE::BOX, true);
 
 					break;
@@ -296,7 +296,7 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.scaleY = height;
 					localMatrix.scaleZ = radius;
 
-					if (prevRadius != radius || prevheight != height)
+					//if (prevRadius != radius || prevheight != height)
 						//CreateCollider(COLLIDER_TYPE::CAPSULE, true);
 
 					break;
