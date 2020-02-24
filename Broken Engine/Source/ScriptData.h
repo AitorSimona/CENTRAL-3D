@@ -2,8 +2,10 @@
 #define __SCRIPTDATA_H__
 
 #include <string>
+
+#include "LuaIncludes.h"
 #include "ComponentScript.h"
-#include "LuaBridge-241/include/luabridge.h"
+
 
 //We don't want to include all the luabridge library in ModuleScripting.h so we don't include it everywhere where we include Module Scripting
 struct ScriptFile {

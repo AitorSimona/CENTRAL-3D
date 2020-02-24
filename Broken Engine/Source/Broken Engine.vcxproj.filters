@@ -73,6 +73,9 @@
     <Filter Include="Sources\3rd Party\glad">
       <UniqueIdentifier>{cc415a8f-0896-47ec-871d-3acac291c44d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Modules\Scripting Functions">
+      <UniqueIdentifier>{14efcff7-e13e-475f-a0e3-9238402bc333}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -558,6 +561,12 @@
     <ClInclude Include="ImporterScript.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="Scripting.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaIncludes.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -904,6 +913,9 @@
     </ClCompile>
     <ClCompile Include="ImporterScript.cpp">
       <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.cpp">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

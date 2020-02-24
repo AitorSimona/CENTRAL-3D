@@ -8,6 +8,7 @@
 #include "Resource.h"
 #include "ResourceScript.h"
 #include "ComponentScript.h"
+#include "Scripting.h"
 //#include "ComponentTransform.h"
 //#include "ModuleResources.h"
 //#include "ModuleEditor.h"
@@ -21,18 +22,12 @@
 #include "SDL/include/SDL_keyboard.h"
 #include "SDL/include/SDL_mouse.h"
 
-extern "C"
-{
-#include "lua-535/include/lua.h"
-#include "lua-535/include/lauxlib.h"
-#include "lua-535/include/lualib.h"
-}
 //This include MUST go after Lua includes
-#include "LuaBridge-241/include/LuaBridge.h"
+//#include "LuaBridge-241/include/LuaBridge.h"
 #include "ScriptData.h"
 
-//LUA lib
-#pragma comment(lib, "lua-535/liblua53.a")
+
+
 
 //Memleaks
 //#include "MemLeaks.h" //MYTODO: Dídac commented old include ask Aitor what to include, I assuem its mmgr directly
@@ -118,7 +113,7 @@ bool ModuleScripting::DoHotReloading()
 }
 
 //This function just compiles a script and checks if it compiled or it prompts the error to console
-bool ModuleScripting::JustCompile(std::string relative_path)
+bool ModuleScripting::JustCompile(std::string absolute_path)
 {
 	bool ret = false;
 
@@ -128,19 +123,33 @@ bool ModuleScripting::JustCompile(std::string relative_path)
 		.beginClass <Scripting>("Scripting")
 		.addConstructor<void(*) (void)>()
 		.addFunction("LOG", &Scripting::LogFromLua)
+		.addFunction("GetKey", &Scripting::GetKey)
+		.addFunction("KeyState", &Scripting::GetKeyState)
+		.addFunction("KeyDown", &Scripting::IsKeyDown)
+		.addFunction("KeyUp", &Scripting::IsKeyUp)
+		.addFunction("KeyRepeat", &Scripting::IsKeyRepeat)
+		.addFunction("KeyIdle", &Scripting::IsKeyIdle)
+		.addFunction("GetMouseButton", &Scripting::GetMouseButton)
+		.addFunction("MouseButtonState", &Scripting::GetMouseButtonState)
+		.addFunction("MouseButtonDown", &Scripting::IsMouseButtonDown)
+		.addFunction("MouseButtonUp", &Scripting::IsMouseButtonUp)
+		.addFunction("MouseButtonRepeat", &Scripting::IsMouseButtonRepeat)
+		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
+		.addFunction("Translate", &Scripting::Translate)
+		.addFunction("dt", &Scripting::GetDT)
 		.endClass()
 		.endNamespace();
 
 	Scripting Scripting;
 
-	std::string absolute_path = App->fs->GetBasePath() + relative_path;
+	//std::string absolute_path = App->fs->GetBasePath() + relative_path;
 	//std::string absolute_path = App->file_system->GetPathToGameFolder(true) + relative_path; //If it compiles, remove this Reference line
 	int compiled = luaL_dofile(L, absolute_path.c_str());
 
 	if (compiled == LUA_OK)
 	{
 		//We don't need to do nothing here, LOG something at most
-		CONSOLE_LOG("Compiled %s successfully!", relative_path.c_str());
+		CONSOLE_LOG("Compiled %s successfully!", absolute_path.c_str());
 		ret = true;
 	}
 	else
@@ -160,6 +169,20 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.beginClass <Scripting>("Scripting")
 		.addConstructor<void(*) (void)>()
 		.addFunction("LOG", &Scripting::LogFromLua)
+		.addFunction("GetKey", &Scripting::GetKey)
+		.addFunction("KeyState", &Scripting::GetKeyState)
+		.addFunction("KeyDown", &Scripting::IsKeyDown)
+		.addFunction("KeyUp", &Scripting::IsKeyUp)
+		.addFunction("KeyRepeat", &Scripting::IsKeyRepeat)
+		.addFunction("KeyIdle", &Scripting::IsKeyIdle)
+		.addFunction("GetMouseButton", &Scripting::GetMouseButton)
+		.addFunction("MouseButtonState", &Scripting::GetMouseButtonState)
+		.addFunction("MouseButtonDown", &Scripting::IsMouseButtonDown)
+		.addFunction("MouseButtonUp", &Scripting::IsMouseButtonUp)
+		.addFunction("MouseButtonRepeat", &Scripting::IsMouseButtonRepeat)
+		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
+		.addFunction("Translate", &Scripting::Translate)
+		.addFunction("dt", &Scripting::GetDT)
 		.endClass()
 		.endNamespace();
 
@@ -202,6 +225,7 @@ void ModuleScripting::SendScriptToModule(ComponentScript * script_component)
 	s_instance->my_resource = script_component->script;
 
 	class_instances.push_back(s_instance);
+	JustCompile(script_component->script->absolute_path);
 	CompileScriptTableClass(s_instance); //Compile so we can give the instance its table/class reference
 }
 
@@ -513,491 +537,3 @@ void ModuleScripting::Stop()
 	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
 		(*it)->awoken = (*it)->started = false;
 }
-
-
-Scripting::Scripting()
-{
-}
-
-Scripting::~Scripting()
-{
-}
-
-// ENGINE TRANSLATOR
-// General
-
-//Function that Lua will be able to call as LOG
-void Scripting::LogFromLua(const char * string)
-{
-	CONSOLE_LOG("[Script]: %s", string);
-}
-//
-//void Scripting::TestFunc()
-//{
-//	LOG("This is a test function that Logs something (TestFunc)");
-//}
-//
-//uint Scripting::GetRealTime() const
-//{
-//	return App->GetRealTime();
-//}
-//
-//uint Scripting::GetTime() const
-//{
-//	return App->GetGameTime();
-//}
-//
-//float Scripting::GetRealDT() const
-//{
-//	return App->GetRealDT();
-//}
-//
-//float Scripting::GetDT() const
-//{
-//	return App->GetGameDT();
-//}
-//
-//// Input
-//int Scripting::GetKey(const char* key) const
-//{
-//	SDL_Scancode code = SDL_GetScancodeFromName(key);
-//	if (code != SDL_SCANCODE_UNKNOWN)
-//		return code;
-//	else {
-//		LOG("[Script Error]: Unknown key passed as string.");
-//		return -1;
-//	}
-//}
-//
-//int Scripting::GetKeyState(const char* key) const
-//{
-//	SDL_Scancode code = SDL_GetScancodeFromName(key);
-//	if (code != SDL_SCANCODE_UNKNOWN)
-//		return App->input->GetKey(code);
-//	else {
-//		LOG("[Script Error]: Unknown key passed as string.");
-//		return -1;
-//	}
-//}
-//
-//bool Scripting::IsKeyDown(const char* key) const
-//{
-//	return GetKeyState(key) == KEY_DOWN;
-//}
-//
-//bool Scripting::IsKeyUp(const char* key) const
-//{
-//	return GetKeyState(key) == KEY_UP;
-//}
-//
-//bool Scripting::IsKeyRepeat(const char* key) const
-//{
-//	return GetKeyState(key) == KEY_REPEAT;
-//}
-//
-//bool Scripting::IsKeyIdle(const char* key) const
-//{
-//	return GetKeyState(key) == KEY_IDLE;
-//}
-//
-//int Scripting::GetMouseButton(const char* button) const
-//{
-//	if (!std::strcmp("Left", button))
-//		return SDL_BUTTON_LEFT;
-//	else if (!std::strcmp("Middle", button))
-//		return SDL_BUTTON_MIDDLE;
-//	else if (!std::strcmp("Right", button))
-//		return SDL_BUTTON_RIGHT;
-//	else if (!std::strcmp("X1", button))
-//		return SDL_BUTTON_X1;
-//	else if (!std::strcmp("X2", button))
-//		return SDL_BUTTON_X2;
-//	else {
-//		LOG("[Script Error]: Unknown MouseButton passed as string.");
-//		return -1;
-//	}
-//}
-//
-//int Scripting::GetMouseButtonState(const char* button) const
-//{
-//	if (!strcmp("Left", button))
-//		return App->input->GetMouseButton(SDL_BUTTON_LEFT);
-//	else if (!std::strcmp("Middle", button))
-//		return App->input->GetMouseButton(SDL_BUTTON_MIDDLE);
-//	else if (!std::strcmp("Right", button))
-//		return App->input->GetMouseButton(SDL_BUTTON_RIGHT);
-//	else if (!std::strcmp("X1", button))
-//		return App->input->GetMouseButton(SDL_BUTTON_X1);
-//	else if (!std::strcmp("X2", button))
-//		return App->input->GetMouseButton(SDL_BUTTON_X2);
-//	else {
-//		LOG("[Script Error]: Unknown MouseButton passed as string.");
-//		return -1;
-//	}
-//}
-//
-//bool Scripting::IsMouseButtonDown(const char* button) const
-//{
-//	return GetMouseButtonState(button) == KEY_DOWN;
-//}
-//
-//bool Scripting::IsMouseButtonUp(const char* button) const
-//{
-//	return GetMouseButtonState(button) == KEY_UP;
-//}
-//
-//bool Scripting::IsMouseButtonRepeat(const char* button) const
-//{
-//	return GetMouseButtonState(button) == KEY_REPEAT;
-//}
-//
-//bool Scripting::IsMouseButtonIdle(const char* button) const
-//{
-//	return GetMouseButtonState(button) == KEY_IDLE;
-//}
-//
-//bool Scripting::IsMouseInGame() const
-//{
-//	return !App->editor->using_menu;
-//}
-//
-//int Scripting::GetMouseRaycastHit(lua_State *L)
-//{
-//	float3 hit = float3::zero;
-//	const GameObject* go = App->camera->MousePick(&hit);
-//
-//	if (go != nullptr) {
-//		lua_pushnumber(L, hit.x);
-//		lua_pushnumber(L, hit.y);
-//		lua_pushnumber(L, hit.z);
-//	}
-//
-//	return 3;
-//}
-//
-//// GameObjects
-//GameObject* Scripting::FindGameObject(const char* objName) const
-//{
-//	return GOFunctions::FindModifiableGameObject(objName);
-//}
-//
-//uint32_t Scripting::FindGameObjectUID(const char* objName) const
-//{
-//	return GOFunctions::FindGameObject(objName)->UID;
-//}
-//
-//GameObject* Scripting::Instantiate(GameObject* reference, float pos_x, float pos_y, float pos_z, float rot_x, float rot_y, float rot_z, float scale)
-//{
-//	GameObject* new_go = GOFunctions::InstantiateGameObject(reference);
-//
-//	if (new_go != nullptr) {
-//		ComponentTransform* trs = (ComponentTransform*)new_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//		float3 rotRad = DegToRad(float3(rot_x, rot_y, rot_z));
-//		trs->SetGlobalMat(float4x4::FromTRS(float3(pos_x, pos_y, pos_z), Quat::FromEulerXYZ(rotRad.x, rotRad.y, rotRad.z), float3(scale)));
-//		trs->UpdateLocalMat();
-//	}
-//	else
-//		LOG("[Script Error]: GameObject referenced was not found in scene.");
-//
-//	return new_go;
-//}
-//
-//uint32_t Scripting::InstantiateByUID(uint32_t objUID, float pos_x, float pos_y, float pos_z, float rot_x, float rot_y, float rot_z, float scale)
-//{
-//	GameObject* reference = GOFunctions::FindModifiableGameObject(objUID);
-//
-//	if (reference != nullptr)
-//		return Instantiate(reference, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z, scale)->UID;
-//	else
-//		return -1;
-//}
-//
-//GameObject* Scripting::InstantiateByName(const char* objName, float pos_x, float pos_y, float pos_z, float rot_x, float rot_y, float rot_z, float scale)
-//{
-//	GameObject* reference = GOFunctions::FindModifiableGameObject(objName);
-//	return Instantiate(reference, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z, scale);
-//}
-//
-//GameObject* Scripting::Destroy(GameObject* target)
-//{
-//	return nullptr;
-//}
-//
-//void Scripting::DestroyByUID(uint32_t objUID)
-//{
-//	App->scene_intro->MarkGameObjectDestruction(GOFunctions::FindModifiableGameObject(objUID));
-//}
-//
-//void Scripting::Activate(bool state)
-//{
-//	App->scripting->current_script->my_component->active = state;
-//}
-//
-//bool Scripting::IsActivated() const
-//{
-//	return App->scripting->current_script->my_component->active;
-//}
-//
-//// OBJECT TRANSLATOR
-//
-//// General
-//const GameObject* Scripting::GetGameObject() const
-//{
-//	return App->scripting->current_script->my_component->my_go;
-//}
-//
-//const char* Scripting::GetObjectName() const
-//{
-//	return App->scripting->current_script->my_component->my_go->name.c_str();
-//}
-//
-//void Scripting::ActivateObject(bool state)
-//{
-//	App->scripting->current_script->my_component->my_go->UpdateChildrenActive(state);
-//}
-//
-//bool Scripting::IsObjectActivated() const
-//{
-//	return App->scripting->current_script->my_component->my_go->active;
-//}
-//
-//void Scripting::SetStatic(bool state)
-//{
-//	App->scripting->current_script->my_component->my_go->UpdateStaticStatus(state);
-//}
-//
-//bool Scripting::IsStatic() const
-//{
-//	return App->scripting->current_script->my_component->my_go->staticObj;
-//}
-//
-//void Scripting::DestroySelf() const
-//{
-//	App->scene_intro->MarkGameObjectDestruction(App->scripting->current_script->my_component->my_go);
-//}
-//
-//// Position
-//float Scripting::GetPositionX(bool local) const
-//{
-//	if (local)
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->position.x;
-//	else
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.TranslatePart().x;
-//}
-//
-//float Scripting::GetPositionY(bool local) const
-//{
-//	if (local)
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->position.y;
-//	else
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.TranslatePart().y;
-//}
-//
-//float Scripting::GetPositionZ(bool local) const
-//{
-//	if (local)
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->position.z;
-//	else
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.TranslatePart().z;
-//}
-//
-//int Scripting::GetPosition(bool local, lua_State *L) const
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	float3 pos;
-//
-//	if (local)
-//		pos = trs->localTrs.TranslatePart();
-//	else
-//		pos = trs->globalTrs.TranslatePart();
-//
-//	lua_pushnumber(L, pos.x);
-//	lua_pushnumber(L, pos.y);
-//	lua_pushnumber(L, pos.z);
-//
-//	return 3;
-//}
-//
-//void Scripting::Translate(float x, float y, float z, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	trs->Translate(float3(x, y, z), local);
-//}
-//
-//void Scripting::SetPosition(float x, float y, float z, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	trs->SetPosition(float3(x, y, z), local);
-//}
-//
-//// Rotation
-//float Scripting::GetEulerX(bool local) const
-//{
-//	if (local) {
-//		return RadToDeg(((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->rotation.x);
-//	}
-//	else {
-//		float3x3 auxMat;
-//		((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().Decompose(auxMat, float3());
-//		return RadToDeg(auxMat.ToEulerXYZ().x);
-//	}
-//}
-//
-//float Scripting::GetEulerY(bool local) const
-//{
-//	if (local) {
-//		return RadToDeg(((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->rotation.y);
-//	}
-//	else {
-//		float3x3 auxMat;
-//		((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().Decompose(auxMat, float3());
-//		return RadToDeg(auxMat.ToEulerXYZ().y);
-//	}
-//		
-//}
-//
-//float Scripting::GetEulerZ(bool local) const
-//{
-//	if (local) {
-//		return RadToDeg(((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->rotation.z);
-//	}
-//	else {
-//		float3x3 auxMat;
-//		((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().Decompose(auxMat, float3());
-//		return RadToDeg(auxMat.ToEulerXYZ().z);
-//	}
-//}
-//
-//int Scripting::GetEulerRotation(bool local, lua_State *L) const
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	float3x3 auxMat;
-//	float3 rot;
-//
-//	if (local)
-//		trs->localTrs.RotatePart().Decompose(auxMat, float3());
-//	else
-//		trs->globalTrs.RotatePart().Decompose(auxMat, float3());
-//
-//	rot = RadToDeg(auxMat.ToEulerXYZ());
-//
-//	lua_pushnumber(L, rot.x);
-//	lua_pushnumber(L, rot.y);
-//	lua_pushnumber(L, rot.z);
-//
-//	return 3;
-//}
-//
-//void Scripting::RotateByEuler(float x, float y, float z, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	trs->Rotate(DegToRad(float3(x, y, z)), local);
-//}
-//
-//void Scripting::SetEulerRotation(float x, float y, float z, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	trs->SetRotation(DegToRad(float3(x, y, z)), local);
-//}
-//
-//float Scripting::GetQuatX(bool local) const
-//{
-//	if (local)
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->localTrs.RotatePart().ToQuat().x;
-//	else {
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().ToQuat().x;
-//	}
-//}
-//
-//float Scripting::GetQuatY(bool local) const
-//{
-//	if (local)
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->localTrs.RotatePart().ToQuat().y;
-//	else
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().ToQuat().y;
-//}
-//
-//float Scripting::GetQuatZ(bool local) const
-//{
-//	if (local)
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->localTrs.RotatePart().ToQuat().z;
-//	else
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().ToQuat().z;
-//}
-//
-//float Scripting::GetQuatW(bool local) const
-//{
-//	if (local)
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->localTrs.RotatePart().ToQuat().w;
-//	else
-//		return ((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().ToQuat().w;
-//}
-//
-//int Scripting::GetQuatRotation(bool local, lua_State *L) const
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	float4 rot;
-//	Quat q;
-//
-//	if (local) {
-//		q = trs->localTrs.RotatePart().ToQuat();
-//		rot = float4(q.x, q.y, q.z, q.w);
-//	}
-//	else {
-//		q = trs->globalTrs.RotatePart().ToQuat();
-//		rot = float4(q.x, q.y, q.z, q.w);
-//	}
-//
-//	lua_pushnumber(L, rot.x);
-//	lua_pushnumber(L, rot.y);
-//	lua_pushnumber(L, rot.z);
-//	lua_pushnumber(L, rot.w);
-//
-//	return 4;
-//}
-//
-//void Scripting::RotateByQuat(float x, float y, float z, float w, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	trs->Rotate(Quat(x, y, z, w), local);
-//}
-//
-//void Scripting::SetQuatRotation(float x, float y, float z, float w, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	trs->SetRotation(Quat(x, y, z, w), local);
-//}
-//
-//// Others
-//void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	float3 dir;
-//
-//	if (local)
-//		dir = (float3(spotX, spotY, spotZ) - trs->localTrs.TranslatePart());
-//	else
-//		dir = (float3(spotX, spotY, spotZ) - trs->globalTrs.TranslatePart());
-//
-//	LookTo(dir.x, dir.y, dir.z, local);
-//}
-//
-//void Scripting::LookTo(float dirX, float dirY, float dirZ, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//
-//	if (local) {
-//		trs->localTrs = trs->localTrs * Quat::RotateFromTo(trs->localTrs.WorldZ(), float3(dirX, dirY, dirZ).Normalized());
-//	}
-//	else {
-//		ComponentTransform* parentTrs = (ComponentTransform*)trs->my_go->parent->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//		trs->localTrs = trs->localTrs * Quat::LookAt(trs->localTrs.WorldZ(), float3(dirX, dirY, dirZ).Normalized(), trs->localTrs.WorldY(), float3::unitY);
-//		trs->localTrs = parentTrs->localTrs.Inverted().RotatePart().ToQuat() * trs->localTrs;	// Maybe there's a simpler way, but this works and by God I'm not fucking touching it again for now
-//
-//		trs->rotation = trs->localTrs.ToEulerXYZ();
-//		//trs->globalTrs = trs->globalTrs * Quat::RotateFromTo(trs->globalTrs.WorldZ().Normalized(), float3(dirX, dirY, dirZ).Normalized());
-//		//trs->needsUpdateLocal = true;
-//	}
-//
-//	trs->needsUpdateGlobal = true;
-//}

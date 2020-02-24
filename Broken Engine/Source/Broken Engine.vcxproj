@@ -105,6 +105,7 @@
     <ClInclude Include="ImporterScript.h" />
     <ClInclude Include="ImporterShader.h" />
     <ClInclude Include="ImporterTexture.h" />
+    <ClInclude Include="LuaIncludes.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK2D.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\Random\LCG.h" />
@@ -232,6 +233,7 @@
     <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
     <ClInclude Include="ScriptData.h" />
+    <ClInclude Include="Scripting.h" />
     <ClInclude Include="ScriptVar.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
@@ -352,6 +354,7 @@
     <ClCompile Include="ResourceShaderObject.cpp" />
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
+    <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptVar.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
