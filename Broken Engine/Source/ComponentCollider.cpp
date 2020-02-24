@@ -69,11 +69,11 @@ void ComponentCollider::Draw()
 			case physx::PxGeometryType::eBOX:
 			{
 				PxBoxGeometry pxbox = holder.box();
-				PxVec3 dimensions = 2 * pxbox.halfExtents;
+				//PxVec3 dimensions = 2 * pxbox.halfExtents;
 
 				// --- Use data to create an AABB and draw it ---
 				AABB aabb;
-				aabb.SetFromCenterAndSize(vec(globalPosition.x, globalPosition.y, globalPosition.z), vec(dimensions.x, dimensions.y, dimensions.z));
+				aabb.SetFromCenterAndSize(vec(globalPosition.x, globalPosition.y, globalPosition.z), vec(scale.x, scale.y, scale.z));
 
 				ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
 			}
@@ -103,7 +103,9 @@ void ComponentCollider::Draw()
 
 			// --- Set uniforms ---
 			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
+			
+			globalMatrix = transform->GetGlobalTransform() * localMatrix;
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, globalMatrix.Transposed().ptr());
 
 			int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
 			glVertexAttrib3f(vertexColorLocation, 125, 125, 0);
@@ -130,7 +132,6 @@ void ComponentCollider::Draw()
 			// --- Set uniforms back to defaults ---
 			glUniform1i(TextureSupportLocation, 0);
 		}
-		SetPosition();
 	}
 }
 
@@ -158,7 +159,7 @@ void ComponentCollider::CreateInspectorNode()
 	if (ImGui::TreeNode("Collider"))
 	{
 		static int colliderType = 0;
-		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0\0");
+		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0");
 
 		switch (colliderType)
 		{
@@ -173,11 +174,21 @@ void ComponentCollider::CreateInspectorNode()
 			collider->type = ComponentCollider::COLLIDER_TYPE::SPHERE;
 			CreateCollider(collider->type);
 			break;
+		case 3:
+			collider->type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
+			CreateCollider(collider->type);
+			break;
 		}
 
 
 		//if (ImGui::Checkbox("Edit Collider", &collider->editCollider))
 		//{
+			
+
+			// PUT HERE A SWITCH CASE DEPENDING ON THE COLLIDER DIFFERENT OPTIONS
+
+		if (shape)
+		{
 			float3* position = &collider->localPosition;
 			ImGui::Text("X");
 			ImGui::SameLine();
@@ -201,11 +212,83 @@ void ComponentCollider::CreateInspectorNode()
 
 			ImGui::DragFloat("##PZ", &position->z, 0.005f);
 
-			// PUT HERE A SWITCH CASE DEPENDING ON THE COLLIDER DIFFERENT OPTIONS
+			switch (shape->getGeometryType())
+			{
+				case PxGeometryType::eSPHERE:
+				{
+					localMatrix.x = position->x;
+					localMatrix.y = position->y;
+					localMatrix.z = position->z;
 
+					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
 
+					ImGui::Text("Radius");
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+					ImGui::DragFloat("##R", &radius, 0.005f);
+					
+					localMatrix.scaleX = radius;
+					localMatrix.scaleY = radius;						
+					localMatrix.scaleZ = radius;
 
+					break;
+				}
 
+				case PxGeometryType::eBOX:
+				{
+					ImGui::Text("X");
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+					ImGui::DragFloat("##SX", &scale.x, 0.005f);
+
+					ImGui::SameLine();
+
+					ImGui::Text("Y");
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+					ImGui::DragFloat("##SY", &scale.y, 0.005f);
+
+					ImGui::SameLine();
+
+					ImGui::Text("Z");
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+					ImGui::DragFloat("##SZ", &scale.z, 0.005f);
+
+					break;
+				}
+
+				case PxGeometryType::eCAPSULE:
+				{
+					localMatrix.x = position->x;
+					localMatrix.y = position->y;
+					localMatrix.z = position->z;
+
+					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
+
+					ImGui::Text("Radius");
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+					ImGui::DragFloat("##R", &radius, 0.005f);
+
+					ImGui::Text("Height");
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+					ImGui::DragFloat("##H", &height, 0.005f);
+
+					localMatrix.scaleX = radius;
+					localMatrix.scaleY = height;
+					localMatrix.scaleZ = radius;
+
+					break;
+				}
+
+			}
+			SetPosition();
+		}
 
 		//}
 

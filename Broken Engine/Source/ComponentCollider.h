@@ -13,11 +13,11 @@ class ComponentCollider : public Component
 public:
 	enum class COLLIDER_TYPE
 	{
+		NONE,
 		BOX,
 		SPHERE,
 		CAPSULE,
-		PLANE,
-		NONE
+		PLANE	
 	};
 
 public:
@@ -46,6 +46,11 @@ public:
 private:
 	physx::PxShape* shape = nullptr;
 	float3 globalPosition;
+	float3 scale = float3::one;
+	float4x4 localMatrix = float4x4::identity;
+	float4x4 globalMatrix = float4x4::identity;
+
+	float radius = 1.0f, height = 1.0f;
 	int lastIndex = -1;
 };
 
