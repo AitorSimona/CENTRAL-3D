@@ -93,6 +93,13 @@ void GameObject::OnUpdateTransform()
 	if (camera)
 		camera->OnUpdateTransform(transform->GetGlobalTransform());
 
+	// PHYSICS: TEMPORAL example, after updating transform, update collider
+	ComponentCollider* collider = GetComponent<ComponentCollider>();
+
+	if (collider)
+		collider->SetPosition();
+
+
 	// --- Update all children ---
 	if (childs.size() > 0)
 	{

@@ -3,8 +3,11 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ModulePhysics.h"
+#include "ModuleSceneManager.h"
 
 #include "Imgui/imgui.h"
+
+#include "mmgr/mmgr.h"
 
 using namespace physx;
 
@@ -26,7 +29,65 @@ ComponentCollider::~ComponentCollider()
 
 void ComponentCollider::Draw() const
 {
+	if (box)
+	{
+		// --- Retrieve number of shapes associated to rigid dynamic body ---
+		uint shapes = box->getNbShapes();
 
+		if (shapes > 0)
+		{
+			// --- Retrieve pointer to shape, for now we only care about the first one ---
+			PxShape** shape = new PxShape*[1];
+			uint written = box->getShapes(shape, sizeof(PxShape*), shapes - 1);
+
+			if (shape)
+			{
+				// --- Get shape's dimensions ---
+				PxGeometryHolder holder = (*shape)->getGeometry();
+				PxGeometryType::Enum type = holder.getType();
+
+				// --- Draw shape according to type ---
+				switch (type)
+				{
+				case physx::PxGeometryType::eSPHERE:
+					break;
+				case physx::PxGeometryType::ePLANE:
+					break;
+				case physx::PxGeometryType::eCAPSULE:
+					break;
+				case physx::PxGeometryType::eBOX:
+				{
+					PxBoxGeometry box = holder.box();
+					PxVec3 dimensions = 2 * box.halfExtents;
+
+					// --- Use data to create an AABB and draw it ---
+					AABB aabb;
+					aabb.SetFromCenterAndSize(vec(globalPosition.p.x, globalPosition.p.y, globalPosition.p.z), vec(dimensions.x, dimensions.y, dimensions.z));
+
+					ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
+				}
+					break;
+				case physx::PxGeometryType::eCONVEXMESH:
+					break;
+				case physx::PxGeometryType::eTRIANGLEMESH:
+					break;
+				case physx::PxGeometryType::eHEIGHTFIELD:
+					break;
+				case physx::PxGeometryType::eGEOMETRY_COUNT:
+					break;
+				case physx::PxGeometryType::eINVALID:
+					break;
+				default:
+					break;
+				}
+
+
+			}
+
+			// --- Delete shape pointer array ---
+			delete[] shape;
+		}
+	}
 }
 
 void ComponentCollider::SetPosition()
@@ -35,9 +96,9 @@ void ComponentCollider::SetPosition()
 	float3 pos = transform->GetPosition();
 
 	float3 position(pos.x * localPosition.x, pos.y * localPosition.y, pos.z * localPosition.z);
-	PxTransform globalPosition(PxVec3(position.x, position.y, position.z));
-
-	box->setGlobalPose(globalPosition);
+	PxTransform globalTransform(PxVec3(position.x, position.y, position.z));
+	PxTransform transtest;
+	box->setGlobalPose(globalTransform);
 }
 
 json ComponentCollider::Save() const
