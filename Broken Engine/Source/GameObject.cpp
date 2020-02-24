@@ -5,7 +5,7 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ComponentCollider.h"
-#include "ComponentRigidBody.h"
+#include "ComponentDynamicRigidBody.h"
 
 #include "ModuleSceneManager.h"
 
@@ -184,8 +184,8 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 		case Component::ComponentType::Collider:
 			component = new ComponentCollider(this);
 			break;
-		case Component::ComponentType::RigidBody:
-			component = new ComponentRigidBody(this);
+		case Component::ComponentType::DynamicRigidBody:
+			component = new ComponentDynamicRigidBody(this);
 			break;
 		}
 

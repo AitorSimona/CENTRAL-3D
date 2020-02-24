@@ -67,7 +67,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer"};
+		const char* items[] = { "ComponentMesh", "ComponentMeshRenderer", "Dynamic RigidBody"};
 		static const char* item_current = items[0];
 
 		// --- Add component ---
@@ -97,6 +97,11 @@ bool PanelInspector::Draw()
 		if (item_current == "ComponentMeshRenderer")
 		{
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
+		}
+
+		if (item_current == "Dynamic RigidBody")
+		{
+			Selected->AddComponent(Component::ComponentType::DynamicRigidBody);
 		}
 
 		// MYTODO: move this to the component itself 

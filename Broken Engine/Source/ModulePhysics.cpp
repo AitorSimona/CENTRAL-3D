@@ -59,6 +59,15 @@ bool ModulePhysics::Init(json config)
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	mScene = mPhysics->createScene(sceneDesc);
 
+	// This will enable basic visualization of PhysX objects like - actors collision shapes and their axes.
+		//The function PxScene::getRenderBuffer() is used to render any active visualization for scene.
+	mScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0);	//Global visualization scale which gets multiplied with the individual scales
+	mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
+	mScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
+
+
+
+
 	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.5f);
 
 	BoxCollider(0, 0, 0);
