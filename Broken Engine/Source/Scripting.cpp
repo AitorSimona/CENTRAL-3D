@@ -25,7 +25,7 @@ Scripting::~Scripting()
 //Function that Lua will be able to call as LOG
 void Scripting::LogFromLua(const char* string)
 {
-	CONSOLE_LOG("[Script]: %s", string);
+	ENGINE_CONSOLE_LOG("[Script]: %s", string);
 }
 
 float Scripting::GetRealDT() const
@@ -45,7 +45,7 @@ int Scripting::GetKey(const char* key) const
 	if (code != SDL_SCANCODE_UNKNOWN)
 		return code;
 	else {
-		CONSOLE_LOG("[Script Error]: Unknown key passed as string.");
+		ENGINE_CONSOLE_LOG("[Script Error]: Unknown key passed as string.");
 		return -1;
 	}
 }
@@ -56,7 +56,7 @@ int Scripting::GetKeyState(const char* key) const
 	if (code != SDL_SCANCODE_UNKNOWN)
 		return App->input->GetKey(code);
 	else {
-		CONSOLE_LOG("[Script Error]: Unknown key passed as string.");
+		ENGINE_CONSOLE_LOG("[Script Error]: Unknown key passed as string.");
 		return -1;
 	}
 }
@@ -94,7 +94,7 @@ int Scripting::GetMouseButton(const char* button) const
 	else if (!std::strcmp("X2", button))
 		return SDL_BUTTON_X2;
 	else {
-		CONSOLE_LOG("[Script Error]: Unknown MouseButton passed as string.");
+		ENGINE_CONSOLE_LOG("[Script Error]: Unknown MouseButton passed as string.");
 		return -1;
 	}
 }
@@ -112,7 +112,7 @@ int Scripting::GetMouseButtonState(const char* button) const
 	else if (!std::strcmp("X2", button))
 		return App->input->GetMouseButton(SDL_BUTTON_X2);
 	else {
-		CONSOLE_LOG("[Script Error]: Unknown MouseButton passed as string.");
+		ENGINE_CONSOLE_LOG("[Script Error]: Unknown MouseButton passed as string.");
 		return -1;
 	}
 }

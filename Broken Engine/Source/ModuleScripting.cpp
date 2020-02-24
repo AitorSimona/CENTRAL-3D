@@ -25,12 +25,7 @@
 //This include MUST go after Lua includes
 //#include "LuaBridge-241/include/LuaBridge.h"
 #include "ScriptData.h"
-
-
-
-
-//Memleaks
-//#include "MemLeaks.h" //MYTODO: Dídac commented old include ask Aitor what to include, I assuem its mmgr directly
+#include "mmgr/mmgr.h"
 
 ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled)
 {
@@ -82,7 +77,7 @@ bool ModuleScripting::DoHotReloading()
 			{
 				can_instantiate_scripts = false;
 				ret = false;
-				CONSOLE_LOG("[Warning] Fix all compiler Errors!");
+				ENGINE_CONSOLE_LOG("[Warning] Fix all compiler Errors!");
 				cannot_start = true;
 			}
 		}
@@ -149,13 +144,13 @@ bool ModuleScripting::JustCompile(std::string absolute_path)
 	if (compiled == LUA_OK)
 	{
 		//We don't need to do nothing here, LOG something at most
-		CONSOLE_LOG("Compiled %s successfully!", absolute_path.c_str());
+		ENGINE_CONSOLE_LOG("Compiled %s successfully!", absolute_path.c_str());
 		ret = true;
 	}
 	else
 	{
 		std::string error = lua_tostring(L, -1);
-		CONSOLE_LOG("%s", error.data());
+		ENGINE_CONSOLE_LOG("%s", error.data());
 	}
 
 	return ret;
@@ -213,7 +208,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		else
 		{
 			std::string error = lua_tostring(L, -1);
-			CONSOLE_LOG("%s", error.data());
+			ENGINE_CONSOLE_LOG("%s", error.data());
 		}
 	}
 }
@@ -358,6 +353,8 @@ bool ModuleScripting::Start()
 
 bool ModuleScripting::CleanUp()
 {
+	CleanUpInstances();
+
 	return true;
 }
 

@@ -43,7 +43,7 @@ void ScriptVar::ChangeEditorValue(bool value)
 		changed_value = true;
 	}
 	else
-		CONSOLE_LOG("Tried to give a boolean value to a var with different type!");
+		ENGINE_CONSOLE_LOG("Tried to give a boolean value to a var with different type!");
 }
 
 void ScriptVar::ChangeEditorValue(const char * value)
@@ -54,7 +54,7 @@ void ScriptVar::ChangeEditorValue(const char * value)
 		changed_value = true;
 	}
 	else
-		CONSOLE_LOG("Tried to give a string value to a var with different type!");
+		ENGINE_CONSOLE_LOG("Tried to give a string value to a var with different type!");
 }
 
 void ScriptVar::ChangeEditorValue(double value)
@@ -65,5 +65,5 @@ void ScriptVar::ChangeEditorValue(double value)
 		changed_value = true;
 	}
 	else
-		CONSOLE_LOG("Tried to give a double float value to a var with different type!");
+		ENGINE_CONSOLE_LOG("Tried to give a double float value to a var with different type!");
 }
