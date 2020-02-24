@@ -202,14 +202,12 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-
 		// --- Draw lines ---
 		glLineWidth(3.0f);
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 		glDrawArrays(GL_LINES, 0, mesh.IndicesSize * 2);
 		glBindVertexArray(0);
 		glLineWidth(1.0f);
-
 
 		// --- Delete VBO and vertices ---
 		glDeleteBuffers(1, &VBO);

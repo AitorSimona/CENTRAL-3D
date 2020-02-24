@@ -20,8 +20,6 @@ private:
 	inline void CreateGameObjectNode(GameObject& Selected) const;
 	inline void CreateMaterialNode(GameObject& Selected) const;
 	inline void CreateCameraNode(GameObject& Selected) const;
-	inline void CreateColliderNode(GameObject& Selected) const;
-	inline void CreateRigidBodyNode(GameObject& Selected) const;
 };
 
 #endif

@@ -11,6 +11,7 @@
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
+#include "ComponentCollider.h"
 #include "ResourceShader.h"
 
 #include "PanelScene.h"
@@ -153,6 +154,14 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	// --- Selected Object Outlining ---
 	HandleObjectOutlining();
+
+	glBegin(GL_TRIANGLES);
+	glLineWidth(10);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 100, 0);
+	glVertex3f(100, 0, 0);
+
+	glEnd();
 
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);
@@ -338,6 +347,13 @@ void ModuleRenderer3D::HandleObjectOutlining()
 
 		// --- Search for Renderer Component ---
 		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+
+		// --- Search for Collider Component ---
+		ComponentCollider* collider = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCollider>();
+
+		// --- If Found, draw collider shape ---
+		if (collider && collider->IsEnabled())
+			collider->Draw();
 
 		// --- If Found, draw the mesh ---
 		if (MeshRenderer && MeshRenderer->IsEnabled())
