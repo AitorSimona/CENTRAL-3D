@@ -12,6 +12,8 @@
 #include "ComponentMesh.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "PanelShaderEditor.h"
 
@@ -64,7 +66,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer" };
+		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer", "ComponentAudioSource" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -95,6 +97,11 @@ bool PanelInspector::Draw()
 		if (item_current == "ComponentMeshRenderer")
 		{
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
+		}
+
+		if (item_current == "ComponentAudioSource")
+		{
+			Selected->AddComponent(Component::ComponentType::AudioSource);
 		}
 
 		item_current = items[0];

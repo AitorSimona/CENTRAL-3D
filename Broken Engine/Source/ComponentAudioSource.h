@@ -10,10 +10,10 @@ class ComponentAudioSource : public Component
 {
 public:
 	ComponentAudioSource(GameObject* ContainerGO);
-	ComponentAudioSource();
+	virtual ~ComponentAudioSource();
 
-	void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) override;
 	void CreateInspectorNode() override;
+	void Update() override;
 
 
 	json Save() const override;

@@ -11,11 +11,10 @@ class ComponentAudioListener : public Component
 {
 public:
 	ComponentAudioListener(GameObject* ContainerGO);
-	ComponentAudioListener();
+	virtual ~ComponentAudioListener();
 
-	void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) override;
 	void CreateInspectorNode() override;
-
+	void Update() override;
 
 	json Save() const override;
 	void Load(json& node) override;

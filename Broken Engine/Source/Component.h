@@ -34,6 +34,9 @@ public:
 	bool& GetActive();
 	bool IsEnabled() const;
 
+
+	virtual void Update() {};
+
 	// --- Save & Load ---
 	virtual json Save() const = 0;
 	virtual void Load(json& node) = 0;

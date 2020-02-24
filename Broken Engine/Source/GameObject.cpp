@@ -51,6 +51,12 @@ void GameObject::Update(float dt)
 		(*it)->Update(dt);
 	}
 
+	for (int i = 0; i < components.size(); ++i)
+	{
+		if (components[i]->GetActive())
+			components[i]->Update();
+	}
+
 }
 
 void GameObject::RecursiveDelete(bool target)
