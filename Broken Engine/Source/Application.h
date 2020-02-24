@@ -41,6 +41,7 @@ class ModuleTimeManager;
 class ModuleEventManager;
 class ModuleThreading;
 class ModulePhysics;
+class ModuleParticles;
 
 class Application
 {
@@ -77,6 +78,7 @@ public:
 	ModuleEventManager* event_manager = nullptr;
 	ModuleThreading* threading = nullptr;
 	ModulePhysics* physics = nullptr;
+	ModuleParticles* particles = nullptr;
 
 private:
 

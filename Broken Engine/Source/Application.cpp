@@ -13,6 +13,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleThreading.h"
 #include "ModulePhysics.h"
+#include "ModuleParticles.h"
 
 #include "mmgr/mmgr.h"
 
@@ -37,6 +38,7 @@ Application::Application()
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
 	physics = new ModulePhysics(true);
+	particles = new ModuleParticles(true);
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -59,8 +61,9 @@ Application::Application()
 	// Scenes
 	AddModule(scene_manager);
 
-	// Physics
+	// Physics & particles
 	AddModule(physics);
+	AddModule(particles);
 
 	// Renderer last!
 	AddModule(renderer3D);

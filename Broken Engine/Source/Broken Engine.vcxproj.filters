@@ -549,6 +549,9 @@
     <ClInclude Include="ComponentRigidBody.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleParticles.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -895,6 +898,9 @@
     </ClCompile>
     <ClCompile Include="ComponentRigidBody.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleParticles.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
