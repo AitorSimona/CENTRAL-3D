@@ -4,6 +4,12 @@
 #include "ComponentTransform.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneManager.h"
+#include "ModuleResourceManager.h"
+#include "ModuleRenderer3D.h"
+
+#include "ResourceShader.h"
+#include "ResourceMesh.h"
+#include "OpenGL.h"
 
 #include "Imgui/imgui.h"
 
@@ -11,7 +17,7 @@
 
 using namespace physx;
 
-ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider) 
+ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {
 	/*ComponentTransform* transform = ContainerGO->GetComponent<ComponentTransform>();
 	float3 pos = transform->GetPosition();
@@ -26,62 +32,133 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 
 ComponentCollider::~ComponentCollider()
 {
+	if (mesh)
+	{
+		Resource* res = mesh;
+		res->OnDelete();
+		delete mesh;
+	}
 }
 
 void ComponentCollider::Draw() const
 {
 	if (shape)
+	{
+		// --- Get shape's dimensions ---
+		PxGeometryHolder holder = shape->getGeometry();
+		PxGeometryType::Enum type = holder.getType();
+
+		// --- Draw shape according to type ---
+		switch (type)
 		{
-			// --- Get shape's dimensions ---
-			PxGeometryHolder holder = shape->getGeometry();
-			PxGeometryType::Enum type = holder.getType();
+		case physx::PxGeometryType::eSPHERE:
+		{
+			PxSphereGeometry pxsphere = holder.sphere();
 
-			// --- Draw shape according to type ---
-			switch (type)
+			// --- Only creating sphere once for now ---
+			if (!mesh->IsInMemory())
 			{
-			case physx::PxGeometryType::eSPHERE: {
-				PxSphereGeometry shape = holder.sphere();
-				PxReal radiusSphere = shape.radius;
-
-				//Create SPHERE
-
-				break;
+				// --- If the sphere has to be modified, call mesh.Release() first
+				App->scene_manager->CreateSphere(pxsphere.radius, 25, 25, mesh);
+				mesh->LoadToMemory();
 			}
-			case physx::PxGeometryType::ePLANE:
-				break;
-			case physx::PxGeometryType::eCAPSULE: {
+		}
+		break;
+		case physx::PxGeometryType::ePLANE:
+		{
+			PxPlaneGeometry pxplane = holder.plane();
 
-				PxCapsuleGeometry capsule = holder.capsule();
-				PxReal radius = capsule.radius;
-				PxReal halfHeight = capsule.halfHeight;
-
-				//Create CAPSULE
-
-				break;
+			// --- Only creating sphere once for now ---
+			if (!mesh->IsInMemory())
+			{
+				// --- If the sphere has to be modified, call mesh.Release() first
+				App->scene_manager->CreatePlane(10, 10, 10, mesh);
+				mesh->LoadToMemory();
 			}
-			case physx::PxGeometryType::eBOX: {
-				PxBoxGeometry box = holder.box();
-				PxVec3 length = 2 * box.halfExtents;
+		}
+		break;
+		case physx::PxGeometryType::eCAPSULE:
+		{
+			PxCapsuleGeometry capsule = holder.capsule();
 
-				AABB aabb;
-				aabb.SetFromCenterAndSize(vec(globalPosition.p.x, globalPosition.p.y, globalPosition.p.z), vec(length.x + 20, length.y, length.z));
+			// --- Only creating capsule once for now ---
+			if (!mesh->IsInMemory())
+			{
+				// --- If the capsule has to be modified, call mesh.Release() first
+				App->scene_manager->CreateCapsule(capsule.radius, capsule.halfHeight, mesh);
+				mesh->LoadToMemory();
+			}
 
-				ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
-				break;
-			}
-			case physx::PxGeometryType::eCONVEXMESH:
-				break;
-			case physx::PxGeometryType::eTRIANGLEMESH:
-				break;
-			case physx::PxGeometryType::eHEIGHTFIELD:
-				break;
-			case physx::PxGeometryType::eGEOMETRY_COUNT:
-				break;
-			case physx::PxGeometryType::eINVALID:
-				break;
-			default:
-				break;
-			}
+		}
+		break;
+		case physx::PxGeometryType::eBOX:
+		{
+			PxBoxGeometry pxbox = holder.box();
+			PxVec3 dimensions = 2 * pxbox.halfExtents;
+
+			// --- Use data to create an AABB and draw it ---
+			AABB aabb;
+			aabb.SetFromCenterAndSize(vec(globalPosition.p.x, globalPosition.p.y, globalPosition.p.z), vec(dimensions.x, dimensions.y, dimensions.z));
+
+
+			ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
+		}
+		break;
+		case physx::PxGeometryType::eCONVEXMESH:
+			break;
+		case physx::PxGeometryType::eTRIANGLEMESH:
+			break;
+		case physx::PxGeometryType::eHEIGHTFIELD:
+			break;
+		case physx::PxGeometryType::eGEOMETRY_COUNT:
+			break;
+		case physx::PxGeometryType::eINVALID:
+			break;
+		default:
+			break;
+		}
+
+		if (mesh == nullptr)
+			return;
+
+		// --- Render shape ---
+		if (mesh->vertices && mesh->Indices)
+		{
+			// --- Use default shader ---
+			glUseProgram(App->renderer3D->defaultShader->ID);
+
+			ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+
+			// --- Set uniforms ---
+			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetGlobalTransform().Transposed().ptr());
+
+			int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
+			glVertexAttrib3f(vertexColorLocation, 125, 125, 0);
+
+			int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+			glUniform1i(TextureSupportLocation, -1);
+
+			// --- Bind mesh's vao ---
+			glBindVertexArray(mesh->VAO);
+
+			// --- Activate wireframe mode ---
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+			// --- bind indices buffer and draw ---
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+			glDrawElements(GL_TRIANGLES, mesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+			// --- Unbind mesh's vao ---
+			glBindVertexArray(0);
+
+			// --- DeActivate wireframe mode ---
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+			// --- Set uniforms back to defaults ---
+			glUniform1i(TextureSupportLocation, 0);
+		}
+
 	}
 }
 
@@ -149,6 +226,13 @@ void ComponentCollider::CreateInspectorNode()
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
 			ImGui::DragFloat("##PZ", &position->z, 0.005f);
+
+			// PUT HERE A SWITCH CASE DEPENDING ON THE COLLIDER DIFFERENT OPTIONS
+
+
+
+
+
 		//}
 
 		ImGui::TreePop();
@@ -187,7 +271,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type) {
 			shape = App->physics->mPhysics->createShape(planeGeometry, *App->physics->mMaterial);
 			shape->setGeometry(planeGeometry);
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::PLANE;
-			break; 
+			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::CAPSULE: {
 			PxCapsuleGeometry CapsukeGeometry(1.0f, 3.0f);
