@@ -1,4 +1,6 @@
 #include "ResourceScript.h"
+#include "Application.h"
+#include "ModuleScripting.h"
 
 ResourceScript::ResourceScript(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCRIPT, UID, source_file)
 {
@@ -18,6 +20,7 @@ bool ResourceScript::LoadInMemory()
 
 void ResourceScript::OnOverwrite()
 {
+	App->scripting->NotifyHotReloading();
 	// Here we have to manage hot Reloading
 }
 

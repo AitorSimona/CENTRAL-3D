@@ -96,5 +96,11 @@ Resource* ImporterScript::Load(const char* path) const
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();
 
+	//Get Script name
+	std::string file;
+	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
+	App->fs->RemoveFileExtension(file);
+	resource_script->script_name = file;
+
 	return (Resource*)resource_script;
 }

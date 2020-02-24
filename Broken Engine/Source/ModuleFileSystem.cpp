@@ -368,7 +368,7 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 	dwChangeHandles[0] = FindFirstChangeNotification(
 		directory,                       // directory to watch 
 		TRUE,                          // watch the subtree 
-		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME
+		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES
 	);
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)

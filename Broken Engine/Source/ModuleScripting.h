@@ -24,6 +24,7 @@ public:
 	ScriptFile* AddScriptFile(ComponentScript* script_component, std::string full_file_path);
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
+	void NotifyHotReloading();
 
 	//If a lua file doesn't have a meta
 	void ManageOrphanScript(std::string relative_path);

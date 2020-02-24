@@ -305,6 +305,11 @@ void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript * 
 	}
 }
 
+void ModuleScripting::NotifyHotReloading()
+{
+	hot_reloading_waiting = true;
+}
+
 //MYTODO: Dídac don't quite remember what this what used for, when It compiles let check low priority
 //void ModuleScripting::ManageOrphanScript(std::string relative_path)
 //{

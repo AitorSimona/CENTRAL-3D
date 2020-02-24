@@ -20,6 +20,7 @@ function lua_table:Update ()
 	lua_table["position_x"] = lua_table["position_x"] + 1
 
 	lua_table["LOG"]:LOG ("This Log was called from LUA testing a table on UPDATE")
+	--lua_table["LOG"]:LOG ("Testing HOT Reloading")
 	lua_table["LOG"]:LOG ("Position X = " .. lua_table["position_x"])
 end
 
