@@ -69,10 +69,18 @@ bool ModuleSceneManager::Start()
 	// --- Create primitives ---
 	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
 	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
+	capsule = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCapsule");
+	plane = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultPlane");
 
-	// Not needed since we are checking if resources are in Memory in LoadCube and LoadSphere, which are called by ModuleGui
-	//CreateCube(1, 1, 1, cube);
-	//CreateSphere(1.0f, 25, 25, sphere);
+	CreateCube(1, 1, 1, cube);
+	CreateSphere(1.0f, 25, 25, sphere);
+	CreateCapsule(1, 1, capsule);
+	CreatePlane(1, 1, 1, plane);
+
+	cube->LoadToMemory();
+	sphere->LoadToMemory();
+	capsule->LoadToMemory();
+	plane->LoadToMemory();
 
 	// --- Create adaptive grid ---
 	glGenVertexArrays(1, &Grid_VAO);
@@ -721,10 +729,6 @@ void ModuleSceneManager::CreateGrid(float target_distance)
 
 GameObject * ModuleSceneManager::LoadCube()
 {
-	// --- If the cube was unloaded, create par shape and extract data again ---
-	if (!cube->IsInMemory())
-		CreateCube(1, 1, 1, cube);
-
 	GameObject* new_object = CreateEmptyGameObject();
 	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(cube->GetUID());
@@ -737,10 +741,6 @@ GameObject * ModuleSceneManager::LoadCube()
 
 GameObject * ModuleSceneManager::LoadSphere()
 {
-	// --- If the sphere was unloaded, create par shape and extract data again ---
-	if (!sphere->IsInMemory())
-		CreateSphere(1.0f, 25, 25, sphere);
-
 	GameObject* new_object = CreateEmptyGameObject();
 	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(sphere->GetUID());

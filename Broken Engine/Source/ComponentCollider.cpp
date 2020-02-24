@@ -28,105 +28,75 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 	shape->setGeometry(geometry);
 
 	App->physics->mScene->addActor(*shape->getActor());*/
-
-	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCollider");
-
-
 }
 
 ComponentCollider::~ComponentCollider()
 {
-	if (mesh)
-	{
-		Resource* res = mesh;
-		res->OnDelete();
-		delete mesh;
-	}
 }
 
-void ComponentCollider::Draw() const
+void ComponentCollider::Draw() 
 {
+
 	if (shape)
 	{
-		// --- Get shape's dimensions ---
-		PxGeometryHolder holder = shape->getGeometry();
-		PxGeometryType::Enum type = holder.getType();
-
-		// --- Draw shape according to type ---
-		switch (type)
-		{
-		case physx::PxGeometryType::eSPHERE:
-		{
-			PxSphereGeometry pxsphere = holder.sphere();
-
-			// --- Only creating sphere once for now ---
-			if (!mesh->IsInMemory())
-			{
-				// --- If the sphere has to be modified, call mesh.Release() first
-				App->scene_manager->CreateSphere(pxsphere.radius, 25, 25, mesh);
-				mesh->LoadToMemory();
-			}
-		}
-		break;
-		case physx::PxGeometryType::ePLANE:
-		{
-			PxPlaneGeometry pxplane = holder.plane();
-
-			// --- Only creating sphere once for now ---
-			if (!mesh->IsInMemory())
-			{
-				// --- If the sphere has to be modified, call mesh.Release() first
-				App->scene_manager->CreatePlane(10, 10, 10, mesh);
-				mesh->LoadToMemory();
-			}
-		}
-		break;
-		case physx::PxGeometryType::eCAPSULE:
-		{
-			PxCapsuleGeometry capsule = holder.capsule();
-
-			// --- Only creating capsule once for now ---
-			if (!mesh->IsInMemory())
-			{
-				// --- If the capsule has to be modified, call mesh.Release() first
-				App->scene_manager->CreateCapsule(capsule.radius, capsule.halfHeight, mesh);
-				mesh->LoadToMemory();
-			}
-
-		}
-		break;
-		case physx::PxGeometryType::eBOX:
-		{
-			PxBoxGeometry pxbox = holder.box();
-			PxVec3 dimensions = 2 * pxbox.halfExtents;
-
-			// --- Use data to create an AABB and draw it ---
-			AABB aabb;
-			aabb.SetFromCenterAndSize(vec(globalPosition.p.x, globalPosition.p.y, globalPosition.p.z), vec(dimensions.x, dimensions.y, dimensions.z));
-
-
-			ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
-		}
-		break;
-		case physx::PxGeometryType::eCONVEXMESH:
-			break;
-		case physx::PxGeometryType::eTRIANGLEMESH:
-			break;
-		case physx::PxGeometryType::eHEIGHTFIELD:
-			break;
-		case physx::PxGeometryType::eGEOMETRY_COUNT:
-			break;
-		case physx::PxGeometryType::eINVALID:
-			break;
-		default:
-			break;
-		}
 
 		if (mesh == nullptr)
-			return;
+		{
+			// --- Get shape's dimensions ---
+			PxGeometryHolder holder = shape->getGeometry();
+			PxGeometryType::Enum type = holder.getType();
+
+			// --- Draw shape according to type ---
+			switch (type)
+			{
+			case physx::PxGeometryType::eSPHERE:
+			{
+				PxSphereGeometry pxsphere = holder.sphere();
+				mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->sphere->GetUID());
+			}
+			break;
+			case physx::PxGeometryType::ePLANE:
+			{
+				PxPlaneGeometry pxplane = holder.plane();
+				mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->plane->GetUID());
+			}
+			break;
+			case physx::PxGeometryType::eCAPSULE:
+			{
+				PxCapsuleGeometry capsule = holder.capsule();
+				mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->capsule->GetUID());
+			}
+			break;
+			case physx::PxGeometryType::eBOX:
+			{
+				PxBoxGeometry pxbox = holder.box();
+				PxVec3 dimensions = 2 * pxbox.halfExtents;
+
+				// --- Use data to create an AABB and draw it ---
+				AABB aabb;
+				aabb.SetFromCenterAndSize(vec(globalPosition.p.x, globalPosition.p.y, globalPosition.p.z), vec(dimensions.x, dimensions.y, dimensions.z));
+
+
+				ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
+			}
+			break;
+			case physx::PxGeometryType::eCONVEXMESH:
+				break;
+			case physx::PxGeometryType::eTRIANGLEMESH:
+				break;
+			case physx::PxGeometryType::eHEIGHTFIELD:
+				break;
+			case physx::PxGeometryType::eGEOMETRY_COUNT:
+				break;
+			case physx::PxGeometryType::eINVALID:
+				break;
+			default:
+				break;
+			}
+		}
 
 		// --- Render shape ---
-		if (mesh->vertices && mesh->Indices)
+		if (mesh && mesh->vertices && mesh->Indices)
 		{
 			// --- Use default shader ---
 			glUseProgram(App->renderer3D->defaultShader->ID);
@@ -247,7 +217,12 @@ void ComponentCollider::CreateInspectorNode()
 void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type) {
 	if (shape != nullptr && lastIndex != (int)type) {
 		shape->release();
-		//RELEASE MESH
+
+		if (mesh)
+		{
+			mesh->Release();
+			mesh = nullptr;
+		}
 	}
 
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();

@@ -24,7 +24,7 @@ public:
 	ComponentCollider(GameObject* ContainerGO);
 	virtual ~ComponentCollider();
 
-	void Draw() const;
+	void Draw();
 
 	void SetPosition();
 
