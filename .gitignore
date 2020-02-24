@@ -87,6 +87,8 @@ StyleCopReport.xml
 *.rec
 *.tlog
 *.idb
+*.exe
+
 
 
 # Chutzpah Test files

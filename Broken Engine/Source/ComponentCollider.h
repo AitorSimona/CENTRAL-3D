@@ -13,6 +13,8 @@ public:
 	{
 		BOX,
 		SPHERE,
+		CAPSULE,
+		PLANE,
 		NONE
 	};
 
@@ -29,6 +31,8 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+	void CreateCollider(ComponentCollider::COLLIDER_TYPE type);
+
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
 public:
@@ -38,8 +42,9 @@ public:
 	float3 localPosition = float3::zero;
 
 private:
-	physx::PxRigidDynamic* box = nullptr;
+	physx::PxShape* shape = nullptr;
 	physx::PxTransform globalPosition;
+	int lastIndex = -1;
 };
 
 #endif __COMPONENT_COLLIDER_H__
