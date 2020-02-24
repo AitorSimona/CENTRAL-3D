@@ -33,11 +33,11 @@ bool ModuleTextures::Init(json file)
 		iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION ||
 		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)
 	{
-		CONSOLE_LOG("|[error]: DevIL version is different. Exiting...");
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: DevIL version is different. Exiting...");
 		ret = false;
 	}
 
-	CONSOLE_LOG("Initializing DevIL Version: %i",IL_VERSION);
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing DevIL Version: %i",IL_VERSION);
 	// --- Initializing DevIL
 
 	// Initialize IL
@@ -165,7 +165,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	// --- Unbind texture ---
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	CONSOLE_LOG("Loaded Texture: ID: %i , Width: %i , Height: %i ", TextureID, width, height);
+	ENGINE_CONSOLE_LOG("Loaded Texture: ID: %i , Width: %i , Height: %i ", TextureID, width, height);
 
 	// --- Returning id so a mesh can use it (and destroy buffer when done) ---
 
@@ -212,7 +212,7 @@ void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &
 		}
 	}
 	else
-		CONSOLE_LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
+		ENGINE_CONSOLE_LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
 }
 
 uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &height, int UID) const
@@ -223,7 +223,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 
 	if (path == nullptr)
 	{
-		CONSOLE_LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr",path);
+		ENGINE_CONSOLE_LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr",path);
 		return TextureID;
 	}
 
@@ -248,7 +248,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	if (ilLoadImage(path))
 		CreateTextureFromImage(TextureID, width,height, lib_path);
 	else
-		CONSOLE_LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
+		ENGINE_CONSOLE_LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
 
 	// --- Release Image data (we have already extracted the necessary information) ---
 	ilDeleteImages(1, (const ILuint*)&ImageName);

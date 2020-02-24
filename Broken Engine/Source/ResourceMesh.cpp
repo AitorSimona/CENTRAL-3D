@@ -16,7 +16,6 @@ ResourceMesh::ResourceMesh(uint UID, std::string source_file) : Resource(Resourc
 	resource_file = MESHES_FOLDER + std::to_string(UID) + extension;
 
 	previewTexID = App->gui->defaultfileTexID;
-
 }
 
 ResourceMesh::~ResourceMesh()
@@ -168,7 +167,7 @@ void ResourceMesh::CreateVBO()
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 	else
-		CONSOLE_LOG("|[error]: Could not create VBO, null vertices");
+		ENGINE_CONSOLE_LOG("|[error]: Could not create VBO, null vertices");
 }
 
 void ResourceMesh::CreateEBO()
@@ -181,7 +180,7 @@ void ResourceMesh::CreateEBO()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 	else
-		CONSOLE_LOG("|[error]: Could not create EBO, null indices");
+		ENGINE_CONSOLE_LOG("|[error]: Could not create EBO, null indices");
 }
 
 void ResourceMesh::CreateVAO()

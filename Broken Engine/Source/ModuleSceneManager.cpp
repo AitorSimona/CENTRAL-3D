@@ -113,44 +113,121 @@ bool ModuleSceneManager::CleanUp()
 	return true;
 }
 
-void ModuleSceneManager::DrawGrid()
+void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 {
-	App->renderer3D->defaultShader->use();
+	// -------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------
+	//									BY NOW, DONE IN DIRECT MODE
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+	//Set polygon draw mode and appropiated matrices for OGL
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPushMatrix();
+	glMultMatrixf(float4x4::identity.Transposed().ptr());
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());
 
-	float gridColor = 0.8f;
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, gridColor, gridColor, gridColor);
+	float colorIntensity = 0.65f;
 
-	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureSupportLocation, -1);
+	//Axis draw
+	if (drawAxis)
+	{
+		glLineWidth(3.0f);
+		glBegin(GL_LINES);
 
-	glLineWidth(1.7f);
-	glBindVertexArray(Grid_VAO);
-	glDrawArrays(GL_LINES, 0, 84);
-	glBindVertexArray(0);
+		glColor4f(colorIntensity, 0.0f, 0.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+		glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+
+		glColor4f(0.0f, colorIntensity, 0.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+		glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+		glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+
+		glColor4f(0.0f, 0.0f, colorIntensity, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+		glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+		glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+
+		glEnd();
+	}
+
+	//Plane draw
+	glLineWidth(1.5f);
+	glColor4f(colorIntensity, colorIntensity, colorIntensity, 1.0f);
+	glBegin(GL_LINES);
+
+	float d = size;
+	for (float i = -d; i <= d; i += 1.0f)
+	{
+		//if ((int)i % 3 == 0)
+		//	continue;
+
+		glVertex3f(i, 0.0f, -d);
+		glVertex3f(i, 0.0f, d);
+		glVertex3f(-d, 0.0f, i);
+		glVertex3f(d, 0.0f, i);
+	}
+
+	glEnd();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glLineWidth(1.0f);
 
-	glUniform1i(TextureSupportLocation, 0);
+	//Set again Identity for OGL Matrices & Polygon draw to fill again
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glPopMatrix();
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	// -------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------
+	//									THIS IS HOW IT WAS PREVIOUSLY DONE
+	// Is nice to keep this, since it was rendered in function of camera position, moving the grid with it.
+	// However, as the grid doesn't has an "infinite" sensation, it was weird, so that should be fixed in order
+	// for this to look good.
+
+		/*App->renderer3D->defaultShader->use();
+
+		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+
+		float gridColor = 0.8f;
+		int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
+		glVertexAttrib3f(vertexColorLocation, gridColor, gridColor, gridColor);
+
+		int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+		glUniform1i(TextureSupportLocation, -1);
+
+		glLineWidth(1.7f);
+		glBindVertexArray(Grid_VAO);
+		glDrawArrays(GL_LINES, 0, 84);
+		glBindVertexArray(0);
+		glLineWidth(1.0f);
+
+		glUniform1i(TextureSupportLocation, 0);*/
 }
 
 void ModuleSceneManager::Draw()
 {
 	// --- Draw Grid ---
-	DrawGrid();
+	DrawGrid(true, 75.0f);
 
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// --- Draw Game Object Meshes ---
 	DrawScene();
 
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void ModuleSceneManager::DrawScene()
@@ -174,7 +251,7 @@ void ModuleSceneManager::DrawScene()
 			}
 
 			// --- If Found, draw the mesh ---
-			if (MeshRenderer && MeshRenderer->IsEnabled())
+			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 					MeshRenderer->Draw();
 
 			if (SelectedGameObject == (*it))
@@ -199,7 +276,7 @@ void ModuleSceneManager::DrawScene()
 		}
 
 		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled())
+		if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 			MeshRenderer->Draw();
 
 		if (SelectedGameObject == (*it))
@@ -281,7 +358,7 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 	// --- Gather non-static gos ---
 	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
 	{
-		if (ray.Intersects((*it)->GetAABB()))
+		if ((*it)->GetActive() && ray.Intersects((*it)->GetAABB()))
 		{
 			float hit_near, hit_far;
 			if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))

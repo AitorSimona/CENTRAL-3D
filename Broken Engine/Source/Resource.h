@@ -47,6 +47,7 @@ public:
 
 	void SetOriginalFile(const char* new_path);
 	void SetUID(uint UID);
+	void SetName(const char* name);
 
 	bool IsInMemory() const;
 	bool LoadToMemory();
@@ -59,13 +60,13 @@ public:
 	virtual void OnOverwrite() = 0;
 	virtual void OnDelete() = 0;
 
+	// to encapsulate model childs in panelproject
+	bool has_parent = false;
 protected:
 	// --- Utilities ---
 	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
 	virtual void Repath() {};
-
-	void SetName(const char* name);
 
 
 protected:

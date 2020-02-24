@@ -4,25 +4,102 @@
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
 #pragma warning( disable : 4530 )
 
+#include "glad/include/glad/glad.h"
 #include <windows.h>
+#include "Errors.h"
 #include <stdio.h>
 
-#define CONSOLE_LOG(format, ...) _log(__FILE__, __LINE__, format, __VA_ARGS__);
+//Just in case -- Null redefinition
+#ifdef NULL
+#undef NULL
+#endif
+#define NULL 0
+#define NULLRECT {0,0,0,0}
 
-void _log(const char file[], int line, const char* format, ...);
 
+// LOGGING -----------------------------------------------------------------------
+// Visual Studio Console will log both system & engine consoles!!!!!!!!!!!
+/// Print only in Engine Console
+#define ENGINE_CONSOLE_LOG(format, ...) EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+/// Print only in System Console
+#define SYSTEM_CONSOLE_LOG(format, ...) SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+/// Print in both Consoles
+#define ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+/// First info at Compilation
+#define COMPILATIONLOGINFO LogCompilationFirstMessage()
+
+/// Log functions
+void LogCompilationFirstMessage();
+void EngineConsoleLog(const char file[], int line, const char* format, ...);
+void SystemConsoleLog(const char file[], int line, const char* format, ...);
+// -------------------------------------------------------------------------------
+
+
+// ERROR HANDLING ----------------------------------------------------------------
+/// Error Handling Macros
+#ifdef _DEBUG
+#define GLCall(x) GLClearError(); x; CRONOS_ASSERT(GLLogCall(#x, __FILE__, __LINE__));
+#define GL_SETERRORHANDLER(majV, minV) SetErrorHandler(majV, minV)
+#define BROKEN_ASSERT(x, ...) if(!x) { SYSTEM_CONSOLE_LOG("BROKEN ENGINE ASSERT: ", __VA_ARGS__); __debugbreak(); }
+#define BROKEN_WARN(x, ...) if(!x) { SYSTEM_CONSOLE_LOG("BROKEN ENGINE WARN: ",  __VA_ARGS__); }
+#else
+#define GLCall(x) x;
+#define GL_SETERRORHANDLER(majV, minV) SYSTEM_CONSOLE_LOG("\n\n\nGL_SETERROHANDLER (glDebugMessageCallback) not Available IN DEBUG CONTEXT\n\n\n");
+#define BROKEN_ASSERT(x, ...) if(!x) { ENGINE_AND_SYSTEM_CONSOLE_LOG("BROKEN ENGINE ASSERT: ", __VA_ARGS__); __debugbreak(); }
+#define BROKEN_WARN(x, ...) if(!x) { ENGINE_AND_SYSTEM_CONSOLE_LOG("BROKEN ENGINE WARN: ",  __VA_ARGS__) }
+#endif
+// -------------------------------------------------------------------------------
+
+
+// PREDEFINED & GENERAL VARIABLES ------------------------------------------------
+/// Keep a value between 0.0f and 1.0f
 #define CAP(n) ((n <= 0.0f) ? n=0.0f : (n >= 1.0f) ? n=1.0f : n=n)
 
 #define DEGTORAD 0.0174532925199432957f
 #define RADTODEG 57.295779513082320876f
-#define HAVE_M_PI
+#define PI			3.14159265359f
+#define TO_BOOL( a )  ( (a != 0) ? true : false )
+
+/// Useful helpers, InRange checker, min, max and clamp
+#define MIN( a, b ) ( ((a) < (b)) ? (a) : (b) )
+#define MAX( a, b ) ( ((a) > (b)) ? (a) : (b) )
+#define CLAMP(x, upper, lower) (MIN(upper, MAX(x, lower)))
+#define IN_RANGE( value, min, max ) ( ((value) >= (MIN) && (value) <= (MAX)) ? 1 : 0 )
+
+/// Standard string size
+#define SHORT_STR	32
+#define MID_STR		255
+#define HUGE_STR	8192
+
+/// Camera Settings
+#define MIN_FOV 15.0f
+#define MAX_FOV 120.0f
+
+/// Performance macros
+#define PERF_START(timer) timer.Start()
+#define PERF_PEEK(timer) LOG("%s took %f ms", __FUNCTION__, timer.ReadMs())
+
+/// Releasing Memory
+#define RELEASE( x )\
+    {\
+       if( x != nullptr )\
+       {\
+         delete x;\
+	     x = nullptr;\
+       }\
+    }
+// -------------------------------------------------------------------------------
 
 
+// TYPEDEFS ----------------------------------------------------------------------
 typedef unsigned int uint;
 typedef unsigned long ulong;
 typedef unsigned __int64 uint64;
 typedef unsigned __int32 uint32;
+// -------------------------------------------------------------------------------
 
+
+// OTHERS ------------------------------------------------------------------------
 enum update_status
 {
 	UPDATE_CONTINUE = 1,
@@ -31,9 +108,27 @@ enum update_status
 };
 
 
-// Configuration -----------
+/// Joins a path and file
+inline const char* const PATH(const char* folder, const char* file)
+{
+	static char path[MID_STR];
+	sprintf_s(path, MID_STR, "%s/%s", folder, file);
+	return path;
+}
+
+/// Swaps 2 values
+template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
+{
+	VALUE_TYPE tmp = a;
+	a = b;
+	b = tmp;
+}
+// -------------------------------------------------------------------------------
+
+
+// CONFIGURATION -----------------------------------------------------------------
 #define TITLE "CENTRAL 3D"
-#define VERSION "0.05"
+#define VERSION "v2.0"
 #define ASSETS_FOLDER "Assets/"
 #define SETTINGS_FOLDER "Settings/"
 #define LIBRARY_FOLDER "Library/"
@@ -46,3 +141,4 @@ enum update_status
 
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096
+// -------------------------------------------------------------------------------

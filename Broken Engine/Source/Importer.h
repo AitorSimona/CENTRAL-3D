@@ -31,6 +31,7 @@ public:
 		}
 
 		const char* path = "";
+		bool dropped = false;
 	};
 
 public:

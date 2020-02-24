@@ -1,6 +1,7 @@
 #include "ComponentCamera.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
 
 #include "Imgui/imgui.h"
 
@@ -162,21 +163,83 @@ void ComponentCamera::CreateInspectorNode()
 		if (ImGui::Checkbox("Active Camera", &active_camera))
 			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
 
-
 		if (ImGui::Checkbox("Culling Camera", &culling))
 			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
 
+		// --- Camera FOV ---
 		ImGui::Text("FOV");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
 		float fov = GetFOV();
-
-		ImGui::DragFloat("##FOV", &fov, 0.005f);
+		ImGui::DragFloat("##FOV", &fov, 0.05f, 0.005f, 179.0f);
 
 		if (fov != GetFOV())
 			SetFOV(fov);
 
+		ImGui::SameLine();
+		if (ImGui::Button("DefFOV", { 50.0f, 15.0f }))
+			App->camera->m_CustomDefaultCameraValues.x = fov;
+
+		// --- Camera Planes ---
+		float nearPlane = GetNearPlane();
+		float farPlane = GetFarPlane();
+
+		ImGui::Text("Camera Planes");
+		ImGui::SameLine();
+
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		ImGui::DragFloat("##NearPlane", &nearPlane, 0.005f, 0.01f, farPlane - 0.01f);
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);		
+		ImGui::DragFloat("##FarPlane", &farPlane, 0.005f, nearPlane + 0.01f, 10000.0f);
+
+
+		if (nearPlane != GetNearPlane())
+			SetNearPlane(nearPlane);
+		if (farPlane != GetFarPlane())
+			SetFarPlane(farPlane);
+
+		ImGui::SameLine();
+		if (ImGui::Button("DefPlanes", { 75.0f, 15.0f }))
+		{
+			App->camera->m_CustomDefaultCameraValues.y = nearPlane;
+			App->camera->m_CustomDefaultCameraValues.z = farPlane;
+		}
+
+		// --- Camera Aspect Ratio ---
+		float aspectRatio = GetAspectRatio();
+
+		ImGui::Text("Aspect Ratio");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);		
+
+		if (aspectRatio != GetAspectRatio())
+			SetAspectRatio(aspectRatio);
+
+		ImGui::SameLine();
+		if (ImGui::Button("DefAR", { 50.0f, 15.0f }))
+			App->camera->m_CustomDefaultCameraValues.w = aspectRatio;
+
+		// --- Set Values to Default ---
+		if (ImGui::Button("Custom Default Values", { 150.0f, 25.0f }))
+			SetCameraValues(App->camera->m_CustomDefaultCameraValues);
+
+		ImGui::SameLine();
+		if (ImGui::Button("Default Values", { 150.0f, 25.0f }))
+			SetCameraValues(App->camera->GetCameraDefaultValues());
+
 		ImGui::TreePop();
 	}
+}
+
+
+void ComponentCamera::SetCameraValues(float4 val)
+{
+	SetAspectRatio(val.w);
+	SetFOV(val.x);
+	SetNearPlane(val.y);
+	SetFarPlane(val.z);
 }

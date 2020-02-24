@@ -25,13 +25,13 @@ ModuleInput::~ModuleInput()
 // Called before render is available
 bool ModuleInput::Init(json file)
 {
-	CONSOLE_LOG("Init SDL input event system");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
 	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
-		CONSOLE_LOG("|[error]: SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -131,6 +131,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				std::string DroppedFile_path = e.drop.file;
 
 				Importer::ImportData IData(DroppedFile_path.c_str());
+				IData.dropped = true;
 				App->resources->ImportAssets(IData);
 
 				SDL_free((char*)DroppedFile_path.data());
@@ -147,7 +148,7 @@ update_status ModuleInput::PreUpdate(float dt)
 // Called before quitting
 bool ModuleInput::CleanUp()
 {
-	CONSOLE_LOG("Quitting SDL input event subsystem");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }

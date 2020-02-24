@@ -64,6 +64,9 @@ public:
 	uint materialTexID = 0;
 	uint folderTexID = 0;
 	uint defaultfileTexID = 0;
+	uint prefabTexID = 0;
+	uint playbuttonTexID = 0;
+	uint sceneTexID = 0;
 private:
 	bool show_demo_window = false;
 
