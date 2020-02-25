@@ -92,7 +92,7 @@ public:
 	bool display_tree = false;
 	bool display_boundingboxes = false;
 
-
+	ResourceScene* currentScene = nullptr;
 private:
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
@@ -102,7 +102,6 @@ private:
 	GameObject* SelectedGameObject = nullptr;
 
 	ResourceScene* defaultScene = nullptr;
-	ResourceScene* currentScene = nullptr;
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
 };
