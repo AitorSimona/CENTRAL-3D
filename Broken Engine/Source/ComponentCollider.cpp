@@ -442,7 +442,6 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry) const
 	if (dynamicRB != nullptr)
 	{
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, localTransform, geometry, *App->physics->mMaterial, 1.0f);
-		App->physics->rigidBody = dynamicRB->rigidBody;
 		App->physics->mScene->addActor(*dynamicRB->rigidBody);
 
 		return true;

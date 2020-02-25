@@ -27,9 +27,7 @@ public:
 	void SimulatePhysics(float dt, float speed = 1.0f);
 
 public:
-
-	physx::PxRigidDynamic* rigidBody = nullptr;
-
+	
 	PxPvd* mPvd = nullptr; 
 	PxPvdSceneClient* pvdClient = nullptr;
 	PxFoundation* mFoundation = nullptr;
