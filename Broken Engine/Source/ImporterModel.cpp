@@ -84,8 +84,8 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		LoadNodes(scene->mRootNode, rootnode, scene, model_gos, MData.path, model_meshes, model_mats, mesh_collector);
 
 		// --- Load bones ---
-		ResourceBone* bone = nullptr;
-		LoadSceneBones(mesh_collector, bone, MData.path);
+		std::map<uint, ResourceBone*> bones;
+		LoadSceneBones(mesh_collector, bones, MData.path);
 
 		LoadBones(model_gos, mesh_collector);
 
@@ -97,8 +97,13 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		{
 			model->AddResource(model_mats[j]);
 		}
+		for (uint j = 0; j < bones.size(); ++j)
+		{
+			model->AddResource(bones[j]);
+		}
 
-		//model->AddResource(anim);
+		if(anim)
+			model->AddResource(anim);
 
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
@@ -106,6 +111,11 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		// --- Free everything ---
 		FreeSceneMaterials(&model_mats);
 		FreeSceneMeshes(&model_meshes);
+		FreeSceneBones(&bones);
+
+		if(anim)
+			anim->FreeMemory();
+
 		rootnode->RecursiveDelete();
 
 		// --- Free scene ---
@@ -158,6 +168,17 @@ void ImporterModel::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes)
 	scene_meshes->clear();
 }
 
+void ImporterModel::FreeSceneBones(std::map<uint, ResourceBone*>* scene_bones) const
+{
+	for (std::map<uint, ResourceBone*>::iterator it = scene_bones->begin(); it != scene_bones->end();)
+	{
+		it->second->FreeMemory();
+		it = scene_bones->erase(it);
+	}
+
+	scene_bones->clear();
+}
+
 void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const
 {
 	for (uint i = 0; i < scene->mNumMaterials; ++i)
@@ -189,7 +210,7 @@ void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 	}
 }
 
-void ImporterModel::LoadSceneBones(std::vector<aiMesh*>& mesh, ResourceBone* bones, const char* source_file) const
+void ImporterModel::LoadSceneBones(std::vector<aiMesh*>& mesh, std::map<uint, ResourceBone*>& bones, const char* source_file) const
 {
 	for (std::vector<aiMesh*>::iterator it = mesh.begin(); it != mesh.end(); it++)
 	{
@@ -204,8 +225,8 @@ void ImporterModel::LoadSceneBones(std::vector<aiMesh*>& mesh, ResourceBone* bon
 
 				if (IBone)
 				{
-					bones = (ResourceBone*)IBone->Import(BData);
-					bones->SetName((*it)->mBones[i]->mName.C_Str());
+					bones[i] = ((ResourceBone*)IBone->Import(BData));
+					bones[i]->SetName((*it)->mBones[i]->mName.C_Str());
 				}
 			}
 		}

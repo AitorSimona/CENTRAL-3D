@@ -4,6 +4,8 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 
+#include "ImporterBone.h"
+
 #include "mmgr/mmgr.h"
 
 
@@ -107,5 +109,6 @@ void ResourceBone::OnDelete()
 
 void ResourceBone::Repath()
 {
-
+	ImporterBone* IBone = App->resources->GetImporter<ImporterBone>();
+	IBone->Save(this);
 }
