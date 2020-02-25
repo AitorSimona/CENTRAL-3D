@@ -60,18 +60,18 @@ std::string ImporterScene::SaveSceneToFile(ResourceScene* scene, std::string& sc
 
 	json file;
 
-	for (int i = 0; i < scene->scene_gos.size(); ++i)
+	for (int i = 0; i < scene->NoStaticGameObjects.size(); ++i)
 	{
 		// --- Create GO Structure ---
-		file[scene->scene_gos[i]->GetName()];
-		file[scene->scene_gos[i]->GetName()]["UID"] = std::to_string(scene->scene_gos[i]->GetUID());
-		file[scene->scene_gos[i]->GetName()]["Parent"] = std::to_string(scene->scene_gos[i]->parent->GetUID());
-		file[scene->scene_gos[i]->GetName()]["Components"];
+		file[scene->NoStaticGameObjects[i]->GetName()];
+		file[scene->NoStaticGameObjects[i]->GetName()]["UID"] = std::to_string(scene->NoStaticGameObjects[i]->GetUID());
+		file[scene->NoStaticGameObjects[i]->GetName()]["Parent"] = std::to_string(scene->NoStaticGameObjects[i]->parent->GetUID());
+		file[scene->NoStaticGameObjects[i]->GetName()]["Components"];
 
-		for (int j = 0; j < scene->scene_gos[i]->GetComponents().size(); ++j)
+		for (int j = 0; j < scene->NoStaticGameObjects[i]->GetComponents().size(); ++j)
 		{
 			// --- Save Components to file ---
-			file[scene->scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene->scene_gos[i]->GetComponents()[j]->GetType())] = scene->scene_gos[i]->GetComponents()[j]->Save();
+			file[scene->NoStaticGameObjects[i]->GetName()]["Components"][std::to_string((uint)scene->NoStaticGameObjects[i]->GetComponents()[j]->GetType())] = scene->NoStaticGameObjects[i]->GetComponents()[j]->Save();
 		}
 
 	}

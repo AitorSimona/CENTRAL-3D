@@ -30,7 +30,7 @@ bool ResourceScene::LoadInMemory()
 {
 	// --- Load scene game objects ---
 
-	if (scene_gos.size() == 0)
+	if (NoStaticGameObjects.size() == 0)
 	{
 		// --- Load Scene/model file ---
 		json file = App->GetJLoader()->Load(resource_file.c_str());
@@ -101,12 +101,12 @@ bool ResourceScene::LoadInMemory()
 void ResourceScene::FreeMemory()
 {
 	// --- Delete all scene game objects ---
-	for (std::unordered_map<uint, GameObject*>::iterator it = scene_gos.begin(); it != scene_gos.end(); ++it)
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
 	{
 		delete (*it).second;
 	}
 
-	scene_gos.clear();
+	NoStaticGameObjects.clear();
 }
 
 void ResourceScene::OnOverwrite()

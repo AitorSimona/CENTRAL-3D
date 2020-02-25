@@ -12,6 +12,7 @@ struct aiScene;
 struct ImportMaterialData;
 struct par_shapes_mesh_s;
 class ResourceMesh;
+class ResourceScene;
 struct Event;
 
 class ModuleSceneManager : public Module
@@ -74,7 +75,7 @@ private:
 	static void ONGameObjectDestroyed(const Event& e);
 
 private:
-	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
+	void GatherGameObjects(std::vector<GameObject*> & NoStaticGameObjects, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawScene();
 
@@ -87,7 +88,7 @@ private:
 public:
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	std::vector<GameObject*> NoStaticGo;
+	//std::vector<GameObject*> NoStaticGo;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
 
@@ -100,6 +101,8 @@ private:
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
 
+	ResourceScene* defaultScene = nullptr;
+	ResourceScene* currentScene = nullptr;
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
 };
