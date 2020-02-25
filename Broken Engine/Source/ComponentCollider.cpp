@@ -21,15 +21,20 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 {
 	/*ComponentTransform* transform = ContainerGO->GetComponent<ComponentTransform>();
 	float3 pos = transform->GetPosition();
+
 	globalPosition = PxTransform(PxVec3(pos.x, pos.y, pos.z));
 	PxBoxGeometry geometry(PxVec3(0.5f, 0.5f, 0.5f));
 	shape = App->physics->mPhysics->createShape(;
 	shape->setGeometry(geometry);
+
 	App->physics->mScene->addActor(*shape->getActor());*/
+
+	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultColliderMesh");
 }
 
 ComponentCollider::~ComponentCollider()
 {
+	mesh->Release();
 }
 
 void ComponentCollider::Draw() 
@@ -37,11 +42,13 @@ void ComponentCollider::Draw()
 	if (shape)
 	{
 
-		if (mesh == nullptr)
+		// --- Get shape's dimensions ---
+		PxGeometryHolder holder = shape->getGeometry();
+		PxGeometryType::Enum type = holder.getType();
+
+		if (!mesh->IsInMemory())
 		{
-			// --- Get shape's dimensions ---
-			PxGeometryHolder holder = shape->getGeometry();
-			PxGeometryType::Enum type = holder.getType();
+
 
 			// --- Draw shape according to type ---
 			switch (type)
@@ -49,24 +56,33 @@ void ComponentCollider::Draw()
 			case physx::PxGeometryType::eSPHERE:
 			{
 				PxSphereGeometry pxsphere = holder.sphere();
-				mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->sphere->GetUID());
+
+				// --- Rebuild capsule ---
+				App->scene_manager->CreateSphere(1, 25, 25, mesh);
+				mesh->LoadToMemory();
 			}
 			break;
 			case physx::PxGeometryType::ePLANE:
 			{
 				PxPlaneGeometry pxplane = holder.plane();
-				mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->plane->GetUID());
+
+				// --- Rebuild plane ---
+				App->scene_manager->CreatePlane(1, 1, 1, mesh);
+				mesh->LoadToMemory();
 			}
 			break;
 			case physx::PxGeometryType::eCAPSULE:
 			{
 				PxCapsuleGeometry capsule = holder.capsule();
-				mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->capsule->GetUID());
+
+				// --- Rebuild capsule ---
+				App->scene_manager->CreateCapsule(1, 1, mesh);
+				mesh->LoadToMemory();
 			}
 			break;
 			case physx::PxGeometryType::eBOX:
 			{
-				PxBoxGeometry pxbox = holder.box();
+				//PxBoxGeometry pxbox = holder.box();
 				//PxVec3 dimensions = 2 * pxbox.halfExtents;
 
 				// --- Use data to create an AABB and draw it ---
@@ -90,9 +106,11 @@ void ComponentCollider::Draw()
 				break;
 			}
 		}
+	}
+	
 
 		// --- Render shape ---
-		if (mesh && mesh->vertices && mesh->Indices)
+		if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
 		{
 			// --- Use default shader ---
 			glUseProgram(App->renderer3D->defaultShader->ID);
@@ -130,7 +148,7 @@ void ComponentCollider::Draw()
 			// --- Set uniforms back to defaults ---
 			glUniform1i(TextureSupportLocation, 0);
 		}
-	}
+	
 }
 
 void ComponentCollider::SetPosition()
@@ -218,6 +236,8 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.y = position->y;
 					localMatrix.z = position->z;
 
+					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
+					
 					float prevRadius = radius;
 					
 					ImGui::Text("Radius");
@@ -272,7 +292,9 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.x = position->x;
 					localMatrix.y = position->y;
 					localMatrix.z = position->z;
-					
+
+					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
+
 					float prevRadius = radius;
 					float prevheight = height;
 
@@ -284,16 +306,14 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::Text("Height");
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##Height", &height, 0.005f);
+					ImGui::DragFloat("##H", &height, 0.005f);
 
 					localMatrix.scaleX = radius;
 					localMatrix.scaleY = height;
 					localMatrix.scaleZ = radius;
 
-					if (prevRadius != radius || prevheight != height) {
-						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
-						mesh = (ResourceMesh*)App->resources->GetResource(App->scene_manager->capsule->GetUID());
-					}
+					//if (prevRadius != radius || prevheight != height)
+						//CreateCollider(COLLIDER_TYPE::CAPSULE, true);
 
 					break;
 				}
@@ -316,14 +336,14 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 	if (shape != nullptr && (lastIndex != (int)type || createAgain)) {
 		shape->release();
 
-		if (mesh)
+		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
+		if (mesh && mesh->IsInMemory())
 		{
 			mesh->Release();
-			mesh = nullptr;
 		}
 	}
 
-	if (lastIndex == (int)type && !createAgain)
+	if (lastIndex == (int)type)
 		return;
 
 	switch (type) {
