@@ -47,6 +47,8 @@ public:
 	GP_AXIS_STATE GetAxisStateFromString(const char* state_name) const;
 
 	int GetAxisValue(int player_num, const char* joy_axis) const;
+	void ShakeController(int player_num, float intensity, uint32 milliseconds) const;
+	void StopControllerShake(int player_num) const;
 	//bool IsMouseInGame() const;
 	//int GetMouseRaycastHit(lua_State *L);
 

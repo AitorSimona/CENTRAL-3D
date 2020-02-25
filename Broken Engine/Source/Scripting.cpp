@@ -338,6 +338,24 @@ int Scripting::GetAxisValue(int player_num, const char* axis) const
 	return ret;
 }
 
+void Scripting::ShakeController(int player_num, float intensity, uint32 milliseconds) const
+{
+	//Get Player
+	PLAYER player = PLAYER::P1;
+	if (player_num > 0)
+		player = (PLAYER)(player_num - 1);
+	App->input->ShakeController((PLAYER)player, intensity, milliseconds);
+}
+
+void Scripting::StopControllerShake(int player_num) const
+{
+	//Get Player
+	PLAYER player = PLAYER::P1;
+	if (player_num > 0)
+		player = (PLAYER)(player_num - 1);
+	App->input->StopControllerShake((PLAYER)player);
+}
+
 //bool Scripting::IsMouseInGame() const
 //{
 //	return !App->editor->using_menu;

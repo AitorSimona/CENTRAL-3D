@@ -34,8 +34,8 @@ function lua_table:Update ()
 	--lua_table["Functions"]:LOG ("Joystick Left X: " .. lua_table["Functions"]:GetAxisValue(1,"AXIS_RIGHTX"))
 	--lua_table["Functions"]:LOG ("Joystick Left Y: " .. lua_table["Functions"]:GetAxisValue(1,"AXIS_RIGHTY"))
 	
-	if lua_table["Functions"]:IsTriggerState(1,"AXIS_TRIGGERLEFT","DOWN") then lua_table["Functions"]:LOG ("Left Trigger Down") end
-	if lua_table["Functions"]:IsTriggerState(1,"AXIS_TRIGGERRIGHT","UP") then lua_table["Functions"]:LOG ("Right Trigger Down") end
+	if lua_table["Functions"]:IsTriggerState(1,"AXIS_TRIGGERLEFT","DOWN") then lua_table["Functions"]:StopControllerShake(1) end
+	if lua_table["Functions"]:IsTriggerState(1,"AXIS_TRIGGERRIGHT","DOWN") then lua_table["Functions"]:ShakeController(1,0.3,2000) end
 	
 	
 end

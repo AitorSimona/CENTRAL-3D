@@ -182,6 +182,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("IsJoystickAxis", &Scripting::IsJoystickAxis)
 		.addFunction("IsTriggerState", &Scripting::IsTriggerState)
 		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
+		.addFunction("ShakeController", &Scripting::ShakeController)
+		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
 		.endClass()
 		.endNamespace();
 
