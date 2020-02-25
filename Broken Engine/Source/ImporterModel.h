@@ -47,7 +47,7 @@ private:
 	void LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const;
 	void FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const;
 	void LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const;
-	void LoadSceneBones(const aiMesh* mesh, ResourceBone* bones, const char* source_file) const;
+	void LoadSceneBones(std::vector<aiMesh*>& mesh, ResourceBone* bones, const char* source_file) const;
 	void LoadBones(std::vector<GameObject*> model_gos, std::vector<aiMesh*> mesh_collector) const;
 	void LoadSceneAnimations(const aiScene* scene, GameObject* GO, ResourceAnimation* anim, const char* source_file) const;
 	void FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const;

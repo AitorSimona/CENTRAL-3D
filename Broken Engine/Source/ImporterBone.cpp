@@ -45,6 +45,11 @@ Resource* ImporterBone::Import(ImportData& IData) const
 		resource_bone->index_weight[i] = data.bone->mWeights[i].mVertexId;
 	}
 
+	// --- Save to library ---
+	Save(resource_bone);
+
+	App->resources->AddResourceToFolder(resource_bone);
+
 	return resource_bone;
 }
 
@@ -53,7 +58,7 @@ void ImporterBone::Save(ResourceBone* bone) const
 	//----------------------------- CALCULATE SIZE ------------------------------------------------------------------------------------
 
 	//Bone meshID, numWeights, matrix, weights, index_weigths
-	uint size = sizeof(uint) + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
+	uint size = /*sizeof(uint) +*/ sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
 
 	//---------------------------------------------------------------------------------------------------------------------------------
 	//------------------------------- Allocate ---------------------------------------------------------------------------------------
@@ -61,9 +66,9 @@ void ImporterBone::Save(ResourceBone* bone) const
 	char* data = new char[size];
 	char* cursor = data;
 
-	// meshID
-	memcpy(cursor, &bone->meshID, sizeof(uint));
-	cursor += sizeof(uint);
+	//// meshID
+	//memcpy(cursor, &bone->meshID, sizeof(uint));
+	//cursor += sizeof(uint);
 
 	// numWeights
 	memcpy(cursor, &bone->NumWeights, sizeof(uint));
@@ -78,30 +83,10 @@ void ImporterBone::Save(ResourceBone* bone) const
 	cursor += sizeof(float) * bone->NumWeights;
 
 	//index_weights
-	memcpy(cursor, bone->index_weight, sizeof(uint));
+	memcpy(cursor, bone->index_weight, sizeof(uint) * bone->NumWeights);
 	cursor += sizeof(uint) * bone->NumWeights;
 
-	if (data)
-	{
-		delete[] data;
-		data = nullptr;
-		cursor = nullptr;
-	}
-
-	if (bone->weight)
-	{
-		delete[] bone->weight;
-		bone->weight = nullptr;
-	}
-
-	if (bone->index_weight)
-	{
-		delete[] bone->index_weight;
-		bone->index_weight = nullptr;
-	}
-
 	App->fs->Save(bone->GetResourceFile(), data, size);
-
 
 	if (data)
 	{
@@ -119,13 +104,4 @@ Resource* ImporterBone::Load(const char* path) const
 
 
 	return bone;
-}
-
-void ImporterBone::BoneCollector(std::map<std::string, GameObject*>& map, GameObject* root)
-{
-	map[root->GetName()] = root;
-	for (int i = 0; i < root->childs.size(); i++)
-	{
-		BoneCollector(map, root);
-	}
 }

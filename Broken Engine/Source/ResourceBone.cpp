@@ -24,8 +24,6 @@ bool ResourceBone::LoadInMemory()
 {
 	bool ret = true;
 
-	char* buffer = nullptr;
-
 	if (App->fs->Exists(resource_file.c_str()))
 	{
 		// --- Load mesh data ---
@@ -33,12 +31,12 @@ bool ResourceBone::LoadInMemory()
 		App->fs->Load(resource_file.c_str(), &buffer);
 		char* cursor = buffer;
 
-		// meshID
-		memcpy(&this->meshID, cursor, sizeof(uint));
-		cursor += sizeof(uint);
+		//// meshID
+		//memcpy(&this->meshID, cursor, sizeof(uint));
+		//cursor += sizeof(uint);
 
 		// NumWeights
-		memcpy(&this->NumWeights, cursor, sizeof(uint));
+		memcpy(&NumWeights, cursor, sizeof(uint));
 		cursor += sizeof(uint);
 
 		// matrix
@@ -46,18 +44,20 @@ bool ResourceBone::LoadInMemory()
 		memcpy(matrix, cursor, sizeof(float) * 16);
 		cursor += sizeof(float) * 16;
 
-		this->matrix = float4x4(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], matrix[6], matrix[7],
-			matrix[8], matrix[9], matrix[10], matrix[11], matrix[12], matrix[13], matrix[14], matrix[15]);
+		this->matrix = float4x4(matrix[0], matrix[1], matrix[2], matrix[3], 
+								matrix[4], matrix[5], matrix[6], matrix[7],
+								matrix[8], matrix[9], matrix[10], matrix[11],
+								matrix[12], matrix[13], matrix[14], matrix[15]);
 
 		// Weights
-		this->weight = new float[this->NumWeights];
-		memcpy(this->weight, cursor, sizeof(float) * this->NumWeights);
-		cursor += sizeof(float) * this->NumWeights;
+		weight = new float[NumWeights];
+		memcpy(weight, cursor, sizeof(float) * NumWeights);
+		cursor += sizeof(float) * NumWeights;
 
 		// index_weights
-		this->index_weight = new uint[this->NumWeights];
-		memcpy(this->index_weight, cursor, sizeof(uint) * this->NumWeights);
-		cursor += sizeof(uint) * this->NumWeights;
+		index_weight = new uint[NumWeights];
+		memcpy(index_weight, cursor, sizeof(uint) * NumWeights);
+		cursor += sizeof(uint) * NumWeights;
 
 
 		delete[] matrix;

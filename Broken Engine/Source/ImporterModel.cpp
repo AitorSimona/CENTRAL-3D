@@ -71,10 +71,6 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		LoadSceneMeshes(scene, model_meshes, MData.path);
 
 		// --- Load animation ---
-		ResourceBone* bone = nullptr;
-		//LoadSceneBones(scene, rootnode, bone, MData.path);
-
-		// --- Load animation ---
 		ResourceAnimation* anim = nullptr;
 		LoadSceneAnimations(scene, rootnode, anim, MData.path);
 
@@ -85,12 +81,13 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		std::vector<aiMesh*> mesh_collector;
 
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		LoadNodes(scene->mRootNode,rootnode, scene, model_gos, MData.path, model_meshes, model_mats, mesh_collector);
+		LoadNodes(scene->mRootNode, rootnode, scene, model_gos, MData.path, model_meshes, model_mats, mesh_collector);
 
-
+		// --- Load bones ---
+		ResourceBone* bone = nullptr;
+		LoadSceneBones(mesh_collector, bone, MData.path);
 
 		LoadBones(model_gos, mesh_collector);
-
 
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
@@ -192,24 +189,45 @@ void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 	}
 }
 
-void ImporterModel::LoadSceneBones(const aiMesh* mesh, ResourceBone* bones, const char* source_file) const
+void ImporterModel::LoadSceneBones(std::vector<aiMesh*>& mesh, ResourceBone* bones, const char* source_file) const
 {
-	if (mesh->HasBones())
+	for (std::vector<aiMesh*>::iterator it = mesh.begin(); it != mesh.end(); it++)
 	{
-		ImporterBone* IBone = App->resources->GetImporter<ImporterBone>();
-
-		for (int i = 0; i < mesh->mNumBones; i++)
+		if ((*it)->HasBones())
 		{
+			ImporterBone* IBone = App->resources->GetImporter<ImporterBone>();
+
+			for (int i = 0; i < (*it)->mNumBones; i++)
+			{
+				ImportBoneData BData(source_file);
+				BData.bone = (*it)->mBones[i];
+
+				if (IBone)
+				{
+					bones = (ResourceBone*)IBone->Import(BData);
+					bones->SetName((*it)->mBones[i]->mName.C_Str());
+				}
+			}
+		}
+	}
+
+	/*for (int i = 0; i < mesh.size(); i++)
+	{
+		if (mesh[i]->HasBones())
+		{
+			ImporterBone* IBone = App->resources->GetImporter<ImporterBone>();
+
 			ImportBoneData BData(source_file);
-			BData.bone = mesh->mBones[i];
+			BData.bone = mesh[i]->mBones[i];
 
 			if (IBone)
 			{
 				bones = (ResourceBone*)IBone->Import(BData);
-				bones->SetName(mesh->mBones[i]->mName.C_Str());
+				bones->SetName(mesh[i]->mBones[i]->mName.C_Str());
 			}
+
 		}
-	}
+	}*/
 }
 
 void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<aiMesh*> mesh_collect) const

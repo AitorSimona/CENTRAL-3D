@@ -32,8 +32,6 @@ public:
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Bone; };
 
-private:
-	void BoneCollector(std::map<std::string, GameObject*>& map, GameObject* root);
 };
 
 #endif
