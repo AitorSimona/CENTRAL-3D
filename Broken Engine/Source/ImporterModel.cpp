@@ -187,7 +187,7 @@ void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, Re
 		ImporterAnimation* IAnim = App->resources->GetImporter<ImporterAnimation>();
 
 		//Creating animator component
-		GO->AddComponent(Component::ComponentType::Animation);
+		//GO->AddComponent(Component::ComponentType::Animation);
 
 		for (int i = 0; i < scene->mNumAnimations; i++)
 		{
