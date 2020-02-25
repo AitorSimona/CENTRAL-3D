@@ -37,6 +37,7 @@ class ModuleFileSystem;
 class ModuleTextures;
 class ModuleSceneManager;
 class ModuleResourceManager;
+class ModuleScripting;
 class ModuleTimeManager;
 class ModuleEventManager;
 class ModuleThreading;
@@ -74,6 +75,7 @@ public:
 	ModuleResourceManager* resources = nullptr;
 	ModuleTimeManager* time = nullptr;
 	ModuleEventManager* event_manager = nullptr;
+	ModuleScripting* scripting = nullptr;
 	ModuleThreading* threading = nullptr;
 
 private:

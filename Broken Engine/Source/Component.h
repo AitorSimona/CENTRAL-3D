@@ -16,6 +16,7 @@ public:
 		Mesh,
 		MeshRenderer,
 		Camera,
+		Script,
 		Unknown
 	};
 

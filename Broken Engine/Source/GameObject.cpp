@@ -4,6 +4,7 @@
 #include "ComponentMesh.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
+#include "ComponentScript.h"
 #include "ModuleSceneManager.h"
 
 #include "Math.h"
@@ -31,7 +32,7 @@ GameObject::~GameObject()
 	{
 		if (*it)
 			delete *it;
-		
+
 	}
 	components.clear();
 
@@ -59,7 +60,7 @@ void GameObject::RecursiveDelete(bool target)
 	{
 		for (std::vector<GameObject*>::iterator it = this->childs.begin(); it != this->childs.end(); ++it)
 		{
-			(*it)->RecursiveDelete(false);			
+			(*it)->RecursiveDelete(false);
 		}
 
 		this->childs.clear();
@@ -95,7 +96,7 @@ void GameObject::OnUpdateTransform()
 	{
 		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 		{
-			(*it)->OnUpdateTransform();	
+			(*it)->OnUpdateTransform();
 		}
 	}
 
@@ -110,7 +111,7 @@ void GameObject::RemoveChildGO(GameObject * GO)
 		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
 		{
 			if ((*go)->GetUID() == GO->GetUID())
-			{				
+			{
 				childs.erase(go);
 				break;
 			}
@@ -155,7 +156,8 @@ bool GameObject::FindChildGO(GameObject * GO)
 
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
+
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
@@ -164,19 +166,22 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 	{
 		switch (type)
 		{
-			case Component::ComponentType::Transform:
-				component = new ComponentTransform(this);
-				break;
-			case Component::ComponentType::Mesh:
-				component = new ComponentMesh(this);
-				UpdateAABB();
-				break;
-			case Component::ComponentType::MeshRenderer:
-				component = new ComponentMeshRenderer(this);
-				break;
-			case Component::ComponentType::Camera:
-				component = new ComponentCamera(this);
-				break;
+		case Component::ComponentType::Transform:
+			component = new ComponentTransform(this);
+			break;
+		case Component::ComponentType::Mesh:
+			component = new ComponentMesh(this);
+			UpdateAABB();
+			break;
+		case Component::ComponentType::MeshRenderer:
+			component = new ComponentMeshRenderer(this);
+			break;
+		case Component::ComponentType::Camera:
+			component = new ComponentCamera(this);
+			break;
+		case Component::ComponentType::Script:
+			component = new ComponentScript(this);
+			break;
 		}
 
 		if (component)
@@ -311,5 +316,3 @@ void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType ty
 	if (model && type == Resource::ResourceNotificationType::Deletion && model->GetUID() == uid)
 		model = nullptr;
 }
-
-

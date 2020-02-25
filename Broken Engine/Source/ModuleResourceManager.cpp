@@ -45,6 +45,7 @@ bool ModuleResourceManager::Init(json file)
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
 	importers.push_back(new ImporterTexture());
+	importers.push_back(new ImporterScript);
 	importers.push_back(new ImporterMeta());
 
 	return true;
@@ -64,6 +65,7 @@ bool ModuleResourceManager::Start()
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
+	filters.push_back("lua");
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -159,7 +161,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -206,6 +208,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::META:
 		resource = ImportMeta(IData);
+		break;
+
+	case Resource::ResourceType::SCRIPT:
+		resource = ImportScript(IData); //MYTODO: D�dac I assume I must create a new Importer to handle scripts importing
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -359,11 +365,11 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 {
 	Resource* texture = nullptr;
 	ImporterTexture* ITex = GetImporter<ImporterTexture>();
-	
+
 	// --- If the resource is already in library, load from there ---
 	if (IsFileImported(IData.path))
 		texture = ITex->Load(IData.path);
-	
+
 
 	// --- Else call relevant importer ---
 	else
@@ -395,6 +401,23 @@ Resource* ModuleResourceManager::ImportShaderObject(Importer::ImportData& IData)
 		// Import
 
 	return shader_object;
+}
+
+Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
+{
+	Resource* script = nullptr;
+
+	ImporterScript* IScr = GetImporter<ImporterScript>();
+
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+		script = IScr->Load(IData.path);
+	// --- Else call relevant importer ---
+	else
+		script = IScr->Import(IData);
+
+
+	return script;
 }
 
 Resource* ModuleResourceManager::ImportMeta(Importer::ImportData& IData)
@@ -432,7 +455,7 @@ void ModuleResourceManager::HandleFsChanges()
 		// --- Check if meta exists ---
 		if (!App->fs->Exists((*meta).second->GetResourceFile()))
 		{
-			// Recreate meta, only if directory exists 
+			// Recreate meta, only if directory exists
 			std::string metadir;
 			App->fs->SplitFilePath((*meta).second->GetResourceFile(), &metadir);
 
@@ -451,7 +474,7 @@ void ModuleResourceManager::HandleFsChanges()
 		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
 		{
 			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
-			
+
 			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);
 
@@ -490,7 +513,7 @@ void ModuleResourceManager::HandleFsChanges()
 						{
 							resource->OnOverwrite();
 
-							// Update meta 
+							// Update meta
 							Resource* meta_res = (*meta).second;
 							meta_res->OnOverwrite();
 						}
@@ -514,7 +537,7 @@ void ModuleResourceManager::HandleFsChanges()
 
 				// --- If dates are not equal, dir has been overwritten ---
 				if (date != (*meta).second->Date)
-				{	
+				{
 					// --- Basically update meta, files inside will be taken care of  ---
 					ENGINE_CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
 
@@ -524,7 +547,7 @@ void ModuleResourceManager::HandleFsChanges()
 					{
 						resource->OnOverwrite();
 
-						// Update meta 
+						// Update meta
 						Resource* meta_res = (*meta).second;
 						meta_res->OnOverwrite();
 					}
@@ -562,7 +585,7 @@ void ModuleResourceManager::HandleFsChanges()
 
 		// --- Check if dir has a meta, if not import directory ---
 		if (!App->resources->IsFileImported(dir_name.c_str()))
-		{	
+		{
 			Importer::ImportData IData((*dir).first.c_str());
 			ImportAssets(IData);
 		}
@@ -646,7 +669,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -658,6 +681,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
+	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
@@ -672,7 +696,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -718,6 +742,12 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
+	case Resource::ResourceType::SCRIPT:
+		//MYTODO: D�dac fill code following Aitor's Guidelines
+		resource = (Resource*)new ResourceScript(App->GetRandom().Int(), source_file);
+		scripts[resource->GetUID()] = (ResourceScript*)resource;
+		break;
+
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
@@ -734,8 +764,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
-
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Creation Switch needs to be updated");
 
 	switch (type)
 	{
@@ -790,6 +819,12 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 		break;
 
+	case Resource::ResourceType::SCRIPT:
+		resource = (Resource*)new ResourceScript(UID, source_file);
+		scripts[resource->GetUID()] = (ResourceScript*)resource;
+		break;
+
+
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
@@ -805,7 +840,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -837,6 +872,9 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 
 	else if (extension == "vertex" || extension == "fragment")
 		type = Resource::ResourceType::SHADER_OBJECT;
+
+	else if (extension == "lua")
+		type = Resource::ResourceType::SCRIPT;
 
 	else if (extension == "meta")
 		type = Resource::ResourceType::META;
@@ -927,7 +965,7 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 
 		path.append(".meta");
 
-		// --- PhysFS will only return true if the file is inside one of the fs predefined folders! 
+		// --- PhysFS will only return true if the file is inside one of the fs predefined folders!
 		//  using that on our advantage to know if a resource is imported or not ---
 		ret = App->fs->Exists(path.data());
 	}
@@ -937,7 +975,7 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -991,13 +1029,17 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
 			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
-				(*it).second->resource_diffuse = nullptr;	
+				(*it).second->resource_diffuse = nullptr;
 		}
 
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
 		shader_objects.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::SCRIPT:
+		scripts.erase(resource->GetUID());
 		break;
 
 	case Resource::ResourceType::META:
@@ -1024,7 +1066,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
@@ -1098,6 +1140,15 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	shader_objects.clear();
+
+	for (std::map<uint, ResourceScript*>::iterator it = scripts.begin(); it != scripts.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = scripts.erase(it);
+	}
+
+	scripts.clear();
 
 	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end();)
 	{
