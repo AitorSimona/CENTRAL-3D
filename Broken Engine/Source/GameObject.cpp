@@ -194,9 +194,9 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 			case Component::ComponentType::Bone:
 				component = new ComponentBone(this);
 				break;
-			/*case Component::ComponentType::Animation:
+			case Component::ComponentType::Animation:
 				component = new ComponentAnimation(this);
-				break;*/
+				break;
 		}
 
 		if (component)

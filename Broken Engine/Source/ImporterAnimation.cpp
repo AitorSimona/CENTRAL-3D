@@ -76,8 +76,12 @@ void ImporterAnimation::Save(ResourceAnimation* anim) const
 {
 	//----------------------------- CALCULATE SIZE ----------------------------------
 
+	uint sourcefilename_length = std::string(anim->GetOriginalFile()).size();
+
+	uint length = sourcefilename_length;
+
 	//Animation Duration, TicksperSec, numChannels
-	uint size = sizeof(float) + sizeof(float) + sizeof(uint);
+	uint size = sizeof(length) + sizeof(const char) * sourcefilename_length + sizeof(float) + sizeof(float) + sizeof(uint);
 
 	for (int i = 0; i < anim->numChannels; i++)
 	{
@@ -100,6 +104,14 @@ void ImporterAnimation::Save(ResourceAnimation* anim) const
 	//---------------------------------- Allocate -----------------------------------
 	char* data = new char[size];
 	char* cursor = data;
+
+	// --- Store name length ---
+	memcpy(cursor, &length, sizeof(length));
+	cursor += sizeof(length);
+
+	// --- Store original filename ---
+	memcpy(cursor, anim->GetOriginalFile(), sizeof(const char) * sourcefilename_length);
+	cursor+= sizeof(const char) * sourcefilename_length;
 
 	//Duration
 	memcpy(cursor, &anim->duration, sizeof(float));
@@ -179,7 +191,41 @@ Resource* ImporterAnimation::Load(const char* path) const
 {
 
 	Resource* anim = nullptr;
+	char* buffer = nullptr;
 	
+	if (App->fs->Exists(path))
+	{
+		App->fs->Load(path, &buffer);
+
+		if (buffer)
+		{
+			// --- Read ranges first ---
+			char* cursor = buffer;
+			uint ranges;
+			uint bytes = sizeof(ranges);
+			memcpy(&ranges, cursor, bytes);
+
+			// --- Read the original file's name ---
+			std::string source_file;
+			source_file.resize(ranges);
+			cursor += bytes;
+			bytes = sizeof(char) * ranges;
+			memcpy((char*)source_file.c_str(), cursor, bytes);
+
+			// --- Extract UID from path ---
+			std::string uid = path;
+			App->fs->SplitFilePath(path, nullptr, &uid);
+			uid = uid.substr(0, uid.find_last_of("."));
+
+
+			anim = App->resources->animations.find(std::stoi(uid)) != App->resources->animations.end() ? App->resources->animations.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::ANIMATION, std::string(source_file), std::stoi(uid));
+
+			delete[] buffer;
+			buffer = nullptr;
+			cursor = nullptr;
+		}
+
+	}
 
 	return anim;
 }

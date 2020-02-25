@@ -34,6 +34,11 @@ bool ResourceAnimation::LoadInMemory()
 		App->fs->Load(resource_file.c_str(), &buffer);
 		char* cursor = buffer;
 
+		//skip name length and name
+		uint length = 0;
+		memcpy(&length, cursor, sizeof(length));
+		cursor += sizeof(length) + length;
+
 		//Duration
 		memcpy(&this->duration, cursor, sizeof(float));
 		cursor += sizeof(float);

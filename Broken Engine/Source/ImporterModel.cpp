@@ -232,23 +232,6 @@ void ImporterModel::LoadSceneBones(std::vector<aiMesh*>& mesh, std::map<uint, Re
 		}
 	}
 
-	/*for (int i = 0; i < mesh.size(); i++)
-	{
-		if (mesh[i]->HasBones())
-		{
-			ImporterBone* IBone = App->resources->GetImporter<ImporterBone>();
-
-			ImportBoneData BData(source_file);
-			BData.bone = mesh[i]->mBones[i];
-
-			if (IBone)
-			{
-				bones = (ResourceBone*)IBone->Import(BData);
-				bones->SetName(mesh[i]->mBones[i]->mName.C_Str());
-			}
-
-		}
-	}*/
 }
 
 void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<aiMesh*> mesh_collect) const
@@ -279,7 +262,7 @@ void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, Re
 	if (scene->HasAnimations())
 	{
 		ImporterAnimation* IAnim = App->resources->GetImporter<ImporterAnimation>();
-
+		GO->AddComponent(Component::ComponentType::Animation);
 
 		for (int i = 0; i < scene->mNumAnimations; i++)
 		{

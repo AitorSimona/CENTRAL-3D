@@ -3,6 +3,8 @@
 #include "ModuleResourceManager.h"
 #include "Application.h"
 #include "GameObject.h"
+
+#include "Imgui/imgui.h"
 //#include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
@@ -65,6 +67,7 @@ Animation* ComponentAnimation::GetDefaultAnimation() const
 
 json ComponentAnimation::Save() const
 {
+
 	return json();
 }
 
@@ -89,6 +92,22 @@ void ComponentAnimation::ONResourceEvent(uint UID, Resource::ResourceNotificatio
 
 	default:
 		break;
+	}
+}
+
+void ComponentAnimation::CreateInspectorNode()
+{
+	ImGui::Checkbox("##Animator", &GetActive());
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("Animation"))
+	{
+		ImGui::Text("Im a component animator:D");
+
+		if(res_anim)
+			ImGui::Text("Resource anim connected");
+
+		ImGui::TreePop();
 	}
 }
 
