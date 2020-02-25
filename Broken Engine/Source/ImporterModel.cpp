@@ -63,7 +63,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		rootnode = App->scene_manager->CreateEmptyGameObject();
 
 		// --- Save Game objects to vector so we can save to lib later ---
-		std::vector<GameObject*> model_gos;
+		std::vector<GameObject*> model_gos; 
 		model_gos.push_back(rootnode);
 
 		// --- Load all meshes ---
@@ -82,8 +82,15 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		std::map<uint, ResourceMaterial*> model_mats;
 		LoadSceneMaterials(scene, model_mats, MData.path, MData.library_deleted);
 
+		std::vector<aiMesh*> mesh_collector;
+
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		LoadNodes(scene->mRootNode,rootnode, scene, model_gos, MData.path, model_meshes, model_mats);
+		LoadNodes(scene->mRootNode,rootnode, scene, model_gos, MData.path, model_meshes, model_mats, mesh_collector);
+
+
+
+		LoadBones(model_gos, mesh_collector);
+
 
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
@@ -205,14 +212,35 @@ void ImporterModel::LoadSceneBones(const aiMesh* mesh, ResourceBone* bones, cons
 	}
 }
 
+void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<aiMesh*> mesh_collect) const
+{
+	std::map<std::string, GameObject*> go_map;
+
+	for (std::vector<GameObject*>::iterator it = model_gos.begin(); it != model_gos.end(); ++it)
+	{
+		go_map[(*it)->GetName()] = (*it);
+	}
+
+	for (int i = 0; i < mesh_collect.size(); i++)
+	{
+		for (int j = 0; j < mesh_collect[i]->mNumBones; j++)
+		{
+			std::map<std::string, GameObject*>::iterator bone = go_map.find(mesh_collect[i]->mBones[j]->mName.C_Str());
+			if (bone != go_map.end())
+			{
+				bone->second->AddComponent(Component::ComponentType::Bone);
+			}
+		}
+	}
+
+}
+
 void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, ResourceAnimation* anim, const char* source_file) const
 {
 	if (scene->HasAnimations())
 	{
 		ImporterAnimation* IAnim = App->resources->GetImporter<ImporterAnimation>();
 
-		//Creating animator component
-		//GO->AddComponent(Component::ComponentType::Animation);
 
 		for (int i = 0; i < scene->mNumAnimations; i++)
 		{
@@ -239,7 +267,7 @@ void ImporterModel::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_
 	scene_mats->clear();
 }
 
-void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats) const
+void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats, std::vector<aiMesh*> &mesh_collector) const
 {
 	// --- Load Game Objects from Assimp scene ---
 
@@ -259,7 +287,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	// --- Iterate children and repeat process ---
 	for (int i = 0; i < node->mNumChildren; ++i)
 	{
-		LoadNodes(node->mChildren[i], nodeGo, scene, scene_gos, path, scene_meshes, scene_mats);
+		LoadNodes(node->mChildren[i], nodeGo, scene, scene_gos, path, scene_meshes, scene_mats, mesh_collector);
 	}
 
 	// --- Iterate and load meshes ---
@@ -275,6 +303,11 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		uint mesh_index = node->mMeshes[j];
 		aiMesh* mesh = scene->mMeshes[mesh_index];
 		uint mat_index = mesh->mMaterialIndex;
+
+		if (scene->mMeshes[node->mMeshes[j]]->HasBones())
+		{
+			mesh_collector.push_back(scene->mMeshes[node->mMeshes[j]]);
+		}
 
 		if (mesh)
 		{
@@ -314,6 +347,8 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 		}
 	}
+
+	
 }
 
 

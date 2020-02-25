@@ -5,6 +5,7 @@
 #include "ModuleResourceManager.h"
 #include "GameObject.h"
 
+#include "Imgui/imgui.h"
 #include "OpenGL.h"
 
 #include "Color.h"
@@ -98,5 +99,18 @@ void ComponentBone::ONResourceEvent(uint UID, Resource::ResourceNotificationType
 
 	default:
 		break;
+	}
+}
+
+void ComponentBone::CreateInspectorNode()
+{
+	ImGui::Checkbox("##Bone", &GetActive());
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("Bone"))
+	{
+		ImGui::Text("Im a component bone :D");
+
+		ImGui::TreePop();
 	}
 }

@@ -5,6 +5,7 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentAnimation.h"
 #include "ComponentCamera.h"
+#include "ComponentBone.h"
 #include "ModuleSceneManager.h"
 
 #include "Math.h"
@@ -168,7 +169,7 @@ GameObject* GameObject::GetAnimGO(GameObject* GO)
 
 Component * GameObject::AddComponent(Component::ComponentType type)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 6, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
@@ -190,6 +191,12 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 			case Component::ComponentType::Camera:
 				component = new ComponentCamera(this);
 				break;
+			case Component::ComponentType::Bone:
+				component = new ComponentBone(this);
+				break;
+			/*case Component::ComponentType::Animation:
+				component = new ComponentAnimation(this);
+				break;*/
 		}
 
 		if (component)
