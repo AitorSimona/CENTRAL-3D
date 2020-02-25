@@ -89,6 +89,8 @@ Resource* ImporterModel::Import(ImportData& IData) const
 			model->AddResource(model_mats[j]);
 		}
 
+		//model->AddResource(anim);
+
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
 

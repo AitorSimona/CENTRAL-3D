@@ -41,11 +41,11 @@ Resource* ImporterAnimation::Import(ImportData& IData) const
 				data.animation->mChannels[i]->mPositionKeys[j].mValue.y, data.animation->mChannels[i]->mPositionKeys[j].mValue.z);
 
 		for (uint j = 0; j < data.animation->mChannels[i]->mNumRotationKeys; j++)
-			resource_anim->channels[i].RotationKeys[data.animation->mChannels[i]->mRotationKeys[i].mTime] = Quat(data.animation->mChannels[i]->mRotationKeys[i].mValue.x,
+			resource_anim->channels[i].RotationKeys[data.animation->mChannels[i]->mRotationKeys[j].mTime] = Quat(data.animation->mChannels[i]->mRotationKeys[i].mValue.x,
 				data.animation->mChannels[i]->mRotationKeys[i].mValue.y, data.animation->mChannels[i]->mRotationKeys[i].mValue.z, data.animation->mChannels[i]->mRotationKeys[i].mValue.w);
 
 		for (uint j = 0; j < data.animation->mChannels[i]->mNumScalingKeys; j++)
-			resource_anim->channels[i].ScaleKeys[data.animation->mChannels[i]->mScalingKeys[i].mTime] = float3(data.animation->mChannels[i]->mScalingKeys[i].mValue.x,
+			resource_anim->channels[i].ScaleKeys[data.animation->mChannels[i]->mScalingKeys[j].mTime] = float3(data.animation->mChannels[i]->mScalingKeys[i].mValue.x,
 				data.animation->mChannels[i]->mScalingKeys[i].mValue.y, data.animation->mChannels[i]->mScalingKeys[i].mValue.z);
 
 		resource_anim->channels[i].name = data.animation->mChannels[i]->mNodeName.C_Str();
