@@ -329,13 +329,6 @@ void ModuleScripting::NotifyHotReloading()
 	hot_reloading_waiting = true;
 }
 
-//MYTODO: Dídac don't quite remember what this what used for, when It compiles let check low priority
-//void ModuleScripting::ManageOrphanScript(std::string relative_path)
-//{
-//	//Create a new meta
-//	ie_scripts.ie_data.meta_path = relative_path;
-//	ie_scripts.CreateMeta(relative_path.data(), &ie_scripts.ie_data);
-//}
 
 bool ModuleScripting::Init(json file)
 {

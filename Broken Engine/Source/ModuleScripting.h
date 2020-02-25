@@ -26,8 +26,6 @@ public:
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NotifyHotReloading();
 
-	//If a lua file doesn't have a meta
-	void ManageOrphanScript(std::string relative_path);
 
 public:
 	bool Init(json file) override;

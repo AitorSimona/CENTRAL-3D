@@ -20,12 +20,14 @@ bool ResourceScript::LoadInMemory()
 
 void ResourceScript::OnOverwrite()
 {
+
 	App->scripting->NotifyHotReloading();
 	// Here we have to manage hot Reloading
 }
 
 void ResourceScript::OnDelete()
 {
+
 	//Script Resource doesn't generate any additional memory
 }
 
