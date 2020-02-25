@@ -89,6 +89,7 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
+	COMPILATIONLOGINFO;
 
 	// --- Load App data from JSON files ---
 	json config = JLoader.Load(configpath.data());
@@ -117,7 +118,7 @@ bool Application::Init()
 	}
 
 	// After all Init calls we call Start() in all modules
-	CONSOLE_LOG("Application Start --------------");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Broken Engine Start --------------");
 	item = list_modules.begin();
 
 	while(item != list_modules.end() && ret == true)

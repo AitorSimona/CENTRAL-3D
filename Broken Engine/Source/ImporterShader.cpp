@@ -62,7 +62,7 @@ Resource* ImporterShader::Import(ImportData& IData) const
 	//			delete[] buffer;
 	//		}
 	//		else
-	//			CONSOLE_LOG("|[error]: Could not load shader program");
+	//			ENGINE_CONSOLE_LOG("|[error]: Could not load shader program");
 	//	}
 
 	//	else

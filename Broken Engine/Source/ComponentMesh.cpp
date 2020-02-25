@@ -81,7 +81,6 @@ void ComponentMesh::CreateInspectorNode()
 	ImGui::Checkbox("##MeshActive", &GetActive());
 	ImGui::SameLine();
 
-
 	if (resource_mesh && ImGui::TreeNode("Mesh"))
 	{
 		std::string Triangle_count = "Triangles   ";
@@ -93,6 +92,13 @@ void ComponentMesh::CreateInspectorNode()
 		//ImGui::Text(std::to_string(mesh->resource_mesh->instances).data());
 
 		ImGui::TreePop();
+	}
+
+	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
+
+	ImGui::SameLine();
+	if (ImGui::Button("Delete")) {
+		GO->RemoveComponent(Component::ComponentType::Mesh);
 	}
 }
 

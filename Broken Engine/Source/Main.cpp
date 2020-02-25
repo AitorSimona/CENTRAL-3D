@@ -8,6 +8,19 @@
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 
+//Trick to tell AMD and NVIDIA drivers to use the most powerful GPU instead of a lower-performance (such as integrated) GPU
+#ifdef _WIN32
+//else: Use GPU by default.
+extern "C" {
+	// http://developer.download.nvidia.com/devzone/devcenter/gamegraphics/files/OptimusRenderingPolicies.pdf
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+
+	// http://developer.amd.com/community/blog/2015/10/02/amd-enduro-system-for-developers/
+	// or (if the 1st doesn't works): https://gpuopen.com/amdpowerxpressrequesthighperformance/
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#endif
+
 enum main_states
 {
 	MAIN_CREATION,
@@ -21,7 +34,7 @@ Application* App = NULL;
 
 int main(int argc, char ** argv)
 {
-	CONSOLE_LOG("Starting app '%s'...", TITLE);
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -33,23 +46,23 @@ int main(int argc, char ** argv)
 		{
 		case MAIN_CREATION:
 
-			CONSOLE_LOG("-------------- Application Creation --------------");
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
 			App = new Application();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
-			CONSOLE_LOG("-------------- Application Init --------------");
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Init --------------");
 			if (App->Init() == false)
 			{
-				CONSOLE_LOG("|[error]: Application Init exits with ERROR");
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
 			else
 			{
 				state = MAIN_UPDATE;
-				CONSOLE_LOG("-------------- Application Update --------------");
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Update --------------");
 			}
 
 			break;
@@ -60,7 +73,7 @@ int main(int argc, char ** argv)
 
 			if (update_return == UPDATE_ERROR)
 			{
-				CONSOLE_LOG("|[error]: Application Update exits with ERROR");
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Update exits with ERROR");
 				state = MAIN_EXIT;
 			}
 
@@ -71,10 +84,10 @@ int main(int argc, char ** argv)
 
 		case MAIN_FINISH:
 
-			CONSOLE_LOG("-------------- Application CleanUp --------------");
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application CleanUp --------------");
 			if (App->CleanUp() == false)
 			{
-				CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
 			}
 			else
 				main_return = EXIT_SUCCESS;
@@ -85,7 +98,7 @@ int main(int argc, char ** argv)
 
 		}
 	}
-	CONSOLE_LOG("Exiting app '%s'...\n", TITLE);
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Exiting app '%s'...\n", TITLE);
 
 	delete App;
 	return main_return;

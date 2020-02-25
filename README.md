@@ -6,7 +6,8 @@ A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 
 - Microsoft Visual Studio 2019 
 - 3rd Party Libraries used:
 - SDL 2.0.10
-- Glew 2.1.0
+- Assimp 3.3
+- Glad 0.1.33
 - ImGui 1.72b (with beta docking)
 - ImGuizmo
 - MathGeoLib 1.5 (commit 1994)

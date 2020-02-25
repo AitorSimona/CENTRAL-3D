@@ -24,7 +24,10 @@ private:
 	inline void InputNode() const;
 	inline void RendererNode() const;
 	inline void HardwareNode() const;
+	inline void SoftwareNode() const;
+	inline void RAMMemoryNode() const;
 	inline void LibrariesNode() const;
+	inline void EngineCameraNode() const;
 
 private:
 	std::vector<float> FPS_Tracker;

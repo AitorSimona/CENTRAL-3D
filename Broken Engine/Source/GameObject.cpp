@@ -5,7 +5,7 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ComponentCollider.h"
-#include "ComponentRigidBody.h"
+#include "ComponentDynamicRigidBody.h"
 
 #include "ModuleSceneManager.h"
 
@@ -93,6 +93,13 @@ void GameObject::OnUpdateTransform()
 	if (camera)
 		camera->OnUpdateTransform(transform->GetGlobalTransform());
 
+	// PHYSICS: TEMPORAL example, after updating transform, update collider
+	ComponentCollider* collider = GetComponent<ComponentCollider>();
+
+	if (collider)
+		collider->SetPosition();
+
+
 	// --- Update all children ---
 	if (childs.size() > 0)
 	{
@@ -158,8 +165,7 @@ bool GameObject::FindChildGO(GameObject* GO)
 
 Component* GameObject::AddComponent(Component::ComponentType type)
 {
-	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 6, "Component Creation Switch needs to be updated");
-
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
@@ -184,8 +190,8 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 		case Component::ComponentType::Collider:
 			component = new ComponentCollider(this);
 			break;
-		case Component::ComponentType::RigidBody:
-			component = new ComponentRigidBody(this);
+		case Component::ComponentType::DynamicRigidBody:
+			component = new ComponentDynamicRigidBody(this);
 			break;
 		}
 
@@ -196,7 +202,7 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 	else
 	{
 		// --- If we find a component of the same type, tell the user and return such component ---
-		CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
+		ENGINE_CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
 		component = HasComponent(type);
 	}
 

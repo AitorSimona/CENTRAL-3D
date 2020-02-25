@@ -7,6 +7,8 @@
 #include "Importers.h"
 #include "Resources.h"
 
+#include "PanelProject.h"
+
 #include "Assimp/include/cimport.h"
 
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
@@ -16,7 +18,7 @@
 // --- Get Assimp LOGS and print them to console ---
 void MyAssimpCallback(const char* msg, char* userData)
 {
-	CONSOLE_LOG("[Assimp]: %s", msg);
+	ENGINE_CONSOLE_LOG("[Assimp]: %s", msg);
 }
 
 ModuleResourceManager::ModuleResourceManager(bool start_enabled)
@@ -29,6 +31,7 @@ ModuleResourceManager::~ModuleResourceManager()
 
 bool ModuleResourceManager::Init(json file)
 {
+
 	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
 	struct aiLogStream stream;
 	stream.callback = MyAssimpCallback;
@@ -57,6 +60,7 @@ bool ModuleResourceManager::Start()
 	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
 
+	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
@@ -64,6 +68,7 @@ bool ModuleResourceManager::Start()
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
 
+	// --- Manage changes ---
 	HandleFsChanges();
 
 	// --- Tell Windows to notify us when changes to given directory and subtree occur ---
@@ -74,9 +79,9 @@ bool ModuleResourceManager::Start()
 
 // ------------------------------ IMPORTING --------------------------------------------------------
 
-std::string ModuleResourceManager::DuplicateIntoAssetsFolder(const char* path)
+std::string ModuleResourceManager::DuplicateIntoGivenFolder(const char* path, const char* folder_path)
 {
-	std::string new_path = ASSETS_FOLDER;
+	std::string new_path = folder_path;
 	std::string file;
 
 	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
@@ -154,7 +159,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -206,7 +211,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 	case Resource::ResourceType::UNKNOWN:
 		break;
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
 		break;
 	}
 
@@ -215,10 +220,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		if(type != Resource::ResourceType::FOLDER && type != Resource::ResourceType::META)
 		AddResourceToFolder(resource);
 
-		CONSOLE_LOG("Imported successfully: %s", IData.path);
+		ENGINE_CONSOLE_LOG("Imported successfully: %s", IData.path);
 	}
 	else
-		CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
+		ENGINE_CONSOLE_LOG("![Warning]: Could not import: %s", IData.path);
 
 
 	return resource;
@@ -244,7 +249,12 @@ Resource* ModuleResourceManager::ImportFolder(Importer::ImportData& IData)
 		// --- Else call relevant importer ---
 		else
 		{
-			IData.path = new_path.append("/").c_str();
+			new_path = IData.path = new_path.append("/").c_str();
+
+			if (IData.dropped)
+				new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
+			IData.path = new_path.c_str();
 			folder = IFolder->Import(IData);
 		}
 	}
@@ -266,6 +276,8 @@ Resource* ModuleResourceManager::ImportScene(Importer::ImportData& IData)
 	else
 		// Import
 
+
+
 	return scene;
 }
 
@@ -284,7 +296,11 @@ Resource* ModuleResourceManager::ImportModel(Importer::ImportData& IData)
 		// --- Else call relevant importer ---
 		else
 		{
-			std::string new_path = DuplicateIntoAssetsFolder(IData.path);
+			std::string new_path = IData.path;
+
+			if(IData.dropped)
+				new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
 			IData.path = new_path.c_str();
 			ImportModelData MData(IData.path);
 			model = IModel->Import(MData);
@@ -351,7 +367,15 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 
 	// --- Else call relevant importer ---
 	else
+	{
+		std::string new_path = IData.path;
+
+		if (IData.dropped)
+			new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
+		IData.path = new_path.c_str();
 		texture = ITex->Import(IData);
+	}
 
 	return texture;
 }
@@ -426,7 +450,7 @@ void ModuleResourceManager::HandleFsChanges()
 		// --- Meta's associated file has been deleted, print warning and eliminate lib files ---
 		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
 		{
-			CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.")
+			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
 			
 			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);
@@ -458,7 +482,7 @@ void ModuleResourceManager::HandleFsChanges()
 					// --- If dates are not equal, file has been overwritten ---
 					if (date != (*meta).second->Date)
 					{
-						CONSOLE_LOG("Reimported file: %s", (*files).c_str());
+						ENGINE_CONSOLE_LOG("Reimported file: %s", (*files).c_str());
 
 						Resource* resource = GetResource((*meta).second->GetUID(), false);
 
@@ -492,7 +516,7 @@ void ModuleResourceManager::HandleFsChanges()
 				if (date != (*meta).second->Date)
 				{	
 					// --- Basically update meta, files inside will be taken care of  ---
-					CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
+					ENGINE_CONSOLE_LOG("Reimported directory: %s", dir_name.c_str());
 
 					Resource* resource = GetResource((*meta).second->GetUID(), false);
 
@@ -622,7 +646,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -638,7 +662,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
 	else if (!resource)
-		CONSOLE_LOG("![Warning]: Could not load: %i", UID);
+		ENGINE_CONSOLE_LOG("![Warning]: Could not load: %i", UID);
 
 
 	return resource;
@@ -648,7 +672,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -695,11 +719,11 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -710,7 +734,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -767,11 +791,11 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -781,7 +805,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -843,7 +867,7 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
 			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
 			directory.pop_back();
-			original_file = (*it).second->GetName();
+			original_file = (*it).second->GetOriginalFile();
 			original_file.pop_back();
 
 
@@ -881,7 +905,7 @@ void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
 			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
 			directory.pop_back();
-			original_file = (*it).second->GetName();
+			original_file = (*it).second->GetOriginalFile();
 			original_file.pop_back();
 
 			if (directory == original_file)
@@ -913,7 +937,7 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -931,6 +955,25 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 	case Resource::ResourceType::MATERIAL:
 		materials.erase(resource->GetUID());
+
+		// --- Tell parent model, if any ---
+		if (resource->has_parent)
+		{
+			for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end(); ++it)
+			{
+				std::vector<Resource*>* model_resources = (*it).second->GetResources();
+
+				for (std::vector<Resource*>::iterator res = model_resources->begin(); res != model_resources->end(); ++res)
+				{
+					if ((*res)->GetUID() == resource->GetUID())
+					{
+						(*it).second->RemoveResource(resource);
+						break;
+					}
+				}
+
+			}
+		}
 		break;
 
 	case Resource::ResourceType::SHADER:
@@ -943,6 +986,14 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 	case Resource::ResourceType::TEXTURE:
 		textures.erase(resource->GetUID());
+
+		// --- Tell mats ---
+		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end(); ++it)
+		{
+			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
+				(*it).second->resource_diffuse = nullptr;	
+		}
+
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
@@ -954,11 +1005,11 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 
 	default:
-		CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
 	}
 
@@ -973,7 +1024,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)

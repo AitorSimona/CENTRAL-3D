@@ -16,7 +16,7 @@ public:
 		Mesh,
 		MeshRenderer,
 		Camera,
-		RigidBody,
+		DynamicRigidBody,
 		Collider,
 		Unknown
 	};

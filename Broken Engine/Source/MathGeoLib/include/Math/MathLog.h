@@ -41,7 +41,7 @@ void PrintToConsole(MathLogChannel channel, const char *str);
 #define STRINGIZE(x) STRINGIZE_HELPER(x)
 #define WARNING(desc) message(__FILE__ "(" STRINGIZE(__LINE__) ") : warning: " #desc)
 
-#ifndef LOGGING_SUPPORT_DISABLED
+#ifdef LOGGING_SUPPORT_DISABLED //MGEOLIB DEBUG DISPLAY DEACTIVATED! - To activate it, change "#ifdef" by "#ifndef"
 
 #define LOGI(...) PrintToConsoleVariadic(MathLogInfo, __VA_ARGS__)
 #define LOGW(...) PrintToConsoleVariadic(MathLogWarning, __VA_ARGS__)
