@@ -4,6 +4,10 @@
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
 
+#include "PhysX_3.4/Include/pvd/PxPvd.h"
+#include "PhysX_3.4/Include/pvd/PxPvdSceneClient.h"
+#include "PhysX_3.4/Include/pvd/PxPvdTransport.h"
+
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 #ifndef _DEBUG
@@ -51,6 +55,25 @@ bool ModulePhysics::Init(json config)
 		return false;
 	}
 
+	//Setup Connection-----------------------------------------------------------------------
+	physx::PxPvdTransport* mTransport = physx::PxDefaultPvdSocketTransportCreate("localhost", 5425, 10000);
+
+	if (mTransport == NULL)  
+		return false;
+
+	physx::PxPvdInstrumentationFlags mPvdFlags = physx::PxPvdInstrumentationFlag::eALL;   
+	mPvd = physx::PxCreatePvd(*mFoundation);
+	mPvd->connect(*mTransport, mPvdFlags);
+
+	pvdClient = mScene->getScenePvdClient(); 
+	if (pvdClient) { 
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);  
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);  
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true); 
+	}
+
+	//-------------------------------------
+
 	PxRegisterParticles(*mPhysics);
 
 	PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
@@ -84,6 +107,7 @@ update_status ModulePhysics::Update(float dt)
 
 bool ModulePhysics::CleanUp()
 {
+	mPvd->release();
 	/*mPhysics->release();
 	mFoundation->release();
 

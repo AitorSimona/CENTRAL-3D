@@ -4,6 +4,9 @@
 #include "Globals.h"
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "PhysX_3.4/Include/pvd/PxPvd.h"
+#include "PhysX_3.4/Include/pvd/PxPvdSceneClient.h"
+#include "PhysX_3.4/Include/pvd/PxPvdTransport.h"
 
 using namespace physx;
 
@@ -24,7 +27,8 @@ public:
 	void SimulatePhysics(float dt, float speed = 1.0f);
 
 public:
-
+	PxPvd* mPvd = nullptr; 
+	PxPvdSceneClient* pvdClient = nullptr;
 	PxFoundation* mFoundation = nullptr;
 	PxPhysics* mPhysics = nullptr;
 	PxScene* mScene = nullptr;
