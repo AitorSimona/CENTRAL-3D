@@ -4,6 +4,8 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 
+#include "ImporterAnimation.h"
+
 #include "mmgr/mmgr.h"
 
 
@@ -159,8 +161,8 @@ void ResourceAnimation::OnDelete()
 
 void ResourceAnimation::Repath()
 {
-	/*ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
-	IMesh->Save(this);*/
+	ImporterAnimation* IAnim = App->resources->GetImporter<ImporterAnimation>();
+	IAnim->Save(this);
 }
 
 
