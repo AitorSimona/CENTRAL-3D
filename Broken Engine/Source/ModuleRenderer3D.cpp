@@ -12,6 +12,8 @@
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ResourceShader.h"
+#include "ComponentAudioListener.h"
+#include "Component.h"
 
 #include "PanelScene.h"
 

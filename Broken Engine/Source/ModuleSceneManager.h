@@ -99,6 +99,7 @@ private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
+	GameObject* music = nullptr;
 
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
