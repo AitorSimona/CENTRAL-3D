@@ -110,6 +110,13 @@ void ComponentBone::CreateInspectorNode()
 	if (ImGui::TreeNode("Bone"))
 	{
 		ImGui::Text("Im a component bone :D");
+		//ImGui::Checkbox("Toggle debug draw skeleton", (bool*)GO->GetComponent<ComponentAnimation>()->draw_bones);
+
+		/*ImGui::Text("Number of weights: %d", res_bone->NumWeights);
+		ImGui::Text("Weight: %d", res_bone->weight);
+		ImGui::Text("Offset matrix: %d", res_bone->matrix);
+		ImGui::Text("Index weight: %d", res_bone->index_weight);*/
+
 
 		ImGui::TreePop();
 	}

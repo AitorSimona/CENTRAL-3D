@@ -37,11 +37,16 @@ bool ResourceBone::LoadInMemory()
 		//memcpy(&this->meshID, cursor, sizeof(uint));
 		//cursor += sizeof(uint);
 
-		// NumWeights
+		// --- Skip name and ranges ---
+		uint ranges;
+		memcpy(&ranges, cursor, sizeof(ranges));
+		cursor += sizeof(ranges) + ranges;
+
+		//  --- Load NumWeights ---
 		memcpy(&NumWeights, cursor, sizeof(uint));
 		cursor += sizeof(uint);
 
-		// matrix
+		//  --- Load matrix ---
 		float* matrix = new float[16];
 		memcpy(matrix, cursor, sizeof(float) * 16);
 		cursor += sizeof(float) * 16;
@@ -51,12 +56,12 @@ bool ResourceBone::LoadInMemory()
 								matrix[8], matrix[9], matrix[10], matrix[11],
 								matrix[12], matrix[13], matrix[14], matrix[15]);
 
-		// Weights
+		//  --- Load weights ---
 		weight = new float[NumWeights];
 		memcpy(weight, cursor, sizeof(float) * NumWeights);
 		cursor += sizeof(float) * NumWeights;
 
-		// index_weights
+		//  --- Load index_weights ---
 		index_weight = new uint[NumWeights];
 		memcpy(index_weight, cursor, sizeof(uint) * NumWeights);
 		cursor += sizeof(uint) * NumWeights;

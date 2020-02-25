@@ -55,10 +55,13 @@ Resource* ImporterBone::Import(ImportData& IData) const
 
 void ImporterBone::Save(ResourceBone* bone) const
 {
+	uint sourcefilename_length = std::string(bone->GetOriginalFile()).size();
+	uint ranges = sourcefilename_length;
+
 	//----------------------------- CALCULATE SIZE ------------------------------------------------------------------------------------
 
 	//Bone meshID, numWeights, matrix, weights, index_weigths
-	uint size = /*sizeof(uint) +*/ sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
+	uint size = /*sizeof(uint) +*/ sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
 
 	//---------------------------------------------------------------------------------------------------------------------------------
 	//------------------------------- Allocate ---------------------------------------------------------------------------------------
@@ -70,19 +73,29 @@ void ImporterBone::Save(ResourceBone* bone) const
 	//memcpy(cursor, &bone->meshID, sizeof(uint));
 	//cursor += sizeof(uint);
 
-	// numWeights
+	// --- Store range ---
+	uint tmp = sizeof(ranges);
+	memcpy(cursor, &ranges, tmp);
+
+	// --- Store original filename ---
+	
+	uint bytes = sizeof(const char) * sourcefilename_length;
+	cursor += bytes;
+	memcpy(cursor, bone->GetOriginalFile(), bytes);
+
+	// --- Store numWeights
 	memcpy(cursor, &bone->NumWeights, sizeof(uint));
 	cursor += sizeof(uint);
 
-	// matrix
+	// --- Store matrix
 	memcpy(cursor, &bone->matrix, sizeof(float) * 16);
 	cursor += sizeof(float) * 16;
 
-	//Weights
+	// --- Store Weights
 	memcpy(cursor, bone->weight, sizeof(float) * bone->NumWeights);
 	cursor += sizeof(float) * bone->NumWeights;
 
-	//index_weights
+	// --- Store index_weights
 	memcpy(cursor, bone->index_weight, sizeof(uint) * bone->NumWeights);
 	cursor += sizeof(uint) * bone->NumWeights;
 
@@ -101,7 +114,40 @@ Resource* ImporterBone::Load(const char* path) const
 {
 	Resource* bone = nullptr;
 
+	char* buffer = nullptr;
 
+	if (App->fs->Exists(path))
+	{
+		App->fs->Load(path, &buffer);
+
+		if (buffer)
+		{
+			// --- Read ranges first ---
+			char* cursor = buffer;
+			uint ranges;
+			uint bytes = sizeof(ranges);
+			memcpy(&ranges, cursor, bytes);
+
+			// --- Read the original file's name ---
+			std::string source_file;
+			source_file.resize(ranges);
+			cursor += bytes;
+			bytes = sizeof(char) * ranges;
+			memcpy((char*)source_file.c_str(), cursor, bytes);
+
+			// --- Extract UID from path ---
+			std::string uid = path;
+			App->fs->SplitFilePath(path, nullptr, &uid);
+			uid = uid.substr(0, uid.find_last_of("."));
+
+			bone = App->resources->bones.find(std::stoi(uid)) != App->resources->bones.end() ? App->resources->bones.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::BONE, std::string(source_file), std::stoi(uid));
+
+			delete[] buffer;
+			buffer = nullptr;
+			cursor = nullptr;
+		}
+
+	}
 
 	return bone;
 }
