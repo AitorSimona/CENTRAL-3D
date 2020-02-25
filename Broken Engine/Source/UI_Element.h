@@ -59,7 +59,12 @@ public:
 	void DoLogic(Action action);
 
 	virtual void Draw() const {};
-	virtual void CreateInspectorNode() {};
+
+	//Load & Save
+	virtual json Save() const = 0;
+	virtual void Load(json& node) = 0;
+	virtual void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) {};
+	virtual void CreateInspectorNode() = 0;
 
 private:
 	bool CheckMousePos();

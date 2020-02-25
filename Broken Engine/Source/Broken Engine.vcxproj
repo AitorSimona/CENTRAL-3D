@@ -75,6 +75,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Canvas.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\dxgi1_4.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Imgui\imconfig.h" />
     <ClInclude Include="Imgui\imgui.h" />
     <ClInclude Include="Imgui\ImGuizmo\ImGuizmo.h" />
@@ -231,12 +233,14 @@
     <ClInclude Include="ResourceShaderObject.h" />
     <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="UI_Element.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
@@ -245,6 +249,7 @@
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="Imgui\imgui.cpp" />
     <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="Imgui\imgui_demo.cpp" />
@@ -348,6 +353,7 @@
     <ClCompile Include="ResourceShaderObject.cpp" />
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UI_Element.cpp" />
   </ItemGroup>

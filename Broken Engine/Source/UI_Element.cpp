@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleInput.h"
 
+#include "mmgr/mmgr.h"
+
 UI_Element::UI_Element(GameObject* gameObject, UI_Element::Type Type) : Component(gameObject, Component::ComponentType::UI_Element), type(Type)
 {
 }

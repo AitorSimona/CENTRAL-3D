@@ -11,6 +11,11 @@
 
 #include "Panels.h"
 
+#include "UI_Element.h"
+#include "Canvas.h"
+#include "Image.h"
+#include "Text.h"
+
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -193,6 +198,33 @@ update_status ModuleGui::Update(float dt)
 						App->scene_manager->RedoOctree();
 					}
 
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("UI Elements"))
+				{
+					if (ImGui::MenuItem("Canvas"))
+					{
+						GameObject* canvas = App->scene_manager->CreateEmptyGameObject();
+						Canvas* camera = (Canvas*)canvas->AddComponent(Component::ComponentType::UI_Element);
+					}
+					if (ImGui::MenuItem("Image"))
+					{
+					}
+					if (ImGui::MenuItem("Text"))
+					{
+					}
+					if (ImGui::MenuItem("Button", false, false, false))
+					{
+					}
+					if (ImGui::MenuItem("Checkbox", false, false, false))
+					{
+					}
+					if (ImGui::MenuItem("Input Text", false, false, false))
+					{
+					}
+					if (ImGui::MenuItem("Progress Bar", false, false, false))
+					{
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();

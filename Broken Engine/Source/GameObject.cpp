@@ -5,6 +5,7 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ModuleSceneManager.h"
+#include "UI_Element.h"
 
 #include "Math.h"
 
@@ -176,6 +177,10 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 				break;
 			case Component::ComponentType::Camera:
 				component = new ComponentCamera(this);
+				break;
+
+			case Component::ComponentType::UI_Element:
+				component = new UI_Element(this);
 				break;
 		}
 
