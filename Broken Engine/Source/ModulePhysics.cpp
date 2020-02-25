@@ -115,7 +115,7 @@ bool ModulePhysics::CleanUp()
 
 	mPhysics = nullptr;
 	mFoundation = nullptr;
-	mScene = nullptr; 
+	mScene = nullptr;
 	mPvd = nullptr;
 	return false;
 }
