@@ -72,16 +72,19 @@ bool ModuleSceneManager::Start()
 	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
 	capsule = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCapsule");
 	plane = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultPlane");
+	cylinder = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCylinder");
 
 	CreateCube(1, 1, 1, cube);
 	CreateSphere(1.0f, 25, 25, sphere);
 	CreateCapsule(1, 1, capsule);
 	CreatePlane(1, 1, 1, plane);
+	CreateCylinder(1, 1, cylinder);
 
 	cube->LoadToMemory();
 	sphere->LoadToMemory();
 	capsule->LoadToMemory();
 	plane->LoadToMemory();
+	cylinder->LoadToMemory();
 
 	// --- Create adaptive grid ---
 	glGenVertexArrays(1, &Grid_VAO);
@@ -719,6 +722,40 @@ void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, Reso
 	}
 }
 
+void ModuleSceneManager::CreateCylinder(float radius, float height, ResourceMesh* rmesh)
+{
+	// --- Create par shapes cylinder ---
+	//First, create a normal cylinder and put it at (0,0,0)
+	par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(25, 25);
+	par_shapes_translate(Cyl_PrShM, 0, 0, 0);
+	par_shapes_scale(Cyl_PrShM, radius/2, height/2, radius/2);
+
+	//Now create 2 disks around the cylinder (since x, y and z are the same, we can just pick x)
+	float normal[3] = { 0, 0, 1 };
+	float center_axis[3] = { 0, 0, radius };
+	float center_axis2[3] = { 0, 0, 1 };
+	par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(radius/2, 25, center_axis, normal);
+	par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(radius/2, 25, center_axis2, normal);
+
+	//Rotate one of the disks (to make it see outside the cylinder)
+	float RotAxis[3] = { 1, 0, 0 };
+	par_shapes_rotate(Disk2_PrShM, PI, RotAxis);
+	par_shapes_translate(Disk2_PrShM, 0, 0, 1);
+	par_shapes_translate(Disk_PrShM, 0, 0, -0.5f);
+
+	//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
+	par_shapes_mesh* ParshapeMesh = par_shapes_create_empty();
+	par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
+
+	if (ParshapeMesh)
+	{
+		par_shapes_scale(ParshapeMesh, radius/2, height/2, radius/2);
+		LoadParMesh(ParshapeMesh, rmesh);
+	}
+}
+
 void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
 {
 	// --- Create par shapes sphere ---
@@ -817,6 +854,11 @@ GameObject* ModuleSceneManager::LoadPlane()
 GameObject* ModuleSceneManager::LoadSphere()
 {
 	return LoadPrimitiveObject(sphere->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadCylinder()
+{
+	return LoadPrimitiveObject(cylinder->GetUID());
 }
 
 GameObject* ModuleSceneManager::LoadCapsule()

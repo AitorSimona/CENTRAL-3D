@@ -35,6 +35,7 @@ public:
 	GameObject* LoadCube();
 	GameObject* LoadCapsule();
 	GameObject* LoadPlane();
+	GameObject* LoadCylinder();
 
 	void DestroyGameObject(GameObject* go);
 
@@ -73,6 +74,7 @@ public:
 	// --- Primitives ---
 	GameObject* LoadPrimitiveObject(uint PrimitiveMeshID);
 	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
+	void CreateCylinder(float radius, float height, ResourceMesh* rmesh);
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
@@ -108,6 +110,7 @@ private:
 	ResourceMesh* sphere = nullptr;
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* plane = nullptr;
+	ResourceMesh* cylinder = nullptr;
 
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
