@@ -1,6 +1,7 @@
 #include "ModuleParticles.h"
 #include "ModulePhysics.h"
 #include "Application.h"
+#include "ModuleInput.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -35,28 +36,78 @@ bool ModuleParticles::Init(json config)
 bool ModuleParticles::Start()
 {
 	particleSystem = App->physics->mPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
+	
+	PxActorFlag::eDISABLE_GRAVITY;
+
+	particleSystem->setExternalAcceleration(PxVec3(0,9.80,0));
 
 	if (particleSystem)
 		App->physics->mScene->addActor(*particleSystem);
 
-	PxParticleCreationData particleCreationData;
 
-	static PxVec3 paco(3, 4, 5);
-	static PxVec3 position(0, 0, 0);
+	//TEST
+	//Creating particles
+	PxParticleCreationData creationData;
 
+	creationData.numParticles = 1;
 
-	particleCreationData.numParticles = 10;
-	particleCreationData.indexBuffer = PxStrideIterator<const PxU32>(PxU32(0));
-	particleCreationData.positionBuffer = PxStrideIterator<const PxVec3>(&position);
-	particleCreationData.velocityBuffer = PxStrideIterator<const PxVec3>(&paco);
-	
-	bool success = particleSystem->createParticles(particleCreationData);
+	PxU32 indexBuffer[] = { 0 };
+	PxVec3 positionBuffer[] = { PxVec3(0,0.2,0) };
+	PxVec3 velocityBuffer[] = { PxVec3(0,0,0) };
+
+	creationData.indexBuffer = PxStrideIterator<const PxU32>(indexBuffer);
+	creationData.positionBuffer = PxStrideIterator<const PxVec3>(positionBuffer);
+	creationData.velocityBuffer = PxStrideIterator<const PxVec3>(velocityBuffer);
+
+	bool succes = particleSystem->createParticles(creationData);
+
+	//TEST
 
 	return true;
 }
 
 update_status ModuleParticles::Update(float dt)
 {
+
+	//TEST
+
+	// lock SDK buffers of *PxParticleSystem* ps for reading
+	PxParticleReadData* rd = particleSystem->lockParticleReadData();
+
+	// access particle data from PxParticleReadData
+	if (rd)
+	{
+		PxStrideIterator<const PxParticleFlags> flagsIt(rd->flagsBuffer);
+		PxStrideIterator<const PxVec3> positionIt(rd->positionBuffer);
+
+		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt, ++positionIt)
+		{
+			if (*flagsIt & PxParticleFlag::eVALID)
+			{
+				// access particle position
+				const PxVec3& position = *positionIt;
+				CONSOLE_LOG("%f %f %f", position.x, position.y, position.z);
+			}
+		}
+
+		// return ownership of the buffers back to the SDK
+		rd->unlock();
+	}
+
+	PxU32 numParticles = 1;
+	PxU32 indices[] = { 0 };
+	PxVec3 positions[] = { PxVec3(10,9.8,30) };
+
+	if (App->input->GetKey(SDL_SCANCODE_SPACE)==KEY_DOWN)
+		particleSystem->setPositions(numParticles,PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions));
+
+	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
+		particleSystem->addForces(numParticles, PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions), PxForceMode::eACCELERATION);
+
+	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
+		particleSystem->setVelocities(numParticles, PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions));
+	
+	//TEST
 
 	return UPDATE_CONTINUE;
 }
