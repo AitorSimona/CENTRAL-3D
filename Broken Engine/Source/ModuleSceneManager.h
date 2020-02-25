@@ -69,16 +69,18 @@ public:
 		DrawWireFromVertices(corners, color, VAO);
 	};
 
-private:
-	// --- Event Callbacks ---
-	static void ONResourceSelected(const Event& e);
-	static void ONGameObjectDestroyed(const Event& e);
-
 	// --- Primitives ---
 	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+
+private:
+	// --- Event Callbacks ---
+	static void ONResourceSelected(const Event& e);
+	static void ONGameObjectDestroyed(const Event& e);
+
+
 private:
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
@@ -95,13 +97,13 @@ public:
 	bool display_tree = false;
 	bool display_boundingboxes = false;
 
+private:
 	// --- Do not modify, just use ---
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* plane = nullptr;
 
-private:
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
 	uint Grid_VBO = 0;
