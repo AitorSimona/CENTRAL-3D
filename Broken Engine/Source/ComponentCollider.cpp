@@ -273,8 +273,8 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.scaleY = radius;						
 					localMatrix.scaleZ = radius;
 
-					//if (prevRadius != radius)
-						//CreateCollider(COLLIDER_TYPE::SPHERE, true);
+					if (prevRadius != radius)
+						CreateCollider(COLLIDER_TYPE::SPHERE, true);
 								
 					break;
 				}
@@ -305,8 +305,8 @@ void ComponentCollider::CreateInspectorNode()
 
 					ImGui::DragFloat("##SZ", &scale.z, 0.005f);
 
-					//if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z)
-						//CreateCollider(COLLIDER_TYPE::BOX, true);
+					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z)
+						CreateCollider(COLLIDER_TYPE::BOX, true);
 
 					break;
 				}
@@ -336,8 +336,8 @@ void ComponentCollider::CreateInspectorNode()
 					localMatrix.scaleY = height;
 					localMatrix.scaleZ = radius;
 
-					//if (prevRadius != radius || prevheight != height)
-						//CreateCollider(COLLIDER_TYPE::CAPSULE, true);
+					if (prevRadius != radius || prevheight != height)
+						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
 
 					break;
 				}
@@ -359,6 +359,16 @@ void ComponentCollider::CreateInspectorNode()
 void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain) {
 	if (shape != nullptr && (lastIndex != (int)type || createAgain)) {
 		shape->release();
+		
+		if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
+		{
+			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
+				App->physics->mScene->removeActor(*(PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+		}
+
+		else
+			App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
+
 
 		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
 		if (mesh && mesh->IsInMemory())
@@ -367,7 +377,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		}
 	}
 
-	if (lastIndex == (int)type)
+	if (lastIndex == (int)type && !createAgain)
 		return;
 
 	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
