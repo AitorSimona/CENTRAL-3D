@@ -71,8 +71,59 @@ Resource* ImporterBone::Import(ImportData& IData) const
 	return resource_bone;
 }
 
-void ImporterBone::Save(ResourceBone* anim) const
+void ImporterBone::Save(ResourceBone* bone) const
 {
+	//----------------------------- CALCULATE SIZE ------------------------------------------------------------------------------------
+
+	//Bone meshID, numWeights, matrix, weights, index_weigths
+	uint size = sizeof(uint) + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
+
+	//---------------------------------------------------------------------------------------------------------------------------------
+	//------------------------------- Allocate ---------------------------------------------------------------------------------------
+
+	char* data = new char[size];
+	char* cursor = data;
+
+	// meshID
+	memcpy(cursor, &bone->meshID, sizeof(uint));
+	cursor += sizeof(uint);
+
+	// numWeights
+	memcpy(cursor, &bone->NumWeights, sizeof(uint));
+	cursor += sizeof(uint);
+
+	// matrix
+	memcpy(cursor, &bone->matrix, sizeof(float) * 16);
+	cursor += sizeof(float) * 16;
+
+	//Weights
+	memcpy(cursor, bone->weight, sizeof(float) * bone->NumWeights);
+	cursor += sizeof(float) * bone->NumWeights;
+
+	//index_weights
+	memcpy(cursor, bone->index_weight, sizeof(uint);
+	cursor += sizeof(uint) * bone->NumWeights;
+
+	if (data)
+	{
+		delete[] data;
+		data = nullptr;
+		cursor = nullptr;
+	}
+
+	if (bone->weight)
+	{
+		delete[] bone->weight;
+		bone->weight = nullptr;
+	}
+
+	if (bone->index_weight)
+	{
+		delete[] bone->index_weight;
+		bone->index_weight = nullptr;
+	}
+
+	delete bone;
 
 }
 

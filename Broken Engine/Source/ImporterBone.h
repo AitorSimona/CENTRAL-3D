@@ -24,7 +24,7 @@ public:
 
 	Resource* Import(ImportData& IData) const override;
 
-	void Save(ResourceBone* anim) const;
+	void Save(ResourceBone* bone) const;
 	Resource* Load(const char* path) const override;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Bone; };
