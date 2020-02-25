@@ -71,6 +71,7 @@ public:
 	};
 
 	// --- Primitives ---
+	GameObject* LoadPrimitiveObject(uint PrimitiveMeshID);
 	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);

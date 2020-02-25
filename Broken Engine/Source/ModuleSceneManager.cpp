@@ -806,45 +806,29 @@ void ModuleSceneManager::CreateGrid(float target_distance)
 
 GameObject * ModuleSceneManager::LoadCube()
 {
-	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(cube->GetUID());
-
-	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
-	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
-
-	return new_object;
+	return LoadPrimitiveObject(cube->GetUID());
 }
 
 GameObject* ModuleSceneManager::LoadPlane()
 {
-	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(plane->GetUID());
+	return LoadPrimitiveObject(plane->GetUID());
+}
 
-	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
-	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
-
-	return new_object;
+GameObject* ModuleSceneManager::LoadSphere()
+{
+	return LoadPrimitiveObject(sphere->GetUID());
 }
 
 GameObject* ModuleSceneManager::LoadCapsule()
 {
-	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(capsule->GetUID());
-
-	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
-	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
-
-	return new_object;
+	return LoadPrimitiveObject(capsule->GetUID());
 }
 
-GameObject * ModuleSceneManager::LoadSphere()
+GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 {
 	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(sphere->GetUID());
+	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(PrimitiveMeshID);
 
 	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
