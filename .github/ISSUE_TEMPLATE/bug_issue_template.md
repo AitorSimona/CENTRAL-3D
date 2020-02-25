@@ -10,14 +10,15 @@ about: Use this Template to easily issue a BUG you've found!
 ## Type of Bug 
 Select the type of bug with and "x" ([x])
 
-* [ ] Art 
-* [ ] Animation 
+* [ ] Visual 
+* [ ] Physics 
 * [ ] Audio 
 * [ ] Particles
-* [ ] Stage 
-* [ ] Player 
-* [ ] Enemies
-* [ ] UI 
+* [ ] Resource Management & Save/Load 
+* [ ] Materials 
+* [ ] Components
+* [ ] Game Objects
+* [ ] UI/UX 
 * [ ] Other
 
 ## Severity
@@ -32,9 +33,11 @@ Steps to reproduce the behavior:
 
  1. 
  
- 2.
+ 2. 
  
  3. 
+
+ 4. 
 
 ## Frequency
 Select the frequency with which the bug appears and mark it "x" ([x])
@@ -52,7 +55,7 @@ Select the frequency with which the bug appears and mark it "x" ([x])
 ### Actual result:
 
 
-## Screenshots and Illustrations
+## Screenshots and Illustrations:
 
 
 ## Build

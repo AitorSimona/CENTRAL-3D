@@ -10,13 +10,15 @@ about: Do you imagine something that could make this project better? Use this Te
 ## Type of Enhancement 
 Select the type of enhancement with and "x" ([x])
 
-* [ ] Art 
-* [ ] Animation 
+* [ ] Visual 
+* [ ] Physics 
 * [ ] Audio 
 * [ ] Particles
-* [ ] Stage 
-* [ ] UI 
-* [ ] Game Mechanics 
+* [ ] Resource Management & Save/Load 
+* [ ] Materials 
+* [ ] Components
+* [ ] Game Objects
+* [ ] UI/UX
 * [ ] Other
 
 ## Why do you propose this enhancement?
