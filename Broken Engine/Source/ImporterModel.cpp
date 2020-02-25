@@ -13,6 +13,7 @@
 #include "ImporterMeta.h"
 #include "ImporterMesh.h"
 #include "ImporterMaterial.h"
+#include "ImporterBone.h"
 #include "ImporterAnimation.h"
 #include "ImporterBone.h"
 
@@ -68,6 +69,10 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		// --- Load all meshes ---
 		std::map<uint, ResourceMesh*> model_meshes;
 		LoadSceneMeshes(scene, model_meshes, MData.path);
+
+		// --- Load animation ---
+		ResourceBone* bone = nullptr;
+		//LoadSceneBones(scene, rootnode, bone, MData.path);
 
 		// --- Load animation ---
 		ResourceAnimation* anim = nullptr;
@@ -176,6 +181,26 @@ void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 			// --- Import material data ---
 			if (IMat)
 				scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
+		}
+	}
+}
+
+void ImporterModel::LoadSceneBones(const aiMesh* mesh, ResourceBone* bones, const char* source_file) const
+{
+	if (mesh->HasBones())
+	{
+		ImporterBone* IBone = App->resources->GetImporter<ImporterBone>();
+
+		for (int i = 0; i < mesh->mNumBones; i++)
+		{
+			ImportBoneData BData(source_file);
+			BData.bone = mesh->mBones[i];
+
+			if (IBone)
+			{
+				bones = (ResourceBone*)IBone->Import(BData);
+				bones->SetName(mesh->mBones[i]->mName.C_Str());
+			}
 		}
 	}
 }

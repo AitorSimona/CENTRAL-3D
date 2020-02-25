@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
+#include "GameObject.h"
 
 #include "ResourceBone.h"
 
@@ -26,6 +27,7 @@ Resource* ImporterBone::Import(ImportData& IData) const
 
 	ResourceBone* resource_bone = (ResourceBone*)App->resources->CreateResource(Resource::ResourceType::BONE, IData.path);
 
+
 	//TODO: get the correct id
 	//resource_bone->meshID = 
 	resource_bone->NumWeights = data.bone->mNumWeights;
@@ -42,31 +44,6 @@ Resource* ImporterBone::Import(ImportData& IData) const
 		resource_bone->weight[i] = data.bone->mWeights[i].mWeight;
 		resource_bone->index_weight[i] = data.bone->mWeights[i].mVertexId;
 	}
-
-	uint size = sizeof(uint) + sizeof(uint) + sizeof(float) * 16 + resource_bone->NumWeights * sizeof(float) + resource_bone->NumWeights * sizeof(uint);
-
-	char* my_data = new char[size];
-	char* cursor = my_data;
-
-	// meshID
-	memcpy(cursor, &resource_bone->meshID, sizeof(uint));
-	cursor += sizeof(uint);
-
-	// numWeights
-	memcpy(cursor, &resource_bone->NumWeights, sizeof(uint));
-	cursor += sizeof(uint);
-
-	// matrix
-	memcpy(cursor, &resource_bone->matrix, sizeof(float) * 16);
-	cursor += sizeof(float) * 16;
-
-	//Weights
-	memcpy(cursor, resource_bone->weight, sizeof(float) * resource_bone->NumWeights);
-	cursor += sizeof(float) * resource_bone->NumWeights;
-
-	//index_weights
-	memcpy(cursor, resource_bone->index_weight, sizeof(uint) * resource_bone->NumWeights);
-	cursor += sizeof(uint) * resource_bone->NumWeights;
 
 	return resource_bone;
 }
@@ -101,7 +78,7 @@ void ImporterBone::Save(ResourceBone* bone) const
 	cursor += sizeof(float) * bone->NumWeights;
 
 	//index_weights
-	memcpy(cursor, bone->index_weight, sizeof(uint);
+	memcpy(cursor, bone->index_weight, sizeof(uint));
 	cursor += sizeof(uint) * bone->NumWeights;
 
 	if (data)
@@ -123,11 +100,32 @@ void ImporterBone::Save(ResourceBone* bone) const
 		bone->index_weight = nullptr;
 	}
 
-	delete bone;
+	App->fs->Save(bone->GetResourceFile(), data, size);
+
+
+	if (data)
+	{
+		delete[] data;
+		data = nullptr;
+		cursor = nullptr;
+	}
 
 }
 
 Resource* ImporterBone::Load(const char* path) const
 {
-	return nullptr;
+	Resource* bone = nullptr;
+
+
+
+	return bone;
+}
+
+void ImporterBone::BoneCollector(std::map<std::string, GameObject*>& map, GameObject* root)
+{
+	map[root->GetName()] = root;
+	for (int i = 0; i < root->childs.size(); i++)
+	{
+		BoneCollector(map, root);
+	}
 }

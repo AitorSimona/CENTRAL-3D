@@ -3,9 +3,12 @@
 
 #include "Importer.h"
 
+#include <map>
+
 struct aiBone;
 class ResourceBone;
 class Resource;
+class GameObject;
 
 
 struct ImportBoneData : public Importer::ImportData
@@ -28,6 +31,9 @@ public:
 	Resource* Load(const char* path) const override;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Bone; };
+
+private:
+	void BoneCollector(std::map<std::string, GameObject*>& map, GameObject* root);
 };
 
 #endif
