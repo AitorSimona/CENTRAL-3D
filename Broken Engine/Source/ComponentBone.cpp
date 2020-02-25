@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ComponentBone.h"
 #include "ComponentTransform.h"
+#include "ComponentAnimation.h"
 #include "ModuleResourceManager.h"
 #include "GameObject.h"
 
@@ -25,7 +26,7 @@ ComponentBone::~ComponentBone()
 void ComponentBone::DebugDrawBones()
 {
 	if (GO->parent != nullptr && GO->parent->GetComponent<ComponentBone>() != nullptr
-		/*&& GO->GetAnimGO(GetHipBone()->GO)->GetComponentAnimation()->draw_bones*/)
+		&& GO->GetComponent<ComponentAnimation>()->draw_bones)
 	{
 		float4x4 child_matrix = GetBoneTransform();
 		float4x4 parent_matrix = GO->parent->GetComponent<ComponentBone>()->GetBoneTransform();
@@ -53,11 +54,9 @@ float4x4 ComponentBone::GetBoneTransform() const
 	return GO->GetComponent<ComponentTransform>()->GetGlobalTransform();
 }
 
-float4x4 ComponentBone::GetSkeletonTransform() const
+float4x4 ComponentBone::GetSkeletonTransform()
 {
-	/*return GO->GetAnimGO(GetHipBone()->GO)->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted() * GO->GetComponent<ComponentTransform>()->GetGlobalTransform();*/
-
-	return float4x4();
+	return GO->GetAnimGO(GetHipBone()->GO)->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted() * GO->GetComponent<ComponentTransform>()->GetGlobalTransform();
 }
 
 

@@ -16,7 +16,7 @@ public:
 	void DebugDrawBones();
 
 	float4x4 GetBoneTransform() const;
-	float4x4 GetSkeletonTransform() const;
+	float4x4 GetSkeletonTransform();
 	ComponentBone* GetHipBone();
 
 	// --- Save & Load ---

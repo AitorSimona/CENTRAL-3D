@@ -3,6 +3,7 @@
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentMeshRenderer.h"
+#include "ComponentAnimation.h"
 #include "ComponentCamera.h"
 #include "ModuleSceneManager.h"
 
@@ -151,6 +152,18 @@ bool GameObject::FindChildGO(GameObject * GO)
 	}
 
 	return ret;
+}
+
+GameObject* GameObject::GetAnimGO(GameObject* GO)
+{
+	ComponentAnimation* anim = GO->GetComponent<ComponentAnimation>();
+
+	if (anim != nullptr)
+	{
+		return this;
+	}
+	else
+		return GetAnimGO(this->parent);
 }
 
 Component * GameObject::AddComponent(Component::ComponentType type)

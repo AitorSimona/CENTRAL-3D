@@ -60,6 +60,7 @@ public:
 	void RemoveChildGO(GameObject* GO);
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);
+	GameObject* GetAnimGO(GameObject* GO);
 
 	void UpdateAABB();
 
