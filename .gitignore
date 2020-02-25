@@ -13,9 +13,9 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
+#[Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
+#[Rr]elease/
 [Rr]eleases/
 x64/
 x86/
@@ -85,7 +85,7 @@ StyleCopReport.xml
 *.svclog
 *.scc
 *.rec
-*.tlog
+*.tlog#
 
 
 
