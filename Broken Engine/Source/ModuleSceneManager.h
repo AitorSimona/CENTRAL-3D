@@ -31,9 +31,10 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	void CreateGrid(float target_distance);
-	GameObject* ModuleSceneManager::LoadSphere();
-	GameObject* ModuleSceneManager::LoadCube();
-
+	GameObject* LoadSphere();
+	GameObject* LoadCube();
+	GameObject* LoadCapsule();
+	GameObject* LoadPlane();
 
 	void DestroyGameObject(GameObject* go);
 
@@ -79,9 +80,9 @@ private:
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);
 	static void ONGameObjectDestroyed(const Event& e);
-
-
+	
 private:
+
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawScene();
@@ -90,7 +91,9 @@ private:
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
 
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
+
 public:
+
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	std::vector<GameObject*> NoStaticGo;
@@ -98,6 +101,7 @@ public:
 	bool display_boundingboxes = false;
 
 private:
+
 	// --- Do not modify, just use ---
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;

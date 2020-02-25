@@ -816,6 +816,30 @@ GameObject * ModuleSceneManager::LoadCube()
 	return new_object;
 }
 
+GameObject* ModuleSceneManager::LoadPlane()
+{
+	GameObject* new_object = CreateEmptyGameObject();
+	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(plane->GetUID());
+
+	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
+	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
+
+	return new_object;
+}
+
+GameObject* ModuleSceneManager::LoadCapsule()
+{
+	GameObject* new_object = CreateEmptyGameObject();
+	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(capsule->GetUID());
+
+	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
+	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
+
+	return new_object;
+}
+
 GameObject * ModuleSceneManager::LoadSphere()
 {
 	GameObject* new_object = CreateEmptyGameObject();
