@@ -38,7 +38,8 @@ public:
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
 private:
-	bool HasDynamicRigidBody(physx::PxGeometry geometry) const;
+	template <class Geometry>
+	bool HasDynamicRigidBody(Geometry geometry) const;
 	bool HasDynamicRigidBody() const;
 
 public:

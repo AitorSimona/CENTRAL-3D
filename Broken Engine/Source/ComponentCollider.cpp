@@ -13,6 +13,7 @@
 #include "OpenGL.h"
 
 #include "Imgui/imgui.h"
+#include "ImGUi/ImGuizmo/ImGuizmo.h"
 
 #include "mmgr/mmgr.h"
 
@@ -163,12 +164,23 @@ void ComponentCollider::SetPosition()
 
 	if (!HasDynamicRigidBody())
 		rigidStatic->setGlobalPose(globalPose);
-	
 	else
 	{
-		ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
-		dynamicRB->rigidBody->setGlobalPose(globalPose);
+		if (ImGuizmo::IsUsing()) {
+			ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+			dynamicRB->rigidBody->setGlobalPose(globalPose);
+		}
+		else {
+			PxTransform transform = GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody->getGlobalPose();
+			ENGINE_CONSOLE_LOG("POISTION %f - %f - %f", transform.p.x, transform.p.y,transform.p.z);
+			ENGINE_CONSOLE_LOG("ROTATION %f - %f - %f", transform.q.x, transform.q.y,transform.q.z, transform.q.w);
+			GO->GetComponent<ComponentTransform>()->SetPosition(transform.p.x, transform.p.y, transform.p.z);
+			GO->GetComponent<ComponentTransform>()->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
+		}
+		
 	}
+
+
 }
 
 json ComponentCollider::Save() const
@@ -420,7 +432,8 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 	}
 }
 
-bool ComponentCollider::HasDynamicRigidBody(PxGeometry geometry) const
+template <class Geometry>
+bool ComponentCollider::HasDynamicRigidBody(Geometry geometry) const
 {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 	
@@ -429,6 +442,7 @@ bool ComponentCollider::HasDynamicRigidBody(PxGeometry geometry) const
 	if (dynamicRB != nullptr)
 	{
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, localTransform, geometry, *App->physics->mMaterial, 1.0f);
+		App->physics->rigidBody = dynamicRB->rigidBody;
 		App->physics->mScene->addActor(*dynamicRB->rigidBody);
 
 		return true;

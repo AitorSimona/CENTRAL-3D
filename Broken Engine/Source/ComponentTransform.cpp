@@ -67,6 +67,16 @@ void ComponentTransform::SetRotation(float3 euler_angles)
 	UpdateLocalTransform();
 }
 
+void ComponentTransform::SetRotation(Quat quat)
+{
+	// --- Update own variables ---
+	rotation = quat;
+	rotation_euler = quat.ToEulerXYZ() * RADTODEG;
+
+	// --- Update Transform ---
+	UpdateLocalTransform();
+}
+
 void ComponentTransform::Scale(float x, float y, float z)
 {
 	if (x > 0.0f && y > 0.0f && z > 0.0f)

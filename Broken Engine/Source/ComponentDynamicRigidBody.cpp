@@ -53,10 +53,10 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		SetDensity(density);
 		UseGravity(use_gravity);
 		SetKinematic(is_kinematic);
-		SetLinearVelocity(linear_vel);
+		/*SetLinearVelocity(linear_vel);
 		SetAngularVelocity(angular_vel);
 		SetLinearDamping(linear_dumping);
-		SetAngularDamping(angular_dumping);
+		SetAngularDamping(angular_dumping);*/
 		FeezePosition_X(freezePosition_X);
 		FeezePosition_Y(freezePosition_Y);
 		FeezePosition_Z(freezePosition_Z);

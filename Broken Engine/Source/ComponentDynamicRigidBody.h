@@ -19,8 +19,8 @@ public:
 	inline void SetMass(PxReal mass) { rigidBody->setMass(mass); }
 	inline void SetDensity(PxReal density) { PxRigidBodyExt::updateMassAndInertia(*rigidBody, density); }
 
-	inline void UseGravity(bool enable) { rigidBody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, enable); }
-	inline void SetKinematic(bool enable) { rigidBody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true); }
+	inline void UseGravity(bool enable) { rigidBody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !enable); }
+	inline void SetKinematic(bool enable) { rigidBody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, enable); }
 
 	inline float3 GetLinearVelocity() { return float3(rigidBody->getLinearVelocity().x, rigidBody->getLinearVelocity().y, rigidBody->getLinearVelocity().z); }
 	inline float3 GetAngularVelocity() { return float3(rigidBody->getAngularVelocity().x, rigidBody->getAngularVelocity().y, rigidBody->getAngularVelocity().z); }
@@ -50,13 +50,13 @@ public:
 	void CreateInspectorNode() override;
 
 public:
-	PxRigidDynamic* rigidBody = nullptr;
+	physx::PxRigidDynamic* rigidBody = nullptr;
 
 public:
 	float mass = 0.f;
-	float density = 0.f;
+	float density = 1.f;
 	bool use_gravity = true;
-	bool is_kinematic = true;;
+	bool is_kinematic = false;;
 	float3 linear_vel = float3::zero;
 	float3 angular_vel = float3::zero;
 	float linear_dumping = 0.f;

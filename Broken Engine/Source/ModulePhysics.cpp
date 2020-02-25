@@ -95,13 +95,15 @@ bool ModulePhysics::Init(json config)
 	}
 	//-------------------------------------
 
-	//BoxCollider(0, 100, 0);
-	PlaneCollider(0, -5, 0);
+	BoxCollider(0.5, 20, 0.5);
 	return true;
 }
 
 update_status ModulePhysics::Update(float dt)
 {
+	if(rigidBody)
+		rigidBody->wakeUp();
+
 	SimulatePhysics(dt);
 
 	return update_status::UPDATE_CONTINUE;
@@ -126,8 +128,7 @@ void ModulePhysics::PlaneCollider(float posX, float posY, float posZ)
 {
 	PxTransform position = PxTransform(PxVec3(posX, posY, posZ), PxQuat(PxHalfPi, PxVec3(0.0f, 0, 0.0f)));
 	PxRigidStatic* plane = mPhysics->createRigidStatic(position);
-	plane = PxCreatePlane(*mPhysics, PxPlane(PxVec3(0.0f, 0.0, 0.0), PxVec3(0.0, 1.0, 0.0)), *mMaterial);
-	//plane->createShape(PxPlaneGeometry(), *mMaterial);
+	plane->createShape(PxPlaneGeometry(), *mMaterial);
 	mScene->addActor(*plane);
 }
 
