@@ -219,6 +219,125 @@ GP_BUTTON_STATE Scripting::GetGamepadButtonState(const char* state_name) const
 	return ret;
 }
 
+bool Scripting::IsJoystickAxis(int player_num, const char* joy_axis, const char* axis_state) const
+{
+	bool ret = false;
+	//Get Player
+	PLAYER player = PLAYER::P1;
+	if (player_num > 0)
+		player = (PLAYER)(player_num - 1);
+
+	//Get Axis
+	SDL_GameControllerAxis SDL_axis = GetControllerAxisFromString(joy_axis);
+
+	if (SDL_axis == SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT ||
+		SDL_axis == SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
+	{
+		//In case anyone tries to call this function to use the triggers
+		ENGINE_CONSOLE_LOG("Tried to call IsJoystickAxis with a Trigger! this function is exclusive for joysticks, FALSE will be returned by default");
+	}
+	else
+	{
+		//Get State
+		GP_AXIS_STATE SDL_axis_state = GetAxisStateFromString(axis_state);
+
+		if (App->input->GetLRAxisState(player, SDL_axis) == SDL_axis_state)
+			ret = true;
+	}
+
+	return ret;
+}
+
+bool Scripting::IsTriggerState(int player_num, const char* trigger, const char* button_state) const
+{
+	bool ret = false;
+	//Get Player
+	PLAYER player = PLAYER::P1;
+	if (player_num > 0)
+		player = (PLAYER)(player_num - 1);
+
+	//Get TRIGGER
+	SDL_GameControllerAxis SDL_axis = GetControllerAxisFromString(trigger);
+
+	if (SDL_axis != SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT &&
+		SDL_axis != SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
+	{
+		//In case anyone tries to call this function to use the triggers
+		ENGINE_CONSOLE_LOG("Tried to call Gamepad INPUT function IsTriggerState with a joystick axis! this function is exclusive for Triggers, FALSE will be returned by default");
+	}
+	else
+	{
+		//Get State
+		GP_BUTTON_STATE SDL_axis_state = GetGamepadButtonState(button_state);
+
+		if (App->input->GetTriggerState(player, SDL_axis) == SDL_axis_state)
+			ret = true;
+	}
+
+	return ret;
+}
+
+SDL_GameControllerAxis Scripting::GetControllerAxisFromString(const char* axis_name) const
+{
+	SDL_GameControllerAxis ret= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID;
+
+	if (!strcmp("AXIS_INVALID", axis_name))
+		ret = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID;
+	else if (!std::strcmp("AXIS_LEFTX", axis_name))
+		ret = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX;
+	else if (!std::strcmp("AXIS_LEFTY", axis_name))
+		ret = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY;
+	else if (!std::strcmp("AXIS_RIGHTX", axis_name))
+		ret = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX;
+	else if (!std::strcmp("AXIS_RIGHTY", axis_name))
+		ret = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY;
+	else if (!std::strcmp("AXIS_TRIGGERLEFT", axis_name))
+		ret = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT;
+	else if (!std::strcmp("AXIS_TRIGGERRIGHT", axis_name))
+		ret = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT;
+
+	return ret;
+}
+
+GP_AXIS_STATE Scripting::GetAxisStateFromString(const char* state_name) const
+{
+	GP_AXIS_STATE ret = GP_AXIS_STATE::AXIS_IDLE;
+
+	if (!strcmp("IDLE", state_name))
+		ret = GP_AXIS_STATE::AXIS_IDLE;
+	else if (!std::strcmp("POSITIVE_DOWN", state_name))
+		ret = GP_AXIS_STATE::AXIS_POSITIVE_DOWN;
+	else if (!std::strcmp("POSITIVE_REPEAT", state_name))
+		ret = GP_AXIS_STATE::AXIS_POSITIVE_REPEAT;
+	else if (!std::strcmp("POSITIVE_RELEASE", state_name))
+		ret = GP_AXIS_STATE::AXIS_POSITIVE_RELEASE;
+	else if (!std::strcmp("NEGATIVE_DOWN", state_name))
+		ret = GP_AXIS_STATE::AXIS_NEGATIVE_DOWN;
+	else if (!std::strcmp("NEGATIVE_REPEAT", state_name))
+		ret = GP_AXIS_STATE::AXIS_NEGATIVE_REPEAT;
+	else if (!std::strcmp("NEGATIVE_RELEASE", state_name))
+		ret = GP_AXIS_STATE::AXIS_NEGATIVE_RELEASE;
+
+	return ret;
+}
+
+int Scripting::GetAxisValue(int player_num, const char* axis) const
+{
+	int ret = 0;
+
+	//Get Player
+	PLAYER player = PLAYER::P1;
+	if (player_num > 0)
+		player = (PLAYER)(player_num - 1);
+
+	//Get Axis (you can use both triggers & axis for this function)
+	SDL_GameControllerAxis SDL_axis = GetControllerAxisFromString(axis);
+
+	ret = App->input->GetAxis(player,SDL_axis);
+
+	return ret;
+}
+
 //bool Scripting::IsMouseInGame() const
 //{
 //	return !App->editor->using_menu;

@@ -40,6 +40,13 @@ public:
 	bool IsGamepadButton(int player_num, const char* button, const char* button_state) const;
 	SDL_GameControllerButton GetControllerButtonFromString(const char* button_name) const;
 	GP_BUTTON_STATE GetGamepadButtonState(const char* state_name) const;
+
+	bool IsJoystickAxis(int player_num, const char* joy_axis, const char* axis_state) const;
+	bool IsTriggerState(int player_num, const char* trigger, const char* button_state) const;
+	SDL_GameControllerAxis GetControllerAxisFromString(const char* axis_name) const;
+	GP_AXIS_STATE GetAxisStateFromString(const char* state_name) const;
+
+	int GetAxisValue(int player_num, const char* joy_axis) const;
 	//bool IsMouseInGame() const;
 	//int GetMouseRaycastHit(lua_State *L);
 

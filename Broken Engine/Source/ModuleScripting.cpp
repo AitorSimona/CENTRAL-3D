@@ -179,6 +179,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("Translate", &Scripting::Translate)
 		.addFunction("dt", &Scripting::GetDT)
 		.addFunction("IsGamepadButton", &Scripting::IsGamepadButton)
+		.addFunction("IsJoystickAxis", &Scripting::IsJoystickAxis)
+		.addFunction("IsTriggerState", &Scripting::IsTriggerState)
+		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
 		.endClass()
 		.endNamespace();
 
