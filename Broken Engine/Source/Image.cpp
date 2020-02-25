@@ -11,13 +11,9 @@ Image::Image(GameObject* gameObject) : Component(gameObject, Component::Componen
 {
 	visible = true;
 
-	//if (!gameObject->HasComponent(Component::ComponentType::Canvas))
-	//	canvas = (Canvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	//else
-		//canvas = (Canvas*)gameObject->GetComponent<Canvas>();
-
+	canvas = (Canvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	//texture = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
-	//canvas->AddElement(this);
+	canvas->AddElement(this);
 }
 
 Image::~Image()
