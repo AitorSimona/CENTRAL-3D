@@ -37,34 +37,51 @@ void Canvas::Draw() const
 		switch (elements[i]->GetType())
 		{
 		case Component::ComponentType::Canvas:
-			Canvas* elem = (Canvas*)elements[i];
-			if (elem->visible) elem->Draw();
+			Canvas* canvas = (Canvas*)elements[i];
+			if (canvas->visible) canvas->Draw();
+			continue;
 
-		case Component::ComponentType::Text:
-			Text* elem = (Text*)elements[i];
-			if (elem->visible) elem->Draw();
+		//case Component::ComponentType::Text:
+		//	Text* elem = (Text*)elements[i];
+		//	if (elem->visible) elem->Draw();
+		//	continue;
 
-		case Component::ComponentType::Image:
-			Image* elem = (Image*)elements[i];
-			if (elem->visible) elem->Draw();
+		//case Component::ComponentType::Image:
+		//	Image* elem = (Image*)elements[i];
+		//	if (elem->visible) elem->Draw();
+		//	continue;
 
 		//case Component::ComponentType::Button:
 		//	Button* elem = (Button*)elements[i];
 		//	if (elem->visible) elem->Draw();
+		//	continue;
 
 		//case Component::ComponentType::CheckBox:
 		//	CheckBox* elem = (CheckBox*)elements[i];
 		//	if (elem->visible) elem->Draw();
+		//	continue;
 
 		//case Component::ComponentType::InputText:
 		//	InputText* elem = (InputText*)elements[i];
 		//	if (elem->visible) elem->Draw();
+		//	continue;
 
 		//case Component::ComponentType::ProgressBar:
 		//	ProgressBar* elem = (ProgressBar*)elements[i];
 		//	if (elem->visible) elem->Draw();
+		//	continue;
 		}
 	}
+}
+
+json Canvas::Save() const
+{
+	json node;
+	return node;
+}
+
+void Canvas::Load(json& node)
+{
 }
 
 void Canvas::CreateInspectorNode()
@@ -118,7 +135,7 @@ void Canvas::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Mesh);
+		GO->RemoveComponent(Component::ComponentType::Canvas);
 	}
 }
 
@@ -136,10 +153,11 @@ void Canvas::UpdateState()
 	{
 		if (state != DRAGGING)
 		{
-			if (App->ui_system->CheckMousePos(this))
+			UpdateCollider();
+			if (App->ui_system->CheckMousePos(this, collider))
 			{
 				ChangeStateTo(HOVERED);
-				if (App->ui_system->CheckClick(this))
+				if (App->ui_system->CheckClick(this, draggable))
 				{
 					if (draggable && (App->ui_system->drag_start.x != App->ui_system->mouse_pos.x || App->ui_system->drag_start.y != App->ui_system->mouse_pos.y))
 						ChangeStateTo(DRAGGING);
@@ -152,7 +170,7 @@ void Canvas::UpdateState()
 		}
 		else
 		{
-			if (!App->ui_system->CheckClick(this))
+			if (!App->ui_system->CheckClick(this, draggable))
 				ChangeStateTo(IDLE);
 		}
 	}

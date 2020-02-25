@@ -30,27 +30,27 @@ update_status ModuleUI::PreUpdate(float dt)
 {
 	//for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
 	//{
-		//if (obj->HasComponent(Component::ComponentType::UI_Element)) //if has ui component
-		//{
-			//std::vector<Component*> ui = obj->GetAllComponentsOfType(Component::ComponentType::UI_Element); //get all ui components
-			//if (!ui.empty())
-			//{
-				//for (uint i = 0; i < ui.size(); ++i) //update
-				//{
-					//UI_Element* element = (UI_Element*)ui[i];
+	//	if (obj->HasComponent(Component::ComponentType::UI_Element)) //if has ui component
+	//	{
+	//		std::vector<Component*> ui = obj->GetAllComponentsOfType(Component::ComponentType::UI_Element); //get all ui components
+	//		if (!ui.empty())
+	//		{
+	//			for (uint i = 0; i < ui.size(); ++i) //update
+	//			{
+	//				UI_Element* element = (UI_Element*)ui[i];
 
-					//UI_Element* element = (UI_Element*)obj->GetComponent(Component::ComponentType::UI_Element); //single component (change when able to have multiple components of same type)
-					//element->UpdateCollider(); //update colliders
-					//element->UpdateState(); //update state
+	//				UI_Element* element = (UI_Element*)obj->GetComponent(Component::ComponentType::UI_Element); //single component (change when able to have multiple components of same type)
+	//				element->UpdateCollider(); //update colliders
+	//				element->UpdateState(); //update state
 
-					//if (element->GetState() == UI_Element::State::DRAGGING)
-					//{
-					//	element->position2D.x = App->input->GetMouseX();
-					//	element->position2D.y = App->input->GetMouseY();
-					//}
-				//}
-			//}
-		//}
+	//				if (element->GetState() == UI_Element::State::DRAGGING)
+	//				{
+	//					element->position2D.x = App->input->GetMouseX();
+	//					element->position2D.y = App->input->GetMouseY();
+	//				}
+	//			}
+	//		}
+	//	}
 	//}
 	return UPDATE_CONTINUE;
 }
@@ -76,9 +76,8 @@ void ModuleUI::Draw() const
 	}
 }
 
-bool ModuleUI::CheckMousePos(Component* component, Collider collider)
+bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)
 {
-	UpdateCollider();
 	mouse_pos.x = App->input->GetMouseX();
 	mouse_pos.y = App->input->GetMouseY();
 
@@ -92,7 +91,7 @@ bool ModuleUI::CheckMousePos(Component* component, Collider collider)
 	return false;
 }
 
-bool ModuleUI::CheckClick(Component* component)
+bool ModuleUI::CheckClick(Component* component, bool draggable)
 {
 	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 	{

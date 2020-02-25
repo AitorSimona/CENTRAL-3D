@@ -11,10 +11,13 @@
 
 #include "Panels.h"
 
-#include "UI_Element.h"
 #include "Canvas.h"
 #include "Image.h"
 #include "Text.h"
+//#include "Button.h"
+//#include "CheckBox.h"
+//#include "InputText.h"
+//#include "ProgressBar.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -204,14 +207,18 @@ update_status ModuleGui::Update(float dt)
 				{
 					if (ImGui::MenuItem("Canvas"))
 					{
-						GameObject* canvas = App->scene_manager->CreateEmptyGameObject();
-						Canvas* camera = (Canvas*)canvas->AddComponent(Component::ComponentType::UI_Element);
+						GameObject* canvas_go = App->scene_manager->CreateEmptyGameObject();
+						Canvas* camera = (Canvas*)canvas_go->AddComponent(Component::ComponentType::Canvas);
 					}
 					if (ImGui::MenuItem("Image"))
 					{
+						GameObject* image_go = App->scene_manager->CreateEmptyGameObject();
+						Image* image = (Image*)image_go->AddComponent(Component::ComponentType::Image);
 					}
 					if (ImGui::MenuItem("Text"))
 					{
+						GameObject* text_go = App->scene_manager->CreateEmptyGameObject();
+						Text* text = (Text*)text_go->AddComponent(Component::ComponentType::Text);
 					}
 					if (ImGui::MenuItem("Button", false, false, false))
 					{

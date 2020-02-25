@@ -1,26 +1,10 @@
 #pragma once
 #include "Module.h"
-#include "UI_Element.h"
 #include "Canvas.h"
 #include <vector>
 
 class ModuleUI : public Module
 {
-	enum State
-	{
-		NOTHING = 0,
-		IDLE,
-		HOVERED,
-		SELECTED,
-		LOCKED,
-		DRAGGING
-	};
-
-	enum Action
-	{
-		NONE = 0,
-	};
-
 public:
 	ModuleUI(bool start_enabled = true);
 	~ModuleUI();
@@ -34,8 +18,8 @@ public:
 	void Draw() const;
 	void AddCanvas(Canvas* c) { canvas.push_back(c); }
 
-	bool CheckMousePos(Component* element);
-	bool CheckClick(Component* element);
+	bool CheckMousePos(Component* element, SDL_Rect collider);
+	bool CheckClick(Component* element, bool draggable);
 
 public:
 	std::vector<Canvas*> canvas;

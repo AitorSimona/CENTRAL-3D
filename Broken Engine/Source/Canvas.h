@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Color.h"
+#include "Math.h"
 #include <vector>
 
 class Canvas : public Component
@@ -18,11 +19,9 @@ public:
 
 public:
 	Canvas(GameObject* gameObject);
-	~Canvas();
+	virtual ~Canvas();
 
 	void Draw() const;
-	void CreateInspectorNode() override;
-
 	void AddElement(Component* element) { elements.push_back(element); }
 
 	// UI Functions
@@ -37,11 +36,10 @@ public:
 	void UpdateCollider();
 	void UpdateState();
 
-	// Load & Save
-	json Save() const;
-	void Load(json& node);
-	void ONResourceEvent(uint UID, Resource::ResourceNotificationType type);
-	void CreateInspectorNode();
+	// --- Save & Load ---
+	json Save() const override;
+	void Load(json& node) override;
+	void CreateInspectorNode() override;
 
 public:
 	bool visible = true;

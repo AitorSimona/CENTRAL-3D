@@ -190,13 +190,13 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 				component = new Canvas(this);
 				break;
 
-			//case Component::ComponentType::Text:
-			//	component = new Text(this);
-			//	break;
+			case Component::ComponentType::Text:
+				component = new Text(this);
+				break;
 
-			//case Component::ComponentType::Image:
-			//	component = new Image(this);
-			//	break;
+			case Component::ComponentType::Image:
+				component = new Image(this);
+				break;
 
 			//case Component::ComponentType::Button:
 			//	component = new Button(this);
