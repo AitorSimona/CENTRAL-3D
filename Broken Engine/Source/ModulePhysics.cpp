@@ -15,17 +15,20 @@
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CommonCHECKED_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3ExtensionsCHECKED.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PxFoundationCHECKED_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Checked/PxPvdSDKCHECKED_x86.lib")
 /*
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3Common_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3Extensions.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PxFoundation_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Checked/PxPvdSDK_x86.lib")
 */
 #else
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3CommonDEBUG_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3DEBUG_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3ExtensionsDEBUG.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxFoundationDEBUG_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Debug/PxPvdSDKDEBUG_x86.lib")
 #endif // _DEBUG
 
 
@@ -48,31 +51,23 @@ bool ModulePhysics::Init(json config)
 
 	bool recordMemoryAllocations = true;
 
+	//Setup Connection-----------------------------------------------------------------------
+	physx::PxPvdTransport* mTransport = physx::PxDefaultPvdSocketTransportCreate("localhost", 5425, 10000);
+
+	if (mTransport == NULL)
+		return false;
+
+	physx::PxPvdInstrumentationFlags mPvdFlags = physx::PxPvdInstrumentationFlag::eALL;
+	mPvd = physx::PxCreatePvd(*mFoundation);
+	mPvd->connect(*mTransport, mPvdFlags);
+	//---------------------------------------------------------------------------------------
+
 	mPhysics = PxCreateBasePhysics(PX_PHYSICS_VERSION, *mFoundation,
-		PxTolerancesScale(), recordMemoryAllocations);
+		PxTolerancesScale(), recordMemoryAllocations,mPvd);
 	if (!mPhysics) {
 		ENGINE_CONSOLE_LOG("PxCreateBasePhysics failed!");
 		return false;
 	}
-
-	//Setup Connection-----------------------------------------------------------------------
-	physx::PxPvdTransport* mTransport = physx::PxDefaultPvdSocketTransportCreate("localhost", 5425, 10000);
-
-	if (mTransport == NULL)  
-		return false;
-
-	physx::PxPvdInstrumentationFlags mPvdFlags = physx::PxPvdInstrumentationFlag::eALL;   
-	mPvd = physx::PxCreatePvd(*mFoundation);
-	mPvd->connect(*mTransport, mPvdFlags);
-
-	pvdClient = mScene->getScenePvdClient(); 
-	if (pvdClient) { 
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);  
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);  
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true); 
-	}
-
-	//-------------------------------------
 
 	PxRegisterParticles(*mPhysics);
 
@@ -88,13 +83,19 @@ bool ModulePhysics::Init(json config)
 	mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
-
-
-
 	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.5f);
 
-	BoxCollider(0, 0, 0);
 
+	//Setup Configuration-----------------------------------------------------------------------
+	pvdClient = mScene->getScenePvdClient();
+	if (pvdClient) {
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+	}
+	//-------------------------------------
+
+	BoxCollider(0.5, 0.5, 0.5);
 	return true;
 }
 
@@ -107,14 +108,15 @@ update_status ModulePhysics::Update(float dt)
 
 bool ModulePhysics::CleanUp()
 {
-	mPvd->release();
-	/*mPhysics->release();
+	mScene->release();
+	mPhysics->release();
 	mFoundation->release();
+	mPvd->release();
 
 	mPhysics = nullptr;
-	mFoundation = nullptr;*/
-	mScene->release();
-	mScene = nullptr;
+	mFoundation = nullptr;
+	mScene = nullptr; 
+	mPvd = nullptr;
 	return false;
 }
 
