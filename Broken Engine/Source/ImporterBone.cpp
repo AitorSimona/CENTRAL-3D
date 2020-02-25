@@ -78,5 +78,5 @@ void ImporterBone::Save(ResourceBone* anim) const
 
 Resource* ImporterBone::Load(const char* path) const
 {
-
+	return nullptr;
 }
