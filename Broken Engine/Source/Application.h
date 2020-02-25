@@ -40,6 +40,7 @@ class ModuleResourceManager;
 class ModuleTimeManager;
 class ModuleEventManager;
 class ModuleThreading;
+class ModuleUI;
 
 class Application
 {
@@ -75,6 +76,7 @@ public:
 	ModuleTimeManager* time = nullptr;
 	ModuleEventManager* event_manager = nullptr;
 	ModuleThreading* threading = nullptr;
+	ModuleUI* ui_system = nullptr;
 
 private:
 

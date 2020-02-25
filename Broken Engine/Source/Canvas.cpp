@@ -1,12 +1,20 @@
 #include "Canvas.h"
-#include "GameObject.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "ModuleResourceManager.h"
+#include "ModuleUI.h"
+
+#include "Text.h"
+#include "Image.h"
+//#include "Button.h"
+//#include "CheckBox.h"
+//#include "InputText.h"
+//#include "ProgressBar.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-Canvas::Canvas(GameObject* gameObject, UI_Element::Type type) : UI_Element(gameObject, UI_Element::Type::CANVAS)
+Canvas::Canvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Canvas)
 {
 	visible = true;
 	interactable = false;
@@ -19,12 +27,43 @@ Canvas::~Canvas()
 {
 }
 
-void Canvas::Draw()
+void Canvas::Draw() const
 {
+	//draw canvas texture
+
+	// Draw elements inside canvas
 	for (int i = 0; i < elements.size(); i++)
 	{
-		if (elements[i]->visible)
-			elements[i]->Draw();
+		switch (elements[i]->GetType())
+		{
+		case Component::ComponentType::Canvas:
+			Canvas* elem = (Canvas*)elements[i];
+			if (elem->visible) elem->Draw();
+
+		case Component::ComponentType::Text:
+			Text* elem = (Text*)elements[i];
+			if (elem->visible) elem->Draw();
+
+		case Component::ComponentType::Image:
+			Image* elem = (Image*)elements[i];
+			if (elem->visible) elem->Draw();
+
+		//case Component::ComponentType::Button:
+		//	Button* elem = (Button*)elements[i];
+		//	if (elem->visible) elem->Draw();
+
+		//case Component::ComponentType::CheckBox:
+		//	CheckBox* elem = (CheckBox*)elements[i];
+		//	if (elem->visible) elem->Draw();
+
+		//case Component::ComponentType::InputText:
+		//	InputText* elem = (InputText*)elements[i];
+		//	if (elem->visible) elem->Draw();
+
+		//case Component::ComponentType::ProgressBar:
+		//	ProgressBar* elem = (ProgressBar*)elements[i];
+		//	if (elem->visible) elem->Draw();
+		}
 	}
 }
 
@@ -80,5 +119,41 @@ void Canvas::CreateInspectorNode()
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
 		GO->RemoveComponent(Component::ComponentType::Mesh);
+	}
+}
+
+void Canvas::UpdateCollider()
+{
+	collider.x = position2D.x - size2D.x;
+	collider.y = position2D.y - size2D.y;
+	collider.w = size2D.x * 2;
+	collider.h = size2D.y * 2;
+}
+
+void Canvas::UpdateState()
+{
+	if (interactable && visible)
+	{
+		if (state != DRAGGING)
+		{
+			if (App->ui_system->CheckMousePos(this))
+			{
+				ChangeStateTo(HOVERED);
+				if (App->ui_system->CheckClick(this))
+				{
+					if (draggable && (App->ui_system->drag_start.x != App->ui_system->mouse_pos.x || App->ui_system->drag_start.y != App->ui_system->mouse_pos.y))
+						ChangeStateTo(DRAGGING);
+					else
+						ChangeStateTo(SELECTED);
+				}
+			}
+			else
+				ChangeStateTo(IDLE);
+		}
+		else
+		{
+			if (!App->ui_system->CheckClick(this))
+				ChangeStateTo(IDLE);
+		}
 	}
 }

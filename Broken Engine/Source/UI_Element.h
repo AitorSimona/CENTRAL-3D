@@ -10,18 +10,6 @@ class UI_Element : public Component
 	friend class ModuleGUI;
 
 public:
-	enum Type
-	{
-		UNKNOWN = 0,
-		CANVAS,
-		IMAGE,
-		TEXT,
-		BUTTON,
-		CHECKBOX,
-		INPUTTEXT,
-		PROGRESSBAR
-	};
-
 	enum State
 	{
 		NOTHING = 0,
@@ -39,24 +27,6 @@ public:
 		HIDE_MAINMENU
 	};
 
-public:
-	UI_Element(GameObject* gameObject, UI_Element::Type type);
-	virtual ~UI_Element();
-
-	UI_Element::Type GetType() const { return type; }
-	UI_Element::State GetState() { return state; }
-	UI_Element::Action GetAction() const { return action; }
-
-	void ChangeActionTo(Action new_action) { action = new_action; }
-	void ChangeStateTo(State new_state) { state = new_state; }
-	void ChangeColor(Color new_color) { color = new_color; }
-	void ChangeSize(float2 size) { size2D = size; }
-	void ChangePosition(float2 pos) { position2D = pos; }
-	void ChangeRotation(float rot) { rotation2D = rot; }
-
-	void UpdateCollider();
-	void UpdateState();
-	void DoLogic(Action action);
 
 	virtual void Draw() const {};
 
@@ -82,12 +52,8 @@ public:
 	Color color = White;
 
 protected:
-	Type type = UNKNOWN;
 	State state = NOTHING;
 	Action action = NONE;
-
-	float2 drag_start = float2::zero;
-	float2 mouse_pos = float2::zero;
 
 	SDL_Rect collider = { 0,0,0,0 };
 

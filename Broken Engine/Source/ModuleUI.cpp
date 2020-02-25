@@ -28,10 +28,10 @@ bool ModuleUI::Start()
 
 update_status ModuleUI::PreUpdate(float dt)
 {
-	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
-	{
-		if (obj->HasComponent(Component::ComponentType::UI_Element)) //if has ui component
-		{
+	//for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
+	//{
+		//if (obj->HasComponent(Component::ComponentType::UI_Element)) //if has ui component
+		//{
 			//std::vector<Component*> ui = obj->GetAllComponentsOfType(Component::ComponentType::UI_Element); //get all ui components
 			//if (!ui.empty())
 			//{
@@ -50,8 +50,8 @@ update_status ModuleUI::PreUpdate(float dt)
 					//}
 				//}
 			//}
-		}
-	}
+		//}
+	//}
 	return UPDATE_CONTINUE;
 }
 
@@ -69,9 +69,43 @@ bool ModuleUI::CleanUp()
 
 void ModuleUI::Draw() const
 {
-	//for (int i = 0; i < canvas.size(); i++)
-	//{
-	//	if (canvas[i]->visible)
-	//		canvas[i]->Draw();
-	//}
+	for (int i = 0; i < canvas.size(); i++)
+	{
+		if (canvas[i]->visible)
+			canvas[i]->Draw();
+	}
+}
+
+bool ModuleUI::CheckMousePos(Component* component, Collider collider)
+{
+	UpdateCollider();
+	mouse_pos.x = App->input->GetMouseX();
+	mouse_pos.y = App->input->GetMouseY();
+
+	//mouse_pos.x -= App->editor->tab_viewport->pos_x + 7;
+	//mouse_pos.y = math::Abs(mouse_pos.y - (App->editor->tab_viewport->pos_y + 26 + App->editor->tab_viewport->height));// -mouse_pos.y + App->editor->focused_panel->pos_x;
+
+	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
+	if (SDL_HasIntersection(&MouseCollider, &collider))
+		return true;
+
+	return false;
+}
+
+bool ModuleUI::CheckClick(Component* component)
+{
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+	{
+		drag_start.x = App->input->GetMouseX();
+		drag_start.y = App->input->GetMouseY();
+		return true;
+	}
+
+	if (draggable && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+		return true;
+
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
+		return false;
+
+	return false;
 }

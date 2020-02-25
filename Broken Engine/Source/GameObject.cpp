@@ -5,7 +5,14 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ModuleSceneManager.h"
-#include "UI_Element.h"
+
+#include "Canvas.h"
+#include "Text.h"
+#include "Image.h"
+//#include "Button.h"
+//#include "CheckBox.h"
+//#include "InputText.h"
+//#include "ProgressBar.h"
 
 #include "Math.h"
 
@@ -179,9 +186,33 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 				component = new ComponentCamera(this);
 				break;
 
-			case Component::ComponentType::UI_Element:
-				component = new UI_Element(this);
+			case Component::ComponentType::Canvas:
+				component = new Canvas(this);
 				break;
+
+			//case Component::ComponentType::Text:
+			//	component = new Text(this);
+			//	break;
+
+			//case Component::ComponentType::Image:
+			//	component = new Image(this);
+			//	break;
+
+			//case Component::ComponentType::Button:
+			//	component = new Button(this);
+			//	break;
+
+			//case Component::ComponentType::CheckBox:
+			//	component = new CheckBox(this);
+			//	break;
+
+			//case Component::ComponentType::InputText:
+			//	component = new InputText(this);
+			//	break;
+
+			//case Component::ComponentType::ProgressBar:
+			//	component = new ProgressBar(this);
+			//	break;
 		}
 
 		if (component)

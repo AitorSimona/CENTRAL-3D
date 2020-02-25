@@ -12,6 +12,7 @@
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 #include "ModuleThreading.h"
+#include "ModuleUI.h"
 
 #include "mmgr/mmgr.h"
 
@@ -35,6 +36,7 @@ Application::Application()
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
+	ui_system = new ModuleUI(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -55,6 +57,8 @@ Application::Application()
 	AddModule(window);
 	AddModule(camera);
 	AddModule(gui);
+
+	AddModule(ui_system);
 
 	// Scenes
 	AddModule(scene_manager);

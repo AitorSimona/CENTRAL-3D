@@ -16,7 +16,13 @@ public:
 		Mesh,
 		MeshRenderer,
 		Camera,
-		UI_Element,
+		Canvas,
+		Image,
+		Text,
+		Button,
+		CheckBox,
+		InputText,
+		ProgressBar,
 		Unknown
 	};
 
