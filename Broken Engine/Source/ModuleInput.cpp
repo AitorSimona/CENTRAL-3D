@@ -197,11 +197,13 @@ update_status ModuleInput::PreUpdate(float dt)
 								SDL_HapticRumbleInit(controllers[i].haptic_ptr);
 
 								controllers[i].index = index_addition_controllers;
+								ENGINE_CONSOLE_LOG("Gamepad %d was Connected for the 1st Time!", i);
 								//LoadConfigBinding((PLAYER)controllers[i].index);
 							}
 							else    //The gamepad was disconnected at some point and is now being reconnected
 							{
 								controllers[i].id_ptr = SDL_GameControllerOpen(controllers[i].index);
+								ENGINE_CONSOLE_LOG("Gamepad %d was reconnected!", i);
 							}
 
 

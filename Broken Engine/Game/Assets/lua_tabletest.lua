@@ -15,19 +15,15 @@ function lua_table:Start ()
 end
 
 function lua_table:Update ()
-	lua_table["position_x"] = lua_table["position_x"] + 10
-
-	lua_table["Functions"]:LOG ("This Log was called from LUA testing a table on UPDATE")
-	lua_table["Functions"]:LOG ("Position X = " .. lua_table["position_x"])
-
 	dt = lua_table["Functions"]:dt ()
-	lua_table["Functions"]:LOG ("GameDT = " .. dt)
 
 	if lua_table["Functions"]:KeyRepeat ("W") then lua_table["Functions"]:Translate (0.0, 0.0, 50.0 * dt) end
 	if lua_table["Functions"]:KeyRepeat ("A") then lua_table["Functions"]:Translate (50.0 * dt, 0.0 , 0.0) end
 	if lua_table["Functions"]:KeyRepeat ("S") then lua_table["Functions"]:Translate (0.0, 0.0, -50.0 * dt) end
 	if lua_table["Functions"]:KeyRepeat ("D") then lua_table["Functions"]:Translate(-50.0 * dt,0.0 , 0.0) end
 	if lua_table["Functions"]:KeyRepeat ("Q") then lua_table["Functions"]:LOG ("Q is pressed") end
+	if lua_table["Functions"]:IsGamepadButton(1,"BUTTON_DPAD_LEFT","DOWN") then lua_table["Functions"]:LOG ("Button BACK DOWN") end
+	if lua_table["Functions"]:IsGamepadButton(2,"BUTTON_A","DOWN") then lua_table["Functions"]:LOG ("PLAYER 2 button A DOWN") end
 end
 
 return lua_table

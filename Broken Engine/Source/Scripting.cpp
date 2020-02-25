@@ -137,6 +137,88 @@ bool Scripting::IsMouseButtonIdle(const char* button) const
 	return GetMouseButtonState(button) == KEY_IDLE;
 }
 
+bool Scripting::IsGamepadButton(int player_num, const char* button, const char* button_state) const
+{
+	bool ret = false;
+	//Get Player
+	PLAYER player = PLAYER::P1;
+	if(player_num > 0)
+	player = (PLAYER)(player_num -1);
+
+	//Get Button
+	SDL_GameControllerButton SDL_button = GetControllerButtonFromString(button);
+
+	//Get Button State
+	GP_BUTTON_STATE b_state = GetGamepadButtonState(button_state);
+
+	//Evaluate condition
+	if (App->input->GetButton(player, (int)SDL_button) == b_state)
+		ret = true;
+	else
+		ret = false;
+
+	return ret;
+}
+
+//Get the SDL_Controller_Button for a given String
+SDL_GameControllerButton Scripting::GetControllerButtonFromString(const char* button_name) const
+{
+	SDL_GameControllerButton button;
+
+	if (!strcmp("BUTTON_INVALID", button_name))
+		button = SDL_CONTROLLER_BUTTON_INVALID;
+	else if (!std::strcmp("BUTTON_A", button_name))
+		button = SDL_CONTROLLER_BUTTON_A;
+	else if (!std::strcmp("BUTTON_B", button_name))
+		button = SDL_CONTROLLER_BUTTON_B;
+	else if (!std::strcmp("BUTTON_X", button_name))
+		button = SDL_CONTROLLER_BUTTON_X;
+	else if (!std::strcmp("BUTTON_Y", button_name))
+		button = SDL_CONTROLLER_BUTTON_Y;
+	else if (!std::strcmp("BUTTON_BACK", button_name))
+		button = SDL_CONTROLLER_BUTTON_BACK;
+	else if (!std::strcmp("BUTTON_GUIDE", button_name))
+		button = SDL_CONTROLLER_BUTTON_GUIDE;
+	else if (!std::strcmp("BUTTON_START", button_name))
+		button = SDL_CONTROLLER_BUTTON_START;
+	else if (!std::strcmp("BUTTON_LEFTSTICK", button_name))
+		button = SDL_CONTROLLER_BUTTON_LEFTSTICK;
+	else if (!std::strcmp("BUTTON_RIGHTSTICK", button_name))
+		button = SDL_CONTROLLER_BUTTON_RIGHTSTICK;
+	else if (!std::strcmp("BUTTON_LEFTSHOULDER", button_name))
+		button = SDL_CONTROLLER_BUTTON_LEFTSHOULDER;
+	else if (!std::strcmp("BUTTON_RIGHTSHOULDER", button_name))
+		button = SDL_CONTROLLER_BUTTON_RIGHTSHOULDER;
+	else if (!std::strcmp("BUTTON_DPAD_UP", button_name))
+		button = SDL_CONTROLLER_BUTTON_DPAD_UP;
+	else if (!std::strcmp("BUTTON_DPAD_DOWN", button_name))
+		button = SDL_CONTROLLER_BUTTON_DPAD_DOWN;
+	else if (!std::strcmp("BUTTON_DPAD_LEFT", button_name))
+		button = SDL_CONTROLLER_BUTTON_DPAD_LEFT;
+	else if (!std::strcmp("BUTTON_DPAD_RIGHT", button_name))
+		button = SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
+	else
+		button = SDL_CONTROLLER_BUTTON_INVALID;
+	
+	return button;
+}
+
+GP_BUTTON_STATE Scripting::GetGamepadButtonState(const char* state_name) const
+{
+	GP_BUTTON_STATE ret = GP_BUTTON_STATE::BUTTON_IDLE;
+	
+	if (!strcmp("IDLE", state_name))
+		ret = GP_BUTTON_STATE::BUTTON_IDLE;
+	else if (!std::strcmp("DOWN", state_name))
+		ret = GP_BUTTON_STATE::BUTTON_DOWN;
+	else if (!std::strcmp("REPEAT", state_name))
+		ret = GP_BUTTON_STATE::BUTTON_REPEAT;
+	else if (!std::strcmp("UP", state_name))
+		ret = GP_BUTTON_STATE::BUTTON_UP;
+
+	return ret;
+}
+
 //bool Scripting::IsMouseInGame() const
 //{
 //	return !App->editor->using_menu;

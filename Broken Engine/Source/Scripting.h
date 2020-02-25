@@ -1,5 +1,6 @@
 #ifndef __SCRIPTING_H__
 #define __SCRIPTING_H__
+#include "ModuleInput.h"
 
 class lua_State;
 
@@ -36,6 +37,9 @@ public:
 	bool IsMouseButtonRepeat(const char* button) const;
 	bool IsMouseButtonIdle(const char* button) const;
 
+	bool IsGamepadButton(int player_num, const char* button, const char* button_state) const;
+	SDL_GameControllerButton GetControllerButtonFromString(const char* button_name) const;
+	GP_BUTTON_STATE GetGamepadButtonState(const char* state_name) const;
 	//bool IsMouseInGame() const;
 	//int GetMouseRaycastHit(lua_State *L);
 

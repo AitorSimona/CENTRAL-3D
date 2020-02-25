@@ -178,6 +178,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
 		.addFunction("Translate", &Scripting::Translate)
 		.addFunction("dt", &Scripting::GetDT)
+		.addFunction("IsGamepadButton", &Scripting::IsGamepadButton)
 		.endClass()
 		.endNamespace();
 
