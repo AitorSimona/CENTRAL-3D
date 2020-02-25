@@ -37,6 +37,10 @@ public:
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
+private:
+	bool HasDynamicRigidBody(physx::PxGeometry geometry) const;
+	bool HasDynamicRigidBody() const;
+
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;
@@ -45,6 +49,7 @@ public:
 
 private:
 	physx::PxShape* shape = nullptr;
+	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 globalPosition;
 	float3 scale = float3::one;
 	float4x4 localMatrix = float4x4::identity;

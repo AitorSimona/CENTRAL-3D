@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
+#include "ComponentDynamicRigidBody.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
@@ -139,6 +140,17 @@ void ComponentCollider::SetPosition()
 	shape->setLocalPose(localTransform);
 	globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
 	globalPosition += localPosition;
+
+	PxTransform globalPose(PxVec3(globalPosition.x, globalPosition.y, globalPosition.z));
+
+	if (!HasDynamicRigidBody())
+		rigidStatic->setGlobalPose(globalPose);
+	
+	else
+	{
+		ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+		dynamicRB->rigidBody->setGlobalPose(globalPose);
+	}
 }
 
 json ComponentCollider::Save() const
@@ -326,11 +338,20 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 	if (lastIndex == (int)type && !createAgain)
 		return;
 
+	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
+
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
 			PxBoxGeometry boxGeometry(PxVec3(scale.x, scale.y, scale.z));
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
+			
+			if (!HasDynamicRigidBody(boxGeometry))
+			{
+				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
+				App->physics->mScene->addActor(*rigidStatic);
+			}
+
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::BOX;
 			break;
 		}
@@ -338,6 +359,13 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			PxSphereGeometry SphereGeometry(radius);
 			shape = App->physics->mPhysics->createShape(SphereGeometry, *App->physics->mMaterial);
 			shape->setGeometry(SphereGeometry);
+
+			if (!HasDynamicRigidBody(SphereGeometry))
+			{
+				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
+				App->physics->mScene->addActor(*rigidStatic);
+			}
+
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::SPHERE;
 			break;
 		}
@@ -345,15 +373,52 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			PxBoxGeometry planeGeometry(PxVec3(scale.x, 0.0001f, scale.z));
 			shape = App->physics->mPhysics->createShape(planeGeometry, *App->physics->mMaterial);
 			shape->setGeometry(planeGeometry);
+
+			if (!HasDynamicRigidBody(planeGeometry))
+			{
+				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
+				App->physics->mScene->addActor(*rigidStatic);
+			}
+
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::PLANE;
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::CAPSULE: {
-			PxCapsuleGeometry CapsukeGeometry(radius, height);
-			shape = App->physics->mPhysics->createShape(CapsukeGeometry, *App->physics->mMaterial);
-			shape->setGeometry(CapsukeGeometry);
+			PxCapsuleGeometry CapsuleGeometry(radius, height);
+			shape = App->physics->mPhysics->createShape(CapsuleGeometry, *App->physics->mMaterial);
+			shape->setGeometry(CapsuleGeometry);
+
+			if (!HasDynamicRigidBody(CapsuleGeometry))
+			{
+				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
+				App->physics->mScene->addActor(*rigidStatic);
+			}
+
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
 			break;
 		}
 	}
+}
+
+bool ComponentCollider::HasDynamicRigidBody(PxGeometry geometry) const
+{
+	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+	
+	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
+
+	if (dynamicRB != nullptr)
+	{
+		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, localTransform, geometry, *App->physics->mMaterial, 1.0f);
+		App->physics->mScene->addActor(*dynamicRB->rigidBody);
+
+		return true;
+	}
+
+	else
+		return false;
+}
+
+bool ComponentCollider::HasDynamicRigidBody() const
+{
+	return (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr);
 }
