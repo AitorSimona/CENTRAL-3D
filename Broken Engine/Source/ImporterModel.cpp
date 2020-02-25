@@ -245,7 +245,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 	GameObject* nodeGo = nullptr;
 
-	if (node != scene->mRootNode && node->mNumMeshes > 1)
+	if (node != scene->mRootNode)
 	{
 		// --- Create GO per each node that contains a mesh ---
 		nodeGo = App->scene_manager->CreateEmptyGameObject();
@@ -268,7 +268,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		// --- Create Game Object per mesh ---
 		GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
 		new_object->SetName(node->mName.C_Str());
-		nodeGo->AddChildGO(new_object);
+		parent->AddChildGO(new_object);
 		scene_gos.push_back(new_object);
 
 		// --- Get Scene mesh associated to node's mesh at index ---
