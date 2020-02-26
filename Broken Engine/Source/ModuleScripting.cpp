@@ -51,7 +51,6 @@ bool ModuleScripting::DoHotReloading()
 			ScriptInstance* recompiled_instance = new ScriptInstance;
 
 			recompiled_instance->my_component = (*it)->my_component;
-			recompiled_instance->my_resource = (*it)->my_resource;
 
 			recompiled_instances.push_back(recompiled_instance);
 		}
@@ -192,12 +191,12 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 	if (L != nullptr)
 	{
 		//Compile the file and run it, we're gonna optimize this to just compile the function the script contains to library later.
-		int compiled = luaL_dofile(L, script->my_resource->absolute_path.c_str());
-
+		int compiled = luaL_dofile(L, script->my_component->script->absolute_path.c_str());
+		
 		if (compiled == LUA_OK)
 		{
 			//Get the function to instantiate the lua table (used as a class as known in C++)
-			std::string get_function = "GetTable" + script->my_resource->script_name;
+			std::string get_function = "GetTable" + script->my_component->script->script_name;
 			//get_function = App->SubtractString(get_function,".",false,true,false); //Line of reference delete if code compiles
 			App->fs->SplitFilePath(get_function.data(),nullptr, &get_function,nullptr);
 			luabridge::LuaRef ScriptGetTable = luabridge::getGlobal(L, get_function.c_str());
@@ -223,7 +222,6 @@ void ModuleScripting::SendScriptToModule(ComponentScript * script_component)
 {
 	ScriptInstance* s_instance = new ScriptInstance;
 	s_instance->my_component = script_component;
-	s_instance->my_resource = script_component->script;
 
 	class_instances.push_back(s_instance);
 	JustCompile(script_component->script->absolute_path);
