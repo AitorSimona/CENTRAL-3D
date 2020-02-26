@@ -22,6 +22,7 @@ public:
 	void DrawParticles();
 
 	void AddEmitter(ComponentParticleEmitter* componentEmitter);
+	void DeleteEmitter(ComponentParticleEmitter* componentEmitter);
 
 	bool CleanUp() override;
 

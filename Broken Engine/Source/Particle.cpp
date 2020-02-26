@@ -12,11 +12,21 @@
 
 #include "mmgr/mmgr.h"
 
+Particle::Particle()
+{
+	position = { 0.0f,0.0f,0.0f };
+	lifeTime = 1000;
+	diameter = 1;
+}
+
+Particle::~Particle()
+{}
+
 void Particle::Draw()
 {
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
-	float4x4 transform;
+	float4x4 transform=float4x4::identity;
 	transform.SetIdentity();
 	transform = float4x4::FromTRS(position,Quat::identity,float3::one);
 

@@ -28,30 +28,6 @@ bool ModuleParticles::Init(json config)
 
 bool ModuleParticles::Start()
 {
-	particleSystem = App->physics->mPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
-
-	particleSystem->setExternalAcceleration(PxVec3(0, -9.80, 0));
-
-	if (particleSystem)
-		App->physics->mScene->addActor(*particleSystem);
-
-	//TEST
-	//Creating particles
-	PxParticleCreationData creationData;
-
-	creationData.numParticles = 3;
-
-	PxU32 indexBuffer[] = { 0,1,2 };
-	PxVec3 positionBuffer[] = { PxVec3(-10,30,0),PxVec3(0,30,0),PxVec3(14,30,0) };
-	PxVec3 velocityBuffer[] = { PxVec3(0,0,0),PxVec3(0,0,0) ,PxVec3(0,0,0) };
-
-	creationData.indexBuffer = PxStrideIterator<const PxU32>(indexBuffer);
-	creationData.positionBuffer = PxStrideIterator<const PxVec3>(positionBuffer);
-	creationData.velocityBuffer = PxStrideIterator<const PxVec3>(velocityBuffer);
-
-	bool succes = particleSystem->createParticles(creationData);
-
-	//TEST
 
 	return true;
 }
@@ -62,8 +38,6 @@ update_status ModuleParticles::Update(float dt)
 	for (int i = 0; i < particleEmitters.size(); ++i)
 		if (particleEmitters[i]->IsEnabled())
 			particleEmitters[i]->UpdateParticles(dt);
-
-
 
 	//if (App->input->GetKey(SDL_SCANCODE_SPACE)==KEY_DOWN)
 	//	particleSystem->setPositions(numParticles,PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions));
@@ -88,6 +62,16 @@ void ModuleParticles::DrawParticles()
 void ModuleParticles::AddEmitter(ComponentParticleEmitter* componentEmitter)
 {
 	particleEmitters.push_back(componentEmitter);
+}
+
+void ModuleParticles::DeleteEmitter(ComponentParticleEmitter* componentEmitter)
+{
+	for (std::vector<ComponentParticleEmitter*>::iterator it = particleEmitters.begin();it != particleEmitters.end() ; it++) {
+		if (*(it) == componentEmitter) {
+			particleEmitters.erase(it);
+			break;
+		}
+	}
 }
 
 bool ModuleParticles::CleanUp()

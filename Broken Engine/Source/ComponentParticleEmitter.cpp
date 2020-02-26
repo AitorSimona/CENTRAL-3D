@@ -28,12 +28,19 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 	
 	App->particles->AddEmitter(this);
 	
-	particles.reserve(maxParticles);
+	particles.resize(maxParticles);
+	
+	for (int i= 0; i < maxParticles; ++i)
+		particles[i] = new Particle();
+
+	int i = 0;
+
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
 {
 	// MYTODO: Tell module particles to erase its pointer!!!
+	App->particles->DeleteEmitter(this);
 }
 
 void ComponentParticleEmitter::Enable()
@@ -106,8 +113,8 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			if (*flagsIt & PxParticleFlag::eVALID)
 			{
 				// access particle position
-				const PxVec3& position = *positionIt;
-				EngineConsoleLog("%f", position.x, "%f", position.y, "%f", position.z, "%f");
+				float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
+				particles[i]->position =newPosition;
 			}
 		}
 
@@ -118,7 +125,8 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 void ComponentParticleEmitter::DrawParticles()
 {
-
+	for (int i = 0; i < particles.size(); ++i)
+		particles[i]->Draw();
 }
 
 json ComponentParticleEmitter::Save() const

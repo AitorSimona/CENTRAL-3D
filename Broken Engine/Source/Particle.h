@@ -15,7 +15,6 @@ public:
 	~Particle();
 
 	void Draw();
-	void Update();
 
 public:
 
