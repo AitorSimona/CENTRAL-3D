@@ -79,8 +79,8 @@ json ComponentBone::Save() const
 	json node;
 
 	// --- Store path to component file ---
-	/*if (res_bone)
-		node["Resources"]["ResourceBone"] = std::string(res_bone->GetResourceFile());*/
+	if (res_bone)
+		node["Resources"]["ResourceBone"] = std::string(res_bone->GetResourceFile());
 
 
 	return node;
@@ -88,18 +88,18 @@ json ComponentBone::Save() const
 
 void ComponentBone::Load(json& node)
 {
-	//std::string path = node["Resources"]["ResourceBone"];
-	//App->fs->SplitFilePath(path.c_str(), nullptr, &path);
-	//path = path.substr(0, path.find_last_of("."));
+	std::string path = node["Resources"]["ResourceBone"];
+	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	path = path.substr(0, path.find_last_of("."));
 
-	//if (res_bone)
-	//	res_bone->Release();
+	if (res_bone)
+		res_bone->Release();
 
-	//res_bone = (ResourceBone*)App->resources->GetResource(std::stoi(path));
+	res_bone = (ResourceBone*)App->resources->GetResource(std::stoi(path));
 
-	//// --- We want to be notified of any resource event ---
-	//if (res_bone)
-	//	res_bone->AddUser(GO);
+	// --- We want to be notified of any resource event ---
+	if (res_bone)
+		res_bone->AddUser(GO);
 }
 
 void ComponentBone::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
@@ -131,8 +131,12 @@ void ComponentBone::CreateInspectorNode()
 	{
 		ImGui::Text("Im a component bone :D");
 		
-		if(res_bone)
+		if (res_bone)
+		{
 			ImGui::Text("ResourceBone linked");
+			ImGui::Text("MeshID: %u", res_bone->meshID);
+		}
+			
 
 
 		ImGui::TreePop();

@@ -33,9 +33,9 @@ bool ResourceBone::LoadInMemory()
 		App->fs->Load(resource_file.c_str(), &buffer);
 		char* cursor = buffer;
 
-		//// meshID
-		//memcpy(&this->meshID, cursor, sizeof(uint));
-		//cursor += sizeof(uint);
+		// meshID
+		memcpy(&this->meshID, cursor, sizeof(uint));
+		cursor += sizeof(uint);
 
 		// --- Skip name and ranges ---
 		uint ranges;

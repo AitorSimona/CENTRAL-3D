@@ -29,7 +29,7 @@ Resource* ImporterBone::Import(ImportData& IData) const
 
 
 	//TODO: get the correct id
-	//resource_bone->meshID = 
+	resource_bone->meshID = data.mesh_UID;
 	resource_bone->NumWeights = data.bone->mNumWeights;
 	resource_bone->matrix = float4x4(data.bone->mOffsetMatrix.a1, data.bone->mOffsetMatrix.a2, data.bone->mOffsetMatrix.a3, data.bone->mOffsetMatrix.a4,
 									 data.bone->mOffsetMatrix.b1, data.bone->mOffsetMatrix.b2, data.bone->mOffsetMatrix.b3, data.bone->mOffsetMatrix.b4,
@@ -61,7 +61,7 @@ void ImporterBone::Save(ResourceBone* bone) const
 	//----------------------------- CALCULATE SIZE ------------------------------------------------------------------------------------
 
 	//Bone meshID, numWeights, matrix, weights, index_weigths
-	uint size = /*sizeof(uint) +*/ sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
+	uint size = sizeof(uint) + sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
 
 	//---------------------------------------------------------------------------------------------------------------------------------
 	//------------------------------- Allocate ---------------------------------------------------------------------------------------
@@ -70,18 +70,19 @@ void ImporterBone::Save(ResourceBone* bone) const
 	char* cursor = data;
 
 	//// meshID
-	//memcpy(cursor, &bone->meshID, sizeof(uint));
-	//cursor += sizeof(uint);
+	memcpy(cursor, &bone->meshID, sizeof(uint));
+	cursor += sizeof(uint);
 
 	// --- Store range ---
 	uint tmp = sizeof(ranges);
 	memcpy(cursor, &ranges, tmp);
+	cursor += sizeof(ranges);
 
 	// --- Store original filename ---
 	
 	uint bytes = sizeof(const char) * sourcefilename_length;
-	cursor += bytes;
 	memcpy(cursor, bone->GetOriginalFile(), bytes);
+	cursor += bytes;
 
 	// --- Store numWeights
 	memcpy(cursor, &bone->NumWeights, sizeof(uint));

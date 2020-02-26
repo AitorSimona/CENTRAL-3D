@@ -16,6 +16,7 @@ struct ImportBoneData : public Importer::ImportData
 	ImportBoneData(const char* path) : Importer::ImportData(path) {};
 
 	aiBone* bone = nullptr;
+	uint mesh_UID = 0;
 };
 
 class ImporterBone : public Importer
