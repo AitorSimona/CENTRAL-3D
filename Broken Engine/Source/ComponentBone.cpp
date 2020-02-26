@@ -4,12 +4,13 @@
 #include "ComponentAnimation.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
+#include "ModuleCamera3D.h"
+#include "ComponentCamera.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 
-#include "Color.h"
 
 ComponentBone::ComponentBone(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Bone)
 {
@@ -27,13 +28,30 @@ ComponentBone::~ComponentBone()
 
 void ComponentBone::DebugDrawBones()
 {
+
 	if (GO->parent != nullptr && GO->parent->GetComponent<ComponentBone>() != nullptr
 		&& GO->GetAnimGO(GetHipBone()->GO)->GetComponent<ComponentAnimation>()->draw_bones)
 	{
+		//Set polygon draw mode and appropiated matrices for OGL
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPushMatrix();
+		glMultMatrixf(float4x4::identity.Transposed().ptr());
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());
+
+
 		float4x4 child_matrix = GetBoneTransform();
 		float4x4 parent_matrix = GO->parent->GetComponent<ComponentBone>()->GetBoneTransform();
 		float3 child_pos = float3(child_matrix.At(0, 3), child_matrix.At(1, 3), child_matrix.At(2, 3));
 		float3 parent_pos = float3(parent_matrix.At(0, 3), parent_matrix.At(1, 3), parent_matrix.At(2, 3));
+
+		/*float4x4 child_matrix = GO->GetComponent<ComponentTransform>()->GetGlobalTransform();
+		float4x4 parent_matrix = GO->parent->GetComponent<ComponentTransform>()->GetGlobalTransform();
+		float3 child_pos = float3(GO->GetComponent<ComponentTransform>()->GetGlobalPosition());
+		float3 parent_pos = float3(GO->parent->GetComponent<ComponentTransform>()->GetGlobalPosition());*/
+
 
 		glLineWidth(5.0f);
 		glBegin(GL_LINES);
@@ -44,11 +62,20 @@ void ComponentBone::DebugDrawBones()
 		glVertex3f(child_pos.x, child_pos.y, child_pos.z);
 		glVertex3f(parent_pos.x, parent_pos.y, parent_pos.z);
 
-
 		glEnd();
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	}
+		glLineWidth(1.0f);
 
+
+		//Set again Identity for OGL Matrices & Polygon draw to fill again
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPopMatrix();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	
 }
 
 float4x4 ComponentBone::GetBoneTransform() const

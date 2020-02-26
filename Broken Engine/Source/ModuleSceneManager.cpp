@@ -13,6 +13,7 @@
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
 #include "ComponentCamera.h"
+#include "ComponentBone.h"
 
 #include "ModuleGui.h"
 
@@ -253,6 +254,10 @@ void ModuleSceneManager::DrawScene()
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 					MeshRenderer->Draw();
+
+			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
+			if(C_Bone)
+				C_Bone->DebugDrawBones();
 
 			if (SelectedGameObject == (*it))
 			{

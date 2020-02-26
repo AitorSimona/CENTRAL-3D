@@ -46,11 +46,6 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		this->OnUpdateTransform();
 
-	if (this->GetComponent<ComponentBone>() != nullptr)
-	{
-		this->GetComponent<ComponentBone>()->DebugDrawBones();
-	}
-
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);

@@ -27,6 +27,7 @@ public:
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Bone; };
 
+
 public:
 	ResourceBone* res_bone = nullptr;
 };
