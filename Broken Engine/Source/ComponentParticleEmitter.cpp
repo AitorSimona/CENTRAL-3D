@@ -5,6 +5,7 @@
 #include "Imgui/imgui.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
+#include "ModuleParticles.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -30,6 +31,10 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 
 	particlesVelocity = { 0,0,0 };
 	particlesDuration = 0;	
+
+	Enable();
+	
+	App->particles->AddEmitter(this);
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
@@ -37,6 +42,8 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 
 void ComponentParticleEmitter::Enable()
 {
+	active = true;
+
 	particleSystem = App->physics->mPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
 
 	if (particleSystem)
@@ -48,8 +55,12 @@ void ComponentParticleEmitter::Enable()
 void ComponentParticleEmitter::Disable()
 {
 	particleSystem->releaseParticles();
+	
 	App->physics->mScene->removeActor(*particleSystem);
+	
 	indexPool->release();
+
+	active = false;
 }
 
 void ComponentParticleEmitter::UpdateParticles(float dt)
@@ -84,6 +95,34 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			bool succes = particleSystem->createParticles(creationData);
 		}
 	}
+
+	// lock SDK buffers of *PxParticleSystem* ps for reading
+	PxParticleReadData* rd = particleSystem->lockParticleReadData();
+
+	// access particle data from PxParticleReadData
+	if (rd)
+	{
+		PxStrideIterator<const PxParticleFlags> flagsIt(rd->flagsBuffer);
+		PxStrideIterator<const PxVec3> positionIt(rd->positionBuffer);
+
+		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt, ++positionIt)
+		{
+			if (*flagsIt & PxParticleFlag::eVALID)
+			{
+				// access particle position
+				const PxVec3& position = *positionIt;
+				EngineConsoleLog("%f", position.x, "%f", position.y, "%f", position.z, "%f");
+			}
+		}
+
+		// return ownership of the buffers back to the SDK
+		rd->unlock();
+	}
+}
+
+void ComponentParticleEmitter::DrawParticles()
+{
+
 }
 
 json ComponentParticleEmitter::Save() const
@@ -128,8 +167,8 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::DragFloat("",&emisionRate, 0.05f);
 
-	//Emision rate
-	ImGui::Text("Max particles");
-	ImGui::SameLine();
-	ImGui::DragInt("", &maxParticles, 1);
+	////Emision rate
+	//ImGui::Text("Max particles");
+	//ImGui::SameLine();
+	//ImGui::DragInt("", &maxParticles, 1);
 }

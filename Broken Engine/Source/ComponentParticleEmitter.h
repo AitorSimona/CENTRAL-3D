@@ -6,13 +6,9 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
-using namespace  physx;
+class Particle;
 
-class Particle
-{
-	PxVec3 position;
-	uint index;
-};
+using namespace  physx;
 
 class ComponentParticleEmitter : public Component
 {
@@ -25,6 +21,7 @@ public:
 	void Disable() override;
 
 	void UpdateParticles(float dt);
+	void DrawParticles();
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::ParticleEmitter; };
 
@@ -37,7 +34,7 @@ private:
 	
 	PxParticleSystem* particleSystem=nullptr;
 
-	int maxParticles = 200;
+	unsigned int maxParticles = 200;
 	bool perParticleRestOffset = false;
 
 	PxParticleExt::IndexPool* indexPool;
@@ -50,7 +47,6 @@ private:
 	//Particle properties
 	PxVec3 particlesVelocity;
 	uint particlesDuration;
-	
 
 	float spawnClock=0.0f;
 };

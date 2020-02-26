@@ -220,6 +220,7 @@
     <ClInclude Include="PanelConsole.h" />
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PanelSettings.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="par\par_shapes.h" />
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="ComponentMesh.h" />
@@ -342,6 +343,7 @@
     <ClCompile Include="PanelInspector.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PanelSettings.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="Quadtree.cpp" />

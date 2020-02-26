@@ -69,37 +69,10 @@ update_status ModuleParticles::Update(float dt)
 {
 
 	for (int i = 0; i < particleEmitters.size(); ++i)
-		particleEmitters[i]->UpdateParticles(dt);
+		if (particleEmitters[i]->IsEnabled())
+			particleEmitters[i]->UpdateParticles(dt);
 
 
-	//TEST
-
-	// lock SDK buffers of *PxParticleSystem* ps for reading
-	PxParticleReadData* rd = particleSystem->lockParticleReadData();
-
-	// access particle data from PxParticleReadData
-	if (rd)
-	{
-		PxStrideIterator<const PxParticleFlags> flagsIt(rd->flagsBuffer);
-		PxStrideIterator<const PxVec3> positionIt(rd->positionBuffer);
-
-		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt, ++positionIt)
-		{
-			if (*flagsIt & PxParticleFlag::eVALID)
-			{
-				// access particle position
-				const PxVec3& position = *positionIt;
-				EngineConsoleLog("%f", position.x,"%f", position.y, "%f", position.z, "%f");
-			}
-		}
-
-		// return ownership of the buffers back to the SDK
-		rd->unlock();
-	}
-
-	//PxU32 numParticles = 1;
-	//PxU32 indices[] = { 0 };
-	//PxVec3 positions[] = { PxVec3(10,9.8,30) };
 
 	//if (App->input->GetKey(SDL_SCANCODE_SPACE)==KEY_DOWN)
 	//	particleSystem->setPositions(numParticles,PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions));
@@ -113,6 +86,17 @@ update_status ModuleParticles::Update(float dt)
 	////TEST
 
 	return UPDATE_CONTINUE;
+}
+
+void ModuleParticles::DrawParticles()
+{
+	for (uint i = 0; i < particleEmitters.size(); ++i)
+		particleEmitters[i]->DrawParticles();
+}
+
+void ModuleParticles::AddEmitter(ComponentParticleEmitter* componentEmitter)
+{
+	particleEmitters.push_back(componentEmitter);
 }
 
 bool ModuleParticles::CleanUp()
