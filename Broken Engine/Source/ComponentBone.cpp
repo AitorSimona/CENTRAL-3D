@@ -3,8 +3,9 @@
 #include "ComponentTransform.h"
 #include "ComponentAnimation.h"
 #include "ModuleResourceManager.h"
-#include "GameObject.h"
+#include "ModuleFileSystem.h"
 
+#include "GameObject.h"
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 
@@ -75,11 +76,30 @@ ComponentBone* ComponentBone::GetHipBone()
 
 json ComponentBone::Save() const
 {
-	return json();
+	json node;
+
+	// --- Store path to component file ---
+	/*if (res_bone)
+		node["Resources"]["ResourceBone"] = std::string(res_bone->GetResourceFile());*/
+
+
+	return node;
 }
 
 void ComponentBone::Load(json& node)
 {
+	//std::string path = node["Resources"]["ResourceBone"];
+	//App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	//path = path.substr(0, path.find_last_of("."));
+
+	//if (res_bone)
+	//	res_bone->Release();
+
+	//res_bone = (ResourceBone*)App->resources->GetResource(std::stoi(path));
+
+	//// --- We want to be notified of any resource event ---
+	//if (res_bone)
+	//	res_bone->AddUser(GO);
 }
 
 void ComponentBone::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
@@ -110,12 +130,9 @@ void ComponentBone::CreateInspectorNode()
 	if (ImGui::TreeNode("Bone"))
 	{
 		ImGui::Text("Im a component bone :D");
-		//ImGui::Checkbox("Toggle debug draw skeleton", (bool*)GO->GetComponent<ComponentAnimation>()->draw_bones);
-
-		/*ImGui::Text("Number of weights: %d", res_bone->NumWeights);
-		ImGui::Text("Weight: %d", res_bone->weight);
-		ImGui::Text("Offset matrix: %d", res_bone->matrix);
-		ImGui::Text("Index weight: %d", res_bone->index_weight);*/
+		
+		if(res_bone)
+			ImGui::Text("ResourceBone linked");
 
 
 		ImGui::TreePop();

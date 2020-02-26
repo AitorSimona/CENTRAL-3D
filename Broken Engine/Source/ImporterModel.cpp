@@ -87,7 +87,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		std::map<uint, ResourceBone*> bones;
 		LoadSceneBones(mesh_collector, bones, MData.path);
 
-		LoadBones(model_gos, mesh_collector);
+		LoadBones(model_gos, mesh_collector, bones);
 
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
@@ -234,24 +234,35 @@ void ImporterModel::LoadSceneBones(std::vector<aiMesh*>& mesh, std::map<uint, Re
 
 }
 
-void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<aiMesh*> mesh_collect) const
+void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<aiMesh*> mesh_collect, std::map<uint, ResourceBone*> bones) const
 {
+	//GameObjects map
 	std::map<std::string, GameObject*> go_map;
-
 	for (std::vector<GameObject*>::iterator it = model_gos.begin(); it != model_gos.end(); ++it)
 	{
 		go_map[(*it)->GetName()] = (*it);
+	}
+
+	//ResourceBone map
+	std::map<std::string, ResourceBone*> bone_map;
+	for (int i=0; i<bones.size(); i++)
+	{
+		bone_map[bones[i]->GetName()] = bones[i];
 	}
 
 	for (int i = 0; i < mesh_collect.size(); i++)
 	{
 		for (int j = 0; j < mesh_collect[i]->mNumBones; j++)
 		{
+			//Search for GO that are bones
 			std::map<std::string, GameObject*>::iterator bone = go_map.find(mesh_collect[i]->mBones[j]->mName.C_Str());
 			if (bone != go_map.end())
 			{
 				ComponentBone* comp_bone = (ComponentBone*)bone->second->AddComponent(Component::ComponentType::Bone);
-				//add resource to component
+
+				std::map<std::string, ResourceBone*>::iterator resource_bone = bone_map.find(bone->second->GetName());
+				if (resource_bone != bone_map.end())
+					comp_bone->res_bone = resource_bone->second;
 			}
 		}
 	}
