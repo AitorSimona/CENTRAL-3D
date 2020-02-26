@@ -31,7 +31,7 @@ namespace BrokenEngine {
 	class ModuleInput;
 	class ModuleRenderer3D;
 	class ModuleCamera3D;
-	//class ModuleGui;
+	class ModuleGui;
 	class ModuleHardware;
 	class ModuleFileSystem;
 	class ModuleTextures;
@@ -66,7 +66,7 @@ namespace BrokenEngine {
 	  	ModuleInput* input = nullptr;
 	  	ModuleRenderer3D* renderer3D = nullptr;
 	  	ModuleCamera3D* camera = nullptr;
-	  	Module* gui = nullptr;
+	  	ModuleGui* gui = nullptr;
 	  	ModuleHardware* hardware = nullptr;
 	  	ModuleFileSystem* fs = nullptr;
 	  	ModuleTextures* textures = nullptr;

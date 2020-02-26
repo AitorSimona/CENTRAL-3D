@@ -5,7 +5,7 @@
 //#include "ModuleSceneManager.h"
 //#include "ModuleRenderer3D.h"
 //#include "ModuleResourceManager.h"
-#include "ModuleGui.h"
+//#include "ModuleGui.h"
 
 //#include "GameObject.h"
 //#include "ComponentTransform.h"
@@ -38,7 +38,7 @@ bool PanelInspector::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		BrokenEngine::GameObject* Selected = App->scene_manager->GetSelectedGameObject();
+		BrokenEngine::GameObject* Selected = EngineApp->scene_manager->GetSelectedGameObject();
 
 		if (Selected == nullptr)
 		{
@@ -51,9 +51,9 @@ bool PanelInspector::Draw()
 
 		// --- Components ---
 
-		std::vector<Component*>* components = &Selected->GetComponents();
+		std::vector<BrokenEngine::Component*>* components = &Selected->GetComponents();
 
-		for (std::vector<Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
+		for (std::vector<BrokenEngine::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
 		{
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
@@ -90,14 +90,14 @@ bool PanelInspector::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
+				BrokenEngine::Resource* resource = EngineApp->resources->GetResource(UID, false);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if (resource && resource->GetType() == Resource::ResourceType::SCRIPT)
+				if (resource && resource->GetType() == BrokenEngine::Resource::ResourceType::SCRIPT)
 				{
-					resource = App->resources->GetResource(UID);
-					ComponentScript* script = (ComponentScript*)Selected->AddComponent(Component::ComponentType::Script);
-					script->AssignScript((ResourceScript*)resource);
+					resource = EngineApp->resources->GetResource(UID);
+					BrokenEngine::ComponentScript* script = (BrokenEngine::ComponentScript*)Selected->AddComponent(BrokenEngine::Component::ComponentType::Script);
+					script->AssignScript((BrokenEngine::ResourceScript*)resource);
 
 				}
 			}
@@ -147,7 +147,7 @@ void PanelInspector::CreateGameObjectNode(BrokenEngine::GameObject & Selected) c
 	ImGui::SameLine();
 
 	if(ImGui::Checkbox("Static", &Selected.Static))
-	App->scene_manager->SetStatic(&Selected);
+	EngineApp->scene_manager->SetStatic(&Selected);
 
 	ImGui::EndChild();
 }

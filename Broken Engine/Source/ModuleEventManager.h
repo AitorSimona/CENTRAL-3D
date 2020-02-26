@@ -9,59 +9,59 @@
 
 typedef void (*Function)(const BrokenEngine::Event& e);
 
-namespace BrokenEngine {
+BE_BEGIN_NAMESPACE
 
+class GameObject;
+class Resource;
 
-	class GameObject;
-	class Resource;
+struct Event {
+	enum class EventType {
+		GameObject_destroyed,
+		GameObject_selected,
+		Resource_selected,
+		Resource_destroyed,
+		Window_resize,
+		File_dropped,
+		invalid
+	} type = EventType::invalid;
 
-	struct Event {
-		enum class EventType {
-			GameObject_destroyed,
-			GameObject_selected,
-			Resource_selected,
-			Resource_destroyed,
-			Window_resize,
-			File_dropped,
-			invalid
-		} type = EventType::invalid;
-
-		union {
-			GameObject* go = nullptr;
-			Resource* resource;
-			uint uid; // For overwrite case
-		};
-
-		Event(EventType type) : type(type) {}
-		Event() {}
+	union {
+		GameObject* go = nullptr;
+		Resource* resource;
+		uint uid; // For overwrite case
 	};
 
-	struct Listeners {
-		std::vector<Function> listeners;
-	};
+	Event(EventType type) : type(type) {}
+	Event() {}
+};
 
-	class ModuleEventManager : public Module {
-	public:
+struct Listeners {
+	std::vector<Function> listeners;
+};
 
-		// --- Basic ---
-		ModuleEventManager(bool start_enabled = true);
-		~ModuleEventManager();
+class ModuleEventManager : public Module {
+public:
 
-		bool Init(json file) override;
-		bool Start() override;
-		update_status PreUpdate(float dt) override;
-		bool CleanUp() override;
+	// --- Basic ---
+	ModuleEventManager(bool start_enabled = true);
+	~ModuleEventManager();
 
-		void PushEvent(Event& new_event);
-		void AddListener(Event::EventType type, Function callback);
-		void RemoveListener(Event::EventType type, Function callback);
+	bool Init(json file) override;
+	bool Start() override;
+	update_status PreUpdate(float dt) override;
+	bool CleanUp() override;
 
-	private:
-		Event events[MAX_EVENTS];
-		Listeners listeners[EVENT_TYPES];
+	void PushEvent(Event& new_event);
+	void AddListener(Event::EventType type, Function callback);
+	void RemoveListener(Event::EventType type, Function callback);
 
-		uint head;
-		uint tail;
-	};
-}
+private:
+	Event events[MAX_EVENTS];
+	Listeners listeners[EVENT_TYPES];
+
+	uint head;
+	uint tail;
+};
+
+BE_END_NAMESPACE
 #endif

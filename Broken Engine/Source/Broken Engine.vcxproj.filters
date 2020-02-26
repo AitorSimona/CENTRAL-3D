@@ -30,9 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ModuleGui.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="VSresource.h">
       <Filter>Sources\VSResources</Filter>
     </ClInclude>
@@ -105,11 +102,11 @@
     <ClInclude Include="mmgr\nommgr.h">
       <Filter>Sources\3rd party\mmgr</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleEditorUI.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ModuleGui.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="EngineApplication.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -166,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="mmgr\mmgr.cpp">
       <Filter>Sources\3rd party\mmgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEditorUI.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

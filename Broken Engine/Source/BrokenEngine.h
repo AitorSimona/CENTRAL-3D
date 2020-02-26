@@ -21,6 +21,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
 #include "ModuleThreading.h"
+#include "ModuleGui.h"
 // --------------------------------
 
 // ---Panel------------------------

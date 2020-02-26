@@ -2,8 +2,6 @@
 #include "Imgui/imgui.h"
 
 #include "EngineApplication.h"
-#include "ModuleGui.h"
-
 #include "PanelProject.h"
 
 #include "OpenGL.h"
@@ -44,11 +42,11 @@ bool PanelScene::Draw()
 		// DOCKING HAS NO SUPPORT FOR WINDOW SIZE CONSTRAINTS :(
 
 		if(width > height)
-			App->renderer3D->active_camera->SetAspectRatio(width / height);
+			EngineApp->renderer3D->active_camera->SetAspectRatio(width / height);
 		else
-			App->renderer3D->active_camera->SetAspectRatio(height / width);
+			EngineApp->renderer3D->active_camera->SetAspectRatio(height / width);
 
-		ImGui::Image((ImTextureID)App->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((ImTextureID)EngineApp->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
 		// --- Save Image's current position (screen space)
 		posX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
@@ -61,13 +59,13 @@ bool PanelScene::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				BrokenEngine::Resource* resource = App->resources->GetResource(UID, false);
+				BrokenEngine::Resource* resource = EngineApp->resources->GetResource(UID, false);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
 				if (resource && resource->GetType() == BrokenEngine::Resource::ResourceType::MODEL)
 				{
-					resource = App->resources->GetResource(UID);
-					App->resources->GetImporter < BrokenEngine::ImporterModel > ()->InstanceOnCurrentScene(resource->GetResourceFile(), (BrokenEngine::ResourceModel*)resource);
+					resource = EngineApp->resources->GetResource(UID);
+					EngineApp->resources->GetImporter < BrokenEngine::ImporterModel > ()->InstanceOnCurrentScene(resource->GetResourceFile(), (BrokenEngine::ResourceModel*)resource);
 				}
 			}
 
@@ -85,12 +83,12 @@ bool PanelScene::Draw()
 		{
 			if (ImGui::BeginMenu("DebugDraw"))
 			{
-				ImGui::MenuItem("LIGHTING", NULL, &App->renderer3D->lighting);
-				ImGui::MenuItem("COLOR MATERIAL", NULL, &App->renderer3D->color_material);
-				ImGui::MenuItem("WIREFRAME", NULL, &App->renderer3D->wireframe);
-				ImGui::MenuItem("BOUNDING BOXES", NULL, &App->scene_manager->display_boundingboxes);
-				ImGui::MenuItem("OCTREE", NULL, &App->scene_manager->display_tree);
-				ImGui::MenuItem("ZDRAWER", NULL, &App->renderer3D->zdrawer);
+				ImGui::MenuItem("LIGHTING", NULL, &EngineApp->renderer3D->lighting);
+				ImGui::MenuItem("COLOR MATERIAL", NULL, &EngineApp->renderer3D->color_material);
+				ImGui::MenuItem("WIREFRAME", NULL, &EngineApp->renderer3D->wireframe);
+				ImGui::MenuItem("BOUNDING BOXES", NULL, &EngineApp->scene_manager->display_boundingboxes);
+				ImGui::MenuItem("OCTREE", NULL, &EngineApp->scene_manager->display_tree);
+				ImGui::MenuItem("ZDRAWER", NULL, &EngineApp->renderer3D->zdrawer);
 
 				ImGui::EndMenu();
 			}
@@ -100,24 +98,24 @@ bool PanelScene::Draw()
 	}
 
 	// --- Handle Guizmo operations ---
-	if(App->scene_manager->GetSelectedGameObject() != nullptr)
+	if(EngineApp->scene_manager->GetSelectedGameObject() != nullptr)
 	HandleGuizmo();
 
 	// --- Update editor camera ---
 	if (ImGuizmo::IsUsing() == false)
-		App->camera->UpdateCamera();
+		EngineApp->camera->UpdateCamera();
 
 
-	if (App->camera->m_ScrollingSpeedChange)
+	if (EngineApp->camera->m_ScrollingSpeedChange)
 	{
 		CurrentSpeedScrollLabel = 0.75;
-		App->camera->m_ScrollingSpeedChange = false;
+		EngineApp->camera->m_ScrollingSpeedChange = false;
 	}
 
 	if (CurrentSpeedScrollLabel > 0)
 	{
 		bool open = true;
-	//	ImVec2 CursorPos(App->input->GetMouseX() + (SizeGame.x / 2), App->window->cursorPositionY + (SizeGame.y / 2));
+	//	ImVec2 CursorPos(EngineApp->input->GetMouseX() + (SizeGame.x / 2), EngineApp->window->cursorPositionY + (SizeGame.y / 2));
 		
 		ImGui::SetNextWindowBgAlpha(CurrentSpeedScrollLabel);
 		//ImGui::SetNextWindowPos(CursorPos);
@@ -127,7 +125,7 @@ bool PanelScene::Draw()
 		if (ImGui::Begin("Example: Simple overlay", &open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 		{
 			ImGui::SetWindowFontScale(3);
-			ImGui::Text(" x%.2f", App->camera->m_SpeedMultiplicator);
+			ImGui::Text(" x%.2f", EngineApp->camera->m_SpeedMultiplicator);
 		}
 		
 		ImGui::End();
@@ -141,17 +139,17 @@ bool PanelScene::Draw()
 void PanelScene::HandleGuizmo()
 {
 	// --- Set Current Guizmo operation ---
-	if (ImGui::IsWindowHovered() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == BrokenEngine::KEY_IDLE)
+	if (ImGui::IsWindowHovered() && EngineApp->input->GetMouseButton(SDL_BUTTON_RIGHT) == BrokenEngine::KEY_IDLE)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_W) == BrokenEngine::KEY_DOWN)
+		if (EngineApp->input->GetKey(SDL_SCANCODE_W) == BrokenEngine::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-		if (App->input->GetKey(SDL_SCANCODE_E) == BrokenEngine::KEY_DOWN)
+		if (EngineApp->input->GetKey(SDL_SCANCODE_E) == BrokenEngine::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R) == BrokenEngine::KEY_DOWN)
+		if (EngineApp->input->GetKey(SDL_SCANCODE_R) == BrokenEngine::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
-	BrokenEngine::GameObject* selectedGO = App->scene_manager->GetSelectedGameObject();
+	BrokenEngine::GameObject* selectedGO = EngineApp->scene_manager->GetSelectedGameObject();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();
@@ -163,7 +161,7 @@ void PanelScene::HandleGuizmo()
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
-	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
+	ImGuizmo::Manipulate(EngineApp->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), EngineApp->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
 
 	// --- Update Selected go transform ---
 	if (ImGuizmo::IsUsing())

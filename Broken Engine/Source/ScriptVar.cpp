@@ -16,8 +16,8 @@ namespace BrokenEngine {
 	ScriptVar::ScriptVar(const char* value) {
 		type = VarType::STRING;
 
-		strcpy(script_defined_value.as_string, value);
-		strcpy(editor_value.as_string, value);
+		strcpy_s(script_defined_value.as_string, value);
+		strcpy_s(editor_value.as_string, value);
 	}
 
 	ScriptVar::ScriptVar(double value) {

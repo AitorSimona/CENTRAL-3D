@@ -9,262 +9,262 @@
 #define KBTOMB 1024.0f //To GB: (1048576.0f)
 #define BTOMB (1048576.0f)
 
-namespace BrokenEngine {
-	//-------------------------- SOFTWARE INFO --------------------------//
-	class SoftwareInfo {
-	private:
+BE_BEGIN_NAMESPACE
+//-------------------------- SOFTWARE INFO --------------------------//
+class SoftwareInfo {
+private:
 
-		//Don't use this, they are just class variables, use the getters instead
-		mutable std::string mSoftware_CppVersion;
-		mutable std::string mSoftware_LANGCppVersion;
-		mutable std::string mSoftware_WindowsVersion;
-		mutable std::string mSoftware_SDLVersion;
+	//Don't use this, they are just class variables, use the getters instead
+	mutable std::string mSoftware_CppVersion;
+	mutable std::string mSoftware_LANGCppVersion;
+	mutable std::string mSoftware_WindowsVersion;
+	mutable std::string mSoftware_SDLVersion;
 
-	private:
+private:
 
-		//Methods to check the versions for different software -- DON'T USE THEM!
-		const std::string ExtractCppVersion(long int cppValue);
-		const std::string ExtractWindowsVersion();
-		const std::string ExtractSDLVersion();
+	//Methods to check the versions for different software -- DON'T USE THEM!
+	const std::string ExtractCppVersion(long int cppValue);
+	const std::string ExtractWindowsVersion();
+	const std::string ExtractSDLVersion();
 
-	public:
+public:
 
-		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
-		//Methods to return the different values for software versions... Ready to print -- Use them :)
-		const std::string GetWindowsVersion()	const { return mSoftware_WindowsVersion; }
-		const std::string OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
+	//Methods to return the different values for software versions... Ready to print -- Use them :)
+	const std::string GetWindowsVersion()	const { return mSoftware_WindowsVersion; }
+	const std::string OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
 
-		const std::string GetSDLVersion()		const { return mSoftware_SDLVersion; }
-		const auto GetOGLVersion()				const { return glGetString(GL_VERSION); }
-		const auto GetOGLShadingVersion()		const { return glGetString(GL_SHADING_LANGUAGE_VERSION); }
+	const std::string GetSDLVersion()		const { return mSoftware_SDLVersion; }
+	const auto GetOGLVersion()				const { return glGetString(GL_VERSION); }
+	const auto GetOGLShadingVersion()		const { return glGetString(GL_SHADING_LANGUAGE_VERSION); }
 
-		///__cplusplus returning values:
-		///199711L (C++98 or C++03)
-		///201103L (C++11)
-		///201402L (C++14)
-		///201703L (C++17)
-		const std::string GetCppVersionImplementedByCompiler()	const { return mSoftware_CppVersion; }
-		const std::string GetCPPNumericalVersion()				const { return std::to_string(__cplusplus); }
-		const std::string GetCppCompilerVersion()				const;
+	///__cplusplus returning values:
+	///199711L (C++98 or C++03)
+	///201103L (C++11)
+	///201402L (C++14)
+	///201703L (C++17)
+	const std::string GetCppVersionImplementedByCompiler()	const { return mSoftware_CppVersion; }
+	const std::string GetCPPNumericalVersion()				const { return std::to_string(__cplusplus); }
+	const std::string GetCppCompilerVersion()				const;
 
 
-		const std::string GetVSCompilerVersion()				const { return (std::to_string(_MSC_VER)); }
-		const std::string MultithreadedSpecified()				const { return ("Multithreaded Specified: " + std::string(_MT ? "YES" : "NO")); }
+	const std::string GetVSCompilerVersion()				const { return (std::to_string(_MSC_VER)); }
+	const std::string MultithreadedSpecified()				const { return ("Multithreaded Specified: " + std::string(_MT ? "YES" : "NO")); }
 
-		const std::string GetCompilationDate()					const { return __DATE__; }
-		const std::string GetCompilationTime()					const { return __TIME__; }
+	const std::string GetCompilationDate()					const { return __DATE__; }
+	const std::string GetCompilationTime()					const { return __TIME__; }
+};
+
+
+//--------------------------- MEMORY INFO ---------------------------//
+class MemoryHardware {
+private:
+
+	mutable MEMORYSTATUSEX m_MemoryInfo;
+
+	mutable PROCESS_MEMORY_COUNTERS m_ProcessMemCounters;
+	mutable SIZE_T mProcess_vMemUsed;
+	mutable SIZE_T mProcess_physMemUsed;
+
+	void ExtractMemoryInfo() const;
+
+public:
+
+	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+	void RecalculateRAMParameters();
+	//void RecalculateRAMParameters()										{ ExtractMemoryInfo(); m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics(); }
+
+	const float GetRAMSizeFromSDL()								const { return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB
+
+	//Getting Stats of Memory from MEMORYSTATUSEX
+	const uint32 GetRAMSize()									const { return (uint32)(m_MemoryInfo.dwLength); } //In GB
+	const uint32 GetPercentageOfMemoryLoad()					const { return (uint32)(m_MemoryInfo.dwMemoryLoad); } //In %
+
+	const uint64 GetPhysicalMemory()							const { return (uint64)(m_MemoryInfo.ullTotalPhys / BTOGB); } //In GB
+	const uint64 GetFreePhysicalMemory()						const { return (uint64)(m_MemoryInfo.ullAvailPhys / BTOGB); } //In GB
+	const uint64 GetUsedPhysicalMemory()						const { return (uint64)((m_MemoryInfo.ullTotalPhys - m_MemoryInfo.ullAvailPhys) / BTOGB); } //In GB
+
+	const uint64 GetVirtualMemory()								const { return (uint64)(m_MemoryInfo.ullTotalVirtual / BTOGB); } //In GB
+	const uint64 GetFreeVirtualMemory()							const { return (uint64)(m_MemoryInfo.ullAvailVirtual / BTOGB); } //In GB
+
+	const uint64 GetFreeExtendedMemory()						const { return (uint64)(m_MemoryInfo.ullAvailExtendedVirtual / BTOMB); } //In MB
+
+	const uint64 GetPageFileMemory()							const { return (uint64)(m_MemoryInfo.ullTotalPageFile / BTOGB); } //In GB
+	const uint64 GetFreePageFileMemory()						const { return (uint64)(m_MemoryInfo.ullAvailPageFile / BTOGB); } //In GB
+
+	const uint GetVirtualMemoryUsedByProcess()					const { return(uint)(mProcess_vMemUsed / BTOMB); } //In GB
+	const uint GetPhysMemoryUsedByProcess()						const { return(uint)(mProcess_physMemUsed / BTOMB); } //In GB
+
+	//Getting Stats of Memory from MMRG
+	const uint GetMemStatsFromMMGR_TotalReportedMemory()		const;
+	const uint GetMemStatsFromMMGR_TotalActualMemory()			const;
+	const uint GetMemStatsFromMMGR_PeakReportedMemory()			const;
+	const uint GetMemStatsFromMMGR_PeakActualMemory()			const;
+
+	const uint GetMemStatsFromMMGR_AccumulatedReportedMemory()	const;
+	const uint GetMemStatsFromMMGR_AccumulatedActualMemory()	const;
+
+	const uint GetMemStatsFromMMGR_AccumulatedAllocUnitCount()	const;
+	const uint GetMemStatsFromMMGR_TotalAllocUnitCount()		const;
+	const uint GetMemStatsFromMMGR_PeakAllocUnitCount()			const;
+
+};
+
+
+//---------------------------- CPU INFO -----------------------------//
+class ProcessorHardware {
+private:
+
+	SYSTEM_INFO m_CpuSysInfo;
+	std::string m_CPUBrand;
+	std::string m_CPUVendor;
+
+	std::string m_CpuArchitecture;
+
+	struct InstructionsSet {
+		bool Available_3DNow = false;
+		bool RDTSC_Available = false;
+		bool AltiVec_Available = false;
+		bool AVX_Available = false;
+		bool AVX2_Available = false;
+		bool MMX_Available = false;
+		bool SSE_Available = false;
+		bool SSE2_Available = false;
+		bool SSE3_Available = false;
+		bool SSE41_Available = false;
+		bool SSE42_Available = false;
 	};
 
+	InstructionsSet m_CPUInstructionSet;
 
-	//--------------------------- MEMORY INFO ---------------------------//
-	class MemoryHardware {
-	private:
+private:
 
-		mutable MEMORYSTATUSEX m_MemoryInfo;
+	void GetCPUSystemInfo();
+	const std::string ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo);
+	void CheckForCPUInstructionsSet();
 
-		mutable PROCESS_MEMORY_COUNTERS m_ProcessMemCounters;
-		mutable SIZE_T mProcess_vMemUsed;
-		mutable SIZE_T mProcess_physMemUsed;
+public:
 
-		void ExtractMemoryInfo() const;
+	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
-	public:
+	const uint GetCPUCores()						const { return SDL_GetCPUCount(); }
+	const uint GetCPUCacheLine1Size()				const { return SDL_GetCPUCacheLineSize(); } //In bytes
 
-		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
-		void RecalculateRAMParameters();
-		//void RecalculateRAMParameters()										{ ExtractMemoryInfo(); m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics(); }
+	const std::string GetCPUArchitecture()			const { return m_CpuArchitecture; }
+	const std::string GetNumberOfProcessors()		const { return std::to_string(m_CpuSysInfo.dwNumberOfProcessors); }
+	const std::string GetProcessorRevision()		const { return std::to_string(m_CpuSysInfo.wProcessorRevision); }
 
-		const float GetRAMSizeFromSDL()								const { return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB
+	const InstructionsSet GetCPUInstructionsSet()	const { return m_CPUInstructionSet; }
+	const std::string GetCPUInstructionSet()		const;
 
-		//Getting Stats of Memory from MEMORYSTATUSEX
-		const uint32 GetRAMSize()									const { return (uint32)(m_MemoryInfo.dwLength); } //In GB
-		const uint32 GetPercentageOfMemoryLoad()					const { return (uint32)(m_MemoryInfo.dwMemoryLoad); } //In %
+	const std::string GetCPUBrand()					const { return m_CPUBrand; }
+	const std::string GetCPUVendor()				const { return m_CPUVendor; }
+};
 
-		const uint64 GetPhysicalMemory()							const { return (uint64)(m_MemoryInfo.ullTotalPhys / BTOGB); } //In GB
-		const uint64 GetFreePhysicalMemory()						const { return (uint64)(m_MemoryInfo.ullAvailPhys / BTOGB); } //In GB
-		const uint64 GetUsedPhysicalMemory()						const { return (uint64)((m_MemoryInfo.ullTotalPhys - m_MemoryInfo.ullAvailPhys) / BTOGB); } //In GB
 
-		const uint64 GetVirtualMemory()								const { return (uint64)(m_MemoryInfo.ullTotalVirtual / BTOGB); } //In GB
-		const uint64 GetFreeVirtualMemory()							const { return (uint64)(m_MemoryInfo.ullAvailVirtual / BTOGB); } //In GB
+//---------------------------- GPU INFO -----------------------------//
+class GPUHardware {
+private:
 
-		const uint64 GetFreeExtendedMemory()						const { return (uint64)(m_MemoryInfo.ullAvailExtendedVirtual / BTOMB); } //In MB
+	struct GPUPrimaryInfo_IntelGPUDetect {
+		std::string m_GPUBrand;
+		uint m_GPUID = 0;
+		uint m_GPUVendor = 0;
 
-		const uint64 GetPageFileMemory()							const { return (uint64)(m_MemoryInfo.ullTotalPageFile / BTOGB); } //In GB
-		const uint64 GetFreePageFileMemory()						const { return (uint64)(m_MemoryInfo.ullAvailPageFile / BTOGB); } //In GB
+		//'PI' is for "Primary Info", 'GPUDet' is for "GPUDetect", the code we use to get this info
+		//Info in Bytes
+		uint64 mPI_GPUDet_TotalVRAM_Bytes = 0;
+		uint64 mPI_GPUDet_VRAMUsage_Bytes = 0;
+		uint64 mPI_GPUDet_CurrentVRAM_Bytes = 0;
+		uint64 mPI_GPUDet_VRAMReserved_Bytes = 0;
 
-		const uint GetVirtualMemoryUsedByProcess()					const { return(uint)(mProcess_vMemUsed / BTOMB); } //In GB
-		const uint GetPhysMemoryUsedByProcess()						const { return(uint)(mProcess_physMemUsed / BTOMB); } //In GB
-
-		//Getting Stats of Memory from MMRG
-		const uint GetMemStatsFromMMGR_TotalReportedMemory()		const;
-		const uint GetMemStatsFromMMGR_TotalActualMemory()			const;
-		const uint GetMemStatsFromMMGR_PeakReportedMemory()			const;
-		const uint GetMemStatsFromMMGR_PeakActualMemory()			const;
-
-		const uint GetMemStatsFromMMGR_AccumulatedReportedMemory()	const;
-		const uint GetMemStatsFromMMGR_AccumulatedActualMemory()	const;
-
-		const uint GetMemStatsFromMMGR_AccumulatedAllocUnitCount()	const;
-		const uint GetMemStatsFromMMGR_TotalAllocUnitCount()		const;
-		const uint GetMemStatsFromMMGR_PeakAllocUnitCount()			const;
+		//Info in MB (Just change the division of BTOMB in the GPUDetect_ExtractGPUInfo() function
+		//by the BTOGB one to get the GB). And change this variables name!! (_MB change it by _GB!!!)
+		float mPI_GPUDet_TotalVRAM_MB = 0.0f;
+		float mPI_GPUDet_VRAMUsage_MB = 0.0f;
+		float mPI_GPUDet_CurrentVRAM_MB = 0.0f;
+		float mPI_GPUDet_VRAMReserved_MB = 0.0f;
 
 	};
 
+	mutable GPUPrimaryInfo_IntelGPUDetect m_PI_GPUDet_GPUInfo; //This is the Info for the current GPU in use
 
-	//---------------------------- CPU INFO -----------------------------//
-	class ProcessorHardware {
-	private:
+	//For OPENGL GPU "Getter"
+	GLint m_GPUTotalVRAM = 0;
+	GLint m_GPUCurrentVRAM = 0;
 
-		SYSTEM_INFO m_CpuSysInfo;
-		std::string m_CPUBrand;
-		std::string m_CPUVendor;
+private:
 
-		std::string m_CpuArchitecture;
+	void GPUDetect_ExtractGPUInfo() const;
 
-		struct InstructionsSet {
-			bool Available_3DNow = false;
-			bool RDTSC_Available = false;
-			bool AltiVec_Available = false;
-			bool AVX_Available = false;
-			bool AVX2_Available = false;
-			bool MMX_Available = false;
-			bool SSE_Available = false;
-			bool SSE2_Available = false;
-			bool SSE3_Available = false;
-			bool SSE41_Available = false;
-			bool SSE42_Available = false;
-		};
+public:
 
-		InstructionsSet m_CPUInstructionSet;
+	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+	void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
 
-	private:
+	const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
+	const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
 
-		void GetCPUSystemInfo();
-		const std::string ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo);
-		void CheckForCPUInstructionsSet();
+	const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
+	const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 
-	public:
-
-		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
-
-		const uint GetCPUCores()						const { return SDL_GetCPUCount(); }
-		const uint GetCPUCacheLine1Size()				const { return SDL_GetCPUCacheLineSize(); } //In bytes
-
-		const std::string GetCPUArchitecture()			const { return m_CpuArchitecture; }
-		const std::string GetNumberOfProcessors()		const { return std::to_string(m_CpuSysInfo.dwNumberOfProcessors); }
-		const std::string GetProcessorRevision()		const { return std::to_string(m_CpuSysInfo.wProcessorRevision); }
-
-		const InstructionsSet GetCPUInstructionsSet()	const { return m_CPUInstructionSet; }
-		const std::string GetCPUInstructionSet()		const;
-
-		const std::string GetCPUBrand()					const { return m_CPUBrand; }
-		const std::string GetCPUVendor()				const { return m_CPUVendor; }
-	};
-
-
-	//---------------------------- GPU INFO -----------------------------//
-	class GPUHardware {
-	private:
-
-		struct GPUPrimaryInfo_IntelGPUDetect {
-			std::string m_GPUBrand;
-			uint m_GPUID = 0;
-			uint m_GPUVendor = 0;
-
-			//'PI' is for "Primary Info", 'GPUDet' is for "GPUDetect", the code we use to get this info
-			//Info in Bytes
-			uint64 mPI_GPUDet_TotalVRAM_Bytes = 0;
-			uint64 mPI_GPUDet_VRAMUsage_Bytes = 0;
-			uint64 mPI_GPUDet_CurrentVRAM_Bytes = 0;
-			uint64 mPI_GPUDet_VRAMReserved_Bytes = 0;
-
-			//Info in MB (Just change the division of BTOMB in the GPUDetect_ExtractGPUInfo() function
-			//by the BTOGB one to get the GB). And change this variables name!! (_MB change it by _GB!!!)
-			float mPI_GPUDet_TotalVRAM_MB = 0.0f;
-			float mPI_GPUDet_VRAMUsage_MB = 0.0f;
-			float mPI_GPUDet_CurrentVRAM_MB = 0.0f;
-			float mPI_GPUDet_VRAMReserved_MB = 0.0f;
-
-		};
-
-		mutable GPUPrimaryInfo_IntelGPUDetect m_PI_GPUDet_GPUInfo; //This is the Info for the current GPU in use
-
-		//For OPENGL GPU "Getter"
-		GLint m_GPUTotalVRAM = 0;
-		GLint m_GPUCurrentVRAM = 0;
-
-	private:
-
-		void GPUDetect_ExtractGPUInfo() const;
-
-	public:
-
-		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
-		void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
-
-		const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
-		const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
-
-		const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
-		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
-
-		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
-	};
+	const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
+};
 
 
 
-	//-------------------------------------------------------------------//
-	struct hw_info {
-		SoftwareInfo Software_Information;
-		MemoryHardware Memory_Information;
-		ProcessorHardware CPU_Information;
-		GPUHardware GPU_Information;
+//-------------------------------------------------------------------//
+struct hw_info {
+	SoftwareInfo Software_Information;
+	MemoryHardware Memory_Information;
+	ProcessorHardware CPU_Information;
+	GPUHardware GPU_Information;
 
-		char sdl_version[25] = "";
-		float ram_gb = 0.f;
-		uint cpu_count = 0;
-		uint l1_cachekb = 0;
-		bool rdtsc = false;
-		bool altivec = false;
-		bool now3d = false;
-		bool mmx = false;
-		bool sse = false;
-		bool sse2 = false;
-		bool sse3 = false;
-		bool sse41 = false;
-		bool sse42 = false;
-		bool avx = false;
-		bool avx2 = false;
-		std::string gpu_vendor;
-		std::string gpu_driver;
-		std::string gpu_brand;
-		float vram_mb_budget = 0.f;
-		float vram_mb_usage = 0.f;
-		float vram_mb_available = 0.f;
-		float vram_mb_reserved = 0.f;
-	};
+	char sdl_version[25] = "";
+	float ram_gb = 0.f;
+	uint cpu_count = 0;
+	uint l1_cachekb = 0;
+	bool rdtsc = false;
+	bool altivec = false;
+	bool now3d = false;
+	bool mmx = false;
+	bool sse = false;
+	bool sse2 = false;
+	bool sse3 = false;
+	bool sse41 = false;
+	bool sse42 = false;
+	bool avx = false;
+	bool avx2 = false;
+	std::string gpu_vendor;
+	std::string gpu_driver;
+	std::string gpu_brand;
+	float vram_mb_budget = 0.f;
+	float vram_mb_usage = 0.f;
+	float vram_mb_available = 0.f;
+	float vram_mb_reserved = 0.f;
+};
 
-	class ModuleHardware : public Module {
-	public:
+class ModuleHardware : public Module {
+public:
 
-		ModuleHardware(bool start_enabled = true);
-		~ModuleHardware();
+	ModuleHardware(bool start_enabled = true);
+	~ModuleHardware();
 
-		bool Start();
+	bool Start();
 
-		const hw_info& GetInfo() const;
-		const SoftwareInfo GetSwInfo() const { return info.Software_Information; }
-		const MemoryHardware GetMemInfo() const { return info.Memory_Information; }
-		const ProcessorHardware GetProcessorInfo() const { return info.CPU_Information; }
-		const GPUHardware GetGraphicsCardInfo() const { return info.GPU_Information; }
+	const hw_info& GetInfo() const;
+	const SoftwareInfo GetSwInfo() const { return info.Software_Information; }
+	const MemoryHardware GetMemInfo() const { return info.Memory_Information; }
+	const ProcessorHardware GetProcessorInfo() const { return info.CPU_Information; }
+	const GPUHardware GetGraphicsCardInfo() const { return info.GPU_Information; }
 
-		void RecalculateParameters() { info.Memory_Information.RecalculateRAMParameters(); info.GPU_Information.RecalculateGPUParameters(); }
+	void RecalculateParameters() { info.Memory_Information.RecalculateRAMParameters(); info.GPU_Information.RecalculateGPUParameters(); }
 
-	private:
+private:
 
-		mutable hw_info info;
-	};
+	mutable hw_info info;
+};
 
-}
+BE_END_NAMESPACE
 #endif // __MODULEHARDWARE_H__

@@ -7,7 +7,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
-//#include "ModuleGui.h"
+#include "ModuleGui.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
@@ -34,7 +34,7 @@ namespace BrokenEngine {
 		renderer3D = new ModuleRenderer3D(true);
 		scripting = new ModuleScripting(true);
 		camera = new ModuleCamera3D(true);
-		//gui = new ModuleGui(true);
+		gui = new ModuleGui(true);
 		textures = new ModuleTextures(true);
 		resources = new ModuleResourceManager(true);
 		threading = new ModuleThreading(true);

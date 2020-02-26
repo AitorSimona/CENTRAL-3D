@@ -1,6 +1,5 @@
 #include "PanelAbout.h"
 #include "EngineApplication.h"
-#include "ModuleGui.h"
 #include "Imgui/imgui.h"
 
 PanelAbout::PanelAbout(char * name) : BrokenEngine::Panel(name)
@@ -20,15 +19,15 @@ bool PanelAbout::Draw()
 	{
 		// --- Introduction ---
 		ImGui::Separator();
-		ImGui::Text(App->GetAppName());
+		ImGui::Text(EngineApp->GetAppName());
 		ImGui::SameLine();
 		ImGui::Text("Version 0.0");
 		ImGui::SameLine();
-		if (ImGui::Button("GitHub")) { App->gui->RequestBrowser("https://github.com/Broken-Gem-Studio/Broken-Engine"); }
+		if (ImGui::Button("GitHub")) { EngineApp->gui->RequestBrowser("https://github.com/Broken-Gem-Studio/Broken-Engine"); }
 		ImGui::Text("A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 3 subject");
 		ImGui::Text("By: ");
 		ImGui::SameLine();
-		if (ImGui::Button("Broken Gem Studio")) { App->gui->RequestBrowser("https://github.com/Broken-Gem-Studio"); }
+		if (ImGui::Button("Broken Gem Studio")) { EngineApp->gui->RequestBrowser("https://github.com/Broken-Gem-Studio"); }
 
 		ImGui::Spacing();
 		ImGui::Separator();

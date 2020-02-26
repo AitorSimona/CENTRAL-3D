@@ -1,44 +1,47 @@
 #ifndef __MODULE_GUI_H__
 #define __MODULE_GUI_H__
 
-#include "BrokenEngine.h"
+#include "Module.h"
+#include "Panel.h"
+#include "BrokenCore.h"
 
 #include <vector>
+//
+//class PanelSettings;
+//class PanelAbout;
+//class PanelConsole;
+//class PanelInspector;
+//class PanelHierarchy;
+//class PanelScene;
+//class PanelToolbar;
+//class PanelProject;
+//class PanelShaderEditor;
+//class PanelResources;
 
-class PanelSettings;
-class PanelAbout;
-class PanelConsole;
-class PanelInspector;
-class PanelHierarchy;
-class PanelScene;
-class PanelToolbar;
-class PanelProject;
-class PanelShaderEditor;
-class PanelResources;
+BE_BEGIN_NAMESPACE
 
-class ModuleGui : public BrokenEngine::Module
+class ModuleGui : public Module
 {
 public:
 
 	ModuleGui(bool start_enabled = true);
 	~ModuleGui();
 
-	bool Init(BrokenEngine::json file) override;
+	bool Init(json file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
-	update_status Update(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
 
 	void Draw() const;
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
+	void AddPanel(Panel* npanel);
 
 	void LogFPS(float fps, float ms);
 
-	void SaveStatus(BrokenEngine::json &file) const override;
-
-	void LoadStatus(const BrokenEngine::json & file) override;
+	void SaveStatus(json &file) const override;
+	void LoadStatus(const json & file) override;
 
 	void HandleInput(SDL_Event* event) const;
 
@@ -49,7 +52,7 @@ public:
 
 public:
 
-	PanelSettings*		panelSettings = nullptr;
+	/*PanelSettings*	panelSettings = nullptr;
 	PanelAbout*			panelAbout = nullptr;
 	PanelConsole*		panelConsole = nullptr;
 	PanelInspector*		panelInspector = nullptr;
@@ -58,7 +61,7 @@ public:
 	PanelToolbar*       panelToolbar = nullptr;
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;
-	PanelResources*		panelResources = nullptr;
+	PanelResources*		panelResources = nullptr;*/
 	
 	uint materialTexID = 0;
 	uint folderTexID = 0;
@@ -67,12 +70,11 @@ public:
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
 private:
-	bool show_demo_window = false;
-
 	bool capture_keyboard = false;
 	bool capture_mouse = false;
 
 	std::vector<BrokenEngine::Panel*> panels;
 };
 
+BE_END_NAMESPACE
 #endif

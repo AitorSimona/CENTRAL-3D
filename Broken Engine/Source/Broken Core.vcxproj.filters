@@ -546,6 +546,9 @@
     <ClInclude Include="Components.h">
       <Filter>Sources\BrokenEngine\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleGui.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BrokenCore.cpp">
@@ -865,6 +868,9 @@
     </ClCompile>
     <ClCompile Include="Panel.cpp">
       <Filter>Sources\BrokenEngine\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleGui.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

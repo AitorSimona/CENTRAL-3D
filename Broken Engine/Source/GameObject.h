@@ -5,79 +5,82 @@
 #include "Component.h"
 #include "Math.h"
 #include <vector>
+#include <string>
 #include "Resource.h"
 
-namespace BrokenEngine {
-	class ResourceModel;
+BE_BEGIN_NAMESPACE
 
-	class BROKEN_API GameObject {
+class ResourceModel;
 
-	public:
+class BROKEN_API GameObject {
 
-		GameObject(const char* name);
-		virtual ~GameObject();
-		void Enable();
-		void Disable();
-		void Update(float dt);
+public:
 
-		// --- Getters ---
-		uint& GetUID();
-		std::string		GetName() const;
-		const AABB& GetAABB();
-		const OBB& GetOBB() const;
+	GameObject(const char* name);
+	virtual ~GameObject();
+	void Enable();	
+	void Disable();
+	void Update(float dt);
 
-		bool& GetActive();
-		bool			IsEnabled() const;
+	// --- Getters ---
+	uint& GetUID();
+	std::string	GetName() const;
+	const AABB& GetAABB();
+	const OBB& GetOBB() const;
 
-		// --- Components ---
+	bool& GetActive();
+	bool			IsEnabled() const;
 
-		template<typename TComponent>
-		TComponent* GetComponent() {
+	// --- Components ---
 
-			for (uint i = 0; i < components.size(); ++i) {
-				if (components[i]->GetType() == TComponent::GetType()) {
-					return ((TComponent*)(components[i]));
-				}
+	template<typename TComponent>
+	TComponent* GetComponent() {
+
+		for (uint i = 0; i < components.size(); ++i) {
+			if (components[i]->GetType() == TComponent::GetType()) {
+				return ((TComponent*)(components[i]));
 			}
-
-			return nullptr;
 		}
 
-		Component* AddComponent(Component::ComponentType type);
-		void			RemoveComponent(Component::ComponentType type);
-		Component* HasComponent(Component::ComponentType type) const;
-		std::vector<Component*>& GetComponents();
+		return nullptr;
+	}
 
-		// --- Setters ---
-		void			SetName(const char* name);
+	Component* AddComponent(Component::ComponentType type);
+	void			RemoveComponent(Component::ComponentType type);
+	Component* HasComponent(Component::ComponentType type) const;
+	std::vector<Component*>& GetComponents();
 
-		// --- Utilities ---
-		void RecursiveDelete(bool target = true);
-		void OnUpdateTransform();
-		void RemoveChildGO(GameObject* GO);
-		void AddChildGO(GameObject* GO);
-		bool FindChildGO(GameObject* GO);
+	// --- Setters ---
+	void			SetName(const char* name);
 
-		void UpdateAABB();
+	// --- Utilities ---
+	void RecursiveDelete(bool target = true);
+	void OnUpdateTransform();
+	void RemoveChildGO(GameObject* GO);
+	void AddChildGO(GameObject* GO);
+	bool FindChildGO(GameObject* GO);
 
-		void ONResourceEvent(uint uid, Resource::ResourceNotificationType type);
+	void UpdateAABB();
 
-	public:
-		GameObject* parent = nullptr;
-		std::vector<GameObject*> childs;
-		bool Static = false;
-		ResourceModel* model = nullptr;
+	void ONResourceEvent(uint uid, Resource::ResourceNotificationType type);
 
-	private:
-		// Unique Identifier
-		uint UID = 0;
-		std::string name;
-		std::vector<Component*> components;
+public:
+	GameObject* parent = nullptr;
+	std::vector<GameObject*> childs;
+	bool Static = false;
+	ResourceModel* model = nullptr;
 
-		bool active = false;
-		AABB						aabb;
-		OBB							obb;
-	};
-}
+private:
+	// Unique Identifier
+	uint UID = 0;
+	std::string name;
+	std::vector<Component*> components;
+
+	bool active = false;
+	AABB						aabb;
+	OBB							obb;
+};
+
+BE_END_NAMESPACE
 
 #endif

@@ -41,9 +41,9 @@ bool PanelConsole::Draw()
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 1)); // Tighten spacing
 
-			for (uint i = 0; i < App->GetLogs().size(); ++i)
+			for (uint i = 0; i < EngineApp->GetLogs().size(); ++i)
 			{
-				const char* item = App->GetLogs().at(i).data();
+				const char* item = EngineApp->GetLogs().at(i).data();
 
 				// --- Display error messages in red color ---
 				if(item[1] == *error_key)
@@ -83,5 +83,5 @@ bool PanelConsole::Draw()
 
 void PanelConsole::Clear()
 {
-	App->ClearLogsFromConsole();
+	EngineApp->ClearLogsFromConsole();
 }

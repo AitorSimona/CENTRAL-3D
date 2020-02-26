@@ -3,7 +3,7 @@
 
 #include "BrokenEngine.h"
 
-class ModuleGui;
+class ModuleEditorUI;
 
 class EngineApplication : public BrokenEngine::Application {
 
@@ -11,10 +11,13 @@ public:
 
 	EngineApplication();
 	~EngineApplication();
+
+public:
+	ModuleEditorUI* editorui;
 	
 };
 
-extern EngineApplication* App;
+EngineApplication* EngineApp;
 BrokenEngine::Application* CreateApplication();
 
 #endif

@@ -10,8 +10,9 @@
 #include <condition_variable>
 #include <atomic>
 
+#define ADDTASK(object, function, ...) ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
+
 namespace BrokenEngine {
-	#define ADDTASK(object, function, ...) ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
 
 	class ModuleThreading : public Module {
 	public:

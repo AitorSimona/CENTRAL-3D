@@ -1,25 +1,26 @@
 #include "PanelProject.h"
 #include "EngineApplication.h"
-#include "ModuleFileSystem.h"
-#include "ModuleResourceManager.h"
-#include "ModuleEventManager.h"
-#include "ModuleGui.h"
+#include "ModuleEditorUI.h"
+//#include "ModuleFileSystem.h"
+//#include "ModuleResourceManager.h"
+//#include "ModuleEventManager.h"
+//#include "ModuleGui.h"
 
-#include "ResourceFolder.h"
-#include "ResourceModel.h"
+//#include "ResourceFolder.h"
+//#include "ResourceModel.h"
 
 #include "mmgr/mmgr.h"
 
 // --- Event Manager Callbacks ---
 void PanelProject::ONGameObjectSelected(const BrokenEngine::Event& e)
 {
-	App->gui->panelProject->SetSelected(nullptr);
+	EngineApp->editorui->panelProject->SetSelected(nullptr);
 }
 
 void PanelProject::ONResourceDestroyed(const BrokenEngine::Event& e)
 {
-	if (e.uid == App->gui->panelProject->selected_uid)
-		App->gui->panelProject->SetSelected(nullptr);
+	if (e.uid == EngineApp->editorui->panelProject->selected_uid)
+		EngineApp->editorui->panelProject->SetSelected(nullptr);
 }
 
 // -------------------------------
@@ -27,15 +28,15 @@ void PanelProject::ONResourceDestroyed(const BrokenEngine::Event& e)
 PanelProject::PanelProject(char * name) : BrokenEngine::Panel(name)
 {
 	// --- Add Event Listeners ---
-	App->event_manager->AddListener(BrokenEngine::Event::EventType::GameObject_selected, ONGameObjectSelected);
-	App->event_manager->AddListener(BrokenEngine::Event::EventType::Resource_destroyed, ONResourceDestroyed);
+	EngineApp->event_manager->AddListener(BrokenEngine::Event::EventType::GameObject_selected, ONGameObjectSelected);
+	EngineApp->event_manager->AddListener(BrokenEngine::Event::EventType::Resource_destroyed, ONResourceDestroyed);
 
 }
 
 PanelProject::~PanelProject()
 {
-	App->event_manager->RemoveListener(BrokenEngine::Event::EventType::GameObject_selected, ONGameObjectSelected);
-	App->event_manager->RemoveListener(BrokenEngine::Event::EventType::Resource_destroyed, ONResourceDestroyed);
+	EngineApp->event_manager->RemoveListener(BrokenEngine::Event::EventType::GameObject_selected, ONGameObjectSelected);
+	EngineApp->event_manager->RemoveListener(BrokenEngine::Event::EventType::Resource_destroyed, ONResourceDestroyed);
 }
 
 
@@ -71,7 +72,7 @@ bool PanelProject::Draw()
 		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y), true, projectFlags);
 
 		if(currentDirectory == nullptr)
-			currentDirectory = App->resources->GetAssetsFolder();
+			currentDirectory = EngineApp->resources->GetAssetsFolder();
 
 		DrawFolder(currentDirectory);
 
@@ -120,7 +121,7 @@ void PanelProject::SetSelected(BrokenEngine::Resource* new_selected)
 		selected_uid = new_selected->GetUID();
 		BrokenEngine::Event e(BrokenEngine::Event::EventType::Resource_selected);
 		e.resource = selected;
-		App->event_manager->PushEvent(e);
+		EngineApp->event_manager->PushEvent(e);
 	}
 	else
 		selected_uid = 0;
@@ -139,13 +140,13 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 
 	BrokenEngine::ResourceFolder* curr = folder;
 
-	if (currentDirectory == App->resources->GetAssetsFolder())
-		ImGui::TextColored(ImVec4(0, 120, 255, 255), App->resources->GetAssetsFolder()->GetName());
+	if (currentDirectory == EngineApp->resources->GetAssetsFolder())
+		ImGui::TextColored(ImVec4(0, 120, 255, 255), EngineApp->resources->GetAssetsFolder()->GetName());
 	else
-	ImGui::Text(App->resources->GetAssetsFolder()->GetName());
+	ImGui::Text(EngineApp->resources->GetAssetsFolder()->GetName());
 
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-		currentDirectory = App->resources->GetAssetsFolder();
+		currentDirectory = EngineApp->resources->GetAssetsFolder();
 
 	std::vector<BrokenEngine::ResourceFolder*> folders_path;
 
@@ -283,7 +284,7 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 					uvy = { 0,1 };
 				}
 
-				if (ImGui::ImageButton((ImTextureID)App->gui->playbuttonTexID, ImVec2(arrowSize, arrowSize), uvx, uvy, 0))
+				if (ImGui::ImageButton((ImTextureID)EngineApp->gui->playbuttonTexID, ImVec2(arrowSize, arrowSize), uvx, uvy, 0))
 					model->openInProject = !model->openInProject;
 
 				if (model->openInProject)
@@ -401,7 +402,7 @@ void PanelProject::RecursiveDirectoryDraw(const char * directory, std::vector<st
 	std::string dir((directory) ? directory : "");
 	dir += "/";
 
-	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+	EngineApp->fs->DiscoverFiles(dir.c_str(), files, dirs);
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{

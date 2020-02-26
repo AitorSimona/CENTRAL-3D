@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include "Application.h"
-//#include "Globals.h"
+#include "BrokenCore.h"
 
 #include "mmgr/mmgr.h"
 
@@ -33,7 +33,7 @@ enum main_states {
 };
 
 extern BrokenEngine::Application* BrokenEngine::CreateApplication();
-BrokenEngine::Application* App;
+BrokenEngine::Application* App = nullptr;
 
 int main(int argc, char** argv) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
