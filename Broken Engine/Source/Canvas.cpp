@@ -21,6 +21,8 @@ Canvas::Canvas(GameObject* gameObject) : Component(gameObject, Component::Compon
 	draggable = false;
 
 	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+
+	App->ui_system->AddCanvas(this);
 }
 
 Canvas::~Canvas()
@@ -34,43 +36,56 @@ void Canvas::Draw() const
 	// Draw elements inside canvas
 	for (int i = 0; i < elements.size(); i++)
 	{
-		switch (elements[i]->GetType())
+		if (elements[i]->GetType() == Component::ComponentType::Canvas)
 		{
-		case Component::ComponentType::Canvas:
 			Canvas* canvas = (Canvas*)elements[i];
-			if (canvas->visible) canvas->Draw();
+			if (canvas->visible)
+				canvas->Draw();
 			continue;
-
-		//case Component::ComponentType::Text:
-		//	Text* elem = (Text*)elements[i];
-		//	if (elem->visible) elem->Draw();
-		//	continue;
-
-		//case Component::ComponentType::Image:
-		//	Image* elem = (Image*)elements[i];
-		//	if (elem->visible) elem->Draw();
-		//	continue;
-
-		//case Component::ComponentType::Button:
-		//	Button* elem = (Button*)elements[i];
-		//	if (elem->visible) elem->Draw();
-		//	continue;
-
-		//case Component::ComponentType::CheckBox:
-		//	CheckBox* elem = (CheckBox*)elements[i];
-		//	if (elem->visible) elem->Draw();
-		//	continue;
-
-		//case Component::ComponentType::InputText:
-		//	InputText* elem = (InputText*)elements[i];
-		//	if (elem->visible) elem->Draw();
-		//	continue;
-
-		//case Component::ComponentType::ProgressBar:
-		//	ProgressBar* elem = (ProgressBar*)elements[i];
-		//	if (elem->visible) elem->Draw();
-		//	continue;
 		}
+		else if (elements[i]->GetType() == Component::ComponentType::Text)
+		{
+			Text* text = (Text*)elements[i];
+			if (text->visible)
+				text->Draw();
+			continue;
+		}
+		else if (elements[i]->GetType() == Component::ComponentType::Image)
+		{
+			Image* image = (Image*)elements[i];
+			if (image->visible)
+				image->Draw();
+			continue;
+		}
+		//else if (elements[i]->GetType() == Component::ComponentType::Button)
+		//{
+		//	Button* elem = (Button*)elements[i];
+		//	if (elem->visible) 
+		//		elem->Draw();
+		//}
+		//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
+		//{
+		//	CheckBox* elem = (CheckBox*)elements[i];
+		//	if (elem->visible) 
+		//		elem->Draw();
+		//	continue;
+		//}
+		//else if (elements[i]->GetType() == Component::ComponentType::InputText)
+		//{
+		//	InputText* elem = (InputText*)elements[i];
+		//	if (elem->visible) 
+		//		elem->Draw();
+		//	continue;
+		//}
+		//else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
+		//{
+		//	ProgressBar* elem = (ProgressBar*)elements[i];
+		//	if (elem->visible) 
+		//		elem->Draw();
+		//	continue;
+		//}
+		else
+			continue;
 	}
 }
 
