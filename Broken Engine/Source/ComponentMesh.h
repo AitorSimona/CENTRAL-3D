@@ -5,6 +5,7 @@
 #include "Math.h"
 #include "ResourceMesh.h"
 
+class ComponentBone;
 
 class ComponentMesh : public Component
 {
@@ -21,8 +22,17 @@ public:
 	void CreateInspectorNode() override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
+
 public:
 	ResourceMesh* resource_mesh = nullptr;
+	ResourceMesh* resource_def_mesh = nullptr;
+
+private:
+	void AddBone(ComponentBone* bone);
+	void UpdateDefMesh();
+
+private:
+	std::vector<ComponentBone*> bones;
 };
 
 #endif
