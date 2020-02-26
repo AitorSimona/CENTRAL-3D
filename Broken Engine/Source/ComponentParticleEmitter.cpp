@@ -13,17 +13,8 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
-#ifndef _DEBUG
-#pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CHECKED_x86.lib")
-#pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CommonCHECKED_x86.lib")
-#pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3ExtensionsCHECKED.lib")
-#pragma comment(lib, "PhysX_3.4/lib/Checked/PxFoundationCHECKED_x86.lib")
-#else
-#pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3CommonDEBUG_x86.lib")
-#pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3DEBUG_x86.lib")
-#pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3ExtensionsDEBUG.lib")
-#pragma comment(lib, "PhysX_3.4/lib/Debug/PxFoundationDEBUG_x86.lib")
-#endif // _DEBUG
+#include "mmgr/mmgr.h"
+
 
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
@@ -41,7 +32,9 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
-{}
+{
+	// MYTODO: Tell module particles to erase its pointer!!!
+}
 
 void ComponentParticleEmitter::Enable()
 {
