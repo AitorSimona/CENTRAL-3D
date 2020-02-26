@@ -34,6 +34,8 @@ private:
 	
 	PxParticleSystem* particleSystem=nullptr;
 
+	std::vector<Particle*> particles;
+
 	unsigned int maxParticles = 200;
 	bool perParticleRestOffset = false;
 

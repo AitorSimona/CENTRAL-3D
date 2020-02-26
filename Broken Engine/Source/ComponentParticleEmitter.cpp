@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ModuleParticles.h"
+#include "Particle.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -35,6 +36,8 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 	Enable();
 	
 	App->particles->AddEmitter(this);
+	
+	particles.reserve(maxParticles);
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
