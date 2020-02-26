@@ -1,14 +1,15 @@
 #ifndef MODULETHREADING_H
 #define MODULETHREADING_H
-
-#include "Module.h"
+#include <thread>
 #include <mutex>
 #include <queue>
 #include <functional>
 #include <vector>
-#include <thread>
 #include <condition_variable>
 #include <atomic>
+
+#include "Module.h"
+
 
 #define ADDTASK(object, function, ...) ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
 

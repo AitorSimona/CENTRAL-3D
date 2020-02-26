@@ -3,7 +3,9 @@
 
 #include "Module.h"
 #include <string>
-#include "psapi.h"
+//#include "psapi.h"
+
+struct PROCESS_MEMORY_COUNTERS;
 
 #define BTOGB (1073741824.0f)
 #define KBTOMB 1024.0f //To GB: (1048576.0f)
@@ -63,7 +65,7 @@ private:
 
 	mutable MEMORYSTATUSEX m_MemoryInfo;
 
-	mutable PROCESS_MEMORY_COUNTERS m_ProcessMemCounters;
+	mutable PROCESS_MEMORY_COUNTERS* m_ProcessMemCounters;
 	mutable SIZE_T mProcess_vMemUsed;
 	mutable SIZE_T mProcess_physMemUsed;
 

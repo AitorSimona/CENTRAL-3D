@@ -7,8 +7,6 @@
 #include "ComponentScript.h"
 #include "ModuleSceneManager.h"
 
-#include "Math.h"
-
 #include "ResourceModel.h"
 
 #include "mmgr/mmgr.h"

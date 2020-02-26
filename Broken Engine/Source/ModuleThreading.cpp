@@ -1,4 +1,5 @@
 #include "ModuleThreading.h"
+#include "mmgr/nommgr.h"
 
 namespace BrokenEngine {
 	ModuleThreading::ModuleThreading(bool start_enabled) : Module(start_enabled) {

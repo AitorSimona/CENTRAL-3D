@@ -5,6 +5,7 @@
 
 #include "SDL/include/SDL.h"
 #include "OpenGL.h"
+#include "psapi.h"
 
 #include "mmgr/mmgr.h"
 
@@ -192,9 +193,9 @@ void MemoryHardware::ExtractMemoryInfo() const {
 	m_MemoryInfo = tmpMemoryInfo;
 	m_MemoryInfo.dwLength = sizeof(MEMORYSTATUSEX);
 
-	GetProcessMemoryInfo(GetCurrentProcess(), &m_ProcessMemCounters, sizeof(m_ProcessMemCounters));
-	mProcess_vMemUsed = m_ProcessMemCounters.PagefileUsage;
-	mProcess_physMemUsed = m_ProcessMemCounters.WorkingSetSize;
+	GetProcessMemoryInfo(GetCurrentProcess(), m_ProcessMemCounters, sizeof(m_ProcessMemCounters));
+	mProcess_vMemUsed = m_ProcessMemCounters->PagefileUsage;
+	mProcess_physMemUsed = m_ProcessMemCounters->WorkingSetSize;
 }
 
 

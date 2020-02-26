@@ -872,6 +872,9 @@
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="EntryPoint.cpp">
+      <Filter>Sources\BrokenEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">

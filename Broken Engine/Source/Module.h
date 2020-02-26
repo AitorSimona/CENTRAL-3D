@@ -1,8 +1,8 @@
 #ifndef __BE_MODULE_H__
 #define __BE_MODULE_H__
 
-#include "BrokenCore.h"
 #include <string>
+#include "BrokenCore.h"
 #include "JSONLoader.h"
 
 BE_BEGIN_NAMESPACE

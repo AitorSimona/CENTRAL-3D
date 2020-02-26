@@ -294,6 +294,7 @@
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentScript.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
+    <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />
