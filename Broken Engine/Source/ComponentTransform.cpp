@@ -127,12 +127,14 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::Text("Position  ");
 	ImGui::SameLine();
 
+	float dragSpeed = 0.25f;
+
 	float3 position = GetPosition();
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PX", &position.x, 0.005f);
+	ImGui::DragFloat("##PX", &position.x, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -140,7 +142,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PY", &position.y, 0.005f);
+	ImGui::DragFloat("##PY", &position.y, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -148,7 +150,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PZ", &position.z, 0.005f);
+	ImGui::DragFloat("##PZ", &position.z, dragSpeed);
 
 	// --- Transform Rotation ---
 	ImGui::Text("Rotation  ");
@@ -159,7 +161,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##RX", &rotation.x, 0.005f);
+	ImGui::DragFloat("##RX", &rotation.x, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -167,7 +169,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##RY", &rotation.y, 0.005f);
+	ImGui::DragFloat("##RY", &rotation.y, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -175,9 +177,11 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##RZ", &rotation.z, 0.005f);
+	ImGui::DragFloat("##RZ", &rotation.z, dragSpeed);
 
 	// --- Transform Scale ---
+	float scale_dragSpeed = 0.1f;
+
 	ImGui::Text("Scale     ");
 	ImGui::SameLine();
 
@@ -186,7 +190,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SX", &scale.x, 0.005f);
+	ImGui::DragFloat("##SX", &scale.x, scale_dragSpeed);
 
 	ImGui::SameLine();
 
@@ -194,7 +198,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SY", &scale.y, 0.005f);
+	ImGui::DragFloat("##SY", &scale.y, scale_dragSpeed);
 
 	ImGui::SameLine();
 
@@ -202,7 +206,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SZ", &scale.z, 0.005f);
+	ImGui::DragFloat("##SZ", &scale.z, scale_dragSpeed);
 
 	// --- Transform Set ---
 	if (!GO->Static)
