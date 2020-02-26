@@ -1,9 +1,10 @@
 #include "ComponentAnimation.h"
+#include "Application.h"
 #include "ComponentTransform.h"
 #include "ModuleResourceManager.h"
-#include "Application.h"
-#include "GameObject.h"
+#include "ModuleFileSystem.h"
 
+#include "GameObject.h"
 #include "Imgui/imgui.h"
 //#include "OpenGL.h"
 
@@ -67,12 +68,30 @@ Animation* ComponentAnimation::GetDefaultAnimation() const
 
 json ComponentAnimation::Save() const
 {
+	json node;
 
-	return json();
+	// --- Store path to component file ---
+	if(res_anim)
+		node["Resources"]["ResourceAnimation"] = std::string(res_anim->GetResourceFile());
+	
+
+	return node;
 }
 
 void ComponentAnimation::Load(json& node)
 {
+	std::string path = node["Resources"]["ResourceAnimation"];
+	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	path = path.substr(0, path.find_last_of("."));
+
+	if (res_anim)
+		res_anim->Release();
+
+	res_anim = (ResourceAnimation*)App->resources->GetResource(std::stoi(path));
+
+	// --- We want to be notified of any resource event ---
+	if (res_anim)
+		res_anim->AddUser(GO);
 }
 
 void ComponentAnimation::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
@@ -104,8 +123,8 @@ void ComponentAnimation::CreateInspectorNode()
 	{
 		ImGui::Text("Im a component animator:D");
 
-		if(res_anim)
-			ImGui::Text("Resource anim connected");
+		if (res_anim)
+			ImGui::Text("Animation: %f", res_anim->duration);
 
 		ImGui::TreePop();
 	}

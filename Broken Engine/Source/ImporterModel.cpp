@@ -114,7 +114,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		FreeSceneMaterials(&model_mats);
 		FreeSceneMeshes(&model_meshes);
 		FreeSceneBones(&bones);
-		//TODO free animation
+		FreeSceneAnimations(&anims);
 
 		rootnode->RecursiveDelete();
 
@@ -250,7 +250,8 @@ void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<ai
 			std::map<std::string, GameObject*>::iterator bone = go_map.find(mesh_collect[i]->mBones[j]->mName.C_Str());
 			if (bone != go_map.end())
 			{
-				bone->second->AddComponent(Component::ComponentType::Bone);
+				ComponentBone* comp_bone = (ComponentBone*)bone->second->AddComponent(Component::ComponentType::Bone);
+				//add resource to component
 			}
 		}
 	}
@@ -262,20 +263,35 @@ void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, st
 	if (scene->HasAnimations())
 	{
 		ImporterAnimation* IAnim = App->resources->GetImporter<ImporterAnimation>();
-		GO->AddComponent(Component::ComponentType::Animation);
+		ComponentAnimation* comp_anim = (ComponentAnimation*)GO->AddComponent(Component::ComponentType::Animation);
 
 		for (int i = 0; i < scene->mNumAnimations; i++)
 		{
 			ImportAnimationData AData(source_file);
 			AData.animation = scene->mAnimations[i];
+			
 
 			if (IAnim)
 			{
 				anim[i] = (ResourceAnimation*)IAnim->Import(AData);
 				anim[i]->SetName(scene->mAnimations[i]->mName.C_Str());
+				comp_anim->res_anim = anim[i];
 			}
 		}
 	}
+}
+
+void ImporterModel::FreeSceneAnimations(std::map<uint, ResourceAnimation*>* anims) const
+{
+
+	for (std::map<uint, ResourceAnimation*>::iterator it = anims->begin(); it != anims->end();)
+	{
+		it->second->FreeMemory();
+		it = anims->erase(it);
+	}
+
+	anims->clear();
+
 }
 
 void ImporterModel::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const
