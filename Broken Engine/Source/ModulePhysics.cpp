@@ -100,6 +100,7 @@ bool ModulePhysics::Init(json config)
 
 update_status ModulePhysics::Update(float dt)
 {
+
 	SimulatePhysics(dt);
 
 	return update_status::UPDATE_CONTINUE;

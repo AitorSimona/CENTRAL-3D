@@ -101,8 +101,6 @@ void ComponentCollider::Draw()
 			// --- Use default shader ---
 			glUseProgram(App->renderer3D->defaultShader->ID);
 
-			
-
 			// --- Set uniforms ---
 			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 
@@ -139,7 +137,9 @@ void ComponentCollider::Draw()
 }
 
 void ComponentCollider::UpdateLocalMatrix() {
-	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+
+	if (!rigidStatic)
+		return;
 
 	//Render
 	localMatrix.x = localPosition.x + offset.x;
@@ -149,20 +149,24 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.scaleY = scale.y + originalScale.y - 1;
 	localMatrix.scaleZ = scale.z + originalScale.z - 1;
 
-	globalMatrix = transform->GetGlobalTransform() * localMatrix;
+	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
+	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
 
-	//DEBUG
+	//PHYSX DEBUG
+	float3 pos, scale;
+	Quat rot;
+	globalMatrix.Decompose(pos, rot, scale);
 
+	PxVec3 posi(pos.x, pos.y, pos.z);
+	PxQuat quati(rot.x, rot.y, rot.z, rot.w);
+	PxTransform transform(posi,quati);
+
+	rigidStatic->setGlobalPose(transform);
 }
 
 void ComponentCollider::SetPosition()
 {
-	//PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
-	//shape->setLocalPose(localTransform);
-	//PxTransform globalPose(PxVec3(globalPosition.x, globalPosition.y, globalPosition.z));
-	//shape->setLocalPose(localTransform);
-
-	float3 pos = GO->GetComponent<ComponentTransform>()->GetPosition();
+	/*float3 pos = GO->GetComponent<ComponentTransform>()->GetPosition();
 	float3 rot = GO->GetComponent<ComponentTransform>()->GetRotation();
 	Quat q = Quat::FromEulerXYZ(rot.x, rot.y, rot.z);
 
@@ -171,9 +175,9 @@ void ComponentCollider::SetPosition()
 
 	PxTransform globalTransform(globalPos, globalRot);
 
-	//shape->setLocalPose(globalTransform);
+	shape->setLocalPose(globalTransform);*/
 
-	if (!GO->GetComponent<ComponentDynamicRigidBody>())
+	/*if (!GO->GetComponent<ComponentDynamicRigidBody>())
 		rigidStatic->setGlobalPose(globalTransform);
 	else
 	{
@@ -186,7 +190,7 @@ void ComponentCollider::SetPosition()
 			GO->GetComponent<ComponentTransform>()->SetPosition(transform.p.x, transform.p.y, transform.p.z);
 			GO->GetComponent<ComponentTransform>()->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
 		}		
-	}
+	}*/
 }
 
 json ComponentCollider::Save() const
@@ -265,7 +269,7 @@ void ComponentCollider::CreateInspectorNode()
 					scale.y = radius;
 					scale.z = radius;
 
-					if (prevRadius != radius)
+					if (prevRadius != radius || editCollider)
 						CreateCollider(COLLIDER_TYPE::SPHERE, true);
 								
 					break;
@@ -297,7 +301,7 @@ void ComponentCollider::CreateInspectorNode()
 
 					ImGui::DragFloat("##SZ", &scale.z, 0.005f);
 
-					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z)
+					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z || editCollider)
 						CreateCollider(COLLIDER_TYPE::BOX, true);
 
 					break;
@@ -322,14 +326,13 @@ void ComponentCollider::CreateInspectorNode()
 					scale.y = height;
 					scale.z = radius;
 
-					if (prevRadius != radius || prevheight != height)
+					if (prevRadius != radius || prevheight != height || editCollider)
 						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
 
 					break;
 				}
 
 			}
-			SetPosition();
 		}
 
 		ImGui::TreePop();
@@ -358,16 +361,19 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		}
 	}
 
-	if (lastIndex == (int)type && !createAgain)
+	if (lastIndex == (int)type && !createAgain) {
 		return;
+	}
 
 	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
+	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+	float3 tScale = transform->GetScale();
 
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
 		
 			float3 center = GO->GetAABB().CenterPoint();
-			offset = center - GO->GetComponent<ComponentTransform>()->GetGlobalPosition();//returns the offset of the collider from the AABB
+			offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
 
 			float3 halfSize = GO->GetAABB().HalfSize().Mul(scale);
 			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
@@ -379,7 +385,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			}
 			
 			baseScale = halfSize * 2;
-			boxGeometry = PxVec3(baseScale.x, baseScale.y, baseScale.z);
+			boxGeometry = PxVec3(baseScale.x + tScale.x, baseScale.y + tScale.y, baseScale.z + tScale.z);
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
@@ -439,6 +445,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			break;
 		}
 	}
+	editCollider = false;
 }
 
 template <class Geometry>

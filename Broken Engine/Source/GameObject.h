@@ -19,6 +19,7 @@ public:
 	void Enable();
 	void Disable();
 	void Update(float dt);
+	void PostUpdate();
 
 	// --- Getters ---
 	uint&			GetUID();
