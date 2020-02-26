@@ -217,7 +217,7 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 void ModuleSceneManager::Draw()
 {
 	// --- Draw Grid ---
-	DrawGrid(true, 75.0f);
+	//DrawGrid(true, 75.0f);
 
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
@@ -251,13 +251,14 @@ void ModuleSceneManager::DrawScene()
 					glStencilMask(0xFF);
 			}
 
+
+			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
+			if (C_Bone)
+				C_Bone->DebugDrawBones();
+
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 					MeshRenderer->Draw();
-
-			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
-			if(C_Bone)
-				C_Bone->DebugDrawBones();
 
 			if (SelectedGameObject == (*it))
 			{

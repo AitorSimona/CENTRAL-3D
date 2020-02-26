@@ -371,7 +371,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 	GameObject* nodeGo = nullptr;
 
-	// --- Create GO per each node that contains a mesh ---
+	// --- Create GO 
 	nodeGo = App->scene_manager->CreateEmptyGameObject();
 	nodeGo->SetName(node->mName.C_Str());
 	parent->AddChildGO(nodeGo);
@@ -380,7 +380,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	ComponentTransform* transform = nodeGo->GetComponent<ComponentTransform>();
 
 	transform->SetPosition(pos2.x, pos2.y, pos2.z);
-	transform->Scale(s2.x, s2.y, s2.z);
+	transform->Scale(1.0f, 1.0f, 1.0f);
 	transform->SetQuatRotation(rot2);
 
 	int i = 0;
