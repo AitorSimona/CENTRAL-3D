@@ -28,7 +28,7 @@ ComponentBone::~ComponentBone()
 void ComponentBone::DebugDrawBones()
 {
 	if (GO->parent != nullptr && GO->parent->GetComponent<ComponentBone>() != nullptr
-		&& GO->GetComponent<ComponentAnimation>()->draw_bones)
+		&& GO->GetAnimGO(GetHipBone()->GO)->GetComponent<ComponentAnimation>()->draw_bones)
 	{
 		float4x4 child_matrix = GetBoneTransform();
 		float4x4 parent_matrix = GO->parent->GetComponent<ComponentBone>()->GetBoneTransform();
@@ -64,7 +64,7 @@ float4x4 ComponentBone::GetSkeletonTransform()
 
 ComponentBone* ComponentBone::GetHipBone()
 {
-	ComponentBone* pBone = GO->GetComponent<ComponentBone>();
+	ComponentBone* pBone = GO->parent->GetComponent<ComponentBone>();
 
 	if (pBone == nullptr)
 	{

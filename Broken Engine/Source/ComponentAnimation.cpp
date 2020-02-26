@@ -121,10 +121,14 @@ void ComponentAnimation::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Animation"))
 	{
+		ImGui::Checkbox("Draw Bones", &draw_bones);
+
 		ImGui::Text("Im a component animator:D");
 
 		if (res_anim)
 			ImGui::Text("Animation: %f", res_anim->GetName());
+
+		
 
 		ImGui::TreePop();
 	}

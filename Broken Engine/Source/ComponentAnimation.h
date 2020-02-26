@@ -67,7 +67,7 @@ public:
 	ResourceAnimation* res_anim = nullptr;
 	float blend_time_value = 0.3f;
 
-	bool draw_bones = true;
+	bool draw_bones = false;
 
 private:
 	std::vector<Link> links;

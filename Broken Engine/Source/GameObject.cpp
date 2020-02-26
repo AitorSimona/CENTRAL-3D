@@ -46,11 +46,15 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		this->OnUpdateTransform();
 
+	if (this->GetComponent<ComponentBone>() != nullptr)
+	{
+		this->GetComponent<ComponentBone>()->DebugDrawBones();
+	}
+
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);
 	}
-
 }
 
 void GameObject::RecursiveDelete(bool target)
@@ -161,10 +165,10 @@ GameObject* GameObject::GetAnimGO(GameObject* GO)
 
 	if (anim != nullptr)
 	{
-		return this;
+		return anim->GetContainerGameObject();
 	}
 	else
-		return GetAnimGO(this->parent);
+		return GetAnimGO(GO->parent);
 }
 
 Component * GameObject::AddComponent(Component::ComponentType type)
