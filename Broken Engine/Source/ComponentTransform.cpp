@@ -49,7 +49,6 @@ float3 ComponentTransform::GetGlobalPosition() const
 void ComponentTransform::SetPosition(float x, float y, float z)
 {
 	position = float3(x, y, z);
-
 	UpdateLocalTransform();
 }
 
