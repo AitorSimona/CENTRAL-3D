@@ -80,6 +80,8 @@ Resource* ImporterScript::Load(const char* path) const
 	d_pos = abs_path.find("Debug");
 	std::size_t r_pos = 0;
 	r_pos = abs_path.find("Release");
+	std::size_t g_pos = 0;
+	g_pos = abs_path.find("Game");
 
 	if (d_pos != 4294967295)  // If we are in DEBUG
 	{
@@ -89,6 +91,11 @@ Resource* ImporterScript::Load(const char* path) const
 	if (r_pos != 4294967295) // If we are in RELEASE
 	{
 		abs_path = abs_path.substr(0, r_pos);
+	}
+
+	if (g_pos != 4294967295) // If we are in a EXE final build
+	{
+		abs_path = abs_path.substr(0, g_pos);
 	}
 
 	abs_path += "Game/";
