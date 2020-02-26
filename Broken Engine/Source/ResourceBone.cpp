@@ -33,14 +33,14 @@ bool ResourceBone::LoadInMemory()
 		App->fs->Load(resource_file.c_str(), &buffer);
 		char* cursor = buffer;
 
-		// meshID
-		memcpy(&this->meshID, cursor, sizeof(uint));
-		cursor += sizeof(uint);
-
 		// --- Skip name and ranges ---
 		uint ranges;
 		memcpy(&ranges, cursor, sizeof(ranges));
 		cursor += sizeof(ranges) + ranges;
+
+		// meshID
+		memcpy(&this->meshID, cursor, sizeof(uint));
+		cursor += sizeof(uint);
 
 		//  --- Load NumWeights ---
 		memcpy(&NumWeights, cursor, sizeof(uint));

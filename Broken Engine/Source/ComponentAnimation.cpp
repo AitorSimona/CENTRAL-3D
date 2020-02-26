@@ -124,7 +124,7 @@ void ComponentAnimation::CreateInspectorNode()
 		ImGui::Text("Im a component animator:D");
 
 		if (res_anim)
-			ImGui::Text("Animation: %f", res_anim->duration);
+			ImGui::Text("Animation: %f", res_anim->GetName());
 
 		ImGui::TreePop();
 	}

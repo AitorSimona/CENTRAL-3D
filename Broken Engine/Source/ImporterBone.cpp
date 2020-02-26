@@ -61,17 +61,13 @@ void ImporterBone::Save(ResourceBone* bone) const
 	//----------------------------- CALCULATE SIZE ------------------------------------------------------------------------------------
 
 	//Bone meshID, numWeights, matrix, weights, index_weigths
-	uint size = sizeof(uint) + sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
+	uint size = sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
 
 	//---------------------------------------------------------------------------------------------------------------------------------
 	//------------------------------- Allocate ---------------------------------------------------------------------------------------
 
 	char* data = new char[size];
 	char* cursor = data;
-
-	//// meshID
-	memcpy(cursor, &bone->meshID, sizeof(uint));
-	cursor += sizeof(uint);
 
 	// --- Store range ---
 	uint tmp = sizeof(ranges);
@@ -83,6 +79,10 @@ void ImporterBone::Save(ResourceBone* bone) const
 	uint bytes = sizeof(const char) * sourcefilename_length;
 	memcpy(cursor, bone->GetOriginalFile(), bytes);
 	cursor += bytes;
+
+	//// meshID
+	memcpy(cursor, &bone->meshID, sizeof(uint));
+	cursor += sizeof(uint);
 
 	// --- Store numWeights
 	memcpy(cursor, &bone->NumWeights, sizeof(uint));

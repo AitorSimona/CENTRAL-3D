@@ -134,7 +134,7 @@ void ComponentBone::CreateInspectorNode()
 		if (res_bone)
 		{
 			ImGui::Text("ResourceBone linked");
-			ImGui::Text("MeshID: %u", res_bone->meshID);
+			ImGui::Text("Name: %s", res_bone->GetName());
 		}
 			
 
