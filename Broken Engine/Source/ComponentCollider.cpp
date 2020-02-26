@@ -21,16 +21,6 @@ using namespace physx;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {
-	/*ComponentTransform* transform = ContainerGO->GetComponent<ComponentTransform>();
-	float3 pos = transform->GetPosition();
-
-	globalPosition = PxTransform(PxVec3(pos.x, pos.y, pos.z));
-	PxBoxGeometry geometry(PxVec3(0.5f, 0.5f, 0.5f));
-	shape = App->physics->mPhysics->createShape(;
-	shape->setGeometry(geometry);
-
-	App->physics->mScene->addActor(*shape->getActor());*/
-
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultColliderMesh");
 }
 
@@ -43,7 +33,6 @@ void ComponentCollider::Draw()
 {
 	if (shape)
 	{
-
 		// --- Get shape's dimensions ---
 		PxGeometryHolder holder = shape->getGeometry();
 		PxGeometryType::Enum type = holder.getType();
@@ -158,8 +147,7 @@ void ComponentCollider::SetPosition()
 	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
 	shape->setLocalPose(localTransform);
 	globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
-	globalPosition += localPosition;
-
+	globalPosition = globalPosition + localPosition + centerPosition;
 	PxTransform globalPose(PxVec3(globalPosition.x, globalPosition.y, globalPosition.z));
 
 	if (!HasDynamicRigidBody())
@@ -172,15 +160,12 @@ void ComponentCollider::SetPosition()
 		}
 		else {
 			PxTransform transform = GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody->getGlobalPose();
-			ENGINE_CONSOLE_LOG("POISTION %f - %f - %f", transform.p.x, transform.p.y,transform.p.z);
+			ENGINE_CONSOLE_LOG("POSITION %f - %f - %f", transform.p.x, transform.p.y,transform.p.z);
 			ENGINE_CONSOLE_LOG("ROTATION %f - %f - %f", transform.q.x, transform.q.y,transform.q.z, transform.q.w);
 			GO->GetComponent<ComponentTransform>()->SetPosition(transform.p.x, transform.p.y, transform.p.z);
 			GO->GetComponent<ComponentTransform>()->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
-		}
-		
+		}		
 	}
-
-
 }
 
 json ComponentCollider::Save() const
@@ -194,29 +179,26 @@ void ComponentCollider::Load(json& node)
 
 void ComponentCollider::CreateInspectorNode()
 {
-	ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
-
 	if (ImGui::TreeNode("Collider"))
 	{
-		static int colliderType = 0;
 		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0");
 
 		switch (colliderType)
 		{
 		case 0:
-			collider->type = ComponentCollider::COLLIDER_TYPE::NONE;
+			type = ComponentCollider::COLLIDER_TYPE::NONE;
 			break;
 		case 1:
-			collider->type = ComponentCollider::COLLIDER_TYPE::BOX;
-			CreateCollider(collider->type);
+			type = ComponentCollider::COLLIDER_TYPE::BOX;
+			CreateCollider(type);
 			break;
 		case 2:
-			collider->type = ComponentCollider::COLLIDER_TYPE::SPHERE;
-			CreateCollider(collider->type);
+			type = ComponentCollider::COLLIDER_TYPE::SPHERE;
+			CreateCollider(type);
 			break;
 		case 3:
-			collider->type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
-			CreateCollider(collider->type);
+			type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
+			CreateCollider(type);
 			break;
 		}
 
@@ -229,7 +211,8 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (shape)
 		{
-			float3* position = &collider->localPosition;
+			float3* position = &localPosition;
+;
 			ImGui::Text("X");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
@@ -384,13 +367,21 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
+		
+			float3 center = GO->GetAABB().CenterPoint();
+			float3 halfSize = GO->GetAABB().HalfSize().Mul(scale);
+			scale = halfSize * 2;
 			PxBoxGeometry boxGeometry(PxVec3(scale.x, scale.y, scale.z));
+			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
 			
+			PxTransform position(PxVec3(center.x, center.y, center.z));
+			centerPosition = center;
+			
 			if (!HasDynamicRigidBody(boxGeometry))
 			{
-				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
+				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 				App->physics->mScene->addActor(*rigidStatic);
 			}
 

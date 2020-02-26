@@ -47,6 +47,7 @@ public:
 	ResourceMesh* mesh = nullptr;
 	bool editCollider = false;
 	float3 localPosition = float3::zero;
+	float3 centerPosition = float3::zero;
 
 private:
 	physx::PxShape* shape = nullptr;
@@ -58,6 +59,8 @@ private:
 
 	float radius = 1.0f, height = 1.0f;
 	int lastIndex = -1;
+	int colliderType = 0;
+
 };
 
 #endif __COMPONENT_COLLIDER_H__
