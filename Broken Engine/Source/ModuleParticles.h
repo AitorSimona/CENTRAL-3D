@@ -27,11 +27,6 @@ public:
 	bool CleanUp() override;
 
 private:
-	
-	uint maxParticles=10000;
-	bool perParticleRestOffset = false;
-
-	PxParticleSystem* particleSystem = nullptr;
 
 	std::vector<ComponentParticleEmitter*> particleEmitters;
 };

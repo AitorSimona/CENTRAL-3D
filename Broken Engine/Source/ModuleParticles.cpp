@@ -76,7 +76,6 @@ void ModuleParticles::DeleteEmitter(ComponentParticleEmitter* componentEmitter)
 
 bool ModuleParticles::CleanUp()
 {
-	particleSystem->releaseParticles();
 
 	return true;
 }

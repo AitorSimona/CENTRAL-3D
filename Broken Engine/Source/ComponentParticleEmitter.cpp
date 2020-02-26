@@ -19,7 +19,7 @@
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
 	size = { 0,0,0 };
-	emisionRate = 100.0f;
+	emisionRate = 500.0f;
 
 	particlesVelocity = { 0,0,0 };
 	particlesDuration = 0;	
@@ -148,7 +148,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PX", &size.x, 0.005f);
+	ImGui::DragFloat("X", &size.x, 0.005f);
 
 	ImGui::SameLine();
 
@@ -156,7 +156,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PY", &size.y, 0.005f);
+	ImGui::DragFloat("Y", &size.y, 0.005f);
 
 	ImGui::SameLine();
 
@@ -164,15 +164,17 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PZ", &size.z, 0.005f);
+	ImGui::DragFloat("Z", &size.z, 0.005f);
 
 	//Emision rate
-	ImGui::Text("Emision rate");
-	ImGui::SameLine();
-	ImGui::DragFloat("",&emisionRate, 0.05f);
+	ImGui::DragFloat("Emision rate (ms) ", &emisionRate, 5.0f,10.00f ,1000000.0f);
 
-	////Emision rate
-	//ImGui::Text("Max particles");
-	//ImGui::SameLine();
-	//ImGui::DragInt("", &maxParticles, 1);
+	//External forces
+	ImGui::Text("External forces ");
+	PxVec3 externalForce(0, 0, 0);
+	if (ImGui::SliderFloat("##X", &externalForce.x, -10000.0f, 10000.0f) ||
+		ImGui::SliderFloat("##y", &externalForce.y, -10000.0f, 10000.0f) ||
+		ImGui::SliderFloat("##z", &externalForce.z, -10000.0f, 10000.0f))
+		particleSystem->setExternalAcceleration(externalForce);
+
 }
