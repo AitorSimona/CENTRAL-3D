@@ -17,6 +17,7 @@ ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resou
 	extension = ".scene";
 	name = "scene";
 	resource_file = SCENES_FOLDER + name + extension;
+	original_file = resource_file;
 
 	previewTexID = App->gui->sceneTexID;
 
@@ -24,13 +25,15 @@ ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resou
 
 ResourceScene::~ResourceScene()
 {
+	NoStaticGameObjects.clear();
+	StaticGameObjects.clear();
 }
 
 bool ResourceScene::LoadInMemory()
 {
 	// --- Load scene game objects ---
 
-	if (NoStaticGameObjects.size() == 0)
+	if (NoStaticGameObjects.size() == 0 && App->fs->Exists(resource_file.c_str()))
 	{
 		// --- Load Scene/model file ---
 		json file = App->GetJLoader()->Load(resource_file.c_str());
@@ -43,13 +46,14 @@ bool ResourceScene::LoadInMemory()
 			// --- Iterate main nodes ---
 			for (json::iterator it = file.begin(); it != file.end(); ++it)
 			{
-				// --- Create a Game Object for each node ---
-				GameObject* go = App->scene_manager->CreateEmptyGameObject();
+				// --- Retrieve GO's UID ---
+				std::string uid = it.key().c_str();
 
-				// --- Retrieve GO's UID and name ---
-				go->SetName(it.key().c_str());
-				std::string uid = file[it.key()]["UID"];
-				go->GetUID() = std::stoi(uid);
+				// --- Create a Game Object for each node ---
+				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
+
+				std::string name = file[it.key()]["Name"];
+				go->SetName(name.c_str());
 
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
@@ -80,7 +84,7 @@ bool ResourceScene::LoadInMemory()
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
-				std::string parent_uid_string = file[objects[i]->GetName()]["Parent"];
+				std::string parent_uid_string = file[std::to_string(objects[i]->GetUID())]["Parent"];
 				uint parent_uid = std::stoi(parent_uid_string);
 
 				for (uint j = 0; j < objects.size(); ++j)
@@ -107,6 +111,15 @@ void ResourceScene::FreeMemory()
 	}
 
 	NoStaticGameObjects.clear();
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		delete (*it).second;
+	}
+
+	StaticGameObjects.clear();
+
+	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }
 
 void ResourceScene::OnOverwrite()

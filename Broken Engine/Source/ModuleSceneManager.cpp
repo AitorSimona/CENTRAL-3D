@@ -67,10 +67,6 @@ bool ModuleSceneManager::Init(json file)
 
 bool ModuleSceneManager::Start()
 {
-	// --- Create default scene ---
-	defaultScene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, "DefaultScene");
-	currentScene = defaultScene;
-
 	// --- Create primitives ---
 	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
 	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
@@ -107,9 +103,6 @@ update_status ModuleSceneManager::Update(float dt)
 bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
-
-	if(currentScene)
-	currentScene->NoStaticGameObjects.clear();
 
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
@@ -326,21 +319,19 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 {
 	if (go->Static)
 	{
+		// --- Insert go into octree and remove it from currentscene's static go map ---
 		tree.Insert(go);
 		currentScene->StaticGameObjects[go->GetUID()] = go;
 
-		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
-		{
-			if ((*it).second->GetUID() == go->GetUID())
-			{
-				currentScene->NoStaticGameObjects.erase(it);
-				break;
-			}
-		}
+		// --- Erase go from currentscene's no static map ---
+		currentScene->NoStaticGameObjects.erase(go->GetUID());
 	}
 	else
 	{
+		// --- Add go to currentscene's no static map ---
 		currentScene->NoStaticGameObjects[go->GetUID()] = go;
+
+		// --- Remove go from octree and currentscene's static go map ---
 		tree.Erase(go);
 		currentScene->StaticGameObjects.erase(go->GetUID());
 	}
@@ -427,73 +418,45 @@ void ModuleSceneManager::LoadStatus(const json & file)
 {
 }
 
-//void ModuleSceneManager::SaveScene()
-//{
-//	// --- Fill vector with scene's GO's ---
-//	std::vector<GameObject*> scene_gos;
-//	GatherGameObjects(scene_gos, root);
-//
-//	if (scene_gos.size() > 0)
-//	{
-//		std::string Scene_name = "SampleScene";
-//		//App->importer->GetImporterScene()->SaveSceneToFile(scene_gos, Scene_name, SCENE);
-//	}
-//}
-//
-//void ModuleSceneManager::LoadScene()
-//{
-//	std::string Scene_name = SCENES_FOLDER;
-//	Scene_name.append("SampleScene.scene");
-//
-//	SelectedGameObject = nullptr;
-//
-//	RecursiveFreeScene(root);
-//
-//	//if(App->fs->Exists(Scene_name.data()))
-//	//App->importer->GetImporterScene()->Load(Scene_name.data());
-//}
-//
-//void ModuleSceneManager::RecursiveFreeScene(GameObject* go)
-//{
-//	// --- Delete all objects except root (if go is root) ---
-//
-//	if (go->childs.size() > 0)
-//	{
-//		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-//		{
-//			RecursiveFreeScene(*it);
-//		}
-//
-//		go->childs.clear();
-//	}
-//
-//	if (go->GetName() != root->GetName())
-//	{
-//		go->Static = true;
-//		App->scene_manager->SetStatic(go);
-//		App->scene_manager->tree.Erase(go);
-//		delete go;
-//	}
-//}
+void ModuleSceneManager::SaveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+		IScene->SaveSceneToFile(scene);
+	}
+}
+
+void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		SelectedGameObject = nullptr;
+
+		// --- Unload current scene ---
+		if (currentScene)
+		{
+			// --- Reset octree ---
+			tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
+
+			// --- Release current scene ---
+			currentScene->Release();
+
+			// --- Clear root ---
+			root->childs.clear();
+		}
+
+		currentScene = scene; // force this so gos are not added to another scene 
+		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());	
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");
+
+}
 
 GameObject* ModuleSceneManager::GetSelectedGameObject() const
 {
 	return SelectedGameObject;
-}
-
-void ModuleSceneManager::GatherGameObjects(std::vector<GameObject*>& NoStaticGameObjects, GameObject* go)
-{
-	// --- Add all childs from go to vector ---
-	if(go->GetName() != root->GetName())
-	NoStaticGameObjects.push_back(go);
-
-	if (go->childs.size() > 0)
-	{
-		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-		{
-			GatherGameObjects(NoStaticGameObjects, *it);
-		}
-	}
 }
 
 
@@ -529,13 +492,37 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	return new_object;
 }
 
+GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
+{
+	// --- Create New Game Object Name ---
+	std::string Name = "GameObject ";
+	Name.append("(");
+	Name.append(std::to_string(go_count));
+	Name.append(")");
+
+	go_count++;
+
+	// --- Create empty Game object to be filled out ---
+	GameObject* new_object = new GameObject(Name.data(),UID);
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+
+	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+
+	return new_object;
+}
+
+void ModuleSceneManager::ResetGameObjectUID(GameObject* go)
+{
+
+}
+
 GameObject * ModuleSceneManager::CreateRootGameObject()
 {
 	// --- Create New Game Object Name ---
 	std::string Name = "root";
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data());
+	GameObject* new_object = new GameObject(Name.c_str());
 
 	return new_object;
 }
@@ -805,6 +792,6 @@ void ModuleSceneManager::DestroyGameObject(GameObject * go)
 {
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
-
+	delete go;
 	this->go_count--;
 }

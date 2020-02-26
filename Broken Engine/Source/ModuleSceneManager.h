@@ -17,6 +17,7 @@ struct Event;
 
 class ModuleSceneManager : public Module
 {
+	friend class ModuleResourceManager;
 public:
 
 	ModuleSceneManager(bool start_enabled = true);
@@ -31,6 +32,9 @@ public:
 
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
+	GameObject* CreateEmptyGameObjectGivenUID(uint UID);
+	void ResetGameObjectUID(GameObject* go);
+
 	void CreateGrid(float target_distance);
 	GameObject* LoadCube();
 	GameObject* LoadSphere();
@@ -56,9 +60,8 @@ public:
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;
 	void LoadStatus(const json & file) override;
-	//void SaveScene();
-	//void LoadScene();
-	//void RecursiveFreeScene(GameObject* go);
+	void SaveScene(ResourceScene* scene);
+	void SetActiveScene(ResourceScene* scene);
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -75,7 +78,6 @@ private:
 	static void ONGameObjectDestroyed(const Event& e);
 
 private:
-	void GatherGameObjects(std::vector<GameObject*> & NoStaticGameObjects, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawScene();
 
@@ -88,10 +90,8 @@ private:
 public:
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	//std::vector<GameObject*> NoStaticGo;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
-
 	ResourceScene* currentScene = nullptr;
 private:
 	uint PointLineVAO = 0;

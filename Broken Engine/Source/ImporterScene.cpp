@@ -54,24 +54,42 @@ Resource* ImporterScene::Load(const char * path) const
 	return scene;
 }
 
-std::string ImporterScene::SaveSceneToFile(ResourceScene* scene, std::string& scene_name) const
+void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 {
 	// --- Save Scene/Model to file ---
 
 	json file;
 
-	for (int i = 0; i < scene->NoStaticGameObjects.size(); ++i)
+	for (std::unordered_map<uint, GameObject*>::iterator it = scene->NoStaticGameObjects.begin(); it != scene->NoStaticGameObjects.end(); ++it)
 	{
+		std::string string_uid = std::to_string((*it).second->GetUID());
 		// --- Create GO Structure ---
-		file[scene->NoStaticGameObjects[i]->GetName()];
-		file[scene->NoStaticGameObjects[i]->GetName()]["UID"] = std::to_string(scene->NoStaticGameObjects[i]->GetUID());
-		file[scene->NoStaticGameObjects[i]->GetName()]["Parent"] = std::to_string(scene->NoStaticGameObjects[i]->parent->GetUID());
-		file[scene->NoStaticGameObjects[i]->GetName()]["Components"];
+		file[string_uid];
+		file[string_uid]["Name"] = (*it).second->GetName();
+		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Components"];
 
-		for (int j = 0; j < scene->NoStaticGameObjects[i]->GetComponents().size(); ++j)
+		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
 		{
 			// --- Save Components to file ---
-			file[scene->NoStaticGameObjects[i]->GetName()]["Components"][std::to_string((uint)scene->NoStaticGameObjects[i]->GetComponents()[j]->GetType())] = scene->NoStaticGameObjects[i]->GetComponents()[j]->Save();
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
+		}
+
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = scene->StaticGameObjects.begin(); it != scene->StaticGameObjects.end(); ++it)
+	{
+		std::string string_uid = std::to_string((*it).second->GetUID());
+		// --- Create GO Structure ---
+		file[string_uid];
+		file[string_uid]["Name"] = (*it).second->GetName();
+		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Components"];
+
+		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
+		{
+			// --- Save Components to file ---
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
 		}
 
 	}
@@ -85,6 +103,14 @@ std::string ImporterScene::SaveSceneToFile(ResourceScene* scene, std::string& sc
 	uint size = data.length();
 
 	App->fs->Save(scene->GetResourceFile(), buffer, size);
+	scene->SetOriginalFile(scene->GetResourceFile());
 
-	return scene_name;
+	// --- Create meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, scene->GetResourceFile(), scene->GetUID());
+
+	if (meta)
+		IMeta->Save(meta);
+
+	App->resources->AddResourceToFolder(scene);
 }
