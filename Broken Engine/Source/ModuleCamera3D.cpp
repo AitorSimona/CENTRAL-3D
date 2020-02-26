@@ -17,7 +17,6 @@
 #include "ModuleRenderer3D.h"
 
 #include "PanelScene.h"
-
 #include "mmgr/mmgr.h"
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
@@ -111,7 +110,7 @@ void ModuleCamera3D::UpdateCamera()
 			CameraPan(m_ScrollSpeedDeltaTime);
 
 		// --- Orbit Object ---
-		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
 			CameraLookAround(m_CameraSpeedDeltaTime, reference);
 
 		// --- Frame object ---
@@ -139,7 +138,6 @@ void ModuleCamera3D::UpdateCamera()
 void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 {
 	// MYTODO: Make this easy to understand / explain
-
 	// Scene window relative coords
 	float normalized_x = (mouse_x - App->gui->panelScene->posX) / App->gui->panelScene->width * (float)App->window->GetWindowWidth();
 	float normalized_y = (mouse_y - App->gui->panelScene->posY) / App->gui->panelScene->height * (float)App->window->GetWindowHeight();
@@ -154,7 +152,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 	last_ray = ray;
 
-	App->scene_manager->SelectFromRay(ray);
+	if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_IDLE)
+		App->scene_manager->SelectFromRay(ray);
 }
 
 void ModuleCamera3D::FrameObject(GameObject* GO)
@@ -187,9 +186,7 @@ void ModuleCamera3D::FrameObject(float3 posToLook)
 
 	if (Movement.IsFinite())
 		camera->frustum.SetPos(reference - Movement);
-
 }
-
 
 void ModuleCamera3D::CameraPan(float speed)
 {
@@ -223,7 +220,6 @@ void ModuleCamera3D::CameraZoom(float speed)
 	camera->frustum.SetPos(camera->frustum.Pos() + Movement);
 }
 
-
 void ModuleCamera3D::ModifySpeedMultiplicator()
 {
 	m_ScrollingSpeedChange = true;
@@ -234,7 +230,6 @@ void ModuleCamera3D::ModifySpeedMultiplicator()
 	if (m_SpeedMultiplicator < 0.3f)
 		m_SpeedMultiplicator = 0.3f;
 }
-
 
 void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 {
@@ -251,6 +246,6 @@ void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 	float distance = (camera->frustum.Pos() - reference).Length();
 	camera->frustum.SetPos(reference + (-camera->frustum.Front() * distance));
 
-	if(!reference.Equals(this->reference))
-	this->reference = camera->frustum.Pos() + camera->frustum.Front() * (camera->frustum.Pos()).Length();
+	if (!reference.Equals(this->reference))
+		this->reference = camera->frustum.Pos() + camera->frustum.Front() * (camera->frustum.Pos()).Length();
 }
