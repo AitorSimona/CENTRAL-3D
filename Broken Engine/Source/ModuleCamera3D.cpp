@@ -44,6 +44,7 @@ bool ModuleCamera3D::Start()
 	camera->SetFOV(60.0f);
 	reference = camera->frustum.Pos();
 	camera->Look({ 0.0f, 0.0f, 0.0f });
+	FrameObject({ 0.0f, 0.0f, 0.0f });
 
 	return ret;
 }
@@ -111,7 +112,12 @@ void ModuleCamera3D::UpdateCamera()
 
 		// --- Orbit Object ---
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
-			CameraLookAround(m_CameraSpeedDeltaTime, reference);
+		{
+			if (GameObject* GO = App->scene_manager->GetSelectedGameObject())
+				CameraLookAround(m_CameraSpeedDeltaTime, GO->GetComponent<ComponentTransform>()->GetPosition());
+			else
+				CameraLookAround(m_CameraSpeedDeltaTime, reference);
+		}
 
 		// --- Frame object ---
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
