@@ -51,6 +51,7 @@ public:
 	float3 centerPosition = float3::zero;
 	float3 baseScale = float3::one;
 	float3 originalScale = float3::one;
+	float3 offset = float3::zero;
 
 private:
 	physx::PxShape* shape = nullptr;
