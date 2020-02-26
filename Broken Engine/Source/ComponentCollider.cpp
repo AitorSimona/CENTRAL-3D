@@ -21,16 +21,6 @@ using namespace physx;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {
-	/*ComponentTransform* transform = ContainerGO->GetComponent<ComponentTransform>();
-	float3 pos = transform->GetPosition();
-
-	globalPosition = PxTransform(PxVec3(pos.x, pos.y, pos.z));
-	PxBoxGeometry geometry(PxVec3(0.5f, 0.5f, 0.5f));
-	shape = App->physics->mPhysics->createShape(;
-	shape->setGeometry(geometry);
-
-	App->physics->mScene->addActor(*shape->getActor());*/
-
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultColliderMesh");
 }
 
@@ -43,15 +33,12 @@ void ComponentCollider::Draw()
 {
 	if (shape)
 	{
-
 		// --- Get shape's dimensions ---
 		PxGeometryHolder holder = shape->getGeometry();
 		PxGeometryType::Enum type = holder.getType();
 
 		if (!mesh->IsInMemory())
 		{
-
-
 			// --- Draw shape according to type ---
 			switch (type)
 			{
@@ -84,14 +71,12 @@ void ComponentCollider::Draw()
 			break;
 			case physx::PxGeometryType::eBOX:
 			{
-				//PxBoxGeometry pxbox = holder.box();
-				//PxVec3 dimensions = 2 * pxbox.halfExtents;
+				PxCapsuleGeometry capsule = holder.capsule();
 
-				// --- Use data to create an AABB and draw it ---
-				AABB aabb;
-				aabb.SetFromCenterAndSize(vec(globalPosition.x, globalPosition.y, globalPosition.z), vec(scale.x, scale.y, scale.z));
+				// --- Rebuild capsule ---
+				App->scene_manager->CreateCube(1, 1, 1, mesh);
+				mesh->LoadToMemory();
 
-				ModuleSceneManager::DrawWire(aabb, Red, App->scene_manager->GetPointLineVAO());
 			}
 			break;
 			case physx::PxGeometryType::eCONVEXMESH:
@@ -109,7 +94,6 @@ void ComponentCollider::Draw()
 			}
 		}
 	}
-	
 
 		// --- Render shape ---
 		if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
@@ -121,8 +105,11 @@ void ComponentCollider::Draw()
 
 			// --- Set uniforms ---
 			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+
+			//UpdateLocalMatrix();
 			
 			globalMatrix = transform->GetGlobalTransform() * localMatrix;
+
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, globalMatrix.Transposed().ptr());
 
 			int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
@@ -153,27 +140,38 @@ void ComponentCollider::Draw()
 	
 }
 
+void ComponentCollider::UpdateLocalMatrix() {
+	localMatrix.x = localPosition.x;
+	localMatrix.y = localPosition.y;
+	localMatrix.z = localPosition.z;
+	localMatrix.scaleX = scale.x;
+	localMatrix.scaleY = scale.y;
+	localMatrix.scaleZ = scale.z;
+}
+
 void ComponentCollider::SetPosition()
 {
-	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
-	shape->setLocalPose(localTransform);
-	globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
-	globalPosition += localPosition;
+	//shape->setLocalPose(localTransform);
 
-	PxTransform globalPose(PxVec3(globalPosition.x, globalPosition.y, globalPosition.z));
+	float3 pos = GO->GetComponent<ComponentTransform>()->GetPosition();
+	float3 rot = GO->GetComponent<ComponentTransform>()->GetRotation();
+	Quat q = Quat::FromEulerXYZ(rot.x, rot.y, rot.z);
 
-	if (!HasDynamicRigidBody())
-		rigidStatic->setGlobalPose(globalPose);
+	PxVec3 globalPos = PxVec3(pos.x, pos.y, pos.z) + PxVec3(localPosition.x, localPosition.y, localPosition.z);
+	PxQuat globalRot = PxQuat(q.x, q.y, q.z, q.w);
+
+	PxTransform globalTransform(globalPos, globalRot);
+
+	if (!GO->GetComponent<ComponentDynamicRigidBody>())
+		rigidStatic->setGlobalPose(globalTransform);
 	else
 	{
 		if (ImGuizmo::IsUsing()) {
 			ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
-			dynamicRB->rigidBody->setGlobalPose(globalPose);
+			dynamicRB->rigidBody->setGlobalPose(globalTransform);
 		}
 		else {
 			PxTransform transform = GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody->getGlobalPose();
-			ENGINE_CONSOLE_LOG("POISTION %f - %f - %f", transform.p.x, transform.p.y,transform.p.z);
-			ENGINE_CONSOLE_LOG("ROTATION %f - %f - %f", transform.q.x, transform.q.y,transform.q.z, transform.q.w);
 			GO->GetComponent<ComponentTransform>()->SetPosition(transform.p.x, transform.p.y, transform.p.z);
 			GO->GetComponent<ComponentTransform>()->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
 		}
@@ -220,13 +218,6 @@ void ComponentCollider::CreateInspectorNode()
 			break;
 		}
 
-
-		//if (ImGui::Checkbox("Edit Collider", &collider->editCollider))
-		//{
-			
-
-			// PUT HERE A SWITCH CASE DEPENDING ON THE COLLIDER DIFFERENT OPTIONS
-
 		if (shape)
 		{
 			float3* position = &collider->localPosition;
@@ -256,12 +247,6 @@ void ComponentCollider::CreateInspectorNode()
 			{
 				case PxGeometryType::eSPHERE:
 				{
-					localMatrix.x = position->x;
-					localMatrix.y = position->y;
-					localMatrix.z = position->z;
-
-					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
-					
 					float prevRadius = radius;
 					
 					ImGui::Text("Radius");
@@ -269,9 +254,9 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 					ImGui::DragFloat("##R", &radius, 0.005f);
 					
-					localMatrix.scaleX = radius;
-					localMatrix.scaleY = radius;						
-					localMatrix.scaleZ = radius;
+					scale.x = radius;
+					scale.y = radius;
+					scale.z = radius;
 
 					if (prevRadius != radius)
 						CreateCollider(COLLIDER_TYPE::SPHERE, true);
@@ -313,12 +298,6 @@ void ComponentCollider::CreateInspectorNode()
 
 				case PxGeometryType::eCAPSULE:
 				{
-					localMatrix.x = position->x;
-					localMatrix.y = position->y;
-					localMatrix.z = position->z;
-
-					const float3 pos(localMatrix.x, localMatrix.y, localMatrix.z);
-
 					float prevRadius = radius;
 					float prevheight = height;
 
@@ -332,9 +311,9 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 					ImGui::DragFloat("##H", &height, 0.005f);
 
-					localMatrix.scaleX = radius;
-					localMatrix.scaleY = height;
-					localMatrix.scaleZ = radius;
+					scale.x = radius;
+					scale.y = height;
+					scale.z = radius;
 
 					if (prevRadius != radius || prevheight != height)
 						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
@@ -343,13 +322,8 @@ void ComponentCollider::CreateInspectorNode()
 				}
 
 			}
-			PxTransform transform(position->x, position->y, position->z);
-			shape->setLocalPose(transform);
-
 			SetPosition();
 		}
-
-		//}
 
 		ImGui::TreePop();
 	}
@@ -459,9 +433,4 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry) const
 
 	else
 		return false;
-}
-
-bool ComponentCollider::HasDynamicRigidBody() const
-{
-	return (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr);
 }
