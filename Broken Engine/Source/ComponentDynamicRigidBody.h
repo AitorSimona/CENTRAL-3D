@@ -49,6 +49,9 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+private:
+	void StaticToDynamicRigidBody();
+
 public:
 	physx::PxRigidDynamic* rigidBody = nullptr;
 

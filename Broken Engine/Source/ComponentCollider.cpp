@@ -186,9 +186,12 @@ void ComponentCollider::SetPosition()
 			dynamicRB->rigidBody->setGlobalPose(globalTransform);
 		}
 		else {
-			PxTransform transform = GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody->getGlobalPose();
-			GO->GetComponent<ComponentTransform>()->SetPosition(transform.p.x, transform.p.y, transform.p.z);
-			GO->GetComponent<ComponentTransform>()->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
+			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
+			{
+				PxTransform transform = GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody->getGlobalPose();
+				GO->GetComponent<ComponentTransform>()->SetPosition(transform.p.x, transform.p.y, transform.p.z);
+				GO->GetComponent<ComponentTransform>()->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
+			}
 		}		
 	}*/
 }
@@ -348,6 +351,8 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		{
 			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
 				App->physics->mScene->removeActor(*(PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+			if (createAgain)
+				App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
 		}
 
 		else
@@ -393,7 +398,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			PxTransform position(PxVec3(center.x, center.y, center.z));
 			//centerPosition = center;
 			
-			if (!HasDynamicRigidBody(boxGeometry))
+			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 				App->physics->mScene->addActor(*rigidStatic);
@@ -407,7 +412,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			shape = App->physics->mPhysics->createShape(SphereGeometry, *App->physics->mMaterial);
 			shape->setGeometry(SphereGeometry);
 
-			if (!HasDynamicRigidBody(SphereGeometry))
+			if (!HasDynamicRigidBody(SphereGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
 				App->physics->mScene->addActor(*rigidStatic);
@@ -421,7 +426,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			shape = App->physics->mPhysics->createShape(planeGeometry, *App->physics->mMaterial);
 			shape->setGeometry(planeGeometry);
 
-			if (!HasDynamicRigidBody(planeGeometry))
+			if (!HasDynamicRigidBody(planeGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
 				App->physics->mScene->addActor(*rigidStatic);
@@ -435,7 +440,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			shape = App->physics->mPhysics->createShape(CapsuleGeometry, *App->physics->mMaterial);
 			shape->setGeometry(CapsuleGeometry);
 
-			if (!HasDynamicRigidBody(CapsuleGeometry))
+			if (!HasDynamicRigidBody(CapsuleGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
 				App->physics->mScene->addActor(*rigidStatic);
@@ -449,15 +454,13 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 }
 
 template <class Geometry>
-bool ComponentCollider::HasDynamicRigidBody(Geometry geometry) const
+bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, PxTransform transform) const
 {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 	
-	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
-
 	if (dynamicRB != nullptr)
 	{
-		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, localTransform, geometry, *App->physics->mMaterial, 1.0f);
+		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
 		App->physics->mScene->addActor(*dynamicRB->rigidBody);
 
 		return true;
