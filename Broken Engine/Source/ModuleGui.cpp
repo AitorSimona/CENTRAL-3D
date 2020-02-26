@@ -8,6 +8,7 @@
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
+#include "ComponentTransform.h"
 
 #include "Panels.h"
 
@@ -167,19 +168,28 @@ update_status ModuleGui::Update(float dt)
 			{
 				if (ImGui::BeginMenu("3D Object"))
 				{
+					if (ImGui::MenuItem("Empty Game Object"))
+						App->scene_manager->CreateEmptyGameObject();
+
+					if (ImGui::MenuItem("Plane"))
+					{
+						GameObject* obj = App->scene_manager->LoadPlane();
+						obj->GetComponent<ComponentTransform>()->SetRotation({ -90, 0, 0});
+						obj->GetComponent<ComponentTransform>()->Scale(10, 10, 10);
+					}
 
 					if (ImGui::MenuItem("Cube"))
-					{
 						App->scene_manager->LoadCube();
-					}
+
+					if (ImGui::MenuItem("Cylinder"))
+						App->scene_manager->LoadCylinder()->GetComponent<ComponentTransform>()->SetRotation({ -90, 0, 0 });
+
+					if (ImGui::MenuItem("Capsule"))
+						App->scene_manager->LoadCapsule();
+
 					if (ImGui::MenuItem("Sphere"))
-					{
 						App->scene_manager->LoadSphere();
-					}
-					if (ImGui::MenuItem("Empty Game Object"))
-					{
-						App->scene_manager->CreateEmptyGameObject();
-					}
+
 					if (ImGui::MenuItem("Camera"))
 					{
 						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
@@ -189,9 +199,7 @@ update_status ModuleGui::Update(float dt)
 					}
 
 					if (ImGui::MenuItem("Redo Octree"))
-					{
 						App->scene_manager->RedoOctree();
-					}
 
 					ImGui::EndMenu();
 				}

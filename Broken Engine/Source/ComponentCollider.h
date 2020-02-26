@@ -26,6 +26,8 @@ public:
 
 	void Draw();
 
+	void UpdateLocalMatrix();
+
 	void SetPosition();
 
 	// --- Save & Load ---
@@ -40,7 +42,6 @@ public:
 private:
 	template <class Geometry>
 	bool HasDynamicRigidBody(Geometry geometry) const;
-	bool HasDynamicRigidBody() const;
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;

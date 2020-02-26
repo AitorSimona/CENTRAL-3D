@@ -31,9 +31,11 @@ public:
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	void CreateGrid(float target_distance);
-	GameObject* ModuleSceneManager::LoadSphere();
-	GameObject* ModuleSceneManager::LoadCube();
-
+	GameObject* LoadSphere();
+	GameObject* LoadCube();
+	GameObject* LoadCapsule();
+	GameObject* LoadPlane();
+	GameObject* LoadCylinder();
 
 	void DestroyGameObject(GameObject* go);
 
@@ -70,7 +72,9 @@ public:
 	};
 
 	// --- Primitives ---
+	GameObject* LoadPrimitiveObject(uint PrimitiveMeshID);
 	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
+	void CreateCylinder(float radius, float height, ResourceMesh* rmesh);
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
@@ -79,9 +83,9 @@ private:
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);
 	static void ONGameObjectDestroyed(const Event& e);
-
-
+	
 private:
+
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawScene();
@@ -90,7 +94,9 @@ private:
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
 
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
+
 public:
+
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	std::vector<GameObject*> NoStaticGo;
@@ -98,11 +104,13 @@ public:
 	bool display_boundingboxes = false;
 
 private:
+
 	// --- Do not modify, just use ---
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* plane = nullptr;
+	ResourceMesh* cylinder = nullptr;
 
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
