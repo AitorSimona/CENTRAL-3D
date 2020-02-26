@@ -1,5 +1,7 @@
 #include "Application.h"
 #include "ComponentDynamicRigidBody.h"
+#include "ComponentCollider.h"
+#include "GameObject.h"
 #include "ModulePhysics.h"
 
 #include "Imgui/imgui.h"
@@ -65,6 +67,21 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		FreeseRotation_Z(freeseRotation_Z);
 	}
 
+	StaticToDynamicRigidBody();
+}
+
+void ComponentDynamicRigidBody::StaticToDynamicRigidBody()
+{
+	ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
+	if (collider != nullptr && rigidBody == nullptr)
+	{
+		collider->CreateCollider(collider->type, true);
+	}
+
+	//else
+	//{
+
+	//}
 }
 
 

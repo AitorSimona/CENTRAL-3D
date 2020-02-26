@@ -41,7 +41,7 @@ public:
 
 private:
 	template <class Geometry>
-	bool HasDynamicRigidBody(Geometry geometry) const;
+	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
@@ -51,10 +51,10 @@ public:
 	float3 centerPosition = float3::zero;
 	float3 baseScale = float3::one;
 	float3 originalScale = float3::one;
+	physx::PxRigidStatic* rigidStatic = nullptr;
 
 private:
 	physx::PxShape* shape = nullptr;
-	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 globalPosition;
 	float3 scale = float3::one;
 	float4x4 localMatrix = float4x4::identity;
