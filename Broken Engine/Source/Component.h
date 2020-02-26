@@ -18,6 +18,7 @@ public:
 		Camera,
 		DynamicRigidBody,
 		Collider,
+		ParticleEmitter,
 		Unknown
 	};
 

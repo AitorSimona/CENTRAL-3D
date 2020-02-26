@@ -3,8 +3,10 @@
 
 #include "Module.h"
 
-
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+
+class ComponentParticleEmitter;
+class RenderParticleSystemActor;
 
 using namespace physx;
 
@@ -18,15 +20,18 @@ public:
 	bool Start() override;
 	update_status Update(float dt) override;
 
-
 	bool CleanUp() override;
 
 private:
 	
-	uint maxParticles=100;
+	uint maxParticles=10000;
 	bool perParticleRestOffset = false;
 
 	PxParticleSystem* particleSystem = nullptr;
+
+	RenderParticleSystemActor* particleSystem2;
+
+	std::vector<ComponentParticleEmitter*> particleEmitters;
 };
 
 #endif // _MODULE_PARTICLES_H__

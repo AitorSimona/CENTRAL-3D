@@ -552,6 +552,12 @@
     <ClInclude Include="ModuleParticles.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Errors.h" />
+    <ClInclude Include="gpudetect\DeviceId.h" />
+    <ClInclude Include="gpudetect\dxgi1_4.h" />
+    <ClInclude Include="ComponentParticleEmitter.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -565,9 +571,6 @@
     </ClCompile>
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="log.cpp">
-      <Filter>Sources\Tools</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Sources\Tools</Filter>
@@ -901,6 +904,10 @@
     </ClCompile>
     <ClCompile Include="ModuleParticles.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="gpudetect\DeviceId.cpp" />
+    <ClCompile Include="ComponentParticleEmitter.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

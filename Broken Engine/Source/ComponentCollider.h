@@ -21,6 +21,7 @@ public:
 	};
 
 public:
+
 	ComponentCollider(GameObject* ContainerGO);
 	virtual ~ComponentCollider();
 

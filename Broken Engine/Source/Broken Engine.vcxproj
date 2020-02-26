@@ -81,6 +81,7 @@
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
+    <ClInclude Include="ComponentParticleEmitter.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="Errors.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
+    <ClCompile Include="ComponentParticleEmitter.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glad\src\glad.c" />
