@@ -67,6 +67,15 @@ void ComponentTransform::SetRotation(float3 euler_angles)
 	UpdateLocalTransform();
 }
 
+void ComponentTransform::SetQuatRotation(Quat rot)
+{
+	rotation = rot;
+	rotation_euler = rotation.ToEulerXYZ();
+	rotation_euler *= RADTODEG;
+
+	UpdateLocalTransform();
+}
+
 void ComponentTransform::Scale(float x, float y, float z)
 {
 	if (x > 0.0f && y > 0.0f && z > 0.0f)
@@ -106,9 +115,9 @@ json ComponentTransform::Save() const
   	node["positiony"] = std::to_string(position.y);
   	node["positionz"] = std::to_string(position.z);
 
-  	node["rotationx"] = std::to_string(rotation.x);
-  	node["rotationy"] = std::to_string(rotation.y);
-  	node["rotationz"] = std::to_string(rotation.z);
+  	node["rotationx"] = std::to_string(rotation_euler.x);
+  	node["rotationy"] = std::to_string(rotation_euler.y);
+  	node["rotationz"] = std::to_string(rotation_euler.z);
 
   	node["scalex"] = std::to_string(scale.x);
   	node["scaley"] = std::to_string(scale.y);
@@ -119,6 +128,21 @@ json ComponentTransform::Save() const
 
 void ComponentTransform::Load(json& node)
 {
+	std::string posx = node["positionx"];
+	std::string posy = node["positiony"];
+	std::string posz = node["positionz"];
+
+	std::string rotx = node["rotationx"];
+	std::string roty = node["rotationy"];
+	std::string rotz = node["rotationz"];
+
+	std::string scalex = node["rotationx"];
+	std::string scaley = node["rotationy"];
+	std::string scalez = node["rotationz"];
+
+	SetPosition(std::stof(posx), std::stof(posy), std::stof(posz));
+	SetRotation(float3(std::stof(rotx), std::stof(roty), std::stof(rotz)));
+	Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 }
 
 void ComponentTransform::CreateInspectorNode()

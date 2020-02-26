@@ -25,6 +25,7 @@ public:
 	void			Scale(float x, float y, float z);
 	void			SetGlobalTransform(float4x4 new_transform);
 	void			OnUpdateTransform(const float4x4& ParentGlobal);
+	void			SetQuatRotation(Quat rotation);
 
 	// --- Save & Load ---
 	json Save() const override;
