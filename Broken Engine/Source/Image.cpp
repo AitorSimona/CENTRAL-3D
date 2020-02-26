@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
+#include "ModuleTextures.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
@@ -12,7 +13,8 @@ Image::Image(GameObject* gameObject) : Component(gameObject, Component::Componen
 	visible = true;
 
 	canvas = (Canvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	//texture = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "Default");
+	texture->SetTextureID(App->textures->GetDefaultTextureID());
 	canvas->AddElement(this);
 }
 
@@ -112,31 +114,25 @@ void Image::CreateInspectorNode()
 		// Image
 		ImGui::Separator();
 		ImGui::Text("Image");
-		ImGui::SameLine();
 
-		if (ImGui::Button("Load..."))
-			ImGui::OpenPopup("Load Image");
-
-		if (ImGui::BeginPopup("Load Image"))
+		if (texture == nullptr)
+			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
+		else
+			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
+		 
+		//drag and drop
+		if (ImGui::BeginDragDropTarget())
 		{
-			//std::vector<Resource*> images = App->resources->GetAllResourcesOfType(Resource::Type::material);
-			//for (int i = 0; i < images.size(); i++)
-			//{
-			//	if (strcmp("", images[i]->GetName().c_str()) == 0 ||
-			//		images[i]->GetName().substr(images[i]->GetName().size() - 3) == "fbx" ||
-			//		images[i]->GetName().substr(images[i]->GetName().size() - 3) == "FBX")
-			//		continue;
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+			{
+				uint UID = *(const uint*)payload->Data;
+				Resource* resource = App->resources->GetResource(UID, false);
 
-			//	if (ImGui::Selectable(images[i]->GetName().c_str()))
-			//		material->LoadTexture(images[i]->GetFile());
-			//}
-			ImGui::EndPopup();
+				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+					texture = (ResourceTexture*)App->resources->GetResource(UID);
+			}
+			ImGui::EndDragDropTarget();
 		}
-
-		//if (texture->GetTexID() != 0)
-		//	ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0));
-		//else
-			ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "*Image not loaded*");
 
 		ImGui::Separator();
 		ImGui::Separator();

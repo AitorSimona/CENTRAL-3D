@@ -64,7 +64,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer" };
+		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer", "UI Canvas", "UI Image", "UI Text" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -95,6 +95,21 @@ bool PanelInspector::Draw()
 		if (item_current == "ComponentMeshRenderer")
 		{
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
+		}
+
+		if (item_current == "UI Canvas")
+		{
+			Selected->AddComponent(Component::ComponentType::Canvas);
+		}
+
+		if (item_current == "UI Image")
+		{
+			Selected->AddComponent(Component::ComponentType::Image);
+		}
+
+		if (item_current == "UI Text")
+		{
+			Selected->AddComponent(Component::ComponentType::Text);
 		}
 
 		item_current = items[0];
