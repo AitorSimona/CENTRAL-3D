@@ -4,22 +4,22 @@
 #include "Resource.h"
 #include <unordered_map>
 
-class GameObject;
+namespace BrokenEngine {
+	class GameObject;
 
-class ResourceScene : public Resource
-{
-public:
-	ResourceScene(uint UID, std::string source_file);
-	~ResourceScene();
+	class ResourceScene : public Resource {
+	public:
+		ResourceScene(uint UID, std::string source_file);
+		~ResourceScene();
 
-	bool LoadInMemory() override;
-	void FreeMemory() override;
+		bool LoadInMemory() override;
+		void FreeMemory() override;
 
-	std::unordered_map<uint,GameObject*> scene_gos;
+		std::unordered_map<uint, GameObject*> scene_gos;
 
-private:
-	void OnOverwrite() override;
-	void OnDelete() override;
-};
-
+	private:
+		void OnOverwrite() override;
+		void OnDelete() override;
+	};
+}
 #endif //__RESOURCE_SCENE_H__

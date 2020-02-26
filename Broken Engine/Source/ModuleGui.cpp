@@ -1,14 +1,13 @@
-#include "Application.h"
-#include "Globals.h"
+#include "EngineApplication.h"
 #include "ModuleGui.h"
-#include "ModuleWindow.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleSceneManager.h"
-#include "ModuleTextures.h"
-
-#include "GameObject.h"
-#include "ComponentCamera.h"
-
+//#include "ModuleWindow.h"
+//#include "ModuleRenderer3D.h"
+//#include "ModuleSceneManager.h"
+//#include "ModuleTextures.h"
+//
+//#include "GameObject.h"
+//#include "ComponentCamera.h"
+//
 #include "Panels.h"
 
 #include "Imgui/imgui.h"
@@ -23,7 +22,7 @@
 
 
 
-ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
+ModuleGui::ModuleGui(bool start_enabled) : BrokenEngine::Module(start_enabled)
 {
 	name = "GUI";
 }
@@ -182,9 +181,9 @@ update_status ModuleGui::Update(float dt)
 					}
 					if (ImGui::MenuItem("Camera"))
 					{
-						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
-						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
-						cam->AddComponent(Component::ComponentType::MeshRenderer);
+						BrokenEngine::GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						BrokenEngine::ComponentCamera* camera = (BrokenEngine::ComponentCamera*)cam->AddComponent(BrokenEngine::Component::ComponentType::Camera);
+						cam->AddComponent(BrokenEngine::Component::ComponentType::MeshRenderer);
 						camera->SetFarPlane(10);
 					}
 

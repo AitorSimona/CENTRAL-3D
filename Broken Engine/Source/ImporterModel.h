@@ -6,44 +6,44 @@
 #include <vector>
 #include <string>
 
-class GameObject;
-class Resource;
-class ResourceMesh;
-class ResourceModel;
-class ResourceMaterial;
 struct aiNode;
 struct aiScene;
 
-struct ImportModelData : public Importer::ImportData
-{
-	ImportModelData(const char* path) : Importer::ImportData(path) {};
+namespace BrokenEngine {
+	class GameObject;
+	class Resource;
+	class ResourceMesh;
+	class ResourceModel;
+	class ResourceMaterial;
 
-	ResourceModel* model_overwrite = nullptr;
-	bool library_deleted = false;
-};
+	struct ImportModelData : public Importer::ImportData {
+		ImportModelData(const char* path) : Importer::ImportData(path) {};
 
-class ImporterModel : public Importer
-{
+		ResourceModel* model_overwrite = nullptr;
+		bool library_deleted = false;
+	};
 
-public:
-	ImporterModel();
-	~ImporterModel();
+	class ImporterModel : public Importer {
 
-    Resource* Import(ImportData& IData) const override;
-    Resource* Load(const char* path) const override;
+	public:
+		ImporterModel();
+		~ImporterModel();
 
-	void InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const;
+		Resource* Import(ImportData& IData) const override;
+		Resource* Load(const char* path) const override;
 
-	void Save(ResourceModel* model,std::vector<GameObject*>& model_gos, std::string& model_name) const;
+		void InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const;
 
-	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Model; };
+		void Save(ResourceModel* model, std::vector<GameObject*>& model_gos, const std::string& model_name) const;
 
-private:
-	void LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats) const;
-	void LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const;
-	void FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const;
-	void LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const;
-	void FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const;
-};
+		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Model; };
 
+	private:
+		void LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats) const;
+		void LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const;
+		void FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const;
+		void LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const;
+		void FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const;
+	};
+}
 #endif

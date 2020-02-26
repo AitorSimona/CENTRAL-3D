@@ -1,25 +1,10 @@
 #include "PanelScene.h"
 #include "Imgui/imgui.h"
 
-#include "Application.h"
-#include "ModuleInput.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleWindow.h"
-#include "ModuleSceneManager.h"
-#include "ModuleCamera3D.h"
-#include "ModuleResourceManager.h"
-
-#include "GameObject.h"
-#include "ComponentTransform.h"
-
-#include "ImporterScene.h"
-#include "ImporterModel.h"
+#include "EngineApplication.h"
 #include "ModuleGui.h"
-#include "ModuleFileSystem.h"
 
 #include "PanelProject.h"
-
-#include "ComponentCamera.h"
 
 #include "OpenGL.h"
 
@@ -76,13 +61,13 @@ bool PanelScene::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
+				BrokenEngine::Resource* resource = App->resources->GetResource(UID, false);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if (resource && resource->GetType() == Resource::ResourceType::MODEL)
+				if (resource && resource->GetType() == BrokenEngine::Resource::ResourceType::MODEL)
 				{
 					resource = App->resources->GetResource(UID);
-					App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), (ResourceModel*)resource);
+					App->resources->GetImporter < BrokenEngine::ImporterModel > ()->InstanceOnCurrentScene(resource->GetResourceFile(), (BrokenEngine::ResourceModel*)resource);
 				}
 			}
 
@@ -156,17 +141,17 @@ bool PanelScene::Draw()
 void PanelScene::HandleGuizmo()
 {
 	// --- Set Current Guizmo operation ---
-	if (ImGui::IsWindowHovered() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_IDLE)
+	if (ImGui::IsWindowHovered() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == BrokenEngine::KEY_IDLE)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_W) == BrokenEngine::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_E) == BrokenEngine::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_R) == BrokenEngine::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
-	GameObject* selectedGO = App->scene_manager->GetSelectedGameObject();
+	BrokenEngine::GameObject* selectedGO = App->scene_manager->GetSelectedGameObject();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();
@@ -174,7 +159,7 @@ void PanelScene::HandleGuizmo()
 
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
+	memcpy(modelMatrix, selectedGO->GetComponent<BrokenEngine::ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
@@ -185,7 +170,7 @@ void PanelScene::HandleGuizmo()
 	{
 		float4x4 newTransform;
 		newTransform.Set(modelMatrix);
-		selectedGO->GetComponent<ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
+		selectedGO->GetComponent<BrokenEngine::ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
 	}
 }
 

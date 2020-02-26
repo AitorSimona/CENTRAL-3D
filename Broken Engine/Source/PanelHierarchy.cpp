@@ -1,20 +1,20 @@
 #include "PanelHierarchy.h"
 #include "Imgui/imgui.h"
 
-#include "Application.h"
-#include "ModuleSceneManager.h"
-#include "ModuleInput.h"
-#include "ImporterScene.h"
+#include "EngineApplication.h"
+//#include "ModuleSceneManager.h"
+//#include "ModuleInput.h"
+//#include "ImporterScene.h"
 #include "ModuleGui.h"
-#include "ModuleFileSystem.h"
+//#include "ModuleFileSystem.h"
 
-#include "GameObject.h"
+//#include "GameObject.h"
 #include "PanelProject.h"
 
+//
+//#include "mmgr/mmgr.h"
 
-#include "mmgr/mmgr.h"
-
-PanelHierarchy::PanelHierarchy(char * name) : Panel(name)
+PanelHierarchy::PanelHierarchy(char * name) : BrokenEngine::Panel(name)
 {
 }
 

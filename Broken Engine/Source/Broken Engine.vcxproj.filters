@@ -7,446 +7,165 @@
     <Filter Include="Sources\Modules">
       <UniqueIdentifier>{7b418be2-1631-4a31-9ef2-8a8b234a7339}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Containers">
-      <UniqueIdentifier>{afc36133-f401-499a-aa33-0da1e500fb52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Tools">
-      <UniqueIdentifier>{7e4dfaf7-022c-4f7d-92aa-f3b3fa9d6248}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\VSResources">
       <UniqueIdentifier>{6057c556-5da2-4161-a91e-ab85919a9010}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\EditorPanels">
-      <UniqueIdentifier>{b9ecbe23-f523-4b9d-97a3-34d6e133690c}</UniqueIdentifier>
+      <UniqueIdentifier>{0b2650b1-2fb2-4dc9-b715-0881fa96f27a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Tools\Helpers">
-      <UniqueIdentifier>{121f8e6b-df36-4ab0-be0d-601ddfc9e503}</UniqueIdentifier>
+    <Filter Include="Sources\3rd party">
+      <UniqueIdentifier>{63b4c65f-6d9c-495a-b6e1-b28ea9886dea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game Objects">
-      <UniqueIdentifier>{7f726d8d-a75f-44b3-8629-35d0d62f3672}</UniqueIdentifier>
+    <Filter Include="Sources\3rd party\Imgui">
+      <UniqueIdentifier>{71ff72d8-f9ee-433b-98ad-2397b874048c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game Objects\Components">
-      <UniqueIdentifier>{61475cf2-6c53-4b8e-babc-3bf35a2320a2}</UniqueIdentifier>
+    <Filter Include="Sources\3rd party\Imgui\ImGuizmo">
+      <UniqueIdentifier>{ad6af1d3-585a-432f-8f23-57e0a952d1a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Resources">
-      <UniqueIdentifier>{aabe4bfb-2742-467d-8bd9-8eb226e07829}</UniqueIdentifier>
+    <Filter Include="Sources\Helpers">
+      <UniqueIdentifier>{8ea028ee-87c9-4ccc-98df-0332177e920e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Resources\Importers">
-      <UniqueIdentifier>{999fa85e-3dcf-4a41-8a1e-c52a5a31fc78}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Modules\Scripting Functions">
-      <UniqueIdentifier>{14efcff7-e13e-475f-a0e3-9238402bc333}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Tools\DeviceID">
-      <UniqueIdentifier>{7c511496-d653-456c-8542-c8926a418e2e}</UniqueIdentifier>
+    <Filter Include="Sources\3rd party\mmgr">
+      <UniqueIdentifier>{083cac49-5b36-4b32-9d19-9ecde5298a3d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ModuleCamera3D.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleInput.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleRenderer3D.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Sources\Tools\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleHardware.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleGui.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="Panel.h">
+    <ClInclude Include="VSresource.h">
+      <Filter>Sources\VSResources</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineApplication.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelToolbar.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelAbout.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
-    <ClInclude Include="PanelSettings.h">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="PerfTimer.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="PanelConsole.h">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="PanelInspector.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelHierarchy.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
-    <ClInclude Include="PanelScene.h">
+    <ClInclude Include="PanelInspector.h">
       <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="PanelToolbar.h">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleFileSystem.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="JSONLoader.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="VSresource.h">
-      <Filter>Sources\VSResources</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTextures.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentMesh.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Sources\Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleSceneManager.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Importer.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterScene.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterMesh.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterMaterial.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentTransform.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceMesh.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceTexture.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceMaterial.h">
-      <Filter>Sources\Resources</Filter>
     </ClInclude>
     <ClInclude Include="PanelProject.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentCamera.h">
-      <Filter>Sources\Game Objects\Components</Filter>
+    <ClInclude Include="PanelResources.h">
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
-    <ClInclude Include="Quadtree.h">
-      <Filter>Sources\Containers</Filter>
+    <ClInclude Include="PanelScene.h">
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceShader.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterShader.h">
-      <Filter>Sources\Resources\Importers</Filter>
+    <ClInclude Include="PanelSettings.h">
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="PanelShaderEditor.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceModel.h">
-      <Filter>Sources\Resources</Filter>
+    <ClInclude Include="Imgui\imconfig.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceScene.h">
-      <Filter>Sources\Resources</Filter>
+    <ClInclude Include="Imgui\imgui.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceShaderProgram.h">
-      <Filter>Sources\Resources</Filter>
+    <ClInclude Include="Imgui\imgui_impl_opengl3.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceShaderObject.h">
-      <Filter>Sources\Resources</Filter>
+    <ClInclude Include="Imgui\imgui_impl_sdl.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFolder.h">
-      <Filter>Sources\Resources</Filter>
+    <ClInclude Include="Imgui\imgui_internal.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ImporterModel.h">
-      <Filter>Sources\Resources\Importers</Filter>
+    <ClInclude Include="Imgui\imstb_rectpack.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Resources.h">
-      <Filter>Sources\Tools</Filter>
+    <ClInclude Include="Imgui\imstb_textedit.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Importers.h">
-      <Filter>Sources\Tools</Filter>
+    <ClInclude Include="Imgui\imstb_truetype.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceMeta.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterMeta.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterFolder.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="Components.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleEventManager.h">
-      <Filter>Sources\Modules</Filter>
+    <ClInclude Include="Imgui\ImGuizmo\ImGuizmo.h">
+      <Filter>Sources\3rd party\Imgui\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="Panels.h">
-      <Filter>Sources\Tools</Filter>
+      <Filter>Sources\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentMeshRenderer.h">
-      <Filter>Sources\Game Objects\Components</Filter>
+    <ClInclude Include="mmgr\mmgr.h">
+      <Filter>Sources\3rd party\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="ImporterTexture.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="PanelResources.h">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleResourceManager.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleScripting.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptData.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptVar.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentScript.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceScript.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleThreading.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterScript.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripting.h">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
-    </ClInclude>
-    <ClInclude Include="LuaIncludes.h">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
-    </ClInclude>
-    <ClInclude Include="gpudetect\DeviceId.h">
-      <Filter>Sources\Tools\DeviceID</Filter>
-    </ClInclude>
-    <ClInclude Include="gpudetect\dxgi1_4.h">
-      <Filter>Sources\Tools\DeviceID</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineApplication.h">
-      <Filter>Sources</Filter>
+    <ClInclude Include="mmgr\nommgr.h">
+      <Filter>Sources\3rd party\mmgr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ModuleCamera3D.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleInput.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleRenderer3D.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Sources\Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="Color.cpp">
-      <Filter>Sources\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Sources\Tools\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleHardware.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Panel.cpp">
-      <Filter>Sources\EditorPanels</Filter>
+    <ClCompile Include="EngineApplication.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="PanelAbout.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
-    <ClCompile Include="PanelSettings.cpp">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
-    <ClCompile Include="PerfTimer.cpp">
-      <Filter>Sources\Tools</Filter>
-    </ClCompile>
     <ClCompile Include="PanelConsole.cpp">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
-    <ClCompile Include="PanelInspector.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelHierarchy.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
+    <ClCompile Include="PanelInspector.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelProject.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelResources.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
     <ClCompile Include="PanelScene.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelSettings.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelShaderEditor.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PanelToolbar.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleFileSystem.cpp">
-      <Filter>Sources\Modules</Filter>
+    <ClCompile Include="Imgui\imgui.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="JSONLoader.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
+    <ClCompile Include="Imgui\imgui_demo.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleTextures.cpp">
-      <Filter>Sources\Modules</Filter>
+    <ClCompile Include="Imgui\imgui_draw.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
+    <ClCompile Include="Imgui\imgui_impl_opengl3.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentMesh.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
+    <ClCompile Include="Imgui\imgui_impl_sdl.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Sources\Game Objects</Filter>
+    <ClCompile Include="Imgui\imgui_widgets.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleSceneManager.cpp">
-      <Filter>Sources\Modules</Filter>
+    <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Sources\3rd party\Imgui\ImGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="Importer.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterScene.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterMesh.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterMaterial.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentTransform.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceMesh.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceTexture.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceMaterial.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="PanelProject.cpp">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentCamera.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Quadtree.cpp">
-      <Filter>Sources\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShader.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterShader.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="PanelShaderEditor.cpp">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceModel.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceScene.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShaderProgram.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShaderObject.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceFolder.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterModel.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceMeta.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterMeta.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterFolder.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleEventManager.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentMeshRenderer.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterTexture.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="PanelResources.cpp">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleResourceManager.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleScripting.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptVar.cpp">
-      <Filter>Sources\Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentScript.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceScript.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterScript.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="Scripting.cpp">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineApplication.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ModuleThreading.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="gpudetect\DeviceId.cpp">
-      <Filter>Sources\Tools\DeviceID</Filter>
+    <ClCompile Include="mmgr\mmgr.cpp">
+      <Filter>Sources\3rd party\mmgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

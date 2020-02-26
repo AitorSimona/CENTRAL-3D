@@ -1,12 +1,9 @@
 #include "PanelAbout.h"
-#include "Application.h"
+#include "EngineApplication.h"
 #include "ModuleGui.h"
 #include "Imgui/imgui.h"
 
-#include "mmgr/mmgr.h"
-
-
-PanelAbout::PanelAbout(char * name) : Panel(name)
+PanelAbout::PanelAbout(char * name) : BrokenEngine::Panel(name)
 {
 }
 

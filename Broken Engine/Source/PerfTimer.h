@@ -3,21 +3,21 @@
 
 #include "SDL/include/SDL_timer.h"
 
-class PerfTimer
-{
-public:
+namespace BrokenEngine {
+	class PerfTimer {
+	public:
 
-	PerfTimer();
+		PerfTimer();
 
-	void Start();
+		void Start();
 
-	double ReadMs() const;
-	Uint64 ReadTicks() const;
+		double ReadMs() const;
+		Uint64 ReadTicks() const;
 
-private:
+	private:
 
-	Uint64 started_at;
-	static Uint64 frequency;
-};
-
+		Uint64 started_at;
+		static Uint64 frequency;
+	};
+}
 #endif

@@ -1,59 +1,65 @@
-#pragma once
+#ifndef __BE_MODULECAMERA3D_H__
+#define __BE_MODULECAMERA3D_H__
+
 #include "Module.h"
-#include "Globals.h"
+#include "BrokenCore.h"
 #include "Math.h"
 
-class GameObject;
-class ComponentCamera;
+namespace BrokenEngine {
 
-class ModuleCamera3D : public Module
-{
-public:
+	class GameObject;
+	class ComponentCamera;
 
-	ModuleCamera3D(bool start_enabled = true);
-	~ModuleCamera3D();
+	class ModuleCamera3D : public Module {
+	public:
 
-	bool Init(json config) override;
-	bool Start() override;
-	update_status Update(float dt) override;
-	void UpdateCamera();
-	
-	bool CleanUp() override;
+		ModuleCamera3D(bool start_enabled = true);
+		~ModuleCamera3D();
 
-	void FrameObject(GameObject* GO);
-	void FrameObject(float3 posToLook);
-	void OnMouseClick(const float mouse_x, const float mouse_y);
+		bool Init(json config) override;
+		bool Start() override;
+		update_status Update(float dt) override;
+		void UpdateCamera();
 
-	const float4 GetCameraDefaultValues() const { return m_CameraDefaultValues; }
+		bool CleanUp() override;
 
-private:
+		void FrameObject(GameObject* GO);
+		void FrameObject(float3 posToLook);
+		void OnMouseClick(const float mouse_x, const float mouse_y);
 
-	void CameraPan(float speed);
-	void CameraZoom(float speed);
-	void CameraLookAround(float speed, float3 reference);
+		const float4 GetCameraDefaultValues() const { return m_CameraDefaultValues; }
 
-	//Modify engine's camera speed (for the mouse mid button scroll)
-	void ModifySpeedMultiplicator();
+	private:
 
-public:
+		void CameraPan(float speed);
+		void CameraZoom(float speed);
+		void CameraLookAround(float speed, float3 reference);
 
-	float m_CameraSpeed = 10.0f;
-	float m_ScrollSpeed = 3.0f;
-	float m_SpeedMultiplicator = 1.0f;
-	bool m_ScrollingSpeedChange = false;
+		//Modify engine's camera speed (for the mouse mid button scroll)
+		void ModifySpeedMultiplicator();
 
-	float3 reference = { 0.0f,0.0f,0.0f };
-	ComponentCamera* camera = nullptr;
-	LineSegment last_ray;
+	public:
 
-	float4 m_CustomDefaultCameraValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
+		float m_CameraSpeed = 10.0f;
+		float m_ScrollSpeed = 3.0f;
+		float m_SpeedMultiplicator = 1.0f;
+		bool m_ScrollingSpeedChange = false;
 
-private:
+		float3 reference = { 0.0f,0.0f,0.0f };
+		ComponentCamera* camera = nullptr;
+		LineSegment last_ray;
 
-	float m_CameraSpeedDeltaTime = 0.0f;
-	float m_ScrollSpeedDeltaTime = 0.0f;
-	float m_FinalSpeed = 0.0f;
+		float4 m_CustomDefaultCameraValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
+
+	private:
+
+		float m_CameraSpeedDeltaTime = 0.0f;
+		float m_ScrollSpeedDeltaTime = 0.0f;
+		float m_FinalSpeed = 0.0f;
 
 
-	float4 m_CameraDefaultValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
-};
+		float4 m_CameraDefaultValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
+	};
+}
+
+#endif

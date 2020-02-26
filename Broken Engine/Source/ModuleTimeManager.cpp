@@ -5,7 +5,7 @@
 
 #include "mmgr/mmgr.h"
 
-namespace BrokenEngine{
+namespace BrokenEngine {
 	ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled) {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing Time Manager");
 

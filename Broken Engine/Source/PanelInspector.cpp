@@ -1,27 +1,27 @@
 #include "PanelInspector.h"
 #include "Imgui/imgui.h"
 
-#include "Application.h"
-#include "ModuleSceneManager.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleResourceManager.h"
+#include "EngineApplication.h"
+//#include "ModuleSceneManager.h"
+//#include "ModuleRenderer3D.h"
+//#include "ModuleResourceManager.h"
 #include "ModuleGui.h"
 
-#include "GameObject.h"
-#include "ComponentTransform.h"
-#include "ComponentMesh.h"
-#include "ComponentMeshRenderer.h"
-#include "ComponentCamera.h"
+//#include "GameObject.h"
+//#include "ComponentTransform.h"
+//#include "ComponentMesh.h"
+//#include "ComponentMeshRenderer.h"
+//#include "ComponentCamera.h"
 
 #include "PanelShaderEditor.h"
 
-#include "ResourceMesh.h"
-#include "ResourceMaterial.h"
-#include "ResourceTexture.h"
-#include "ResourceShader.h"
-#include "ComponentScript.h"
+//#include "ResourceMesh.h"
+//#include "ResourceMaterial.h"
+//#include "ResourceTexture.h"
+//#include "ResourceShader.h"
+//#include "ComponentScript.h"
 
-#include "mmgr/mmgr.h"
+//#include "mmgr/mmgr.h"
 
 PanelInspector::PanelInspector(char * name) : Panel(name)
 {
@@ -38,7 +38,7 @@ bool PanelInspector::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		GameObject* Selected = App->scene_manager->GetSelectedGameObject();
+		BrokenEngine::GameObject* Selected = App->scene_manager->GetSelectedGameObject();
 
 		if (Selected == nullptr)
 		{
@@ -111,12 +111,12 @@ bool PanelInspector::Draw()
 
 		if (item_current == "ComponentMesh")
 		{
-			Selected->AddComponent(Component::ComponentType::Mesh);
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::Mesh);
 		}
 
 		if (item_current == "ComponentMeshRenderer")
 		{
-			Selected->AddComponent(Component::ComponentType::MeshRenderer);
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::MeshRenderer);
 		}
 
 		item_current = items[0];
@@ -131,7 +131,7 @@ bool PanelInspector::Draw()
 	return true;
 }
 
-void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
+void PanelInspector::CreateGameObjectNode(BrokenEngine::GameObject & Selected) const
 {
 	ImGui::BeginChild("child", ImVec2(0, 35), true);
 

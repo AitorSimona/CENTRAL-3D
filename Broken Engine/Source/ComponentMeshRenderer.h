@@ -6,37 +6,39 @@
 // Specifying normal vectors length (used when drawing normals)
 #define NORMAL_LENGTH 0.5
 
-class ResourceMesh;
-class ComponentTransform;
-class ResourceMaterial;
+namespace BrokenEngine {
 
-class ComponentMeshRenderer : public Component
-{
-public:
+	class ResourceMesh;
+	class ComponentTransform;
+	class ResourceMaterial;
 
-	ComponentMeshRenderer(GameObject* ContainerGO);
-	virtual ~ComponentMeshRenderer();
+	class ComponentMeshRenderer : public Component {
+	public:
 
-	void Draw(bool outline = false) const;
+		ComponentMeshRenderer(GameObject* ContainerGO);
+		virtual ~ComponentMeshRenderer();
 
-	// --- Save & Load ---
-	json Save() const override;
-	void Load(json& node) override;
-	void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) override;
-	void CreateInspectorNode() override;
+		void Draw(bool outline = false) const;
 
-	static inline Component::ComponentType GetType() { return Component::ComponentType::MeshRenderer; };
+		// --- Save & Load ---
+		json Save() const override;
+		void Load(json& node) override;
+		void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) override;
+		void CreateInspectorNode() override;
 
-private:
-	// --- Draw Functiions accessed by main Draw ---
-	void DrawMesh(ResourceMesh& mesh) const;
-	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
+		static inline Component::ComponentType GetType() { return Component::ComponentType::MeshRenderer; };
 
-public:
-	bool draw_vertexnormals = false;
-	bool draw_facenormals = false;
-	bool checkers = false;
-	ResourceMaterial* material = nullptr;
-};
+	private:
+		// --- Draw Functiions accessed by main Draw ---
+		void DrawMesh(ResourceMesh& mesh) const;
+		void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 
+	public:
+		bool draw_vertexnormals = false;
+		bool draw_facenormals = false;
+		bool checkers = false;
+		ResourceMaterial* material = nullptr;
+	};
+
+}
 #endif

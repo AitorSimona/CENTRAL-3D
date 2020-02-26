@@ -1,19 +1,19 @@
 #include "Application.h"
 #include "Module.h"
-//#include "ModuleEventManager.h"
-//#include "ModuleInput.h"
+#include "ModuleEventManager.h"
+#include "ModuleInput.h"
 #include "ModuleTimeManager.h"
-//#include "ModuleHardware.h"
-//#include "ModuleFileSystem.h"
+#include "ModuleHardware.h"
+#include "ModuleFileSystem.h"
 #include "ModuleWindow.h"
-//#include "ModuleCamera3D.h"
+#include "ModuleCamera3D.h"
 //#include "ModuleGui.h"
-//#include "ModuleSceneManager.h"
-//#include "ModuleRenderer3D.h"
-//#include "ModuleTextures.h"
-//#include "ModuleResourceManager.h"
-//#include "ModuleScripting.h"
-//#include "ModuleThreading.h"
+#include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleTextures.h"
+#include "ModuleResourceManager.h"
+#include "ModuleScripting.h"
+#include "ModuleThreading.h"
 
 #include "mmgr/mmgr.h"
 
@@ -24,20 +24,20 @@ namespace BrokenEngine {
 		configpath = "Settings/EditorConfig.json";
 		RandomNumber = new math::LCG();
 
-		//event_manager = new ModuleEventManager(true);
-		//input = new ModuleInput(true);
-		//time = new ModuleTimeManager(true);
-		//hardware = new ModuleHardware(true);
-		//fs = new ModuleFileSystem(true, ASSETS_FOLDER);
-		//window = new ModuleWindow(true);
-		//scene_manager = new ModuleSceneManager(true);
-		//renderer3D = new ModuleRenderer3D(true);
-		//scripting = new ModuleScripting(true);
-		//camera = new ModuleCamera3D(true);
+		event_manager = new ModuleEventManager(true);
+		input = new ModuleInput(true);
+		time = new ModuleTimeManager(true);
+		hardware = new ModuleHardware(true);
+		fs = new ModuleFileSystem(true, ASSETS_FOLDER);
+		window = new ModuleWindow(true);
+		scene_manager = new ModuleSceneManager(true);
+		renderer3D = new ModuleRenderer3D(true);
+		scripting = new ModuleScripting(true);
+		camera = new ModuleCamera3D(true);
 		//gui = new ModuleGui(true);
-		//textures = new ModuleTextures(true);
-		//resources = new ModuleResourceManager(true);
-		//threading = new ModuleThreading(true);
+		textures = new ModuleTextures(true);
+		resources = new ModuleResourceManager(true);
+		threading = new ModuleThreading(true);
 
 		// The order of calls is very important!
 		// Modules will Init() Start() and Update in this order

@@ -1,7 +1,6 @@
 #ifndef __PANELS_H__
 #define __PANELS_H__
 
-#include "Panel.h"
 #include "PanelSettings.h"
 #include "PanelAbout.h"
 #include "PanelConsole.h"

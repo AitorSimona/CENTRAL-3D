@@ -1,24 +1,17 @@
 #include <vector>
 #include "PanelSettings.h"
-#include "Application.h"
+#include "EngineApplication.h"
 #include "ModuleGui.h"
-#include "ModuleHardware.h"
-#include "ModuleWindow.h"
-#include "ModuleInput.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleTimeManager.h"
-#include "ModuleCamera3D.h"
-#include "ComponentCamera.h"
 
 #include "Imgui/imgui.h"
-#include "OpenGL.h"
-#include "DevIL/include/il.h"
-#include "Assimp/include/version.h"
+//#include "OpenGL.h"
+//#include "DevIL/include/il.h"
+//#include "Assimp/include/version.h"
 
 #include "mmgr/mmgr.h"
 
 
-PanelSettings::PanelSettings(char * name): Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
+PanelSettings::PanelSettings(char * name): BrokenEngine::Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
 {
 
 }
@@ -253,7 +246,7 @@ inline void PanelSettings::RendererNode() const
 
 inline void PanelSettings::EngineCameraNode() const
 {
-	ComponentCamera* cam = App->camera->camera;
+	BrokenEngine::ComponentCamera* cam = App->camera->camera;
 
 	// --- Camera Speed ---
 	float camSpeed = App->camera->m_CameraSpeed;
@@ -352,7 +345,7 @@ inline void PanelSettings::SoftwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);	
-	SoftwareInfo swInfo = App->hardware->GetSwInfo();
+	BrokenEngine::SoftwareInfo swInfo = App->hardware->GetSwInfo();
 
 	// --- INFO
 	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate().c_str());
@@ -381,7 +374,7 @@ inline void PanelSettings::RAMMemoryNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	MemoryHardware HardwareInfo = App->hardware->GetMemInfo();
+	BrokenEngine::MemoryHardware HardwareInfo = App->hardware->GetMemInfo();
 
 	// --- INFO
 	ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetRAMSizeFromSDL()) + " GB").c_str()));
@@ -414,8 +407,8 @@ inline void PanelSettings::HardwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	ProcessorHardware CPUData = App->hardware->GetProcessorInfo();
-	GPUHardware GPUData = App->hardware->GetGraphicsCardInfo();
+	BrokenEngine::ProcessorHardware CPUData = App->hardware->GetProcessorInfo();
+	BrokenEngine::GPUHardware GPUData = App->hardware->GetGraphicsCardInfo();
 
 	// --- INFO
 	ImGui::Text("PROCESSOR INFORMATION (CPU)");

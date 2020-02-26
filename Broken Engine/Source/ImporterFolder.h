@@ -2,22 +2,21 @@
 #define __IMPORTER_FOLDER_H__
 
 #include "Importer.h"
+namespace BrokenEngine {
+	class ResourceFolder;
 
-class ResourceFolder;
+	class ImporterFolder : public Importer {
 
-class ImporterFolder : public Importer
-{
+	public:
+		ImporterFolder();
+		~ImporterFolder();
 
-public:
-	ImporterFolder();
-	~ImporterFolder();
+		Resource* Import(ImportData& IData) const override;
+		Resource* Load(const char* path) const override;
 
-	Resource* Import(ImportData& IData) const override;
-	Resource* Load(const char* path) const override;
+		void Save(ResourceFolder* folder) const;
 
-	void Save(ResourceFolder* folder) const;
-
-	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Folder; };
-};
-
+		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Folder; };
+	};
+}
 #endif

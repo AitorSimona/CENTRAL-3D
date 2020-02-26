@@ -6,101 +6,98 @@
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
-
-ImporterScript::ImporterScript() : Importer(ImporterType::Script)
-{
-}
-
-ImporterScript::~ImporterScript()
-{
-}
-
-Resource* ImporterScript::Import(ImportData& IData) const
-{
-	ResourceScript* resource_script = (ResourceScript*)App->resources->CreateResource(Resource::ResourceType::SCRIPT, IData.path);
-
-	//Pass the relative path
-	resource_script->relative_path = IData.path;
-
-	//Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
-	std::string abs_path = App->fs->GetBasePath();
-
-	std::size_t d_pos = 0;
-	d_pos = abs_path.find("Debug");
-	std::size_t r_pos = 0;
-	r_pos = abs_path.find("Release");
-
-	if (d_pos != 4294967295)  // If we are in DEBUG
-	{
-		abs_path = abs_path.substr(0,d_pos);
+namespace BrokenEngine {
+	ImporterScript::ImporterScript() : Importer(ImporterType::Script) {
 	}
 
-	if (r_pos != 4294967295) // If we are in RELEASE
-	{
-		abs_path = abs_path.substr(0,r_pos);
+	ImporterScript::~ImporterScript() {
 	}
 
-	abs_path += "Game/";
-	abs_path += IData.path;
-	App->fs->NormalizePath(abs_path);
-	resource_script->absolute_path = abs_path.c_str();
-	
-	//Get Script name
-	std::string file;
-	App->fs->SplitFilePath(IData.path,nullptr,&file ,nullptr);
-	App->fs->RemoveFileExtension(file);
-	resource_script->script_name = file;
+	Resource* ImporterScript::Import(ImportData& IData) const {
+		ResourceScript* resource_script = (ResourceScript*)App->resources->CreateResource(Resource::ResourceType::SCRIPT, IData.path);
 
-	// --- Create Meta ---
-	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		//Pass the relative path
+		resource_script->relative_path = IData.path;
 
-	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_script->GetOriginalFile(), resource_script->GetUID());
+		//Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
+		std::string abs_path = App->fs->GetBasePath();
 
-	if (meta)
-		IMeta->Save(meta);
+		std::size_t d_pos = 0;
+		d_pos = abs_path.find("Debug");
+		std::size_t r_pos = 0;
+		r_pos = abs_path.find("Release");
 
-	return (Resource*)resource_script;
-}
+		if (d_pos != 4294967295)  // If we are in DEBUG
+		{
+			abs_path = abs_path.substr(0, d_pos);
+		}
 
-Resource* ImporterScript::Load(const char* path) const
-{
-	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+		if (r_pos != 4294967295) // If we are in RELEASE
+		{
+			abs_path = abs_path.substr(0, r_pos);
+		}
 
-	uint UID = meta->GetUID();
-	ResourceScript* resource_script = App->resources->scripts.find(UID) != App->resources->scripts.end() ? App->resources->scripts.find(UID)->second : (ResourceScript*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCRIPT, meta->GetOriginalFile(), UID);
+		abs_path += "Game/";
+		abs_path += IData.path;
+		App->fs->NormalizePath(abs_path);
+		resource_script->absolute_path = abs_path.c_str();
 
-	//Pass the relative path
-	resource_script->relative_path = path;
+		//Get Script name
+		std::string file;
+		App->fs->SplitFilePath(IData.path, nullptr, &file, nullptr);
+		App->fs->RemoveFileExtension(file);
+		resource_script->script_name = file;
 
-	//Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
-	std::string abs_path = App->fs->GetBasePath();
+		// --- Create Meta ---
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-	std::size_t d_pos = 0;
-	d_pos = abs_path.find("Debug");
-	std::size_t r_pos = 0;
-	r_pos = abs_path.find("Release");
+		ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_script->GetOriginalFile(), resource_script->GetUID());
 
-	if (d_pos != 4294967295)  // If we are in DEBUG
-	{
-		abs_path = abs_path.substr(0, d_pos);
+		if (meta)
+			IMeta->Save(meta);
+
+		return (Resource*)resource_script;
 	}
 
-	if (r_pos != 4294967295) // If we are in RELEASE
-	{
-		abs_path = abs_path.substr(0, r_pos);
+	Resource* ImporterScript::Load(const char* path) const {
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+
+		uint UID = meta->GetUID();
+		ResourceScript* resource_script = App->resources->scripts.find(UID) != App->resources->scripts.end() ? App->resources->scripts.find(UID)->second : (ResourceScript*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCRIPT, meta->GetOriginalFile(), UID);
+
+		//Pass the relative path
+		resource_script->relative_path = path;
+
+		//Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
+		std::string abs_path = App->fs->GetBasePath();
+
+		std::size_t d_pos = 0;
+		d_pos = abs_path.find("Debug");
+		std::size_t r_pos = 0;
+		r_pos = abs_path.find("Release");
+
+		if (d_pos != 4294967295)  // If we are in DEBUG
+		{
+			abs_path = abs_path.substr(0, d_pos);
+		}
+
+		if (r_pos != 4294967295) // If we are in RELEASE
+		{
+			abs_path = abs_path.substr(0, r_pos);
+		}
+
+		abs_path += "Game/";
+		abs_path += path;
+		App->fs->NormalizePath(abs_path);
+		resource_script->absolute_path = abs_path.c_str();
+
+		//Get Script name
+		std::string file;
+		App->fs->SplitFilePath(path, nullptr, &file, nullptr);
+		App->fs->RemoveFileExtension(file);
+		resource_script->script_name = file;
+
+		return (Resource*)resource_script;
 	}
-
-	abs_path += "Game/";
-	abs_path += path;
-	App->fs->NormalizePath(abs_path);
-	resource_script->absolute_path = abs_path.c_str();
-
-	//Get Script name
-	std::string file;
-	App->fs->SplitFilePath(path, nullptr, &file, nullptr);
-	App->fs->RemoveFileExtension(file);
-	resource_script->script_name = file;
-
-	return (Resource*)resource_script;
 }

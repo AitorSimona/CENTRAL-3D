@@ -1,16 +1,9 @@
 #include "PanelShaderEditor.h"
 
-#include "OpenGL.h"
+//#include "OpenGL.h"
 #include "Imgui/imgui.h"
 
-#include "Application.h"
-#include "ModuleResourceManager.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleSceneManager.h"
-
-#include "GameObject.h"
-#include "ResourceShader.h"
-#include "ResourceMaterial.h"
+#include "EngineApplication.h"
 
 #include "mmgr/mmgr.h"
 
@@ -36,7 +29,7 @@ bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags)
 	return ImGui::InputTextMultiline(label, (char*)str->c_str(), str->capacity() + 1, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), flags, InputTextCallback, (void*)str);
 }
 
-PanelShaderEditor::PanelShaderEditor(char * name) : Panel(name)
+PanelShaderEditor::PanelShaderEditor(char * name) : BrokenEngine::Panel(name)
 {
 }
 
@@ -151,7 +144,7 @@ bool PanelShaderEditor::Draw()
 	return true;
 }
 
-void PanelShaderEditor::DisplayAndUpdateUniforms(ResourceMaterial* resource_mat)
+void PanelShaderEditor::DisplayAndUpdateUniforms(BrokenEngine::ResourceMaterial* resource_mat)
 {
 	// Note this is being done before any render happens
 

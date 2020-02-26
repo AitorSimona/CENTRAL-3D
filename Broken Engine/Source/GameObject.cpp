@@ -13,306 +13,264 @@
 
 #include "mmgr/mmgr.h"
 
-GameObject::GameObject(const char* name)
-{
-	UID = App->GetRandom().Int();
-	this->name = name;
-	// --- Add transform ---
-	AddComponent(Component::ComponentType::Transform);
-	UpdateAABB();
+namespace BrokenEngine {
+	GameObject::GameObject(const char* name) {
+		UID = App->GetRandom().Int();
+		this->name = name;
+		// --- Add transform ---
+		AddComponent(Component::ComponentType::Transform);
+		UpdateAABB();
 
-	Enable();
-}
-
-GameObject::~GameObject()
-{
-	// --- Destroy all components and game object ---
-
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-	{
-		if (*it)
-			delete *it;
-
-	}
-	components.clear();
-
-	if (model)
-		model->Release();
-}
-
-void GameObject::Update(float dt)
-{
-	if (GetComponent<ComponentTransform>()->update_transform)
-		this->OnUpdateTransform();
-
-	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
-	{
-		(*it)->Update(dt);
+		Enable();
 	}
 
-}
+	GameObject::~GameObject() {
+		// --- Destroy all components and game object ---
 
-void GameObject::RecursiveDelete(bool target)
-{
-	// --- Delete all childs of given GO, also destroys GO ---
+		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+			if (*it)
+				delete* it;
 
-	if (this->childs.size() > 0)
-	{
-		for (std::vector<GameObject*>::iterator it = this->childs.begin(); it != this->childs.end(); ++it)
-		{
-			(*it)->RecursiveDelete(false);
+		}
+		components.clear();
+
+		if (model)
+			model->Release();
+	}
+
+	void GameObject::Update(float dt) {
+		if (GetComponent<ComponentTransform>()->update_transform)
+			this->OnUpdateTransform();
+
+		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
+			(*it)->Update(dt);
 		}
 
-		this->childs.clear();
 	}
-	// --- If this is the first object GO given to Recursive delete, erase it from parent's list ---
-	if (target && this->parent)
-		this->parent->RemoveChildGO(this);
 
-	this->Static = true;
-	App->scene_manager->SetStatic(this);
-	App->scene_manager->tree.Erase(this);
+	void GameObject::RecursiveDelete(bool target) {
+		// --- Delete all childs of given GO, also destroys GO ---
 
-	delete this;
-}
+		if (this->childs.size() > 0) {
+			for (std::vector<GameObject*>::iterator it = this->childs.begin(); it != this->childs.end(); ++it) {
+				(*it)->RecursiveDelete(false);
+			}
 
-void GameObject::OnUpdateTransform()
-{
-	if (Static)
-		return;
+			this->childs.clear();
+		}
+		// --- If this is the first object GO given to Recursive delete, erase it from parent's list ---
+		if (target && this->parent)
+			this->parent->RemoveChildGO(this);
 
-	ComponentTransform* transform = GetComponent<ComponentTransform>();
+		this->Static = true;
+		App->scene_manager->SetStatic(this);
+		App->scene_manager->tree.Erase(this);
 
-	if(parent)
-	transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
+		delete this;
+	}
 
-	ComponentCamera* camera = GetComponent<ComponentCamera>();
+	void GameObject::OnUpdateTransform() {
+		if (Static)
+			return;
 
-	if(camera)
-	camera->OnUpdateTransform(transform->GetGlobalTransform());
+		ComponentTransform* transform = GetComponent<ComponentTransform>();
 
-	// --- Update all children ---
-	if (childs.size() > 0)
-	{
-		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
-		{
-			(*it)->OnUpdateTransform();
+		if (parent)
+			transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
+
+		ComponentCamera* camera = GetComponent<ComponentCamera>();
+
+		if (camera)
+			camera->OnUpdateTransform(transform->GetGlobalTransform());
+
+		// --- Update all children ---
+		if (childs.size() > 0) {
+			for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
+				(*it)->OnUpdateTransform();
+			}
+		}
+
+		UpdateAABB();
+	}
+
+	void GameObject::RemoveChildGO(GameObject* GO) {
+		// --- Remove given child from list ---
+		if (childs.size() > 0) {
+			for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
+				if ((*go)->GetUID() == GO->GetUID()) {
+					childs.erase(go);
+					break;
+				}
+			}
 		}
 	}
 
-	UpdateAABB();
-}
+	void GameObject::AddChildGO(GameObject* GO) {
+		// --- Add a child GO to a Game Object this ---
+		if (!FindChildGO(GO)) {
+			if (GO->parent)
+				GO->parent->RemoveChildGO(GO);
 
-void GameObject::RemoveChildGO(GameObject * GO)
-{
-	// --- Remove given child from list ---
-	if (childs.size() > 0)
-	{
-		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
-		{
-			if ((*go)->GetUID() == GO->GetUID())
-			{
-				childs.erase(go);
+			GO->parent = this;
+			childs.push_back(GO);
+
+			//ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
+			//transform->SetGlobalTransform(this->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
+		}
+	}
+
+	bool GameObject::FindChildGO(GameObject* GO) {
+		// --- Look for given GO in child list and return true if found ---
+		bool ret = false;
+
+		if (childs.size() > 0) {
+			std::vector<GameObject*>::iterator go = childs.begin();
+
+			for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
+				if ((*go)->GetUID() == GO->GetUID())
+					ret = true;
+			}
+		}
+
+		return ret;
+	}
+
+	Component* GameObject::AddComponent(Component::ComponentType type) {
+		BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
+
+		Component* component = nullptr;
+
+		// --- Check if there is already a component of the type given ---
+
+		if (HasComponent(type) == nullptr) {
+			switch (type) {
+			case Component::ComponentType::Transform:
+				component = new ComponentTransform(this);
+				break;
+			case Component::ComponentType::Mesh:
+				component = new ComponentMesh(this);
+				UpdateAABB();
+				break;
+			case Component::ComponentType::MeshRenderer:
+				component = new ComponentMeshRenderer(this);
+				break;
+			case Component::ComponentType::Camera:
+				component = new ComponentCamera(this);
+				break;
+			case Component::ComponentType::Script:
+				component = new ComponentScript(this);
+				break;
+			}
+
+			if (component)
+				components.push_back(component);
+
+		}
+		else {
+			// --- If we find a component of the same type, tell the user and return such component ---
+			ENGINE_CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
+			component = HasComponent(type);
+		}
+
+		return component;
+	}
+
+	void GameObject::RemoveComponent(Component::ComponentType type) {
+		// ---Remove component of type given from game object ---
+
+		for (uint i = 0; i < components.size(); ++i) {
+			if (components[i]->GetType() == type) {
+				std::vector<Component*>::iterator it = components.begin();
+				it += i;
+
+				components.erase(it);
+
 				break;
 			}
 		}
 	}
-}
 
-void GameObject::AddChildGO(GameObject * GO)
-{
-	// --- Add a child GO to a Game Object this ---
-	if (!FindChildGO(GO))
-	{
-		if (GO->parent)
-			GO->parent->RemoveChildGO(GO);
+	Component* GameObject::HasComponent(Component::ComponentType type) const {
+		// --- Search for given type of component ---
+		Component* component = nullptr;
 
-		GO->parent = this;
-		childs.push_back(GO);
+		for (uint i = 0; i < components.size(); ++i) {
+			if (components[i]->GetType() == type) {
+				component = components[i];
+				break;
+			}
+		}
 
-		//ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-		//transform->SetGlobalTransform(this->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
+		return component;
 	}
-}
 
-bool GameObject::FindChildGO(GameObject * GO)
-{
-	// --- Look for given GO in child list and return true if found ---
-	bool ret = false;
+	std::vector<Component*>& GameObject::GetComponents() {
+		return components;
+	}
 
-	if (childs.size() > 0)
-	{
-		std::vector<GameObject*>::iterator go = childs.begin();
+	void GameObject::Enable() {
+		active = true;
+	}
 
-		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
-		{
-			if ((*go)->GetUID() == GO->GetUID())
-				ret = true;
+	void GameObject::Disable() {
+		active = false;
+	}
+
+	uint& GameObject::GetUID() {
+		return UID;
+	}
+
+	std::string GameObject::GetName() const {
+		return name;
+	}
+
+	const AABB& GameObject::GetAABB() {
+		UpdateAABB();
+		return aabb;
+	}
+
+	const OBB& GameObject::GetOBB() const {
+		return obb;
+	}
+
+	bool& GameObject::GetActive() {
+		return active;
+	}
+
+	bool GameObject::IsEnabled() const {
+		return active;
+	}
+
+	void GameObject::SetName(const char* name) {
+		if (name && name != "root")
+			this->name = name;
+	}
+
+	void GameObject::UpdateAABB() {
+		ComponentMesh* mesh = GetComponent<ComponentMesh>();
+		ComponentTransform* transform = GetComponent<ComponentTransform>();
+
+		if (mesh) {
+			obb = mesh->GetAABB();
+			obb.Transform(transform->GetGlobalTransform());
+
+			aabb.SetNegativeInfinity();
+			aabb.Enclose(obb);
+		}
+		if (!mesh) {
+			aabb.SetNegativeInfinity();
+			aabb.SetFromCenterAndSize(transform->GetGlobalPosition(), float3(1, 1, 1));
+			obb = aabb;
 		}
 	}
 
-	return ret;
-}
-
-Component * GameObject::AddComponent(Component::ComponentType type)
-{
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
-
-	Component* component = nullptr;
-
-	// --- Check if there is already a component of the type given ---
-
-	if (HasComponent(type) == nullptr)
-	{
-		switch (type)
-		{
-		case Component::ComponentType::Transform:
-			component = new ComponentTransform(this);
-			break;
-		case Component::ComponentType::Mesh:
-			component = new ComponentMesh(this);
-			UpdateAABB();
-			break;
-		case Component::ComponentType::MeshRenderer:
-			component = new ComponentMeshRenderer(this);
-			break;
-		case Component::ComponentType::Camera:
-			component = new ComponentCamera(this);
-			break;
-		case Component::ComponentType::Script:
-			component = new ComponentScript(this);
-			break;
+	void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType type) {
+		for (uint i = 0; i < components.size(); ++i) {
+			components[i]->ONResourceEvent(uid, type);
 		}
 
-		if (component)
-			components.push_back(component);
-
-	}
-	else
-	{
-		// --- If we find a component of the same type, tell the user and return such component ---
-		ENGINE_CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
-		component = HasComponent(type);
+		if (model && type == Resource::ResourceNotificationType::Deletion && model->GetUID() == uid)
+			model = nullptr;
 	}
 
-	return component;
-}
-
-void GameObject::RemoveComponent(Component::ComponentType type)
-{
-	// ---Remove component of type given from game object ---
-
-	for (uint i = 0; i < components.size(); ++i)
-	{
-		if (components[i]->GetType() == type)
-		{
-			std::vector<Component*>::iterator it = components.begin();
-			it += i;
-
-			components.erase(it);
-
-			break;
-		}
-	}
-}
-
-Component* GameObject::HasComponent(Component::ComponentType type) const
-{
-	// --- Search for given type of component ---
-	Component* component = nullptr;
-
-	for (uint i = 0; i < components.size(); ++i)
-	{
-		if (components[i]->GetType() == type)
-		{
-			component = components[i];
-			break;
-		}
-	}
-
-	return component;
-}
-
-std::vector<Component*>& GameObject::GetComponents()
-{
-	return components;
-}
-
-void GameObject::Enable()
-{
-	active = true;
-}
-
-void GameObject::Disable()
-{
-	active = false;
-}
-
-uint& GameObject::GetUID()
-{
-	return UID;
-}
-
-std::string GameObject::GetName() const
-{
-	return name;
-}
-
-const AABB & GameObject::GetAABB()
-{
-	UpdateAABB();
-	return aabb;
-}
-
-const OBB & GameObject::GetOBB() const
-{
-	return obb;
-}
-
-bool & GameObject::GetActive()
-{
-	return active;
-}
-
-bool GameObject::IsEnabled() const
-{
-	return active;
-}
-
-void GameObject::SetName(const char* name)
-{
-	if (name && name != "root")
-		this->name = name;
-}
-
-void GameObject::UpdateAABB()
-{
-	ComponentMesh* mesh = GetComponent<ComponentMesh>();
-	ComponentTransform* transform = GetComponent<ComponentTransform>();
-
-	if (mesh)
-	{
-		obb = mesh->GetAABB();
-		obb.Transform(transform->GetGlobalTransform());
-
-		aabb.SetNegativeInfinity();
-		aabb.Enclose(obb);
-	}
-	if(!mesh)
-	{
-		aabb.SetNegativeInfinity();
-		aabb.SetFromCenterAndSize(transform->GetGlobalPosition(), float3(1, 1, 1));
-		obb = aabb;
-	}
-}
-
-void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType type)
-{
-	for (uint i = 0; i < components.size(); ++i)
-	{
-		components[i]->ONResourceEvent(uid, type);
-	}
-
-	if (model && type == Resource::ResourceNotificationType::Deletion && model->GetUID() == uid)
-		model = nullptr;
 }

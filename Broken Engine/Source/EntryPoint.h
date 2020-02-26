@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
-
+	auto App = BrokenEngine::CreateApplication();
 	while (state != MAIN_EXIT) {
 		switch (state) {
 		case MAIN_CREATION:

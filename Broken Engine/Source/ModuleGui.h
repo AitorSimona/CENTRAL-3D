@@ -5,7 +5,6 @@
 
 #include <vector>
 
-class Panel;
 class PanelSettings;
 class PanelAbout;
 class PanelConsole;
@@ -24,7 +23,7 @@ public:
 	ModuleGui(bool start_enabled = true);
 	~ModuleGui();
 
-	bool Init(json file) override;
+	bool Init(BrokenEngine::json file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
 	update_status Update(float dt) override;
@@ -37,9 +36,9 @@ public:
 
 	void LogFPS(float fps, float ms);
 
-	void SaveStatus(json &file) const override;
+	void SaveStatus(BrokenEngine::json &file) const override;
 
-	void LoadStatus(const json & file) override;
+	void LoadStatus(const BrokenEngine::json & file) override;
 
 	void HandleInput(SDL_Event* event) const;
 
@@ -73,7 +72,7 @@ private:
 	bool capture_keyboard = false;
 	bool capture_mouse = false;
 
-	std::vector<Panel*> panels;
+	std::vector<BrokenEngine::Panel*> panels;
 };
 
 #endif

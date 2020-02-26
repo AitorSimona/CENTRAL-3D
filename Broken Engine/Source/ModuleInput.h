@@ -1,70 +1,66 @@
-#pragma once
+#ifndef __BE_MODULE_INPUT_H__
+#define __BE_MODULE_INPUT_H__
+
 #include "Module.h"
-#include "Globals.h"
+
 
 #define MAX_MOUSE_BUTTONS 5
+namespace BrokenEngine {
 
-enum KEY_STATE
-{
-	KEY_IDLE = 0,
-	KEY_DOWN,
-	KEY_REPEAT,
-	KEY_UP
-};
+	enum KEY_STATE {
+		KEY_IDLE = 0,
+		KEY_DOWN,
+		KEY_REPEAT,
+		KEY_UP
+	};
 
-class ModuleInput : public Module
-{
-public:
-	
-	ModuleInput(bool start_enabled = true);
-	~ModuleInput();
+	class ModuleInput : public Module {
+	public:
 
-	bool Init(json file) override;
-	update_status PreUpdate(float dt) override;
-	bool CleanUp() override;
+		ModuleInput(bool start_enabled = true);
+		~ModuleInput();
 
-	KEY_STATE GetKey(int id) const
-	{
-		return keyboard[id];
-	}
+		bool Init(json file) override;
+		update_status PreUpdate(float dt) override;
+		bool CleanUp() override;
 
-	KEY_STATE GetMouseButton(int id) const
-	{
-		return mouse_buttons[id];
-	}
+		KEY_STATE GetKey(int id) const {
+			return keyboard[id];
+		}
 
-	int GetMouseX() const
-	{
-		return mouse_x;
-	}
+		KEY_STATE GetMouseButton(int id) const {
+			return mouse_buttons[id];
+		}
 
-	int GetMouseY() const
-	{
-		return mouse_y;
-	}
+		int GetMouseX() const {
+			return mouse_x;
+		}
 
-	int GetMouseWheel() const
-	{
-		return mouse_wheel;
-	}
+		int GetMouseY() const {
+			return mouse_y;
+		}
 
-	int GetMouseXMotion() const
-	{
-		return mouse_x_motion;
-	}
+		int GetMouseWheel() const {
+			return mouse_wheel;
+		}
 
-	int GetMouseYMotion() const
-	{
-		return mouse_y_motion;
-	}
+		int GetMouseXMotion() const {
+			return mouse_x_motion;
+		}
 
-private:
-	KEY_STATE* keyboard;
-	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
-	int mouse_x;
-	int mouse_y;
-	int mouse_wheel;
-	int mouse_x_motion;
-	int mouse_y_motion;
-	//int mouse_z_motion;
-};
+		int GetMouseYMotion() const {
+			return mouse_y_motion;
+		}
+
+	private:
+		KEY_STATE* keyboard;
+		KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
+		int mouse_x;
+		int mouse_y;
+		int mouse_wheel;
+		int mouse_x_motion;
+		int mouse_y_motion;
+		//int mouse_z_motion;
+	};
+}
+#endif

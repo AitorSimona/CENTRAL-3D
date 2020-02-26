@@ -1,13 +1,10 @@
 #ifndef __PANEL_SHADER_EDITOR_H__
 #define __PANEL_SHADER_EDITOR_H__
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 #include <vector>
 
-class ResourceShader;
-class ResourceMaterial;
-
-class PanelShaderEditor : public Panel
+class PanelShaderEditor : public BrokenEngine::Panel
 {
 public:
 
@@ -15,10 +12,10 @@ public:
 	~PanelShaderEditor();
 
 	bool Draw();
-	void DisplayAndUpdateUniforms(ResourceMaterial* resource_mat);
+	void DisplayAndUpdateUniforms(BrokenEngine::ResourceMaterial* resource_mat);
 
 private:
-	ResourceShader* currentShader = nullptr;
+	BrokenEngine::ResourceShader* currentShader = nullptr;
 };
 
 #endif

@@ -3,11 +3,11 @@
 
 #define FPS_TRACKER_SIZE 100
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 #include <vector>
 
 
-class PanelSettings : public Panel
+class PanelSettings : public BrokenEngine::Panel
 {
 public:
 

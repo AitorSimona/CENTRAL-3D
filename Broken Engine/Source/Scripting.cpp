@@ -1,5 +1,4 @@
 #include "Scripting.h"
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"

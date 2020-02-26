@@ -28,19 +28,19 @@ namespace BrokenEngine {
 
 	class Module;
 	class ModuleWindow;
-	//class ModuleInput;
-	//class ModuleRenderer3D;
-	//class ModuleCamera3D;
+	class ModuleInput;
+	class ModuleRenderer3D;
+	class ModuleCamera3D;
 	//class ModuleGui;
-	//class ModuleHardware;
-	//class ModuleFileSystem;
-	//class ModuleTextures;
-	//class ModuleSceneManager;
-	//class ModuleResourceManager;
-	//class ModuleScripting;
+	class ModuleHardware;
+	class ModuleFileSystem;
+	class ModuleTextures;
+	class ModuleSceneManager;
+	class ModuleResourceManager;
+	class ModuleScripting;
 	class ModuleTimeManager;
-	//class ModuleEventManager;
-	//class ModuleThreading;
+	class ModuleEventManager;
+	class ModuleThreading;
 
 	class BROKEN_API Application {
 	public:
@@ -63,19 +63,19 @@ namespace BrokenEngine {
 	public:
 
 		ModuleWindow* window = nullptr;
-	//	ModuleInput* input = nullptr;
-	//	ModuleRenderer3D* renderer3D = nullptr;
-	//	ModuleCamera3D* camera = nullptr;
-	//	ModuleGui* gui = nullptr;
-	//	ModuleHardware* hardware = nullptr;
-	//	ModuleFileSystem* fs = nullptr;
-	//	ModuleTextures* textures = nullptr;
-	//	ModuleSceneManager* scene_manager = nullptr;
-	//	ModuleResourceManager* resources = nullptr;
-		ModuleTimeManager* time = nullptr;
-	//	ModuleEventManager* event_manager = nullptr;
-	//	ModuleScripting* scripting = nullptr;
-	//	ModuleThreading* threading = nullptr;
+	  	ModuleInput* input = nullptr;
+	  	ModuleRenderer3D* renderer3D = nullptr;
+	  	ModuleCamera3D* camera = nullptr;
+	  	Module* gui = nullptr;
+	  	ModuleHardware* hardware = nullptr;
+	  	ModuleFileSystem* fs = nullptr;
+	  	ModuleTextures* textures = nullptr;
+	  	ModuleSceneManager* scene_manager = nullptr;
+	  	ModuleResourceManager* resources = nullptr;
+	    ModuleTimeManager* time = nullptr;
+	  	ModuleEventManager* event_manager = nullptr;
+	  	ModuleScripting* scripting = nullptr;
+	  	ModuleThreading* threading = nullptr;
 
 	private:
 
@@ -104,9 +104,10 @@ namespace BrokenEngine {
 		bool CleanUp();
 
 
-	private:
-
+	protected:
 		void AddModule(Module* mod);
+
+	private:
 		void PrepareUpdate();
 		void FinishUpdate();
 		void SaveAllStatus();

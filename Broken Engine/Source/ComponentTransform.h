@@ -4,49 +4,51 @@
 #include "Component.h"
 #include "Math.h"
 
-class ComponentTransform : public Component
-{
-public:
+namespace BrokenEngine {
 
-	ComponentTransform(GameObject* ContainerGO);
-	virtual ~ComponentTransform();
+	class ComponentTransform : public Component {
+	public:
 
-	// --- Getters ---
-	float3			GetPosition() const;
-	float3			GetScale() const;
-	float3			GetRotation() const;
-	float4x4        GetLocalTransform() const;
-	float4x4        GetGlobalTransform() const;
-	float3		    GetGlobalPosition() const;
+		ComponentTransform(GameObject* ContainerGO);
+		virtual ~ComponentTransform();
 
-	// --- Setters ---
-	void			SetPosition(float x, float y, float z);
-	void			SetRotation(float3 euler_angles);
-	void			Scale(float x, float y, float z);
-	void			SetGlobalTransform(float4x4 new_transform);
-	void			OnUpdateTransform(const float4x4& ParentGlobal);
+		// --- Getters ---
+		float3			GetPosition() const;
+		float3			GetScale() const;
+		float3			GetRotation() const;
+		float4x4        GetLocalTransform() const;
+		float4x4        GetGlobalTransform() const;
+		float3		    GetGlobalPosition() const;
 
-	// --- Save & Load ---
-	json Save() const override;
-	void Load(json& node) override;
-	void CreateInspectorNode() override;
+		// --- Setters ---
+		void			SetPosition(float x, float y, float z);
+		void			SetRotation(float3 euler_angles);
+		void			Scale(float x, float y, float z);
+		void			SetGlobalTransform(float4x4 new_transform);
+		void			OnUpdateTransform(const float4x4& ParentGlobal);
 
-	static inline Component::ComponentType GetType() { return Component::ComponentType::Transform; };
+		// --- Save & Load ---
+		json Save() const override;
+		void Load(json& node) override;
+		void CreateInspectorNode() override;
 
-public:
-	bool update_transform = false;
-private:
-	void UpdateLocalTransform();
-	void UpdateTRS();
+		static inline Component::ComponentType GetType() { return Component::ComponentType::Transform; };
 
-private:
-	float4x4 Local_transform = math::float4x4::identity;
-	float4x4 Global_transform = math::float4x4::identity;
+	public:
+		bool update_transform = false;
+	private:
+		void UpdateLocalTransform();
+		void UpdateTRS();
 
-	float3 position = float3::zero;
-	Quat rotation = Quat::identity;
-	float3	rotation_euler = float3::zero;
-	float3 scale = float3::one;
-};
+	private:
+		float4x4 Local_transform = math::float4x4::identity;
+		float4x4 Global_transform = math::float4x4::identity;
 
+		float3 position = float3::zero;
+		Quat rotation = Quat::identity;
+		float3	rotation_euler = float3::zero;
+		float3 scale = float3::one;
+	};
+
+}
 #endif

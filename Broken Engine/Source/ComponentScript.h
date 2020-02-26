@@ -3,37 +3,39 @@
 
 #include "Component.h"
 #include "ScriptVar.h"
-class ResourceScript;
 
-class ComponentScript : public Component
-{
-public:
-	ComponentScript(GameObject* ContainerGO);
-	~ComponentScript();
+namespace BrokenEngine {
 
-public:
-	void Enable() override;
-	void Disable() override;
-	void CreateInspectorNode() override;
+	class ResourceScript;
 
-	void AssignScript(ResourceScript* script_resource);
+	class ComponentScript : public Component {
+	public:
+		ComponentScript(GameObject* ContainerGO);
+		~ComponentScript();
 
-	//This function returns the index inside the vector of scriptvars of Script variable using its name as reference
-	//Returns -1 if the ScriptVar was not found in the vector
-	int ScriptVarAlreadyInComponent(std::string name);
+	public:
+		void Enable() override;
+		void Disable() override;
+		void CreateInspectorNode() override;
 
+		void AssignScript(ResourceScript* script_resource);
 
-	//Correct SAve & Load from Central 3D
-	json Save() const override;
-	void Load(json& node) override;
-	/*void Save(json &file);
-	void Load(json &file);*/
-
-public:
-	ResourceScript* script = nullptr;
-	std::string script_name;
-	std::vector<ScriptVar> script_variables;
-};
+		//This function returns the index inside the vector of scriptvars of Script variable using its name as reference
+		//Returns -1 if the ScriptVar was not found in the vector
+		int ScriptVarAlreadyInComponent(std::string name);
 
 
+		//Correct SAve & Load from Central 3D
+		json Save() const override;
+		void Load(json& node) override;
+		/*void Save(json &file);
+		void Load(json &file);*/
+
+	public:
+		ResourceScript* script = nullptr;
+		std::string script_name;
+		std::vector<ScriptVar> script_variables;
+	};
+
+}
 #endif // !__COMPONENTSCRIPT_H__

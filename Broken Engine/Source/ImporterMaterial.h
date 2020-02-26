@@ -4,29 +4,29 @@
 #include "Importer.h"
 
 struct aiMaterial;
-class ResourceMaterial;
-class Resource;
 
-struct ImportMaterialData : public Importer::ImportData
-{
-	ImportMaterialData(const char* path) : Importer::ImportData(path) {};
+namespace BrokenEngine {
+	class ResourceMaterial;
+	class Resource;
 
-	const aiMaterial* mat = nullptr;
-};
+	struct ImportMaterialData : public Importer::ImportData {
+		ImportMaterialData(const char* path) : Importer::ImportData(path) {};
 
-class ImporterMaterial : public Importer
-{
+		const aiMaterial* mat = nullptr;
+	};
 
-public:
-	ImporterMaterial();
-	virtual ~ImporterMaterial();
+	class ImporterMaterial : public Importer {
 
-	Resource* Import(ImportData& IData) const override;
-	Resource* Load(const char* path) const override;
+	public:
+		ImporterMaterial();
+		virtual ~ImporterMaterial();
 
-	void Save(ResourceMaterial* mat) const;
+		Resource* Import(ImportData& IData) const override;
+		Resource* Load(const char* path) const override;
 
-	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };
-};
+		void Save(ResourceMaterial* mat) const;
 
+		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };
+	};
+}
 #endif

@@ -1,9 +1,9 @@
 #ifndef __PANEL_TOOLBAR_H__
 #define __PANEL_TOOLBAR_H__
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 
-class PanelToolbar : public Panel
+class PanelToolbar : public BrokenEngine::Panel
 {
 public:
 

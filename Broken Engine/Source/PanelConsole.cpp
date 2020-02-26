@@ -1,10 +1,9 @@
-#include "Globals.h"
 #include "PanelConsole.h"
-#include "Application.h"
+#include "EngineApplication.h"
 
 #include "mmgr/mmgr.h"
 
-PanelConsole::PanelConsole(char * name) : Panel(name)
+PanelConsole::PanelConsole(char * name) : BrokenEngine::Panel(name)
 {
 }
 

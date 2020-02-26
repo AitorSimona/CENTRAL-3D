@@ -4,30 +4,30 @@
 #include "Importer.h"
 
 struct aiMesh;
-class ResourceMesh;
-class Resource;
-class ResourceMesh;
 
-struct ImportMeshData : public Importer::ImportData
-{
-	ImportMeshData(const char* path) : Importer::ImportData(path) {};
+namespace BrokenEngine {
+	class ResourceMesh;
+	class Resource;
+	class ResourceMesh;
 
-	aiMesh* mesh = nullptr;
-};
+	struct ImportMeshData : public Importer::ImportData {
+		ImportMeshData(const char* path) : Importer::ImportData(path) {};
 
-class ImporterMesh : public Importer
-{
+		aiMesh* mesh = nullptr;
+	};
 
-public:
-	ImporterMesh();
-	virtual ~ImporterMesh();
+	class ImporterMesh : public Importer {
 
-	Resource* Import(ImportData& IData) const override;
+	public:
+		ImporterMesh();
+		virtual ~ImporterMesh();
 
-	void Save(ResourceMesh* mesh) const;
-    Resource* Load(const char* path) const override;
+		Resource* Import(ImportData& IData) const override;
 
-	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Mesh; };
-};
+		void Save(ResourceMesh* mesh) const;
+		Resource* Load(const char* path) const override;
 
+		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Mesh; };
+	};
+}
 #endif

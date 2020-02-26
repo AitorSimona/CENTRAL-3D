@@ -1,5 +1,5 @@
 #include "PanelProject.h"
-#include "Application.h"
+#include "EngineApplication.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 #include "ModuleEventManager.h"
@@ -11,12 +11,12 @@
 #include "mmgr/mmgr.h"
 
 // --- Event Manager Callbacks ---
-void PanelProject::ONGameObjectSelected(const Event& e)
+void PanelProject::ONGameObjectSelected(const BrokenEngine::Event& e)
 {
 	App->gui->panelProject->SetSelected(nullptr);
 }
 
-void PanelProject::ONResourceDestroyed(const Event& e)
+void PanelProject::ONResourceDestroyed(const BrokenEngine::Event& e)
 {
 	if (e.uid == App->gui->panelProject->selected_uid)
 		App->gui->panelProject->SetSelected(nullptr);
@@ -24,18 +24,18 @@ void PanelProject::ONResourceDestroyed(const Event& e)
 
 // -------------------------------
 
-PanelProject::PanelProject(char * name) : Panel(name)
+PanelProject::PanelProject(char * name) : BrokenEngine::Panel(name)
 {
 	// --- Add Event Listeners ---
-	App->event_manager->AddListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
-	App->event_manager->AddListener(Event::EventType::Resource_destroyed, ONResourceDestroyed);
+	App->event_manager->AddListener(BrokenEngine::Event::EventType::GameObject_selected, ONGameObjectSelected);
+	App->event_manager->AddListener(BrokenEngine::Event::EventType::Resource_destroyed, ONResourceDestroyed);
 
 }
 
 PanelProject::~PanelProject()
 {
-	App->event_manager->RemoveListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
-	App->event_manager->RemoveListener(Event::EventType::Resource_destroyed, ONResourceDestroyed);
+	App->event_manager->RemoveListener(BrokenEngine::Event::EventType::GameObject_selected, ONGameObjectSelected);
+	App->event_manager->RemoveListener(BrokenEngine::Event::EventType::Resource_destroyed, ONResourceDestroyed);
 }
 
 
@@ -111,14 +111,14 @@ bool PanelProject::Draw()
 	return true;
 }
 
-void PanelProject::SetSelected(Resource* new_selected)
+void PanelProject::SetSelected(BrokenEngine::Resource* new_selected)
 {
 	selected = new_selected;
 
 	if (selected)
 	{
 		selected_uid = new_selected->GetUID();
-		Event e(Event::EventType::Resource_selected);
+		BrokenEngine::Event e(BrokenEngine::Event::EventType::Resource_selected);
 		e.resource = selected;
 		App->event_manager->PushEvent(e);
 	}
@@ -126,18 +126,18 @@ void PanelProject::SetSelected(Resource* new_selected)
 		selected_uid = 0;
 }
 
-const Resource* PanelProject::GetcurrentDirectory() const
+const BrokenEngine::Resource* PanelProject::GetcurrentDirectory() const
 {
 	return currentDirectory;
 }
 
 
-void PanelProject::DrawFolder(ResourceFolder* folder)
+void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 {
 	// --- Draw menuBar / path to current folder ---
 	ImGui::BeginMenuBar();
 
-	ResourceFolder* curr = folder;
+	BrokenEngine::ResourceFolder* curr = folder;
 
 	if (currentDirectory == App->resources->GetAssetsFolder())
 		ImGui::TextColored(ImVec4(0, 120, 255, 255), App->resources->GetAssetsFolder()->GetName());
@@ -147,7 +147,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
 		currentDirectory = App->resources->GetAssetsFolder();
 
-	std::vector<ResourceFolder*> folders_path;
+	std::vector<BrokenEngine::ResourceFolder*> folders_path;
 
 	while (curr->GetParent())
 	{
@@ -155,7 +155,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		curr = curr->GetParent();
 	}
 
-	for (std::vector<ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
+	for (std::vector<BrokenEngine::ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
 	{
 		if (currentDirectory == *it)
 			ImGui::TextColored(ImVec4(0, 120, 255, 255),(*it)->GetName());
@@ -177,8 +177,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 	if (folder)
 	{
-		const std::vector<Resource*>* resources = &folder->GetResources();
-		const std::vector<ResourceFolder*>* directories = &folder->GetChilds();
+		const std::vector<BrokenEngine::Resource*>* resources = &folder->GetResources();
+		const std::vector<BrokenEngine::ResourceFolder*>* directories = &folder->GetChilds();
 		uint i = 0;
 		uint row = 0;
 		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px);
@@ -187,7 +187,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		ImVec2 vec = ImGui::GetCursorPos();
 
 		// --- Draw sub-folders ---
-		for (std::vector<ResourceFolder*>::const_iterator it = directories->begin(); it != directories->end(); ++it)
+		for (std::vector<BrokenEngine::ResourceFolder*>::const_iterator it = directories->begin(); it != directories->end(); ++it)
 		{
 			if (!*it)
 				continue;
@@ -241,7 +241,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		}
 
 		// --- Draw the rest of files ---
-		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
+		for (std::vector<BrokenEngine::Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
 		{
 			if (!*it)
 				continue;
@@ -254,7 +254,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			bool opened = false;
 
 			// --- Draw model childs ---
-			if ((*it)->GetType() == Resource::ResourceType::MODEL)
+			if ((*it)->GetType() == BrokenEngine::Resource::ResourceType::MODEL)
 			{
 				opened = true;
 
@@ -272,7 +272,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 				ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px/1.1) + imageSize_px/10);
 				ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px/2);
 
-				ResourceModel* model = (ResourceModel*)*it;
+				BrokenEngine::ResourceModel* model = (BrokenEngine::ResourceModel*)*it;
 
 				ImVec2 uvx = { 0,1 };
 				ImVec2 uvy = { 1,0 };
@@ -288,9 +288,9 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 				if (model->openInProject)
 				{
-					std::vector<Resource*>* model_resources = model->GetResources();
+					std::vector<BrokenEngine::Resource*>* model_resources = model->GetResources();
 
-					for (std::vector<Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
+					for (std::vector<BrokenEngine::Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
 					{
 						DrawFile(*res, i, row, vec, color, true);
 
@@ -319,7 +319,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	ImGui::PopStyleVar();
 }
 
-void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child)
+void PanelProject::DrawFile(BrokenEngine::Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child)
 {
 	ImGui::SetCursorPosX(cursor_pos.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px);
 	ImGui::SetCursorPosY(cursor_pos.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);

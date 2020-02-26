@@ -1,13 +1,12 @@
 #include "PanelToolbar.h"
-#include "Application.h"
-#include "ModuleTimeManager.h"
+#include "EngineApplication.h"
 #include "ModuleGui.h"
 #include "PanelScene.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-PanelToolbar::PanelToolbar(char * name) : Panel(name)
+PanelToolbar::PanelToolbar(char * name) : BrokenEngine::Panel(name)
 {
 }
 

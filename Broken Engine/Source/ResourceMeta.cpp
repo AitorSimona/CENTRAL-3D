@@ -10,64 +10,58 @@
 #include "mmgr/mmgr.h"
 
 
+namespace BrokenEngine {
+	ResourceMeta::ResourceMeta(uint UID, std::string source_file) : Resource(Resource::ResourceType::META, UID, source_file) {
+		extension = ".meta";
+		resource_file = source_file + extension;
 
-ResourceMeta::ResourceMeta(uint UID, std::string source_file) : Resource(Resource::ResourceType::META, UID, source_file)
-{
-	extension = ".meta";
-	resource_file = source_file + extension;
+		Date = App->fs->GetLastModificationTime(source_file.c_str());
 
-	Date = App->fs->GetLastModificationTime(source_file.c_str());
+		previewTexID = App->gui->defaultfileTexID;
 
-	previewTexID = App->gui->defaultfileTexID;
+	}
 
-}
+	ResourceMeta::~ResourceMeta() {
+	}
 
-ResourceMeta::~ResourceMeta()
-{
-}
+	bool ResourceMeta::LoadInMemory() {
+		return true;
 
-bool ResourceMeta::LoadInMemory()
-{
-	return true;
+	}
 
-}
+	void ResourceMeta::FreeMemory() {
+	}
 
-void ResourceMeta::FreeMemory()
-{
-}
+	void ResourceMeta::OnOverwrite() {
+		NotifyUsers(ResourceNotificationType::Overwrite);
 
-void ResourceMeta::OnOverwrite()
-{
-	NotifyUsers(ResourceNotificationType::Overwrite);
+		// If a file is overwritten, its meta is notified so it can update the last modification time of its assigned resource
 
-	// If a file is overwritten, its meta is notified so it can update the last modification time of its assigned resource
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		Resource* resource = App->resources->GetResource(UID, false);
 
-	Resource* resource = App->resources->GetResource(UID, false);
+		if (resource)
+			Date = App->fs->GetLastModificationTime(resource->GetOriginalFile());
 
-	if (resource)
-		Date = App->fs->GetLastModificationTime(resource->GetOriginalFile());
+		IMeta->Save(this);
 
-	IMeta->Save(this);
+	}
 
-}
+	void ResourceMeta::OnDelete() {
+		NotifyUsers(ResourceNotificationType::Deletion);
 
-void ResourceMeta::OnDelete()
-{
-	NotifyUsers(ResourceNotificationType::Deletion);
+		FreeMemory();
+		App->fs->Remove(resource_file.c_str());
 
-	FreeMemory();
-	App->fs->Remove(resource_file.c_str());
+		App->resources->RemoveResourceFromFolder(this);
+		App->resources->ONResourceDestroyed(this);
+	}
 
-	App->resources->RemoveResourceFromFolder(this);
-	App->resources->ONResourceDestroyed(this);
-}
-
-void ResourceMeta::Repath()
-{
-	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-	IMeta->Save(this);
+	void ResourceMeta::Repath() {
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		IMeta->Save(this);
+	}
 }
 
 

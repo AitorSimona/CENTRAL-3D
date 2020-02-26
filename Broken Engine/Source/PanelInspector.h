@@ -1,11 +1,9 @@
 #ifndef __PANEL_INSPECTOR_H__
 #define __PANEL_INSPECTOR_H__
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 
-class GameObject;
-
-class PanelInspector : public Panel
+class PanelInspector : public BrokenEngine::Panel
 {
 public:
 
@@ -17,7 +15,7 @@ public:
 	bool Startup = true;
 
 private:
-	void CreateGameObjectNode(GameObject& Selected) const;
+	void CreateGameObjectNode(BrokenEngine::GameObject& Selected) const;
 };
 
 #endif

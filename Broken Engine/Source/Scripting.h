@@ -1,9 +1,11 @@
 #ifndef __SCRIPTING_H__
 #define __SCRIPTING_H__
 
+#include "BrokenCore.h"
+
 class lua_State;
 
-class Scripting
+class BROKEN_API Scripting
 {
 public:
 	Scripting();
