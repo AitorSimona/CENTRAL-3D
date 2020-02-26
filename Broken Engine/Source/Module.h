@@ -1,65 +1,62 @@
-#pragma once
+#ifndef __BE_MODULE_H__
+#define __BE_MODULE_H__
 
+#include "BrokenCore.h"
 #include <string>
 #include "JSONLoader.h"
 
-struct Event;
+namespace BrokenEngine {
+	struct Event;
 
-class Module
-{
-private :
-	bool enabled;
+	class BROKEN_API Module {
+	private:
+		bool enabled;
 
-public:
+	public:
 
-	Module(bool start_enabled = true)
-	{}
+		Module(bool start_enabled = true) {
+		}
 
-	virtual ~Module()
-	{}
+		virtual ~Module() {
+		}
 
-	virtual bool Init(json file) 
-	{
-		return true; 
-	}
+		virtual bool Init(json file) {
+			return true;
+		}
 
-	virtual bool Start()
-	{
-		return true;
-	}
+		virtual bool Start() {
+			return true;
+		}
 
-	virtual void ONEvent(const Event& event) const {}
+		virtual void ONEvent(const Event& event) const {}
 
-	virtual update_status PreUpdate(float dt)
-	{
-		return UPDATE_CONTINUE;
-	}
+		virtual update_status PreUpdate(float dt) {
+			return UPDATE_CONTINUE;
+		}
 
-	virtual update_status Update(float dt)
-	{
-		return UPDATE_CONTINUE;
-	}
+		virtual update_status Update(float dt) {
+			return UPDATE_CONTINUE;
+		}
 
-	virtual update_status GameUpdate(float gameDT)
-	{
-		return UPDATE_CONTINUE;
-	}
+		virtual update_status GameUpdate(float gameDT) {
+			return UPDATE_CONTINUE;
+		}
 
-	virtual update_status PostUpdate(float dt)
-	{
-		return UPDATE_CONTINUE;
-	}
+		virtual update_status PostUpdate(float dt) {
+			return UPDATE_CONTINUE;
+		}
 
-	virtual bool CleanUp() 
-	{ 
-		return true; 
-	}
+		virtual bool CleanUp() {
+			return true;
+		}
 
-	virtual void SaveStatus(json &file) const {}
+		virtual void SaveStatus(json& file) const {}
 
-	virtual void LoadStatus(const json & file) {}
+		virtual void LoadStatus(const json& file) {}
 
-protected:
+	protected:
 
-	std::string name = "Undefined";
-};
+		std::string name = "Undefined";
+	};
+}
+#endif

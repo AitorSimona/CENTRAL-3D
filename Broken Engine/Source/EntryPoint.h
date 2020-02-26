@@ -1,6 +1,9 @@
+#ifndef __BE_ENTRYPOINT_H__
+#define __BE_ENTRYPOINT_H__
+
 #include <stdlib.h>
 #include "Application.h"
-#include "Globals.h"
+//#include "Globals.h"
 
 #include "mmgr/mmgr.h"
 
@@ -21,8 +24,7 @@ extern "C" {
 }
 #endif
 
-enum main_states
-{
+enum main_states {
 	MAIN_CREATION,
 	MAIN_START,
 	MAIN_UPDATE,
@@ -30,37 +32,33 @@ enum main_states
 	MAIN_EXIT
 };
 
-Application* App = NULL;
+extern BrokenEngine::Application* BrokenEngine::CreateApplication();
+BrokenEngine::Application* App;
 
-int main(int argc, char ** argv)
-{
+int main(int argc, char** argv) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
 
-	while (state != MAIN_EXIT)
-	{
-		switch (state)
-		{
+	while (state != MAIN_EXIT) {
+		switch (state) {
 		case MAIN_CREATION:
 
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
-			App = new Application();
+			App = BrokenEngine::CreateApplication();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Init --------------");
-			if (App->Init() == false)
-			{
+			if (App->Init() == false) {
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
-			else
-			{
+			else {
 				state = MAIN_UPDATE;
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Update --------------");
 			}
@@ -71,8 +69,7 @@ int main(int argc, char ** argv)
 		{
 			int update_return = App->Update();
 
-			if (update_return == UPDATE_ERROR)
-			{
+			if (update_return == UPDATE_ERROR) {
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Update exits with ERROR");
 				state = MAIN_EXIT;
 			}
@@ -80,13 +77,12 @@ int main(int argc, char ** argv)
 			if (update_return == UPDATE_STOP)
 				state = MAIN_FINISH;
 		}
-			break;
+		break;
 
 		case MAIN_FINISH:
 
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application CleanUp --------------");
-			if (App->CleanUp() == false)
-			{
+			if (App->CleanUp() == false) {
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
 			}
 			else
@@ -103,3 +99,6 @@ int main(int argc, char ** argv)
 	delete App;
 	return main_return;
 }
+
+
+#endif

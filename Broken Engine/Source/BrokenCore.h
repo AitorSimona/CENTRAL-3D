@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __BE_BROKENCORE_H__
+#define __BE_BROKENCORE_H__
 
 // Warning disabled ---
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
@@ -8,6 +9,13 @@
 #include <windows.h>
 #include "Errors.h"
 #include <stdio.h>
+
+//Import/export define
+#ifdef BE_BUILD_DLL
+	#define BROKEN_API __declspec(dllexport)
+#else
+	#define BROKEN_API __declspec(dllimport)
+#endif
 
 //Just in case -- Null redefinition
 #ifdef NULL
@@ -142,3 +150,5 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096
 // -------------------------------------------------------------------------------
+
+#endif

@@ -6,43 +6,42 @@
 #include "PerfTimer.h"
 
 
+namespace BrokenEngine {
+	class ModuleTimeManager : public Module {
+	public:
 
-class ModuleTimeManager : public Module
-{
-public:
+		ModuleTimeManager(bool start_enabled = true);
+		~ModuleTimeManager();
 
-	ModuleTimeManager(bool start_enabled = true);
-	~ModuleTimeManager();
+		void PrepareUpdate();
+		void FinishUpdate();
 
-	void PrepareUpdate();
-	void FinishUpdate();
+		// --- Getters ---
+		float GetGameDt() const;
+		float GetRealTimeDt()const;
+		uint GetMaxFramerate() const;
+		float GetTimeScale() const;
 
-	// --- Getters ---
-	float GetGameDt() const;
-	float GetRealTimeDt()const;
-	uint GetMaxFramerate() const;
-	float GetTimeScale() const;
+		// --- Setters ---
+		void SetMaxFramerate(uint maxFramerate);
+		void SetTimeScale(float scale);
 
-	// --- Setters ---
-	void SetMaxFramerate(uint maxFramerate);
-	void SetTimeScale(float scale);
+		float time = 0.0f;
+	private:
 
-	float time = 0.0f;
-private:
-
-	Timer				Realtime_clock;
-	Timer				Gametime_clock;
-	float				Time_scale = 1.0f;
+		Timer				Realtime_clock;
+		Timer				Gametime_clock;
+		float				Time_scale = 1.0f;
 
 
-	Timer				fps_timer;
-	float				game_dt = 0.0f;
-	float				realtime_dt = 0.0f;
-	Uint32				frame_count;
-	int					fps_counter;
-	int					last_fps;
-	uint				capped_ms;
-	uint				last_frame_ms;
-};
-
+		Timer				fps_timer;
+		float				game_dt = 0.0f;
+		float				realtime_dt = 0.0f;
+		Uint32				frame_count;
+		int					fps_counter;
+		int					last_fps;
+		uint				capped_ms;
+		uint				last_frame_ms;
+	};
+}
 #endif

@@ -5,32 +5,30 @@
 
 #include "mmgr/mmgr.h"
 
-ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled)
-{
-	ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing Time Manager");
+namespace BrokenEngine{
+	ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled) {
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing Time Manager");
 
-	name = "TimeManager";
-	Realtime_clock.Start();
-	Gametime_clock.Start();
+		name = "TimeManager";
+		Realtime_clock.Start();
+		Gametime_clock.Start();
 
-	frame_count = 0;
-	last_frame_ms = -1;
-	last_fps = -1;
-	capped_ms = 1000 / 60; // Get Display RR!!
-	fps_counter = 0;
-}
+		frame_count = 0;
+		last_frame_ms = -1;
+		last_fps = -1;
+		capped_ms = 1000 / 60; // Get Display RR!!
+		fps_counter = 0;
+	}
 
-ModuleTimeManager::~ModuleTimeManager() {}
+	ModuleTimeManager::~ModuleTimeManager() {}
 
-void ModuleTimeManager::PrepareUpdate()
-{
-	game_dt = realtime_dt = (float)Gametime_clock.Read() / 1000.0f;
-	Gametime_clock.Start();
+	void ModuleTimeManager::PrepareUpdate() {
+		game_dt = realtime_dt = (float)Gametime_clock.Read() / 1000.0f;
+		Gametime_clock.Start();
 
-	time += realtime_dt*Time_scale;
+		time += realtime_dt * Time_scale;
 
-	switch (App->GetAppState())
-	{
+		switch (App->GetAppState()) {
 		case AppState::TO_PLAY:
 			App->GetAppState() = AppState::PLAY;
 			//App->scene_manager->SaveScene();
@@ -69,64 +67,57 @@ void ModuleTimeManager::PrepareUpdate()
 			App->GetAppState() = AppState::PAUSE;
 			break;
 
-	}
-}
-
-void ModuleTimeManager::FinishUpdate()
-{
-	// --- Recap on framecount and fps ---
-	++frame_count;
-	++fps_counter;
-
-	if (fps_timer.Read() >= 1000)
-	{
-		last_fps = fps_counter;
-		fps_counter = 0;
-		fps_timer.Start();
+		}
 	}
 
-	last_frame_ms = Gametime_clock.Read();
+	void ModuleTimeManager::FinishUpdate() {
+		// --- Recap on framecount and fps ---
+		++frame_count;
+		++fps_counter;
 
-	// --- Cap fps ---
-	if (capped_ms > 0 && (last_frame_ms < capped_ms))
-		SDL_Delay(capped_ms - last_frame_ms);
+		if (fps_timer.Read() >= 1000) {
+			last_fps = fps_counter;
+			fps_counter = 0;
+			fps_timer.Start();
+		}
 
-	// --- Send data to GUI-PanelSettings Historiograms
-	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
-}
+		last_frame_ms = Gametime_clock.Read();
 
-uint ModuleTimeManager::GetMaxFramerate() const
-{
-	if (capped_ms > 0)
-		return (uint)((1.0f / (float)capped_ms) * 1000.0f);
-	else
-		return 0;
-}
+		// --- Cap fps ---
+		if (capped_ms > 0 && (last_frame_ms < capped_ms))
+			SDL_Delay(capped_ms - last_frame_ms);
 
-float ModuleTimeManager::GetTimeScale() const
-{
-	return Time_scale;
-}
+		// --- Send data to GUI-PanelSettings Historiograms
+		App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
+	}
 
-void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)
-{
-	if (maxFramerate > 0)
-		capped_ms = 1000 / maxFramerate;
-	else
-		capped_ms = 0;
-}
+	uint ModuleTimeManager::GetMaxFramerate() const {
+		if (capped_ms > 0)
+			return (uint)((1.0f / (float)capped_ms) * 1000.0f);
+		else
+			return 0;
+	}
 
-void ModuleTimeManager::SetTimeScale(float scale)
-{
-	Time_scale = scale;
-}
+	float ModuleTimeManager::GetTimeScale() const {
+		return Time_scale;
+	}
 
-float ModuleTimeManager::GetGameDt() const
-{
-	return game_dt;
-}
+	void ModuleTimeManager::SetMaxFramerate(uint maxFramerate) {
+		if (maxFramerate > 0)
+			capped_ms = 1000 / maxFramerate;
+		else
+			capped_ms = 0;
+	}
 
-float ModuleTimeManager::GetRealTimeDt() const
-{
-	return realtime_dt;
+	void ModuleTimeManager::SetTimeScale(float scale) {
+		Time_scale = scale;
+	}
+
+	float ModuleTimeManager::GetGameDt() const {
+		return game_dt;
+	}
+
+	float ModuleTimeManager::GetRealTimeDt() const {
+		return realtime_dt;
+	}
 }

@@ -1,7 +1,7 @@
 #ifndef __MODULE_GUI_H__
 #define __MODULE_GUI_H__
 
-#include "Module.h"
+#include "BrokenEngine.h"
 
 #include <vector>
 
@@ -17,7 +17,7 @@ class PanelProject;
 class PanelShaderEditor;
 class PanelResources;
 
-class ModuleGui : public Module
+class ModuleGui : public BrokenEngine::Module
 {
 public:
 
