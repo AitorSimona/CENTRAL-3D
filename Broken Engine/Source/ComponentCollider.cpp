@@ -202,6 +202,7 @@ void ComponentCollider::CreateInspectorNode()
 		{
 		case 0:
 			type = ComponentCollider::COLLIDER_TYPE::NONE;
+			CreateCollider(type);
 			break;
 		case 1:
 			type = ComponentCollider::COLLIDER_TYPE::BOX;
@@ -333,7 +334,7 @@ void ComponentCollider::CreateInspectorNode()
 void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain) {
 	if (shape != nullptr && (lastIndex != (int)type || createAgain)) {
 		shape->release();
-		
+		shape = nullptr;
 		if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 		{
 			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
