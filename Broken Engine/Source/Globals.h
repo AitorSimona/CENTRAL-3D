@@ -64,7 +64,7 @@ void SystemConsoleLog(const char file[], int line, const char* format, ...);
 #define MIN( a, b ) ( ((a) < (b)) ? (a) : (b) )
 #define MAX( a, b ) ( ((a) > (b)) ? (a) : (b) )
 #define CLAMP(x, upper, lower) (MIN(upper, MAX(x, lower)))
-#define IN_RANGE( value, min, max ) ( ((value) >= (MIN) && (value) <= (MAX)) ? 1 : 0 )
+#define IN_RANGE( value, min, max ) ( ((value) >= (min) && (value) <= (max)) ? 1 : 0 )
 
 /// Standard string size
 #define SHORT_STR	32

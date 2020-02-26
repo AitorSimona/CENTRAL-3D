@@ -19,6 +19,7 @@ Resource* ImporterScript::Import(ImportData& IData) const
 {
 	ResourceScript* resource_script = (ResourceScript*)App->resources->CreateResource(Resource::ResourceType::SCRIPT, IData.path);
 
+
 	//Pass the relative path
 	resource_script->relative_path = IData.path;
 
