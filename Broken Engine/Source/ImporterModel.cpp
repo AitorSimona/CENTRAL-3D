@@ -71,8 +71,8 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		LoadSceneMeshes(scene, model_meshes, MData.path);
 
 		// --- Load animation ---
-		ResourceAnimation* anim = nullptr;
-		LoadSceneAnimations(scene, rootnode, anim, MData.path);
+		std::map<uint, ResourceAnimation*> anims;
+		LoadSceneAnimations(scene, rootnode, anims, MData.path);
 
 		// --- Load all materials ---
 		std::map<uint, ResourceMaterial*> model_mats;
@@ -97,13 +97,15 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		{
 			model->AddResource(model_mats[j]);
 		}
+		for (uint j = 0; j < anims.size(); ++j)
+		{
+			model->AddResource(anims[j]);
+		}
 		for (uint j = 0; j < bones.size(); ++j)
 		{
 			model->AddResource(bones[j]);
 		}
 
-		if(anim)
-			model->AddResource(anim);
 
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
@@ -112,9 +114,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		FreeSceneMaterials(&model_mats);
 		FreeSceneMeshes(&model_meshes);
 		FreeSceneBones(&bones);
-
-		if(anim)
-			anim->FreeMemory();
+		//TODO free animation
 
 		rootnode->RecursiveDelete();
 
@@ -257,7 +257,7 @@ void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<ai
 
 }
 
-void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, ResourceAnimation* anim, const char* source_file) const
+void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, std::map<uint, ResourceAnimation*>& anim, const char* source_file) const
 {
 	if (scene->HasAnimations())
 	{
@@ -271,8 +271,8 @@ void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, Re
 
 			if (IAnim)
 			{
-				anim = (ResourceAnimation*)IAnim->Import(AData);
-				anim->SetName(scene->mAnimations[i]->mName.C_Str());
+				anim[i] = (ResourceAnimation*)IAnim->Import(AData);
+				anim[i]->SetName(scene->mAnimations[i]->mName.C_Str());
 			}
 		}
 	}
