@@ -49,6 +49,8 @@ public:
 	bool editCollider = false;
 	float3 localPosition = float3::zero;
 	float3 centerPosition = float3::zero;
+	float3 baseScale = float3::one;
+	float3 originalScale = float3::one;
 
 private:
 	physx::PxShape* shape = nullptr;
@@ -57,11 +59,12 @@ private:
 	float3 scale = float3::one;
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
-
+	physx::PxVec3 globalPos;
 	float radius = 1.0f, height = 1.0f;
 	int lastIndex = -1;
 	int colliderType = 0;
 
+	bool firstCreation = false;
 };
 
 #endif __COMPONENT_COLLIDER_H__

@@ -73,8 +73,8 @@ void ComponentCollider::Draw()
 			{
 				PxCapsuleGeometry capsule = holder.capsule();
 
-				// --- Rebuild capsule ---
-				App->scene_manager->CreateCube(1, 1, 1, mesh);
+				// --- Rebuild box ---
+				App->scene_manager->CreateCube(scale.x, scale.y, scale.z, mesh);
 				mesh->LoadToMemory();
 
 			}
@@ -106,8 +106,8 @@ void ComponentCollider::Draw()
 			// --- Set uniforms ---
 			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 
-			//UpdateLocalMatrix();
-			
+			UpdateLocalMatrix();
+
 			globalMatrix = transform->GetGlobalTransform() * localMatrix;
 
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, globalMatrix.Transposed().ptr());
@@ -144,17 +144,15 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.x = localPosition.x;
 	localMatrix.y = localPosition.y;
 	localMatrix.z = localPosition.z;
-	localMatrix.scaleX = scale.x;
-	localMatrix.scaleY = scale.y;
-	localMatrix.scaleZ = scale.z;
+	localMatrix.scaleX = scale.x + originalScale.x - 1;
+	localMatrix.scaleY = scale.y + originalScale.y - 1;
+	localMatrix.scaleZ = scale.z + originalScale.z - 1;
 }
 
 void ComponentCollider::SetPosition()
 {
-	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
-	shape->setLocalPose(localTransform);
-	globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
-	globalPosition = globalPosition + localPosition + centerPosition;
+	//PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
+	//shape->setLocalPose(localTransform);
 	//PxTransform globalPose(PxVec3(globalPosition.x, globalPosition.y, globalPosition.z));
 	//shape->setLocalPose(localTransform);
 
@@ -162,10 +160,12 @@ void ComponentCollider::SetPosition()
 	float3 rot = GO->GetComponent<ComponentTransform>()->GetRotation();
 	Quat q = Quat::FromEulerXYZ(rot.x, rot.y, rot.z);
 
-	PxVec3 globalPos = PxVec3(pos.x, pos.y, pos.z) + PxVec3(localPosition.x, localPosition.y, localPosition.z);
+	globalPos = PxVec3(pos.x, pos.y, pos.z) + PxVec3(localPosition.x, localPosition.y, localPosition.z);
 	PxQuat globalRot = PxQuat(q.x, q.y, q.z, q.w);
 
 	PxTransform globalTransform(globalPos, globalRot);
+
+	//shape->setLocalPose(globalTransform);
 
 	if (!GO->GetComponent<ComponentDynamicRigidBody>())
 		rigidStatic->setGlobalPose(globalTransform);
@@ -361,8 +361,16 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		
 			float3 center = GO->GetAABB().CenterPoint();
 			float3 halfSize = GO->GetAABB().HalfSize().Mul(scale);
-			scale = halfSize * 2;
-			PxBoxGeometry boxGeometry(PxVec3(scale.x, scale.y, scale.z));
+			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
+
+			if (!firstCreation)
+			{
+				originalScale = halfSize * 2;
+				firstCreation = true;
+			}
+			
+			baseScale = halfSize * 2;
+			boxGeometry = PxVec3(baseScale.x, baseScale.y, baseScale.z);
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);

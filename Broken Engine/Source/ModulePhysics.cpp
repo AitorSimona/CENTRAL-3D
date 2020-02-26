@@ -94,7 +94,6 @@ bool ModulePhysics::Init(json config)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 	//-------------------------------------
-
 	PlaneCollider(0, 0, 0);
 	return true;
 }
