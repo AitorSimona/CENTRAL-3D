@@ -177,6 +177,8 @@ public:
 
 	bool ControllerIsConnected(PLAYER p);
 
+	void SetAxisThreshold(float threshold);
+
 private:
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
@@ -186,6 +188,8 @@ private:
 	int mouse_x_motion;
 	int mouse_y_motion;
 	//int mouse_z_motion;
+
+	float axis_threshold = 0.8f;
 
 	//Gamepads Data
 	Gamepad controllers[MAX_GAMEPADS] = { nullptr };

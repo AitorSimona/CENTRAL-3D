@@ -263,7 +263,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			// Check Triggers to work as states
 			for (int j = 0; j < 2; ++j)
 			{
-				if (SDL_GameControllerGetAxis(controllers[i].id_ptr, SDL_GameControllerAxis(j + (int)SDL_CONTROLLER_AXIS_TRIGGERLEFT)) > 0.8f * AXISMAX)
+				if (SDL_GameControllerGetAxis(controllers[i].id_ptr, SDL_GameControllerAxis(j + (int)SDL_CONTROLLER_AXIS_TRIGGERLEFT)) > axis_threshold* AXISMAX)
 				{
 					if (controllers[i].triggers_state[j] == BUTTON_IDLE)
 					{
@@ -286,7 +286,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			// Check Multidirection axis to work as states
 			for (int j = 0; j < 4; ++j)
 			{
-				if (SDL_GameControllerGetAxis(controllers[i].id_ptr, SDL_GameControllerAxis(j)) > 0.8f * AXISMAX) //Stick all the way to the positive
+				if (SDL_GameControllerGetAxis(controllers[i].id_ptr, SDL_GameControllerAxis(j)) > axis_threshold* AXISMAX) //Stick all the way to the positive
 				{
 					if (controllers[i].multidirection_axis_state[j] == GP_AXIS_STATE::AXIS_IDLE ||
 						IN_RANGE(controllers[i].multidirection_axis_state[j], GP_AXIS_STATE::AXIS_NEGATIVE_DOWN, GP_AXIS_STATE::AXIS_NEGATIVE_REPEAT))
@@ -301,7 +301,7 @@ update_status ModuleInput::PreUpdate(float dt)
 					else
 						controllers[i].multidirection_axis_state[j] = GP_AXIS_STATE::AXIS_IDLE;
 				}
-				else if (SDL_GameControllerGetAxis(controllers[i].id_ptr, SDL_GameControllerAxis(j)) < -(0.8f * AXISMAX))// Stick All the way negative
+				else if (SDL_GameControllerGetAxis(controllers[i].id_ptr, SDL_GameControllerAxis(j)) < -(axis_threshold * AXISMAX))// Stick All the way negative
 				{
 					if (controllers[i].multidirection_axis_state[j] == GP_AXIS_STATE::AXIS_IDLE ||
 						IN_RANGE(controllers[i].multidirection_axis_state[j], GP_AXIS_STATE::AXIS_POSITIVE_DOWN, GP_AXIS_STATE::AXIS_POSITIVE_REPEAT))
@@ -475,4 +475,9 @@ bool ModuleInput::ControllerIsConnected(PLAYER p)
 		return false;
 	else
 		return true;
+}
+
+void ModuleInput::SetAxisThreshold(float threshold)
+{
+	axis_threshold = threshold;
 }

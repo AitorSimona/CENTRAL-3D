@@ -46,7 +46,8 @@ public:
 	SDL_GameControllerAxis GetControllerAxisFromString(const char* axis_name) const;
 	GP_AXIS_STATE GetAxisStateFromString(const char* state_name) const;
 
-	int GetAxisValue(int player_num, const char* joy_axis) const;
+	int GetAxisRealValue(int player_num, const char* joy_axis) const;
+	float GetAxisValue(int player_num, const char* joy_axis, float threshold) const;
 	void ShakeController(int player_num, float intensity, uint32 milliseconds) const;
 	void StopControllerShake(int player_num) const;
 	//bool IsMouseInGame() const;

@@ -321,7 +321,7 @@ GP_AXIS_STATE Scripting::GetAxisStateFromString(const char* state_name) const
 	return ret;
 }
 
-int Scripting::GetAxisValue(int player_num, const char* axis) const
+int Scripting::GetAxisRealValue(int player_num, const char* axis) const
 {
 	int ret = 0;
 
@@ -334,6 +334,22 @@ int Scripting::GetAxisValue(int player_num, const char* axis) const
 	SDL_GameControllerAxis SDL_axis = GetControllerAxisFromString(axis);
 
 	ret = App->input->GetAxis(player,SDL_axis);
+
+	return ret;
+}
+
+//Get the value of an axis from -1.0f to 1.0f if the value in the gamepad surpasses the threshold, else returns 0.0f
+float Scripting::GetAxisValue(int player_num, const char* joy_axis, float threshold) const
+{
+	float ret = 0.0f;
+
+	//App->input->SetAxisThreshold(threshold);
+	int val = GetAxisRealValue(player_num, joy_axis);
+
+	ret = val / (float)AXISMAX;
+
+	if (IN_RANGE(ret, -threshold, threshold))
+		ret = 0.0f; //In case the value is lower than the threshold, (both from the negative & positive sides) we return 0.0f (no imput, implementing a deadzone basically)
 
 	return ret;
 }
