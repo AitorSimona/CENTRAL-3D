@@ -17,7 +17,7 @@ public:
 		BOX,
 		SPHERE,
 		CAPSULE,
-		PLANE	
+		PLANE
 	};
 
 public:
@@ -52,6 +52,7 @@ public:
 	float3 baseScale = float3::one;
 	float3 originalScale = float3::one;
 	physx::PxRigidStatic* rigidStatic = nullptr;
+	float3 offset = float3::zero;
 
 private:
 	physx::PxShape* shape = nullptr;

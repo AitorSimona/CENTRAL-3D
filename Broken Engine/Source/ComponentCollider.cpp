@@ -74,7 +74,7 @@ void ComponentCollider::Draw()
 				PxCapsuleGeometry capsule = holder.capsule();
 
 				// --- Rebuild box ---
-				App->scene_manager->CreateCube(scale.x, scale.y, scale.z, mesh);
+				App->scene_manager->CreateCube(1, 1, 1, mesh);
 				mesh->LoadToMemory();
 
 			}
@@ -101,14 +101,12 @@ void ComponentCollider::Draw()
 			// --- Use default shader ---
 			glUseProgram(App->renderer3D->defaultShader->ID);
 
-			ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+			
 
 			// --- Set uniforms ---
 			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 
 			UpdateLocalMatrix();
-
-			globalMatrix = transform->GetGlobalTransform() * localMatrix;
 
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, globalMatrix.Transposed().ptr());
 
@@ -141,12 +139,20 @@ void ComponentCollider::Draw()
 }
 
 void ComponentCollider::UpdateLocalMatrix() {
-	localMatrix.x = localPosition.x;
-	localMatrix.y = localPosition.y;
-	localMatrix.z = localPosition.z;
+	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+
+	//Render
+	localMatrix.x = localPosition.x + offset.x;
+	localMatrix.y = localPosition.y + offset.y;
+	localMatrix.z = localPosition.z + offset.z;
 	localMatrix.scaleX = scale.x + originalScale.x - 1;
 	localMatrix.scaleY = scale.y + originalScale.y - 1;
 	localMatrix.scaleZ = scale.z + originalScale.z - 1;
+
+	globalMatrix = transform->GetGlobalTransform() * localMatrix;
+
+	//DEBUG
+
 }
 
 void ComponentCollider::SetPosition()
@@ -366,6 +372,8 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
 		
 			float3 center = GO->GetAABB().CenterPoint();
+			offset = center - GO->GetComponent<ComponentTransform>()->GetGlobalPosition();//returns the offset of the collider from the AABB
+
 			float3 halfSize = GO->GetAABB().HalfSize().Mul(scale);
 			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
 
@@ -382,7 +390,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			shape->setGeometry(boxGeometry);
 			
 			PxTransform position(PxVec3(center.x, center.y, center.z));
-			centerPosition = center;
+			//centerPosition = center;
 			
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
