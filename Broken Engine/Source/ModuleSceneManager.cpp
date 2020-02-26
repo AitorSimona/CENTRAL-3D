@@ -14,6 +14,7 @@
 #include "ModuleEventManager.h"
 #include "ComponentCamera.h"
 
+
 #include "ModuleGui.h"
 
 #include "ImporterMaterial.h"
@@ -103,8 +104,6 @@ update_status ModuleSceneManager::PreUpdate(float dt)
 update_status ModuleSceneManager::Update(float dt)
 {
 	root->Update(dt);
-
-
 	return UPDATE_CONTINUE;
 }
 

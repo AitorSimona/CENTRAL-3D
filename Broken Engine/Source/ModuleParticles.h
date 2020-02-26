@@ -6,7 +6,6 @@
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 class ComponentParticleEmitter;
-class RenderParticleSystemActor;
 
 using namespace physx;
 
@@ -28,8 +27,6 @@ private:
 	bool perParticleRestOffset = false;
 
 	PxParticleSystem* particleSystem = nullptr;
-
-	RenderParticleSystemActor* particleSystem2;
 
 	std::vector<ComponentParticleEmitter*> particleEmitters;
 };

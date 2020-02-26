@@ -6,6 +6,7 @@
 #include "ComponentCamera.h"
 #include "ComponentCollider.h"
 #include "ComponentDynamicRigidBody.h"
+#include "ComponentParticleEmitter.h"
 
 #include "ModuleSceneManager.h"
 
@@ -192,6 +193,9 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 			break;
 		case Component::ComponentType::DynamicRigidBody:
 			component = new ComponentDynamicRigidBody(this);
+			break;
+		case Component::ComponentType::ParticleEmitter:
+			component = new ComponentParticleEmitter(this);
 			break;
 		}
 

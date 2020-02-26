@@ -80,15 +80,9 @@ bool ModulePhysics::Init(json config)
 	// This will enable basic visualization of PhysX objects like - actors collision shapes and their axes.
 		//The function PxScene::getRenderBuffer() is used to render any active visualization for scene.
 	mScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0);	//Global visualization scale which gets multiplied with the individual scales
-	//mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
+	mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 	
-	mScene->setVisualizationParameter(PxVisualizationParameter::ePARTICLE_SYSTEM_BOUNDS, 1.0f);	//Enable visualization of actor's axis
-	mScene->setVisualizationParameter(PxVisualizationParameter::ePARTICLE_SYSTEM_BROADPHASE_BOUNDS, 1.0f);
-	mScene->setVisualizationParameter(PxVisualizationParameter::ePARTICLE_SYSTEM_GRID, 1.0f);
-	mScene->setVisualizationParameter(PxVisualizationParameter::ePARTICLE_SYSTEM_POSITION, 1.0f);
-	mScene->setVisualizationParameter(PxVisualizationParameter::ePARTICLE_SYSTEM_VELOCITY, 1.0f);
-	mScene->setVisualizationParameter(PxVisualizationParameter::ePARTICLE_SYSTEM_MAX_MOTION_DISTANCE, 1.0f);
 
 
 	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.5f);

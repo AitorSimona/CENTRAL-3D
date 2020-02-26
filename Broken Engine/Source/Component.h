@@ -42,6 +42,7 @@ public:
 	virtual void CreateInspectorNode() = 0;
 
 protected:
+
 	bool active = false;
 	GameObject* GO = nullptr;
 

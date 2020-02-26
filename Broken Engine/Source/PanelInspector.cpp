@@ -13,6 +13,7 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ComponentCollider.h"
+#include "ComponentParticleEmitter.h"
 
 #include "PanelShaderEditor.h"
 
@@ -65,7 +66,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer", "Dynamic RigidBody", "ComponentCollider" };
+		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer", "Dynamic RigidBody", "ComponentCollider", "Particle Emitter" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -106,6 +107,10 @@ bool PanelInspector::Draw()
 		if (item_current == "ComponentCollider")
 		{
 			Selected->AddComponent(Component::ComponentType::Collider);
+		}
+		if (item_current == "Particle Emitter")
+		{
+			Selected->AddComponent(Component::ComponentType::ParticleEmitter);
 		}
 
 		item_current = items[0];

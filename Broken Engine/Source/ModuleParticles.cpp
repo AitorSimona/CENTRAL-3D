@@ -39,7 +39,7 @@ bool ModuleParticles::Start()
 {
 	particleSystem = App->physics->mPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
 
-	particleSystem->setExternalAcceleration(PxVec3(0,-9.80,0));
+	particleSystem->setExternalAcceleration(PxVec3(0, -9.80, 0));
 
 	if (particleSystem)
 		App->physics->mScene->addActor(*particleSystem);
