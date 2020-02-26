@@ -146,13 +146,14 @@ void ComponentMesh::UpdateDefMesh()
 			resource_def_mesh->vertices[i].position[2] = 0.0f;
 		}
 
-		// SHADERS????????????????????????????????????????????????????????????????????????????
-		uint idx = App->renderer3D->CreateBufferFromData(resource_def_mesh->VBO, resource_def_mesh->VerticesSize, resource_def_mesh->vertices);
+		// ---  ASK AITOR FFS
+		//// SHADERS????????????????????????????????????????????????????????????????????????????
+		//uint idx = App->renderer3D->CreateBufferFromData(resource_def_mesh->VBO, resource_def_mesh->VerticesSize, resource_def_mesh->Indices);
 
-		glGenBuffers(1, (GLuint*)&(idx));
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * resource_def_mesh->VerticesSize, resource_def_mesh->vertices, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glGenBuffers(1, (GLuint*)&(idx));
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * resource_def_mesh->VerticesSize, resource_def_mesh->vertices, GL_STATIC_DRAW);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		for (std::vector<ComponentBone*>::iterator it = bones.begin(); it != bones.end(); it++)
 		{
@@ -165,10 +166,8 @@ void ComponentMesh::UpdateDefMesh()
 			for (uint i = 0; i < r_bone->NumWeights; i++)
 			{
 				uint index = r_bone->index_weight[i];
-				float3 tmp = { 0, 0, 0 };
+				float3 tmp = { resource_def_mesh->vertices[index].position[0], resource_def_mesh->vertices[index].position[1], resource_def_mesh->vertices[index].position[2] };
 				float3 _vertex = mat.TransformPos(tmp);
-
-				//float3 tmp = res_mesh->vertex[index];
 
 				resource_def_mesh->vertices[index].position[0] += _vertex.x * r_bone->weight[i];
 				resource_def_mesh->vertices[index].position[1] += _vertex.y * r_bone->weight[i];
@@ -176,12 +175,6 @@ void ComponentMesh::UpdateDefMesh()
 
 				if ((resource_mesh->VerticesSize / 3) > 0);
 				{
-					float3 aux = { resource_def_mesh->vertices[index].normal[0], resource_def_mesh->vertices[index].normal[1], resource_def_mesh->vertices[index].normal[3] };
-					_vertex = mat.TransformPos(aux);
-					resource_def_mesh->vertices[index].position[0] += _vertex.x * r_bone->weight[i];
-					resource_def_mesh->vertices[index].position[1] += _vertex.y * r_bone->weight[i];
-					resource_def_mesh->vertices[index].position[2] += _vertex.z * r_bone->weight[i];
-
 					float3 aux_ = { resource_def_mesh->vertices[index].position[0], resource_def_mesh->vertices[index].position[1], resource_def_mesh->vertices[index].position[2] };
 					_vertex = mat.TransformPos(aux_);
 					resource_def_mesh->vertices[index].normal[0] += _vertex.x * r_bone->weight[i];
