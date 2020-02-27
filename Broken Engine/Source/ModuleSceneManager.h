@@ -83,6 +83,12 @@ private:
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 
+
+
+
+
+	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 public:
 	// --- Actually this is an octree ---
@@ -91,6 +97,7 @@ public:
 	bool display_tree = false;
 	bool display_boundingboxes = false;
 
+	ResourceMesh* plane = nullptr;
 
 private:
 	uint PointLineVAO = 0;

@@ -70,6 +70,11 @@ bool ModuleSceneManager::Start()
 	// --- Create primitives ---
 	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
 	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
+	plane = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultPlane");
+
+	CreatePlane(1, 1, 1, plane);
+
+	plane->LoadToMemory();
 
 	// Not needed since we are checking if resources are in Memory in LoadCube and LoadSphere, which are called by ModuleGui
 	//CreateCube(1, 1, 1, cube);
@@ -707,6 +712,18 @@ void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, Reso
 	if (mesh)
 	{
 		par_shapes_scale(mesh, Radius / 2, Radius / 2, Radius / 2);
+		LoadParMesh(mesh, rmesh);
+	}
+}
+
+void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
+{
+	// --- Create par shapes sphere ---
+	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
+
+	if (mesh)
+	{
+		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
 		LoadParMesh(mesh, rmesh);
 	}
 }
