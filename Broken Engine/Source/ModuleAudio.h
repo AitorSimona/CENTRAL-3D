@@ -7,6 +7,8 @@
 
 class WwiseGameObject
 {
+public:
+
 	WwiseGameObject(unsigned __int64 id, const char* name);
 	~WwiseGameObject();
 
@@ -26,10 +28,10 @@ public:
 
 public:
 	float volume = 1.0f;
-
+	AkGameObjectID id = 0;
 private:
 	const char* name = nullptr;
-	AkGameObjectID id;
+	
 
 	AkVector position = { 0,0,0 };
 	AkVector orientationFront = { 0,0,0 };

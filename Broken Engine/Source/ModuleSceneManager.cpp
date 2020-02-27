@@ -87,12 +87,13 @@ bool ModuleSceneManager::Start()
 
 	glGenVertexArrays(1, &PointLineVAO);
 
-	music = LoadCube();
+	//Hardcoded Debug for audio
+	/*music = LoadCube();
 	music->AddComponent(Component::ComponentType::AudioSource);
 	ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();
 	musicSource->SetID(AK::EVENTS::BACKGROUNDMUSIC);
 	musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
-	musicSource->isPlaying = true;
+	musicSource->isPlaying = true;*/
 
 	return true;
 }

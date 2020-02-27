@@ -13,7 +13,6 @@
 #include "ModuleResourceManager.h"
 #include "ModuleThreading.h"
 #include "ModuleAudio.h"
-
 #include "mmgr/mmgr.h"
 
 Application::Application()

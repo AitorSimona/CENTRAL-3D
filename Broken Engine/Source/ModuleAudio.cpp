@@ -1,10 +1,13 @@
 #include "ModuleAudio.h"
-
+#include <string>
 #include "wwise.h"
 #include "Wwise/IO/Win32/AkFilePackageLowLevelIOBlocking.h"
 #include "..\Game\Assets\Sounds\Wwise_IDs.h"
 #include "Application.h"
-#include <string>
+#include "ModuleFileSystem.h"
+
+#include "mmgr/mmgr.h"
+
 
 #define BANKNAME_INIT "Assets/Sounds/Init.bnk"
 
@@ -152,6 +155,8 @@ void ModuleAudio::LoadSoundBank(const char* path)
 	fullPath += ".bnk";
 
 	AkBankID bankID;
+
+	if(App->fs->Exists(fullPath.c_str()))
 	SoundEngine::LoadBank(fullPath.c_str(), AK_DEFAULT_POOL_ID, bankID);
 }
 
