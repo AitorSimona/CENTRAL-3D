@@ -1,6 +1,5 @@
 #include "ModulePhysics.h"
 
-
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
 
@@ -31,6 +30,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxPvdSDKDEBUG_x86.lib")
 #endif // _DEBUG
 
+#include "mmgr/mmgr.h"
 
 ModulePhysics::ModulePhysics(bool start_enabled)
 {
@@ -94,8 +94,9 @@ bool ModulePhysics::Init(json config)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 	//-------------------------------------
+	
 	PlaneCollider(0, 0, 0);
-	//BoxCollider(5, 5, 0);
+	
 	return true;
 }
 

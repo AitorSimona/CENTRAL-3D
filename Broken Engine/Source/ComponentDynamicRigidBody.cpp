@@ -6,6 +6,8 @@
 
 #include "Imgui/imgui.h"
 
+#include "mmgr/mmgr.h"
+
 
 ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::DynamicRigidBody)
 {
