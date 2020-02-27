@@ -57,8 +57,8 @@ private:
 	void LoadSoundBank(const char* path);
 
 public:
-	AkGameObjectID currentListenerID;
-	unsigned long g_envMAP[255];
+	AkGameObjectID currentListenerID = 0;
+	//unsigned long g_envMAP[255];
 
 };
 
