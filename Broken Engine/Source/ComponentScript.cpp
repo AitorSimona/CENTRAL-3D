@@ -128,6 +128,8 @@ json ComponentScript::Save() const
 
 void ComponentScript::Load(json& node)
 {
+
+
 }
 
 //void ComponentScript::Save(json & file)
