@@ -3,6 +3,7 @@
 #include "ComponentTransform.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
+#include "ModuleTimeManager.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
@@ -40,6 +41,71 @@ ComponentAnimation::~ComponentAnimation()
 		res_anim->Release();
 		res_anim->RemoveUser(GO);
 	}
+
+}
+
+void ComponentAnimation::Update(float dt)
+{
+	if (linked_channels == false)
+	{
+		std::vector<GameObject*> childs;
+		GO->GetAllChilds(childs);
+		has_skeleton = HasSkeleton(childs);
+
+		DoLink();
+		//CreateAnimation("Idle", 0, 48, true, true);
+		playing_animation = CreateAnimation("Run", 0, 42, true);
+		//CreateAnimation("Punch", 73, 140, false);
+	}
+
+	/*if (linked_bones == false)
+		DoBoneLink();*/
+
+	if (blending == false)
+	{
+		time += App->time->GetGameDt();
+		UpdateJointsTransform();
+	}
+	else
+		BlendAnimations(blend_time_value);
+
+	//if (has_skeleton)
+		//UpdateMesh(GO);
+
+	//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	//{
+	//	//prev_anim = playing_animation;
+	//	StartBlend(animations[2]->start, animations[2]);
+	//	time = 0;
+	//}
+
+	//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) // press key
+	//{
+	//	//prev_anim = playing_animation;
+
+	//	animations[1]->Default = true;
+	//	animations[0]->Default = false;
+
+	//	if (playing_animation->loop)
+	//	{
+	//		StartBlend(animations[1]->start, animations[1]);
+	//		time = 0;
+	//	}
+
+	//}
+	//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_UP) //release key
+	//{
+	//	animations[1]->Default = false;
+	//	animations[0]->Default = true;
+
+	//	if (playing_animation->loop)
+	//	{
+	//		StartBlend(GetDefaultAnimation()->start, GetDefaultAnimation());
+	//		time = 0;
+	//	}
+
+	//}
+
 
 }
 
@@ -140,19 +206,19 @@ void ComponentAnimation::DoLink()
 	{
 		std::vector<GameObject*> childs;
 		//TODO: Make function GetAllChilds in GameObject.cpp
-		/*GO->GetAllChilds(childs);
+		GO->GetAllChilds(childs);
 		for (int i = 0; i < res_anim->numChannels; i++)
 		{
 			for (int j = 0; j < childs.size(); j++)
 			{
 				// We link them if the GO is a bone and their names are equal
-				if (childs[j]->GetComponentBone() != nullptr && childs[j]->name.compare(res_anim->channels[i].name) == 0)
+				if (childs[j]->GetComponent<ComponentBone>() && childs[j]->GetName().compare(res_anim->channels[i].name) == 0)
 				{
 					links.push_back(Link(childs[j], &res_anim->channels[i]));
 					break;
 				}
 			}
-		}*/
+		}
 
 		linked_channels = true;
 	}
@@ -170,13 +236,13 @@ void ComponentAnimation::DoBoneLink()
 	{
 		// -- Uncomment when Comp/Res Bone is done
 
-		/*uint tmp_id = bones[i]->res_bone->meshID;
+		uint tmp_id = bones[i]->res_bone->meshID;
 		//They have to have the same ID (Mesh/Bone), that's how they are linked
 		std::map<uint, ComponentMesh*>::iterator it = meshes.find(tmp_id);
 		if (it != meshes.end())
 		{
-			it->second->AddBone(bones[i]);
-		}*/
+			//it->second->AddBone(bones[i]);
+		}
 	}
 
 	linked_bones = true;
@@ -190,7 +256,7 @@ void ComponentAnimation::UpdateJointsTransform()
 
 		// ----------------------- Frame count managment -----------------------------------
 
-		/*Frame = playing_animation->start + (time * res_anim->ticksPerSecond);
+		Frame = playing_animation->start + (time * res_anim->ticksPerSecond);
 		if (Frame == playing_animation->end)
 		{
 			if (!playing_animation->loop)
@@ -222,7 +288,7 @@ void ComponentAnimation::UpdateJointsTransform()
 				}
 			}
 		}
-		trans->SetPosition(position);
+		trans->SetPosition(position.x, position.y, position.z);
 		//ROTATION
 		Quat rotation = trans->GetQuaternionRotation();
 		if (links[i].channel->RotHasKey())
@@ -266,7 +332,7 @@ void ComponentAnimation::UpdateJointsTransform()
 				}
 			}
 		}
-		trans->SetScale(scale);*/
+		trans->Scale(scale.x, scale.y, scale.z);
 
 	}
 }
@@ -291,8 +357,8 @@ void ComponentAnimation::StartBlend(uint start, Animation* anim)
 	{
 		ComponentTransform* trans = links[i].gameObject->GetComponent<ComponentTransform>();
 
-		/*end_position[i] = trans->GetPosition();
-		end_rotation[i] = trans->GetRotation();
+		end_position[i] = trans->GetPosition();
+		end_rotation[i] = trans->GetQuaternionRotation();
 		end_scale[i] = trans->GetScale();
 		std::map<double, float3>::iterator next_pos = links[i].channel->PositionKeys.find(blend_start_Frame);
 		if (next_pos != links[i].channel->PositionKeys.end())
@@ -308,7 +374,7 @@ void ComponentAnimation::StartBlend(uint start, Animation* anim)
 		if (next_sc != links[i].channel->ScaleKeys.end())
 			start_scale[i] = next_sc->second;
 		else
-			start_scale[i] = float3(1234, 0, 0);*/
+			start_scale[i] = float3(1234, 0, 0);
 	}
 
 	blending = true;
@@ -316,18 +382,18 @@ void ComponentAnimation::StartBlend(uint start, Animation* anim)
 
 void ComponentAnimation::BlendAnimations(float blend_time)
 {
-	/*curr_blend_time += App->GetDT();
+	curr_blend_time += App->time->GetGameDt();
 	float value = curr_blend_time / blend_time;
 	for (int i = 0; i < links.size(); i++)
 	{
-		ComponentTransform* trans = links[i].gameObject->GetComponentTransform();
+		ComponentTransform* trans = links[i].gameObject->GetComponent<ComponentTransform>();
 		if (start_position[i].x != 1234)
-			trans->SetPosition(end_position[i].Lerp(start_position[i], value));
+			trans->SetPosition(end_position[i].Lerp(start_position[i], value).x, end_position[i].Lerp(start_position[i], value).y, end_position[i].Lerp(start_position[i], value).z);
 		if (start_rotation[i].x != 1234)
 			trans->SetQuatRotation(end_rotation[i].Slerp(start_rotation[i], value));
 		if (start_scale[i].x != 1234)
-			trans->SetScale(end_scale[i].Lerp(start_scale[i], value));
-	}*/
+			trans->Scale(end_scale[i].Lerp(start_scale[i], value).x, end_scale[i].Lerp(start_scale[i], value).y, end_scale[i].Lerp(start_scale[i], value).z);
+	}
 
 	if (curr_blend_time >= blend_time)
 	{
@@ -366,18 +432,18 @@ void ComponentAnimation::GetAllBones(GameObject* go, std::map<uint, ComponentMes
 	if (mesh != nullptr)
 		meshes[mesh->resource_mesh->GetUID()] = mesh;
 
-	/*ComponentBone* bone = go->GetComponent<ComponentBone>();
+	ComponentBone* bone = go->GetComponent<ComponentBone>();
 	if (bone != nullptr)
 		bones.push_back(bone);
 	for (uint i = 0; i < go->childs.size(); i++)
-		GetAllBones(go->childs[i], meshes, bones);*/
+		GetAllBones(go->childs[i], meshes, bones);
 }
 
 bool ComponentAnimation::HasSkeleton(std::vector<GameObject*> collector) const
 {
 	for (int i = 0; i < collector.size(); i++)
-		/*if (collector[i]->GetComponent<ComponentBone>());
-			return true;*/
+		if (collector[i]->GetComponent<ComponentBone>());
+			return true;
 
 		return false;
 }

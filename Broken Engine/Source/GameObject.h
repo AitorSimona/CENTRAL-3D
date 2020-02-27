@@ -56,10 +56,12 @@ public:
 
 	// --- Utilities ---
 	void RecursiveDelete(bool target = true);
-	void OnUpdateTransform();
+	//void OnUpdateTransform();
+	void TransformGlobal(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);
+	void GetAllChilds(std::vector<GameObject*>& collector);
 	GameObject* GetAnimGO(GameObject* GO);
 
 	void UpdateAABB();

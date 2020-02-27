@@ -15,6 +15,7 @@ public:
 	float3			GetPosition() const;
 	float3			GetScale() const;
 	float3			GetRotation() const;
+	Quat			GetQuaternionRotation() const;
 	float4x4        GetLocalTransform() const;
 	float4x4        GetGlobalTransform() const;
 	float3		    GetGlobalPosition() const;

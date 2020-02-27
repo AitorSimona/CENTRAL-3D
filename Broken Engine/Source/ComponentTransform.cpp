@@ -30,6 +30,11 @@ float3 ComponentTransform::GetRotation() const
 	return rotation_euler;
 }
 
+Quat ComponentTransform::GetQuaternionRotation() const
+{
+	return rotation;
+}
+
 float4x4 ComponentTransform::GetLocalTransform() const
 {
 	return Local_transform;
@@ -138,9 +143,9 @@ void ComponentTransform::Load(json& node)
 	std::string rotz = node["rotationz"];
 	std::string rotw = node["rotationw"];
 
-	std::string scalex = node["rotationx"];
-	std::string scaley = node["rotationy"];
-	std::string scalez = node["rotationz"];
+	std::string scalex = node["scalex"];
+	std::string scaley = node["scaley"];
+	std::string scalez = node["scalez"];
 
 	SetPosition(std::stof(posx), std::stof(posy), std::stof(posz));
 	SetQuatRotation(Quat(std::stof(rotx), std::stof(roty), std::stof(rotz), std::stof(rotw)));

@@ -82,11 +82,12 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		std::vector<GameObject*> mesh_wbones;
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array --
 		if (scene->mRootNode->mNumChildren > 0)
+		{
 			for (int i = 0; i < scene->mRootNode->mNumChildren; ++i)
 			{
 				LoadNodes(scene->mRootNode->mChildren[i], rootnode, scene, model_gos, MData.path, model_meshes, model_mats, mesh_collector, mesh_wbones);
 			}
-		
+		}
 
 		// --- Load bones ---
 		std::map<uint, ResourceBone*> bones;
@@ -339,7 +340,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	node->mTransformation.Decompose(scaling, rotation, translation);
 
 	float3 pos2(translation.x, translation.y, translation.z);
-	float3 s2(1, 1, 1);
+	float3 s2(scaling.x, scaling.y, scaling.z);
 	Quat rot2(rotation.x, rotation.y, rotation.z, rotation.w);
 
 	std::string node_name = node->mName.C_Str();
@@ -382,7 +383,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	transform->position = pos2;;
 	transform->scale = s2;
 	transform->rotation = rot2;
-	transform->UpdateLocalTransform();
+	//transform->UpdateLocalTransform();
 
 
 	int i = 0;
