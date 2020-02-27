@@ -21,7 +21,7 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 	size = { 0,0,0 };
 	emisionRate = 500.0f;
 
-	particlesVelocity = { 0,0,0 };
+	particlesVelocity = { 10,0,0 };
 	particlesDuration = 0;	
 
 	Enable();
@@ -88,7 +88,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 			float3 globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
 
-			PxVec3 positionBuffer[] ={ PxVec3( globalPosition.x, globalPosition.y, globalPosition.y) };
+			PxVec3 positionBuffer[] ={ PxVec3( globalPosition.x, globalPosition.y, globalPosition.z) };
 			PxVec3 velocityBuffer[] = { particlesVelocity };
 
 			creationData.indexBuffer = indexBuffer;
