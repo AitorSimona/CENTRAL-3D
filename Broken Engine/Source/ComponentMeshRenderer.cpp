@@ -106,15 +106,15 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
-		if (mesh->resource_def_mesh)
-		{
-			DrawMesh(*mesh->resource_def_mesh);
-		}
-		else
-		{
+		//if (mesh->resource_def_mesh)
+		//{
+		//	DrawMesh(*mesh->resource_def_mesh);
+		//}
+		//else
+		//{
 			DrawMesh(*mesh->resource_mesh);
 			DrawNormals(*mesh->resource_mesh, *transform);
-		}
+		//}
 
 	}
 

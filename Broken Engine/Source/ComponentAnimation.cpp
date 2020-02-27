@@ -420,12 +420,12 @@ void ComponentAnimation::UpdateMesh(GameObject* go)
 	if (tmp != nullptr)
 	{
 		tmp->UpdateDefMesh();
-		if (tmp->resource_def_mesh != nullptr)
-		{
-			//Vertex buffer
-			if (!created_buffer)
-				created_buffer = true;
-		}
+		//if (tmp->resource_def_mesh != nullptr)
+		//{
+		//	//Vertex buffer
+		//	if (!created_buffer)
+		//		created_buffer = true;
+		//}
 	}
 
 	for (int i = 0; i < go->childs.size(); i++)

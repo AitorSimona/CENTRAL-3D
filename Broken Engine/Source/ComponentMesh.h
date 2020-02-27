@@ -29,7 +29,7 @@ public:
 
 public:
 	ResourceMesh* resource_mesh = nullptr;
-	ResourceMesh* resource_def_mesh = nullptr;
+	/*ResourceMesh* resource_def_mesh = nullptr;*/
 
 	std::vector<ComponentBone*> bones;
 };

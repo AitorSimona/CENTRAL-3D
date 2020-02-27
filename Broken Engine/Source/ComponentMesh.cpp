@@ -26,11 +26,11 @@ ComponentMesh::~ComponentMesh()
 		resource_mesh->Release();
 		resource_mesh->RemoveUser(GO);
 	}
-	if (resource_def_mesh && resource_def_mesh->IsInMemory())
-	{
-		resource_def_mesh->Release();
-		delete resource_def_mesh;
-	}
+	//if (resource_def_mesh && resource_def_mesh->IsInMemory())
+	//{
+	//	resource_def_mesh->Release();
+	//	delete resource_def_mesh;
+	//}
 }
 
 const AABB & ComponentMesh::GetAABB() const
@@ -124,64 +124,91 @@ void ComponentMesh::AddBone(ComponentBone* bone)
 
 void ComponentMesh::UpdateDefMesh()
 {
-	if (resource_def_mesh == nullptr)
-	{
-		resource_def_mesh = new ResourceMesh(resource_mesh->GetUID(), resource_mesh->GetResourceFile());
+	//if (resource_def_mesh == nullptr)
+	//{
+	//	resource_def_mesh = new ResourceMesh(resource_mesh->GetUID(), resource_mesh->GetResourceFile());
 
-		resource_def_mesh->LoadToMemory();
+	//	resource_def_mesh->LoadToMemory();
 
-	}
+	//}
 	// --- Reset temporal mesh
 	// --- Normals ---
-	for (uint i = 0; i < resource_def_mesh->VerticesSize / 3; ++i)
-	{
-		resource_def_mesh->vertices[i].normal[0] = 0.0f;
-		resource_def_mesh->vertices[i].normal[1] = 0.0f;
-		resource_def_mesh->vertices[i].normal[2] = 0.0f;
+	//for (uint i = 0; i < resource_mesh->VerticesSize / 3; ++i)
+	//{
+	//	resource_def_mesh->vertices[i].normal[0] = 0.0f;
+	//	resource_def_mesh->vertices[i].normal[1] = 0.0f;
+	//	resource_def_mesh->vertices[i].normal[2] = 0.0f;
 
-		resource_def_mesh->vertices[i].position[0] = 0.0f;
-		resource_def_mesh->vertices[i].position[1] = 0.0f;
-		resource_def_mesh->vertices[i].position[2] = 0.0f;
+	//	resource_def_mesh->vertices[i].position[0] = 0.0f;
+	//	resource_def_mesh->vertices[i].position[1] = 0.0f;
+	//	resource_def_mesh->vertices[i].position[2] = 0.0f;
+	//}
+
+
+
+	for (std::vector<ComponentBone*>::iterator it = bones.begin(); it != bones.end(); ++it)
+	{
+		ResourceBone* r_bone = (*it)->res_bone;
+
+		float4x4 mat = (*it)->GetSkeletonTransform();
+		mat = GO->GetComponent<ComponentTransform>()->GetLocalTransform().Inverted() * mat;
+		mat = mat * r_bone->matrix;
+
+
+		for (uint i = 0; i < r_bone->NumWeights; i++)
+		{
+
+			uint index = r_bone->index_weight[i];
+
+			// -- This is the original vertex
+			float3 tmp = { resource_mesh->vertices[index].position[0],
+						   resource_mesh->vertices[index].position[1],
+						   resource_mesh->vertices[index].position[2]};
+
+			float3 tmp2 = float3::zero;
+
+
+			// -- Vertex offset
+			/*resource_def_mesh->vertices[index].position[0];
+			resource_def_mesh->vertices[index].position[1];
+			resource_def_mesh->vertices[index].position[2];*/
+
+
+			float3 _vertex = mat.TransformPos(tmp);
+
+			//resource_mesh->vertices[index].animPos_offset[0] = 0;
+			//resource_mesh->vertices[index].animPos_offset[1] = 0;
+			//resource_mesh->vertices[index].animPos_offset[2] = 0;
+
+			//resource_mesh->vertices[index].animPos_offset[0] += _vertex.x * r_bone->weight[i];
+			//resource_mesh->vertices[index].animPos_offset[1] += _vertex.y * r_bone->weight[i];
+			//resource_mesh->vertices[index].animPos_offset[2] += _vertex.z * r_bone->weight[i];
+
+			/*if ((resource_mesh->VerticesSize / 3) > 0);
+			{
+				float3 aux_ = { resource_mesh->vertices[index].position[0],
+								resource_mesh->vertices[index].position[1],
+								resource_mesh->vertices[index].position[2] };
+				_vertex = mat.TransformPos(aux_);
+				resource_def_mesh->vertices[index].normal[0] += _vertex.x * r_bone->weight[i];
+				resource_def_mesh->vertices[index].normal[1] += _vertex.y * r_bone->weight[i];
+				resource_def_mesh->vertices[index].normal[2] += _vertex.z * r_bone->weight[i];
+			}*/
+		}
 	}
 
-	//for (std::vector<ComponentBone*>::iterator it = bones.begin(); it != bones.end(); it++)
-	//{
-	//	ResourceBone* r_bone = (*it)->res_bone;
+	//// --- Bind it ---
+	//glBindVertexArray(resource_mesh->VAO);
 
-	//	float4x4 mat = (*it)->GetSkeletonTransform();
-	//	mat = GO->GetComponent<ComponentTransform>()->GetLocalTransform().Inverted() * mat;
-	//	mat = mat * r_bone->matrix;
+	//// Bind the VBO 
+	//glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->VBO);
 
-	//	for (uint i = 0; i < r_bone->NumWeights; i++)
-	//	{
-	//		uint index = r_bone->index_weight[i];
+	//// --- Set all vertex attribute pointers ---
 
-	//		// -- This is the original vertex
-	//		float3 tmp = { resource_mesh->vertices[index].position[0],
-	//					   resource_mesh->vertices[index].position[1],
-	//					   resource_mesh->vertices[index].position[2]};
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * resource_mesh->VerticesSize, resource_mesh->vertices, GL_DYNAMIC_DRAW);
 
-	//		// -- Vertex offset
-	//		resource_def_mesh->vertices[index].position[0];
-	//		resource_def_mesh->vertices[index].position[1];
-	//		resource_def_mesh->vertices[index].position[2];
-	//		float3 _vertex = mat.TransformPos(tmp);
-
-	//		resource_def_mesh->vertices[index].position[0] += _vertex.x * r_bone->weight[i];
-	//		resource_def_mesh->vertices[index].position[1] += _vertex.y * r_bone->weight[i];
-	//		resource_def_mesh->vertices[index].position[2] += _vertex.z * r_bone->weight[i];
-
-	//		/*if ((resource_mesh->VerticesSize / 3) > 0);
-	//		{
-	//			float3 aux_ = { resource_mesh->vertices[index].position[0],
-	//							resource_mesh->vertices[index].position[1],
-	//							resource_mesh->vertices[index].position[2] };
-	//			_vertex = mat.TransformPos(aux_);
-	//			resource_def_mesh->vertices[index].normal[0] += _vertex.x * r_bone->weight[i];
-	//			resource_def_mesh->vertices[index].normal[1] += _vertex.y * r_bone->weight[i];
-	//			resource_def_mesh->vertices[index].normal[2] += _vertex.z * r_bone->weight[i];
-	//		}*/
-	//	}
-	//}
+	//// --- Unbind VAO and VBO ---
+	//glBindVertexArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
