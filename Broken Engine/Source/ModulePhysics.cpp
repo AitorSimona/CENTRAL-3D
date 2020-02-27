@@ -95,12 +95,12 @@ bool ModulePhysics::Init(json config)
 	}
 	//-------------------------------------
 	PlaneCollider(0, 0, 0);
+	BoxCollider(5, 5, 0);
 	return true;
 }
 
 update_status ModulePhysics::Update(float dt)
 {
-
 	SimulatePhysics(dt);
 
 	return update_status::UPDATE_CONTINUE;

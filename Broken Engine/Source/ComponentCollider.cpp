@@ -138,7 +138,10 @@ void ComponentCollider::Draw()
 
 void ComponentCollider::UpdateLocalMatrix() {
 
-	if (!rigidStatic)
+	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
+
+	if (!rigidStatic && !dynamicRB)
 		return;
 
 	//Render
@@ -149,19 +152,40 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.scaleY = scale.y + originalScale.y - 1;
 	localMatrix.scaleZ = scale.z + originalScale.z - 1;
 
-	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
 	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
 
 	//PHYSX DEBUG
 	float3 pos, scale;
 	Quat rot;
 	globalMatrix.Decompose(pos, rot, scale);
+	scale = cTransform->GetScale();
+
+	if (!scale.Equals(tmpScale)) {
+		editCollider = true;
+		tmpScale = scale;
+	}
 
 	PxVec3 posi(pos.x, pos.y, pos.z);
 	PxQuat quati(rot.x, rot.y, rot.z, rot.w);
 	PxTransform transform(posi,quati);
 
-	rigidStatic->setGlobalPose(transform);
+	if (!dynamicRB)
+		rigidStatic->setGlobalPose(transform);
+	else
+	{
+		if (ImGuizmo::IsUsing()) {
+			dynamicRB->rigidBody->setGlobalPose(transform);
+		}
+		else {
+			if (dynamicRB->rigidBody != nullptr)
+			{
+				PxTransform transform = dynamicRB->rigidBody->getGlobalPose();
+				cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y, transform.p.z - offset.z);
+				cTransform->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w)); 
+				globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
+			}
+		}
+	}
 }
 
 void ComponentCollider::SetPosition()
@@ -351,7 +375,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		{
 			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
 				App->physics->mScene->removeActor(*(PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
-			if (createAgain)
+			if (createAgain && rigidStatic)
 				App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
 		}
 
@@ -388,9 +412,9 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				originalScale = halfSize * 2;
 				firstCreation = true;
 			}
-			
-			baseScale = halfSize * 2;
-			boxGeometry = PxVec3(baseScale.x + tScale.x, baseScale.y + tScale.y, baseScale.z + tScale.z);
+
+			baseScale = halfSize;
+			boxGeometry = PxBoxGeometry(PxVec3(baseScale.x + (tScale.x - 1), baseScale.y + (tScale.y - 1), baseScale.z + (tScale.z - 1)));
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);

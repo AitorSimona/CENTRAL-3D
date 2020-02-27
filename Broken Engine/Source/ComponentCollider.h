@@ -64,7 +64,7 @@ private:
 	float radius = 1.0f, height = 1.0f;
 	int lastIndex = -1;
 	int colliderType = 0;
-
+	float3 tmpScale = float3::one;
 	bool firstCreation = false;
 };
 

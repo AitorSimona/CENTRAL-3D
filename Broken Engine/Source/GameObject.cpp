@@ -111,12 +111,6 @@ void GameObject::OnUpdateTransform()
 		}
 	}
 
-	
-	ComponentCollider* collider = GetComponent<ComponentCollider>();
-
-	if (collider)
-		collider->editCollider = true;
-
 	UpdateAABB();
 }
 
