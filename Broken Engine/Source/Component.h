@@ -18,6 +18,7 @@ public:
 		Camera,
 		DynamicRigidBody,
 		Collider,
+		Script,
 		Unknown
 	};
 
@@ -48,4 +49,3 @@ protected:
 };
 
 #endif
-

@@ -7,6 +7,7 @@
 #include "ComponentCollider.h"
 #include "ComponentDynamicRigidBody.h"
 
+#include "ComponentScript.h"
 #include "ModuleSceneManager.h"
 
 #include "Math.h"
@@ -33,7 +34,7 @@ GameObject::~GameObject()
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if (*it)
-			delete* it;
+			delete *it;
 
 	}
 	components.clear();
@@ -167,7 +168,8 @@ bool GameObject::FindChildGO(GameObject* GO)
 
 Component* GameObject::AddComponent(Component::ComponentType type)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
+
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
@@ -194,6 +196,8 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 			break;
 		case Component::ComponentType::DynamicRigidBody:
 			component = new ComponentDynamicRigidBody(this);
+		case Component::ComponentType::Script:
+			component = new ComponentScript(this);
 			break;
 		}
 
