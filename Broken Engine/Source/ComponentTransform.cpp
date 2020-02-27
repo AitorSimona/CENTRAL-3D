@@ -51,10 +51,9 @@ float3 ComponentTransform::GetGlobalPosition() const
 	return global_transform.TranslatePart();
 }
 
-void ComponentTransform::SetPosition(float x, float y, float z)
+void ComponentTransform::SetPosition(float3 new_position)
 {
-	position = float3(x, y, z);
-
+	position = new_position;
 	UpdateLocalTransform();
 }
 
@@ -147,7 +146,8 @@ void ComponentTransform::Load(json& node)
 	std::string scaley = node["scaley"];
 	std::string scalez = node["scalez"];
 
-	SetPosition(std::stof(posx), std::stof(posy), std::stof(posz));
+	float3 pos = float3(std::stof(posx), std::stof(posy), std::stof(posz));
+	SetPosition(pos);
 	SetQuatRotation(Quat(std::stof(rotx), std::stof(roty), std::stof(rotz), std::stof(rotw)));
 	Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 }
@@ -241,7 +241,7 @@ void ComponentTransform::CreateInspectorNode()
 	if (!GO->Static)
 	{
 		if (!GetPosition().Equals(position))
-			SetPosition(position.x, position.y, position.z);
+			SetPosition(position);
 		if (!GetScale().Equals(scale))
 			Scale(scale.x, scale.y, scale.z);
 		if (!GetRotation().Equals(rotation))

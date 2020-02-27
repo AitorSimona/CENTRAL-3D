@@ -21,7 +21,7 @@ public:
 	float3		    GetGlobalPosition() const;
 
 	// --- Setters ---
-	void			SetPosition(float x, float y, float z);
+	void			SetPosition(float3 new_pos);
 	void			SetRotation(float3 euler_angles);
 	void			Scale(float x, float y, float z);
 	void			SetGlobalTransform(float4x4 new_transform);

@@ -46,65 +46,75 @@ ComponentAnimation::~ComponentAnimation()
 
 void ComponentAnimation::Update(float dt)
 {
-	if (linked_channels == false)
+	if (App->GetAppState() == AppState::PLAY)
 	{
-		std::vector<GameObject*> childs;
-		GO->GetAllChilds(childs);
-		has_skeleton = HasSkeleton(childs);
+		if (linked_channels == false)
+		{
+			std::vector<GameObject*> childs;
+			GO->GetAllChilds(childs);
+			has_skeleton = HasSkeleton(childs);
 
-		DoLink();
-		//CreateAnimation("Idle", 0, 48, true, true);
-		playing_animation = CreateAnimation("Run", 0, 42, true);
-		//CreateAnimation("Punch", 73, 140, false);
-	}
+			DoLink();
+			playing_animation = CreateAnimation("Idle", 0, 42, true, true);
+			CreateAnimation("Run", 0, 42, true);
+			CreateAnimation("Punch", 73, 140, false);
+		}
 
-	/*if (linked_bones == false)
-		DoBoneLink();*/
+		/*if (linked_bones == false)
+			DoBoneLink();*/
 
-	if (blending == false)
-	{
-		time += App->time->GetGameDt();
-		UpdateJointsTransform();
+		if (blending == false)
+		{
+			time += App->time->GetGameDt();
+			UpdateJointsTransform();
+		}
+		else
+			BlendAnimations(blend_time_value);
+
+		//if (has_skeleton)
+			//UpdateMesh(GO);
+
+		//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		//{
+		//	//prev_anim = playing_animation;
+		//	StartBlend(animations[2]->start, animations[2]);
+		//	time = 0;
+		//}
+
+		//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) // press key
+		//{
+		//	//prev_anim = playing_animation;
+
+		//	animations[1]->Default = true;
+		//	animations[0]->Default = false;
+
+		//	if (playing_animation->loop)
+		//	{
+		//		StartBlend(animations[1]->start, animations[1]);
+		//		time = 0;
+		//	}
+
+		//}
+		//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_UP) //release key
+		//{
+		//	animations[1]->Default = false;
+		//	animations[0]->Default = true;
+
+		//	if (playing_animation->loop)
+		//	{
+		//		StartBlend(GetDefaultAnimation()->start, GetDefaultAnimation());
+		//		time = 0;
+		//	}
+
+		//}
 	}
 	else
-		BlendAnimations(blend_time_value);
-
-	//if (has_skeleton)
-		//UpdateMesh(GO);
-
-	//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	//{
-	//	//prev_anim = playing_animation;
-	//	StartBlend(animations[2]->start, animations[2]);
-	//	time = 0;
-	//}
-
-	//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) // press key
-	//{
-	//	//prev_anim = playing_animation;
-
-	//	animations[1]->Default = true;
-	//	animations[0]->Default = false;
-
-	//	if (playing_animation->loop)
-	//	{
-	//		StartBlend(animations[1]->start, animations[1]);
-	//		time = 0;
-	//	}
-
-	//}
-	//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_UP) //release key
-	//{
-	//	animations[1]->Default = false;
-	//	animations[0]->Default = true;
-
-	//	if (playing_animation->loop)
-	//	{
-	//		StartBlend(GetDefaultAnimation()->start, GetDefaultAnimation());
-	//		time = 0;
-	//	}
-
-	//}
+	{
+		time = 0;
+		if(animations.size()>0)
+			playing_animation = GetDefaultAnimation();
+	}
+	
 
 
 }
@@ -214,7 +224,8 @@ void ComponentAnimation::DoLink()
 				// We link them if the GO is a bone and their names are equal
 				if (childs[j]->GetComponent<ComponentBone>() && childs[j]->GetName().compare(res_anim->channels[i].name) == 0)
 				{
-					links.push_back(Link(childs[j], &res_anim->channels[i]));
+					Link lk = Link(childs[j], &res_anim->channels[i]);
+					links.push_back(lk);
 					break;
 				}
 			}
@@ -271,65 +282,63 @@ void ComponentAnimation::UpdateJointsTransform()
 		float3 position = trans->GetPosition();
 		if (links[i].channel->PosHasKey())
 		{
-			std::map<double, float3>::iterator pos = links[i].channel->PositionKeys.find(Frame);
-			if (pos != links[i].channel->PositionKeys.end())
-				position = pos->second;
+			std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
+			std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
+
+			if (next == links[i].channel->PositionKeys.end())
+				next = prev;
+
+			//If both keys are the same, no need to blend
+			if (prev == next)
+				position = prev->second;
 			else
 			{
-				//Blend prev with next
-				std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
-				std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
-				if (next == links[i].channel->PositionKeys.end())
-					next = prev;
-				else
-				{
-					float value = (Frame - prev->first) / (next->first - prev->first);
-					position = prev->second.Lerp(next->second, value);
-				}
+				float value = (Frame - prev->first) / (next->first - prev->first);
+				position = prev->second.Lerp(next->second, value);
 			}
+			
 		}
-		trans->SetPosition(position.x, position.y, position.z);
+		trans->SetPosition(position);
 		//ROTATION
 		Quat rotation = trans->GetQuaternionRotation();
 		if (links[i].channel->RotHasKey())
 		{
-			std::map<double, Quat>::iterator rot = links[i].channel->RotationKeys.find(Frame);
-			if (rot != links[i].channel->RotationKeys.end())
-				rotation = rot->second;
+			std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
+			std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
+
+			if (next == links[i].channel->RotationKeys.end())
+				next = prev;
+			//If both keys are the same, no need to blend
+			if (prev == next)
+				rotation = prev->second;
 			else
 			{
-				//Blend prev with next
-				std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
-				std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
-				if (next == links[i].channel->RotationKeys.end())
-					next = prev;
-				else
-				{
-					float value = (Frame - prev->first) / (next->first - prev->first);
-					rotation = prev->second.Slerp(next->second, value);
-				}
+				float value = (Frame - prev->first) / (next->first - prev->first);
+				rotation = prev->second.Slerp(next->second, value);
 			}
 		}
 		trans->SetQuatRotation(rotation);
+
 		//SCALE
 		float3 scale = trans->GetScale();
 		if (links[i].channel->ScaleHasKey())
 		{
+			std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
+			std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
+
+			if (next == links[i].channel->ScaleKeys.end())
+				next = prev;
+
 			std::map<double, float3>::iterator sca = links[i].channel->ScaleKeys.find(Frame);
 			if (sca != links[i].channel->ScaleKeys.end())
-				scale = sca->second;
+				scale = sca->second;	
+			//If both keys are the same, no need to blend
+			if (prev == next)
+				scale = prev->second;
 			else
 			{
-				//Blend prev with next
-				std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
-				std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
-				if (next == links[i].channel->ScaleKeys.end())
-					next = prev;
-				else
-				{
-					float value = (Frame - prev->first) / (next->first - prev->first);
-					scale = prev->second.Lerp(next->second, value);
-				}
+				float value = (Frame - prev->first) / (next->first - prev->first);
+				scale = prev->second.Lerp(next->second, value);
 			}
 		}
 		trans->Scale(scale.x, scale.y, scale.z);
@@ -374,7 +383,7 @@ void ComponentAnimation::StartBlend(uint start, Animation* anim)
 		if (next_sc != links[i].channel->ScaleKeys.end())
 			start_scale[i] = next_sc->second;
 		else
-			start_scale[i] = float3(1234, 0, 0);
+			start_position[i] = float3(1234, 0, 0);
 	}
 
 	blending = true;
@@ -388,7 +397,7 @@ void ComponentAnimation::BlendAnimations(float blend_time)
 	{
 		ComponentTransform* trans = links[i].gameObject->GetComponent<ComponentTransform>();
 		if (start_position[i].x != 1234)
-			trans->SetPosition(end_position[i].Lerp(start_position[i], value).x, end_position[i].Lerp(start_position[i], value).y, end_position[i].Lerp(start_position[i], value).z);
+			trans->SetPosition(end_position[i].Lerp(start_position[i], value));
 		if (start_rotation[i].x != 1234)
 			trans->SetQuatRotation(end_rotation[i].Slerp(start_rotation[i], value));
 		if (start_scale[i].x != 1234)

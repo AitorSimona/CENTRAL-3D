@@ -177,7 +177,7 @@ void PanelScene::HandleGuizmo()
 	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
-	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
+	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
 	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
 
 	// --- Update Selected go transform ---

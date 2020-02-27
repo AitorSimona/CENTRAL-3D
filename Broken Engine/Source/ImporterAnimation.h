@@ -3,7 +3,10 @@
 
 #include "Importer.h"
 
+
 struct aiAnimation;
+struct aiNodeAnim;
+struct Channel;
 class ResourceAnimation;
 class Resource;
 
@@ -22,7 +25,7 @@ public:
 	virtual ~ImporterAnimation();
 
 	Resource* Import(ImportData& IData) const override;
-
+	void LoadChannel(const aiNodeAnim* AnimNode, Channel& channel)const;
 	void Save(ResourceAnimation* anim) const;
 	Resource* Load(const char* path) const override;
 
