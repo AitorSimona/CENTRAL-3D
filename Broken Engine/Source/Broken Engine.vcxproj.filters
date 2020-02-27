@@ -579,13 +579,16 @@
     <ClInclude Include="ComponentDynamicRigidBody.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="gpudetect\DeviceId.h" />
-    <ClInclude Include="gpudetect\dxgi1_4.h" />
     <ClInclude Include="ModulePhysics.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="PanelPhysics.h">
       <Filter>Sources\EditorPanels</Filter>
+    <ClInclude Include="gpudetect\DeviceId.h">
+      <Filter>Sources\Tools\DeviceID</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\dxgi1_4.h">
+      <Filter>Sources\Tools\DeviceID</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

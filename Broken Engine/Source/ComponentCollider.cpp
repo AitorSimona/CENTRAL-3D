@@ -148,7 +148,6 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.x = localPosition.x +offset.x;
 	localMatrix.y = localPosition.y +offset.y;
 	localMatrix.z = localPosition.z +offset.z;
-	ENGINE_CONSOLE_LOG("%f", scale.x);
 	localMatrix.scaleX = scale.x * originalScale.x; //scale * sizeAABB
 	localMatrix.scaleY = scale.y * originalScale.y;
 	localMatrix.scaleZ = scale.z * originalScale.z;
@@ -242,11 +241,12 @@ json ComponentCollider::Save() const
 
 void ComponentCollider::Load(json& node)
 {
+	//localPosition.x = std::stof(node["localPositionx"].value);
 }
 
 void ComponentCollider::CreateInspectorNode()
 {
-	if (ImGui::TreeNode("Collider"))
+	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0");
 
@@ -273,7 +273,8 @@ void ComponentCollider::CreateInspectorNode()
 		if (shape)
 		{
 			float3* position = &localPosition;
-;
+			
+			ImGui::Text("Center");
 			ImGui::Text("X");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
@@ -320,7 +321,7 @@ void ComponentCollider::CreateInspectorNode()
 				case PxGeometryType::eBOX:
 				{
 					float3 prevScale = scale;
-
+					ImGui::Text("Size");
 					ImGui::Text("X");
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
@@ -418,7 +419,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		
 			float3 center = GO->GetAABB().CenterPoint();
 
-
 			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
 			
 			if (!firstCreation)
@@ -486,6 +486,10 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
+			break;
+		}
+		case ComponentCollider::COLLIDER_TYPE::NONE: {
+			lastIndex = -1;
 			break;
 		}
 	}
