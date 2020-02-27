@@ -90,7 +90,6 @@ private:
 
 private:
 
-	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawScene();
 
