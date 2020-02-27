@@ -119,7 +119,7 @@ bool PanelScene::Draw()
 		HandleGuizmo();
 
 	// --- Update editor camera ---
-	if (ImGuizmo::IsUsing() == false)
+	if (!ImGuizmo::IsUsing())
 		App->camera->UpdateCamera();
 
 
@@ -174,10 +174,10 @@ void PanelScene::HandleGuizmo()
 
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
+	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
-	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
+	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
 	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
 
 	// --- Update Selected go transform ---
