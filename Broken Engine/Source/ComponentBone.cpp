@@ -45,89 +45,92 @@ void ComponentBone::DebugDrawBones()
 			0.0f, 0.0f, 0.0f, -1.0f,
 			0.0f, 0.0f, nearp, 0.0f);
 
-		////Set polygon draw mode and appropiated matrices for OGL
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//glPushMatrix();
-		//glMultMatrixf(float4x4::identity.Transposed().ptr());
-		//glMatrixMode(GL_PROJECTION);
-		//glLoadMatrixf(proj_RH.ptr());
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadMatrixf(GetBoneTransform().Transposed().ptr());
+		//Set polygon draw mode and appropiated matrices for OGL
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glLoadIdentity();
+		
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(proj_RH.ptr());
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-		uint shader = App->renderer3D->linepointShader->ID;
-		glUseProgram(shader);
-		// --- Set uniforms ---
+		glPushMatrix();
+		glMultMatrixf(GetBoneTransform().Transposed().ptr());
 
-		GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, GetBoneTransform().Transposed().ptr());
+		//uint shader = App->renderer3D->linepointShader->ID;
+		//glUseProgram(shader);
+		//// --- Set uniforms ---
 
-		GLint viewLoc = glGetUniformLocation(shader, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+		//GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, GetBoneTransform().Transposed().ptr());
 
-		GLint projectLoc = glGetUniformLocation(shader, "projection");
-		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+		//GLint viewLoc = glGetUniformLocation(shader, "view");
+		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+		//GLint projectLoc = glGetUniformLocation(shader, "projection");
+		//glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 
-		float3* vertices = new float3[2];
-		float4x4 child_matrix = GetBoneTransform();
-		float4x4 parent_matrix = GO->parent->GetComponent<ComponentBone>()->GetBoneTransform();
-		float3 child_pos = float3(child_matrix.At(0, 3), child_matrix.At(1, 3), child_matrix.At(2, 3));
-		float3 parent_pos = float3(parent_matrix.At(0, 3), parent_matrix.At(1, 3), parent_matrix.At(2, 3));
-		vertices[0] = child_pos;
-		vertices[1] = parent_pos;
+		//float3* vertices = new float3[2];
+		/*float4x4 child_matrix = GetBoneTransform();
+		float4x4 parent_matrix = GO->parent->GetComponent<ComponentBone>()->GetBoneTransform();*/
+		float3 child_pos = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
+		float3 parent_pos = GO->parent->GetComponent<ComponentTransform>()->GetGlobalPosition();
+		/*vertices[0] = child_pos;
+		vertices[1] = parent_pos;*/
 
-		// --- Create VAO, VBO ---
-		unsigned int VBO;
-		glGenBuffers(1, &VBO);
-		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		//// --- Create VAO, VBO ---
+		//unsigned int VBO;
+		//glGenBuffers(1, &VBO);
+		//// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*2, vertices, GL_DYNAMIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*2, vertices, GL_DYNAMIC_DRAW);
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		//glEnableVertexAttribArray(0);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glBindVertexArray(0);
 
-		// --- Draw lines ---
-		glLineWidth(3.0f);
-		glBindVertexArray(App->scene_manager->GetPointLineVAO());
-		glDrawArrays(GL_LINES, 0, 2);
-		glBindVertexArray(0);
-		glLineWidth(1.0f);
+		//// --- Draw lines ---
+		//glLineWidth(3.0f);
+		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		//glDrawArrays(GL_LINES, 0, 2);
+		//glBindVertexArray(0);
+		//glLineWidth(1.0f);
 
 		// --- Delete VBO and vertices ---
-		glDeleteBuffers(1, &VBO);
-		delete[] vertices;
+		/*glDeleteBuffers(1, &VBO);*/
+		//delete[] vertices;
 
-		glUseProgram(App->renderer3D->defaultShader->ID);
+		//glUseProgram(App->renderer3D->defaultShader->ID);
 
 		
 
 
 
-		//glLineWidth(5.0f);
-		//glBegin(GL_LINES);
+		glLineWidth(5.0f);
+		glBegin(GL_LINES);
 
-		////Yellow
-		//glColor4f(1.0, 1.0, 0.0, 1.0);
+		//Yellow
+		glColor4f(1.0, 1.0, 0.0, 1.0);
 
-		//glVertex3f(child_pos.x, child_pos.y, child_pos.z);
-		//glVertex3f(parent_pos.x, parent_pos.y, parent_pos.z);
+		glVertex3f(child_pos.x, child_pos.y, child_pos.z);
+		glVertex3f(parent_pos.x, parent_pos.y, parent_pos.z);
 
-		//glEnd();
-		//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		//glLineWidth(1.0f);
+		glEnd();
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glLineWidth(1.0f);
 
 
-		////Set again Identity for OGL Matrices & Polygon draw to fill again
-		//glMatrixMode(GL_PROJECTION);
-		//glLoadIdentity();
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadIdentity();
-		//glPopMatrix();
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//Set again Identity for OGL Matrices & Polygon draw to fill again
+		glPopMatrix();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	
 }

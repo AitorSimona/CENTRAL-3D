@@ -240,7 +240,7 @@ void ModuleSceneManager::DrawScene()
 
 	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
 	{
-		if ((*it)->GetName() != root->GetName())
+		if ((*it)->GetUID() != root->GetUID())
 		{
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
@@ -252,13 +252,15 @@ void ModuleSceneManager::DrawScene()
 			}
 
 
-			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
-			if (C_Bone)
-				C_Bone->DebugDrawBones();
+			
 
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 					MeshRenderer->Draw();
+
+			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
+			if (C_Bone)
+				C_Bone->DebugDrawBones();
 
 			if (SelectedGameObject == (*it))
 			{
@@ -475,7 +477,7 @@ GameObject* ModuleSceneManager::GetSelectedGameObject() const
 void ModuleSceneManager::GatherGameObjects(std::vector<GameObject*>& scene_gos, GameObject* go)
 {
 	// --- Add all childs from go to vector ---
-	if(go->GetName() != root->GetName())
+	if(go->GetUID() != root->GetUID())
 	scene_gos.push_back(go);
 
 	if (go->childs.size() > 0)
@@ -523,7 +525,7 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 GameObject * ModuleSceneManager::CreateRootGameObject()
 {
 	// --- Create New Game Object Name ---
-	std::string Name = "root";
+	std::string Name = "root1";
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
