@@ -28,8 +28,6 @@ public:
 
 	void UpdateLocalMatrix();
 
-	void SetPosition();
-
 	// --- Save & Load ---
 	json Save() const override;
 	void Load(json& node) override;
@@ -48,15 +46,12 @@ public:
 	ResourceMesh* mesh = nullptr;
 	bool editCollider = false;
 	float3 localPosition = float3::zero;
-	float3 centerPosition = float3::zero;
-	float3 baseScale = float3::one;
 	float3 originalScale = float3::one;
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
 
 private:
 	physx::PxShape* shape = nullptr;
-	float3 globalPosition;
 	float3 scale = float3(1, 1, 1);
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;

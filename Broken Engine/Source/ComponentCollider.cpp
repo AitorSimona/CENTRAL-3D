@@ -189,38 +189,6 @@ void ComponentCollider::UpdateLocalMatrix() {
 	}
 }
 
-void ComponentCollider::SetPosition()
-{
-	/*float3 pos = GO->GetComponent<ComponentTransform>()->GetPosition();
-	float3 rot = GO->GetComponent<ComponentTransform>()->GetRotation();
-	Quat q = Quat::FromEulerXYZ(rot.x, rot.y, rot.z);
-
-	globalPos = PxVec3(pos.x, pos.y, pos.z) + PxVec3(localPosition.x, localPosition.y, localPosition.z);
-	PxQuat globalRot = PxQuat(q.x, q.y, q.z, q.w);
-
-	PxTransform globalTransform(globalPos, globalRot);
-
-	shape->setLocalPose(globalTransform);*/
-
-	/*if (!GO->GetComponent<ComponentDynamicRigidBody>())
-		rigidStatic->setGlobalPose(globalTransform);
-	else
-	{
-		if (ImGuizmo::IsUsing()) {
-			ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
-			dynamicRB->rigidBody->setGlobalPose(globalTransform);
-		}
-		else {
-			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
-			{
-				PxTransform transform = GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody->getGlobalPose();
-				GO->GetComponent<ComponentTransform>()->SetPosition(transform.p.x, transform.p.y, transform.p.z);
-				GO->GetComponent<ComponentTransform>()->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
-			}
-		}		
-	}*/
-}
-
 json ComponentCollider::Save() const
 {
 	json node;
@@ -228,14 +196,6 @@ json ComponentCollider::Save() const
 	node["localPositionx"] = std::to_string(localPosition.x);
 	node["localPositiony"] = std::to_string(localPosition.y);
 	node["localPositionz"] = std::to_string(localPosition.z);
-
-	node["centerPositionx"] = std::to_string(centerPosition.x);
-	node["centerPositiony"] = std::to_string(centerPosition.y);
-	node["centerPositionz"] = std::to_string(centerPosition.z);
-
-	node["baseScalex"] = std::to_string(baseScale.x);
-	node["baseScaley"] = std::to_string(baseScale.y);
-	node["baseScalez"] = std::to_string(baseScale.z);
 
 	node["originalScalex"] = std::to_string(originalScale.x);
 	node["originalScaley"] = std::to_string(originalScale.y);
