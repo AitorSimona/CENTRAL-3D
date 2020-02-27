@@ -192,7 +192,7 @@ bool GameObject::FindChildGO(GameObject* GO)
 
 Component* GameObject::AddComponent(Component::ComponentType type)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 6, "Component Creation Switch needs to be updated");
 
 	Component* component = nullptr;
 
@@ -220,6 +220,7 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 			break;
 		case Component::ComponentType::DynamicRigidBody:
 			component = new ComponentDynamicRigidBody(this);
+			break;
 		case Component::ComponentType::Script:
 			component = new ComponentScript(this);
 			break;
