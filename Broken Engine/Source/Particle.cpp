@@ -37,9 +37,6 @@ void Particle::Draw()
 	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	//GLint timeLoc = glGetUniformLocation(shader, "time");
-	//glUniform1f(timeLoc, App->time->time);
-
 	float farp = App->renderer3D->active_camera->GetFarPlane();
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
@@ -80,7 +77,6 @@ void Particle::Draw()
 		}
 
 	}
-
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }

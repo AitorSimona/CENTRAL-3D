@@ -36,19 +36,20 @@ private:
 
 	std::vector<Particle*> particles;
 
-	unsigned int maxParticles = 200;
+	unsigned int maxParticles = 2000;
 	bool perParticleRestOffset = false;
 
 	PxParticleExt::IndexPool* indexPool;
 
 	//Emitter properties
-	PxVec3 size;
-	float emisionRate;	//in milliseconds
+	PxVec3 size = { 0,0,0 };
+	float emisionRate=500.0f;	//in milliseconds
 	uint validParticles=0;
+	PxVec3 externalAcceleration = {0,1000,0};
+	PxVec3 particlesVelocity = { 10,10,10 };
 
 	//Particle properties
-	PxVec3 particlesVelocity;
-	uint particlesDuration;
+	int particlesLifeTime=1000;
 
 	float spawnClock=0.0f;
 };

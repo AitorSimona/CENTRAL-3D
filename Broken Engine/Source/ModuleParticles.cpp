@@ -15,7 +15,7 @@
 
 ModuleParticles::ModuleParticles(bool start_enabled)
 {
-	name = "Particles Module";
+	name = "Particles module";
 }
 
 ModuleParticles::~ModuleParticles()

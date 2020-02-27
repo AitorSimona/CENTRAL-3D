@@ -21,6 +21,7 @@ public:
 	float3 position;
 
 	uint lifeTime;
+	uint spawnTime = 0;
 	float diameter;
 };
 
