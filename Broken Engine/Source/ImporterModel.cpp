@@ -379,9 +379,11 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 	ComponentTransform* transform = nodeGo->GetComponent<ComponentTransform>();
 
-	transform->SetPosition(pos2.x, pos2.y, pos2.z);
-	transform->Scale(s2.x, s2.y, s2.z);
-	transform->SetQuatRotation(rot2);
+	transform->position = pos2;;
+	transform->scale = s2;
+	transform->rotation = rot2;
+	transform->UpdateLocalTransform();
+
 
 	int i = 0;
 

@@ -115,9 +115,10 @@ json ComponentTransform::Save() const
   	node["positiony"] = std::to_string(position.y);
   	node["positionz"] = std::to_string(position.z);
 
-  	node["rotationx"] = std::to_string(rotation_euler.x);
-  	node["rotationy"] = std::to_string(rotation_euler.y);
-  	node["rotationz"] = std::to_string(rotation_euler.z);
+  	node["rotationx"] = std::to_string(rotation.x);
+  	node["rotationy"] = std::to_string(rotation.y);
+  	node["rotationz"] = std::to_string(rotation.z);
+	node["rotationw"] = std::to_string(rotation.w);
 
   	node["scalex"] = std::to_string(scale.x);
   	node["scaley"] = std::to_string(scale.y);
@@ -135,13 +136,14 @@ void ComponentTransform::Load(json& node)
 	std::string rotx = node["rotationx"];
 	std::string roty = node["rotationy"];
 	std::string rotz = node["rotationz"];
+	std::string rotw = node["rotationw"];
 
 	std::string scalex = node["rotationx"];
 	std::string scaley = node["rotationy"];
 	std::string scalez = node["rotationz"];
 
 	SetPosition(std::stof(posx), std::stof(posy), std::stof(posz));
-	SetRotation(float3(std::stof(rotx), std::stof(roty), std::stof(rotz)));
+	SetQuatRotation(Quat(std::stof(rotx), std::stof(roty), std::stof(rotz), std::stof(rotw)));
 	Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 }
 

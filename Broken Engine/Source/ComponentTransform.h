@@ -27,6 +27,8 @@ public:
 	void			OnUpdateTransform(const float4x4& ParentGlobal);
 	void			SetQuatRotation(Quat rotation);
 
+	void UpdateLocalTransform();
+
 	// --- Save & Load ---
 	json Save() const override;
 	void Load(json& node) override;
@@ -37,10 +39,11 @@ public:
 public:
 	bool update_transform = false;
 private:
-	void UpdateLocalTransform();
+	//void UpdateLocalTransform();
 	void UpdateTRS();
 
-private:
+//private;
+public:
 	float4x4 Local_transform = math::float4x4::identity;
 	float4x4 Global_transform = math::float4x4::identity;
 
