@@ -32,6 +32,10 @@ bool PanelHierarchy::Draw()
 		DrawRecursive(App->scene_manager->GetRootGO());
 	}
 
+	// Deselect the current GameObject when clicking in an empty space of the hierarchy
+	if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
+		App->scene_manager->SetSelectedGameObject(nullptr);
+
 	ImGui::End();
 
 	// --- Manage Drag & Drop ---
