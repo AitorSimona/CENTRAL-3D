@@ -41,6 +41,8 @@ function lua_table:Update ()
 	
 end
 
+function lua_table.AquiEstaElErrorPorSimeOlvidoDeBorrarlo()
+
 return lua_table
 end
 

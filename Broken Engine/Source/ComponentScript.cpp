@@ -1,7 +1,7 @@
 #include "ComponentScript.h"
 //#include "ResourceScript.h"
 #include "Application.h"
-//#include "ModuleResources.h"
+#include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
 #include "ModuleFileSystem.h"
 #include "ResourceScript.h"
@@ -16,6 +16,12 @@ ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerG
 ComponentScript::~ComponentScript() 
 {
 	App->scripting->DeleteScriptInstanceWithParentComponent(this);
+
+	if (script && script->IsInMemory())
+	{
+		script->Release();
+		script->RemoveUser(GO);
+	}
 }
 
 void ComponentScript::Enable()
@@ -32,53 +38,83 @@ void ComponentScript::CreateInspectorNode()
 {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-	std::string name = script->script_name + "(Script)";
+	std::string name = this->script_name + "(Script)";
 	ImGui::Checkbox("Active", &active); ImGui::SameLine();
 	if (ImGui::TreeNodeEx(name.data(), base_flags)) {
-		if (ImGui::Button("Open Script File")) {
-			App->gui->RequestBrowser(std::string(script->absolute_path).data());
-		}
-
-		char auxBuffer[256];
-
-		//Display Variables
-		for (int i = 0; i < script_variables.size(); ++i)
+		if (this->script != nullptr)
 		{
-			std::string auxName = script_variables[i].name.c_str();
-			ImGui::Text(auxName.c_str()); ImGui::SameLine(200.f); ImGui::SetNextItemWidth(ImGui::GetWindowWidth() / 7.0f);
-			auxName.assign("##Var" + auxName);
+			if (ImGui::Button("Open Script File")) {
+				App->gui->RequestBrowser(std::string(script->absolute_path).data());
+			}
 
-			VarType type = script_variables[i].type;
-			if (type == VarType::DOUBLE)
+			char auxBuffer[256];
+
+			//Display Variables
+			for (int i = 0; i < script_variables.size(); ++i)
 			{
-				float auxVal(script_variables[i].editor_value.as_double_number);
+				std::string auxName = script_variables[i].name.c_str();
+				ImGui::Text(auxName.c_str()); ImGui::SameLine(200.f); ImGui::SetNextItemWidth(ImGui::GetWindowWidth() / 7.0f);
+				auxName.assign("##Var" + auxName);
 
-				if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f)) {
-					script_variables[i].editor_value.as_double_number = auxVal;
-					script_variables[i].changed_value = true;
+				VarType type = script_variables[i].type;
+				if (type == VarType::DOUBLE)
+				{
+					float auxVal(script_variables[i].editor_value.as_double_number);
+
+					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f)) {
+						script_variables[i].editor_value.as_double_number = auxVal;
+						script_variables[i].changed_value = true;
+					}
+
+				}
+				else if (type == VarType::BOOLEAN)
+				{
+					if (ImGui::Checkbox(auxName.c_str(), &script_variables[i].editor_value.as_boolean))
+						script_variables[i].changed_value = true;
+				}
+				else if (type == VarType::STRING)
+				{
+					strcpy(auxBuffer, script_variables[i].editor_value.as_string);
+
+					ImGui::InputText(auxName.c_str(), auxBuffer, IM_ARRAYSIZE(auxBuffer));
+
+					if (strcmp(script_variables[i].editor_value.as_string, auxBuffer) != 0) {
+						strcpy(script_variables[i].editor_value.as_string, auxBuffer);
+						script_variables[i].changed_value = true;
+					}
 				}
 
 			}
-			else if (type == VarType::BOOLEAN)
-			{
-				if (ImGui::Checkbox(auxName.c_str(), &script_variables[i].editor_value.as_boolean))
-					script_variables[i].changed_value = true;
-			}
-			else if (type == VarType::STRING)
-			{
-				strcpy(auxBuffer, script_variables[i].editor_value.as_string);
-
-				ImGui::InputText(auxName.c_str(), auxBuffer, IM_ARRAYSIZE(auxBuffer));
-
-				if (strcmp(script_variables[i].editor_value.as_string, auxBuffer) != 0) {
-					strcpy(script_variables[i].editor_value.as_string, auxBuffer);
-					script_variables[i].changed_value = true;
-				}
-			}
-
 		}
 
 		ImGui::TreePop();
+	}
+	
+}
+
+void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
+{
+	// --- Always check if your resources are already invalidated, since go sends events from all of its components resources ---
+	switch (type)
+	{
+	case Resource::ResourceNotificationType::Overwrite:
+		/*if (script && UID == script->GetUID())
+			script = (ResourceScript*)App->resources->GetResource(UID);*/
+
+		if(script && UID == script->GetUID())
+
+		break;
+
+	case Resource::ResourceNotificationType::Deletion:
+		if (script && UID == script->GetUID())
+		{
+			script = nullptr;
+			App->scripting->NullifyScriptInstanceWithParentComponent(this);
+		}
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -86,7 +122,10 @@ void ComponentScript::CreateInspectorNode()
 void ComponentScript::AssignScript(ResourceScript* script_resource)
 {
 	if (script_resource != nullptr)
+	{
 		this->script = script_resource;
+		script_resource->AddUser(GO);
+	}
 
 	script_name = this->script->script_name;
 
@@ -123,12 +162,27 @@ int ComponentScript::ScriptVarAlreadyInComponent(std::string name)
 
 json ComponentScript::Save() const
 {
-	return json();
+	json node;
+
+	// --- Store path to component file ---
+	node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
+	return node;
 }
 
 void ComponentScript::Load(json& node)
 {
+	std::string path = node["Resources"]["ResourceScript"];
+	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	path = path.substr(0, path.find_last_of("."));
 
+	//if (resource_mesh)
+	//	resource_mesh->Release();
+
+	script = (ResourceScript*)App->resources->GetResource(std::stoi(path));
+
+	// --- We want to be notified of any resource event ---
+	if (script)
+		script->AddUser(GO);
 
 }
 

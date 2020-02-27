@@ -98,6 +98,7 @@ bool PanelInspector::Draw()
 					resource = App->resources->GetResource(UID);
 					ComponentScript* script = (ComponentScript*)Selected->AddComponent(Component::ComponentType::Script);
 					script->AssignScript((ResourceScript*)resource);
+					
 
 				}
 			}
