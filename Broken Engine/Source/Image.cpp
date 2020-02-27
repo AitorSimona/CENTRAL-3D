@@ -44,11 +44,10 @@ void Image::Draw()
 
 	rotation2D *= DEGTORAD;
 	float4x4 transform = float4x4::identity;
+	float2 frustum_pos = float2(App->renderer3D->active_camera->frustum.Pos().x, App->renderer3D->active_camera->frustum.Pos().y);
+	float distance = float(App->renderer3D->active_camera->frustum.NearPlanePos(1, 1).z) + 10;
 	float3 rot = this->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetRotation();
-	transform = transform.FromTRS(
-		float3(float2(App->renderer3D->active_camera->frustum.Pos().x, App->renderer3D->active_camera->frustum.Pos().y) + position2D, 10),
-		Quat::FromEulerXYZ(rot.x, rot.y, rotation2D),
-		float3(size2D,1));
+	transform = transform.FromTRS(float3(frustum_pos + position2D, distance), Quat::FromEulerXYZ(rot.x, rot.y, rotation2D), float3(size2D,1));
 
 	rotation2D *= RADTODEG;
 
