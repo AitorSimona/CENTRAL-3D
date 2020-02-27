@@ -1,8 +1,8 @@
 #ifndef __COMPONENT_TRANSFORM_H__
 #define __COMPONENT_TRANSFORM_H__
 
-#include "Component.h"
 #include "Math.h"
+#include "Component.h"
 
 namespace BrokenEngine {
 

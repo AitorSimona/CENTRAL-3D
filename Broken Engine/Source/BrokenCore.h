@@ -6,7 +6,7 @@
 #pragma warning( disable : 4530 )
 
 #include "glad/include/glad/glad.h"
-#include <windows.h>
+//#include <windows.h>
 #include "Errors.h"
 #include <stdio.h>
 

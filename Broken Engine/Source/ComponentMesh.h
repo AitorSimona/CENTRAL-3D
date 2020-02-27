@@ -1,8 +1,8 @@
 #ifndef __COMPONENT_MESH_H__
 #define __COMPONENT_MESH_H__
 
-#include "Component.h"
 #include "Math.h"
+#include "Component.h"
 #include "ResourceMesh.h"
 
 namespace BrokenEngine {

@@ -2,8 +2,9 @@
 #define __BE_MODULECAMERA3D_H__
 
 #include "Module.h"
-#include "BrokenCore.h"
 #include "Math.h"
+#include "BrokenCore.h"
+
 
 BE_BEGIN_NAMESPACE
 

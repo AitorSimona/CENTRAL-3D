@@ -7,6 +7,8 @@
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
+#define NOMINMAX
+#include <Windows.h>
 //
 //#include "Panel.h"
 

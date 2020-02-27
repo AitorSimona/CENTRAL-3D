@@ -3,11 +3,14 @@
 #include <stdlib.h>
 #include "BrokenCore.h"
 
-#include "mmgr/mmgr.h"
+#define NOMINMAX
+#include <Windows.h>
 
 #include "SDL/include/SDL.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
+
+#include "mmgr/mmgr.h"
 
 //Trick to tell AMD and NVIDIA drivers to use the most powerful GPU instead of a lower-performance (such as integrated) GPU
 #ifdef _WIN32

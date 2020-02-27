@@ -3,9 +3,10 @@
 
 #include "Module.h"
 #include <string>
-//#include "psapi.h"
+#define NOMINMAX
+#include <windows.h>
+#include "psapi.h"
 
-struct PROCESS_MEMORY_COUNTERS;
 
 #define BTOGB (1073741824.0f)
 #define KBTOMB 1024.0f //To GB: (1048576.0f)

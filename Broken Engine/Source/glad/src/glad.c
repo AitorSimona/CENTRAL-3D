@@ -638,6 +638,7 @@ static void* get_proc(const char *namez);
 #ifndef _WINDOWS_
 #undef APIENTRY
 #endif
+#define NOMINMAX
 #include <windows.h>
 static HMODULE libGL;
 

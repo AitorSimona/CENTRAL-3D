@@ -1,9 +1,9 @@
 #ifndef __BE_GAMEOBJECT_H__
 #define __BE_GAMEOBJECT_H__
 
+#include "Math.h"
 #include "BrokenCore.h"
 #include "Component.h"
-#include "Math.h"
 #include <vector>
 #include <string>
 #include "Resource.h"

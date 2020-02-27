@@ -1,8 +1,9 @@
 #ifndef __COMPONENT_CAMERA_H__
 #define __COMPONENT_CAMERA_H__
 
-#include "Component.h"
 #include "Math.h"
+#include "Component.h"
+
  
 namespace BrokenEngine {
 	class ComponentCamera : public Component {

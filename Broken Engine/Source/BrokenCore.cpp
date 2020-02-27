@@ -2,6 +2,8 @@
 #include "Application.h"
 
 #include <iostream>
+#define NOMINMAX
+#include <Windows.h>
 
 namespace BrokenEngine {
 	// INFORMATION LOG ----------------------------------------------------------------------------

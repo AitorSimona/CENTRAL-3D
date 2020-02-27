@@ -3,6 +3,8 @@
 
 #include "Module.h"
 #include <vector>
+#define NOMINMAX
+#include <Windows.h>
 
 struct SDL_RWops;
 int close_sdl_rwops(SDL_RWops *rw);
