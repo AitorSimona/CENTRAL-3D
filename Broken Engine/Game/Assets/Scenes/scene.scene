@@ -1,9 +1,9 @@
 {
-    "320802104": {
+    "201817162": {
         "Components": {
             "0": {
                 "positionx": "0.000000",
-                "positiony": "0.000000",
+                "positiony": "14.893782",
                 "positionz": "0.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
@@ -12,62 +12,24 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "1": {
-                "Resources": {
-                    "ResourceMesh": "Library/Meshes/685996513.mesh"
-                }
-            },
-            "2": {
-                "Resources": {
-                    "ResourceMaterial": "Assets/Baker_house.mat"
-                }
-            }
-        },
-        "Name": "Baker_house",
-        "Parent": "400088439"
-    },
-    "400088439": {
-        "Components": {
-            "0": {
-                "positionx": "0.000000",
-                "positiony": "0.000000",
-                "positionz": "0.000000",
-                "rotationx": "0.000000",
-                "rotationy": "0.000000",
-                "rotationz": "0.000000",
-                "scalex": "1.000000",
-                "scaley": "1.000000",
-                "scalez": "1.000000"
+            "6": {
+                "emisionRate": "1.000000",
+                "externalAccelerationX": "0.000000",
+                "externalAccelerationY": "2.500000",
+                "externalAccelerationZ": "0.000000",
+                "particlesLifeTime": "1000",
+                "particlesVelocityX": "0.000000",
+                "particlesVelocityY": "21.650000",
+                "particlesVelocityZ": "0.000000",
+                "sizeX": "0.000000",
+                "sizeY": "0.000000",
+                "sizeZ": "12.300000",
+                "velocityRandomFactorX": "5.000000",
+                "velocityRandomFactorY": "5.000000",
+                "velocityRandomFactorZ": "5.000000"
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "1594715249"
-    },
-    "733353784": {
-        "Components": {
-            "0": {
-                "positionx": "0.000000",
-                "positiony": "0.000000",
-                "positionz": "0.000000",
-                "rotationx": "0.000000",
-                "rotationy": "0.000000",
-                "rotationz": "0.000000",
-                "scalex": "1.000000",
-                "scaley": "1.000000",
-                "scalez": "1.000000"
-            },
-            "1": {
-                "Resources": {
-                    "ResourceMesh": "Library/Meshes/1677934839.mesh"
-                }
-            },
-            "2": {
-                "Resources": {
-                    "ResourceMaterial": "Assets/Baker_house.mat"
-                }
-            }
-        },
-        "Name": "Chimney",
-        "Parent": "400088439"
+        "Parent": "2011367190"
     }
 }

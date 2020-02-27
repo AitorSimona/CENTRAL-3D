@@ -33,12 +33,17 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
 {
-	// MYTODO: Tell module particles to erase its pointer!!!
 	App->particles->DeleteEmitter(this);
+
+	if (particleSystem)
+		App->physics->mScene->removeActor(*particleSystem);
+
 
 	for (int i = 0; i < maxParticles; ++i){
 		delete particles[i];
 	}
+
+	indexPool->release();
 	particles.clear();
 }
 
@@ -47,6 +52,7 @@ void ComponentParticleEmitter::Enable()
 	active = true;
 
 	particleSystem = App->physics->mPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
+	particleSystem->setMaxMotionDistance(1000);
 
 	if (particleSystem)
 		App->physics->mScene->addActor(*particleSystem);
@@ -143,8 +149,10 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 		rd->unlock();
 	}
 	if (particlesToRelease > 0) {
+
 		particleSystem->releaseParticles(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));
 		validParticles -= particlesToRelease;
+		indexPool->freeIndices(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));
 	}
 }
 
@@ -197,7 +205,7 @@ json ComponentParticleEmitter::Save() const
 
 void ComponentParticleEmitter::Load(json& node)
 {
-	/*size.x = node["sizeX"];
+	size.x = node["sizeX"];
 	size.y = node["sizeY"];
 	size.z = node["sizeZ"];
 
@@ -215,7 +223,7 @@ void ComponentParticleEmitter::Load(json& node)
 	velocityRandomFactor.y = node["velocityRandomFactorY"];
 	velocityRandomFactor.z = node["velocityRandomFactorZ"];
 
-	particlesLifeTime = node["particlesLifeTime"];*/
+	particlesLifeTime = node["particlesLifeTime"];
 }
 
 void ComponentParticleEmitter::CreateInspectorNode()
@@ -228,7 +236,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SEmitterX", &size.x, 0.005f);
+	ImGui::DragFloat("##SEmitterX", &size.x, 0.05f, 0.0f, 100.0f);
 
 	ImGui::SameLine();
 
@@ -236,7 +244,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SEmitterY", &size.y, 0.005f);
+	ImGui::DragFloat("##SEmitterY", &size.y, 0.05f,0.0f, 100.0f);
 
 	ImGui::SameLine();
 
@@ -244,12 +252,12 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SEmitterZ", &size.z, 0.005f);
+	ImGui::DragFloat("##SEmitterZ", &size.z, 0.05f, 0.0f, 100.0f);
 
 	//Emision rate
 	ImGui::Text("Emision rate (ms)");
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
-	ImGui::DragFloat("##SEmision rate", &emisionRate, 5.0f,10.00f ,1000000.0f);
+	ImGui::DragFloat("##SEmision rate", &emisionRate, 5.0f, 1.0f ,100000.0f);
 
 	//External forces
 	ImGui::Text("External forces ");
@@ -258,7 +266,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SX", &externalAcceleration.x, 0.005f,-10.0f,10.0f))
+	if (ImGui::DragFloat("##SExternalforcesX", &externalAcceleration.x, 0.005f,-50.0f,50.0f))
 		forceChanged = true;
 
 	ImGui::SameLine();
@@ -266,14 +274,14 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("Y");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SY", &externalAcceleration.y, 0.005f, -10.0f, 10.0f))
+	if (ImGui::DragFloat("##SExternalforcesY", &externalAcceleration.y, 0.005f, -50.0f, 50.0f))
 		forceChanged = true;
 	//Z
 	ImGui::SameLine();
 	ImGui::Text("Z");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SZ", &externalAcceleration.z, 0.005f, -10.0f, 10.0f))
+	if (ImGui::DragFloat("##SExternalforcesZ", &externalAcceleration.z, 0.005f, -50.0f, 50.0f))
 		forceChanged = true;
 
 	if (forceChanged)
@@ -285,20 +293,20 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -10.0f, 10.0f);
+	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -100.0f, 100.0f);
 
 	ImGui::SameLine();
 	//Y
 	ImGui::Text("Y");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -10.0f, 10.0f);
+	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -100.0f, 100.0f);
 	//Z
 	ImGui::SameLine();
 	ImGui::Text("Z");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -10.0f, 10.0f);
+	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -100.0f, 100.0f);
 
 	//Random velocity factor
 	ImGui::Text("Velocity random factor");
@@ -306,24 +314,24 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SRandomVelocityX", &velocityRandomFactor.x, 0.05f, 0.0f, 10.0f);
+	ImGui::DragFloat("##SRandomVelocityX", &velocityRandomFactor.x, 0.05f, 0.0f, 100.0f);
 
 	ImGui::SameLine();
 	//Y
 	ImGui::Text("Y");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SRandomVelocityY", &velocityRandomFactor.y, 0.05f, 0.0f, 10.0f);
+	ImGui::DragFloat("##SRandomVelocityY", &velocityRandomFactor.y, 0.05f, 0.0f, 100.0f);
 	//Z
 	ImGui::SameLine();
 	ImGui::Text("Z");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SRandomVelocityZ", &velocityRandomFactor.z, 0.05f, 0.0f, 10.0f);
+	ImGui::DragFloat("##SRandomVelocityZ", &velocityRandomFactor.z, 0.05f, 0.0f, 100.0f);
 
 	//Particles lifetime
 	ImGui::Text("Particles lifetime (ms)");
-	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 50.0f);
+	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 50.0f,0.0f, 10000.0f);
 
 }
 
