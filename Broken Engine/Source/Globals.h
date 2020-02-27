@@ -64,7 +64,7 @@ void SystemConsoleLog(const char file[], int line, const char* format, ...);
 #define MIN( a, b ) ( ((a) < (b)) ? (a) : (b) )
 #define MAX( a, b ) ( ((a) > (b)) ? (a) : (b) )
 #define CLAMP(x, upper, lower) (MIN(upper, MAX(x, lower)))
-#define IN_RANGE( value, min, max ) ( ((value) >= (MIN) && (value) <= (MAX)) ? 1 : 0 )
+#define IN_RANGE( value, min, max ) ( ((value) >= (min) && (value) <= (max)) ? 1 : 0 )
 
 /// Standard string size
 #define SHORT_STR	32
@@ -137,6 +137,7 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define SCENES_FOLDER "Assets/Scenes/"
 #define MODELS_FOLDER "Library/Models/"
 #define SHADERS_FOLDER "Library/Shaders/"
+#define SCRIPTS_FOLDER "Library/Scripts/"
 
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096

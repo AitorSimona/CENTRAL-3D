@@ -22,6 +22,7 @@ public:
 		Button,
 		CheckBox,
 		InputText,
+		Script,
 		ProgressBar,
 		Unknown
 	};
@@ -53,4 +54,3 @@ protected:
 };
 
 #endif
-

@@ -20,6 +20,7 @@ public:
 		MESH,
 		TEXTURE,
 		SHADER_OBJECT,
+		SCRIPT,
 		META,
 		UNKNOWN,
 	};
