@@ -113,6 +113,7 @@ private:
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* plane = nullptr;
 	ResourceMesh* cylinder = nullptr;
+	ResourceScene* defaultScene = nullptr;
 
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
@@ -121,9 +122,6 @@ private:
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
 
-	ResourceScene* defaultScene = nullptr;
-	ResourceMesh* cube = nullptr;
-	ResourceMesh* sphere = nullptr;
 };
 
 #endif
