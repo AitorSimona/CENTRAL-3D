@@ -5,7 +5,7 @@
 #define NOMINMAX
 #include <Windows.h>
 
-using namespace BrokenEngine;
+BE_BEGIN_NAMESPACE
 // INFORMATION LOG ----------------------------------------------------------------------------
 void EngineConsoleLog(const char file[], int line, const char* format, ...) {
 	static char tmp_string[MAX_BUF_SIZE];
@@ -61,3 +61,4 @@ void LogCompilationFirstMessage() {
 		App->Log(data.c_str());
 	}
 }
+BE_END_NAMESPACE

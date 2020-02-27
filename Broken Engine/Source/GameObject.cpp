@@ -9,7 +9,6 @@
 
 #include "ResourceModel.h"
 
-
 #include "mmgr/mmgr.h"
 
 using namespace BrokenEngine;
