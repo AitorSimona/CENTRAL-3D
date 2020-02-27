@@ -20,7 +20,7 @@ Canvas::Canvas(GameObject* gameObject) : Component(gameObject, Component::Compon
 	interactable = false;
 	draggable = false;
 
-	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
+	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "Canvas Texture");
 
 	App->ui_system->AddCanvas(this);
 }

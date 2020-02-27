@@ -32,23 +32,14 @@ update_status ModuleUI::PreUpdate(float dt)
 	//{
 	//	if (obj->HasComponent(Component::ComponentType::UI_Element)) //if has ui component
 	//	{
-	//		std::vector<Component*> ui = obj->GetAllComponentsOfType(Component::ComponentType::UI_Element); //get all ui components
-	//		if (!ui.empty())
+	//		UI_Element* element = (UI_Element*)obj->GetComponent(Component::ComponentType::UI_Element); //single component (change when able to have multiple components of same type)
+	//		element->UpdateCollider(); //update colliders
+	//		element->UpdateState(); //update state
+
+	//		if (element->GetState() == DRAGGING)
 	//		{
-	//			for (uint i = 0; i < ui.size(); ++i) //update
-	//			{
-	//				UI_Element* element = (UI_Element*)ui[i];
-
-	//				UI_Element* element = (UI_Element*)obj->GetComponent(Component::ComponentType::UI_Element); //single component (change when able to have multiple components of same type)
-	//				element->UpdateCollider(); //update colliders
-	//				element->UpdateState(); //update state
-
-	//				if (element->GetState() == UI_Element::State::DRAGGING)
-	//				{
-	//					element->position2D.x = App->input->GetMouseX();
-	//					element->position2D.y = App->input->GetMouseY();
-	//				}
-	//			}
+	//			element->position2D.x = App->input->GetMouseX();
+	//			element->position2D.y = App->input->GetMouseY();
 	//		}
 	//	}
 	//}
@@ -58,7 +49,7 @@ update_status ModuleUI::PreUpdate(float dt)
 update_status ModuleUI::PostUpdate(float dt)
 {
 	// CHANGE CAMERA TO ORTOGRAPHIC MODE
-	Draw();
+	//Draw();
 	return UPDATE_CONTINUE;
 }
 

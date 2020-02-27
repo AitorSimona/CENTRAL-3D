@@ -6,6 +6,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
 #include "ModuleResourceManager.h"
+#include "ModuleUI.h"
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
@@ -150,6 +151,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
+	App->ui_system->Draw();
 
 	// --- Selected Object Outlining ---
 	HandleObjectOutlining();
