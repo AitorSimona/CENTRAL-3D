@@ -582,13 +582,14 @@
     <ClInclude Include="ModulePhysics.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="PanelPhysics.h">
-      <Filter>Sources\EditorPanels</Filter>
     <ClInclude Include="gpudetect\DeviceId.h">
       <Filter>Sources\Tools\DeviceID</Filter>
     </ClInclude>
     <ClInclude Include="gpudetect\dxgi1_4.h">
       <Filter>Sources\Tools\DeviceID</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelPhysics.h">
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -937,7 +938,9 @@
     <ClCompile Include="Scripting.cpp">
       <Filter>Sources\Modules\Scripting Functions</Filter>
     </ClCompile>
-    <ClCompile Include="gpudetect\DeviceId.cpp" />
+    <ClCompile Include="gpudetect\DeviceId.cpp">
+      <Filter>Sources\Tools\DeviceID</Filter>
+    </ClCompile>
     <ClCompile Include="PanelPhysics.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
