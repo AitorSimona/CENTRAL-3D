@@ -1,0 +1,73 @@
+{
+    "320802104": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/685996513.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
+        },
+        "Name": "Baker_house",
+        "Parent": "400088439"
+    },
+    "400088439": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Name": "GameObject (0)",
+        "Parent": "1594715249"
+    },
+    "733353784": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1677934839.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
+        },
+        "Name": "Chimney",
+        "Parent": "400088439"
+    }
+}

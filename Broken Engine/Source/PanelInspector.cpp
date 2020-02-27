@@ -21,6 +21,7 @@
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
+#include "ComponentScript.h"
 
 #include "mmgr/mmgr.h"
 
@@ -83,6 +84,27 @@ bool PanelInspector::Draw()
 					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
 			}
 			ImGui::EndCombo();
+		}
+
+		// --- Handle drag & drop ---
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+			{
+				uint UID = *(const uint*)payload->Data;
+				Resource* resource = App->resources->GetResource(UID, false);
+
+				// MYTODO: Instance resource here, put it on scene (depending on resource)
+				if (resource && resource->GetType() == Resource::ResourceType::SCRIPT)
+				{
+					resource = App->resources->GetResource(UID);
+					ComponentScript* script = (ComponentScript*)Selected->AddComponent(Component::ComponentType::Script);
+					script->AssignScript((ResourceScript*)resource);
+
+				}
+			}
+
+			ImGui::EndDragDropTarget();
 		}
 
 		// --- Add here temporal conditions to know which component to add ---

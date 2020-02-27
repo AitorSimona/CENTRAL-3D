@@ -34,21 +34,9 @@ bool ModuleParticles::Start()
 
 update_status ModuleParticles::Update(float dt)
 {
-
 	for (int i = 0; i < particleEmitters.size(); ++i)
 		if (particleEmitters[i]->IsEnabled())
 			particleEmitters[i]->UpdateParticles(dt);
-
-	//if (App->input->GetKey(SDL_SCANCODE_SPACE)==KEY_DOWN)
-	//	particleSystem->setPositions(numParticles,PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions));
-
-	//if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
-	//	particleSystem->addForces(numParticles, PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions), PxForceMode::eACCELERATION);
-
-	//if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
-	//	particleSystem->setVelocities(numParticles, PxStrideIterator<const PxU32>(indices), PxStrideIterator<const PxVec3>(positions));
-	//
-	////TEST
 
 	return UPDATE_CONTINUE;
 }
@@ -76,6 +64,9 @@ void ModuleParticles::DeleteEmitter(ComponentParticleEmitter* componentEmitter)
 
 bool ModuleParticles::CleanUp()
 {
+
+	for (int i = 0; i < particleEmitters.size(); ++i)
+		particleEmitters[i]->particleSystem->releaseParticles();
 
 	return true;
 }

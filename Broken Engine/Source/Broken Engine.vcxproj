@@ -40,7 +40,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\$(ProjectName)</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(Configuration)\$(ProjectName)</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -83,6 +87,7 @@
     <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="ComponentParticleEmitter.h" />
     <ClInclude Include="Components.h" />
+    <ClInclude Include="ComponentScript.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="Errors.h" />
     <ClInclude Include="GameObject.h" />
@@ -108,8 +113,10 @@
     <ClInclude Include="ImporterModel.h" />
     <ClInclude Include="Importers.h" />
     <ClInclude Include="ImporterScene.h" />
+    <ClInclude Include="ImporterScript.h" />
     <ClInclude Include="ImporterShader.h" />
     <ClInclude Include="ImporterTexture.h" />
+    <ClInclude Include="LuaIncludes.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK2D.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\Random\LCG.h" />
@@ -189,6 +196,7 @@
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleSceneManager.h" />
+    <ClInclude Include="ModuleScripting.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ModuleFileSystem.h" />
@@ -233,10 +241,14 @@
     <ClInclude Include="ResourceModel.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ResourceScene.h" />
+    <ClInclude Include="ResourceScript.h" />
     <ClInclude Include="ResourceShader.h" />
     <ClInclude Include="ResourceShaderObject.h" />
     <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
+    <ClInclude Include="ScriptData.h" />
+    <ClInclude Include="Scripting.h" />
+    <ClInclude Include="ScriptVar.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
@@ -248,6 +260,7 @@
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentParticleEmitter.cpp" />
+    <ClCompile Include="ComponentScript.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glad\src\glad.c" />
@@ -267,6 +280,7 @@
     <ClCompile Include="ImporterMeta.cpp" />
     <ClCompile Include="ImporterModel.cpp" />
     <ClCompile Include="ImporterScene.cpp" />
+    <ClCompile Include="ImporterScript.cpp" />
     <ClCompile Include="ImporterShader.cpp" />
     <ClCompile Include="ImporterTexture.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK.cpp" />
@@ -317,6 +331,7 @@
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleSceneManager.cpp" />
+    <ClCompile Include="ModuleScripting.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="JSONLoader.cpp" />
@@ -354,10 +369,13 @@
     <ClCompile Include="ResourceMeta.cpp" />
     <ClCompile Include="ResourceModel.cpp" />
     <ClCompile Include="ResourceScene.cpp" />
+    <ClCompile Include="ResourceScript.cpp" />
     <ClCompile Include="ResourceShader.cpp" />
     <ClCompile Include="ResourceShaderObject.cpp" />
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
+    <ClCompile Include="Scripting.cpp" />
+    <ClCompile Include="ScriptVar.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>

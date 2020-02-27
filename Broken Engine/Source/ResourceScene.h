@@ -15,7 +15,8 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 
-	std::unordered_map<uint,GameObject*> scene_gos;
+	std::unordered_map<uint,GameObject*> NoStaticGameObjects;
+	std::unordered_map<uint, GameObject*> StaticGameObjects;
 
 private:
 	void OnOverwrite() override;

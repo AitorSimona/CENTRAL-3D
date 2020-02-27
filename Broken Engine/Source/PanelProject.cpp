@@ -4,6 +4,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleEventManager.h"
 #include "ModuleGui.h"
+#include "ModuleSceneManager.h"
 
 #include "ResourceFolder.h"
 #include "ResourceModel.h"
@@ -39,7 +40,7 @@ PanelProject::~PanelProject()
 }
 
 
-// MYTODO: Clean this up
+// MYTODO: Clean this up !!!!!!!!!
 
 bool PanelProject::Draw()
 {
@@ -335,6 +336,7 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 	else
 		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), color);
 
+	// --- Handle selection ---
 	if (selected && selected->GetUID() == resource->GetUID()
 		&& wasclicked && ImGui::IsMouseReleased(0))
 	{
@@ -349,6 +351,7 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
+	// --- Handle drag and drop origin ---
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 	{
 		uint UID = resource->GetUID();
@@ -359,11 +362,17 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 		ImGui::EndDragDropSource();
 	}
 
-
+	// --- Handle selection ---
 	if (ImGui::IsItemClicked())
 	{
 		selected = resource;
 		wasclicked = true;
+	}
+	// --- IF resource is a scene, load it on double click! ---
+	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+	{
+		if (resource->GetType() == Resource::ResourceType::SCENE)
+			App->scene_manager->SetActiveScene((ResourceScene*)resource);
 	}
 
 	ImGui::PopStyleVar();

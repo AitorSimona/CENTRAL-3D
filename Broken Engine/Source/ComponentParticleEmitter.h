@@ -12,6 +12,7 @@ using namespace  physx;
 
 class ComponentParticleEmitter : public Component
 {
+	friend class ModuleParticles;
 public:
 
 	ComponentParticleEmitter(GameObject* ContainerGO);

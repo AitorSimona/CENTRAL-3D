@@ -19,6 +19,7 @@ public:
 		DynamicRigidBody,
 		Collider,
 		ParticleEmitter,
+		Script,
 		Unknown
 	};
 
@@ -50,4 +51,3 @@ protected:
 };
 
 #endif
-

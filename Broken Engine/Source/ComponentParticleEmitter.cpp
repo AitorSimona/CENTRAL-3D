@@ -28,9 +28,6 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 	
 	for (int i= 0; i < maxParticles; ++i)
 		particles[i] = new Particle();
-
-	int i = 0;
-
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
@@ -130,8 +127,8 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			}
 		}
 
-		/*if (particlesToRelease > 0) 
-			particleSystem->releaseParticles(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));*/
+		//if (particlesToRelease > 0) 
+		//	particleSystem->releaseParticles(/*particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data())*/);
 		
 		// return ownership of the buffers back to the SDK
 		rd->unlock();
