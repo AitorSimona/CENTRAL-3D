@@ -86,7 +86,6 @@ bool ModulePhysics::Init(json config)
 
 	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.2f);
 
-
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();
 	if (pvdClient) {

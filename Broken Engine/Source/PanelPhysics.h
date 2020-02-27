@@ -15,7 +15,10 @@ public:
 	bool Draw();
 
 private:
-	physx::PxVec3* gravity = nullptr;
-	physx::PxVec3* tmpGravity = nullptr;
+	physx::PxVec3 gravity;
+	float staticFriction, dynamicFriction, restitution;
+
+	physx::PxVec3 tmpGravity;
+	float tmpStaticFriction, tmpDynamicFriction, tmpRestitution;
 };
 #endif
