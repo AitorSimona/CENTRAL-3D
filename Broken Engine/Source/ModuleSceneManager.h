@@ -79,6 +79,11 @@ public:
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 
+	const ResourceMesh* GetCubeMesh()const { return cube; }
+	const ResourceMesh* GetSphereMesh() const { return sphere; }
+	const ResourceMesh* GetCapsuleMesh() const { return capsule; }
+	const ResourceMesh* GetPlaneMesh() const { return plane; }
+	const ResourceMesh* GetCylinderMesh() const { return cylinder; }
 private:
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);

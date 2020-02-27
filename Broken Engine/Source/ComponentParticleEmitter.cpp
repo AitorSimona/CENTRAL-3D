@@ -131,8 +131,8 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 		}
 
 		/*if (particlesToRelease > 0) 
-			particleSystem->releaseParticles(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));
-		*/
+			particleSystem->releaseParticles(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));*/
+		
 		// return ownership of the buffers back to the SDK
 		rd->unlock();
 	}

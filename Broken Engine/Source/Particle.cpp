@@ -58,25 +58,26 @@ void Particle::Draw()
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	if (App->scene_manager->sphere)
+	
+	const ResourceMesh* particle_sphere = App->scene_manager->GetSphereMesh();
+	//App->scene_manager->CreateSphere(1, 4,4,particle_sphere);
+
+	// --- Draw particles (we use a sphere) ---
+	if (particle_sphere->vertices && particle_sphere->Indices)
 	{
-		ResourceMesh* particle_sphere = App->scene_manager->sphere;
-		// --- Draw particles (we use a sphere) ---
-		if (particle_sphere->vertices && particle_sphere->Indices)
-		{
-			glBindVertexArray(particle_sphere->VAO);
+		glBindVertexArray(particle_sphere->VAO);
 
-			glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+		glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, particle_sphere->EBO);
-			glDrawElements(GL_TRIANGLES, particle_sphere->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, particle_sphere->EBO);
+		glDrawElements(GL_TRIANGLES, particle_sphere->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-			glBindVertexArray(0);
-			glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-		}
-
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 	}
+
+	
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
