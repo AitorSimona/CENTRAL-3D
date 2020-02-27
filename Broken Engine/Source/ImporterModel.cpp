@@ -333,32 +333,83 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 {
 	// --- Load Game Objects from Assimp scene ---
 
+	aiVector3D translation, scaling;
+	aiQuaternion rotation;
+
+	node->mTransformation.Decompose(scaling, rotation, translation);
+
+	float3 pos2(translation.x, translation.y, translation.z);
+	float3 s2(1, 1, 1);
+	Quat rot2(rotation.x, rotation.y, rotation.z, rotation.w);
+
+	std::string node_name = node->mName.C_Str();
+
+	bool dummyFound = true;
+	while (dummyFound)//Skipp all dummy modules. Assimp loads this fbx nodes to stack all transformations
+	{
+		//All dummy modules have one children (next dummy module or last module containing the mesh)
+		if (node_name.find("_$AssimpFbx$_") != std::string::npos && node->mNumChildren == 1)
+		{
+			//Dummy module have only one child node, so we use that one as our next GameObject
+			node = node->mChildren[0];
+
+			// Accumulate transform 
+			node->mTransformation.Decompose(scaling, rotation, translation);
+			pos2 += float3(translation.x, translation.y, translation.z);
+			s2 = float3(s2.x * scaling.x, s2.y * scaling.y, s2.z * scaling.z);
+			rot2 = rot2 * Quat(rotation.x, rotation.y, rotation.z, rotation.w);
+
+			node_name = node->mName.C_Str();
+
+			//if we find a dummy node we "change" our current node into the dummy one and search
+			//for other dummy nodes inside that one.
+			dummyFound = true;
+		}
+		else
+			dummyFound = false;
+	}
+
 	GameObject* nodeGo = nullptr;
 
-	if (node != scene->mRootNode)
-	{
-		// --- Create GO per each node that contains a mesh ---
-		nodeGo = App->scene_manager->CreateEmptyGameObject();
-		nodeGo->SetName(node->mName.C_Str());
-		parent->AddChildGO(nodeGo);
-		scene_gos.push_back(nodeGo);
-	}
-	else // If rootnode, set nodeGo as root
-		nodeGo = parent;
+	// --- Create GO per each node that contains a mesh ---
+	nodeGo = App->scene_manager->CreateEmptyGameObject();
+	nodeGo->SetName(node->mName.C_Str());
+	parent->AddChildGO(nodeGo);
+	scene_gos.push_back(nodeGo);
 
-	// --- Iterate children and repeat process ---
-	for (int i = 0; i < node->mNumChildren; ++i)
-	{
-		LoadNodes(node->mChildren[i], nodeGo, scene, scene_gos, path, scene_meshes, scene_mats, mesh_collector, mesh_wbones);
-	}
+	ComponentTransform* transform = nodeGo->GetComponent<ComponentTransform>();
+
+	transform->SetPosition(pos2.x, pos2.y, pos2.z);
+	transform->Scale(s2.x, s2.y, s2.z);
+	transform->SetQuatRotation(rot2);
+
+	int i = 0;
 
 	// --- Iterate and load meshes ---
 	for (int j = 0; j < node->mNumMeshes; ++j)
 	{
 		// --- Create Game Object per mesh ---
-		GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
-		new_object->SetName(node->mName.C_Str());
-		parent->AddChildGO(new_object);
+		GameObject* new_object = nullptr;
+
+		if (node->mNumMeshes > 1)
+		{
+			node_name = scene->mMeshes[node->mMeshes[j]]->mName.C_Str();
+			if (node_name == "")
+				node_name = nodeGo->GetName() + "dummy";
+			if (j > 0)
+				node_name = nodeGo->GetName() + "_submesh";
+			new_object = App->scene_manager->CreateEmptyGameObject();
+			nodeGo->AddChildGO(new_object);
+			new_object->SetName(node_name.c_str());
+		}
+		else
+		{
+			//If node has only 1 mesh child is the parent itself 
+			new_object = nodeGo;
+		}
+
+		//new_object->SetName(node->mName.C_Str());
+		//parent->AddChildGO(new_object);
 		scene_gos.push_back(new_object);
 
 		// --- Get Scene mesh associated to node's mesh at index ---
@@ -384,24 +435,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 			// --- Create Default components ---
 			if (new_mesh)
 			{
-				ComponentTransform* transform = new_object->GetComponent<ComponentTransform>();
 
-				if (transform)
-				{
-					aiVector3D aiscale;
-					aiVector3D aiposition;
-					aiQuaternion airotation;
-					node->mTransformation.Decompose(aiscale, airotation, aiposition);
-					math::Quat quat;
-					quat.x = airotation.x;
-					quat.y = airotation.y;
-					quat.z = airotation.z;
-					quat.w = airotation.w;
-					float3 eulerangles = quat.ToEulerXYZ() * RADTODEG;
-					transform->SetPosition(aiposition.x, aiposition.y, aiposition.z);
-					transform->SetRotation(eulerangles);
-					transform->Scale(aiscale.x, aiscale.y, aiscale.z);
-				}
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 				Renderer->material->Release();
@@ -411,7 +445,11 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		}
 	}
 
-
+	// --- Iterate children and repeat process ---
+	for (int i = 0; i < node->mNumChildren; ++i)
+	{
+		LoadNodes(node->mChildren[i], nodeGo, scene, scene_gos, path, scene_meshes, scene_mats, mesh_collector, mesh_wbones);
+	}
 	
 }
 

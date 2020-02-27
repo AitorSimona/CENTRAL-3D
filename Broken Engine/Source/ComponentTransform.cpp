@@ -128,7 +128,7 @@ json ComponentTransform::Save() const
 
 void ComponentTransform::Load(json& node)
 {
-	/*std::string posx = node["positionx"];
+	std::string posx = node["positionx"];
 	std::string posy = node["positiony"];
 	std::string posz = node["positionz"];
 
@@ -142,7 +142,7 @@ void ComponentTransform::Load(json& node)
 
 	SetPosition(std::stof(posx), std::stof(posy), std::stof(posz));
 	SetRotation(float3(std::stof(rotx), std::stof(roty), std::stof(rotz)));
-	Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));*/
+	Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 }
 
 void ComponentTransform::CreateInspectorNode()
