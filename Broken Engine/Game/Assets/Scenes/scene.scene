@@ -1,35 +1,45 @@
 {
-    "201817162": {
+    "504849448": {
         "Components": {
             "0": {
-                "positionx": "0.000000",
-                "positiony": "14.893782",
-                "positionz": "0.000000",
-                "rotationx": "0.000000",
+                "positionx": "-3.019863",
+                "positiony": "2.472304",
+                "positionz": "-0.000000",
+                "rotationx": "-0.707107",
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
-                "scalex": "1.000000",
-                "scaley": "1.000000",
-                "scalez": "1.000000"
+                "scalex": "10.000000",
+                "scaley": "10.000001",
+                "scalez": "10.000001"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/856468443.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "DefaultMaterial"
+                }
             },
             "6": {
-                "emisionRate": "1.000000",
+                "emisionRate": "500.000000",
                 "externalAccelerationX": "0.000000",
-                "externalAccelerationY": "2.500000",
+                "externalAccelerationY": "10.000000",
                 "externalAccelerationZ": "0.000000",
                 "particlesLifeTime": "1000",
                 "particlesVelocityX": "0.000000",
-                "particlesVelocityY": "21.650000",
+                "particlesVelocityY": "0.000000",
                 "particlesVelocityZ": "0.000000",
                 "sizeX": "0.000000",
                 "sizeY": "0.000000",
-                "sizeZ": "12.300000",
+                "sizeZ": "0.000000",
                 "velocityRandomFactorX": "5.000000",
                 "velocityRandomFactorY": "5.000000",
                 "velocityRandomFactorZ": "5.000000"
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "2011367190"
+        "Parent": "1102834161"
     }
 }

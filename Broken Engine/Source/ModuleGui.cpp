@@ -66,6 +66,9 @@ bool ModuleGui::Init(json file)
 	panelResources = new PanelResources("Resources");
 	panels.push_back(panelResources);
 
+	panelPhysics = new PanelPhysics("Physics");
+	panels.push_back(panelPhysics);
+
 	LoadStatus(file);
 
 	return true;
@@ -248,6 +251,11 @@ update_status ModuleGui::Update(float dt)
 					panelResources->OnOff();
 				}
 
+				if (ImGui::MenuItem("Physics"))
+				{
+					panelPhysics->OnOff();
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -328,6 +336,7 @@ bool ModuleGui::CleanUp()
 	panelToolbar = nullptr;
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
+	panelPhysics = nullptr;
 
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &materialTexID);

@@ -95,7 +95,6 @@ private:
 
 private:
 
-	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
 	GameObject* CreateRootGameObject();
 	void DrawScene();
 
@@ -119,6 +118,7 @@ private:
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* plane = nullptr;
 	ResourceMesh* cylinder = nullptr;
+	ResourceScene* defaultScene = nullptr;
 
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
@@ -126,8 +126,6 @@ private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
-
-	ResourceScene* defaultScene = nullptr;
 };
 
 #endif

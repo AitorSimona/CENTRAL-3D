@@ -19,6 +19,8 @@ public:
 		DynamicRigidBody,
 		Collider,
 		ParticleEmitter,
+		AudioSource,
+		AudioListener,
 		Script,
 		Unknown
 	};
@@ -35,6 +37,9 @@ public:
 	GameObject* GetContainerGameObject() const;
 	bool& GetActive();
 	bool IsEnabled() const;
+
+
+	virtual void Update() {};
 
 	// --- Save & Load ---
 	virtual json Save() const = 0;

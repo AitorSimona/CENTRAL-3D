@@ -16,6 +16,7 @@ class PanelToolbar;
 class PanelProject;
 class PanelShaderEditor;
 class PanelResources;
+class PanelPhysics;
 
 class ModuleGui : public Module
 {
@@ -60,6 +61,7 @@ public:
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;
 	PanelResources*		panelResources = nullptr;
+	PanelPhysics*		panelPhysics = nullptr;
 	
 	uint materialTexID = 0;
 	uint folderTexID = 0;

@@ -14,6 +14,8 @@
 #include "ComponentCamera.h"
 #include "ComponentCollider.h"
 #include "ComponentParticleEmitter.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "PanelShaderEditor.h"
 
@@ -67,7 +69,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer", "Dynamic RigidBody", "ComponentCollider", "Particle Emitter" };
+		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -111,12 +113,12 @@ bool PanelInspector::Draw()
 
 		// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
 
-		if (item_current == "ComponentMesh")
+		if (item_current == "Mesh")
 		{
 			Selected->AddComponent(Component::ComponentType::Mesh);
 		}
 
-		if (item_current == "ComponentMeshRenderer")
+		if (item_current == "Mesh Renderer")
 		{
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
 		}
@@ -126,13 +128,17 @@ bool PanelInspector::Draw()
 			Selected->AddComponent(Component::ComponentType::DynamicRigidBody);
 		}
 
-		if (item_current == "ComponentCollider")
+		if (item_current == "Collider")
 		{
 			Selected->AddComponent(Component::ComponentType::Collider);
 		}
 		if (item_current == "Particle Emitter")
 		{
 			Selected->AddComponent(Component::ComponentType::ParticleEmitter);
+		}
+		if (item_current == "Audio Source")
+		{
+			Selected->AddComponent(Component::ComponentType::AudioSource);
 		}
 
 		item_current = items[0];

@@ -5,6 +5,7 @@
 
 class GameObject;
 class ComponentCamera;
+class ComponentAudioListener;
 
 class ModuleCamera3D : public Module
 {
@@ -44,6 +45,7 @@ public:
 
 	float3 reference = { 0.0f,0.0f,0.0f };
 	ComponentCamera* camera = nullptr;
+	ComponentAudioListener* listener = nullptr;
 	LineSegment last_ray;
 
 	float4 m_CustomDefaultCameraValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);

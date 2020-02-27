@@ -43,6 +43,7 @@ class ModuleEventManager;
 class ModuleThreading;
 class ModulePhysics;
 class ModuleParticles;
+class ModuleAudio;
 
 class Application
 {
@@ -81,6 +82,7 @@ public:
 	ModuleThreading* threading = nullptr;
 	ModulePhysics* physics = nullptr;
 	ModuleParticles* particles = nullptr;
+	ModuleAudio* audio = nullptr;
 
 private:
 

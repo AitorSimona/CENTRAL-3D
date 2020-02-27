@@ -1,4 +1,5 @@
 #include "ModulePhysics.h"
+#include "Application.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -85,8 +86,7 @@ bool ModulePhysics::Init(json config)
 	
 
 
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.5f);
-
+	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.2f);
 
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();
@@ -104,7 +104,8 @@ bool ModulePhysics::Init(json config)
 
 update_status ModulePhysics::Update(float dt)
 {
-	SimulatePhysics(dt);
+	if (App->GetAppState() == AppState::PLAY)
+		SimulatePhysics(dt);
 
 	return update_status::UPDATE_CONTINUE;
 }

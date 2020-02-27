@@ -9,6 +9,8 @@
 #include "ComponentParticleEmitter.h"
 #include "ComponentScript.h"
 #include "ModuleSceneManager.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "Math.h"
 
@@ -57,21 +59,24 @@ GameObject::~GameObject()
 
 void GameObject::Update(float dt)
 {
+	// PHYSICS: TEMPORAL example, after updating transform, update collider
+	ComponentCollider* collider = GetComponent<ComponentCollider>();
+
+	if (collider)
+		collider->UpdateLocalMatrix();
+
 	if (GetComponent<ComponentTransform>()->update_transform)
-		this->OnUpdateTransform();
-
-
+		OnUpdateTransform();
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);
 	}
 
-	// PHYSICS: TEMPORAL example, after updating transform, update collider
-	ComponentCollider* collider = GetComponent<ComponentCollider>();
-
-	if (collider) {
-		collider->UpdateLocalMatrix();
+	for (int i = 0; i < components.size(); ++i)
+	{
+		if (components[i]->GetActive())
+			components[i]->Update();
 	}
 
 }
@@ -192,7 +197,7 @@ bool GameObject::FindChildGO(GameObject* GO)
 
 Component* GameObject::AddComponent(Component::ComponentType type)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 8, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 10, "Component Creation Switch needs to be updated");
 
 	Component* component = nullptr;
 
@@ -224,6 +229,12 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 		case Component::ComponentType::ParticleEmitter:
 			component = new ComponentParticleEmitter(this);
 			break;
+			case Component::ComponentType::AudioSource:
+				component = new ComponentAudioSource(this);
+				break;
+			case Component::ComponentType::AudioListener:
+				component = new ComponentAudioListener(this);
+				break;
 		case Component::ComponentType::Script:
 			component = new ComponentScript(this);
 			break;
