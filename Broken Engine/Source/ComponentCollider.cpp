@@ -418,7 +418,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		
 			float3 center = GO->GetAABB().CenterPoint();
 
-
 			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
 			
 			if (!firstCreation)
@@ -486,6 +485,10 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
+			break;
+		}
+		case ComponentCollider::COLLIDER_TYPE::NONE: {
+			lastIndex = -1;
 			break;
 		}
 	}
