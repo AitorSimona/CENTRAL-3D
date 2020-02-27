@@ -128,16 +128,17 @@ void ModuleCamera3D::UpdateCamera()
 				FrameObject(float3(0.0f));
 		}
 		
-		// --- Mouse picking ---
-		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
-		{
-			float mouse_x = App->input->GetMouseX();
-			float mouse_y = App->input->GetMouseY();
-
-			OnMouseClick(mouse_x, mouse_y);
-		}
 
 		App->scene_manager->CreateGrid(camera->frustum.Pos().Length());
+	}
+
+	// --- Mouse picking ---
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && App->gui->panelScene->SceneHovered)
+	{
+		float mouse_x = App->input->GetMouseX();
+		float mouse_y = App->input->GetMouseY();
+
+		OnMouseClick(mouse_x, mouse_y);
 	}
 }
 

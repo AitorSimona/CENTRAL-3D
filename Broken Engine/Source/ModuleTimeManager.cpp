@@ -33,12 +33,12 @@ void ModuleTimeManager::PrepareUpdate()
 	{
 		case AppState::TO_PLAY:
 			App->GetAppState() = AppState::PLAY;
-			//App->scene_manager->SaveScene();
+			App->scene_manager->SaveScene(App->scene_manager->currentScene);
 			ENGINE_CONSOLE_LOG("APP STATE PLAY");
 			break;
 
 		case AppState::PLAY:
-			App->scene_manager->SetSelectedGameObject(nullptr);
+			//App->scene_manager->SetSelectedGameObject(nullptr);
 			//game_dt *= Time_scale;
 			break;
 
@@ -55,7 +55,7 @@ void ModuleTimeManager::PrepareUpdate()
 
 		case AppState::TO_EDITOR:
 			App->GetAppState() = AppState::EDITOR;
-			//App->scene_manager->LoadScene();
+			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
 			ENGINE_CONSOLE_LOG("APP STATE EDITOR");
 			break;
 
