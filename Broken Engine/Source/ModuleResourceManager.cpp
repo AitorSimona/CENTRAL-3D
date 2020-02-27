@@ -3,6 +3,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleGui.h"
 #include "ModuleTextures.h"
+#include "ModuleSceneManager.h"
 
 #include "Importers.h"
 #include "Resources.h"
@@ -56,6 +57,10 @@ bool ModuleResourceManager::Start()
 	// --- Import all resources in Assets at startup ---
 	App->gui->CreateIcons();
 
+	// --- Create default scene ---
+	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, "DefaultScene");
+	App->scene_manager->currentScene = App->scene_manager->defaultScene;
+
 	// --- Create default material ---
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
 	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
@@ -66,6 +71,7 @@ bool ModuleResourceManager::Start()
 	filters.push_back("mat");
 	filters.push_back("png");
 	filters.push_back("lua");
+	filters.push_back("scene");
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -270,18 +276,19 @@ Resource* ModuleResourceManager::ImportFolder(Importer::ImportData& IData)
 
 Resource* ModuleResourceManager::ImportScene(Importer::ImportData& IData)
 {
-	ResourceScene* scene = nullptr;
+	Resource* scene = nullptr;
+	ImporterScene* IScene = GetImporter<ImporterScene>();
 
 	// --- If the resource is already in library, load from there ---
 	if (IsFileImported(IData.path))
 	{
+		scene = IScene->Load(IData.path);
 		//Loadfromlib
 	}
 
 	// --- Else call relevant importer ---
 	else
-		// Import
-
+		scene = IScene->Import(IData);
 
 
 	return scene;
@@ -904,8 +911,13 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 		{
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
 			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+
+			if(!directory.empty())
 			directory.pop_back();
+
 			original_file = (*it).second->GetOriginalFile();
+
+			if(!original_file.empty())
 			original_file.pop_back();
 
 
@@ -1080,7 +1092,8 @@ bool ModuleResourceManager::CleanUp()
 
 	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end();)
 	{
-		it->second->FreeMemory();
+		//it->second->FreeMemory(); 
+		// We do not call free memory since scene's game objects have already been deleted (we have dangling pointers in scene's list now!)
 		delete it->second;
 		it = scenes.erase(it);
 	}

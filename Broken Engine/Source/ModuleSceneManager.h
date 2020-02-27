@@ -12,10 +12,12 @@ struct aiScene;
 struct ImportMaterialData;
 struct par_shapes_mesh_s;
 class ResourceMesh;
+class ResourceScene;
 struct Event;
 
 class ModuleSceneManager : public Module
 {
+	friend class ModuleResourceManager;
 public:
 
 	ModuleSceneManager(bool start_enabled = true);
@@ -30,6 +32,9 @@ public:
 
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
+	GameObject* CreateEmptyGameObjectGivenUID(uint UID);
+	void ResetGameObjectUID(GameObject* go);
+
 	void CreateGrid(float target_distance);
 	GameObject* LoadSphere();
 	GameObject* LoadCube();
@@ -58,9 +63,8 @@ public:
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;
 	void LoadStatus(const json & file) override;
-	//void SaveScene();
-	//void LoadScene();
-	//void RecursiveFreeScene(GameObject* go);
+	void SaveScene(ResourceScene* scene);
+	void SetActiveScene(ResourceScene* scene);
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -83,7 +87,7 @@ private:
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);
 	static void ONGameObjectDestroyed(const Event& e);
-	
+
 private:
 
 	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
@@ -99,10 +103,9 @@ public:
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	std::vector<GameObject*> NoStaticGo;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
-
+	ResourceScene* currentScene = nullptr;
 private:
 
 	// --- Do not modify, just use ---
@@ -118,6 +121,10 @@ private:
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
+
+	ResourceScene* defaultScene = nullptr;
+	ResourceMesh* cube = nullptr;
+	ResourceMesh* sphere = nullptr;
 };
 
 #endif

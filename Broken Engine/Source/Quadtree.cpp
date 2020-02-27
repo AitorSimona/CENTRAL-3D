@@ -232,6 +232,7 @@ void Quadtree::Erase(GameObject * go)
 
 void Quadtree::Clear()
 {
+	if(root)
 	delete root;
 }
 
