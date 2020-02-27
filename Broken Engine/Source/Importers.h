@@ -9,6 +9,7 @@
 #include "ImporterShader.h"
 #include "ImporterMesh.h"
 #include "ImporterTexture.h"
+#include "ImporterScript.h"
 #include "ImporterMeta.h"
 
 #endif // __IMPORTERS_H__
