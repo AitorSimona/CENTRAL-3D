@@ -1,6 +1,5 @@
 #include "ModulePhysics.h"
 
-
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
 
@@ -31,6 +30,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxPvdSDKDEBUG_x86.lib")
 #endif // _DEBUG
 
+#include "mmgr/mmgr.h"
 
 ModulePhysics::ModulePhysics(bool start_enabled)
 {
@@ -96,8 +96,9 @@ bool ModulePhysics::Init(json config)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 	//-------------------------------------
-
-	BoxCollider(0.5, 0.5, 0.5);
+	
+	PlaneCollider(0, 0, 0);
+	
 	return true;
 }
 
@@ -112,14 +113,15 @@ bool ModulePhysics::CleanUp()
 {
 	mScene->release();
 	mPhysics->release();
-	mFoundation->release();
 	mPvd->release();
+	mFoundation->release();
 
 	mPhysics = nullptr;
 	mFoundation = nullptr;
-	mScene = nullptr; 
+	mScene = nullptr;
 	mPvd = nullptr;
-	return false;
+
+	return true;
 }
 
 // Creating static plane
@@ -127,7 +129,7 @@ void ModulePhysics::PlaneCollider(float posX, float posY, float posZ)
 {
 	PxTransform position = PxTransform(PxVec3(posX, posY, posZ), PxQuat(PxHalfPi, PxVec3(0.0f, 0, 0.0f)));
 	PxRigidStatic* plane = mPhysics->createRigidStatic(position);
-	plane->createShape(PxPlaneGeometry(), *mMaterial);
+	plane = PxCreatePlane(*mPhysics, PxPlane(PxVec3(0, 1, 0), 0), *mMaterial);
 	mScene->addActor(*plane);
 }
 

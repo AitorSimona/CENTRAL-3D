@@ -27,6 +27,7 @@ public:
 	void SimulatePhysics(float dt, float speed = 1.0f);
 
 public:
+	
 	PxPvd* mPvd = nullptr; 
 	PxPvdSceneClient* pvdClient = nullptr;
 	PxFoundation* mFoundation = nullptr;

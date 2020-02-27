@@ -1,8 +1,12 @@
 #include "Application.h"
 #include "ComponentDynamicRigidBody.h"
+#include "ComponentCollider.h"
+#include "GameObject.h"
 #include "ModulePhysics.h"
 
 #include "Imgui/imgui.h"
+
+#include "mmgr/mmgr.h"
 
 
 ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::DynamicRigidBody)
@@ -53,10 +57,10 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		SetDensity(density);
 		UseGravity(use_gravity);
 		SetKinematic(is_kinematic);
-		SetLinearVelocity(linear_vel);
+		/*SetLinearVelocity(linear_vel);
 		SetAngularVelocity(angular_vel);
 		SetLinearDamping(linear_dumping);
-		SetAngularDamping(angular_dumping);
+		SetAngularDamping(angular_dumping);*/
 		FeezePosition_X(freezePosition_X);
 		FeezePosition_Y(freezePosition_Y);
 		FeezePosition_Z(freezePosition_Z);
@@ -65,6 +69,21 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		FreeseRotation_Z(freeseRotation_Z);
 	}
 
+	StaticToDynamicRigidBody();
+}
+
+void ComponentDynamicRigidBody::StaticToDynamicRigidBody()
+{
+	ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
+	if (collider != nullptr && rigidBody == nullptr)
+	{
+		collider->CreateCollider(collider->type, true);
+	}
+
+	//else
+	//{
+
+	//}
 }
 
 

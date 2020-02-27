@@ -48,9 +48,18 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		this->OnUpdateTransform();
 
+
+
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);
+	}
+
+	// PHYSICS: TEMPORAL example, after updating transform, update collider
+	ComponentCollider* collider = GetComponent<ComponentCollider>();
+
+	if (collider) {
+		collider->UpdateLocalMatrix();
 	}
 
 }
@@ -93,13 +102,6 @@ void GameObject::OnUpdateTransform()
 
 	if (camera)
 		camera->OnUpdateTransform(transform->GetGlobalTransform());
-
-	// PHYSICS: TEMPORAL example, after updating transform, update collider
-	ComponentCollider* collider = GetComponent<ComponentCollider>();
-
-	if (collider)
-		collider->SetPosition();
-
 
 	// --- Update all children ---
 	if (childs.size() > 0)

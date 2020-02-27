@@ -17,7 +17,7 @@ public:
 		BOX,
 		SPHERE,
 		CAPSULE,
-		PLANE	
+		PLANE
 	};
 
 public:
@@ -26,6 +26,8 @@ public:
 	virtual ~ComponentCollider();
 
 	void Draw();
+
+	void UpdateLocalMatrix();
 
 	void SetPosition();
 
@@ -38,11 +40,20 @@ public:
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
+private:
+	template <class Geometry>
+	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
+
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;
 	bool editCollider = false;
 	float3 localPosition = float3::zero;
+	float3 centerPosition = float3::zero;
+	float3 baseScale = float3::one;
+	float3 originalScale = float3::one;
+	physx::PxRigidStatic* rigidStatic = nullptr;
+	float3 offset = float3::zero;
 
 private:
 	physx::PxShape* shape = nullptr;
@@ -50,9 +61,12 @@ private:
 	float3 scale = float3::one;
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
-
+	physx::PxVec3 globalPos;
 	float radius = 1.0f, height = 1.0f;
 	int lastIndex = -1;
+	int colliderType = 0;
+	float3 tmpScale = float3::one;
+	bool firstCreation = false;
 };
 
 #endif __COMPONENT_COLLIDER_H__
