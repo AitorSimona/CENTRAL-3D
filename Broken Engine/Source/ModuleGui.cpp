@@ -336,6 +336,7 @@ bool ModuleGui::CleanUp()
 	panelToolbar = nullptr;
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
+	panelPhysics = nullptr;
 
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &materialTexID);

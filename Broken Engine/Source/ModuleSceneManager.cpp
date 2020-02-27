@@ -115,6 +115,9 @@ bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
 
+	delete root;
+	root = nullptr;
+
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
