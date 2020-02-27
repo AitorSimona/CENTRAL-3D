@@ -45,7 +45,10 @@ void Image::Draw()
 	rotation2D *= DEGTORAD;
 	float4x4 transform = float4x4::identity;
 	float3 rot = this->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetRotation();
-	transform = transform.FromTRS(float3(position2D, 10), Quat::FromEulerXYZ(rot.x, rot.y, rotation2D), float3(size2D,1));
+	transform = transform.FromTRS(
+		float3(float2(App->renderer3D->active_camera->frustum.Pos().x, App->renderer3D->active_camera->frustum.Pos().y) + position2D, 10),
+		Quat::FromEulerXYZ(rot.x, rot.y, rotation2D),
+		float3(size2D,1));
 
 	rotation2D *= RADTODEG;
 
@@ -59,7 +62,7 @@ void Image::Draw()
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
-
+	
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
