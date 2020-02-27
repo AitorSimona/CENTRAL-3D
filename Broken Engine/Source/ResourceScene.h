@@ -2,6 +2,9 @@
 #define __RESOURCE_SCENE_H__
 
 #include "Resource.h"
+#include <unordered_map>
+
+class GameObject;
 
 class ResourceScene : public Resource
 {
@@ -11,6 +14,9 @@ public:
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
+
+	std::unordered_map<uint,GameObject*> NoStaticGameObjects;
+	std::unordered_map<uint, GameObject*> StaticGameObjects;
 
 private:
 	void OnOverwrite() override;

@@ -18,6 +18,7 @@ public:
 		Camera,
 		AudioSource,
 		AudioListener,
+		Script,
 		Unknown
 	};
 
@@ -51,4 +52,3 @@ protected:
 };
 
 #endif
-

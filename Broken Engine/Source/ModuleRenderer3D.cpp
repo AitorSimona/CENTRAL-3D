@@ -342,7 +342,7 @@ void ModuleRenderer3D::HandleObjectOutlining()
 		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
 
 		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled())
+		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
 			MeshRenderer->Draw(true);
 
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);

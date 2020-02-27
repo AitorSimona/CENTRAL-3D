@@ -24,6 +24,8 @@ private:
 	inline void InputNode() const;
 	inline void RendererNode() const;
 	inline void HardwareNode() const;
+	inline void SoftwareNode() const;
+	inline void RAMMemoryNode() const;
 	inline void LibrariesNode() const;
 	inline void EngineCameraNode() const;
 

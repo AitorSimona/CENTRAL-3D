@@ -18,6 +18,7 @@ public:
 		Mesh,
 		Texture,
 		Shader_Object,
+		Script,
 		Meta,
 		Unknown
 	};
@@ -30,6 +31,7 @@ public:
 		}
 
 		const char* path = "";
+		bool dropped = false;
 	};
 
 public:

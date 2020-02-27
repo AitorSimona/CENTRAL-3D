@@ -16,7 +16,6 @@ ResourceMesh::ResourceMesh(uint UID, std::string source_file) : Resource(Resourc
 	resource_file = MESHES_FOLDER + std::to_string(UID) + extension;
 
 	previewTexID = App->gui->defaultfileTexID;
-
 }
 
 ResourceMesh::~ResourceMesh()

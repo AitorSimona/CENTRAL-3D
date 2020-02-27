@@ -76,6 +76,12 @@
     <Filter Include="Sources\3rd Party\Wwise">
       <UniqueIdentifier>{b90738d8-f3dc-4dd8-8522-89c6eabc40c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Modules\Scripting Functions">
+      <UniqueIdentifier>{14efcff7-e13e-475f-a0e3-9238402bc333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Tools\DeviceID">
+      <UniqueIdentifier>{7c511496-d653-456c-8542-c8926a418e2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -534,6 +540,21 @@
     <ClInclude Include="ModuleResourceManager.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleScripting.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptData.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptVar.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentScript.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceScript.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="ModuleThreading.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -542,6 +563,15 @@
     </ClInclude>
     <ClInclude Include="glad\include\glad\glad.h">
       <Filter>Sources\3rd Party\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterScript.h">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaIncludes.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
     </ClInclude>
     <ClInclude Include="Errors.h">
       <Filter>Sources</Filter>
@@ -557,6 +587,12 @@
     </ClInclude>
     <ClInclude Include="ComponentAudioListener.h">
       <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\DeviceId.h">
+      <Filter>Sources\Tools\DeviceID</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\dxgi1_4.h">
+      <Filter>Sources\Tools\DeviceID</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -887,6 +923,26 @@
     <ClCompile Include="ModuleResourceManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleScripting.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptVar.cpp">
+      <Filter>Sources\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentScript.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceScript.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterScript.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.cpp">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="ModuleThreading.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
@@ -916,6 +972,9 @@
     </ClCompile>
     <ClCompile Include="ComponentAudioListener.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="gpudetect\DeviceId.cpp">
+      <Filter>Sources\Tools\DeviceID</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

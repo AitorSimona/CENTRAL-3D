@@ -15,6 +15,7 @@ class ResourceMesh;
 class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
+class ResourceScript;
 
 class ModuleResourceManager : public Module
 {
@@ -23,7 +24,9 @@ class ModuleResourceManager : public Module
 	friend class ImporterMeta;
 	friend class ImporterMesh;
 	friend class ImporterMaterial;
+	friend class ImporterScene;
 	friend class ImporterFolder;
+	friend class ImporterScript;
 	friend class PanelResources;
 	friend class ComponentMeshRenderer;
 public:
@@ -41,7 +44,7 @@ public:
 public:
 
 	// --- Importing ---
-	std::string DuplicateIntoAssetsFolder(const char* path);
+	std::string DuplicateIntoGivenFolder(const char* path, const char* folder_path);
 	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
 	Resource* ImportAssets(Importer::ImportData& IData);
 	Resource* ImportFolder(Importer::ImportData& IData);
@@ -52,6 +55,7 @@ public:
 	Resource* ImportMesh(Importer::ImportData& IData);
 	Resource* ImportTexture(Importer::ImportData& IData);
 	Resource* ImportShaderObject(Importer::ImportData& IData);
+	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
 
 	void HandleFsChanges();
@@ -105,6 +109,7 @@ private:
 	std::map<uint, ResourceMesh*> meshes;
 	std::map<uint, ResourceTexture*> textures;
 	std::map<uint, ResourceShaderObject*> shader_objects;
+	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 };
 

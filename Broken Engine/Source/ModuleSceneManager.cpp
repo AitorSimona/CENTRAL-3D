@@ -30,6 +30,7 @@
 #include "Component.h"
 #include "ModuleAudio.h"
 
+#include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
 
@@ -116,12 +117,10 @@ update_status ModuleSceneManager::Update(float dt)
 bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
-	NoStaticGo.clear();
 
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
-
 
 	return true;
 }
@@ -250,52 +249,57 @@ void ModuleSceneManager::DrawScene()
 
 	// MYTODO: Support multiple go selection and draw outline accordingly
 
-	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+	if (currentScene)
 	{
-		if ((*it)->GetName() != root->GetName())
+
+		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
+		{
+			if ((*it).second->GetName() != root->GetName())
+			{
+				// --- Search for Renderer Component ---
+				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
+
+				if (SelectedGameObject == (*it).second)
+				{
+					glStencilFunc(GL_ALWAYS, 1, 0xFF);
+					glStencilMask(0xFF);
+				}
+
+				// --- If Found, draw the mesh ---
+				if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
+					MeshRenderer->Draw();
+
+				if (SelectedGameObject == (*it).second)
+				{
+					glStencilMask(0x00);
+				}
+			}
+		}
+		std::vector<GameObject*> static_go;
+		tree.CollectIntersections(static_go, App->renderer3D->culling_camera->frustum);
+
+		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
-			if(SelectedGameObject == (*it))
+
+			if (SelectedGameObject == (*it))
 			{
-					glStencilFunc(GL_ALWAYS, 1, 0xFF);
-					glStencilMask(0xFF);
+				glStencilFunc(GL_ALWAYS, 1, 0xFF);
+				glStencilMask(0xFF);
 			}
 
 			// --- If Found, draw the mesh ---
-			if (MeshRenderer && MeshRenderer->IsEnabled())
-					MeshRenderer->Draw();
+			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
+				MeshRenderer->Draw();
 
 			if (SelectedGameObject == (*it))
 			{
 				glStencilMask(0x00);
 			}
 		}
-	}
-	std::vector<GameObject*> static_go;
-	tree.CollectIntersections(static_go, App->renderer3D->culling_camera->frustum);
 
-	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
-	{
-		// --- Search for Renderer Component ---
-		ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
-
-
-		if (SelectedGameObject == (*it))
-		{
-			glStencilFunc(GL_ALWAYS, 1, 0xFF);
-			glStencilMask(0xFF);
-		}
-
-		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled())
-			MeshRenderer->Draw();
-
-		if (SelectedGameObject == (*it))
-		{
-			glStencilMask(0x00);
-		}
 	}
 
 }
@@ -312,15 +316,15 @@ uint ModuleSceneManager::GetPointLineVAO() const
 
 void ModuleSceneManager::RedoOctree()
 {
-	std::vector<GameObject*> scene_gos;
-	tree.CollectObjects(scene_gos);
+	std::vector<GameObject*> NoStaticGameObjects;
+	tree.CollectObjects(NoStaticGameObjects);
 
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
-	for (uint i = 0; i < scene_gos.size(); ++i)
+	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
 	{
 		//tree.Erase(scene_gos[i]);
-		tree.Insert(scene_gos[i]);
+		tree.Insert(NoStaticGameObjects[i]);
 	}
 
 }
@@ -329,21 +333,21 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 {
 	if (go->Static)
 	{
+		// --- Insert go into octree and remove it from currentscene's static go map ---
 		tree.Insert(go);
+		currentScene->StaticGameObjects[go->GetUID()] = go;
 
-		for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
-		{
-			if ((*it) == go)
-			{
-				NoStaticGo.erase(it);
-				break;
-			}
-		}
+		// --- Erase go from currentscene's no static map ---
+		currentScene->NoStaticGameObjects.erase(go->GetUID());
 	}
 	else
 	{
-		NoStaticGo.push_back(go);
+		// --- Add go to currentscene's no static map ---
+		currentScene->NoStaticGameObjects[go->GetUID()] = go;
+
+		// --- Remove go from octree and currentscene's static go map ---
 		tree.Erase(go);
+		currentScene->StaticGameObjects.erase(go->GetUID());
 	}
 }
 
@@ -364,57 +368,60 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 
-	// --- Gather static gos ---
-	std::map<float, GameObject*> candidate_gos;
-	tree.CollectIntersections(candidate_gos, ray);
-
-	// --- Gather non-static gos ---
-	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+	if (currentScene)
 	{
-		if (ray.Intersects((*it)->GetAABB()))
-		{
-			float hit_near, hit_far;
-			if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
-				candidate_gos[hit_near] = *it;
-		}
-	}
+		// --- Gather static gos ---
+		std::map<float, GameObject*> candidate_gos;
+		tree.CollectIntersections(candidate_gos, ray);
 
-	GameObject* toSelect = nullptr;
-	for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
-	{
-		// --- We have to test triangle by triangle ---
-		ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>();
-
-		if (mesh)
+		// --- Gather non-static gos ---
+		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if (mesh->resource_mesh)
+			if ((*it).second->GetActive() && ray.Intersects((*it).second->GetAABB()))
 			{
-				// --- We need to transform the ray to local mesh space ---
-				LineSegment local = ray;
-				local.Transform(it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted());
+				float hit_near, hit_far;
+				if (ray.Intersects((*it).second->GetOBB(), hit_near, hit_far))
+					candidate_gos[hit_near] = (*it).second;
+			}
+		}
 
-				for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
+		GameObject* toSelect = nullptr;
+		for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
+		{
+			// --- We have to test triangle by triangle ---
+			ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>();
+
+			if (mesh)
+			{
+				if (mesh->resource_mesh)
 				{
-					float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
-					float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
-					float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
-					// --- Create Triangle given three vertices ---
-					Triangle triangle(a, b, c);
+					// --- We need to transform the ray to local mesh space ---
+					LineSegment local = ray;
+					local.Transform(it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted());
 
-					// --- Test ray/triangle intersection ---
-					if (local.Intersects(triangle, nullptr, nullptr))
+					for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
 					{
-						toSelect = it->second;
-						break;
+						float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
+						float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
+						float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
+						// --- Create Triangle given three vertices ---
+						Triangle triangle(a, b, c);
+
+						// --- Test ray/triangle intersection ---
+						if (local.Intersects(triangle, nullptr, nullptr))
+						{
+							toSelect = it->second;
+							break;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	// --- Set Selected ---
-	//if (toSelect)
+		// --- Set Selected ---
+		//if (toSelect)
 		SetSelectedGameObject(toSelect);
+	}
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
@@ -425,73 +432,45 @@ void ModuleSceneManager::LoadStatus(const json & file)
 {
 }
 
-//void ModuleSceneManager::SaveScene()
-//{
-//	// --- Fill vector with scene's GO's ---
-//	std::vector<GameObject*> scene_gos;
-//	GatherGameObjects(scene_gos, root);
-//
-//	if (scene_gos.size() > 0)
-//	{
-//		std::string Scene_name = "SampleScene";
-//		//App->importer->GetImporterScene()->SaveSceneToFile(scene_gos, Scene_name, SCENE);
-//	}
-//}
-//
-//void ModuleSceneManager::LoadScene()
-//{
-//	std::string Scene_name = SCENES_FOLDER;
-//	Scene_name.append("SampleScene.scene");
-//
-//	SelectedGameObject = nullptr;
-//
-//	RecursiveFreeScene(root);
-//
-//	//if(App->fs->Exists(Scene_name.data()))
-//	//App->importer->GetImporterScene()->Load(Scene_name.data());
-//}
-//
-//void ModuleSceneManager::RecursiveFreeScene(GameObject* go)
-//{
-//	// --- Delete all objects except root (if go is root) ---
-//
-//	if (go->childs.size() > 0)
-//	{
-//		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-//		{
-//			RecursiveFreeScene(*it);
-//		}
-//
-//		go->childs.clear();
-//	}
-//
-//	if (go->GetName() != root->GetName())
-//	{
-//		go->Static = true;
-//		App->scene_manager->SetStatic(go);
-//		App->scene_manager->tree.Erase(go);
-//		delete go;
-//	}
-//}
+void ModuleSceneManager::SaveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+		IScene->SaveSceneToFile(scene);
+	}
+}
+
+void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		SelectedGameObject = nullptr;
+
+		// --- Unload current scene ---
+		if (currentScene)
+		{
+			// --- Reset octree ---
+			tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
+
+			// --- Release current scene ---
+			currentScene->Release();
+
+			// --- Clear root ---
+			root->childs.clear();
+		}
+
+		currentScene = scene; // force this so gos are not added to another scene
+		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");
+
+}
 
 GameObject* ModuleSceneManager::GetSelectedGameObject() const
 {
 	return SelectedGameObject;
-}
-
-void ModuleSceneManager::GatherGameObjects(std::vector<GameObject*>& scene_gos, GameObject* go)
-{
-	// --- Add all childs from go to vector ---
-	if(go->GetName() != root->GetName())
-	scene_gos.push_back(go);
-
-	if (go->childs.size() > 0)
-	{
-		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-		{
-			GatherGameObjects(scene_gos, *it);
-		}
-	}
 }
 
 
@@ -520,11 +499,35 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.data());
-	NoStaticGo.push_back(new_object);
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
 	App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
+}
+
+GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
+{
+	// --- Create New Game Object Name ---
+	std::string Name = "GameObject ";
+	Name.append("(");
+	Name.append(std::to_string(go_count));
+	Name.append(")");
+
+	go_count++;
+
+	// --- Create empty Game object to be filled out ---
+	GameObject* new_object = new GameObject(Name.data(),UID);
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+
+	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+
+	return new_object;
+}
+
+void ModuleSceneManager::ResetGameObjectUID(GameObject* go)
+{
+
 }
 
 GameObject * ModuleSceneManager::CreateRootGameObject()
@@ -533,7 +536,7 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 	std::string Name = "root";
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data());
+	GameObject* new_object = new GameObject(Name.c_str());
 
 	return new_object;
 }
@@ -803,6 +806,6 @@ void ModuleSceneManager::DestroyGameObject(GameObject * go)
 {
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
-
+	delete go;
 	this->go_count--;
 }

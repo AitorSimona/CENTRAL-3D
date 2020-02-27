@@ -63,7 +63,8 @@ bool ModuleFileSystem::Init(json config)
 	// Make sure standard paths exist
 	const char* dirs[] = {
 		SETTINGS_FOLDER, ASSETS_FOLDER, LIBRARY_FOLDER, MODELS_FOLDER, 
-		MESHES_FOLDER, TEXTURES_FOLDER, SCENES_FOLDER, SHADERS_FOLDER
+		MESHES_FOLDER, TEXTURES_FOLDER, SCENES_FOLDER, SHADERS_FOLDER, 
+		SCRIPTS_FOLDER
 	};
 
 	for (uint i = 0; i < sizeof(dirs) / sizeof(const char*); ++i)
@@ -361,13 +362,13 @@ uint ModuleFileSystem::GetLastModificationTime(const char * file)
 
 void ModuleFileSystem::WatchDirectory(const char* directory)
 {
-	// Watch the directory for file creation and deletion. 
-	// Watch the subtree for directory creation and deletion. 
+	// --- Watch the directory for file creation and deletion ---
+	// --- Watch the subtree for directory creation and deletion ---
 
 	dwChangeHandles[0] = FindFirstChangeNotification(
 		directory,                       // directory to watch 
 		TRUE,                          // watch the subtree 
-		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME
+		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES
 	);
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
@@ -377,7 +378,7 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 		ENGINE_CONSOLE_LOG("%i", GetLastError());
 	}
 
-	// Make a final validation check on our handles.
+	// --- Make a final validation check on our handles ---
 
 	if ((dwChangeHandles[0] == NULL) )
 	{
@@ -386,6 +387,13 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 		ENGINE_CONSOLE_LOG("%i", GetLastError());
 	}
 
+}
+
+//Returns a filename without extension
+void ModuleFileSystem::RemoveFileExtension(std::string& file)
+{
+	std::size_t pos = file.find(".");    // position of "." in str
+	file = file.substr(0, pos);     // get from the beginning to "."
 }
 
 

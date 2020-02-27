@@ -122,7 +122,10 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 
 		// --- Else, Import mesh data (fill new_mesh) ---
 		if (IMesh)
+		{
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
+			scene_meshes[i]->SetName(scene->mMeshes[i]->mName.C_Str());
+		}
 
 	}
 }
@@ -313,7 +316,10 @@ Resource* ImporterModel::Load(const char* path) const
 
 						if (to_Add)
 						{
-							//to_Add->SetParent(resource);
+							// --- Give mesh a name ---
+							if (to_Add->GetType() == Resource::ResourceType::MESH)
+								to_Add->SetName(it.key().c_str());
+
 							resource->AddResource(to_Add);
 						}
 					}
@@ -342,13 +348,14 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			// --- Iterate main nodes ---
 			for (json::iterator it = file.begin(); it != file.end(); ++it)
 			{
-				// --- Create a Game Object for each node ---
-				GameObject* go = App->scene_manager->CreateEmptyGameObject();
-	
-				// --- Retrieve GO's UID and name ---
-				go->SetName(it.key().data());
+				// --- Retrieve GO's UID ---
 				std::string uid = file[it.key()]["UID"];
-				go->GetUID() = std::stoi(uid);
+
+				// --- Create a Game Object for each node ---
+				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
+	
+				// --- Retrieve GO's name ---
+				go->SetName(it.key().c_str());
 	
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
@@ -392,10 +399,10 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				}
 			}
 
-			// --- Now give unique uids to all gos ---
+			// --- Now give unique uids to all gos so they are brand new ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
-				objects[i]->GetUID() = App->GetRandom().Int();
+				objects[i]->SetUID(App->GetRandom().Int());
 			}
 
 			// --- Add pointer to model ---

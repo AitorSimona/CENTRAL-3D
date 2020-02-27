@@ -116,10 +116,10 @@ bool PanelScene::Draw()
 
 	// --- Handle Guizmo operations ---
 	if(App->scene_manager->GetSelectedGameObject() != nullptr)
-	HandleGuizmo();
+		HandleGuizmo();
 
 	// --- Update editor camera ---
-	if (ImGuizmo::IsUsing() == false)
+	if (!ImGuizmo::IsUsing())
 		App->camera->UpdateCamera();
 
 
@@ -132,11 +132,11 @@ bool PanelScene::Draw()
 	if (CurrentSpeedScrollLabel > 0)
 	{
 		bool open = true;
-	//	ImVec2 CursorPos(App->input->GetMouseX() + (SizeGame.x / 2), App->window->cursorPositionY + (SizeGame.y / 2));
-		
+
+		ImVec2 textSize = ImGui::CalcTextSize(" xf.2f", nullptr);
+
 		ImGui::SetNextWindowBgAlpha(CurrentSpeedScrollLabel);
-		//ImGui::SetNextWindowPos(CursorPos);
-		ImGui::SetNextWindowPos({ 600.0f, 250.0f });
+		ImGui::SetNextWindowPos({ posX + (width / 2.0f) - (textSize.x / 2.0f + 50.0f), posY + (height / 2.0f) - (textSize.y / 2.0f + 50.0f) });
 		CurrentSpeedScrollLabel -= 0.015f;
 		
 		if (ImGui::Begin("Example: Simple overlay", &open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
@@ -174,10 +174,10 @@ void PanelScene::HandleGuizmo()
 
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
+	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
-	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
+	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
 	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
 
 	// --- Update Selected go transform ---
