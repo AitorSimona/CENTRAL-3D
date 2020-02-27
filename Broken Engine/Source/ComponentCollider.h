@@ -57,7 +57,7 @@ public:
 private:
 	physx::PxShape* shape = nullptr;
 	float3 globalPosition;
-	float3 scale = float3::one;
+	float3 scale = float3(1, 1, 1);
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
 	float radius = 1.0f, height = 1.0f;
