@@ -1,7 +1,9 @@
 #pragma once
 #include "Component.h"
 #include "Canvas.h"
-#include "ResourceTexture.h"
+
+class ResourceTexture;
+
 
 class Image : public Component
 {

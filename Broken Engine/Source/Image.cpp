@@ -13,6 +13,7 @@
 #include "ComponentCamera.h"
 
 #include "ResourceShader.h"
+#include "ResourceTexture.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
@@ -22,8 +23,7 @@ Image::Image(GameObject* gameObject) : Component(gameObject, Component::Componen
 	visible = true;
 
 	canvas = (Canvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "Default");
-	texture->SetTextureID(App->textures->GetDefaultTextureID());
+	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas->AddElement(this);
 }
 
@@ -35,8 +35,8 @@ Image::~Image()
 
 void Image::Draw()
 {
-	glTranslatef(position2D.x, position2D.y, 10.0);
-	glPushMatrix();
+	//glPushMatrix();
+	glTranslatef(position2D.x, position2D.y, 10.0f);
 
 	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 	glEnable(GL_TEXTURE_2D);
@@ -46,10 +46,10 @@ void Image::Draw()
 	glTexCoord2i(0, 1); glVertex2f(-size2D.x, size2D.y);    // Top Right	glVertex2i(100, 500);
 	glTexCoord2i(1, 1); glVertex2f(size2D.x, size2D.y);    // Bottom Right	glVertex2i(500, 500);
 	glTexCoord2i(1, 0); glVertex2f(size2D.x, -size2D.y);    // Bottom Left	glVertex2i(500, 100);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnd();
-	glPopMatrix();
+
+	//glPopMatrix();
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	////--------------
 	////glPushMatrix();
@@ -216,7 +216,12 @@ void Image::CreateInspectorNode()
 				Resource* resource = App->resources->GetResource(UID, false);
 
 				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+				{
+					if (texture)
+						texture->Release();
+
 					texture = (ResourceTexture*)App->resources->GetResource(UID);
+				}
 			}
 			ImGui::EndDragDropTarget();
 		}
