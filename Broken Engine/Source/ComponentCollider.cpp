@@ -110,7 +110,7 @@ void ComponentCollider::Draw()
 			// --- Set uniforms ---
 			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 
-			UpdateLocalMatrix();
+			//UpdateLocalMatrix();
 
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, globalMatrix.Transposed().ptr());
 
@@ -451,7 +451,7 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::DragFloat("##SX", &scale.x, 0.005f);
+					ImGui::DragFloat("##SX", &scale.x, 0.005f, 0.01f, 1000.0f);
 
 					ImGui::SameLine();
 
@@ -459,7 +459,7 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::DragFloat("##SY", &scale.y, 0.005f);
+					ImGui::DragFloat("##SY", &scale.y, 0.005f, 0.01f, 1000.0f);
 
 					ImGui::SameLine();
 
@@ -467,7 +467,7 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::DragFloat("##SZ", &scale.z, 0.005f);
+					ImGui::DragFloat("##SZ", &scale.z, 0.005f, 0.01f, 1000.0f);
 
 					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z || editCollider)
 						CreateCollider(COLLIDER_TYPE::BOX, true);

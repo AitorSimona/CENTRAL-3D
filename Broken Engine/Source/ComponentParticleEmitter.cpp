@@ -35,7 +35,7 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 {
 	App->particles->DeleteEmitter(this);
 
-	if (particleSystem)
+	if (particleSystem && App->physics->mScene)
 		App->physics->mScene->removeActor(*particleSystem);
 
 
@@ -257,7 +257,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	//Emision rate
 	ImGui::Text("Emision rate (ms)");
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
-	ImGui::DragFloat("##SEmision rate", &emisionRate, 5.0f, 1.0f ,100000.0f);
+	ImGui::DragFloat("##SEmision rate", &emisionRate, 1.0f, 1.0f, 100000.0f);
 
 	//External forces
 	ImGui::Text("External forces ");
@@ -293,20 +293,20 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.5f, -100.0f, 100.0f);
 
 	ImGui::SameLine();
 	//Y
 	ImGui::Text("Y");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.5f, -100.0f, 100.0f);
 	//Z
 	ImGui::SameLine();
 	ImGui::Text("Z");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.5f, -100.0f, 100.0f);
 
 	//Random velocity factor
 	ImGui::Text("Velocity random factor");
@@ -331,7 +331,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 
 	//Particles lifetime
 	ImGui::Text("Particles lifetime (ms)");
-	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 50.0f,0.0f, 10000.0f);
+	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 1.0f, 0.0f, 10000.0f);
 
 }
 

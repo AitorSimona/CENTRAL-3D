@@ -32,12 +32,18 @@ void ComponentScript::CreateInspectorNode()
 {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-	std::string name = script->script_name + "(Script)";
+	std::string name;
+	if (script)
+		name = script->script_name + "(Script)";
+	else
+		name = "(Unnamed Script)";
+
 	ImGui::Checkbox("Active", &active); ImGui::SameLine();
-	if (ImGui::TreeNodeEx(name.data(), base_flags)) {
-		if (ImGui::Button("Open Script File")) {
+
+	if (ImGui::TreeNodeEx(name.data(), base_flags))
+	{
+		if (ImGui::Button("Open Script File"))
 			App->gui->RequestBrowser(std::string(script->absolute_path).data());
-		}
 
 		char auxBuffer[256];
 
