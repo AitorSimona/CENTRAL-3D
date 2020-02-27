@@ -102,13 +102,14 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 	// lock SDK buffers of *PxParticleSystem* ps for reading
 	PxParticleReadData* rd = particleSystem->lockParticleReadData();
 
+	std::vector<PxU32> indicesToErease;
+	uint particlesToRelease = 0;
+	
 	// access particle data from PxParticleReadData
 	if (rd)
 	{
 		PxStrideIterator<const PxParticleFlags> flagsIt(rd->flagsBuffer);
 		PxStrideIterator<const PxVec3> positionIt(rd->positionBuffer);
-		std::vector<PxU32> indicesToErease;
-		uint particlesToRelease = 0;
 
 		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt, ++positionIt)
 		{
@@ -127,12 +128,13 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			}
 		}
 
-		//if (particlesToRelease > 0) 
-		//	particleSystem->releaseParticles(/*particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data())*/);
 		
 		// return ownership of the buffers back to the SDK
 		rd->unlock();
 	}
+
+		if (particlesToRelease > 0) 
+			particleSystem->releaseParticles(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));
 }
 
 void ComponentParticleEmitter::DrawParticles()
