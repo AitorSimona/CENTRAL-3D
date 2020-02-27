@@ -222,7 +222,61 @@ void ComponentCollider::SetPosition()
 
 json ComponentCollider::Save() const
 {
-	return json();
+	json node;
+
+	node["localPositionx"] = std::to_string(localPosition.x);
+	node["localPositiony"] = std::to_string(localPosition.y);
+	node["localPositionz"] = std::to_string(localPosition.z);
+
+	node["centerPositionx"] = std::to_string(centerPosition.x);
+	node["centerPositiony"] = std::to_string(centerPosition.y);
+	node["centerPositionz"] = std::to_string(centerPosition.z);
+
+	node["baseScalex"] = std::to_string(baseScale.x);
+	node["baseScaley"] = std::to_string(baseScale.y);
+	node["baseScalez"] = std::to_string(baseScale.z);
+
+	node["originalScalex"] = std::to_string(originalScale.x);
+	node["originalScaley"] = std::to_string(originalScale.y);
+	node["originalScalez"] = std::to_string(originalScale.z);
+
+	node["offsetx"] = std::to_string(offset.x);
+	node["offsety"] = std::to_string(offset.y);
+	node["offsetz"] = std::to_string(offset.z);
+
+	node["globalPositionx"] = std::to_string(originalScale.x);
+	node["globalPositiony"] = std::to_string(originalScale.y);
+	node["globalPositionz"] = std::to_string(originalScale.z);
+
+	node["localMatrixx"] = std::to_string(localMatrix.x);
+	node["localMatrixy"] = std::to_string(localMatrix.y);
+	node["localMatrixz"] = std::to_string(localMatrix.z);
+	node["localMatrixw"] = std::to_string(localMatrix.w);
+
+	node["globalMatrixx"] = std::to_string(globalMatrix.x);
+	node["globalMatrixy"] = std::to_string(globalMatrix.y);
+	node["globalMatrixz"] = std::to_string(globalMatrix.z);
+	node["globalMatrixw"] = std::to_string(globalMatrix.w);
+
+	node["scalex"] = std::to_string(scale.x);
+	node["scaley"] = std::to_string(scale.y);
+	node["scalez"] = std::to_string(scale.z);
+
+	node["radius"] = std::to_string(radius);
+
+	node["height"] = std::to_string(height);
+
+	node["lastIndex"] = std::to_string(lastIndex);
+
+	node["colliderType"] = std::to_string(colliderType);
+
+	node["tmpScalex"] = std::to_string(tmpScale.x);
+	node["tmpScaley"] = std::to_string(tmpScale.y);
+	node["tmpScalez"] = std::to_string(tmpScale.z);
+
+	node["firstCreation"] = std::to_string(firstCreation);
+
+	return node;
 }
 
 void ComponentCollider::Load(json& node)

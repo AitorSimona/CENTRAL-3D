@@ -60,7 +60,6 @@ private:
 	float3 scale = float3::one;
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
-	physx::PxVec3 globalPos;
 	float radius = 1.0f, height = 1.0f;
 	int lastIndex = -1;
 	int colliderType = 0;
