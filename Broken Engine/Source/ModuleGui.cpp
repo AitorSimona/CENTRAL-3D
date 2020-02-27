@@ -66,6 +66,9 @@ bool ModuleGui::Init(json file)
 	panelResources = new PanelResources("Resources");
 	panels.push_back(panelResources);
 
+	panelPhysics = new PanelPhysics("Physics");
+	panels.push_back(panelPhysics);
+
 	LoadStatus(file);
 
 	return true;
@@ -246,6 +249,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Resources"))
 				{
 					panelResources->OnOff();
+				}
+
+				if (ImGui::MenuItem("Physics"))
+				{
+					panelPhysics->OnOff();
 				}
 
 				ImGui::EndMenu();
