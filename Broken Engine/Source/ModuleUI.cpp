@@ -48,8 +48,6 @@ update_status ModuleUI::PreUpdate(float dt)
 
 update_status ModuleUI::PostUpdate(float dt)
 {
-	// CHANGE CAMERA TO ORTOGRAPHIC MODE
-	//Draw();
 	return UPDATE_CONTINUE;
 }
 
@@ -60,11 +58,31 @@ bool ModuleUI::CleanUp()
 
 void ModuleUI::Draw() const
 {
+	//// change camera to ortographic
+	//GLint viewport[4];
+	//glGetIntegerv(GL_VIEWPORT, viewport);
+	//glMatrixMode(GL_PROJECTION);
+	//glPushMatrix();
+	//glLoadIdentity();
+	//glOrtho(viewport[0], viewport[2], viewport[1], viewport[3], 1, -1);
+
+	//glPushAttrib(GL_LIST_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT | GL_TRANSFORM_BIT);
+	//glMatrixMode(GL_MODELVIEW);
+	//glDisable(GL_LIGHTING);
+	//glEnable(GL_TEXTURE_2D);
+	//glDisable(GL_DEPTH_TEST);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	// Draw UI
 	for (int i = 0; i < canvas.size(); i++)
 	{
 		if (canvas[i]->visible)
 			canvas[i]->Draw();
 	}
+
+	//glPopAttrib();
+	//glPopMatrix();
 }
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)

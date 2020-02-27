@@ -10,7 +10,9 @@
 
 #include "ModuleSceneManager.h"
 
+#include "Component.h"
 #include "ComponentCamera.h"
+#include "ComponentTransform.h"
 
 #include "ResourceShader.h"
 #include "ResourceTexture.h"
@@ -38,8 +40,14 @@ Image::~Image()
 
 void Image::Draw()
 {
+	// update transform and rotation to face camera
+
+	rotation2D *= DEGTORAD;
 	float4x4 transform = float4x4::identity;
-	transform = transform.FromTRS(float3(position2D, 10), Quat::identity, float3(size2D,1));
+	float3 rot = this->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetRotation();
+	transform = transform.FromTRS(float3(position2D, 10), Quat::FromEulerXYZ(rot.x, rot.y, rotation2D), float3(size2D,1));
+
+	rotation2D *= RADTODEG;
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);

@@ -33,8 +33,14 @@ public:
 	void Move(float2 pos) { position2D = pos; }
 	void Rotate(float rot) { rotation2D = rot; }
 
+	void UpdatePosition();
 	void UpdateCollider();
 	void UpdateState();
+
+	// Elements
+	void MoveElement(float2 new_pos, Component* element);
+	void RotateElement(float new_angle, Component* element);
+	void ScaleElement(float2 new_scale, Component* element);	
 
 	// --- Save & Load ---
 	json Save() const override;

@@ -154,6 +154,14 @@ void Canvas::CreateInspectorNode()
 	}
 }
 
+void Canvas::UpdatePosition()
+{
+	//for (Component* elem : elements)
+	//{
+	//	MoveElement()
+	//}
+}
+
 void Canvas::UpdateCollider()
 {
 	collider.x = position2D.x - size2D.x;
