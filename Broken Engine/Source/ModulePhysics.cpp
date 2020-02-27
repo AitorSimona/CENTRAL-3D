@@ -95,7 +95,7 @@ bool ModulePhysics::Init(json config)
 	}
 	//-------------------------------------
 	PlaneCollider(0, 0, 0);
-	BoxCollider(5, 5, 0);
+	//BoxCollider(5, 5, 0);
 	return true;
 }
 
@@ -110,14 +110,15 @@ bool ModulePhysics::CleanUp()
 {
 	mScene->release();
 	mPhysics->release();
-	mFoundation->release();
 	mPvd->release();
+	mFoundation->release();
 
 	mPhysics = nullptr;
 	mFoundation = nullptr;
 	mScene = nullptr;
 	mPvd = nullptr;
-	return false;
+
+	return true;
 }
 
 // Creating static plane
