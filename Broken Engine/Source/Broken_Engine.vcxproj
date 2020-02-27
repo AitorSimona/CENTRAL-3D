@@ -81,6 +81,8 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="ComponentAudioListener.h" />
+    <ClInclude Include="ComponentAudioSource.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
@@ -190,6 +192,7 @@
     <ClInclude Include="MathGeoLib\include\Math\vec2d.h" />
     <ClInclude Include="MathGeoLib\include\SystemInfo.h" />
     <ClInclude Include="MathGeoLib\include\Time\Clock.h" />
+    <ClInclude Include="ModuleAudio.h" />
     <ClInclude Include="ModuleEventManager.h" />
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="ModuleResourceManager.h" />
@@ -249,10 +252,13 @@
     <ClInclude Include="ScriptVar.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="wwise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="ComponentAudioListener.cpp" />
+    <ClCompile Include="ComponentAudioSource.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
@@ -323,6 +329,7 @@
     <ClCompile Include="MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp" />
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
+    <ClCompile Include="ModuleAudio.cpp" />
     <ClCompile Include="ModuleEventManager.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
@@ -373,6 +380,11 @@
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptVar.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="wwise.cpp" />
+    <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp" />
+    <ClCompile Include="Wwise\IO\Common\AkFilePackage.cpp" />
+    <ClCompile Include="Wwise\IO\Common\AkFilePackageLUT.cpp" />
+    <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Broken Engine.rc" />

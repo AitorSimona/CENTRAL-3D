@@ -15,6 +15,7 @@
 #include "ModuleThreading.h"
 #include "ModulePhysics.h"
 
+#include "ModuleAudio.h"
 #include "mmgr/mmgr.h"
 
 Application::Application()
@@ -39,6 +40,8 @@ Application::Application()
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
 	physics = new ModulePhysics(true);
+	audio = new ModuleAudio(true);
+
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -63,6 +66,7 @@ Application::Application()
 
 	// Physics
 	AddModule(physics);
+	AddModule(audio);
 
 	//Gameplay (Scripting)
 	AddModule(scripting);

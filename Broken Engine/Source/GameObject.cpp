@@ -9,6 +9,8 @@
 
 #include "ComponentScript.h"
 #include "ModuleSceneManager.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "Math.h"
 
@@ -70,8 +72,13 @@ void GameObject::Update(float dt)
 	// PHYSICS: TEMPORAL example, after updating transform, update collider
 	ComponentCollider* collider = GetComponent<ComponentCollider>();
 
-	if (collider) {
+	if (collider)
 		collider->UpdateLocalMatrix();
+
+	for (int i = 0; i < components.size(); ++i)
+	{
+		if (components[i]->GetActive())
+			components[i]->Update();
 	}
 
 }
@@ -192,7 +199,7 @@ bool GameObject::FindChildGO(GameObject* GO)
 
 Component* GameObject::AddComponent(Component::ComponentType type)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 6, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 9, "Component Creation Switch needs to be updated");
 
 	Component* component = nullptr;
 
@@ -221,6 +228,13 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 		case Component::ComponentType::DynamicRigidBody:
 			component = new ComponentDynamicRigidBody(this);
 			break;
+
+			case Component::ComponentType::AudioSource:
+				component = new ComponentAudioSource(this);
+				break;
+			case Component::ComponentType::AudioListener:
+				component = new ComponentAudioListener(this);
+				break;
 		case Component::ComponentType::Script:
 			component = new ComponentScript(this);
 			break;

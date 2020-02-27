@@ -24,6 +24,12 @@
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
+
+#include "../Game/Assets/Sounds/Wwise_IDs.h"
+#include "ComponentAudioSource.h"
+#include "Component.h"
+#include "ModuleAudio.h"
+
 #include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
@@ -92,6 +98,14 @@ bool ModuleSceneManager::Start()
 	CreateGrid(10.0f);
 
 	glGenVertexArrays(1, &PointLineVAO);
+
+	//Hardcoded Debug for audio
+	//music = LoadCube();
+	//music->AddComponent(Component::ComponentType::AudioSource);
+	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();
+	//musicSource->SetID(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->isPlaying = true;
 
 	return true;
 }
@@ -460,8 +474,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 			root->childs.clear();
 		}
 
-		currentScene = scene; // force this so gos are not added to another scene 
-		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());	
+		currentScene = scene; // force this so gos are not added to another scene
+		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
 	}
 	else
 		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");

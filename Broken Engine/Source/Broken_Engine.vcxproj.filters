@@ -73,6 +73,9 @@
     <Filter Include="Sources\3rd Party\glad">
       <UniqueIdentifier>{cc415a8f-0896-47ec-871d-3acac291c44d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd Party\Wwise">
+      <UniqueIdentifier>{b90738d8-f3dc-4dd8-8522-89c6eabc40c0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Sources\Modules\Scripting Functions">
       <UniqueIdentifier>{14efcff7-e13e-475f-a0e3-9238402bc333}</UniqueIdentifier>
     </Filter>
@@ -582,6 +585,18 @@
     <ClInclude Include="ModulePhysics.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleAudio.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="wwise.h">
+      <Filter>Sources\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAudioSource.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAudioListener.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
     <ClInclude Include="gpudetect\DeviceId.h">
       <Filter>Sources\Tools\DeviceID</Filter>
     </ClInclude>
@@ -960,6 +975,33 @@
     </ClCompile>
     <ClCompile Include="ComponentDynamicRigidBody.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleAudio.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp">
+      <Filter>Sources\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFilePackage.cpp">
+      <Filter>Sources\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFilePackageLUT.cpp">
+      <Filter>Sources\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp">
+      <Filter>Sources\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="wwise.cpp">
+      <Filter>Sources\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAudioSource.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAudioListener.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="gpudetect\DeviceId.cpp">
+      <Filter>Sources\Tools\DeviceID</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

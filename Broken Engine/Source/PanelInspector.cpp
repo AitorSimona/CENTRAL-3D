@@ -13,6 +13,8 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 #include "ComponentCollider.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "PanelShaderEditor.h"
 
@@ -66,7 +68,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider" };
+		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -128,6 +130,10 @@ bool PanelInspector::Draw()
 		if (item_current == "Collider")
 		{
 			Selected->AddComponent(Component::ComponentType::Collider);
+		}
+		if (item_current == "Audio Source")
+		{
+			Selected->AddComponent(Component::ComponentType::AudioSource);
 		}
 
 		item_current = items[0];

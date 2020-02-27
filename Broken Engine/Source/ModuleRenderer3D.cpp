@@ -13,6 +13,8 @@
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
 #include "ResourceShader.h"
+#include "ComponentAudioListener.h"
+#include "Component.h"
 
 #include "PanelScene.h"
 

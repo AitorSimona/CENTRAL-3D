@@ -1,0 +1,11 @@
+Event	ID	Name			Wwise Object Path	Notes
+	626769978	backgroundMusic			\Default Work Unit\backgroundMusic	
+	1153084749	francesco			\Default Work Unit\francesco	
+	2167849898	helicopter			\Default Work Unit\helicopter	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	159884132	friends	D:\WWISE_Projects\Music\.cache\Windows\SFX\friends_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\introMusic\friends		7737408
+	672809502	helicopter	D:\WWISE_Projects\Music\.cache\Windows\SFX\helicopter_D79FB2B7.wem		\Actor-Mixer Hierarchy\Default Work Unit\helicopter		5643296
+	757740205	tbbt	D:\WWISE_Projects\Music\.cache\Windows\SFX\tbbt_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\introMusic\tbbt		3719232
+	857677296	francesco	D:\WWISE_Projects\Music\.cache\Windows\SFX\francesco_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\francesco		5382208
+

@@ -12,6 +12,7 @@
 
 #include "ResourceMesh.h"
 #include "ComponentCamera.h"
+#include "ComponentAudioListener.h"
 
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
