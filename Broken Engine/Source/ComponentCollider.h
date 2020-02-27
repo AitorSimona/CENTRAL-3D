@@ -41,6 +41,8 @@ private:
 	template <class Geometry>
 	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
 
+	void Delete();
+
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;

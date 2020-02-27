@@ -195,7 +195,6 @@ void Application::LoadAllStatus(json & file)
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
-
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 

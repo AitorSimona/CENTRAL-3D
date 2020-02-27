@@ -31,6 +31,12 @@ ComponentCollider::~ComponentCollider()
 
 void ComponentCollider::Draw() 
 {
+	if (App->GetAppState() == AppState::TO_EDITOR)
+	{
+		ENGINE_CONSOLE_LOG("Deleted");
+		Delete();
+	}
+
 	if (shape)
 	{
 		// --- Get shape's dimensions ---
@@ -190,7 +196,30 @@ void ComponentCollider::UpdateLocalMatrix() {
 
 json ComponentCollider::Save() const
 {
+	ENGINE_CONSOLE_LOG("Saved");
 	json node;
+
+	int colliderType = 0;
+	switch (type)
+	{
+	case COLLIDER_TYPE::NONE:
+		colliderType = 0;
+			break;
+	case COLLIDER_TYPE::BOX:
+		colliderType = 1;
+		break;
+	case COLLIDER_TYPE::SPHERE:
+		colliderType = 2;
+		break;
+	case COLLIDER_TYPE::CAPSULE:
+		colliderType = 3;
+		break;
+	case COLLIDER_TYPE::PLANE:
+		colliderType = 4;
+		break;
+	}
+
+	node["colliderType"] = std::to_string(colliderType);
 
 	node["localPositionx"] = std::to_string(localPosition.x);
 	node["localPositiony"] = std::to_string(localPosition.y);
@@ -241,7 +270,103 @@ json ComponentCollider::Save() const
 
 void ComponentCollider::Load(json& node)
 {
-	//localPosition.x = std::stof(node["localPositionx"].value);
+	ENGINE_CONSOLE_LOG("Load");
+	CreateCollider(COLLIDER_TYPE::NONE, true);
+
+	std::string localPositionx = node["localPositionx"];
+	std::string localPositiony = node["localPositiony"];
+	std::string localPositionz = node["localPositionz"];
+
+	std::string originalScalex = node["originalScalex"];
+	std::string originalScaley = node["originalScaley"];
+	std::string originalScalez = node["originalScalez"];
+
+	std::string offsetx = node["offsetx"];
+	std::string offsety = node["offsety"];
+	std::string offsetz = node["offsetz"];
+
+	std::string localMatrixx = node["localMatrixx"];
+	std::string localMatrixy = node["localMatrixy"];
+	std::string localMatrixz = node["localMatrixz"];
+	std::string localMatrixw = node["localMatrixw"];
+
+	std::string globalMatrixx = node["globalMatrixx"];
+	std::string globalMatrixy = node["globalMatrixy"];
+	std::string globalMatrixz = node["globalMatrixz"];
+	std::string globalMatrixw = node["globalMatrixw"];
+
+	std::string scalex = node["scalex"];
+	std::string scaley = node["scaley"];
+	std::string scalez = node["scalez"];
+
+	std::string radius_ = node["radius"];
+
+	std::string height_ = node["height"];
+
+	std::string lastIndex_ = node["lastIndex"];
+
+	std::string colliderType_ = node["colliderType"];
+
+	std::string tmpScalex = node["tmpScalex"];
+	std::string tmpScaley = node["tmpScaley"];
+	std::string tmpScalez = node["tmpScalez"];
+
+	std::string firstCreation_ = node["firstCreation"];
+
+	localPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
+	originalScale = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
+	offset = float3(std::stof(offsetx), std::stof(offsety), std::stof(offsetz));
+	
+	localMatrix.x = std::stof(localMatrixx);
+	localMatrix.y = std::stof(localMatrixy);
+	localMatrix.z = std::stof(localMatrixz);
+	localMatrix.w = std::stof(localMatrixw);
+
+	globalMatrix.x = std::stof(globalMatrixx);
+	globalMatrix.y = std::stof(globalMatrixy);
+	globalMatrix.z = std::stof(globalMatrixz);
+	globalMatrix.w = std::stof(globalMatrixw);
+
+	scale = float3(std::stof(scalex), std::stof(scaley), std::stof(scalez));
+
+	radius = std::stof(radius_);
+	height = std::stof(height_);
+	lastIndex = std::stoi(lastIndex_);
+	colliderType = std::stoi(colliderType_);
+
+	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
+
+	firstCreation = true;
+
+	std::string colliderEnum = node["colliderType"];
+
+	lastIndex = 0;
+
+	int tmp = std::stoi(colliderEnum);
+	switch (tmp)
+	{
+	case 0:
+		type = COLLIDER_TYPE::NONE;
+		CreateCollider(type);
+		break;
+	case 1:
+		type = COLLIDER_TYPE::BOX;
+		CreateCollider(type, true);
+		break;
+	case 2:
+		type = COLLIDER_TYPE::SPHERE;
+		CreateCollider(type);
+		break;
+	case 3:
+		type = COLLIDER_TYPE::CAPSULE;
+		CreateCollider(type);
+	case 4:
+		type = COLLIDER_TYPE::PLANE;
+		CreateCollider(type);
+		break;
+	}
+
+	UpdateLocalMatrix();
 }
 
 void ComponentCollider::CreateInspectorNode()
@@ -495,6 +620,23 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 	}
 	editCollider = false;
 }
+
+void ComponentCollider::Delete()
+{
+	shape->release();
+	shape = nullptr;
+	if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
+	{
+		if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
+			App->physics->mScene->removeActor(*(PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+		if (rigidStatic)
+			App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
+	}
+
+	else
+		App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
+}
+
 
 template <class Geometry>
 bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, PxTransform transform) const
