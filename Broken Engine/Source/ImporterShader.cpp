@@ -7,108 +7,107 @@
 
 #include "mmgr/mmgr.h"
 
-namespace BrokenEngine {
-	ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader) {
-	}
+using namespace BrokenEngine;
+ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader) {
+}
 
-	ImporterShader::~ImporterShader() {
-	}
+ImporterShader::~ImporterShader() {
+}
 
-	Resource* ImporterShader::Import(ImportData& IData) const {
+Resource* ImporterShader::Import(ImportData& IData) const {
 
-		bool ret = true;
+	bool ret = true;
 
-		//if (data.vertexPath != nullptr || data.fragmentPath != nullptr)
-		//{
-		//	if (App->resources->IsFileImported(data.vertexPath) || App->resources->IsFileImported(data.fragmentPath))
-		//	{
-		//		// MYTODO: Should check if we are trying to import 2 times the same (check if resource exists)
+	//if (data.vertexPath != nullptr || data.fragmentPath != nullptr)
+	//{
+	//	if (App->resources->IsFileImported(data.vertexPath) || App->resources->IsFileImported(data.fragmentPath))
+	//	{
+	//		// MYTODO: Should check if we are trying to import 2 times the same (check if resource exists)
 
-		//		uint UID = App->resources->GetUIDFromMeta(data.vertexPath);
+	//		uint UID = App->resources->GetUIDFromMeta(data.vertexPath);
 
-		//		std::string path = SHADERS_FOLDER;
-		//		path.append(std::to_string(UID));
-		//		path.append(".shader");
+	//		std::string path = SHADERS_FOLDER;
+	//		path.append(std::to_string(UID));
+	//		path.append(".shader");
 
-		//		char* buffer = nullptr;
+	//		char* buffer = nullptr;
 
-		//		uint size = App->fs->Load(path.data(),&buffer);
+	//		uint size = App->fs->Load(path.data(),&buffer);
 
-		//		uint format;
-		//		path.append(".format");
-		//		std::string shader_name;
+	//		uint format;
+	//		path.append(".format");
+	//		std::string shader_name;
 
-		//		if (App->fs->Exists(path.data()))
-		//		{
-		//			json file = App->GetJLoader()->Load(path.data());
-		//			std::string formatstring = file["FORMAT"];
-		//			std::string namestring = file["NAME"];
-		//			shader_name = namestring;
+	//		if (App->fs->Exists(path.data()))
+	//		{
+	//			json file = App->GetJLoader()->Load(path.data());
+	//			std::string formatstring = file["FORMAT"];
+	//			std::string namestring = file["NAME"];
+	//			shader_name = namestring;
 
-		//			format = std::stoi(formatstring);
-		//		}
+	//			format = std::stoi(formatstring);
+	//		}
 
-		//		if (buffer)
-		//		{
-		//			// --- Load binary shader ---
-		//			ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data(), data.vertexPath, data.fragmentPath);
-		//			shader->SetUID(UID);
-		//			App->resources->AddResource(shader);
-		//			App->resources->AddShader(shader);
-
-
-		//			delete[] buffer;
-		//		}
-		//		else
-		//			ENGINE_CONSOLE_LOG("|[error]: Could not load shader program");
-		//	}
-
-		//	else
-		//	{
+	//		if (buffer)
+	//		{
+	//			// --- Load binary shader ---
+	//			ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data(), data.vertexPath, data.fragmentPath);
+	//			shader->SetUID(UID);
+	//			App->resources->AddResource(shader);
+	//			App->resources->AddShader(shader);
 
 
-		//		ResourceShader* shader = new ResourceShader(data.vertexPath, data.fragmentPath);
+	//			delete[] buffer;
+	//		}
+	//		else
+	//			ENGINE_CONSOLE_LOG("|[error]: Could not load shader program");
+	//	}
 
-		//		if (shader->ID != 0)
-		//		{
-		//			shader->name = data.vertexPath;
-		//			uint count = shader->name.find_last_of("/");
-		//			shader->name = shader->name.substr(count+1, shader->name.size());
-		//			count = shader->name.find_last_of(".");
-		//			shader->name = shader->name.substr(0,count);
+	//	else
+	//	{
 
-		//			App->resources->AddResource(shader);
-		//			App->resources->AddShader(shader);
 
-		//			std::string path = SHADERS_FOLDER;
-		//			path.append(std::to_string(shader->GetUID()));
+	//		ResourceShader* shader = new ResourceShader(data.vertexPath, data.fragmentPath);
 
-		//			Save(shader, path.data());
+	//		if (shader->ID != 0)
+	//		{
+	//			shader->name = data.vertexPath;
+	//			uint count = shader->name.find_last_of("/");
+	//			shader->name = shader->name.substr(count+1, shader->name.size());
+	//			count = shader->name.find_last_of(".");
+	//			shader->name = shader->name.substr(0,count);
 
-		//			// --- Save metas ---
-		//			std::string vertexmeta = data.vertexPath;
-		//			std::string fragmentmeta = data.fragmentPath;
+	//			App->resources->AddResource(shader);
+	//			App->resources->AddShader(shader);
 
-		//			App->resources->CreateMetaFromUID(shader->GetUID(), vertexmeta.data());
-		//			App->resources->CreateMetaFromUID(shader->GetUID(), fragmentmeta.data());
-		//		}
-		//		else
-		//			delete shader;
+	//			std::string path = SHADERS_FOLDER;
+	//			path.append(std::to_string(shader->GetUID()));
 
-		//	}
-		//}
-		//else
-		//	ret = false;
+	//			Save(shader, path.data());
 
-		return nullptr;
-	}
+	//			// --- Save metas ---
+	//			std::string vertexmeta = data.vertexPath;
+	//			std::string fragmentmeta = data.fragmentPath;
 
-	void ImporterShader::Save(ResourceShader* shader, const char* path) const {
-		//// --- Save Shaders to lib --- 
-		//shader->Save();
-	}
+	//			App->resources->CreateMetaFromUID(shader->GetUID(), vertexmeta.data());
+	//			App->resources->CreateMetaFromUID(shader->GetUID(), fragmentmeta.data());
+	//		}
+	//		else
+	//			delete shader;
 
-	Resource* ImporterShader::Load(const char* path) const {
-		return nullptr;
-	}
+	//	}
+	//}
+	//else
+	//	ret = false;
+
+	return nullptr;
+}
+
+void ImporterShader::Save(ResourceShader* shader, const char* path) const {
+	//// --- Save Shaders to lib --- 
+	//shader->Save();
+}
+
+Resource* ImporterShader::Load(const char* path) const {
+	return nullptr;
 }

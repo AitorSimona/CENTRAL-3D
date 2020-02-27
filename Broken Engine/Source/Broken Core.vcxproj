@@ -131,6 +131,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="BrokenCore.h" />
     <ClInclude Include="BrokenEngine.h" />
+    <ClInclude Include="BrokenEngineMain.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentCamera.h" />
@@ -139,7 +140,7 @@
     <ClInclude Include="Components.h" />
     <ClInclude Include="ComponentScript.h" />
     <ClInclude Include="ComponentTransform.h" />
-    <ClInclude Include="EntryPoint.h" />
+    <ClInclude Include="EngineLog.h" />
     <ClInclude Include="Errors.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="glad\include\glad\glad.h" />
@@ -295,7 +296,7 @@
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentScript.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
-    <ClCompile Include="EntryPoint.cpp" />
+    <ClCompile Include="EngineLog.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />

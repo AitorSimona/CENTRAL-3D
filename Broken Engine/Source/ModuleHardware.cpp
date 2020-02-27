@@ -4,6 +4,7 @@
 #include "gpudetect/DeviceId.h"
 
 #include "SDL/include/SDL.h"
+#pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #include "OpenGL.h"
 #include "psapi.h"
 

@@ -26,11 +26,11 @@ struct BROKEN_API Color {
 	}
 };
 
-extern Color Red;
-extern Color Green;
-extern Color Blue;
-extern Color Black;
-extern Color White;
+extern Color BROKEN_API Red;
+extern Color BROKEN_API Green;
+extern Color BROKEN_API Blue;
+extern Color BROKEN_API Black;
+extern Color BROKEN_API White;
 
 BE_END_NAMESPACE
 #endif

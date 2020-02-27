@@ -1,12 +1,12 @@
 #ifndef __BROKENENGINE_H__
 #define __BROKENENGINE_H__
 
-// ---Entry Point------------------
-#include "EntryPoint.h"
+// ---Logging----------------------
+
 // --------------------------------
 
-#include "Module.h"
 // ---Modules----------------------
+#include "Module.h"
 #include "ModuleEventManager.h"
 #include "ModuleInput.h"
 #include "ModuleTimeManager.h"
@@ -69,5 +69,14 @@
 // ---Others-----------------------
 #include "Light.h"
 // --------------------------------
+
+// ---Application------------------
+#include "Application.h"
+// --------------------------------
+
+//
+//// ---Entry Point------------------
+//#include "EntryPoint.h"
+//// --------------------------------
 
 #endif

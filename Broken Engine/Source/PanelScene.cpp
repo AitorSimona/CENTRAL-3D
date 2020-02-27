@@ -8,7 +8,7 @@
 
 #include "mmgr/mmgr.h"
 
-PanelScene::PanelScene(char * name) : Panel(name)
+PanelScene::PanelScene(char* name) : BrokenEngine::Panel(name)
 {
 	ImGuizmo::Enable(true);
 }

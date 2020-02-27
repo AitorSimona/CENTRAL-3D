@@ -13,7 +13,7 @@ struct aiFileIO;
 
 BE_BEGIN_NAMESPACE
 
-class ModuleFileSystem : public Module {
+class BROKEN_API ModuleFileSystem : public Module {
 public:
 
 	ModuleFileSystem(bool start_enabled = true, const char* game_path = nullptr);

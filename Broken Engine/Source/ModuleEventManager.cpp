@@ -1,5 +1,6 @@
 #include "ModuleEventManager.h"
 
+
 #include "mmgr/mmgr.h"
 using namespace BrokenEngine;
 ModuleEventManager::ModuleEventManager(bool start_enabled) {
@@ -24,7 +25,7 @@ bool ModuleEventManager::Start() {
 
 update_status ModuleEventManager::PreUpdate(float dt) {
 	while (head != tail) {
-		// Process events
+		// Process eventsW
 
 		int EventType = static_cast<int>(events[head].type);
 

@@ -5,29 +5,29 @@
 
 struct aiMesh;
 
-namespace BrokenEngine {
-	class ResourceMesh;
-	class Resource;
-	class ResourceMesh;
+BE_BEGIN_NAMESPACE
+class ResourceMesh;
+class Resource;
+class ResourceMesh;
 
-	struct ImportMeshData : public Importer::ImportData {
-		ImportMeshData(const char* path) : Importer::ImportData(path) {};
+struct BROKEN_API ImportMeshData : public Importer::ImportData {
+	ImportMeshData(const char* path) : Importer::ImportData(path) {};
 
-		aiMesh* mesh = nullptr;
-	};
+	aiMesh* mesh = nullptr;
+};
 
-	class ImporterMesh : public Importer {
+class BROKEN_API ImporterMesh : public Importer {
 
-	public:
-		ImporterMesh();
-		virtual ~ImporterMesh();
+public:
+	ImporterMesh();
+	virtual ~ImporterMesh();
 
-		Resource* Import(ImportData& IData) const override;
+	Resource* Import(ImportData& IData) const override;
 
-		void Save(ResourceMesh* mesh) const;
-		Resource* Load(const char* path) const override;
+	void Save(ResourceMesh* mesh) const;
+	Resource* Load(const char* path) const override;
 
-		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Mesh; };
-	};
-}
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Mesh; };
+};
+BE_END_NAMESPACE
 #endif

@@ -14,7 +14,7 @@
 
 BE_BEGIN_NAMESPACE
 //-------------------------- SOFTWARE INFO --------------------------//
-class SoftwareInfo {
+class BROKEN_API SoftwareInfo {
 private:
 
 	//Don't use this, they are just class variables, use the getters instead
@@ -61,7 +61,7 @@ public:
 
 
 //--------------------------- MEMORY INFO ---------------------------//
-class MemoryHardware {
+class BROKEN_API MemoryHardware {
 private:
 
 	mutable MEMORYSTATUSEX m_MemoryInfo;
@@ -116,7 +116,7 @@ public:
 
 
 //---------------------------- CPU INFO -----------------------------//
-class ProcessorHardware {
+class BROKEN_API ProcessorHardware {
 private:
 
 	SYSTEM_INFO m_CpuSysInfo;
@@ -167,7 +167,7 @@ public:
 
 
 //---------------------------- GPU INFO -----------------------------//
-class GPUHardware {
+class BROKEN_API GPUHardware {
 private:
 
 	struct GPUPrimaryInfo_IntelGPUDetect {
@@ -218,7 +218,7 @@ public:
 
 
 //-------------------------------------------------------------------//
-struct hw_info {
+struct BROKEN_API hw_info {
 	SoftwareInfo Software_Information;
 	MemoryHardware Memory_Information;
 	ProcessorHardware CPU_Information;
@@ -248,7 +248,7 @@ struct hw_info {
 	float vram_mb_reserved = 0.f;
 };
 
-class ModuleHardware : public Module {
+class BROKEN_API ModuleHardware : public Module {
 public:
 
 	ModuleHardware(bool start_enabled = true);

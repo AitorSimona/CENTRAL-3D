@@ -3,21 +3,21 @@
 
 #include "Importer.h"
 
-namespace BrokenEngine {
-	class ResourceMeta;
+BE_BEGIN_NAMESPACE
+class ResourceMeta;
 
-	class ImporterMeta : public Importer {
+class BROKEN_API ImporterMeta : public Importer {
 
-	public:
-		ImporterMeta();
-		~ImporterMeta();
+public:
+	ImporterMeta();
+	~ImporterMeta();
 
-		Resource* Import(ImportData& IData) const override;
-		Resource* Load(const char* path) const override;
+	Resource* Import(ImportData& IData) const override;
+	Resource* Load(const char* path) const override;
 
-		void Save(ResourceMeta* meta) const;
+	void Save(ResourceMeta* meta) const;
 
-		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Meta; };
-	};
-}
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Meta; };
+};
+BE_END_NAMESPACE
 #endif

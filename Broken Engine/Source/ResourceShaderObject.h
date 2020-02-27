@@ -3,18 +3,18 @@
 
 #include "Resource.h"
 
-namespace BrokenEngine {
-	class ResourceShaderObject : public Resource {
-	public:
-		ResourceShaderObject(uint UID, std::string source_file);
-		~ResourceShaderObject();
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceShaderObject : public Resource {
+public:
+	ResourceShaderObject(uint UID, std::string source_file);
+	~ResourceShaderObject();
 
-		bool LoadInMemory() override;
-		void FreeMemory() override;
+	bool LoadInMemory() override;
+	void FreeMemory() override;
 
-	private:
-		void OnOverwrite() override;
-		void OnDelete() override;
-	};
-}
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
+};
+BE_END_NAMESPACE
 #endif //__RESOURCE_SHADER_OBJECT_H__

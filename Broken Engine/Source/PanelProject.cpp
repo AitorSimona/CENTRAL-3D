@@ -158,10 +158,10 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 
 	for (std::vector<BrokenEngine::ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
 	{
-		if (EngineApp->resources->getCurrentDirectory == *it)
+		if (EngineApp->resources->getCurrentDirectory() == *it)
 			ImGui::TextColored(ImVec4(0, 120, 255, 255),(*it)->GetName());
 		else
-		ImGui::Text((*it)->GetName());
+			ImGui::Text((*it)->GetName());
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
 			EngineApp->resources->setCurrentDirectory(*it);

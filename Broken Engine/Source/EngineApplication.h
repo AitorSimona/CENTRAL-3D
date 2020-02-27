@@ -17,7 +17,6 @@ public:
 	
 };
 
-EngineApplication* EngineApp;
-BrokenEngine::Application* CreateApplication();
+extern EngineApplication* EngineApp;
 
 #endif

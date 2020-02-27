@@ -27,7 +27,6 @@
 #define NULL 0
 #define NULLRECT {0,0,0,0}
 
-
 // LOGGING -----------------------------------------------------------------------
 // Visual Studio Console will log both system & engine consoles!!!!!!!!!!!
 /// Print only in Engine Console
@@ -38,13 +37,14 @@
 #define ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) BrokenEngine::EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); BrokenEngine::SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// First info at Compilation
 #define COMPILATIONLOGINFO BrokenEngine::LogCompilationFirstMessage()
-namespace BrokenEngine {
+
+BE_BEGIN_NAMESPACE
 /// Log functions
 
-	void LogCompilationFirstMessage();
-	void EngineConsoleLog(const char file[], int line, const char* format, ...);
-	void SystemConsoleLog(const char file[], int line, const char* format, ...);
-}
+void LogCompilationFirstMessage();
+void EngineConsoleLog(const char file[], int line, const char* format, ...);
+void SystemConsoleLog(const char file[], int line, const char* format, ...);
+BE_END_NAMESPACE
 // -------------------------------------------------------------------------------
 
 
@@ -155,5 +155,9 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096
 // -------------------------------------------------------------------------------
+
+BE_BEGIN_NAMESPACE
+BE_END_NAMESPACE
+
 
 #endif

@@ -5,75 +5,74 @@
 
 #include "mmgr/mmgr.h"
 
-namespace BrokenEngine {
-	json JSONLoader::Load(const char* File) const {
+using namespace BrokenEngine;
+json JSONLoader::Load(const char* File) const {
 
-		// MYTODO: Use PhysFS and check if file exists!
+	// MYTODO: Use PhysFS and check if file exists!
 
-		bool ret = true;
+	bool ret = true;
 
-		// --- Create JSON object ---
-		json jsonfile;
+	// --- Create JSON object ---
+	json jsonfile;
 
-		if (File == nullptr) {
+	if (File == nullptr) {
+		ret = false;
+		ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Load : %c was nullptr", File);
+	}
+
+	else {
+
+		// --- Load File ---
+		std::ifstream ifs;
+		ifs.open(File);
+
+		if (!ifs.is_open()) {
+			ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Load could not open File: %c", File);
 			ret = false;
-			ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Load : %c was nullptr", File);
 		}
 
 		else {
-
-			// --- Load File ---
-			std::ifstream ifs;
-			ifs.open(File);
-
-			if (!ifs.is_open()) {
-				ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Load could not open File: %c", File);
-				ret = false;
+			// --- Parse File, put data in jsonfile ---
+			try {
+				jsonfile = json::parse(ifs);
+			}
+			catch (json::parse_error & e) {
+				ENGINE_CONSOLE_LOG("|[error]: Parse Error in loading file: %c", e.what());
 			}
 
-			else {
-				// --- Parse File, put data in jsonfile ---
-				try {
-					jsonfile = json::parse(ifs);
-				}
-				catch (json::parse_error & e) {
-					ENGINE_CONSOLE_LOG("|[error]: Parse Error in loading file: %c", e.what());
-				}
-
-				ifs.close();
-
-			}
+			ifs.close();
 
 		}
 
-		return jsonfile;
 	}
 
-	bool JSONLoader::Save(const char* File, json jsonfile) {
-		// --- Save to File, overwrite if exists ---
-		// Note setw, used to prettify JSON file (adding newlines and spaces)
+	return jsonfile;
+}
 
-		bool ret = true;
+bool JSONLoader::Save(const char* File, json jsonfile) {
+	// --- Save to File, overwrite if exists ---
+	// Note setw, used to prettify JSON file (adding newlines and spaces)
 
-		std::ofstream file;
-		file.open(File);
+	bool ret = true;
 
-		if (!file.is_open()) {
-			ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %c", File);
-			ret = false;
-		}
-		else {
-			file << std::setw(4) << jsonfile << std::endl;
-			file.close();
-		}
+	std::ofstream file;
+	file.open(File);
 
-		return ret;
+	if (!file.is_open()) {
+		ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %c", File);
+		ret = false;
+	}
+	else {
+		file << std::setw(4) << jsonfile << std::endl;
+		file.close();
 	}
 
-	std::string JSONLoader::Serialize(json jsonfile) {
-		std::string data;
-		data = jsonfile.dump(4);
+	return ret;
+}
 
-		return data;
-	}
+std::string JSONLoader::Serialize(json jsonfile) {
+	std::string data;
+	data = jsonfile.dump(4);
+
+	return data;
 }

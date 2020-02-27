@@ -20,7 +20,7 @@
 
 BE_BEGIN_NAMESPACE
 
-class ModuleGui : public Module
+class BROKEN_API ModuleGui : public Module
 {
 public:
 

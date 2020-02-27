@@ -14,7 +14,7 @@ BE_BEGIN_NAMESPACE
 class GameObject;
 class Resource;
 
-struct Event {
+struct BROKEN_API Event {
 	enum class EventType {
 		GameObject_destroyed,
 		GameObject_selected,
@@ -35,11 +35,11 @@ struct Event {
 	Event() {}
 };
 
-struct Listeners {
+struct BROKEN_API Listeners {
 	std::vector<Function> listeners;
 };
 
-class ModuleEventManager : public Module {
+class BROKEN_API ModuleEventManager : public Module {
 public:
 
 	// --- Basic ---

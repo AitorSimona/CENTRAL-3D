@@ -3,23 +3,22 @@
 
 #include "Importer.h"
 
-namespace BrokenEngine {
-	class Resource;
-	class ResourceTexture;
+BE_BEGIN_NAMESPACE
+class Resource;
+class ResourceTexture;
 
-	class ImporterTexture : public Importer {
+class BROKEN_API ImporterTexture : public Importer {
 
-	public:
-		ImporterTexture();
-		~ImporterTexture();
+public:
+	ImporterTexture();
+	~ImporterTexture();
 
-		Resource* Import(ImportData& IData) const override;
-		Resource* Load(const char* path) const override;
+	Resource* Import(ImportData& IData) const override;
+	Resource* Load(const char* path) const override;
 
-		void Save(ResourceTexture* texture) const;
+	void Save(ResourceTexture* texture) const;
 
-		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Texture; };
-	};
-}
-
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Texture; };
+};
+BE_END_NAMESPACE
 #endif

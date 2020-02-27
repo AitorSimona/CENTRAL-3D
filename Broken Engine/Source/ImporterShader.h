@@ -3,24 +3,24 @@
 
 #include "Importer.h"
 
-namespace BrokenEngine {
-	class ResourceShader;
-	class Resource;
+BE_BEGIN_NAMESPACE
+class ResourceShader;
+class Resource;
 
 
-	class ImporterShader : public Importer {
+class BROKEN_API ImporterShader : public Importer {
 
-	public:
-		ImporterShader();
-		virtual ~ImporterShader();
+public:
+	ImporterShader();
+	virtual ~ImporterShader();
 
-		Resource* Import(ImportData& IData) const override;
+	Resource* Import(ImportData& IData) const override;
 
-		void Save(ResourceShader* shader, const char* path) const;
-		Resource* Load(const char* path) const override;
+	void Save(ResourceShader* shader, const char* path) const;
+	Resource* Load(const char* path) const override;
 
-		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Shader; };
-	};
-}
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Shader; };
+};
+BE_END_NAMESPACE
 
 #endif

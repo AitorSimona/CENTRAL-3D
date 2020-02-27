@@ -1,7 +1,10 @@
-#include "EntryPoint.h"
-
+#ifndef __BROKENENGINEMAIN_H__
+#define __BROKENENGINEMAIN_H__
+#pragma once
 #include <stdlib.h>
-#include "BrokenCore.h"
+//#include "BrokenCore.h"
+#include "Application.h"
+
 
 #define NOMINMAX
 #include <Windows.h>
@@ -12,7 +15,7 @@
 
 #include "mmgr/mmgr.h"
 
-//Trick to tell AMD and NVIDIA drivers to use the most powerful GPU instead of a lower-performance (such as integrated) GPU
+////Trick to tell AMD and NVIDIA drivers to use the most powerful GPU instead of a lower-performance (such as integrated) GPU
 #ifdef _WIN32
 //else: Use GPU by default.
 extern "C" {
@@ -34,28 +37,27 @@ enum main_states {
 };
 
 extern BrokenEngine::Application* BrokenEngine::CreateApplication();
-BrokenEngine::Application* App = nullptr;
 
+BrokenEngine::Application* gameApp = NULL;
 int main(int argc, char** argv) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
-	auto App = BrokenEngine::CreateApplication();
 	while (state != MAIN_EXIT) {
 		switch (state) {
 		case MAIN_CREATION:
 
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
-			App = BrokenEngine::CreateApplication();
+			gameApp = BrokenEngine::CreateApplication();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Init --------------");
-			if (App->Init() == false) {
+			if (gameApp->Init() == false) {
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
@@ -68,7 +70,7 @@ int main(int argc, char** argv) {
 
 		case MAIN_UPDATE:
 		{
-			int update_return = App->Update();
+			int update_return = BrokenEngine::App->Update();
 
 			if (update_return == UPDATE_ERROR) {
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Update exits with ERROR");
@@ -83,7 +85,7 @@ int main(int argc, char** argv) {
 		case MAIN_FINISH:
 
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application CleanUp --------------");
-			if (App->CleanUp() == false) {
+			if (gameApp->CleanUp() == false) {
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
 			}
 			else
@@ -97,6 +99,8 @@ int main(int argc, char** argv) {
 	}
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Exiting app '%s'...\n", TITLE);
 
-	delete App;
+	delete gameApp;
 	return main_return;
 }
+
+#endif

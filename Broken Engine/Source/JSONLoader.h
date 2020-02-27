@@ -4,21 +4,21 @@
 #include "BrokenCore.h"
 #include "json/json.hpp"
 
-namespace BrokenEngine {
-	// for convenience
-	using json = nlohmann::json;
+BE_BEGIN_NAMESPACE
+// for convenience
+using json = nlohmann::json;
 
-	class BROKEN_API JSONLoader {
-	public:
+class BROKEN_API JSONLoader {
+public:
 
-		JSONLoader() {}
-		~JSONLoader() {}
+	JSONLoader() {}
+	~JSONLoader() {}
 
-		json Load(const char* File) const;
+	json Load(const char* File) const;
 
-		bool Save(const char* File, json jsonfile);
+	bool Save(const char* File, json jsonfile);
 
-		std::string Serialize(json jsonfile);
-	};
-}
+	std::string Serialize(json jsonfile);
+};
+BE_END_NAMESPACE
 #endif

@@ -11,7 +11,7 @@ BE_BEGIN_NAMESPACE
 class GameObject;
 class ComponentCamera;
 
-class ModuleCamera3D : public Module {
+class BROKEN_API ModuleCamera3D : public Module {
 public:
 
 	ModuleCamera3D(bool start_enabled = true);

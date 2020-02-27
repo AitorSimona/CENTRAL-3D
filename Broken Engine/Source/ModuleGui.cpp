@@ -5,6 +5,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleTextures.h"
 
+
 #include "GameObject.h"
 #include "ComponentCamera.h"
 #define NOMINMAX
@@ -17,6 +18,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "Imgui/imgui_internal.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
+
+#pragma comment( lib, "SDL/libx86/SDL2.lib" )
 
 #include "OpenGL.h"
 

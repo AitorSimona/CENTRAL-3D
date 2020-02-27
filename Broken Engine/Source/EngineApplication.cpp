@@ -1,7 +1,11 @@
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
+#include "BrokenEngineMain.h"
 
-BrokenEngine::Application* CreateApplication() {
+
+EngineApplication* EngineApp = NULL;
+
+BrokenEngine::Application* BrokenEngine::CreateApplication() {
 	return new EngineApplication();
 }
 

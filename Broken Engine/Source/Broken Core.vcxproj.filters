@@ -93,9 +93,6 @@
     <ClInclude Include="Module.h">
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="EntryPoint.h">
-      <Filter>Sources\BrokenEngine</Filter>
-    </ClInclude>
     <ClInclude Include="MathGeoLib\include\SystemInfo.h">
       <Filter>Sources\BrokenEngine\3rd Party</Filter>
     </ClInclude>
@@ -549,11 +546,14 @@
     <ClInclude Include="ModuleGui.h">
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="BrokenEngineMain.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLog.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BrokenCore.cpp">
-      <Filter>Sources\BrokenEngine</Filter>
-    </ClCompile>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
       <Filter>Sources\BrokenEngine\3rd Party</Filter>
     </ClCompile>
@@ -872,7 +872,10 @@
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="EntryPoint.cpp">
+    <ClCompile Include="EngineLog.cpp">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="BrokenCore.cpp">
       <Filter>Sources\BrokenEngine</Filter>
     </ClCompile>
   </ItemGroup>

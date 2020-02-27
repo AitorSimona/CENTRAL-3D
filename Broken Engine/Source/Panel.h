@@ -2,25 +2,27 @@
 #define __PANEL_H__
 #include "BrokenCore.h"
 
-namespace BrokenEngine {
-	class BROKEN_API Panel {
-	public:
+BE_BEGIN_NAMESPACE
 
-		Panel(char* title);
-		virtual ~Panel();
+class Application;
+class BROKEN_API Panel {
+public:
 
-		virtual bool Draw() = 0;
+	Panel(char* title);
+	virtual ~Panel();
 
-		virtual inline void OnOff();
-		virtual inline void SetOnOff(bool set) { enabled = set; }
-		virtual inline bool IsEnabled() const;
-		virtual inline char* GetName() const { return name; }
+	virtual bool Draw() = 0;
 
-	protected:
+	virtual inline void OnOff();
+	virtual inline void SetOnOff(bool set) { enabled = set; }
+	virtual inline bool IsEnabled() const;
+	virtual inline char* GetName() const { return name; }
 
-		bool enabled = false;
-		char* name = nullptr;
-	};
-}
+protected:
+protected:
+	bool enabled = false;
+	char* name = nullptr;
+};
+BE_END_NAMESPACE
 #endif
 

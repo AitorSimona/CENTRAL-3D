@@ -8,7 +8,6 @@
 BE_BEGIN_NAMESPACE
 
 struct Event;
-
 class BROKEN_API Module {
 private:
 	bool enabled;
@@ -57,7 +56,6 @@ public:
 	virtual void LoadStatus(const json& file) {}
 
 protected:
-
 	std::string name = "Undefined";
 };
 

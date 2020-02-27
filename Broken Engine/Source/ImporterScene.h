@@ -5,23 +5,23 @@
 #include <vector>
 #include <string>
 
-namespace BrokenEngine {
-	class GameObject;
-	class Resource;
-	class ResourceScene;
+BE_BEGIN_NAMESPACE
+class GameObject;
+class Resource;
+class ResourceScene;
 
-	class ImporterScene : public Importer {
+class BROKEN_API ImporterScene : public Importer {
 
-	public:
-		ImporterScene();
-		virtual ~ImporterScene();
+public:
+	ImporterScene();
+	virtual ~ImporterScene();
 
-		Resource* Import(ImportData& IData) const override;
-		Resource* Load(const char* path) const override;
-		std::string SaveSceneToFile(ResourceScene* scene, std::string& scene_name) const;
+	Resource* Import(ImportData& IData) const override;
+	Resource* Load(const char* path) const override;
+	std::string SaveSceneToFile(ResourceScene* scene, std::string& scene_name) const;
 
-		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Scene; };
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Scene; };
 
-	};
-}
+};
+BE_END_NAMESPACE
 #endif

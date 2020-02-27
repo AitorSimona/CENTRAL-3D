@@ -3,38 +3,37 @@
 
 #include "mmgr/mmgr.h"
 
-namespace BrokenEngine {
-	Component::Component(GameObject* ContainerGO, Component::ComponentType type) {
-		GO = ContainerGO;
-		this->type = type;
-		Enable();
-	}
+using namespace BrokenEngine;
+Component::Component(GameObject* ContainerGO, Component::ComponentType type) {
+	GO = ContainerGO;
+	this->type = type;
+	Enable();
+}
 
-	Component::~Component() {
-		Disable();
-	}
+Component::~Component() {
+	Disable();
+}
 
-	void Component::Enable() {
-		active = true;
-	}
+void Component::Enable() {
+	active = true;
+}
 
-	void Component::Disable() {
-		active = false;
-	}
+void Component::Disable() {
+	active = false;
+}
 
-	bool Component::IsEnabled() const {
-		return active;
-	}
+bool Component::IsEnabled() const {
+	return active;
+}
 
-	bool& Component::GetActive() {
-		return active;
-	}
+bool& Component::GetActive() {
+	return active;
+}
 
-	Component::ComponentType Component::GetType() const {
-		return type;
-	}
+Component::ComponentType Component::GetType() const {
+	return type;
+}
 
-	GameObject* Component::GetContainerGameObject() const {
-		return GO;
-	}
+GameObject* Component::GetContainerGameObject() const {
+	return GO;
 }

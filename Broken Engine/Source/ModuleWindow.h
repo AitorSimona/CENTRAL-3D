@@ -3,76 +3,75 @@
 
 #include "Module.h"
 #include "SDL/include/SDL.h"
+#include "BrokenCore.h"
 
 
-namespace BrokenEngine {
-	class Application;
+BE_BEGIN_NAMESPACE
+class BROKEN_API ModuleWindow : public Module {
+public:
 
-	class ModuleWindow : public Module {
-	public:
+	ModuleWindow(bool start_enabled = true);
 
-		ModuleWindow(bool start_enabled = true);
+	// Destructor
+	virtual ~ModuleWindow();
 
-		// Destructor
-		virtual ~ModuleWindow();
+	bool Init(json file) override;
+	bool Start() override;
+	bool CleanUp() override;
 
-		bool Init(json file) override;
-		bool Start() override;
-		bool CleanUp() override;
+	// On Resize
+	void UpdateWindowSize() const;
 
-		// On Resize
-		void UpdateWindowSize() const;
+	// --- Setters ---
+	void SetFullscreen(bool value);
+	void SetResizable(bool value);
+	void SetBorderless(bool value);
+	void SetFullscreenDesktop(bool value);
+	void SetWinBrightness(float value);
+	void SetTitle(const char* title);
+	void SetWindowWidth(uint width);
+	void SetWindowHeight(uint height);
 
-		// --- Setters ---
-		void SetFullscreen(bool value);
-		void SetResizable(bool value);
-		void SetBorderless(bool value);
-		void SetFullscreenDesktop(bool value);
-		void SetWinBrightness(float value);
-		void SetTitle(const char* title);
-		void SetWindowWidth(uint width);
-		void SetWindowHeight(uint height);
+	// --- Only App should access this, through SetAppName ---
+	void SetWinTitle(const char* name);
 
-		// --- Only App should access this, through SetAppName ---
-		void SetWinTitle(const char* name);
+	// --- Getters ---
+	void GetWinMaxMinSize(uint& min_width, uint& min_height, uint& max_width, uint& max_height) const;
+	uint GetWindowWidth() const;
+	uint GetWindowHeight() const;
+	float GetWinBrightness() const;
+	uint GetDisplayRefreshRate();
 
-		// --- Getters ---
-		void GetWinMaxMinSize(uint& min_width, uint& min_height, uint& max_width, uint& max_height) const;
-		uint GetWindowWidth() const;
-		uint GetWindowHeight() const;
-		float GetWinBrightness() const;
-		uint GetDisplayRefreshRate();
+	bool IsFullscreen() const;
+	bool IsResizable() const;
+	bool IsBorderless() const;
+	bool IsFullscreenDesktop() const;
 
-		bool IsFullscreen() const;
-		bool IsResizable() const;
-		bool IsBorderless() const;
-		bool IsFullscreenDesktop() const;
+	// --- Save/Load ----
+	void SaveStatus(json& file) const override;
+	void LoadStatus(const json& file) override;
 
-		// --- Save/Load ----
-		void SaveStatus(json& file) const override;
-		void LoadStatus(const json& file) override;
+public:
+	//The window we'll be rendering to
+	SDL_Window* window;
 
-	public:
-		//The window we'll be rendering to
-		SDL_Window* window;
+	//The surface contained by the window
+	SDL_Surface* screen_surface;
 
-		//The surface contained by the window
-		SDL_Surface* screen_surface;
+private:
 
-	private:
+	// --- Display ---
+	uint				RefreshRate = 0;
+	uint				screen_width = 1280;
+	uint				screen_height = 1024;
+	uint				display_Width = 0; // To keep the original value
+	uint				display_Height = 0; // To keep the original value
 
-		// --- Display ---
-		uint				RefreshRate = 0;
-		uint				screen_width = 1280;
-		uint				screen_height = 1024;
-		uint				display_Width = 0; // To keep the original value
-		uint				display_Height = 0; // To keep the original value
-
-		// --- Win Flags ---
-		bool fullscreen = false;
-		bool resizable = true;
-		bool borderless = false;
-		bool fullscreen_desktop = false;
-	};
-}
+	// --- Win Flags ---
+	bool fullscreen = false;
+	bool resizable = true;
+	bool borderless = false;
+	bool fullscreen_desktop = false;
+};
+BE_END_NAMESPACE
 #endif // __MODULEWINDOW_H__

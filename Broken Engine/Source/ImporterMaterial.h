@@ -5,28 +5,28 @@
 
 struct aiMaterial;
 
-namespace BrokenEngine {
-	class ResourceMaterial;
-	class Resource;
+BE_BEGIN_NAMESPACE
+class ResourceMaterial;
+class Resource;
 
-	struct ImportMaterialData : public Importer::ImportData {
-		ImportMaterialData(const char* path) : Importer::ImportData(path) {};
+struct BROKEN_API ImportMaterialData : public Importer::ImportData {
+	ImportMaterialData(const char* path) : Importer::ImportData(path) {};
 
-		const aiMaterial* mat = nullptr;
-	};
+	const aiMaterial* mat = nullptr;
+};
 
-	class ImporterMaterial : public Importer {
+class BROKEN_API ImporterMaterial : public Importer {
 
-	public:
-		ImporterMaterial();
-		virtual ~ImporterMaterial();
+public:
+	ImporterMaterial();
+	virtual ~ImporterMaterial();
 
-		Resource* Import(ImportData& IData) const override;
-		Resource* Load(const char* path) const override;
+	Resource* Import(ImportData& IData) const override;
+	Resource* Load(const char* path) const override;
 
-		void Save(ResourceMaterial* mat) const;
+	void Save(ResourceMaterial* mat) const;
 
-		static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };
-	};
-}
+	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };
+};
+BE_END_NAMESPACE
 #endif

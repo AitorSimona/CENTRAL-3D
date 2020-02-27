@@ -1,5 +1,5 @@
-#ifndef __APPLICATION_H_
-#define __APPLICATION_H_
+#ifndef __APPLICATION_H__
+#define __APPLICATION_H__
 
 #include "BrokenCore.h"
 #include <list>
@@ -12,111 +12,111 @@
 
 #define MAX_CONSOLE_LOGS 1000
 
-namespace BrokenEngine {
-	enum AppState {
-		PLAY = 0,
-		TO_PLAY,
+BE_BEGIN_NAMESPACE
+enum AppState {
+	PLAY = 0,
+	TO_PLAY,
 
-		EDITOR,
-		TO_EDITOR,
+	EDITOR,
+	TO_EDITOR,
 
-		PAUSE,
-		TO_PAUSE,
+	PAUSE,
+	TO_PAUSE,
 
-		STEP,
-	};
+	STEP,
+};
 
-	class Module;
-	class ModuleWindow;
-	class ModuleInput;
-	class ModuleRenderer3D;
-	class ModuleCamera3D;
-	class ModuleGui;
-	class ModuleHardware;
-	class ModuleFileSystem;
-	class ModuleTextures;
-	class ModuleSceneManager;
-	class ModuleResourceManager;
-	class ModuleScripting;
-	class ModuleTimeManager;
-	class ModuleEventManager;
-	class ModuleThreading;
+class Module;
+class ModuleWindow;
+class ModuleInput;
+class ModuleRenderer3D;
+class ModuleCamera3D;
+class ModuleGui;
+class ModuleHardware;
+class ModuleFileSystem;
+class ModuleTextures;
+class ModuleSceneManager;
+class ModuleResourceManager;
+class ModuleScripting;
+class ModuleTimeManager;
+class ModuleEventManager;
+class ModuleThreading;
 
-	class BROKEN_API Application {
-	public:
+class BROKEN_API Application {
+public:
 
-		// --- Getters ---
-		const char* GetAppName() const;
-		const char* GetOrganizationName() const;
-		json GetDefaultConfig() const;
-		std::vector<std::string>& GetLogs();
-		LCG& GetRandom();
-		JSONLoader* GetJLoader();
-		AppState& GetAppState();
+	// --- Getters ---
+	const char* GetAppName() const;
+	const char* GetOrganizationName() const;
+	json GetDefaultConfig() const;
+	std::vector<std::string>& GetLogs();
+	LCG& GetRandom();
+	JSONLoader* GetJLoader();
+	AppState& GetAppState();
 
-		// --- Setters ---
-		void SetAppName(const char* name);
-		void SetOrganizationName(const char* name);
-		void Log(const char* entry);
-		void ClearLogsFromConsole();
+	// --- Setters ---
+	void SetAppName(const char* name);
+	void SetOrganizationName(const char* name);
+	void Log(const char* entry);
+	void ClearLogsFromConsole();
 
-	public:
+public:
 
-		ModuleWindow* window = nullptr;
-	  	ModuleInput* input = nullptr;
-	  	ModuleRenderer3D* renderer3D = nullptr;
-	  	ModuleCamera3D* camera = nullptr;
-	  	ModuleGui* gui = nullptr;
-	  	ModuleHardware* hardware = nullptr;
-	  	ModuleFileSystem* fs = nullptr;
-	  	ModuleTextures* textures = nullptr;
-	  	ModuleSceneManager* scene_manager = nullptr;
-	  	ModuleResourceManager* resources = nullptr;
-	    ModuleTimeManager* time = nullptr;
-	  	ModuleEventManager* event_manager = nullptr;
-	  	ModuleScripting* scripting = nullptr;
-	  	ModuleThreading* threading = nullptr;
+	ModuleWindow* window = nullptr;
+  	ModuleInput* input = nullptr;
+  	ModuleRenderer3D* renderer3D = nullptr;
+  	ModuleCamera3D* camera = nullptr;
+  	ModuleGui* gui = nullptr;
+  	ModuleHardware* hardware = nullptr;
+  	ModuleFileSystem* fs = nullptr;
+  	ModuleTextures* textures = nullptr;
+  	ModuleSceneManager* scene_manager = nullptr;
+  	ModuleResourceManager* resources = nullptr;
+    ModuleTimeManager* time = nullptr;
+  	ModuleEventManager* event_manager = nullptr;
+  	ModuleScripting* scripting = nullptr;
+  	ModuleThreading* threading = nullptr;
 
-	private:
+private:
 
-		std::list<Module*> list_modules;
+	std::list<Module*> list_modules;
 
-		JSONLoader			JLoader;
-		std::string			appName;
-		std::string			orgName;
-		std::string			configpath;
+	JSONLoader			JLoader;
+	std::string			appName;
+	std::string			orgName;
+	std::string			configpath;
 
-		LCG* RandomNumber = nullptr;
+	LCG* RandomNumber = nullptr;
 
-		std::string			log;
-		std::vector<std::string> logs;
+	std::string			log;
+	std::vector<std::string> logs;
 
-		AppState EngineState = AppState::EDITOR;
-
-
-	public:
-
-		Application();
-		virtual ~Application();
-
-		bool Init();
-		update_status Update();
-		bool CleanUp();
+	AppState EngineState = AppState::EDITOR;
 
 
-	protected:
-		void AddModule(Module* mod);
+public:
 
-	private:
-		void PrepareUpdate();
-		void FinishUpdate();
-		void SaveAllStatus();
-		void LoadAllStatus(json& file);
-	};
+	Application();
+	virtual ~Application();
 
-	extern Application* App;
-	Application* CreateApplication();
-}
+	bool Init();
+	update_status Update();
+	bool CleanUp();
+
+
+protected:
+	void AddModule(Module* mod);
+
+private:
+	void PrepareUpdate();
+	void FinishUpdate();
+	void SaveAllStatus();
+	void LoadAllStatus(json& file);
+};
+
+extern BROKEN_API Application* App;
+Application* CreateApplication();
+BE_END_NAMESPACE
 
 
 #endif

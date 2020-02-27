@@ -5,49 +5,49 @@
 #include "Component.h"
 
  
-namespace BrokenEngine {
-	class ComponentCamera : public Component {
-	public:
+BE_BEGIN_NAMESPACE
+class BROKEN_API ComponentCamera : public Component {
+public:
 
-		ComponentCamera(GameObject* ContainerGO);
-		virtual ~ComponentCamera();
+	ComponentCamera(GameObject* ContainerGO);
+	virtual ~ComponentCamera();
 
-		// --- Getters ---
-		float GetNearPlane() const;
-		float GetFarPlane() const;
-		float GetFOV() const;
-		float GetAspectRatio() const;
-		float4x4 GetOpenGLViewMatrix();
-		float4x4 GetOpenGLProjectionMatrix();
+	// --- Getters ---
+	float GetNearPlane() const;
+	float GetFarPlane() const;
+	float GetFOV() const;
+	float GetAspectRatio() const;
+	float4x4 GetOpenGLViewMatrix();
+	float4x4 GetOpenGLProjectionMatrix();
 
-		// --- Setters ---
-		void SetNearPlane(float distance);
-		void SetFarPlane(float distance);
-		void SetFOV(float fov);
-		void SetAspectRatio(float ar);
+	// --- Setters ---
+	void SetNearPlane(float distance);
+	void SetFarPlane(float distance);
+	void SetFOV(float fov);
+	void SetAspectRatio(float ar);
 
-		void SetCameraValues(float4 values);
+	void SetCameraValues(float4 values);
 
 
-		// --- Utilities ---
-		void Look(const float3& position);
-		void OnUpdateTransform(const float4x4& global);
+	// --- Utilities ---
+	void Look(const float3& position);
+	void OnUpdateTransform(const float4x4& global);
 
-		bool ContainsAABB(const AABB& ref);
+	bool ContainsAABB(const AABB& ref);
 
-		static inline Component::ComponentType GetType() { return Component::ComponentType::Camera; };
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Camera; };
 
-		// --- Save & Load ---
-		json Save() const override;
-		void Load(json& node) override;
-		void CreateInspectorNode() override;
+	// --- Save & Load ---
+	json Save() const override;
+	void Load(json& node) override;
+	void CreateInspectorNode() override;
 
-	public:
+public:
 
-		Frustum		frustum;
-		bool		culling = false;
-		bool		active_camera = false;
-	};
+	Frustum		frustum;
+	bool		culling = false;
+	bool		active_camera = false;
+};
 
-}
+BE_END_NAMESPACE
 #endif

@@ -6,26 +6,26 @@
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
 
-namespace BrokenEngine {
-	class ResourceMaterial : public Resource {
-	public:
-		ResourceMaterial(uint UID, std::string source_file);
-		~ResourceMaterial();
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceMaterial : public Resource {
+public:
+	ResourceMaterial(uint UID, std::string source_file);
+	~ResourceMaterial();
 
-		bool LoadInMemory() override;
-		void FreeMemory() override;
+	bool LoadInMemory() override;
+	void FreeMemory() override;
 
-		void UpdateUniforms();
+	void UpdateUniforms();
 
-	public:
-		ResourceTexture* resource_diffuse = nullptr;
-		ResourceShader* shader = nullptr;
-		std::vector<Uniform*> uniforms;
+public:
+	ResourceTexture* resource_diffuse = nullptr;
+	ResourceShader* shader = nullptr;
+	std::vector<Uniform*> uniforms;
 
-	private:
-		void OnOverwrite() override;
-		void OnDelete() override;
-		void Repath() override;
-	};
-}
+private:
+	void OnOverwrite() override;
+	void OnDelete() override;
+	void Repath() override;
+};
+BE_END_NAMESPACE
 #endif //__RESOURCE_MATERIAL_H__

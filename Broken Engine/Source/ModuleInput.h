@@ -14,7 +14,7 @@ enum KEY_STATE {
 	KEY_UP
 };
 
-class ModuleInput : public Module {
+class BROKEN_API ModuleInput : public Module {
 public:
 
 	ModuleInput(bool start_enabled = true);

@@ -1,17 +1,17 @@
 #include "Panel.h"
+#include "Application.h"
 
 #include "mmgr/mmgr.h"
 
-namespace BrokenEngine {
-	Panel::Panel(char* name) : name(name) {}
+using namespace BrokenEngine;
+Panel::Panel(char* name) : name(name) {}
 
-	Panel::~Panel() {}
+Panel::~Panel() {}
 
-	void Panel::OnOff() {
-		enabled = !enabled;
-	}
+void Panel::OnOff() {
+	enabled = !enabled;
+}
 
-	bool Panel::IsEnabled() const {
-		return enabled;
-	}
+bool Panel::IsEnabled() const {
+	return enabled;
 }

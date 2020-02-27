@@ -14,7 +14,6 @@ class PanelProject;
 class PanelShaderEditor;
 class PanelResources;
 
-
 class ModuleEditorUI : public BrokenEngine::Module
 {
 public:

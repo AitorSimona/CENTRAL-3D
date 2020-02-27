@@ -12,95 +12,94 @@
 
 #include "mmgr/mmgr.h"
 
-namespace BrokenEngine {
-	ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file) {
-		extension = ".mat";
-		resource_file = source_file;
-		shader = App->renderer3D->defaultShader;
-		previewTexID = App->gui->materialTexID;
+using namespace BrokenEngine;
+ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file) {
+	extension = ".mat";
+	resource_file = source_file;
+	shader = App->renderer3D->defaultShader;
+	previewTexID = App->gui->materialTexID;
+}
+
+ResourceMaterial::~ResourceMaterial() {
+
+}
+
+bool ResourceMaterial::LoadInMemory() {
+	shader->GetAllUniforms(uniforms);
+
+	return true;
+}
+
+void ResourceMaterial::FreeMemory() {
+	for (uint i = 0; i < uniforms.size(); ++i) {
+		delete uniforms[i];
 	}
 
-	ResourceMaterial::~ResourceMaterial() {
+	uniforms.clear();
+}
 
-	}
+void ResourceMaterial::UpdateUniforms() {
+	glUseProgram(shader->ID);
 
-	bool ResourceMaterial::LoadInMemory() {
-		shader->GetAllUniforms(uniforms);
+	for (uint i = 0; i < uniforms.size(); ++i) {
 
-		return true;
-	}
+		switch (uniforms[i]->type) {
+		case GL_INT:
+			glUniform1i(uniforms[i]->location, uniforms[i]->value.intU);
+			break;
 
-	void ResourceMaterial::FreeMemory() {
-		for (uint i = 0; i < uniforms.size(); ++i) {
-			delete uniforms[i];
+		case GL_FLOAT:
+			glUniform1f(uniforms[i]->location, uniforms[i]->value.floatU);
+			break;
+
+		case GL_FLOAT_VEC2:
+			glUniform2f(uniforms[i]->location, uniforms[i]->value.vec2U.x, uniforms[i]->value.vec2U.y);
+			break;
+
+		case GL_FLOAT_VEC3:
+			glUniform3f(uniforms[i]->location, uniforms[i]->value.vec3U.x, uniforms[i]->value.vec3U.y, uniforms[i]->value.vec3U.z);
+			break;
+
+		case GL_FLOAT_VEC4:
+			glUniform4f(uniforms[i]->location, uniforms[i]->value.vec4U.x, uniforms[i]->value.vec4U.y, uniforms[i]->value.vec4U.z, uniforms[i]->value.vec4U.w);
+			break;
+
+		case GL_INT_VEC2:
+			glUniform2i(uniforms[i]->location, uniforms[i]->value.vec2U.x, uniforms[i]->value.vec2U.y);
+			break;
+
+		case GL_INT_VEC3:
+			glUniform3i(uniforms[i]->location, uniforms[i]->value.vec3U.x, uniforms[i]->value.vec3U.y, uniforms[i]->value.vec3U.z);
+			break;
+
+		case GL_INT_VEC4:
+			glUniform4i(uniforms[i]->location, uniforms[i]->value.vec4U.x, uniforms[i]->value.vec4U.y, uniforms[i]->value.vec4U.z, uniforms[i]->value.vec4U.w);
+			break;
 		}
-
-		uniforms.clear();
 	}
 
-	void ResourceMaterial::UpdateUniforms() {
-		glUseProgram(shader->ID);
+	glUseProgram(App->renderer3D->defaultShader->ID);
+}
 
-		for (uint i = 0; i < uniforms.size(); ++i) {
+void ResourceMaterial::OnOverwrite() {
+	NotifyUsers(ResourceNotificationType::Overwrite);
+}
 
-			switch (uniforms[i]->type) {
-			case GL_INT:
-				glUniform1i(uniforms[i]->location, uniforms[i]->value.intU);
-				break;
+void ResourceMaterial::OnDelete() {
+	NotifyUsers(ResourceNotificationType::Deletion);
 
-			case GL_FLOAT:
-				glUniform1f(uniforms[i]->location, uniforms[i]->value.floatU);
-				break;
+	FreeMemory();
+	App->fs->Remove(resource_file.c_str());
 
-			case GL_FLOAT_VEC2:
-				glUniform2f(uniforms[i]->location, uniforms[i]->value.vec2U.x, uniforms[i]->value.vec2U.y);
-				break;
+	Resource* diffuse = resource_diffuse;
 
-			case GL_FLOAT_VEC3:
-				glUniform3f(uniforms[i]->location, uniforms[i]->value.vec3U.x, uniforms[i]->value.vec3U.y, uniforms[i]->value.vec3U.z);
-				break;
+	if (diffuse)
+		diffuse->Release();
 
-			case GL_FLOAT_VEC4:
-				glUniform4f(uniforms[i]->location, uniforms[i]->value.vec4U.x, uniforms[i]->value.vec4U.y, uniforms[i]->value.vec4U.z, uniforms[i]->value.vec4U.w);
-				break;
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
+}
 
-			case GL_INT_VEC2:
-				glUniform2i(uniforms[i]->location, uniforms[i]->value.vec2U.x, uniforms[i]->value.vec2U.y);
-				break;
-
-			case GL_INT_VEC3:
-				glUniform3i(uniforms[i]->location, uniforms[i]->value.vec3U.x, uniforms[i]->value.vec3U.y, uniforms[i]->value.vec3U.z);
-				break;
-
-			case GL_INT_VEC4:
-				glUniform4i(uniforms[i]->location, uniforms[i]->value.vec4U.x, uniforms[i]->value.vec4U.y, uniforms[i]->value.vec4U.z, uniforms[i]->value.vec4U.w);
-				break;
-			}
-		}
-
-		glUseProgram(App->renderer3D->defaultShader->ID);
-	}
-
-	void ResourceMaterial::OnOverwrite() {
-		NotifyUsers(ResourceNotificationType::Overwrite);
-	}
-
-	void ResourceMaterial::OnDelete() {
-		NotifyUsers(ResourceNotificationType::Deletion);
-
-		FreeMemory();
-		App->fs->Remove(resource_file.c_str());
-
-		Resource* diffuse = resource_diffuse;
-
-		if (diffuse)
-			diffuse->Release();
-
-		App->resources->RemoveResourceFromFolder(this);
-		App->resources->ONResourceDestroyed(this);
-	}
-
-	void ResourceMaterial::Repath() {
-		resource_file = original_file + extension;
-	}
+void ResourceMaterial::Repath() {
+	resource_file = original_file + extension;
 }
