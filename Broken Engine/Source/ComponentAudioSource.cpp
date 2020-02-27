@@ -18,7 +18,7 @@ ComponentAudioSource::ComponentAudioSource( GameObject* ContainerGO) : Component
 
 ComponentAudioSource::~ComponentAudioSource() {
 
-	delete wwiseGO;
+	//delete wwiseGO;
 	//wwiseGO = nullptr;
 
 	//wwiseGO->~WwiseGameObject();
