@@ -264,6 +264,14 @@ void ModuleRenderer3D::CreateFramebuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+//void ModuleRenderer3D::NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex)
+//{
+//	glGenBuffers(1, (GLuint*)&(id_vertex));
+//	glBindBuffer(GL_ARRAY_BUFFER, id_vertex);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * size * 3, vertex, GL_STATIC_DRAW);
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+//}
+
 bool ModuleRenderer3D::SetVSync(bool vsync)
 {
 	bool ret = true;

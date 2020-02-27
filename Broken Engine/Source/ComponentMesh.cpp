@@ -26,6 +26,11 @@ ComponentMesh::~ComponentMesh()
 		resource_mesh->Release();
 		resource_mesh->RemoveUser(GO);
 	}
+	if (resource_def_mesh && resource_def_mesh->IsInMemory())
+	{
+		resource_def_mesh->Release();
+		delete resource_def_mesh;
+	}
 }
 
 const AABB & ComponentMesh::GetAABB() const
@@ -119,69 +124,63 @@ void ComponentMesh::AddBone(ComponentBone* bone)
 
 void ComponentMesh::UpdateDefMesh()
 {
-	//if (resource_def_mesh == nullptr)
+	if (resource_def_mesh == nullptr)
+	{
+		resource_def_mesh = new ResourceMesh(resource_mesh->GetUID(), resource_mesh->GetResourceFile());
+
+		resource_def_mesh->LoadToMemory();
+
+	}
+	// --- Reset temporal mesh
+	// --- Normals ---
+	for (uint i = 0; i < resource_def_mesh->VerticesSize / 3; ++i)
+	{
+		resource_def_mesh->vertices[i].normal[0] = 0.0f;
+		resource_def_mesh->vertices[i].normal[1] = 0.0f;
+		resource_def_mesh->vertices[i].normal[2] = 0.0f;
+
+		resource_def_mesh->vertices[i].position[0] = 0.0f;
+		resource_def_mesh->vertices[i].position[1] = 0.0f;
+		resource_def_mesh->vertices[i].position[2] = 0.0f;
+	}
+
+	//for (std::vector<ComponentBone*>::iterator it = bones.begin(); it != bones.end(); it++)
 	//{
-	//	resource_def_mesh = new ResourceMesh(App->GetRandom().Int(), resource_mesh->GetResourceFile());
+	//	ResourceBone* r_bone = (*it)->res_bone;
 
-	//	resource_def_mesh->IndicesSize = resource_mesh->IndicesSize;
-	//	resource_def_mesh->Indices = new uint[resource_def_mesh->IndicesSize];
-	//	memcpy(resource_def_mesh->Indices, resource_mesh->Indices, resource_def_mesh->IndicesSize * sizeof(uint));
+	//	float4x4 mat = (*it)->GetSkeletonTransform();
+	//	mat = GO->GetComponent<ComponentTransform>()->GetLocalTransform().Inverted() * mat;
+	//	mat = mat * r_bone->matrix;
 
-	//	resource_def_mesh->VerticesSize = resource_mesh->VerticesSize;
-	//	resource_def_mesh->vertices = new Vertex[resource_mesh->VerticesSize];
-
-	//	// --- Normals ---
-	//	for (uint i = 0; i < resource_def_mesh->VerticesSize / 3; ++i)
+	//	for (uint i = 0; i < r_bone->NumWeights; i++)
 	//	{
-	//		resource_def_mesh->vertices[i].normal[0] = 0.0f;
-	//		resource_def_mesh->vertices[i].normal[1] = 0.0f;
-	//		resource_def_mesh->vertices[i].normal[2] = 0.0f;
-	//	}
+	//		uint index = r_bone->index_weight[i];
 
-	//	// --- Face Normals ---
-	//	for (uint i = 0; i < resource_def_mesh->VerticesSize / 3; ++i)
-	//	{
-	//		resource_def_mesh->vertices[i].position[0] = 0.0f;
-	//		resource_def_mesh->vertices[i].position[1] = 0.0f;
-	//		resource_def_mesh->vertices[i].position[2] = 0.0f;
-	//	}
+	//		// -- This is the original vertex
+	//		float3 tmp = { resource_mesh->vertices[index].position[0],
+	//					   resource_mesh->vertices[index].position[1],
+	//					   resource_mesh->vertices[index].position[2]};
 
-	//	// ---  ASK AITOR FFS
-	//	//// SHADERS????????????????????????????????????????????????????????????????????????????
-	//	//uint idx = App->renderer3D->CreateBufferFromData(resource_def_mesh->VBO, resource_def_mesh->VerticesSize, resource_def_mesh->Indices);
+	//		// -- Vertex offset
+	//		resource_def_mesh->vertices[index].position[0];
+	//		resource_def_mesh->vertices[index].position[1];
+	//		resource_def_mesh->vertices[index].position[2];
+	//		float3 _vertex = mat.TransformPos(tmp);
 
-	//	//glGenBuffers(1, (GLuint*)&(idx));
-	//	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idx);
-	//	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * resource_def_mesh->VerticesSize, resource_def_mesh->vertices, GL_STATIC_DRAW);
-	//	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//		resource_def_mesh->vertices[index].position[0] += _vertex.x * r_bone->weight[i];
+	//		resource_def_mesh->vertices[index].position[1] += _vertex.y * r_bone->weight[i];
+	//		resource_def_mesh->vertices[index].position[2] += _vertex.z * r_bone->weight[i];
 
-	//	for (std::vector<ComponentBone*>::iterator it = bones.begin(); it != bones.end(); it++)
-	//	{
-	//		ResourceBone* r_bone = (*it)->res_bone;
-
-	//		float4x4 mat = (*it)->GetSkeletonTransform();
-	//		mat = GO->GetComponent<ComponentTransform>()->GetLocalTransform() * mat;
-	//		mat = mat * r_bone->matrix;
-
-	//		for (uint i = 0; i < r_bone->NumWeights; i++)
+	//		/*if ((resource_mesh->VerticesSize / 3) > 0);
 	//		{
-	//			uint index = r_bone->index_weight[i];
-	//			float3 tmp = { resource_def_mesh->vertices[index].position[0], resource_def_mesh->vertices[index].position[1], resource_def_mesh->vertices[index].position[2] };
-	//			float3 _vertex = mat.TransformPos(tmp);
-
-	//			resource_def_mesh->vertices[index].position[0] += _vertex.x * r_bone->weight[i];
-	//			resource_def_mesh->vertices[index].position[1] += _vertex.y * r_bone->weight[i];
-	//			resource_def_mesh->vertices[index].position[2] += _vertex.z * r_bone->weight[i];
-
-	//			if ((resource_mesh->VerticesSize / 3) > 0);
-	//			{
-	//				float3 aux_ = { resource_def_mesh->vertices[index].position[0], resource_def_mesh->vertices[index].position[1], resource_def_mesh->vertices[index].position[2] };
-	//				_vertex = mat.TransformPos(aux_);
-	//				resource_def_mesh->vertices[index].normal[0] += _vertex.x * r_bone->weight[i];
-	//				resource_def_mesh->vertices[index].normal[1] += _vertex.y * r_bone->weight[i];
-	//				resource_def_mesh->vertices[index].normal[2] += _vertex.z * r_bone->weight[i];
-	//			}
-	//		}
+	//			float3 aux_ = { resource_mesh->vertices[index].position[0],
+	//							resource_mesh->vertices[index].position[1],
+	//							resource_mesh->vertices[index].position[2] };
+	//			_vertex = mat.TransformPos(aux_);
+	//			resource_def_mesh->vertices[index].normal[0] += _vertex.x * r_bone->weight[i];
+	//			resource_def_mesh->vertices[index].normal[1] += _vertex.y * r_bone->weight[i];
+	//			resource_def_mesh->vertices[index].normal[2] += _vertex.z * r_bone->weight[i];
+	//		}*/
 	//	}
 	//}
 }

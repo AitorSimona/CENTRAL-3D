@@ -55,24 +55,24 @@ void ComponentAnimation::Update(float dt)
 			has_skeleton = HasSkeleton(childs);
 
 			DoLink();
-			playing_animation = CreateAnimation("Idle", 0, 42, true, true);
+			playing_animation = CreateAnimation("Idle", 0, 41, true, true);
 			CreateAnimation("Run", 0, 42, true);
 			CreateAnimation("Punch", 73, 140, false);
 		}
 
-		/*if (linked_bones == false)
-			DoBoneLink();*/
+		if (linked_bones == false)
+			DoBoneLink();
 
+		time += dt;
 		if (blending == false)
 		{
-			time += App->time->GetGameDt();
 			UpdateJointsTransform();
 		}
-		else
-			BlendAnimations(blend_time_value);
+		/*else
+			BlendAnimations(blend_time_value);*/
 
-		//if (has_skeleton)
-			//UpdateMesh(GO);
+		if (has_skeleton)
+			UpdateMesh(GO);
 
 		//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 		//{
@@ -252,7 +252,7 @@ void ComponentAnimation::DoBoneLink()
 		std::map<uint, ComponentMesh*>::iterator it = meshes.find(tmp_id);
 		if (it != meshes.end())
 		{
-			//it->second->AddBone(bones[i]);
+			it->second->AddBone(bones[i]);
 		}
 	}
 
@@ -417,17 +417,16 @@ void ComponentAnimation::UpdateMesh(GameObject* go)
 {
 	ComponentMesh* tmp = go->GetComponent<ComponentMesh>();
 
-	/*if (tmp != nullptr)
+	if (tmp != nullptr)
 	{
-		tmp->AttachSkeleton(go);
 		tmp->UpdateDefMesh();
-		if (tmp->deformable_mesh != nullptr)
+		if (tmp->resource_def_mesh != nullptr)
 		{
 			//Vertex buffer
 			if (!created_buffer)
 				created_buffer = true;
 		}
-	}*/
+	}
 
 	for (int i = 0; i < go->childs.size(); i++)
 	{

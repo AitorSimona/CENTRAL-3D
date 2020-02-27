@@ -106,8 +106,16 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
-		DrawMesh(*mesh->resource_mesh);
-		DrawNormals(*mesh->resource_mesh,*transform);
+		if (mesh->resource_def_mesh)
+		{
+			DrawMesh(*mesh->resource_def_mesh);
+		}
+		else
+		{
+			DrawMesh(*mesh->resource_mesh);
+			DrawNormals(*mesh->resource_mesh, *transform);
+		}
+
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -143,6 +151,7 @@ void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
 		glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 	}
 }
+
 
 void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
 {

@@ -23,15 +23,14 @@ public:
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
 
+	// -- For skinning
+	void AddBone(ComponentBone* bone);
+	void UpdateDefMesh();
+
 public:
 	ResourceMesh* resource_mesh = nullptr;
 	ResourceMesh* resource_def_mesh = nullptr;
 
-private:
-	void AddBone(ComponentBone* bone);
-	void UpdateDefMesh();
-
-private:
 	std::vector<ComponentBone*> bones;
 };
 

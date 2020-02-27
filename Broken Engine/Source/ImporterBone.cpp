@@ -60,7 +60,7 @@ void ImporterBone::Save(ResourceBone* bone) const
 
 	//----------------------------- CALCULATE SIZE ------------------------------------------------------------------------------------
 
-	//Bone meshID, numWeights, matrix, weights, index_weigths
+	//Bone ranges, name, meshID, numWeights, matrix, weights, index_weigths
 	uint size = sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) + sizeof(uint) + sizeof(float) * 16 + bone->NumWeights * sizeof(float) + bone->NumWeights * sizeof(uint);
 
 	//---------------------------------------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ void ImporterBone::Save(ResourceBone* bone) const
 	memcpy(cursor, bone->GetOriginalFile(), bytes);
 	cursor += bytes;
 
-	//// meshID
+	// --- Store meshID
 	memcpy(cursor, &bone->meshID, sizeof(uint));
 	cursor += sizeof(uint);
 
@@ -108,7 +108,7 @@ void ImporterBone::Save(ResourceBone* bone) const
 		data = nullptr;
 		cursor = nullptr;
 	}
-
+	
 }
 
 Resource* ImporterBone::Load(const char* path) const
