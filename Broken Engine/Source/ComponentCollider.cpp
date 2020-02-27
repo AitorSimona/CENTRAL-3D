@@ -145,12 +145,13 @@ void ComponentCollider::UpdateLocalMatrix() {
 		return;
 
 	//Render
-	localMatrix.x = localPosition.x + offset.x;
-	localMatrix.y = localPosition.y + offset.y;
-	localMatrix.z = localPosition.z + offset.z;
-	localMatrix.scaleX = scale.x + originalScale.x - 1;
-	localMatrix.scaleY = scale.y + originalScale.y - 1;
-	localMatrix.scaleZ = scale.z + originalScale.z - 1;
+	localMatrix.x = localPosition.x +offset.x;
+	localMatrix.y = localPosition.y +offset.y;
+	localMatrix.z = localPosition.z +offset.z;
+	ENGINE_CONSOLE_LOG("%f", scale.x);
+	localMatrix.scaleX = scale.x * originalScale.x; //scale * sizeAABB
+	localMatrix.scaleY = scale.y * originalScale.y;
+	localMatrix.scaleZ = scale.z * originalScale.z;
 
 	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
 
@@ -170,14 +171,14 @@ void ComponentCollider::UpdateLocalMatrix() {
 	PxTransform transform(posi,quati);
 
 	if (!dynamicRB)
-		rigidStatic->setGlobalPose(transform);
+		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (ImGuizmo::IsUsing()) {
+		if (ImGuizmo::IsUsing()) { //ON EDITOR
 			dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else {
-			if (dynamicRB->rigidBody != nullptr)
+			if (dynamicRB->rigidBody != nullptr) //ON GAME
 			{
 				PxTransform transform = dynamicRB->rigidBody->getGlobalPose();
 				cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y, transform.p.z - offset.z);
@@ -402,19 +403,19 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
 		
 			float3 center = GO->GetAABB().CenterPoint();
-			offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
 
-			float3 halfSize = GO->GetAABB().HalfSize().Mul(scale);
+
 			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
-
+			
 			if (!firstCreation)
 			{
-				originalScale = halfSize * 2;
-				firstCreation = true;
+				originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
+				offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
+				firstCreation = true; 
 			}
+			offset.Mul(tScale);
 
-			baseScale = halfSize;
-			boxGeometry = PxBoxGeometry(PxVec3(baseScale.x + (tScale.x - 1), baseScale.y + (tScale.y - 1), baseScale.z + (tScale.z - 1)));
+			boxGeometry = PxBoxGeometry(PxVec3(originalScale.x * tScale.x * scale.x * 0.5, originalScale.y * tScale.y * scale.y * 0.5, originalScale.z * tScale.z * scale.z * 0.5));
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
