@@ -16,7 +16,7 @@ public:
 
 	bool Draw();
 	void SetSelected(BrokenEngine::Resource* new_selected);
-	const BrokenEngine::Resource* GetcurrentDirectory() const;
+	//const BrokenEngine::Resource* GetcurrentDirectory() const;
 
 private:
 	static void ONGameObjectSelected(const BrokenEngine::Event& e);
@@ -30,7 +30,7 @@ private:
 
 	BrokenEngine::Resource* selected = nullptr;
 	uint selected_uid = 0;
-	BrokenEngine::ResourceFolder* currentDirectory = nullptr;
+	//BrokenEngine::ResourceFolder* currentDirectory = nullptr;
 
 	void DrawFolder(BrokenEngine::ResourceFolder* folder);
 	void DrawFile(BrokenEngine::Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);

@@ -27,30 +27,30 @@ bool PanelScene::Draw()
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 		// --- Set image size
-		width = ImGui::GetWindowWidth()*0.98;
-		height = ImGui::GetWindowHeight()*0.90;
-		ImVec2 size = ImVec2(width, height);
+		EngineApp->gui->sceneWidth = ImGui::GetWindowWidth()*0.98;
+		EngineApp->gui->sceneHeight = ImGui::GetWindowHeight()*0.90;
+		ImVec2 size = ImVec2(EngineApp->gui->sceneWidth, EngineApp->gui->sceneHeight);
 
 		// --- Force Window Size ---
 		if (ImGui::GetWindowWidth() < ImGui::GetWindowHeight())
 		{
 			size.x = size.y;
-			width = height;
+			EngineApp->gui->sceneWidth = EngineApp->gui->sceneHeight;
 			ImGui::SetWindowSize(name, size);
 		}
 		// MYTODO: limit win size
 		// DOCKING HAS NO SUPPORT FOR WINDOW SIZE CONSTRAINTS :(
 
-		if(width > height)
-			EngineApp->renderer3D->active_camera->SetAspectRatio(width / height);
+		if(EngineApp->gui->sceneWidth > EngineApp->gui->sceneHeight)
+			EngineApp->renderer3D->active_camera->SetAspectRatio(EngineApp->gui->sceneWidth / EngineApp->gui->sceneHeight);
 		else
-			EngineApp->renderer3D->active_camera->SetAspectRatio(height / width);
+			EngineApp->renderer3D->active_camera->SetAspectRatio(EngineApp->gui->sceneHeight / EngineApp->gui->sceneWidth);
 
 		ImGui::Image((ImTextureID)EngineApp->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
 		// --- Save Image's current position (screen space)
-		posX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
-		posY = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
+		EngineApp->gui->sceneX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
+		EngineApp->gui->sceneY = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
 
 
 		// --- Handle drag & drop ---
@@ -73,10 +73,7 @@ bool PanelScene::Draw()
 		}
 
 		// --- Process input and update editor camera ---
-		if (ImGui::IsWindowHovered())
-			SceneHovered = true;
-		else
-			SceneHovered = false;
+		EngineApp->gui->isSceneHovered = ImGui::IsWindowHovered();
 
 
 		if (ImGui::BeginMenuBar())
@@ -153,7 +150,7 @@ void PanelScene::HandleGuizmo()
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();
-	ImGuizmo::SetRect(posX, posY, width, height);
+	ImGuizmo::SetRect(EngineApp->gui->sceneX, EngineApp->gui->sceneY, EngineApp->gui->sceneWidth, EngineApp->gui->sceneHeight);
 
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];

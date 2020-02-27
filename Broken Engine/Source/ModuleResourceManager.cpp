@@ -70,6 +70,7 @@ namespace BrokenEngine {
 	
 		// --- Import files and folders ---
 		AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
+		currentDirectory = AssetsFolder;
 	
 		// --- Manage changes ---
 		HandleFsChanges();
@@ -259,7 +260,7 @@ namespace BrokenEngine {
 				new_path = IData.path = new_path.append("/").c_str();
 	
 				if (IData.dropped)
-					new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+					new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
 	
 				IData.path = new_path.c_str();
 				folder = IFolder->Import(IData);
@@ -306,7 +307,7 @@ namespace BrokenEngine {
 				std::string new_path = IData.path;
 	
 				if(IData.dropped)
-					new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+					new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
 	
 				IData.path = new_path.c_str();
 				ImportModelData MData(IData.path);
@@ -378,7 +379,7 @@ namespace BrokenEngine {
 			std::string new_path = IData.path;
 	
 			if (IData.dropped)
-				new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+				new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
 	
 			IData.path = new_path.c_str();
 			texture = ITex->Import(IData);
@@ -903,8 +904,9 @@ namespace BrokenEngine {
 	
 			for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
 			{
-				// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
-				directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+				std::string path = resource->GetOriginalFile();
+				// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviours
+				directory = App->fs->GetDirectoryFromPath(path);
 				directory.pop_back();
 				original_file = (*it).second->GetOriginalFile();
 				original_file.pop_back();
@@ -942,7 +944,8 @@ namespace BrokenEngine {
 			for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
 			{
 				// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
-				directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+				std::string path = resource->GetOriginalFile();
+				directory = App->fs->GetDirectoryFromPath(path);
 				directory.pop_back();
 				original_file = (*it).second->GetOriginalFile();
 				original_file.pop_back();
@@ -1056,6 +1059,14 @@ namespace BrokenEngine {
 			break;
 		}
 	
+	}
+
+	void ModuleResourceManager::setCurrentDirectory(ResourceFolder* dir) {
+		currentDirectory = dir;
+	}
+
+	ResourceFolder* ModuleResourceManager::getCurrentDirectory() const {
+		return currentDirectory;
 	}
 	
 	// ----------------------------------------------------

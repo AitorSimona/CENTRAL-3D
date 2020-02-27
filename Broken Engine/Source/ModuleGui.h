@@ -37,6 +37,7 @@ public:
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
 	void AddPanel(Panel* npanel);
+	bool isHoveringScene() const;
 
 	void LogFPS(float fps, float ms);
 
@@ -69,7 +70,17 @@ public:
 	uint prefabTexID = 0;
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
+
+	bool isSceneHovered = false;
+
+	//Scene position and size
+	float sceneX = 0;
+	float sceneY = 0;
+	float sceneWidth = 0;
+	float sceneHeight = 0;
+
 private:
+
 	bool capture_keyboard = false;
 	bool capture_mouse = false;
 

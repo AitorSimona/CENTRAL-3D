@@ -71,10 +71,10 @@ bool PanelProject::Draw()
 
 		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y), true, projectFlags);
 
-		if(currentDirectory == nullptr)
-			currentDirectory = EngineApp->resources->GetAssetsFolder();
+		//if(currentDirectory == nullptr)
+		//	currentDirectory = EngineApp->resources->GetAssetsFolder();
 
-		DrawFolder(currentDirectory);
+		DrawFolder(EngineApp->resources->getCurrentDirectory());
 
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
 
@@ -127,10 +127,10 @@ void PanelProject::SetSelected(BrokenEngine::Resource* new_selected)
 		selected_uid = 0;
 }
 
-const BrokenEngine::Resource* PanelProject::GetcurrentDirectory() const
-{
-	return currentDirectory;
-}
+//const BrokenEngine::Resource* PanelProject::GetcurrentDirectory() const
+//{
+//	return currentDirectory;
+//}
 
 
 void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
@@ -140,13 +140,13 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 
 	BrokenEngine::ResourceFolder* curr = folder;
 
-	if (currentDirectory == EngineApp->resources->GetAssetsFolder())
+	if (EngineApp->resources->getCurrentDirectory() == EngineApp->resources->GetAssetsFolder())
 		ImGui::TextColored(ImVec4(0, 120, 255, 255), EngineApp->resources->GetAssetsFolder()->GetName());
 	else
 	ImGui::Text(EngineApp->resources->GetAssetsFolder()->GetName());
 
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-		currentDirectory = EngineApp->resources->GetAssetsFolder();
+		EngineApp->resources->setCurrentDirectory(EngineApp->resources->GetAssetsFolder());
 
 	std::vector<BrokenEngine::ResourceFolder*> folders_path;
 
@@ -158,13 +158,13 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 
 	for (std::vector<BrokenEngine::ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
 	{
-		if (currentDirectory == *it)
+		if (EngineApp->resources->getCurrentDirectory == *it)
 			ImGui::TextColored(ImVec4(0, 120, 255, 255),(*it)->GetName());
 		else
 		ImGui::Text((*it)->GetName());
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-			currentDirectory = *it;
+			EngineApp->resources->setCurrentDirectory(*it);
 
 		ImGui::SameLine();
 	}
@@ -223,7 +223,7 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 				SetSelected(*it);
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
-				currentDirectory = *it;
+				EngineApp->resources->setCurrentDirectory(*it);
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x)/2));
 			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);

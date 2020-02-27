@@ -33,6 +33,9 @@ enum main_states {
 	MAIN_EXIT
 };
 
+extern BrokenEngine::Application* BrokenEngine::CreateApplication();
+BrokenEngine::Application* App = nullptr;
+
 int main(int argc, char** argv) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
 

@@ -115,42 +115,46 @@ const std::string SoftwareInfo::ExtractCppVersion(long int cppValue) {
 }
 
 
-const std::string SoftwareInfo::ExtractWindowsVersion() {
-	OSVERSIONINFOEX OS;
-	ZeroMemory(&OS, sizeof(OSVERSIONINFOEX));
-	OS.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	GetVersionEx(&(OSVERSIONINFO&)OS);
+const std::string SoftwareInfo::ExtractWindowsVersion()
+{
+	return ("WINDOWS VERSION RETRIEVAL NOT AVAILABLE");
 
-	std::string ret = "Windows ";
 
-	if (OS.dwMajorVersion == 10)
-		ret += "10";
-	else if (OS.dwMajorVersion == 6) {
-
-		if (OS.dwMinorVersion == 3)
-			ret += "8.1";
-		else if (OS.dwMinorVersion == 2)
-			ret += "8";
-		else if (OS.dwMinorVersion == 1)
-			ret += "7";
-		else
-			ret += "Vista";
-	}
-	else if (OS.dwMajorVersion == 5) {
-
-		if (OS.dwMinorVersion == 2)
-			ret += "XP SP2";
-		else if (OS.dwMinorVersion == 1)
-			ret += "XP";
-		else if (OS.dwMinorVersion == 0)
-			ret += "2000";
-	}
-	else if (OS.dwMajorVersion == 4 || OS.dwMajorVersion == 3)
-		ret += "WinNT";
-	else
-		ret = "WINDOWS VERSION NOT FOUND";
-
-	return ret;
+//	OSVERSIONINFOEX OS;
+//	ZeroMemory(&OS, sizeof(OSVERSIONINFOEX));
+//	OS.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+////	GetVersionEx(&(OSVERSIONINFO&)OS);
+//
+//	std::string ret = "Windows ";
+//
+//	if (OS.dwMajorVersion == 10)
+//		ret += "10";
+//	else if (OS.dwMajorVersion == 6) {
+//
+//		if (OS.dwMinorVersion == 3)
+//			ret += "8.1";
+//		else if (OS.dwMinorVersion == 2)
+//			ret += "8";
+//		else if (OS.dwMinorVersion == 1)
+//			ret += "7";
+//		else
+//			ret += "Vista";
+//	}
+//	else if (OS.dwMajorVersion == 5) {
+//
+//		if (OS.dwMinorVersion == 2)
+//			ret += "XP SP2";
+//		else if (OS.dwMinorVersion == 1)
+//			ret += "XP";
+//		else if (OS.dwMinorVersion == 0)
+//			ret += "2000";
+//	}
+//	else if (OS.dwMajorVersion == 4 || OS.dwMajorVersion == 3)
+//		ret += "WinNT";
+//	else
+//		ret = "WINDOWS VERSION NOT FOUND";
+//
+//	return ret;
 }
 
 

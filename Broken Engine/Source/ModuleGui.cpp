@@ -75,6 +75,10 @@ bool ModuleGui::Start()
 {
 	bool ret = true;
 
+	// --- Set scene width/height to default
+	sceneWidth = App->window->GetWindowWidth();
+	sceneHeight = App->window->GetWindowHeight();
+
 	// --- Initialize ImGui ---
 
 	IMGUI_CHECKVERSION();
@@ -228,6 +232,10 @@ void ModuleGui::RequestBrowser(const char * url) const
 
 void ModuleGui::AddPanel(Panel* npanel) {
 	panels.push_back(npanel);
+}
+
+bool ModuleGui::isHoveringScene() const {
+	return isSceneHovered;
 }
 
 void ModuleGui::LogFPS(float fps, float ms)

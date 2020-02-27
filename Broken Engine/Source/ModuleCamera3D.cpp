@@ -58,7 +58,7 @@ bool ModuleCamera3D::CleanUp() {
 
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt) {
-	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered) {
+	if (App->GetAppState() == AppState::EDITOR && App->gui->isHoveringScene()) {
 		m_CameraSpeedDeltaTime = m_CameraSpeed * dt;
 		m_ScrollSpeedDeltaTime = m_ScrollSpeed * dt;
 		m_FinalSpeed = m_CameraSpeedDeltaTime * m_SpeedMultiplicator;
@@ -71,7 +71,7 @@ update_status ModuleCamera3D::Update(float dt) {
 }
 
 void ModuleCamera3D::UpdateCamera() {
-	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered) {
+	if (App->GetAppState() == AppState::EDITOR && App->gui->isHoveringScene()) {
 		float3 newPos(0, 0, 0);
 
 		// --- Move ---
@@ -130,8 +130,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y) {
 	// MYTODO: Make this easy to understand / explain
 
 	// Scene window relative coords
-	float normalized_x = (mouse_x - App->gui->panelScene->posX) / App->gui->panelScene->width * (float)App->window->GetWindowWidth();
-	float normalized_y = (mouse_y - App->gui->panelScene->posY) / App->gui->panelScene->height * (float)App->window->GetWindowHeight();
+	float normalized_x = (mouse_x - App->gui->sceneX) / App->gui->sceneWidth * (float)App->window->GetWindowWidth();
+	float normalized_y = (mouse_y - App->gui->sceneY) / App->gui->sceneHeight * (float)App->window->GetWindowHeight();
 
 	// mouse pos in range -1 - 1
 	normalized_x = ((normalized_x / (float)App->window->GetWindowWidth()) - 0.5) * 2;

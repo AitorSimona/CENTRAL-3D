@@ -23,6 +23,7 @@
     <ProjectGuid>{A251AA97-8926-46C7-A62B-83A59F47BB5E}</ProjectGuid>
     <RootNamespace>BrokenCore</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>BrokenCore</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

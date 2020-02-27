@@ -85,10 +85,17 @@ namespace BrokenEngine {
 
 		void ONResourceDestroyed(Resource* resource);
 
+		//MYTODO For editor panel to set currentDirectory
+		void setCurrentDirectory(ResourceFolder* dir);
+		ResourceFolder* getCurrentDirectory() const;
+
 		// --- Getters ---
 		ResourceFolder* GetAssetsFolder();
 		uint GetDefaultMaterialUID();
 	private:
+		//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
+		ResourceFolder* currentDirectory;
+
 
 		// --- Available importers ---
 		std::vector<Importer*> importers;
