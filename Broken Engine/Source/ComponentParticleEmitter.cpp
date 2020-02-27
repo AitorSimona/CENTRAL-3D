@@ -8,6 +8,7 @@
 #include "ModuleParticles.h"
 #include "Particle.h"
 
+
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
 
@@ -18,8 +19,6 @@
 
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
-	particlesVelocity = { 10,10,10 };
-
 	Enable();
 	
 	App->particles->AddEmitter(this);
@@ -28,12 +27,19 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 	
 	for (int i= 0; i < maxParticles; ++i)
 		particles[i] = new Particle();
+
+	m_RNEngine = std::default_random_engine(m_RandomDevice());
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
 {
 	// MYTODO: Tell module particles to erase its pointer!!!
 	App->particles->DeleteEmitter(this);
+
+	for (int i = 0; i < maxParticles; ++i){
+		delete particles[i];
+	}
+	particles.clear();
 }
 
 void ComponentParticleEmitter::Enable()
@@ -83,8 +89,15 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 			float3 globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
 
-			PxVec3 positionBuffer[] ={ PxVec3( globalPosition.x, globalPosition.y, globalPosition.z) };
-			PxVec3 velocityBuffer[] = { particlesVelocity };
+			PxVec3 positionBuffer[] ={ PxVec3(	globalPosition.x + GetRandomValue(-size.x,size.x),
+												globalPosition.y + GetRandomValue(-size.y,size.y),
+												globalPosition.z + GetRandomValue(-size.z,size.z))};
+
+			PxVec3 velocityBuffer[] = { PxVec3(	particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x,velocityRandomFactor.x) ,
+												particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
+												particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
+
+
 
 			creationData.indexBuffer = indexBuffer;
 			creationData.positionBuffer = PxStrideIterator<const PxVec3>(positionBuffer);
@@ -97,9 +110,8 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 		}
 	}
 
-
 	//Update particles
-	// lock SDK buffers of *PxParticleSystem* ps for reading
+	//lock SDK buffers of *PxParticleSystem* ps for reading
 	PxParticleReadData* rd = particleSystem->lockParticleReadData();
 
 	std::vector<PxU32> indicesToErease;
@@ -127,14 +139,13 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 				particles[i]->position =newPosition;
 			}
 		}
-
-		
 		// return ownership of the buffers back to the SDK
 		rd->unlock();
 	}
-
-		if (particlesToRelease > 0) 
-			particleSystem->releaseParticles(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));
+	if (particlesToRelease > 0) {
+		particleSystem->releaseParticles(particlesToRelease, PxStrideIterator<PxU32>(indicesToErease.data()));
+		validParticles -= particlesToRelease;
+	}
 }
 
 void ComponentParticleEmitter::DrawParticles()
@@ -159,11 +170,52 @@ void ComponentParticleEmitter::DrawParticles()
 
 json ComponentParticleEmitter::Save() const
 {
-	return json();
+	json node;
+
+	node["sizeX"]=std::to_string(size.x);
+	node["sizeY"] = std::to_string(size.y);
+	node["sizeZ"] = std::to_string(size.z);
+
+	node["emisionRate"] = std::to_string(emisionRate);
+
+	node["externalAccelerationX"] = std::to_string(externalAcceleration.x);
+	node["externalAccelerationY"] = std::to_string(externalAcceleration.y);
+	node["externalAccelerationZ"] = std::to_string(externalAcceleration.z);
+
+	node["particlesVelocityX"] = std::to_string(particlesVelocity.x);
+	node["particlesVelocityY"] = std::to_string(particlesVelocity.y);
+	node["particlesVelocityZ"] = std::to_string(particlesVelocity.z);
+
+	node["velocityRandomFactorX"] = std::to_string(velocityRandomFactor.x);
+	node["velocityRandomFactorY"] = std::to_string(velocityRandomFactor.y);
+	node["velocityRandomFactorZ"] = std::to_string(velocityRandomFactor.z);
+
+	node["particlesLifeTime"] = std::to_string(particlesLifeTime);
+
+	return node;
 }
 
 void ComponentParticleEmitter::Load(json& node)
 {
+	/*size.x = node["sizeX"];
+	size.y = node["sizeY"];
+	size.z = node["sizeZ"];
+
+	emisionRate = node["emisionRate"];
+
+	externalAcceleration.x = node["externalAccelerationX"];
+	externalAcceleration.y = node["externalAccelerationY"];
+	externalAcceleration.z = node["externalAccelerationZ"];
+
+	particlesVelocity.x = node["particlesVelocityX"];
+	particlesVelocity.y = node["particlesVelocityY"];
+	particlesVelocity.z	= node["particlesVelocityZ"];
+
+	velocityRandomFactor.x = node["velocityRandomFactorX"];
+	velocityRandomFactor.y = node["velocityRandomFactorY"];
+	velocityRandomFactor.z = node["velocityRandomFactorZ"];
+
+	particlesLifeTime = node["particlesLifeTime"];*/
 }
 
 void ComponentParticleEmitter::CreateInspectorNode()
@@ -233,22 +285,50 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -10.0f, 10.0f);
 
 	ImGui::SameLine();
 	//Y
 	ImGui::Text("Y");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -10.0f, 10.0f);
 	//Z
 	ImGui::SameLine();
 	ImGui::Text("Z");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -10.0f, 10.0f);
+
+	//Random velocity factor
+	ImGui::Text("Velocity random factor");
+	//X
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##SRandomVelocityX", &velocityRandomFactor.x, 0.05f, 0.0f, 10.0f);
+
+	ImGui::SameLine();
+	//Y
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##SRandomVelocityY", &velocityRandomFactor.y, 0.05f, 0.0f, 10.0f);
+	//Z
+	ImGui::SameLine();
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##SRandomVelocityZ", &velocityRandomFactor.z, 0.05f, 0.0f, 10.0f);
 
 	//Particles lifetime
-	ImGui::DragInt("Particles lifetime (ms)", &particlesLifeTime, 50.0f);
+	ImGui::Text("Particles lifetime (ms)");
+	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 50.0f);
 
+}
+
+double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE
+{
+	std::uniform_real_distribution<double> tmp_DoubleDistribution(min, max);
+	return tmp_DoubleDistribution(m_RNEngine);
 }
