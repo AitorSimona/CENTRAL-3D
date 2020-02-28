@@ -154,7 +154,7 @@ json ComponentAnimation::Save() const
 		node["Resources"]["ResourceAnimation"] = std::string(res_anim->GetResourceFile());
 
 	// --- Saving animations ------------------
-	node["Animations"]["Size"] = std::to_string(animations.size());
+	/*node["Animations"]["Size"] = std::to_string(animations.size());
 
 	for (int i = 0; i < animations.size(); ++i)
 	{
@@ -164,7 +164,7 @@ json ComponentAnimation::Save() const
 		node["Animations"][iterator]["End"] = std::to_string(animations[i]->end);
 		node["Animations"][iterator]["Loop"] = animations[i]->loop;
 		node["Animations"][iterator]["Default"] = animations[i]->Default;
-	}
+	}*/
 
 	return node;
 }
@@ -187,20 +187,20 @@ void ComponentAnimation::Load(json& node)
 
 	//--- Loading animations ---
 
-	std::string size = node["Animations"]["Size"];
-	int anim_size = std::stoi(size);
+	//std::string size = node["Animations"]["Size"];
+	//int anim_size = std::stoi(size);
 
-	for (int i = 0; i < anim_size; ++i)
-	{
-		std::string iterator = std::to_string(i);
-		std::string name = node["Animations"][iterator]["Name"];
-		std::string start = node["Animations"][iterator]["Start"];
-		std::string end = node["Animations"][iterator]["End"];
-		bool loop = node["Animations"][iterator]["Loop"];
-		bool Default = node["Animations"][iterator]["Default"];
+	//for (int i = 0; i < anim_size; ++i)
+	//{
+	//	std::string iterator = std::to_string(i);
+	//	std::string name = node["Animations"][iterator]["Name"];
+	//	std::string start = node["Animations"][iterator]["Start"];
+	//	std::string end = node["Animations"][iterator]["End"];
+	//	bool loop = node["Animations"][iterator]["Loop"];
+	//	bool Default = node["Animations"][iterator]["Default"];
 
-		CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
-	}
+	//	CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
+	//}
 
 }
 
