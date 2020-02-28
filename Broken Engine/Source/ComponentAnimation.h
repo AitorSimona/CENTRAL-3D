@@ -54,7 +54,7 @@ private:
 	void GetAllBones(GameObject* go, std::map<uint, ComponentMesh*>& meshes, std::vector<ComponentBone*>& bones);
 
 	void BlendAnimations(float blend_time);
-	void StartBlend(uint start, Animation* anim);
+	void StartBlend(Animation* anim);
 
 	bool HasSkeleton(std::vector<GameObject*> GO) const;
 

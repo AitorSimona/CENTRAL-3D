@@ -205,15 +205,23 @@ void ComponentAnimation::CreateInspectorNode()
 		{
 			ImGui::Text("Animation name: %s", res_anim->name.c_str());
 
+			if (ImGui::Button("Create New Animation"))
+				CreateAnimation("New Animation", 0, 0, false);
+
 			for (int i = 0; i < animations.size(); i++)
 			{
-				
 				ImGui::Separator();
-				ImGui::Text("Name: %s", animations[i]->name.c_str());
+				// --- Game Object Name Setter ---
+				static char Anim_name[100] = "";
+				strcpy_s(Anim_name, 100, animations[i]->name.c_str());
+				if (ImGui::InputText("", Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+					animations[i]->name = Anim_name;
+
 				ImGui::Text("Animation Frames: %f", (animations[i]->end - animations[i]->start));
 				ImGui::Text("Start Frame: %u", animations[i]->start);
 				ImGui::Text("End Frame: %u", animations[i]->end);
 				ImGui::Separator();
+				
 			}
 		}
 			
@@ -287,7 +295,7 @@ void ComponentAnimation::UpdateJointsTransform()
 			if (!playing_animation->loop)
 				if (playing_animation->Default == false)
 				{
-					StartBlend(GetDefaultAnimation()->start, GetDefaultAnimation());
+					StartBlend(GetDefaultAnimation());
 				}
 			time = 0;
 		}
@@ -360,9 +368,9 @@ void ComponentAnimation::UpdateJointsTransform()
 	}
 }
 
-void ComponentAnimation::StartBlend(uint start, Animation* anim)
+void ComponentAnimation::StartBlend(Animation* anim)
 {
-	blend_start_Frame = start;
+	blend_start_Frame = anim->start;
 	next_animation = anim;
 
 	if (end_position == nullptr)
