@@ -61,8 +61,10 @@ private:
 	PxVec3 externalAcceleration = {0,10,0};
 	PxVec3 particlesVelocity = { 0,0,0 };
 	PxVec3 velocityRandomFactor = {5,5,5};
+	
 	//Particle properties
 	int particlesLifeTime=1000;
+	float particlesSize = 1;
 
 	float spawnClock=0.0f;
 };

@@ -79,11 +79,6 @@ void ComponentDynamicRigidBody::StaticToDynamicRigidBody()
 	{
 		collider->CreateCollider(collider->type, true);
 	}
-
-	//else
-	//{
-
-	//}
 }
 
 
