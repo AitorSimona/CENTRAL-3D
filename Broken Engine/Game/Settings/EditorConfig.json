@@ -3,19 +3,7 @@
         "Organization": "CITM - UPC",
         "Title": "Broken Engine"
     },
-    "GUI": {
-        "About": false,
-        "Console": true,
-        "Hierarchy": true,
-        "Inspector": true,
-        "Physics": false,
-        "Project": true,
-        "Resources": true,
-        "Scene": true,
-        "Settings": false,
-        "ShaderEditor": true,
-        "Toolbar": true
-    },
+    "GUI": null,
     "Input": null,
     "Renderer3D": {
         "VSync": true

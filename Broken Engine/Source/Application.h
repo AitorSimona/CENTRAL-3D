@@ -84,6 +84,8 @@ public:
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
 
+	bool isGame = false;
+
 private:
 
 	std::list<Module*> list_modules;

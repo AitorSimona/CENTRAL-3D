@@ -35,7 +35,7 @@ ModuleGui::~ModuleGui()
 bool ModuleGui::Init(json file)
 {
 	// --- Create UI Panels ---
-
+	#ifndef BE_GAME_BUILD
 	panelSettings = new PanelSettings("Settings");
 	panels.push_back(panelSettings);
 
@@ -70,6 +70,7 @@ bool ModuleGui::Init(json file)
 	panels.push_back(panelPhysics);
 
 	LoadStatus(file);
+	#endif
 
 	return true;
 }
@@ -133,6 +134,7 @@ update_status ModuleGui::PreUpdate(float dt)
 update_status ModuleGui::Update(float dt)
 {
 	// --- Create Main Menu Bar ---
+	#ifndef BE_GAME_BUILD
 
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -296,6 +298,8 @@ update_status ModuleGui::Update(float dt)
 
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
+
+	#endif
 
 	return UPDATE_CONTINUE;
 }
