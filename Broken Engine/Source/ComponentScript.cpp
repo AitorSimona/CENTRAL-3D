@@ -13,7 +13,7 @@ ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerG
 	type = ComponentType::Script;
 }
 
-ComponentScript::~ComponentScript() 
+ComponentScript::~ComponentScript()
 {
 	App->scripting->DeleteScriptInstanceWithParentComponent(this);
 
@@ -89,7 +89,7 @@ void ComponentScript::CreateInspectorNode()
 
 		ImGui::TreePop();
 	}
-	
+
 }
 
 void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
@@ -131,7 +131,7 @@ void ComponentScript::AssignScript(ResourceScript* script_resource)
 
 	//Send Component info to scripting to create a Script Instance / Lua class
 	App->scripting->SendScriptToModule(this);
-	//MYTODO: Dídac trying to compile
+	//MYTODO: Dï¿½dac trying to compile
 	/*ResourceScript* new_script = (ResourceScript*)App->resources->CreateNewResource(Resource::SCRIPT);
 	this->script = new_script;
 	std::string filename;

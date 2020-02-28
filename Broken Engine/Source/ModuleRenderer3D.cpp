@@ -6,12 +6,16 @@
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
 #include "ModuleResourceManager.h"
+#include "ModuleParticles.h"
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
+#include "ComponentCollider.h"
 #include "ResourceShader.h"
+#include "ComponentAudioListener.h"
+#include "Component.h"
 
 #include "PanelScene.h"
 
@@ -150,6 +154,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
+
+	// --- Draw Particles ---
+	App->particles->DrawParticles();
 
 	// --- Selected Object Outlining ---
 	HandleObjectOutlining();
@@ -338,6 +345,13 @@ void ModuleRenderer3D::HandleObjectOutlining()
 
 		// --- Search for Renderer Component ---
 		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+
+		// --- Search for Collider Component ---
+		ComponentCollider* collider = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCollider>();
+
+		// --- If Found, draw collider shape ---
+		if (collider && collider->IsEnabled())
+			collider->Draw();
 
 		// --- If Found, draw the mesh ---
 		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())

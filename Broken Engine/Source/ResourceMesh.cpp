@@ -228,6 +228,8 @@ void ResourceMesh::OnDelete()
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
+
+	if(App->fs->Exists(resource_file.c_str()))
 	App->fs->Remove(resource_file.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);

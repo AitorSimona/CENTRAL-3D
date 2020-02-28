@@ -36,8 +36,11 @@ public:
 	void ResetGameObjectUID(GameObject* go);
 
 	void CreateGrid(float target_distance);
-	GameObject* LoadCube();
 	GameObject* LoadSphere();
+	GameObject* LoadCube();
+	GameObject* LoadCapsule();
+	GameObject* LoadPlane();
+	GameObject* LoadCylinder();
 
 	void DestroyGameObject(GameObject* go);
 
@@ -72,38 +75,57 @@ public:
 		DrawWireFromVertices(corners, color, VAO);
 	};
 
+	// --- Primitives ---
+	GameObject* LoadPrimitiveObject(uint PrimitiveMeshID);
+	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
+	void CreateCylinder(float radius, float height, ResourceMesh* rmesh);
+	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
+	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+
+	const ResourceMesh* GetCubeMesh()const { return cube; }
+	const ResourceMesh* GetSphereMesh() const { return sphere; }
+	const ResourceMesh* GetCapsuleMesh() const { return capsule; }
+	const ResourceMesh* GetPlaneMesh() const { return plane; }
+	const ResourceMesh* GetCylinderMesh() const { return cylinder; }
 private:
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);
 	static void ONGameObjectDestroyed(const Event& e);
 
 private:
+
 	GameObject* CreateRootGameObject();
 	void DrawScene();
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
-	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
+
 public:
+
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
 	ResourceScene* currentScene = nullptr;
 private:
+
+	// --- Do not modify, just use ---
+	ResourceMesh* cube = nullptr;
+	ResourceMesh* sphere = nullptr;
+	ResourceMesh* capsule = nullptr;
+	ResourceMesh* plane = nullptr;
+	ResourceMesh* cylinder = nullptr;
+	ResourceScene* defaultScene = nullptr;
+
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
 	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
-
-	ResourceScene* defaultScene = nullptr;
-	ResourceMesh* cube = nullptr;
-	ResourceMesh* sphere = nullptr;
 };
 
 #endif

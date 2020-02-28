@@ -4,8 +4,13 @@
 #include "ComponentMesh.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
+#include "ComponentCollider.h"
+#include "ComponentDynamicRigidBody.h"
+#include "ComponentParticleEmitter.h"
 #include "ComponentScript.h"
 #include "ModuleSceneManager.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "Math.h"
 
@@ -54,12 +59,24 @@ GameObject::~GameObject()
 
 void GameObject::Update(float dt)
 {
+	// PHYSICS: TEMPORAL example, after updating transform, update collider
+	ComponentCollider* collider = GetComponent<ComponentCollider>();
+
+	if (collider)
+		collider->UpdateLocalMatrix();
+
 	if (GetComponent<ComponentTransform>()->update_transform)
-		this->OnUpdateTransform();
+		OnUpdateTransform();
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);
+	}
+
+	for (int i = 0; i < components.size(); ++i)
+	{
+		if (components[i]->GetActive())
+			components[i]->Update();
 	}
 
 }
@@ -107,13 +124,13 @@ void GameObject::OnUpdateTransform()
 
 	ComponentTransform* transform = GetComponent<ComponentTransform>();
 
-	if(parent)
-	transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
+	if (parent)
+		transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
 
 	ComponentCamera* camera = GetComponent<ComponentCamera>();
 
-	if(camera)
-	camera->OnUpdateTransform(transform->GetGlobalTransform());
+	if (camera)
+		camera->OnUpdateTransform(transform->GetGlobalTransform());
 
 	// --- Update all children ---
 	if (childs.size() > 0)
@@ -127,7 +144,7 @@ void GameObject::OnUpdateTransform()
 	UpdateAABB();
 }
 
-void GameObject::RemoveChildGO(GameObject * GO)
+void GameObject::RemoveChildGO(GameObject* GO)
 {
 	// --- Remove given child from list ---
 	if (childs.size() > 0)
@@ -143,7 +160,7 @@ void GameObject::RemoveChildGO(GameObject * GO)
 	}
 }
 
-void GameObject::AddChildGO(GameObject * GO)
+void GameObject::AddChildGO(GameObject* GO)
 {
 	// --- Add a child GO to a Game Object this ---
 	if (!FindChildGO(GO))
@@ -159,7 +176,7 @@ void GameObject::AddChildGO(GameObject * GO)
 	}
 }
 
-bool GameObject::FindChildGO(GameObject * GO)
+bool GameObject::FindChildGO(GameObject* GO)
 {
 	// --- Look for given GO in child list and return true if found ---
 	bool ret = false;
@@ -178,9 +195,9 @@ bool GameObject::FindChildGO(GameObject * GO)
 	return ret;
 }
 
-Component * GameObject::AddComponent(Component::ComponentType type)
+Component* GameObject::AddComponent(Component::ComponentType type)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 5, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 10, "Component Creation Switch needs to be updated");
 
 	Component* component = nullptr;
 
@@ -203,6 +220,21 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		case Component::ComponentType::Camera:
 			component = new ComponentCamera(this);
 			break;
+		case Component::ComponentType::Collider:
+			component = new ComponentCollider(this);
+			break;
+		case Component::ComponentType::DynamicRigidBody:
+			component = new ComponentDynamicRigidBody(this);
+			break;
+		case Component::ComponentType::ParticleEmitter:
+			component = new ComponentParticleEmitter(this);
+			break;
+			case Component::ComponentType::AudioSource:
+				component = new ComponentAudioSource(this);
+				break;
+			case Component::ComponentType::AudioListener:
+				component = new ComponentAudioListener(this);
+				break;
 		case Component::ComponentType::Script:
 			component = new ComponentScript(this);
 			break;
@@ -301,18 +333,18 @@ std::string GameObject::GetName() const
 	return name;
 }
 
-const AABB & GameObject::GetAABB()
+const AABB& GameObject::GetAABB()
 {
 	UpdateAABB();
 	return aabb;
 }
 
-const OBB & GameObject::GetOBB() const
+const OBB& GameObject::GetOBB() const
 {
 	return obb;
 }
 
-bool & GameObject::GetActive()
+bool& GameObject::GetActive()
 {
 	return active;
 }
@@ -341,7 +373,7 @@ void GameObject::UpdateAABB()
 		aabb.SetNegativeInfinity();
 		aabb.Enclose(obb);
 	}
-	if(!mesh)
+	if (!mesh)
 	{
 		aabb.SetNegativeInfinity();
 		aabb.SetFromCenterAndSize(transform->GetGlobalPosition(), float3(1, 1, 1));

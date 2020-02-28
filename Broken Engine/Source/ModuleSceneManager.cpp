@@ -14,6 +14,7 @@
 #include "ModuleEventManager.h"
 #include "ComponentCamera.h"
 
+
 #include "ModuleGui.h"
 
 #include "ImporterMaterial.h"
@@ -24,6 +25,12 @@
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
+
+#include "../Game/Assets/Sounds/Wwise_IDs.h"
+#include "ComponentAudioSource.h"
+#include "Component.h"
+#include "ModuleAudio.h"
+
 #include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
@@ -70,10 +77,21 @@ bool ModuleSceneManager::Start()
 	// --- Create primitives ---
 	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
 	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
+	capsule = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCapsule");
+	plane = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultPlane");
+	cylinder = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCylinder");
 
-	// Not needed since we are checking if resources are in Memory in LoadCube and LoadSphere, which are called by ModuleGui
-	//CreateCube(1, 1, 1, cube);
-	//CreateSphere(1.0f, 25, 25, sphere);
+	CreateCube(1, 1, 1, cube);
+	CreateSphere(1.0f, 25, 25, sphere);
+	CreateCapsule(1, 1, capsule);
+	CreatePlane(1, 1, 1, plane);
+	CreateCylinder(1, 1, cylinder);
+
+	cube->LoadToMemory();
+	sphere->LoadToMemory();
+	capsule->LoadToMemory();
+	plane->LoadToMemory();
+	cylinder->LoadToMemory();
 
 	// --- Create adaptive grid ---
 	glGenVertexArrays(1, &Grid_VAO);
@@ -81,6 +99,14 @@ bool ModuleSceneManager::Start()
 	CreateGrid(10.0f);
 
 	glGenVertexArrays(1, &PointLineVAO);
+
+	//Hardcoded Debug for audio
+	//music = LoadCube();
+	//music->AddComponent(Component::ComponentType::AudioSource);
+	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();
+	//musicSource->SetID(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->isPlaying = true;
 
 	return true;
 }
@@ -95,14 +121,15 @@ update_status ModuleSceneManager::PreUpdate(float dt)
 update_status ModuleSceneManager::Update(float dt)
 {
 	root->Update(dt);
-
-
 	return UPDATE_CONTINUE;
 }
 
 bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
+
+	delete root;
+	root = nullptr;
 
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
@@ -446,8 +473,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 			root->childs.clear();
 		}
 
-		currentScene = scene; // force this so gos are not added to another scene 
-		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());	
+		currentScene = scene; // force this so gos are not added to another scene
+		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
 	}
 	else
 		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");
@@ -713,6 +740,82 @@ void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, Reso
 	}
 }
 
+void ModuleSceneManager::CreateCylinder(float radius, float height, ResourceMesh* rmesh)
+{
+	// --- Create par shapes cylinder ---
+	//First, create a normal cylinder and put it at (0,0,0)
+	par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(25, 25);
+	par_shapes_translate(Cyl_PrShM, 0, 0, 0);
+	par_shapes_scale(Cyl_PrShM, radius/2, height/2, radius/2);
+
+	//Now create 2 disks around the cylinder (since x, y and z are the same, we can just pick x)
+	float normal[3] = { 0, 0, 1 };
+	float center_axis[3] = { 0, 0, radius };
+	float center_axis2[3] = { 0, 0, 1 };
+	par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(radius/2, 25, center_axis, normal);
+	par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(radius/2, 25, center_axis2, normal);
+
+	//Rotate one of the disks (to make it see outside the cylinder)
+	float RotAxis[3] = { 1, 0, 0 };
+	par_shapes_rotate(Disk2_PrShM, PI, RotAxis);
+	par_shapes_translate(Disk2_PrShM, 0, 0, 1);
+	par_shapes_translate(Disk_PrShM, 0, 0, -0.5f);
+
+	//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
+	par_shapes_mesh* ParshapeMesh = par_shapes_create_empty();
+	par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
+
+	if (ParshapeMesh)
+	{
+		par_shapes_scale(ParshapeMesh, radius/2, height/2, radius/2);
+		LoadParMesh(ParshapeMesh, rmesh);
+	}
+}
+
+void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
+{
+	// --- Create par shapes sphere ---
+	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
+
+	if (mesh)
+	{
+		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
+		LoadParMesh(mesh, rmesh);
+	}
+}
+
+void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh* rmesh)
+{
+	// --- Create spheres and cylinder to build capsule ---
+	par_shapes_mesh* top_sphere = par_shapes_create_hemisphere(25, 25);
+	par_shapes_mesh* bot_sphere = par_shapes_create_hemisphere(25, 25);
+	par_shapes_mesh* cylinder = par_shapes_create_cylinder(25,25);
+	par_shapes_scale(top_sphere, radius / 2, radius / 2, radius / 2);
+	par_shapes_scale(bot_sphere, radius / 2, radius / 2, radius / 2);
+	par_shapes_scale(cylinder, radius / 2, height/2, radius / 2);
+
+	// --- Rotate and translate hemispheres ---
+	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_translate(top_sphere, 0, 0, height / 2);
+	par_shapes_rotate(bot_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_rotate(bot_sphere, float(PAR_PI), (float*)&float3::unitX);
+
+	// --- Merge meshes ---
+	par_shapes_merge_and_free(top_sphere, cylinder);
+	par_shapes_merge_and_free(top_sphere, bot_sphere);
+
+	// --- Position final mesh ---
+	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_translate(top_sphere, 0, height/4, 0);
+
+	if (top_sphere)
+	{
+		LoadParMesh(top_sphere, rmesh);
+	}
+}
+
 void ModuleSceneManager::CreateGrid(float target_distance)
 {
 	// --- Fill vertex data ---
@@ -758,29 +861,34 @@ void ModuleSceneManager::CreateGrid(float target_distance)
 
 GameObject * ModuleSceneManager::LoadCube()
 {
-	// --- If the cube was unloaded, create par shape and extract data again ---
-	if (!cube->IsInMemory())
-		CreateCube(1, 1, 1, cube);
-
-	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(cube->GetUID());
-
-	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
-	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
-
-	return new_object;
+	return LoadPrimitiveObject(cube->GetUID());
 }
 
-GameObject * ModuleSceneManager::LoadSphere()
+GameObject* ModuleSceneManager::LoadPlane()
 {
-	// --- If the sphere was unloaded, create par shape and extract data again ---
-	if (!sphere->IsInMemory())
-		CreateSphere(1.0f, 25, 25, sphere);
+	return LoadPrimitiveObject(plane->GetUID());
+}
 
+GameObject* ModuleSceneManager::LoadSphere()
+{
+	return LoadPrimitiveObject(sphere->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadCylinder()
+{
+	return LoadPrimitiveObject(cylinder->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadCapsule()
+{
+	return LoadPrimitiveObject(capsule->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
+{
 	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(sphere->GetUID());
+	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(PrimitiveMeshID);
 
 	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
