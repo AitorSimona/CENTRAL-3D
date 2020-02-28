@@ -218,22 +218,27 @@ void ComponentAnimation::CreateInspectorNode()
 				char Anim_name[100] = "";
 				strcpy_s(Anim_name, 100, animations[i]->name.c_str());
 				std::string str = "Aniamtion";
-				ImGui::PushItemWidth(200); if (ImGui::InputText(str.append(std::to_string(i +1)).c_str(), Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				ImGui::PushItemWidth(200); if (ImGui::InputText(str.append(std::to_string(i + 1)).c_str(), Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 					animations[i]->name = Anim_name;
 
 				ImGui::Text("Animation Frames: %i", (animations[i]->end - animations[i]->start));
 				std::string Start = animations[i]->name;
 				ImGui::PushItemWidth(100); ImGui::InputInt(Start.append(" Start").c_str(), &animations[i]->start, 1, 0);
 				std::string End = animations[i]->name;
-				ImGui::PushItemWidth(100); ImGui::InputInt(End.append(" End").c_str(), &animations[i]->end, 1,0);
+				ImGui::PushItemWidth(100); ImGui::InputInt(End.append(" End").c_str(), &animations[i]->end, 1, 0);
 				std::string Loop = animations[i]->name;
 				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
 				
+				std::string name = animations[i]->name;
+				std::string Delete = "Delete ";
+				std::string button = Delete.append(name);
+				if (ImGui::Button(button.c_str()))
+				{
+					delete animations[i];
+					animations.erase(animations.begin() + i);
+				}
 			}
 		}
-			
-
-		
 
 		ImGui::TreePop();
 	}
