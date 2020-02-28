@@ -10,6 +10,7 @@
 #include "Assimp/include/types.h"
 
 #pragma comment( lib, "PhysFS/libx86/physfs.lib" )
+#pragma comment (lib, "Assimp/libx86/assimp.lib")
 
 #include "mmgr/mmgr.h"
 

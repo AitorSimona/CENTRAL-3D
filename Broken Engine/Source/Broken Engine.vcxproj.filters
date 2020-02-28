@@ -551,6 +551,9 @@
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp">
       <Filter>Sources\3rd party\MathGeoLib\Time</Filter>
     </ClCompile>
+    <ClCompile Include="EngineMain.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="EXE ICON.ico">

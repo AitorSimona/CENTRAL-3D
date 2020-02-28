@@ -1,6 +1,5 @@
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
-#include "BrokenEngineMain.h"
 
 
 EngineApplication* EngineApp = NULL;

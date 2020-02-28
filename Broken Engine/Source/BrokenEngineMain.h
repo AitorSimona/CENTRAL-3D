@@ -40,7 +40,7 @@ extern BrokenEngine::Application* BrokenEngine::CreateApplication();
 
 BrokenEngine::Application* gameApp = NULL;
 int main(int argc, char** argv) {
-	ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -49,21 +49,21 @@ int main(int argc, char** argv) {
 		switch (state) {
 		case MAIN_CREATION:
 
-			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
+			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
 			gameApp = BrokenEngine::CreateApplication();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
-			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Init --------------");
+			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Init --------------");
 			if (gameApp->Init() == false) {
-				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Init exits with ERROR");
+				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
 			else {
 				state = MAIN_UPDATE;
-				ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Update --------------");
+				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Update --------------");
 			}
 
 			break;
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 			int update_return = BrokenEngine::App->Update();
 
 			if (update_return == UPDATE_ERROR) {
-				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Update exits with ERROR");
+				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Update exits with ERROR");
 				state = MAIN_EXIT;
 			}
 
@@ -84,9 +84,9 @@ int main(int argc, char** argv) {
 
 		case MAIN_FINISH:
 
-			ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application CleanUp --------------");
+			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application CleanUp --------------");
 			if (gameApp->CleanUp() == false) {
-				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
+				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
 			}
 			else
 				main_return = EXIT_SUCCESS;
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
 
 		}
 	}
-	ENGINE_AND_SYSTEM_CONSOLE_LOG("Exiting app '%s'...\n", TITLE);
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Exiting app '%s'...\n", TITLE);
 
 	delete gameApp;
 	return main_return;

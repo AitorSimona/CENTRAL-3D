@@ -95,7 +95,9 @@ Application::~Application() {
 
 bool Application::Init() {
 	bool ret = true;
-	//COMPILATIONLOGINFO;
+	COMPILATIONLOGINFO;
+	EngineConsoleLog(__FILE__, __LINE__, "Test"); 
+	SystemConsoleLog(__FILE__, __LINE__, "Test");
 
 	// --- Load App data from JSON files ---
 	json config = JLoader.Load(configpath.data());

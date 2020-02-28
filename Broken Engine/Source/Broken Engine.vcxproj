@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineApplication.cpp" />
+    <ClCompile Include="EngineMain.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="Imgui\imgui.cpp" />
     <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp" />

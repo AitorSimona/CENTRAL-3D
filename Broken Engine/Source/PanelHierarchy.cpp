@@ -116,7 +116,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 		// --- Set Game Object to be destroyed ---
 		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == BrokenEngine::KEY_DOWN)
 		{
-			ENGINE_CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
+			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
 			to_destroy = Go;
 		}
 
