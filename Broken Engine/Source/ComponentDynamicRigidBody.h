@@ -22,6 +22,7 @@ public:
 	inline void UseGravity(bool enable) { rigidBody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !enable); }
 	inline void SetKinematic(bool enable) { rigidBody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, enable); }
 
+	//Lineal
 	inline float3 GetLinearVelocity() { return float3(rigidBody->getLinearVelocity().x, rigidBody->getLinearVelocity().y, rigidBody->getLinearVelocity().z); }
 	inline float3 GetAngularVelocity() { return float3(rigidBody->getAngularVelocity().x, rigidBody->getAngularVelocity().y, rigidBody->getAngularVelocity().z); }
 	inline void SetLinearVelocity(float3 vel) { rigidBody->setLinearVelocity(PxVec3(vel.x, vel.y, vel.z)); }
@@ -29,11 +30,12 @@ public:
 
 	inline void SetAngularDamping(PxReal value) { rigidBody->setAngularDamping(value); }
 	inline void SetLinearDamping(PxReal value) { rigidBody->setLinearDamping(value); }
-	inline PxReal getAngularDamping() { rigidBody->getAngularDamping(); }
+	inline PxReal GetAngularDamping() { rigidBody->getAngularDamping(); }
 	inline PxReal GetLinearDamping() { rigidBody->getLinearDamping(); }
 
-	inline void addForce(PxVec3 force, PxForceMode::Enum mode) { rigidBody->addForce(force, mode); }
-	inline void addTorque(PxVec3 force, PxForceMode::Enum mode) { rigidBody->addTorque(force, mode); }
+	//Acceleration
+	inline void AddForce(PxVec3 force, PxForceMode::Enum mode) { rigidBody->addForce(force, mode); }
+	inline void AddTorque(PxVec3 force, PxForceMode::Enum mode) { rigidBody->addTorque(force, mode); }
 
 	inline void FeezePosition_X(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, enable); }
 	inline void FeezePosition_Y(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, enable); }

@@ -48,7 +48,7 @@ void Particle::Draw()
 	}
 
 	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float f = diameter / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
@@ -76,8 +76,6 @@ void Particle::Draw()
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 	}
-
-	
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
