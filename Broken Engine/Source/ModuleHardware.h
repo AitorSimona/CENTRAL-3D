@@ -206,8 +206,8 @@ public:
 	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 	void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
 
-	const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
-	const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
+	const std::string GetGPUBenchmark()	const { return (const char*)glGetString(GL_VENDOR); }
+	const std::string GetGPUModel()		const { return (const char*)glGetString(GL_RENDERER); }
 
 	const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 	const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0

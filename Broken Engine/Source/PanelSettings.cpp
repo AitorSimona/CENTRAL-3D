@@ -432,9 +432,9 @@ inline void PanelSettings::HardwareNode() const
 	ImGui::Text("GRAPHICS CARD INFORMATION (GPU)");
 	ImGui::Separator();
 
-	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(GPUData.GetGPUBenchmark()));
+	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUBenchmark().c_str());
 	ImGui::Text("GPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUInfo_GPUDet().m_GPUBrand.c_str());
-	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(GPUData.GetGPUModel()));
+	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUModel().c_str());
 	ImGui::Text("GPU Driver"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", EngineApp->hardware->GetInfo().gpu_driver.data());
 	ImGui::Text("GPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(GPUData.GetGPUInfo_GPUDet().m_GPUVendor).c_str());
