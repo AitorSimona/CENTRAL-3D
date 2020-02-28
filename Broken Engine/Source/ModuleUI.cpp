@@ -63,11 +63,14 @@ void ModuleUI::Draw() const
 {
 	//// change camera to ortographic
 	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
 	glLoadIdentity();
+	//glPushMatrix();
+
 	glOrtho(0, App->gui->panelScene->height, 0, App->gui->panelScene->width, -1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
@@ -82,7 +85,10 @@ void ModuleUI::Draw() const
 			canvas[i]->Draw();
 	}
 
-	glPopMatrix();
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	//glPopMatrix();
 }
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)

@@ -13,6 +13,7 @@
 #include "Component.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
+//#include "ModuleWindow.h"
 
 #include "ResourceShader.h"
 #include "ResourceTexture.h"
@@ -44,18 +45,21 @@ void Image::Draw()
 
 	rotation2D *= DEGTORAD;
 
-	float4x4 transform = float4x4::identity;
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
-	float3 rot = this->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetRotation();
-	float3 frustum_front = App->renderer3D->active_camera->frustum.Front();
-	float3 rotation = float3(rot.x, rot.y, rotation2D);
-	float3 rotation_normalized = vec(rotation.Normalize());
 
-	transform = transform.FromTRS(float3(frustum_pos.x + position2D.x, frustum_pos.y + position2D.y, frustum_pos.z + 10),
-		Quat::FromEulerXYZ(rot.x, rot.y, rotation2D), 
-		float3(size2D,1));
+	// --- Frame image with camera ---
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x + position2D.x, frustum_pos.y + position2D.y,10),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D, 1));
+	
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
+	
+	float3 Movement = App->renderer3D->active_camera->frustum.Front();
+	float3 camera_pos = frustum_pos;
+	
+	if (Movement.IsFinite())
+		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
 
-	transform.RotateFromTo(rotation_normalized, frustum_front);
+
 	rotation2D *= RADTODEG;
 
 	// --- Set Uniforms ---
@@ -92,6 +96,9 @@ void Image::Draw()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
+
+	// --- Set camera back to original position ---
+	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
 
 json Image::Save() const
@@ -128,10 +135,10 @@ void Image::CreateInspectorNode()
 		ImGui::Text("Position:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imageposition", &position2D.x);
+		ImGui::DragFloat("x##imageposition", &position2D.x, 0.01f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imageposition", &position2D.y);
+		ImGui::DragFloat("y##imageposition", &position2D.y, 0.01f);
 
 		// Rotation
 		ImGui::Text("Rotation:");
