@@ -14,6 +14,10 @@ public:
 	// ENGINE TRANSLATOR
 	// General
 
+	// Systems Functions
+	void ActivateParticlesEmission() const;
+	void DeactivateParticlesEmission() const;
+
 	//--------------------------------------------------Comented all functions for now, since we are testing in the 1st place the module itself------------------------//
 	void LogFromLua(const char* string);
 

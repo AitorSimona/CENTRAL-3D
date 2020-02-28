@@ -17,6 +17,9 @@ end
 function lua_table:Update ()
 	dt = lua_table["Functions"]:dt ()
 
+	--Particles Emission Activation/Deactivation
+	--lua_table["Functions"]:ActivateParticlesEmission()
+	--lua_table["Functions"]:DeactivateParticlesEmission()
 	
 end
 

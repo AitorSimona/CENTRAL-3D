@@ -7,6 +7,8 @@
 #include "ComponentTransform.h"
 #include "GameObject.h"
 
+#include "ComponentParticleEmitter.h"
+
 #include "ScriptData.h"
 
 
@@ -21,6 +23,40 @@ Scripting::Scripting()
 Scripting::~Scripting()
 {
 }
+
+
+// ------------------------ SYSTEMS FUNCTIONS ------------------------ //
+void Scripting::ActivateParticlesEmission() const
+{
+	ComponentParticleEmitter* emmiter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();	
+
+	if (emmiter && !emmiter->IsEnabled())
+	{
+		emmiter->Enable();
+		ENGINE_CONSOLE_LOG("[Script]: Particles Emission Enabled");
+	}
+	else if(emmiter && emmiter->IsEnabled())
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component already Enabled");
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+}
+
+void Scripting::DeactivateParticlesEmission() const
+{
+	ComponentParticleEmitter* emmiter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+
+	if (emmiter && emmiter->IsEnabled())
+	{
+		emmiter->Disable();
+		ENGINE_CONSOLE_LOG("[Script]: Particles Emission Disabled");
+	}
+	else if (emmiter && !emmiter->IsEnabled())
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component already Disabled");
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+}
+
+// ------------------------------------------------------------------- //
 
 //Function that Lua will be able to call as LOG
 void Scripting::LogFromLua(const char* string)

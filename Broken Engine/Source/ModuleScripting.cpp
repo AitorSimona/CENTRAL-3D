@@ -186,8 +186,19 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
 		.addFunction("ShakeController", &Scripting::ShakeController)
 		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
+		
+		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
+		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
+		
 		.endClass()
 		.endNamespace();
+
+//	luabridge::getGlobalNamespace(L)
+//		.beginNamespace("Debug")
+//		.beginClass <Scripting>("Scripting")
+//		.addConstructor<void(*) (void)>()
+//		.endClass()
+//		.endNamespace();
 
 	Scripting Scripting;
 
