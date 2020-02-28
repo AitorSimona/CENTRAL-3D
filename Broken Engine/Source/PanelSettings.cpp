@@ -10,6 +10,8 @@
 
 #include "mmgr/mmgr.h"
 
+#pragma comment (lib, "Assimp/libx86/assimp.lib")
+
 
 PanelSettings::PanelSettings(char * name): BrokenEngine::Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
 {

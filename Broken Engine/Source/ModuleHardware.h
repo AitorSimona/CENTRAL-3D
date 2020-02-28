@@ -66,7 +66,7 @@ private:
 
 	mutable MEMORYSTATUSEX m_MemoryInfo;
 
-	mutable PROCESS_MEMORY_COUNTERS* m_ProcessMemCounters;
+	mutable PROCESS_MEMORY_COUNTERS m_ProcessMemCounters;
 	mutable SIZE_T mProcess_vMemUsed;
 	mutable SIZE_T mProcess_physMemUsed;
 
