@@ -52,7 +52,7 @@ void ComponentParticleEmitter::Enable()
 	active = true;
 
 	particleSystem = App->physics->mPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
-	particleSystem->setMaxMotionDistance(1000);
+	particleSystem->setMaxMotionDistance(100);
 
 	if (particleSystem)
 		App->physics->mScene->addActor(*particleSystem);
