@@ -18,9 +18,15 @@ function lua_table:Update ()
 	dt = lua_table["Functions"]:dt ()
 
 	--Object Transformations
-	rotX = lua_table["Functions"]:GetRotationX()
+	lua_table["Functions"]:AddForce(10, 10, 10, 0)
+
+	rotX, rotY, rotZ = lua_table["Functions"]:GetAngularVelocity()
+	posX, posY, posZ = lua_table["Functions"]:GetLinearVelocity()
+	mass = lua_table["Functions"]:UseGravity(false)
 
 	lua_table["Functions"]:LOG (rotX)
+	lua_table["Functions"]:LOG (posX)
+	lua_table["Functions"]:LOG (mass)
 
 	--Particles Emission Activation/Deactivation
 	--lua_table["Functions"]:ActivateParticlesEmission()

@@ -201,11 +201,24 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("SetPosition", &Scripting::SetPosition)
 
 		.addFunction("RotateObject", &Scripting::RotateObject)
-		.addFunction("SetObjectRotation", &Scripting::RotateObject)
+		.addFunction("SetObjectRotation", &Scripting::SetObjectRotation)
 
 		//Systems Functions
 		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
+
+		.addFunction("GetAngularVelocity", &Scripting::GetAngularVelocity)
+		.addFunction("SetAngularVelocity", &Scripting::SetAngularVelocity)
+		.addFunction("GetLinearVelocity", &Scripting::GetLinearVelocity)
+		.addFunction("SetLinearVelocity", &Scripting::SetLinearVelocity)
+		.addFunction("GetMass", &Scripting::GetMass)
+		.addFunction("SetMass", &Scripting::SetMass)
+
+		.addFunction("AddTorque", &Scripting::AddTorque)
+		.addFunction("AddForce", &Scripting::AddForce)
+
+		.addFunction("UseGravity", &Scripting::UseGravity)
+		.addFunction("SetKinematic", &Scripting::SetKinematic)
 		
 		.endClass()
 		.endNamespace();
