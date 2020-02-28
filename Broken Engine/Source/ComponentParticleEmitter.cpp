@@ -7,7 +7,7 @@
 #include "ComponentTransform.h"
 #include "ModuleParticles.h"
 #include "Particle.h"
-
+#include "Timer.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -35,16 +35,15 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 {
 	App->particles->DeleteEmitter(this);
 
-	if (particleSystem && App->physics->mScene)
+	if (particleSystem && App->physics->mScene) {
 		App->physics->mScene->removeActor(*particleSystem);
-
+		indexPool->release();
+		particles.clear();
+	}
 
 	for (int i = 0; i < maxParticles; ++i){
 		delete particles[i];
 	}
-
-	indexPool->release();
-	particles.clear();
 }
 
 void ComponentParticleEmitter::Enable()

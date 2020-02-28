@@ -1,26 +1,16 @@
 {
-    "504849448": {
+    "2122475477": {
         "Components": {
             "0": {
-                "positionx": "-3.019863",
-                "positiony": "2.472304",
-                "positionz": "-0.000000",
-                "rotationx": "-0.707107",
+                "positionx": "0.000000",
+                "positiony": "5.851373",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
-                "scalex": "10.000000",
-                "scaley": "10.000001",
-                "scalez": "10.000001"
-            },
-            "1": {
-                "Resources": {
-                    "ResourceMesh": "Library/Meshes/856468443.mesh"
-                }
-            },
-            "2": {
-                "Resources": {
-                    "ResourceMaterial": "DefaultMaterial"
-                }
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
             },
             "6": {
                 "emisionRate": "500.000000",
@@ -40,6 +30,6 @@
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "1102834161"
+        "Parent": "1498964685"
     }
 }
