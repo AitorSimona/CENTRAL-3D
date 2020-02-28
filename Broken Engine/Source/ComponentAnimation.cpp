@@ -55,7 +55,7 @@ void ComponentAnimation::Update(float dt)
 			has_skeleton = HasSkeleton(childs);
 
 			DoLink();
-			playing_animation = CreateAnimation("Idle", 0, 41, true, true);
+			playing_animation = CreateAnimation("Idle", 0, 48, true, true);
 			CreateAnimation("Run", 0, 42, true);
 			CreateAnimation("Punch", 73, 140, false);
 		}
@@ -64,12 +64,13 @@ void ComponentAnimation::Update(float dt)
 			DoBoneLink();
 
 		time += dt;
+
 		if (blending == false)
 		{
 			UpdateJointsTransform();
 		}
-		/*else
-			BlendAnimations(blend_time_value);*/
+		else
+			BlendAnimations(blend_time_value);
 
 		if (has_skeleton)
 			UpdateMesh(GO);
@@ -268,7 +269,7 @@ void ComponentAnimation::UpdateJointsTransform()
 		// ----------------------- Frame count managment -----------------------------------
 
 		Frame = playing_animation->start + (time * res_anim->ticksPerSecond);
-		if (Frame == playing_animation->end)
+		if (Frame >= playing_animation->end)
 		{
 			if (!playing_animation->loop)
 				if (playing_animation->Default == false)

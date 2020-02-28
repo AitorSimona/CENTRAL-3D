@@ -217,7 +217,7 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 void ModuleSceneManager::Draw()
 {
 	// --- Draw Grid ---
-	//DrawGrid(true, 75.0f);
+	DrawGrid(true, 75.0f);
 
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
