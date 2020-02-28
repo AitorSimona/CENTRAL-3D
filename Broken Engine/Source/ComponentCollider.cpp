@@ -623,8 +623,12 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 void ComponentCollider::Delete()
 {
-	shape->release();
-	shape = nullptr;
+	if (shape)
+	{
+		shape->release();
+		shape = nullptr;
+	}
+
 	if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 	{
 		if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
