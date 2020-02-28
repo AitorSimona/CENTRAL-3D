@@ -4,6 +4,9 @@
 #include "ModuleInput.h"
 #include "ModuleSceneManager.h"
 #include "GameObject.h"
+#include "ModuleGui.h"
+
+#include "PanelScene.h"
 
 #include "mmgr/mmgr.h"
 
@@ -59,20 +62,18 @@ bool ModuleUI::CleanUp()
 void ModuleUI::Draw() const
 {
 	//// change camera to ortographic
-	//GLint viewport[4];
-	//glGetIntegerv(GL_VIEWPORT, viewport);
-	//glMatrixMode(GL_PROJECTION);
-	//glPushMatrix();
-	//glLoadIdentity();
-	//glOrtho(viewport[0], viewport[2], viewport[1], viewport[3], 1, -1);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, App->gui->panelScene->height, 0, App->gui->panelScene->width, -1, 1);
 
-	//glPushAttrib(GL_LIST_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT | GL_TRANSFORM_BIT);
-	//glMatrixMode(GL_MODELVIEW);
-	//glDisable(GL_LIGHTING);
-	//glEnable(GL_TEXTURE_2D);
-	//glDisable(GL_DEPTH_TEST);
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glMatrixMode(GL_MODELVIEW);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	// Draw UI
 	for (int i = 0; i < canvas.size(); i++)
@@ -81,8 +82,7 @@ void ModuleUI::Draw() const
 			canvas[i]->Draw();
 	}
 
-	//glPopAttrib();
-	//glPopMatrix();
+	glPopMatrix();
 }
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)
