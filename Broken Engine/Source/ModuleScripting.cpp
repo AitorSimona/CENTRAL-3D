@@ -176,7 +176,6 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("MouseButtonUp", &Scripting::IsMouseButtonUp)
 		.addFunction("MouseButtonRepeat", &Scripting::IsMouseButtonRepeat)
 		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
-		.addFunction("Translate", &Scripting::Translate)
 		.addFunction("dt", &Scripting::GetDT)
 		.addFunction("GameTime", &Scripting::GameTime)
 		.addFunction("IsGamepadButton", &Scripting::IsGamepadButton)
@@ -187,6 +186,24 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("ShakeController", &Scripting::ShakeController)
 		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
 		
+		//Transform Functions
+		.addFunction("GetPosition", &Scripting::GetPosition)
+		.addFunction("GetPositionX", &Scripting::GetPositionX)
+		.addFunction("GetPositionY", &Scripting::GetPositionY)
+		.addFunction("GetPositionZ", &Scripting::GetPositionZ)
+
+		.addFunction("GetRotation", &Scripting::GetRotation)
+		.addFunction("GetRotationX", &Scripting::GetRotationX)
+		.addFunction("GetRotationY", &Scripting::GetRotationY)
+		.addFunction("GetRotationZ", &Scripting::GetRotationZ)
+
+		.addFunction("Translate", &Scripting::Translate)
+		.addFunction("SetPosition", &Scripting::SetPosition)
+
+		.addFunction("RotateObject", &Scripting::RotateObject)
+		.addFunction("SetObjectRotation", &Scripting::RotateObject)
+
+		//Systems Functions
 		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
 		

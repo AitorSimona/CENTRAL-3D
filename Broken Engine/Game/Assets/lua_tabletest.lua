@@ -17,6 +17,11 @@ end
 function lua_table:Update ()
 	dt = lua_table["Functions"]:dt ()
 
+	--Object Transformations
+	rotX = lua_table["Functions"]:GetRotationX()
+
+	lua_table["Functions"]:LOG (rotX)
+
 	--Particles Emission Activation/Deactivation
 	--lua_table["Functions"]:ActivateParticlesEmission()
 	--lua_table["Functions"]:DeactivateParticlesEmission()
