@@ -1,11 +1,11 @@
 {
-    "271683847": {
+    "1548218490": {
         "Components": {
             "0": {
                 "positionx": "0.000000",
                 "positiony": "0.000000",
                 "positionz": "0.000000",
-                "rotationx": "0.000000",
+                "rotationx": "0.309017",
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
@@ -14,30 +14,13 @@
             },
             "1": {
                 "Resources": {
-                    "ResourceMesh": "Library/Meshes/1810562549.mesh"
+                    "ResourceMesh": "Library/Meshes/403828242.mesh"
                 }
             },
             "2": {
                 "Resources": {
                     "ResourceMaterial": "DefaultMaterial"
                 }
-            },
-            "6": {
-                "emisionRate": "500.000000",
-                "externalAccelerationX": "0.000000",
-                "externalAccelerationY": "10.000000",
-                "externalAccelerationZ": "0.000000",
-                "particlesLifeTime": "1000",
-                "particlesSize": "1.000000",
-                "particlesVelocityX": "0.000000",
-                "particlesVelocityY": "0.000000",
-                "particlesVelocityZ": "0.000000",
-                "sizeX": "0.000000",
-                "sizeY": "0.000000",
-                "sizeZ": "0.000000",
-                "velocityRandomFactorX": "5.000000",
-                "velocityRandomFactorY": "5.000000",
-                "velocityRandomFactorZ": "5.000000"
             },
             "9": {
                 "Resources": {
@@ -46,6 +29,6 @@
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "362869755"
+        "Parent": "828093920"
     }
 }

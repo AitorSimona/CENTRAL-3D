@@ -95,6 +95,15 @@ public:
 	void Translate(float x, float y, float z, bool local);
 	void SetPosition(float x, float y, float z, bool local);
 
+	//Rotation
+	void RotateObject(float x, float y, float z);
+	void SetObjectRotation(float x, float y, float z);
+
+	int GetRotation(bool local, lua_State* L) const;
+	float GetRotationX() const;
+	float GetRotationY() const;
+	float GetRotationZ() const;
+
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll
 	//float GetEulerY(bool local) const;	// Pitch

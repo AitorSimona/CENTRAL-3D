@@ -114,7 +114,7 @@ bool ModuleScripting::JustCompile(std::string absolute_path)
 {
 	bool ret = false;
 
-	//MYTODO: Dídac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
+	//MYTODO: Dï¿½dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
@@ -160,7 +160,7 @@ bool ModuleScripting::JustCompile(std::string absolute_path)
 
 void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 {
-	//MYTODO: Dídac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
+	//MYTODO: Dï¿½dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
@@ -178,7 +178,6 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("MouseButtonUp", &Scripting::IsMouseButtonUp)
 		.addFunction("MouseButtonRepeat", &Scripting::IsMouseButtonRepeat)
 		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
-		.addFunction("Translate", &Scripting::Translate)
 		.addFunction("dt", &Scripting::GetDT)
 		.addFunction("GameTime", &Scripting::GameTime)
 		.addFunction("IsGamepadButton", &Scripting::IsGamepadButton)
@@ -188,6 +187,24 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
 		.addFunction("ShakeController", &Scripting::ShakeController)
 		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
+		//Transform Functions
+		.addFunction("GetPosition", &Scripting::GetPosition)
+		.addFunction("GetPositionX", &Scripting::GetPositionX)
+		.addFunction("GetPositionY", &Scripting::GetPositionY)
+		.addFunction("GetPositionZ", &Scripting::GetPositionZ)
+
+		.addFunction("GetRotation", &Scripting::GetRotation)
+		.addFunction("GetRotationX", &Scripting::GetRotationX)
+		.addFunction("GetRotationY", &Scripting::GetRotationY)
+		.addFunction("GetRotationZ", &Scripting::GetRotationZ)
+
+		.addFunction("Translate", &Scripting::Translate)
+		.addFunction("SetPosition", &Scripting::SetPosition)
+
+		.addFunction("RotateObject", &Scripting::RotateObject)
+		.addFunction("SetObjectRotation", &Scripting::RotateObject)
+
+		//Systems Functions
 		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
 		.endClass()
@@ -206,7 +223,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 	{
 		//Compile the file and run it, we're gonna optimize this to just compile the function the script contains to library later.
 		int compiled = luaL_dofile(L, script->my_component->script->absolute_path.c_str());
-		
+
 		if (compiled == LUA_OK)
 		{
 			//Get the function to instantiate the lua table (used as a class as known in C++)
@@ -350,7 +367,7 @@ void ModuleScripting::NullifyScriptInstanceWithParentComponent(ComponentScript* 
 		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component)
 		{
 			class_instances[i]->script_is_null = true;
-			
+
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("Lua Resource for component %s (lua script component) is nullptr!",class_instances[i]->my_component->script_name.c_str());
 		}
 	}
@@ -415,7 +432,7 @@ update_status ModuleScripting::Update(float realDT)
 
 
 	//TEST FUNCTION DEFINETIVELY SHOULD NOT BE HERE
-	//MYTODO: Dídac PLEAse didac look into this why did you do this?
+	//MYTODO: Dï¿½dac PLEAse didac look into this why did you do this?
 	/*if (App->scene_intro->selected_go != nullptr && App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 		GameObject* returned = GOFunctions::InstantiateGameObject(App->scene_intro->selected_go);*/
 	return UPDATE_CONTINUE;
