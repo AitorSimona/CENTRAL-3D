@@ -29,6 +29,7 @@ Resource* ImporterAnimation::Import(ImportData& IData) const
 	resource_anim->duration = data.animation->mDuration;
 	resource_anim->ticksPerSecond = data.animation->mTicksPerSecond;
 	resource_anim->numChannels = data.animation->mNumChannels;
+	resource_anim->name = data.animation->mName.C_Str();
 
 	//Creating space for channels
 	resource_anim->channels = new Channel[data.animation->mNumChannels];
@@ -85,8 +86,10 @@ void ImporterAnimation::Save(ResourceAnimation* anim) const
 
 	uint length = sourcefilename_length;
 
+	uint anim_name_size = anim->name.size();
+
 	//Animation Duration, TicksperSec, numChannels
-	uint size = sizeof(length) + sizeof(const char) * sourcefilename_length + sizeof(float) + sizeof(float) + sizeof(uint);
+	uint size = sizeof(length) + sizeof(const char) * sourcefilename_length + sizeof(anim_name_size) + sizeof(const char)* anim_name_size + sizeof(float) + sizeof(float) + sizeof(uint);
 
 	for (int i = 0; i < anim->numChannels; i++)
 	{
@@ -117,6 +120,14 @@ void ImporterAnimation::Save(ResourceAnimation* anim) const
 	// --- Store original filename ---
 	memcpy(cursor, anim->GetOriginalFile(), sizeof(const char) * sourcefilename_length);
 	cursor+= sizeof(const char) * sourcefilename_length;
+
+	// --- Store animation name length ---
+	memcpy(cursor, &anim_name_size, sizeof(anim_name_size));
+	cursor += sizeof(anim_name_size);
+
+	//Name
+	memcpy(cursor, anim->name.c_str(), anim->name.size());
+	cursor += anim->name.size();
 
 	//Duration
 	memcpy(cursor, &anim->duration, sizeof(float));

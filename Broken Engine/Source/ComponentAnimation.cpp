@@ -1,13 +1,14 @@
 #include "ComponentAnimation.h"
 #include "Application.h"
 #include "ComponentTransform.h"
+#include "ComponentBone.h"
+#include "ComponentMesh.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleTimeManager.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
-//#include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 
@@ -200,10 +201,22 @@ void ComponentAnimation::CreateInspectorNode()
 	{
 		ImGui::Checkbox("Draw Bones", &draw_bones);
 
-		ImGui::Text("Im a component animator:D");
-
 		if (res_anim)
-			ImGui::Text("Animation: %f", res_anim->GetName());
+		{
+			ImGui::Text("Animation name: %s", res_anim->name.c_str());
+
+			for (int i = 0; i < animations.size(); i++)
+			{
+				
+				ImGui::Separator();
+				ImGui::Text("Name: %s", animations[i]->name.c_str());
+				ImGui::Text("Animation Frames: %f", (animations[i]->end - animations[i]->start));
+				ImGui::Text("Start Frame: %u", animations[i]->start);
+				ImGui::Text("End Frame: %u", animations[i]->end);
+				ImGui::Separator();
+			}
+		}
+			
 
 		
 
@@ -384,7 +397,7 @@ void ComponentAnimation::StartBlend(uint start, Animation* anim)
 		if (next_sc != links[i].channel->ScaleKeys.end())
 			start_scale[i] = next_sc->second;
 		else
-			start_position[i] = float3(1234, 0, 0);
+			start_scale[i] = float3(1234, 0, 0);
 	}
 
 	blending = true;
@@ -421,12 +434,6 @@ void ComponentAnimation::UpdateMesh(GameObject* go)
 	if (tmp != nullptr)
 	{
 		tmp->UpdateDefMesh();
-		//if (tmp->resource_def_mesh != nullptr)
-		//{
-		//	//Vertex buffer
-		//	if (!created_buffer)
-		//		created_buffer = true;
-		//}
 	}
 
 	for (int i = 0; i < go->childs.size(); i++)

@@ -2,9 +2,10 @@
 #define __COMPONENT_ANIMATION_H__
 
 #include "Component.h"
-#include "ComponentMesh.h"
-#include "ComponentBone.h"
 #include "ResourceAnimation.h"
+
+class ComponentMesh;
+class ComponentBone;
 
 struct Animation
 {
@@ -67,7 +68,7 @@ public:
 	ResourceAnimation* res_anim = nullptr;
 	float blend_time_value = 0.3f;
 
-	bool draw_bones = true;
+	bool draw_bones = false;
 
 private:
 	std::vector<Link> links;

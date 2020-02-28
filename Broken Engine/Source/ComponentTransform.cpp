@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
+#include "Math.h"
 
 #include "mmgr/mmgr.h"
 

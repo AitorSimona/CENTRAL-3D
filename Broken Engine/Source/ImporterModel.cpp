@@ -299,7 +299,6 @@ void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, st
 			if (IAnim)
 			{
 				anim[i] = (ResourceAnimation*)IAnim->Import(AData);
-				anim[i]->SetName(scene->mAnimations[i]->mName.C_Str());
 				comp_anim->res_anim = anim[i];
 			}
 		}

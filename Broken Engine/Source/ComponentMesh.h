@@ -2,7 +2,6 @@
 #define __COMPONENT_MESH_H__
 
 #include "Component.h"
-#include "Math.h"
 #include "ResourceMesh.h"
 
 class ComponentBone;
@@ -29,8 +28,6 @@ public:
 
 public:
 	ResourceMesh* resource_mesh = nullptr;
-	/*ResourceMesh* resource_def_mesh = nullptr;*/
-
 	std::vector<ComponentBone*> bones;
 };
 

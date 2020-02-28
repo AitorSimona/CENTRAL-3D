@@ -26,11 +26,6 @@ ComponentMesh::~ComponentMesh()
 		resource_mesh->Release();
 		resource_mesh->RemoveUser(GO);
 	}
-	//if (resource_def_mesh && resource_def_mesh->IsInMemory())
-	//{
-	//	resource_def_mesh->Release();
-	//	delete resource_def_mesh;
-	//}
 }
 
 const AABB & ComponentMesh::GetAABB() const

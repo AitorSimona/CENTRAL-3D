@@ -3,7 +3,7 @@
 
 #include "Component.h"
 #include "ResourceBone.h"
-#include "Math.h"
+//#include "Math.h"
 
 class GameObject;
 

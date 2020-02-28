@@ -39,6 +39,20 @@ bool ResourceAnimation::LoadInMemory()
 		memcpy(&length, cursor, sizeof(length));
 		cursor += sizeof(length) + length;
 
+		uint anim_name_size = 0;
+		memcpy(&anim_name_size, cursor, sizeof(uint));
+		cursor += sizeof(uint);
+		
+		//Get animation name
+		char* string = new char[anim_name_size + 1];
+		bytes = sizeof(const char) * anim_name_size;
+		memcpy(string, cursor, bytes);
+		cursor += bytes;
+
+		string[anim_name_size] = '\0';
+		this->name = string;
+		delete[] string;
+
 		//Duration
 		memcpy(&this->duration, cursor, sizeof(float));
 		cursor += sizeof(float);
