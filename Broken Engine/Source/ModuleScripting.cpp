@@ -10,6 +10,8 @@
 #include "ResourceScript.h"
 #include "ComponentScript.h"
 #include "Scripting.h"
+#include "ResourceScene.h"
+#include "ModuleSceneManager.h"
 //#include "ComponentTransform.h"
 //#include "ModuleResources.h"
 //#include "ModuleEditor.h"
@@ -186,10 +188,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
 		.addFunction("ShakeController", &Scripting::ShakeController)
 		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
-		
 		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
-		
 		.endClass()
 		.endNamespace();
 

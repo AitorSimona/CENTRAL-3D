@@ -122,6 +122,35 @@ void ResourceScene::FreeMemory()
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }
 
+GameObject* ResourceScene::GetGOWithName(const char* GO_name)
+{
+	GameObject* ret = nullptr;
+
+	std::string GO_stringname = GO_name;
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		std::string name = (*it).second->GetName();
+		if (name.compare(GO_stringname) == 0)
+		{
+			ret = (*it).second;
+			return ret;
+		}
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		std::string name = (*it).second->GetName();
+		if (name.compare(GO_stringname) == 0)
+		{
+			ret = (*it).second;
+			return ret;
+		}
+	}
+
+	return ret;
+}
+
 void ResourceScene::OnOverwrite()
 {
 	// No reason to overwrite scene
