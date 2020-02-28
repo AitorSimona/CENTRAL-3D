@@ -40,9 +40,9 @@ public:
 	inline void FeezePosition_X(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, enable); }
 	inline void FeezePosition_Y(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, enable); }
 	inline void FeezePosition_Z(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, enable); }
-	inline void FreeseRotation_X(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, enable); }
-	inline void FreeseRotation_Y(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, enable); }
-	inline void FreeseRotation_Z(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, enable); }
+	inline void FreezeRotation_X(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, enable); }
+	inline void FreezeRotation_Y(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, enable); }
+	inline void FreezeRotation_Z(bool enable) { rigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, enable); }
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::DynamicRigidBody; };
 
@@ -64,10 +64,10 @@ public:
 	bool is_kinematic = false;;
 	float3 linear_vel = float3::zero;
 	float3 angular_vel = float3::zero;
-	float linear_dumping = 0.f;
-	float angular_dumping = 0.f;
+	float linear_damping = 0.f;
+	float angular_damping = 0.f;
 	bool freezePosition_X = false, freezePosition_Y = false, freezePosition_Z = false;
-	bool freeseRotation_X = false, freeseRotation_Y = false, freeseRotation_Z = false;
+	bool freezeRotation_X = false, freezeRotation_Y = false, freezeRotation_Z = false;
 
 };
 #endif
