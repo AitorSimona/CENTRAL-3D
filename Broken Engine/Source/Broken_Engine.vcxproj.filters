@@ -566,7 +566,7 @@
     </ClInclude>
     <ClInclude Include="ModulePhysics.h">
       <Filter>Sources\Modules</Filter>
-      </ClInclude>
+    </ClInclude>
     <ClInclude Include="ImporterScript.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
@@ -620,6 +620,9 @@
     </ClInclude>
     <ClInclude Include="PanelPhysics.h">
       <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingMath.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -974,6 +977,7 @@
     <ClCompile Include="PanelPhysics.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptingMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleThreading.cpp">

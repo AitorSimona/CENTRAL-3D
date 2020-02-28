@@ -19,6 +19,7 @@ public:
 
 	float GetRealDT() const;
 	float GetDT() const;
+	float GameTime();
 
 	// Input
 	int GetKey(const char* key) const;

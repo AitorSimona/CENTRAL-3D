@@ -38,6 +38,11 @@ float Scripting::GetDT() const
 	return App->time->GetGameDt();
 }
 
+float Scripting::GameTime()
+{
+	return App->time->GetGameplayTimePassed();
+}
+
 // Input
 int Scripting::GetKey(const char* key) const
 {
