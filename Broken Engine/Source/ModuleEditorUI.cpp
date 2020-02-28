@@ -2,11 +2,12 @@
 #include "EngineApplication.h"
 #include "Panels.h"
 #include "Imgui/imgui.h"
-#include "imgui/imgui_impl_sdl.h"
-#include "imgui/imgui_impl_opengl3.h"
-#include "Imgui/imgui_internal.h"
-#include "Imgui/ImGuizmo/ImGuizmo.h"
+//#include "imgui/imgui_impl_sdl.h"
+//#include "imgui/imgui_impl_opengl3.h"
+//#include "Imgui/imgui_internal.h"
+//#include "Imgui/ImGuizmo/ImGuizmo.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
+#include "mmgr/mmgr.h"
 
 ModuleEditorUI::ModuleEditorUI(bool start_enabled) : Module(start_enabled) {
 	name = "EditorUI";

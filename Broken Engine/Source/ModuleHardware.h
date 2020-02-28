@@ -39,8 +39,8 @@ public:
 	const std::string OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
 
 	const std::string GetSDLVersion()		const { return mSoftware_SDLVersion; }
-	const auto GetOGLVersion()				const { return glGetString(GL_VERSION); }
-	const auto GetOGLShadingVersion()		const { return glGetString(GL_SHADING_LANGUAGE_VERSION); }
+	const std::string GetOGLVersion()				const;
+	const std::string GetOGLShadingVersion()		const;
 
 	///__cplusplus returning values:
 	///199711L (C++98 or C++03)

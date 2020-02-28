@@ -90,6 +90,14 @@ void SoftwareInfo::DetectSystemProperties() {
 	mSoftware_SDLVersion = ExtractSDLVersion();
 }
 
+const std::string SoftwareInfo::GetOGLVersion() const {
+	return (const char*)glGetString(GL_VERSION);
+}
+
+const std::string SoftwareInfo::GetOGLShadingVersion() const {
+	return (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+}
+
 
 const std::string SoftwareInfo::ExtractCppVersion(long int cppValue) {
 	std::string tmp_cppVersion = "NULL: return value does not match with any C++ version!";

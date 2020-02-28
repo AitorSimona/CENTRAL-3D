@@ -258,8 +258,10 @@ void ModuleGui::LoadStatus(const json & file)
 	
 	for (uint i = 0; i < panels.size(); ++i)
 	{
-		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end())
+		
+		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end()) {
 			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
+		}
 		else
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
 	}
