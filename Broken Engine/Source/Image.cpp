@@ -7,7 +7,7 @@
 #include "PanelScene.h"
 #include "ModuleGui.h"
 #include "ModuleRenderer3D.h"
-
+#include "ModuleCamera3D.h"
 #include "ModuleSceneManager.h"
 
 #include "Component.h"
@@ -43,14 +43,19 @@ void Image::Draw()
 	// update transform and rotation to face camera
 
 	rotation2D *= DEGTORAD;
+
 	float4x4 transform = float4x4::identity;
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
 	float3 rot = this->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetRotation();
+	float3 frustum_front = App->renderer3D->active_camera->frustum.Front();
+	float3 rotation = float3(rot.x, rot.y, rotation2D);
+	float3 rotation_normalized = vec(rotation.Normalize());
 
 	transform = transform.FromTRS(float3(frustum_pos.x + position2D.x, frustum_pos.y + position2D.y, frustum_pos.z + 10),
 		Quat::FromEulerXYZ(rot.x, rot.y, rotation2D), 
 		float3(size2D,1));
 
+	transform.RotateFromTo(rotation_normalized, frustum_front);
 	rotation2D *= RADTODEG;
 
 	// --- Set Uniforms ---
