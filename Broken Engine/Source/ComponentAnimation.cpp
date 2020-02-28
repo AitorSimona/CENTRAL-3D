@@ -6,6 +6,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleTimeManager.h"
+#include "ModuleInput.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
@@ -47,19 +48,19 @@ ComponentAnimation::~ComponentAnimation()
 
 void ComponentAnimation::Update(float dt)
 {
+	if (linked_channels == false)
+	{
+		std::vector<GameObject*> childs;
+		GO->GetAllChilds(childs);
+		has_skeleton = HasSkeleton(childs);
+
+		DoLink();
+		playing_animation = CreateAnimation("Idle", 0, 0, true, true);
+	}
+
 	if (App->GetAppState() == AppState::PLAY)
 	{
-		if (linked_channels == false)
-		{
-			std::vector<GameObject*> childs;
-			GO->GetAllChilds(childs);
-			has_skeleton = HasSkeleton(childs);
-
-			DoLink();
-			playing_animation = CreateAnimation("Idle", 0, 48, true, true);
-			CreateAnimation("Run", 0, 42, true);
-			CreateAnimation("Punch", 73, 140, false);
-		}
+		
 
 		if (linked_bones == false)
 			DoBoneLink();
@@ -76,39 +77,39 @@ void ComponentAnimation::Update(float dt)
 		if (has_skeleton)
 			UpdateMesh(GO);
 
-		//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-		//{
-		//	//prev_anim = playing_animation;
-		//	StartBlend(animations[2]->start, animations[2]);
-		//	time = 0;
-		//}
+		if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		{
+			//prev_anim = playing_animation;
+			StartBlend(animations[2]);
+			time = 0;
+		}
 
-		//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) // press key
-		//{
-		//	//prev_anim = playing_animation;
+		if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) // press key
+		{
+			//prev_anim = playing_animation;
 
-		//	animations[1]->Default = true;
-		//	animations[0]->Default = false;
+			animations[1]->Default = true;
+			animations[0]->Default = false;
 
-		//	if (playing_animation->loop)
-		//	{
-		//		StartBlend(animations[1]->start, animations[1]);
-		//		time = 0;
-		//	}
+			if (playing_animation->loop)
+			{
+				StartBlend(animations[1]);
+				time = 0;
+			}
 
-		//}
-		//if (App->input->GetKey(SDL_SCANCODE_2) == KEY_UP) //release key
-		//{
-		//	animations[1]->Default = false;
-		//	animations[0]->Default = true;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_2) == KEY_UP) //release key
+		{
+			animations[1]->Default = false;
+			animations[0]->Default = true;
 
-		//	if (playing_animation->loop)
-		//	{
-		//		StartBlend(GetDefaultAnimation()->start, GetDefaultAnimation());
-		//		time = 0;
-		//	}
+			if (playing_animation->loop)
+			{
+				StartBlend(GetDefaultAnimation());
+				time = 0;
+			}
 
-		//}
+		}
 	}
 	else
 	{
@@ -199,12 +200,14 @@ void ComponentAnimation::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Animation"))
 	{
-		ImGui::Checkbox("Draw Bones", &draw_bones);
+		
 
 		if (res_anim)
 		{
 			ImGui::Text("Animation name: %s", res_anim->name.c_str());
-
+			ImGui::PushItemWidth(50); ImGui::InputFloat("Blend Duration", &blend_time_value);
+			ImGui::PushItemWidth(50); ImGui::InputFloat("Speed ", &res_anim->ticksPerSecond);
+			ImGui::Checkbox("Draw Bones", &draw_bones);
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);
 
@@ -212,15 +215,19 @@ void ComponentAnimation::CreateInspectorNode()
 			{
 				ImGui::Separator();
 				// --- Game Object Name Setter ---
-				static char Anim_name[100] = "";
+				char Anim_name[100] = "";
 				strcpy_s(Anim_name, 100, animations[i]->name.c_str());
-				if (ImGui::InputText("", Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				std::string str = "Aniamtion";
+				ImGui::PushItemWidth(200); if (ImGui::InputText(str.append(std::to_string(i +1)).c_str(), Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 					animations[i]->name = Anim_name;
 
-				ImGui::Text("Animation Frames: %f", (animations[i]->end - animations[i]->start));
-				ImGui::Text("Start Frame: %u", animations[i]->start);
-				ImGui::Text("End Frame: %u", animations[i]->end);
-				ImGui::Separator();
+				ImGui::Text("Animation Frames: %i", (animations[i]->end - animations[i]->start));
+				std::string Start = animations[i]->name;
+				ImGui::PushItemWidth(100); ImGui::InputInt(Start.append(" Start").c_str(), &animations[i]->start, 1, 0);
+				std::string End = animations[i]->name;
+				ImGui::PushItemWidth(100); ImGui::InputInt(End.append(" End").c_str(), &animations[i]->end, 1,0);
+				std::string Loop = animations[i]->name;
+				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
 				
 			}
 		}

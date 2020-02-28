@@ -12,8 +12,8 @@ struct Animation
 	Animation(std::string name, uint start, uint end, bool loop, bool Default) : name(name), start(start), end(end), loop(loop), Default(Default) {};
 
 	std::string name;
-	uint start;
-	uint end;
+	int start;
+	int end;
 	bool loop = false;
 	bool Default = false;
 };
