@@ -120,10 +120,10 @@ void Image::CreateInspectorNode()
 		ImGui::Text("Size:    ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &size2D.x);
+		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &size2D.y);
+		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f);
 
 		// Position
 		ImGui::Text("Position:");
