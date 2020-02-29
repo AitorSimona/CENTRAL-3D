@@ -19,6 +19,7 @@
 
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
+#include "ImporterMeta.h"
 
 #include "par/par_shapes.h"
 
@@ -450,7 +451,22 @@ void ModuleSceneManager::SaveScene(ResourceScene* scene)
 	if (scene)
 	{
 		ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+
+		// --- Create meta ---
+		if (!App->resources->IsFileImported(scene->GetOriginalFile()))
+		{
+			ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, scene->GetResourceFile(), scene->GetUID());
+
+			if (meta)
+				IMeta->Save(meta);
+		}
+
 		IScene->SaveSceneToFile(scene);
+
+		App->resources->AddResourceToFolder(scene);
+
+
 	}
 }
 
