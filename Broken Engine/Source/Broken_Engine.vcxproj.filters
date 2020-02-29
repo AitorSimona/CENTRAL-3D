@@ -618,6 +618,24 @@
     <ClInclude Include="gpudetect\dxgi1_4.h">
       <Filter>Sources\Tools\DeviceID</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentAnimation.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentBone.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAnimation.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceBone.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterAnimation.h">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterBone.h">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClInclude>
     <ClInclude Include="PanelPhysics.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
@@ -1031,6 +1049,24 @@
     </ClCompile>
     <ClCompile Include="gpudetect\DeviceId.cpp">
       <Filter>Sources\Tools\DeviceID</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAnimation.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentBone.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAnimation.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceBone.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterAnimation.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterBone.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

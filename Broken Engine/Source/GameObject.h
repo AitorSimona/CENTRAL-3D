@@ -45,7 +45,7 @@ public:
 				return ((TComponent*)(components[i]));
 			}
 		}
-		
+
 		return nullptr;
 	}
 
@@ -59,10 +59,13 @@ public:
 
 	// --- Utilities ---
 	void RecursiveDelete();
-	void OnUpdateTransform();
+	//void OnUpdateTransform();
+	void TransformGlobal(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);
+	void GetAllChilds(std::vector<GameObject*>& collector);
+	GameObject* GetAnimGO(GameObject* GO);
 
 	void UpdateAABB();
 

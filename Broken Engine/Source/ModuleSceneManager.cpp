@@ -13,6 +13,7 @@
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
 #include "ComponentCamera.h"
+#include "ComponentBone.h"
 
 
 #include "ModuleGui.h"
@@ -268,7 +269,7 @@ void ModuleSceneManager::DrawScene()
 
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetName() != root->GetName())
+			if ((*it).second->GetUID() != root->GetUID())
 			{
 				// --- Search for Renderer Component ---
 				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
@@ -304,9 +305,16 @@ void ModuleSceneManager::DrawScene()
 				glStencilMask(0xFF);
 			}
 
+
+
+
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 				MeshRenderer->Draw();
+
+			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
+			if (C_Bone)
+				C_Bone->DebugDrawBones();
 
 			if (SelectedGameObject == (*it))
 			{
@@ -527,8 +535,8 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	go_count++;
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data());
-	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+	GameObject* new_object = new GameObject(Name.c_str());
+	//currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
 	App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
@@ -562,7 +570,7 @@ void ModuleSceneManager::ResetGameObjectUID(GameObject* go)
 GameObject * ModuleSceneManager::CreateRootGameObject()
 {
 	// --- Create New Game Object Name ---
-	std::string Name = "root";
+	std::string Name = "root1";
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.c_str());
@@ -903,6 +911,8 @@ GameObject* ModuleSceneManager::LoadCapsule()
 GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 {
 	GameObject* new_object = CreateEmptyGameObject();
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+	
 	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(PrimitiveMeshID);
 
