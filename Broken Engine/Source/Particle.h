@@ -18,11 +18,11 @@ public:
 
 public:
 
-	float3 position;
+	float3 position = { 0,0,0 };
 
-	uint lifeTime;
-	uint spawnTime = 0;
-	float diameter;
+	uint lifeTime=1;
+	uint spawnTime = 1;
+	float diameter=1;
 };
 
 #endif // __PARTICLE_H__
