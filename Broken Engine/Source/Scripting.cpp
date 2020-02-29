@@ -844,42 +844,42 @@ void Scripting::DeactivateParticlesEmission() const
 
 
 //AUDIO --------------------------------------------------------------
-void Scripting::PlayAudioSFX()
+void Scripting::PlayAudioSFX(uint64 id)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
 
 	if (sound)
-		sound->PlaySFX();
+		sound->PlaySFX(id);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void Scripting::StopAudioSFX()
+void Scripting::StopAudioSFX(uint64 id)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
 
 	if (sound)
-		sound->StopSFX();
+		sound->StopSFX(id);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void Scripting::PauseAudioSFX()
+void Scripting::PauseAudioSFX(uint64 id)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
 
 	if (sound)
-		sound->PauseSFX();
+		sound->PauseSFX(id);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void Scripting::ResumeAudioSFX()
+void Scripting::ResumeAudioSFX(uint64 id)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
 
 	if (sound)
-		sound->ResumeSFX();
+		sound->ResumeSFX(id);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
@@ -890,6 +890,17 @@ void Scripting::SetVolume(float volume)
 
 	if (sound)
 		sound->SetVolume(volume);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+
+void Scripting::SetAudioID(uint64 id)
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->SetID(id);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }

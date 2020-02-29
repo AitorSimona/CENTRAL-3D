@@ -219,7 +219,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 
 		.addFunction("UseGravity", &Scripting::UseGravity)
 		.addFunction("SetKinematic", &Scripting::SetKinematic)
-		
+
+		.addFunction("PlayAudio", &Scripting::PlayAudioSFX)
+		.addFunction("StopAudio", &Scripting::StopAudioSFX)
+		.addFunction("PauseAudio", &Scripting::PauseAudioSFX)
+		.addFunction("ResumeAudio", &Scripting::ResumeAudioSFX)
+		.addFunction("SetVolume", &Scripting::SetVolume)
+		.addFunction("SetAudioID", &Scripting::SetAudioID)
+
 		.endClass()
 		.endNamespace();
 

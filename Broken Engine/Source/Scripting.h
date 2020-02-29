@@ -121,12 +121,13 @@ public:
 	void UseGravity(bool enable);
 
 	//Audio
-	void PlayAudioSFX();
-	void StopAudioSFX();
-	void PauseAudioSFX();
-	void ResumeAudioSFX();
+	void PlayAudioSFX(uint64 id);
+	void StopAudioSFX(uint64 id);
+	void PauseAudioSFX(uint64 id);
+	void ResumeAudioSFX(uint64 id);
 
 	void SetVolume(float volume);
+	void SetAudioID(uint64 id);
 
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll

@@ -26,12 +26,12 @@ public:
 
 public:
 
-	void PlaySFX() { wwiseGO->PlayEvent(id); }
-	void StopSFX() { wwiseGO->StopEvent(id); }
-	void PauseSFX() { wwiseGO->PauseEvent(id); }
-	void ResumeSFX() { wwiseGO->ResumeEvent(id); }
+	void PlaySFX(uint64 id);
+	void StopSFX(uint64 id);
+	void PauseSFX(uint64 id);
+	void ResumeSFX(uint64 id);
 
-	void SetVolume(float volume) { wwiseGO->SetVolume(id, volume); }
+	void SetVolume(float volume);
 
 public:
 
