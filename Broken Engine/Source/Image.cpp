@@ -41,24 +41,25 @@ Image::~Image()
 
 void Image::Draw()
 {
-	// update transform and rotation to face camera
+	// --- Update transform and rotation to face camera ---
 
 	rotation2D *= DEGTORAD;
 
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10); // si metes el position aqui no deja moverla
 
 	// --- Frame image with camera ---
-	float4x4 transform = transform.FromTRS(float3(frustum_pos.x + position2D.x, frustum_pos.y + position2D.y,10),
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10), // si metes el position aqui si que se mueve (se carga el billboarding)
 		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D, 1));
 	
-	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
+	transform.SetTranslatePart(transform.TranslatePart().x + position2D.x, transform.TranslatePart().y + position2D.y, 10); // esto mueve el plano en sus ejes X e Y (se carga el billboarding)
+	transform.SetRotatePartZ(rotation2D); // esto funciona (rotar imagen en su eje Z)
 	
 	float3 Movement = App->renderer3D->active_camera->frustum.Front();
 	float3 camera_pos = frustum_pos;
 	
 	if (Movement.IsFinite())
 		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
-
 
 	rotation2D *= RADTODEG;
 
