@@ -636,8 +636,12 @@ void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
 		float3 dir = (float3(spotX, spotY, spotZ) - transform->GetPosition());
 
 		float3 rot = transform->GetRotation();
+		//float3 tmp(0, 20, 0);
+
 		rot += dir;
+		ENGINE_CONSOLE_LOG("rotation: x:%f y:%f z:%f", rot.x, rot.y, rot.z);
 		transform->SetRotation(rot);
+		
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");

@@ -1,10 +1,10 @@
 {
-    "1574028045": {
+    "265620145": {
         "Components": {
             "0": {
-                "positionx": "6.793054",
-                "positiony": "3.630325",
-                "positionz": "1.682780",
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
@@ -14,12 +14,12 @@
             },
             "1": {
                 "Resources": {
-                    "ResourceMesh": "Library/Meshes/1651992534.mesh"
+                    "ResourceMesh": "Library/Meshes/100004722.mesh"
                 }
             },
             "2": {
                 "Resources": {
-                    "ResourceMaterial": "DefaultMaterial"
+                    "ResourceMaterial": "Assets/Baker_house.mat"
                 }
             },
             "4": {
@@ -31,9 +31,9 @@
                 "freezePosition_X": "0",
                 "freezePosition_Y": "0",
                 "freezePosition_Z": "0",
-                "freezeRotation_X": "0",
+                "freezeRotation_X": "1",
                 "freezeRotation_Y": "0",
-                "freezeRotation_Z": "0",
+                "freezeRotation_Z": "1",
                 "is_kinematic": "0",
                 "linear_damping": "0.000000",
                 "linear_velx": "0.000000",
@@ -46,27 +46,27 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "6.790494",
-                "globalMatrixy": "3.630274",
-                "globalMatrixz": "1.680220",
-                "globalPositionx": "1.000000",
-                "globalPositiony": "1.000000",
-                "globalPositionz": "1.000000",
+                "globalMatrixx": "0.072825",
+                "globalMatrixy": "1.784385",
+                "globalMatrixz": "-0.076717",
+                "globalPositionx": "3.213758",
+                "globalPositiony": "3.542976",
+                "globalPositionz": "3.967260",
                 "height": "1.000000",
                 "lastIndex": "1",
                 "localMatrixw": "1.000000",
-                "localMatrixx": "0.000000",
-                "localMatrixy": "0.000000",
-                "localMatrixz": "-0.000000",
+                "localMatrixx": "0.072825",
+                "localMatrixy": "1.784385",
+                "localMatrixz": "-0.076717",
                 "localPositionx": "0.000000",
                 "localPositiony": "0.000000",
                 "localPositionz": "0.000000",
-                "offsetx": "0.000000",
-                "offsety": "0.000000",
-                "offsetz": "-0.000000",
-                "originalScalex": "1.000000",
-                "originalScaley": "1.000000",
-                "originalScalez": "1.000000",
+                "offsetx": "0.072825",
+                "offsety": "1.784385",
+                "offsetz": "-0.076717",
+                "originalScalex": "3.213758",
+                "originalScaley": "3.542976",
+                "originalScalez": "3.967260",
                 "radius": "1.000000",
                 "scalex": "1.000000",
                 "scaley": "1.000000",
@@ -77,11 +77,55 @@
             },
             "9": {
                 "Resources": {
-                    "ResourceScript": "Library/Scripts/72181805.lua"
+                    "ResourceScript": "Library/Scripts/780297544.lua"
                 }
             }
         },
+        "Name": "Baker_house",
+        "Parent": "377801652"
+    },
+    "377801652": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
         "Name": "GameObject (0)",
-        "Parent": "1954578489"
+        "Parent": "1099505701"
+    },
+    "758430728": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1850598654.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
+        },
+        "Name": "Chimney",
+        "Parent": "377801652"
     }
 }
