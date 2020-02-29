@@ -41,6 +41,7 @@ class ModuleScripting;
 class ModuleTimeManager;
 class ModuleEventManager;
 class ModuleThreading;
+class ModuleUI;
 class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
@@ -80,6 +81,7 @@ public:
 	ModuleEventManager* event_manager = nullptr;
 	ModuleScripting* scripting = nullptr;
 	ModuleThreading* threading = nullptr;
+	ModuleUI* ui_system = nullptr;
 	ModulePhysics* physics = nullptr;
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;

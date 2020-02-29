@@ -4,6 +4,8 @@
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"
 #include "ModuleScripting.h"
+#include "ModuleSceneManager.h"
+#include "ResourceScene.h"
 #include "ComponentTransform.h"
 #include "GameObject.h"
 
@@ -11,6 +13,7 @@
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ComponentAudioSource.h"
+#include "ComponentAnimation.h"
 
 #include "ScriptData.h"
 
@@ -210,14 +213,14 @@ SDL_GameControllerButton Scripting::GetControllerButtonFromString(const char* bu
 		button = SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
 	else
 		button = SDL_CONTROLLER_BUTTON_INVALID;
-	
+
 	return button;
 }
 
 GP_BUTTON_STATE Scripting::GetGamepadButtonState(const char* state_name) const
 {
 	GP_BUTTON_STATE ret = GP_BUTTON_STATE::BUTTON_IDLE;
-	
+
 	if (!strcmp("IDLE", state_name))
 		ret = GP_BUTTON_STATE::BUTTON_IDLE;
 	else if (!std::strcmp("DOWN", state_name))
@@ -381,6 +384,133 @@ void Scripting::StopControllerShake(int player_num) const
 	if (player_num > 0)
 		player = (PLAYER)(player_num - 1);
 	App->input->StopControllerShake((PLAYER)player);
+}
+
+//Returns the UID of the GameObject if it is found
+uint Scripting::FindGameObject(const char* go_name)
+{
+	uint ret = 0;
+
+	GameObject* go = App->scene_manager->currentScene->GetGOWithName(go_name);
+
+	if (go != nullptr)
+	{
+		ret = go->GetUID();
+	}
+	else
+	{
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject %s was not found! 0 will be returned",go_name);
+	}
+	return ret;
+}
+
+float Scripting::GetGameObjectPos(uint gameobject_UID, lua_State* L)
+{
+	float ret = 0;
+	float3 rot = float3(0.0f);
+
+	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UID)).second;
+	if (go == nullptr)
+	{
+		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UID)).second;
+	}
+
+	ComponentTransform* transform;
+	transform = go->GetComponent<ComponentTransform>();
+	if ( go != nullptr  && transform != nullptr)
+	{
+		rot = transform->GetPosition();
+		ret = 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+
+	lua_pushnumber(L, rot.x);
+	lua_pushnumber(L, rot.y);
+	lua_pushnumber(L, rot.z);
+	return 0.0f;
+}
+
+float Scripting::GetGameObjectPosX(uint gameobject_UID)
+{
+	float ret = 0.0f;
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+
+	if (GO != nullptr)
+	{
+		ComponentTransform* transform;
+		transform = GO->GetComponent<ComponentTransform>();
+
+		if (transform)
+		{
+			ret = transform->GetGlobalPosition().x;
+		}
+	}
+
+	return ret;
+}
+
+float Scripting::GetGameObjectPosY(uint gameobject_UID)
+{
+	float ret = 0.0f;
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+
+	if (GO != nullptr)
+	{
+		ComponentTransform* transform;
+		transform = GO->GetComponent<ComponentTransform>();
+
+		if (transform)
+		{
+			ret = transform->GetGlobalPosition().y;
+		}
+	}
+
+	return ret;
+}
+
+float Scripting::GetGameObjectPosZ(uint gameobject_UID)
+{
+	float ret = 0.0f;
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+
+	if (GO != nullptr)
+	{
+		ComponentTransform* transform;
+		transform = GO->GetComponent<ComponentTransform>();
+
+		if (transform)
+		{
+			ret = transform->GetGlobalPosition().z;
+		}
+	}
+
+	return ret;
+}
+
+void Scripting::TranslateGameObject(uint gameobject_UID, float x, float y, float z)
+{
+	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UID)).second;
+	if (go == nullptr)
+	{
+		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UID)).second;
+	}
+
+	ComponentTransform* transform;
+	transform = go->GetComponent<ComponentTransform>();
+
+	if (transform)
+	{
+		float3 trans_pos = transform->GetPosition();
+
+		trans_pos.x += x;
+		trans_pos.y += y;
+		trans_pos.z += z;
+
+		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
 //bool Scripting::IsMouseInGame() const
@@ -569,7 +699,6 @@ void Scripting::Translate(float x, float y, float z, bool local)
 
 	if (transform)
 	{
-		transform->SetPosition(x, y, z);
 		float3 trans_pos = transform->GetPosition();
 
 		trans_pos.x += x;
@@ -685,7 +814,7 @@ int Scripting::GetRotation(bool local, lua_State* L) const
 	lua_pushnumber(L, rot.x);
 	lua_pushnumber(L, rot.y);
 	lua_pushnumber(L, rot.z);
-	return ret;		
+	return ret;
 }
 
 float Scripting::GetRotationX() const
@@ -946,6 +1075,16 @@ void Scripting::SetVolume(float volume)
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
+void Scripting::StartAnimation(const char* name, float speed)
+{
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+
+	if (anim)
+		anim->PlayAnimation(name, speed);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
 // ------------------------------------------------------------------- //
 
 
@@ -972,7 +1111,7 @@ void Scripting::SetVolume(float volume)
 //		((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().Decompose(auxMat, float3());
 //		return RadToDeg(auxMat.ToEulerXYZ().y);
 //	}
-//		
+//
 //}
 //
 //float Scripting::GetEulerZ(bool local) const

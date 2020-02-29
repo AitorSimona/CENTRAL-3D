@@ -13,7 +13,7 @@
         "Resources": true,
         "Scene": true,
         "Settings": false,
-        "ShaderEditor": true,
+        "ShaderEditor": false,
         "Toolbar": true
     },
     "Input": null,

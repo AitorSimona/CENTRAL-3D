@@ -15,8 +15,7 @@
 ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file)
 {
 	extension = ".scene";
-	name = "scene";
-	resource_file = SCENES_FOLDER + name + extension;
+	resource_file = source_file;
 	original_file = resource_file;
 
 	previewTexID = App->gui->sceneTexID;
@@ -122,6 +121,48 @@ void ResourceScene::FreeMemory()
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }
 
+GameObject* ResourceScene::GetGOWithName(const char* GO_name)
+{
+	GameObject* ret = nullptr;
+
+	std::string GO_stringname = GO_name;
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		std::string name = (*it).second->GetName();
+		if (name.compare(GO_stringname) == 0)
+		{
+			ret = (*it).second;
+			return ret;
+		}
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		std::string name = (*it).second->GetName();
+		if (name.compare(GO_stringname) == 0)
+		{
+			ret = (*it).second;
+			return ret;
+		}
+	}
+
+	return ret;
+}
+
+//Return the GameObject with this UID
+GameObject* ResourceScene::GetGOWithUID(uint UID)
+{
+	GameObject* ret_go = nullptr;
+	ret_go = NoStaticGameObjects.find(UID)->second;
+	if (ret_go == nullptr)
+	{
+		ret_go = StaticGameObjects.find(UID)->second;
+	}
+
+	return ret_go;
+}
+
 void ResourceScene::OnOverwrite()
 {
 	// No reason to overwrite scene
@@ -129,9 +170,19 @@ void ResourceScene::OnOverwrite()
 
 void ResourceScene::OnDelete()
 {
-	FreeMemory();
-	App->fs->Remove(resource_file.c_str());
+	if (this->GetUID() == App->scene_manager->defaultScene->GetUID())
+	{
+		if (this->GetUID() == App->scene_manager->currentScene->GetUID())
+		{
+			App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
+		}
 
-	App->resources->RemoveResourceFromFolder(this);
-	App->resources->ONResourceDestroyed(this);
+		FreeMemory();
+		App->fs->Remove(resource_file.c_str());
+
+		App->resources->RemoveResourceFromFolder(this);
+		App->resources->ONResourceDestroyed(this);
+	}
+
 }
+

@@ -10,6 +10,8 @@
 #include "ResourceScript.h"
 #include "ComponentScript.h"
 #include "Scripting.h"
+#include "ResourceScene.h"
+#include "ModuleSceneManager.h"
 //#include "ComponentTransform.h"
 //#include "ModuleResources.h"
 //#include "ModuleEditor.h"
@@ -112,7 +114,7 @@ bool ModuleScripting::JustCompile(std::string absolute_path)
 {
 	bool ret = false;
 
-	//MYTODO: Dídac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
+	//MYTODO: Dï¿½dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
@@ -158,7 +160,7 @@ bool ModuleScripting::JustCompile(std::string absolute_path)
 
 void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 {
-	//MYTODO: Dídac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
+	//MYTODO: Dï¿½dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
@@ -185,17 +187,18 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
 		.addFunction("ShakeController", &Scripting::ShakeController)
 		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
-		
 		//Transform Functions
 		.addFunction("GetPosition", &Scripting::GetPosition)
 		.addFunction("GetPositionX", &Scripting::GetPositionX)
 		.addFunction("GetPositionY", &Scripting::GetPositionY)
 		.addFunction("GetPositionZ", &Scripting::GetPositionZ)
-
-		.addFunction("GetRotation", &Scripting::GetRotation)
-		.addFunction("GetRotationX", &Scripting::GetRotationX)
-		.addFunction("GetRotationY", &Scripting::GetRotationY)
-		.addFunction("GetRotationZ", &Scripting::GetRotationZ)
+		//GetGameObject & move an external Gameobject
+		.addFunction("FindGameObject", &Scripting::FindGameObject)
+		//.addFunction("GetGameObjectPos", &Scripting::GetGameObjectPos)
+		.addFunction("TranslateGameObject", &Scripting::TranslateGameObject)
+		.addFunction("GetGameObjectPosX", &Scripting::GetGameObjectPosX)
+		.addFunction("GetGameObjectPosY", &Scripting::GetGameObjectPosY)
+		.addFunction("GetGameObjectPosZ", &Scripting::GetGameObjectPosZ)
 
 		.addFunction("Translate", &Scripting::Translate)
 		.addFunction("SetPosition", &Scripting::SetPosition)
@@ -219,8 +222,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 
 		.addFunction("UseGravity", &Scripting::UseGravity)
 		.addFunction("SetKinematic", &Scripting::SetKinematic)
-		
+
 		.addFunction("LookAt", &Scripting::LookAt)
+
+		.addFunction("PlayAnimation", &Scripting::StartAnimation)
 
 		.endClass()
 		.endNamespace();
@@ -238,7 +243,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 	{
 		//Compile the file and run it, we're gonna optimize this to just compile the function the script contains to library later.
 		int compiled = luaL_dofile(L, script->my_component->script->absolute_path.c_str());
-		
+
 		if (compiled == LUA_OK)
 		{
 			//Get the function to instantiate the lua table (used as a class as known in C++)
@@ -382,7 +387,7 @@ void ModuleScripting::NullifyScriptInstanceWithParentComponent(ComponentScript* 
 		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component)
 		{
 			class_instances[i]->script_is_null = true;
-			
+
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("Lua Resource for component %s (lua script component) is nullptr!",class_instances[i]->my_component->script_name.c_str());
 		}
 	}
@@ -437,7 +442,15 @@ update_status ModuleScripting::Update(float realDT)
 		DoHotReloading();
 
 	if(App->GetAppState() != AppState::PLAY)
+	{
 		previous_AppState = (_AppState)App->GetAppState();
+
+		for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
+		{
+			(*it)->awoken = false;
+			(*it)->started = false;
+		}
+	}
 
 	// Carles to Didac
 	// 1. You can use the "IsWhatever" functions of App to check the current game state.
@@ -447,7 +460,7 @@ update_status ModuleScripting::Update(float realDT)
 
 
 	//TEST FUNCTION DEFINETIVELY SHOULD NOT BE HERE
-	//MYTODO: Dídac PLEAse didac look into this why did you do this?
+	//MYTODO: Dï¿½dac PLEAse didac look into this why did you do this?
 	/*if (App->scene_intro->selected_go != nullptr && App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 		GameObject* returned = GOFunctions::InstantiateGameObject(App->scene_intro->selected_go);*/
 	return UPDATE_CONTINUE;

@@ -3,6 +3,8 @@
 
 #include "Importer.h"
 
+class ResourceScript;
+
 class ImporterScript : public Importer
 {
 public:
@@ -12,9 +14,10 @@ public:
 	virtual Resource* Import(ImportData& IData) const override;
 	virtual Resource* Load(const char* path) const override;
 
+	void Save(ResourceScript* script);
+
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Script; };
 };
 
 
 #endif // !__IMPORTERSCRIPT_H__
-

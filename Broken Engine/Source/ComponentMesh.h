@@ -2,9 +2,9 @@
 #define __COMPONENT_MESH_H__
 
 #include "Component.h"
-#include "Math.h"
 #include "ResourceMesh.h"
 
+class ComponentBone;
 
 class ComponentMesh : public Component
 {
@@ -21,8 +21,14 @@ public:
 	void CreateInspectorNode() override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
+
+	// -- For skinning
+	void AddBone(ComponentBone* bone);
+	void UpdateDefMesh();
+
 public:
 	ResourceMesh* resource_mesh = nullptr;
+	std::vector<ComponentBone*> bones;
 };
 
 #endif
