@@ -99,7 +99,7 @@ public:
 	float GetPositionX() const;
 	float GetPositionY() const;
 	float GetPositionZ() const;
-	int GetPosition(bool local, lua_State *L) const;
+	int GetPosition(lua_State *L);
 
 	void Translate(float x, float y, float z, bool local);
 	void SetPosition(float x, float y, float z, bool local);
@@ -112,6 +112,30 @@ public:
 	float GetRotationX() const;
 	float GetRotationY() const;
 	float GetRotationZ() const;
+
+	//Physics
+	void SetMass(float mass);
+	float GetMass();
+
+	int GetLinearVelocity(lua_State* L);
+	int GetAngularVelocity(lua_State* L);
+
+	void SetLinearVelocity(float x, float y, float z);
+	void SetAngularVelocity(float x, float y, float z);
+
+	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode);
+	void AddForce(float forceX, float forceY, float forceZ, int ForceMode);
+
+	void SetKinematic(bool enable);
+	void UseGravity(bool enable);
+
+	//Audio
+	void PlayAudioSFX();
+	void StopAudioSFX();
+	void PauseAudioSFX();
+	void ResumeAudioSFX();
+
+	void SetVolume(float volume);
 
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll

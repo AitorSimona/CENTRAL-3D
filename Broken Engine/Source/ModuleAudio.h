@@ -9,7 +9,7 @@ class WwiseGameObject
 {
 public:
 
-	WwiseGameObject(unsigned __int64 id, const char* name);
+	WwiseGameObject(uint64 id, const char* name);
 	~WwiseGameObject();
 
 public:

@@ -18,7 +18,7 @@ end
 
 function lua_table:Update ()
 	dt = lua_table["Functions"]:dt ()
-	
+
 	lua_table["Functions"]:TranslateGameObject(lua_table["Camera"],1.0*dt,0.0,0.0)
 	lua_table["Functions"]:LOG("Pos_x:"  .. lua_table["Functions"]:GetGameObjectPosX(lua_table["Camera"]))
 	lua_table["Functions"]:LOG("Pos_y:"  .. lua_table["Functions"]:GetGameObjectPosY(lua_table["Camera"]))
@@ -29,16 +29,25 @@ function lua_table:Update ()
     --lua_table["Functions"]:LOG ("Pos_X" .. posx)
     --lua_table["Functions"]:LOG ("Pos_Y" .. posy)
     --lua_table["Functions"]:LOG ("Pos_Z" .. posz)
-    
+
 	--Object Transformations
 	--rotX = lua_table["Functions"]:GetRotationX()
 
 	--lua_table["Functions"]:LOG (rotX)
+	lua_table["Functions"]:AddForce(10, 10, 10, 0)
+
+	rotX, rotY, rotZ = lua_table["Functions"]:GetAngularVelocity()
+	posX, posY, posZ = lua_table["Functions"]:GetLinearVelocity()
+	mass = lua_table["Functions"]:UseGravity(false)
+
+	lua_table["Functions"]:LOG (rotX)
+	lua_table["Functions"]:LOG (posX)
+	lua_table["Functions"]:LOG (mass)
 
 	--Particles Emission Activation/Deactivation
 	--lua_table["Functions"]:ActivateParticlesEmission()
 	--lua_table["Functions"]:DeactivateParticlesEmission()
-	
+
 end
 
 return lua_table

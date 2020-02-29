@@ -192,7 +192,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetPositionX", &Scripting::GetPositionX)
 		.addFunction("GetPositionY", &Scripting::GetPositionY)
 		.addFunction("GetPositionZ", &Scripting::GetPositionZ)
-		//GetGameObject & move an external Gameobject 
+		//GetGameObject & move an external Gameobject
 		.addFunction("FindGameObject", &Scripting::FindGameObject)
 		//.addFunction("GetGameObjectPos", &Scripting::GetGameObjectPos)
 		.addFunction("TranslateGameObject", &Scripting::TranslateGameObject)
@@ -203,12 +203,26 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("Translate", &Scripting::Translate)
 		.addFunction("SetPosition", &Scripting::SetPosition)
 
-		/*.addFunction("RotateObject", &Scripting::RotateObject)
-		.addFunction("SetObjectRotation", &Scripting::RotateObject)*/
+		.addFunction("RotateObject", &Scripting::RotateObject)
+		.addFunction("SetObjectRotation", &Scripting::SetObjectRotation)
 
 		//Systems Functions
 		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
+
+		.addFunction("GetAngularVelocity", &Scripting::GetAngularVelocity)
+		.addFunction("SetAngularVelocity", &Scripting::SetAngularVelocity)
+		.addFunction("GetLinearVelocity", &Scripting::GetLinearVelocity)
+		.addFunction("SetLinearVelocity", &Scripting::SetLinearVelocity)
+		.addFunction("GetMass", &Scripting::GetMass)
+		.addFunction("SetMass", &Scripting::SetMass)
+
+		.addFunction("AddTorque", &Scripting::AddTorque)
+		.addFunction("AddForce", &Scripting::AddForce)
+
+		.addFunction("UseGravity", &Scripting::UseGravity)
+		.addFunction("SetKinematic", &Scripting::SetKinematic)
+
 		.endClass()
 		.endNamespace();
 
@@ -426,7 +440,7 @@ update_status ModuleScripting::Update(float realDT)
 	if(App->GetAppState() != AppState::PLAY)
 	{
 		previous_AppState = (_AppState)App->GetAppState();
-	
+
 		for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
 		{
 			(*it)->awoken = false;
