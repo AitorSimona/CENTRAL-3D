@@ -141,22 +141,22 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		ImGui::TreePop();
 	}
 
-	//if (rigidBody != nullptr) {
-	//	SetMass(mass);
-	//	SetDensity(density);
-	//	UseGravity(use_gravity);
-	//	SetKinematic(is_kinematic);
-	//	SetLinearVelocity(linear_vel);
-	//	SetAngularVelocity(angular_vel);
-	//	SetLinearDamping(linear_damping);
-	//	SetAngularDamping(angular_damping);
-	//	FeezePosition_X(freezePosition_X);
-	//	FeezePosition_Y(freezePosition_Y);
-	//	FeezePosition_Z(freezePosition_Z);
-	//	FreezeRotation_X(freezeRotation_X);
-	//	FreezeRotation_Y(freezeRotation_Y);
-	//	FreezeRotation_Z(freezeRotation_Z);
-	//}
+	if (rigidBody != nullptr) {
+		SetMass(mass);
+		SetDensity(density);
+		UseGravity(use_gravity);
+		SetKinematic(is_kinematic);
+		/*SetLinearVelocity(linear_vel);
+		SetAngularVelocity(angular_vel);
+		SetLinearDamping(linear_damping);
+		SetAngularDamping(angular_damping);*/
+		FeezePosition_X(freezePosition_X);
+		FeezePosition_Y(freezePosition_Y);
+		FeezePosition_Z(freezePosition_Z);
+		FreezeRotation_X(freezeRotation_X);
+		FreezeRotation_Y(freezeRotation_Y);
+		FreezeRotation_Z(freezeRotation_Z);
+	}
 
 	StaticToDynamicRigidBody();
 }

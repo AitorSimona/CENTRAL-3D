@@ -173,25 +173,36 @@ void ComponentCollider::UpdateLocalMatrix() {
 
 	PxVec3 posi(pos.x, pos.y, pos.z);
 	PxQuat quati(rot.x, rot.y, rot.z, rot.w);
-	PxTransform transform(posi,quati);
+	PxTransform transform(posi, quati);
 
 	if (!dynamicRB)
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (ImGuizmo::IsUsing()) { //ON EDITOR
+		if (ImGuizmo::IsUsing() || updateValues) { //ON EDITOR
 			dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else {
 			if (dynamicRB->rigidBody != nullptr) //ON GAME
 			{
-				PxTransform transform = dynamicRB->rigidBody->getGlobalPose();
-				cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y, transform.p.z - offset.z);
-				cTransform->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w)); 
-				globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
+				UpdateTransformByRigidBody(dynamicRB, cTransform);
 			}
 		}
 	}
+}
+
+void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {
+	PxTransform transform;
+	if (globalPos) {
+		transform = PxTransform(globalPos->p, globalPos->q);
+		RB->rigidBody->setGlobalPose(transform);
+	}
+
+	transform = RB->rigidBody->getGlobalPose();
+	float x = transform.p.x - offset.x;
+	cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y, transform.p.z - offset.z);
+	cTransform->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
+	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
 }
 
 json ComponentCollider::Save() const
