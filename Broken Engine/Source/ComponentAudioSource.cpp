@@ -104,8 +104,3 @@ json ComponentAudioSource::Save() const
 	json node;
 	return node;
 }
-
-void ComponentAudioSource::SetID(AkGameObjectID id)
-{
-	this->id = id;
-}

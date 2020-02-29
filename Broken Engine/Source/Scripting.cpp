@@ -10,6 +10,7 @@
 #include "ComponentParticleEmitter.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
+#include "ComponentAudioSource.h"
 
 #include "ScriptData.h"
 
@@ -839,6 +840,58 @@ void Scripting::DeactivateParticlesEmission() const
 		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component already Disabled");
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+}
+
+
+//AUDIO --------------------------------------------------------------
+void Scripting::PlayAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->PlaySFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::StopAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->StopSFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::PauseAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->PauseSFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::ResumeAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->ResumeSFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::SetVolume(float volume)
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->SetVolume(volume);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
 // ------------------------------------------------------------------- //

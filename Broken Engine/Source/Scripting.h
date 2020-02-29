@@ -120,6 +120,14 @@ public:
 	void SetKinematic(bool enable);
 	void UseGravity(bool enable);
 
+	//Audio
+	void PlayAudioSFX();
+	void StopAudioSFX();
+	void PauseAudioSFX();
+	void ResumeAudioSFX();
+
+	void SetVolume(float volume);
+
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll
 	//float GetEulerY(bool local) const;	// Pitch
