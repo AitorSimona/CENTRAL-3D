@@ -171,6 +171,8 @@ void GameObject::AddChildGO(GameObject* GO)
 		GO->parent = this;
 		childs.push_back(GO);
 
+		GO->GetComponent<ComponentTransform>()->SetGlobalTransform(GO->GetComponent<ComponentTransform>()->GetGlobalTransform()*GetComponent<ComponentTransform>()->GetGlobalTransform().Inverse());
+
 		//ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
 		//transform->SetGlobalTransform(this->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
 	}
