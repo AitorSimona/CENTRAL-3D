@@ -10,6 +10,8 @@
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
 
+#include "ResourceScene.h"
+
 #include "Panels.h"
 
 #include "Imgui/imgui.h"
@@ -172,7 +174,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::BeginMenu("3D Object"))
 				{
 					if (ImGui::MenuItem("Empty Game Object"))
-						App->scene_manager->CreateEmptyGameObject();
+					{
+						GameObject* go = App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->currentScene->NoStaticGameObjects[go->GetUID()] = go;
+					}
+
 
 					if (ImGui::MenuItem("Plane"))
 					{
@@ -196,6 +202,8 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Camera"))
 					{
 						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->currentScene->NoStaticGameObjects[cam->GetUID()] = cam;
+
 						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
 						cam->AddComponent(Component::ComponentType::MeshRenderer);
 						camera->SetFarPlane(10);

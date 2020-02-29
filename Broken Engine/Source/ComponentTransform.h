@@ -22,6 +22,7 @@ public:
 
 	// --- Setters ---
 	void			SetPosition(float3 new_pos);
+	void			SetPosition(float x, float y, float z);
 	void			SetRotation(float3 euler_angles);
 	void			SetRotation(Quat quat);
 	void			Scale(float x, float y, float z);
