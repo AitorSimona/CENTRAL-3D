@@ -4,6 +4,8 @@
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
+#include "ComponentBone.h"
+#include "ComponentAnimation.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
 

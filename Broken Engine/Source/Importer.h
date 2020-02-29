@@ -16,6 +16,8 @@ public:
 		Material,
 		Shader,
 		Mesh,
+		Bone,
+		Animation,
 		Texture,
 		Shader_Object,
 		Script,

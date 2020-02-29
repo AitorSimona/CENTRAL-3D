@@ -16,12 +16,21 @@ public:
 		Mesh,
 		MeshRenderer,
 		Camera,
+		Canvas,
+		Image,
+		Text,
+		Button,
+		CheckBox,
+		InputText,
+		Script,
+		ProgressBar,
+		Bone,
+		Animation,
 		DynamicRigidBody,
 		Collider,
 		ParticleEmitter,
 		AudioSource,
 		AudioListener,
-		Script,
 		Unknown
 	};
 

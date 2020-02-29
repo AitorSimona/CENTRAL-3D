@@ -3,7 +3,9 @@
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentMeshRenderer.h"
+#include "ComponentAnimation.h"
 #include "ComponentCamera.h"
+#include "ComponentBone.h"
 #include "ComponentCollider.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentParticleEmitter.h"
@@ -11,6 +13,14 @@
 #include "ModuleSceneManager.h"
 #include "ComponentAudioListener.h"
 #include "ComponentAudioSource.h"
+
+#include "Canvas.h"
+#include "Text.h"
+#include "Image.h"
+//#include "Button.h"
+//#include "CheckBox.h"
+//#include "InputText.h"
+//#include "ProgressBar.h"
 
 #include "Math.h"
 
@@ -66,7 +76,11 @@ void GameObject::Update(float dt)
 		collider->UpdateLocalMatrix();
 
 	if (GetComponent<ComponentTransform>()->update_transform)
-		OnUpdateTransform();
+		TransformGlobal(this);
+
+	ComponentAnimation* anim = this->GetComponent<ComponentAnimation>();
+	if (GetComponent<ComponentAnimation>())
+		anim->Update(dt);
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
@@ -117,31 +131,48 @@ void GameObject::RecursiveDelete()
 	}
 }
 
-void GameObject::OnUpdateTransform()
+//void GameObject::OnUpdateTransform()
+//{
+//	if (Static)
+//		return;
+//
+//	ComponentTransform* transform = GetComponent<ComponentTransform>();
+//
+//	if(parent)
+//		transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
+//
+//	ComponentCamera* camera = GetComponent<ComponentCamera>();
+//
+//	if(camera)
+//		camera->OnUpdateTransform(transform->GetGlobalTransform());
+//
+//	// --- Update all children ---
+//	if (childs.size() > 0)
+//	{
+//		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+//		{
+//			(*it)->OnUpdateTransform();
+//		}
+//	}
+//
+//	UpdateAABB();
+//}
+
+void GameObject::TransformGlobal(GameObject* GO)
 {
-	if (Static)
-		return;
-
-	ComponentTransform* transform = GetComponent<ComponentTransform>();
-
-	if (parent)
-		transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
+	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
+	transform->OnUpdateTransform(GO->parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
 
 	ComponentCamera* camera = GetComponent<ComponentCamera>();
 
 	if (camera)
 		camera->OnUpdateTransform(transform->GetGlobalTransform());
 
-	// --- Update all children ---
-	if (childs.size() > 0)
+	for (std::vector<GameObject*>::iterator tmp = GO->childs.begin(); tmp != GO->childs.end(); ++tmp)
 	{
-		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
-		{
-			(*it)->OnUpdateTransform();
-		}
+		TransformGlobal(*tmp);
 	}
 
-	UpdateAABB();
 }
 
 void GameObject::RemoveChildGO(GameObject* GO)
@@ -170,7 +201,6 @@ void GameObject::AddChildGO(GameObject* GO)
 
 		GO->parent = this;
 		childs.push_back(GO);
-
 		GO->GetComponent<ComponentTransform>()->SetGlobalTransform(GO->GetComponent<ComponentTransform>()->GetGlobalTransform()*GetComponent<ComponentTransform>()->GetGlobalTransform().Inverse());
 
 		//ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
@@ -197,10 +227,34 @@ bool GameObject::FindChildGO(GameObject* GO)
 	return ret;
 }
 
-Component* GameObject::AddComponent(Component::ComponentType type)
+void GameObject::GetAllChilds(std::vector<GameObject*>& collector)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 10, "Component Creation Switch needs to be updated");
+	collector.push_back(this);
+	for (uint i = 0; i < childs.size(); i++)
+		childs[i]->GetAllChilds(collector);
+}
 
+GameObject* GameObject::GetAnimGO(GameObject* GO)
+{
+	ComponentAnimation* anim = GO->GetComponent<ComponentAnimation>();
+
+	if (anim != nullptr)
+	{
+		return anim->GetContainerGameObject();
+	}
+	else
+	{
+		if (GO->parent)
+			return GetAnimGO(GO->parent);
+		else
+			return nullptr;
+	}
+
+}
+
+Component * GameObject::AddComponent(Component::ComponentType type)
+{
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 19, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
@@ -237,9 +291,44 @@ Component* GameObject::AddComponent(Component::ComponentType type)
 			case Component::ComponentType::AudioListener:
 				component = new ComponentAudioListener(this);
 				break;
-		case Component::ComponentType::Script:
-			component = new ComponentScript(this);
-			break;
+			case Component::ComponentType::Bone:
+				component = new ComponentBone(this);
+				break;
+			case Component::ComponentType::Animation:
+				component = new ComponentAnimation(this);
+				break;
+
+			case Component::ComponentType::Canvas:
+				component = new Canvas(this);
+				break;
+
+			case Component::ComponentType::Text:
+				component = new Text(this);
+				break;
+
+			case Component::ComponentType::Image:
+				component = new Image(this);
+				break;
+
+				case Component::ComponentType::Script:
+					component = new ComponentScript(this);
+					break;
+
+			//case Component::ComponentType::Button:
+			//	component = new Button(this);
+			//	break;
+
+			//case Component::ComponentType::CheckBox:
+			//	component = new CheckBox(this);
+			//	break;
+
+			//case Component::ComponentType::InputText:
+			//	component = new InputText(this);
+			//	break;
+
+			//case Component::ComponentType::ProgressBar:
+			//	component = new ProgressBar(this);
+			//	break;
 		}
 
 		if (component)

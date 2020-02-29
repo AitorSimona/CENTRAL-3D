@@ -10,7 +10,17 @@
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
 
+#include "ResourceScene.h"
+
 #include "Panels.h"
+
+#include "Canvas.h"
+#include "Image.h"
+#include "Text.h"
+//#include "Button.h"
+//#include "CheckBox.h"
+//#include "InputText.h"
+//#include "ProgressBar.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -172,7 +182,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::BeginMenu("3D Object"))
 				{
 					if (ImGui::MenuItem("Empty Game Object"))
-						App->scene_manager->CreateEmptyGameObject();
+					{
+						GameObject* go = App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->currentScene->NoStaticGameObjects[go->GetUID()] = go;
+					}
+
 
 					if (ImGui::MenuItem("Plane"))
 					{
@@ -196,6 +210,8 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Camera"))
 					{
 						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->currentScene->NoStaticGameObjects[cam->GetUID()] = cam;
+
 						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
 						cam->AddComponent(Component::ComponentType::MeshRenderer);
 						camera->SetFarPlane(10);
@@ -204,6 +220,37 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Redo Octree"))
 						App->scene_manager->RedoOctree();
 
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("UI Elements"))
+				{
+					if (ImGui::MenuItem("Canvas"))
+					{
+						GameObject* canvas_go = App->scene_manager->CreateEmptyGameObject();
+						Canvas* camera = (Canvas*)canvas_go->AddComponent(Component::ComponentType::Canvas);
+					}
+					if (ImGui::MenuItem("Image"))
+					{
+						GameObject* image_go = App->scene_manager->CreateEmptyGameObject();
+						Image* image = (Image*)image_go->AddComponent(Component::ComponentType::Image);
+					}
+					if (ImGui::MenuItem("Text"))
+					{
+						GameObject* text_go = App->scene_manager->CreateEmptyGameObject();
+						Text* text = (Text*)text_go->AddComponent(Component::ComponentType::Text);
+					}
+					if (ImGui::MenuItem("Button", false, false, false))
+					{
+					}
+					if (ImGui::MenuItem("Checkbox", false, false, false))
+					{
+					}
+					if (ImGui::MenuItem("Input Text", false, false, false))
+					{
+					}
+					if (ImGui::MenuItem("Progress Bar", false, false, false))
+					{
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();

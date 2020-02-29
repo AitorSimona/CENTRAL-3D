@@ -212,14 +212,14 @@ SDL_GameControllerButton Scripting::GetControllerButtonFromString(const char* bu
 		button = SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
 	else
 		button = SDL_CONTROLLER_BUTTON_INVALID;
-	
+
 	return button;
 }
 
 GP_BUTTON_STATE Scripting::GetGamepadButtonState(const char* state_name) const
 {
 	GP_BUTTON_STATE ret = GP_BUTTON_STATE::BUTTON_IDLE;
-	
+
 	if (!strcmp("IDLE", state_name))
 		ret = GP_BUTTON_STATE::BUTTON_IDLE;
 	else if (!std::strcmp("DOWN", state_name))
@@ -731,7 +731,7 @@ void Scripting::RotateObject(float x, float y, float z)
 		transform->SetRotation(rot);
 	}
 	else
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");	
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
 void Scripting::SetObjectRotation(float x, float y, float z)
@@ -777,7 +777,7 @@ int Scripting::GetRotation(bool local, lua_State* L) const
 	lua_pushnumber(L, rot.x);
 	lua_pushnumber(L, rot.y);
 	lua_pushnumber(L, rot.z);
-	return ret;		
+	return ret;
 }
 
 float Scripting::GetRotationX() const
@@ -1064,7 +1064,7 @@ void Scripting::SetVolume(float volume)
 //		((ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM))->globalTrs.RotatePart().Decompose(auxMat, float3());
 //		return RadToDeg(auxMat.ToEulerXYZ().y);
 //	}
-//		
+//
 //}
 //
 //float Scripting::GetEulerZ(bool local) const

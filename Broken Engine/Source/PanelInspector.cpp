@@ -69,7 +69,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter" };
+		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -102,7 +102,6 @@ bool PanelInspector::Draw()
 					resource = App->resources->GetResource(UID);
 					ComponentScript* script = (ComponentScript*)Selected->AddComponent(Component::ComponentType::Script);
 					script->AssignScript((ResourceScript*)resource);
-					
 
 				}
 			}
@@ -124,6 +123,20 @@ bool PanelInspector::Draw()
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
 		}
 
+		if (item_current == "UI Canvas")
+		{
+			Selected->AddComponent(Component::ComponentType::Canvas);
+		}
+
+		if (item_current == "UI Image")
+		{
+			Selected->AddComponent(Component::ComponentType::Image);
+		}
+
+		if (item_current == "UI Text")
+		{
+			Selected->AddComponent(Component::ComponentType::Text);
+		}
 		if (item_current == "Dynamic RigidBody")
 		{
 			Selected->AddComponent(Component::ComponentType::DynamicRigidBody);
@@ -182,7 +195,7 @@ void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 		else
 			Selected.Disable();
 	}
-	
+
 	ImGui::SameLine();
 
 	// --- Game Object Name Setter ---

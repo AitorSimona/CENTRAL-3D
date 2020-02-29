@@ -46,7 +46,7 @@ Resource* ImporterScript::Import(ImportData& IData) const
 	abs_path += IData.path;
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();
-	
+
 	//Get Script name
 	std::string file;
 	App->fs->SplitFilePath(IData.path,nullptr,&file ,nullptr);
