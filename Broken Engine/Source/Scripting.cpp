@@ -13,6 +13,7 @@
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ComponentAudioSource.h"
+#include "ComponentAnimation.h"
 
 #include "ScriptData.h"
 
@@ -1036,6 +1037,16 @@ void Scripting::SetVolume(float volume)
 		sound->SetVolume(volume);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::StartAnimation(const char* name, float speed)
+{
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+
+	if (anim)
+		anim->PlayAnimation(name, speed);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
 // ------------------------------------------------------------------- //
