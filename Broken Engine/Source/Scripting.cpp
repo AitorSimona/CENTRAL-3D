@@ -348,7 +348,7 @@ int Scripting::GetAxisRealValue(int player_num, const char* axis) const
 	SDL_GameControllerAxis SDL_axis = GetControllerAxisFromString(axis);
 
 	ret = App->input->GetAxis(player,SDL_axis);
-
+	ENGINE_CONSOLE_LOG("%i", ret);
 	return ret;
 }
 
@@ -724,16 +724,31 @@ void Scripting::SetPosition(float x, float y, float z, bool local)
 void Scripting::RotateObject(float x, float y, float z)
 {
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+	ComponentCollider* collider = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	ComponentDynamicRigidBody* rb = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
 
-	if (transform)
+	if (transform && rb && collider)
+	{
+		if (!rb->rigidBody)
+			return;
+
+		PxTransform globalPos = rb->rigidBody->getGlobalPose();
+		Quat quaternion = Quat::FromEulerXYZ(DEGTORAD * x, DEGTORAD * y, DEGTORAD * z);
+		PxQuat quat = PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+		globalPos = PxTransform(globalPos.p, quat);
+
+		collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
+
+	}else if (transform)
 	{
 		float3 rot = transform->GetRotation();
-		rot += float3(x, y, z);
+		rot = float3(x, y, z);
 		transform->SetRotation(rot);
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
+
 
 void Scripting::SetObjectRotation(float x, float y, float z)
 {
@@ -748,14 +763,35 @@ void Scripting::SetObjectRotation(float x, float y, float z)
 void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
 {
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+	ComponentCollider* collider = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	ComponentDynamicRigidBody* rb = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
 
 	if (transform)
 	{
-		float3 dir = (float3(spotX, spotY, spotZ) - transform->GetPosition());
+		float3 zaxis = float3(transform->GetGlobalPosition() - float3(spotX, spotY, spotZ)).Normalized();
+		float3 xaxis = float3(zaxis.Cross(float3(0,1,0))).Normalized();
+		float3 yaxis = xaxis.Cross(zaxis);
+		zaxis = zaxis.Neg();
 
-		float3 rot = transform->GetRotation();
-		rot += dir;
+		float4x4 m = { 
+		   float4(xaxis.x, xaxis.y, xaxis.z, -Dot(xaxis, transform->GetGlobalPosition())),
+		   float4(yaxis.x, yaxis.y, yaxis.z, -Dot(yaxis, transform->GetGlobalPosition())),
+		   float4(zaxis.x, zaxis.y, zaxis.z, -Dot(zaxis, transform->GetGlobalPosition())),
+		   float4(0, 0, 0, 1)
+		};
+		m.Transpose();
+
+		float3 pos, scale;
+		Quat rot;
+
+		m.Decompose(pos, rot, scale);
+
 		transform->SetRotation(rot);
+
+		//PxTransform globalPos(PxVec3(pos.x, pos.y, pos.z), PxQuat(rot.x, rot.y, rot.z, rot.w));
+
+		//collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
+		
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");

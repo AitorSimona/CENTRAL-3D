@@ -41,6 +41,7 @@ public:
 
 public:
 	bool update_transform = false;
+	bool updateValues = false;
 private:
 	//void UpdateLocalTransform();
 	void UpdateTRS();

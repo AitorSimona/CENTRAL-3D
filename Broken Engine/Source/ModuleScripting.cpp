@@ -223,6 +223,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("UseGravity", &Scripting::UseGravity)
 		.addFunction("SetKinematic", &Scripting::SetKinematic)
 
+		.addFunction("LookAt", &Scripting::LookAt)
+
 		.addFunction("PlayAnimation", &Scripting::StartAnimation)
 
 		.endClass()
