@@ -1,5 +1,5 @@
-#ifndef __ComponentAudioSource__H__
-#define __ComponentAudioSource__H__
+#ifndef __COMPONENTAUDIOSOURCE__H__
+#define __COMPONENTAUDIOSOURCE__H__
 
 #include "Component.h"
 #include "Wwise/AK/SoundEngine/Common/AkTypes.h"
@@ -19,9 +19,19 @@ public:
 	json Save() const override;
 	void Load(json& node) override;
 
-	void SetID(AkGameObjectID id);
+	void SetID(uint64 id) { this->id = id; }
+	const uint64 GetID() const { return id; }
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::AudioSource; };
+
+public:
+
+	void PlaySFX();
+	void StopSFX();
+	void PauseSFX();
+	void ResumeSFX();
+
+	void SetVolume(float volume);
 
 public:
 
@@ -31,4 +41,4 @@ public:
 	bool isPlaying = false;
 };
 
-#endif __ComponentAudioSource__H__
+#endif __COMPONENTAUDIOSOURCE__H__

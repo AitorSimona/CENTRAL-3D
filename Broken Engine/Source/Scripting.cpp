@@ -4,8 +4,15 @@
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"
 #include "ModuleScripting.h"
+#include "ModuleSceneManager.h"
+#include "ResourceScene.h"
 #include "ComponentTransform.h"
 #include "GameObject.h"
+
+#include "ComponentParticleEmitter.h"
+#include "ComponentDynamicRigidBody.h"
+#include "ComponentCollider.h"
+#include "ComponentAudioSource.h"
 
 #include "ScriptData.h"
 
@@ -22,6 +29,7 @@ Scripting::~Scripting()
 {
 }
 
+
 //Function that Lua will be able to call as LOG
 void Scripting::LogFromLua(const char* string)
 {
@@ -36,6 +44,11 @@ float Scripting::GetRealDT() const
 float Scripting::GetDT() const
 {
 	return App->time->GetGameDt();
+}
+
+float Scripting::GameTime()
+{
+	return App->time->GetGameplayTimePassed();
 }
 
 // Input
@@ -372,6 +385,133 @@ void Scripting::StopControllerShake(int player_num) const
 	App->input->StopControllerShake((PLAYER)player);
 }
 
+//Returns the UID of the GameObject if it is found
+uint Scripting::FindGameObject(const char* go_name)
+{
+	uint ret = 0;
+
+	GameObject* go = App->scene_manager->currentScene->GetGOWithName(go_name);
+
+	if (go != nullptr)
+	{
+		ret = go->GetUID();
+	}
+	else
+	{
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject %s was not found! 0 will be returned",go_name);
+	}
+	return ret;
+}
+
+float Scripting::GetGameObjectPos(uint gameobject_UID, lua_State* L)
+{
+	float ret = 0;
+	float3 rot = float3(0.0f);
+
+	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UID)).second;
+	if (go == nullptr)
+	{
+		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UID)).second;
+	}
+
+	ComponentTransform* transform;
+	transform = go->GetComponent<ComponentTransform>();
+	if ( go != nullptr  && transform != nullptr)
+	{
+		rot = transform->GetPosition();
+		ret = 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+
+	lua_pushnumber(L, rot.x);
+	lua_pushnumber(L, rot.y);
+	lua_pushnumber(L, rot.z);
+	return 0.0f;
+}
+
+float Scripting::GetGameObjectPosX(uint gameobject_UID)
+{
+	float ret = 0.0f;
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+
+	if (GO != nullptr)
+	{
+		ComponentTransform* transform;
+		transform = GO->GetComponent<ComponentTransform>();
+
+		if (transform)
+		{
+			ret = transform->GetGlobalPosition().x;
+		}
+	}
+
+	return ret;
+}
+
+float Scripting::GetGameObjectPosY(uint gameobject_UID)
+{
+	float ret = 0.0f;
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+
+	if (GO != nullptr)
+	{
+		ComponentTransform* transform;
+		transform = GO->GetComponent<ComponentTransform>();
+
+		if (transform)
+		{
+			ret = transform->GetGlobalPosition().y;
+		}
+	}
+
+	return ret;
+}
+
+float Scripting::GetGameObjectPosZ(uint gameobject_UID)
+{
+	float ret = 0.0f;
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+
+	if (GO != nullptr)
+	{
+		ComponentTransform* transform;
+		transform = GO->GetComponent<ComponentTransform>();
+
+		if (transform)
+		{
+			ret = transform->GetGlobalPosition().z;
+		}
+	}
+
+	return ret;
+}
+
+void Scripting::TranslateGameObject(uint gameobject_UID, float x, float y, float z)
+{
+	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UID)).second;
+	if (go == nullptr)
+	{
+		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UID)).second;
+	}
+
+	ComponentTransform* transform;
+	transform = go->GetComponent<ComponentTransform>();
+
+	if (transform)
+	{
+		float3 trans_pos = transform->GetPosition();
+
+		trans_pos.x += x;
+		trans_pos.y += y;
+		trans_pos.z += z;
+
+		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+}
+
 //bool Scripting::IsMouseInGame() const
 //{
 //	return !App->editor->using_menu;
@@ -495,48 +635,412 @@ void Scripting::StopControllerShake(int player_num) const
 // Position
 float Scripting::GetPositionX() const
 {
-		return App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetPosition().x;//GetComponent(COMPONENT_TYPE::TRANSFORM))->position.x;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+		return transform->GetPosition().x;
+	else
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
+	}
 }
 
 float Scripting::GetPositionY() const
 {
-	return App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetPosition().y;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+		return transform->GetPosition().y;
+	else
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
+	}
 }
 
 float Scripting::GetPositionZ() const
 {
-	return App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>()->GetPosition().z;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+		return transform->GetPosition().z;
+	else
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
+	}
 }
 
-int Scripting::GetPosition(bool local, lua_State *L) const
+int Scripting::GetPosition(lua_State *L)
 {
-	ComponentTransform* trs = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-	float3 pos;
+	int ret = 0;
+	float3 rot = float3(0.0f);
 
-	pos = trs->GetPosition();
+	ComponentTransform* transform;
+	if ((transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>()))
+	{
+		rot = transform->GetPosition();
+		ret = 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 
-	lua_pushnumber(L, pos.x);
-	lua_pushnumber(L, pos.y);
-	lua_pushnumber(L, pos.z);
-
-	return 3;
+	lua_pushnumber(L, rot.x);
+	lua_pushnumber(L, rot.y);
+	lua_pushnumber(L, rot.z);
+	return ret;
 }
 
 void Scripting::Translate(float x, float y, float z, bool local)
 {
-	ComponentTransform* trs = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-	float3 trans_pos = trs->GetPosition();
-	trans_pos.x += x;
-	trans_pos.y += y;
-	trans_pos.z += z;
-	trs->SetPosition(trans_pos.x,trans_pos.y,trans_pos.z);
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+	{
+		transform->SetPosition(x, y, z);
+		float3 trans_pos = transform->GetPosition();
+
+		trans_pos.x += x;
+		trans_pos.y += y;
+		trans_pos.z += z;
+
+		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
 void Scripting::SetPosition(float x, float y, float z, bool local)
 {
-	ComponentTransform* trs = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-	trs->SetPosition(x, y, z);
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+		transform->SetPosition(x, y, z);
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
+
+void Scripting::RotateObject(float x, float y, float z)
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+	{
+		float3 rot = transform->GetRotation();
+		rot += float3(x, y, z);
+		transform->SetRotation(rot);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");	
+}
+
+void Scripting::SetObjectRotation(float x, float y, float z)
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if(transform)
+		transform->SetRotation({ x, y, z });
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+}
+
+void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+	{
+		float3 dir = (float3(spotX, spotY, spotZ) - transform->GetPosition());
+
+		float3 rot = transform->GetRotation();
+		rot += dir;
+		transform->SetRotation(rot);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+}
+
+int Scripting::GetRotation(bool local, lua_State* L) const
+{
+	int ret = 0;
+	float3 rot = float3(0.0f);
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+	{
+		rot = transform->GetRotation();
+		ret = 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+
+	lua_pushnumber(L, rot.x);
+	lua_pushnumber(L, rot.y);
+	lua_pushnumber(L, rot.z);
+	return ret;		
+}
+
+float Scripting::GetRotationX() const
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+		return transform->GetRotation().x;
+	else
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
+	}
+}
+
+float Scripting::GetRotationY() const
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+		return transform->GetRotation().y;
+	else
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
+	}
+}
+
+float Scripting::GetRotationZ() const
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+		return transform->GetRotation().z;
+	else
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
+	}
+}
+
+
+// ------------------------ SYSTEMS FUNCTIONS ------------------------ //
+//PHYSICS ------------------------------------------------------------
+void Scripting::SetLinearVelocity(float x, float y, float z)
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		body->SetLinearVelocity({ x, y, z });
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+void Scripting::SetAngularVelocity(float x, float y, float z)
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		body->SetAngularVelocity({ x, y, z });
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+void Scripting::SetMass(float mass)
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		body->SetMass(mass);
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+float Scripting::GetMass()
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		return body->GetMass();
+	else
+	{
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+		return 0.0f;
+	}
+}
+
+int Scripting::GetLinearVelocity(lua_State* L)
+{
+	int ret = 0;
+	float3 vel = float3(0.0f);
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+	{
+		vel = body->GetLinearVelocity();
+		ret = 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+
+	lua_pushnumber(L, vel.x);
+	lua_pushnumber(L, vel.y);
+	lua_pushnumber(L, vel.z);
+	return ret;
+}
+
+int Scripting::GetAngularVelocity(lua_State* L)
+{
+	int ret = 0;
+	float3 vel = float3(0.0f);
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+	{
+		vel = body->GetAngularVelocity();
+		ret = 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+
+	lua_pushnumber(L, vel.x);
+	lua_pushnumber(L, vel.y);
+	lua_pushnumber(L, vel.z);
+	return ret;
+}
+
+void Scripting::AddForce(float forceX, float forceY, float forceZ, int ForceMode)
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		return body->AddForce({forceX, forceY, forceZ}, (PxForceMode::Enum)ForceMode);
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+void Scripting::AddTorque(float forceX, float forceY, float forceZ, int ForceMode)
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		return body->AddTorque({ forceX, forceY, forceZ }, (PxForceMode::Enum)ForceMode);
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+void Scripting::SetKinematic(bool enable)
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		return body->SetKinematic(enable);
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+void Scripting::UseGravity(bool enable)
+{
+	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
+	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+
+	if (body && coll)
+		return body->UseGravity(enable);
+	else
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+//PARTICLES ----------------------------------------------------------
+void Scripting::ActivateParticlesEmission() const
+{
+	ComponentParticleEmitter* emmiter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+
+	if (emmiter && !emmiter->IsEnabled())
+	{
+		emmiter->Enable();
+		ENGINE_CONSOLE_LOG("[Script]: Particles Emission Enabled");
+	}
+	else if (emmiter && emmiter->IsEnabled())
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component already Enabled");
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+}
+
+void Scripting::DeactivateParticlesEmission() const
+{
+	ComponentParticleEmitter* emmiter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+
+	if (emmiter && emmiter->IsEnabled())
+	{
+		emmiter->Disable();
+		ENGINE_CONSOLE_LOG("[Script]: Particles Emission Disabled");
+	}
+	else if (emmiter && !emmiter->IsEnabled())
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component already Disabled");
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+}
+
+
+//AUDIO --------------------------------------------------------------
+void Scripting::PlayAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->PlaySFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::StopAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->StopSFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::PauseAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->PauseSFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::ResumeAudioSFX()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->ResumeSFX();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::SetVolume(float volume)
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+
+	if (sound)
+		sound->SetVolume(volume);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+// ------------------------------------------------------------------- //
+
 
 //// Rotation
 //float Scripting::GetEulerX(bool local) const
@@ -677,19 +1181,7 @@ void Scripting::SetPosition(float x, float y, float z, bool local)
 //}
 //
 //// Others
-//void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	float3 dir;
-//
-//	if (local)
-//		dir = (float3(spotX, spotY, spotZ) - trs->localTrs.TranslatePart());
-//	else
-//		dir = (float3(spotX, spotY, spotZ) - trs->globalTrs.TranslatePart());
-//
-//	LookTo(dir.x, dir.y, dir.z, local);
-//}
-//
+
 //void Scripting::LookTo(float dirX, float dirY, float dirZ, bool local)
 //{
 //	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);

@@ -28,6 +28,7 @@ void ModuleTimeManager::PrepareUpdate()
 	Gametime_clock.Start();
 
 	time += realtime_dt*Time_scale;
+	
 
 	switch (App->GetAppState())
 	{
@@ -39,7 +40,8 @@ void ModuleTimeManager::PrepareUpdate()
 
 		case AppState::PLAY:
 			//App->scene_manager->SetSelectedGameObject(nullptr);
-			//game_dt *= Time_scale;
+			game_dt *= Time_scale;
+			gametime_passed += game_dt;
 			break;
 
 		case AppState::TO_PAUSE:
@@ -62,13 +64,13 @@ void ModuleTimeManager::PrepareUpdate()
 		case AppState::EDITOR:
 			time = 0.0f;
 			game_dt = 0.0f;
+			gametime_passed = 0.0f;
 			break;
 
 		case AppState::STEP:
 			ENGINE_CONSOLE_LOG("APP STATE STEP");
 			App->GetAppState() = AppState::PAUSE;
 			break;
-
 	}
 }
 
@@ -106,6 +108,11 @@ uint ModuleTimeManager::GetMaxFramerate() const
 float ModuleTimeManager::GetTimeScale() const
 {
 	return Time_scale;
+}
+
+float ModuleTimeManager::GetGameplayTimePassed() const
+{
+	return gametime_passed;
 }
 
 void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)

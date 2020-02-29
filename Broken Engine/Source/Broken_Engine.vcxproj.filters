@@ -624,6 +624,9 @@
     <ClInclude Include="PanelGame.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptingMath.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -980,6 +983,9 @@
     <ClCompile Include="PanelGame.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
+    <ClInclude Include="ScriptingMath.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleThreading.cpp">

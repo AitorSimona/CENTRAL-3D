@@ -8,6 +8,8 @@ lua_table["Functions"] = Debug.Scripting ()
 function lua_table:Awake ()
 	lua_table["position_x"] = 30
 	lua_table["Functions"]:LOG ("This Log was called from LUA testing a table on AWAKE")
+	lua_table["Camera"] = lua_table["Functions"]:FindGameObject("Test")
+	lua_table["Functions"]:LOG ("Camera Game Object UID: " .. lua_table["Camera"] )
 end
 
 function lua_table:Start ()
@@ -17,28 +19,35 @@ end
 function lua_table:Update ()
 	dt = lua_table["Functions"]:dt ()
 
-	if lua_table["Functions"]:KeyRepeat ("W") then lua_table["Functions"]:Translate (0.0, 0.0, 50.0 * dt) end
-	if lua_table["Functions"]:KeyRepeat ("A") then lua_table["Functions"]:Translate (50.0 * dt, 0.0 , 0.0) end
-	if lua_table["Functions"]:KeyRepeat ("S") then lua_table["Functions"]:Translate (0.0, 0.0, -50.0 * dt) end
-	if lua_table["Functions"]:KeyRepeat ("D") then lua_table["Functions"]:Translate(-50.0 * dt,0.0 , 0.0) end
-	if lua_table["Functions"]:KeyRepeat ("Q") then lua_table["Functions"]:LOG ("Q is pressed") end
-	if lua_table["Functions"]:IsGamepadButton(1,"BUTTON_DPAD_LEFT","DOWN") then lua_table["Functions"]:LOG ("Button BACK DOWN") end
-	if lua_table["Functions"]:IsGamepadButton(2,"BUTTON_A","DOWN") then lua_table["Functions"]:LOG ("PLAYER 2 button A DOWN") end
-	
-	--Testing axis
-	if lua_table["Functions"]:IsJoystickAxis(1,"AXIS_RIGHTX","POSITIVE_DOWN") then lua_table["Functions"]:LOG ("Joystick Left X POSITIVE Down") end
-	if lua_table["Functions"]:IsJoystickAxis(1,"AXIS_RIGHTX","NEGATIVE_DOWN") then lua_table["Functions"]:LOG ("Joystick Left X NEGATIVE Down") end
-	if lua_table["Functions"]:IsJoystickAxis(1,"AXIS_RIGHTY","POSITIVE_DOWN") then lua_table["Functions"]:LOG ("Joystick Left Y POSITIVE Down") end
-	if lua_table["Functions"]:IsJoystickAxis(1,"AXIS_RIGHTY","NEGATIVE_DOWN") then lua_table["Functions"]:LOG ("Joystick Left Y NEGATIVE Down") end
-	
-	--lua_table["Functions"]:LOG ("Joystick Left X: " .. lua_table["Functions"]:GetAxisValue(1,"AXIS_RIGHTX"))
-	--lua_table["Functions"]:LOG ("Joystick Left Y: " .. lua_table["Functions"]:GetAxisValue(1,"AXIS_RIGHTY"))
-	
-	if lua_table["Functions"]:IsTriggerState(1,"AXIS_TRIGGERLEFT","DOWN") then lua_table["Functions"]:StopControllerShake(1) end
-	if lua_table["Functions"]:IsTriggerState(1,"AXIS_TRIGGERRIGHT","DOWN") then lua_table["Functions"]:ShakeController(1,0.3,2000) end
-	
-	lua_table["Functions"]:LOG ("Joystick Left X: " .. lua_table["Functions"]:GetAxisValue(1,"AXIS_LEFTX", 0.3))
-	
+	lua_table["Functions"]:TranslateGameObject(lua_table["Camera"],1.0*dt,0.0,0.0)
+	lua_table["Functions"]:LOG("Pos_x:"  .. lua_table["Functions"]:GetGameObjectPosX(lua_table["Camera"]))
+	lua_table["Functions"]:LOG("Pos_y:"  .. lua_table["Functions"]:GetGameObjectPosY(lua_table["Camera"]))
+	lua_table["Functions"]:LOG("Pos_z:"  .. lua_table["Functions"]:GetGameObjectPosZ(lua_table["Camera"]))
+	--pos_x, pos_y, pos_z = lua_table["Functions"]:GetGameObjectPos(lua_table["Camera"]);
+
+    --if pos_x ~= nil then lua_table["Functions"]:LOG("Pos_X: " .. pos_x) end
+    --lua_table["Functions"]:LOG ("Pos_X" .. posx)
+    --lua_table["Functions"]:LOG ("Pos_Y" .. posy)
+    --lua_table["Functions"]:LOG ("Pos_Z" .. posz)
+
+	--Object Transformations
+	--rotX = lua_table["Functions"]:GetRotationX()
+
+	--lua_table["Functions"]:LOG (rotX)
+	lua_table["Functions"]:AddForce(10, 10, 10, 0)
+
+	rotX, rotY, rotZ = lua_table["Functions"]:GetAngularVelocity()
+	posX, posY, posZ = lua_table["Functions"]:GetLinearVelocity()
+	mass = lua_table["Functions"]:UseGravity(false)
+
+	lua_table["Functions"]:LOG (rotX)
+	lua_table["Functions"]:LOG (posX)
+	lua_table["Functions"]:LOG (mass)
+
+	--Particles Emission Activation/Deactivation
+	--lua_table["Functions"]:ActivateParticlesEmission()
+	--lua_table["Functions"]:DeactivateParticlesEmission()
+
 end
 
 return lua_table
