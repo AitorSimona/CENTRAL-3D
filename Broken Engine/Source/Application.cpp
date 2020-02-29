@@ -137,7 +137,7 @@ bool Application::Init()
 
 	while(item != list_modules.end() && ret == true)
 	{
-		ret = (*item)->Start();
+		ret = (*item)->isEnabled() ? (*item)->Start() : true;
 		item++;
 	}
 
@@ -215,7 +215,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PreUpdate(time->GetRealTimeDt());
+		ret = (*item)->isEnabled() ? (*item)->PreUpdate(time->GetRealTimeDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
@@ -223,7 +223,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->Update(time->GetRealTimeDt());
+		ret = (*item)->isEnabled() ? (*item)->Update(time->GetRealTimeDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
@@ -231,7 +231,7 @@ update_status Application::Update()
 
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->GameUpdate(time->GetGameDt());
+		ret = (*item)->isEnabled() ? (*item)->GameUpdate(time->GetGameDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
@@ -239,7 +239,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PostUpdate(time->GetRealTimeDt());
+		ret = (*item)->isEnabled() ? (*item)->PostUpdate(time->GetRealTimeDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
