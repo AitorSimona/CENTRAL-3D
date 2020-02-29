@@ -17,7 +17,7 @@ end
 function lua_table:Update ()
 	dt = lua_table["Functions"]:dt ()
 
-	lua_table["Functions"]:RotateObject(0,45,0)
+	--lua_table["Functions"]:RotateObject(0,45,0)
 
 
 	--lua_table["Functions"]:LOG (rotX)

@@ -634,17 +634,34 @@ void Scripting::SetObjectRotation(float x, float y, float z)
 void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
 {
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+	ComponentCollider* collider = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	ComponentDynamicRigidBody* rb = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
 
 	if (transform)
 	{
-		float3 dir = (float3(spotX, spotY, spotZ) - transform->GetPosition());
+		float3 zaxis = float3(transform->GetGlobalPosition() - float3(spotX, spotY, spotZ)).Normalized();
+		float3 xaxis = float3(zaxis.Cross(float3(0,1,0))).Normalized();
+		float3 yaxis = xaxis.Cross(zaxis);
+		zaxis = zaxis.Neg();
 
-		float3 rot = transform->GetRotation();
-		//float3 tmp(0, 20, 0);
+		float4x4 m = { 
+		   float4(xaxis.x, xaxis.y, xaxis.z, -Dot(xaxis, transform->GetGlobalPosition())),
+		   float4(yaxis.x, yaxis.y, yaxis.z, -Dot(yaxis, transform->GetGlobalPosition())),
+		   float4(zaxis.x, zaxis.y, zaxis.z, -Dot(zaxis, transform->GetGlobalPosition())),
+		   float4(0, 0, 0, 1)
+		};
+		m.Transpose();
 
-		rot += dir;
-		ENGINE_CONSOLE_LOG("rotation: x:%f y:%f z:%f", rot.x, rot.y, rot.z);
+		float3 pos, scale;
+		Quat rot;
+
+		m.Decompose(pos, rot, scale);
+
 		transform->SetRotation(rot);
+
+		//PxTransform globalPos(PxVec3(pos.x, pos.y, pos.z), PxQuat(rot.x, rot.y, rot.z, rot.w));
+
+		//collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
 		
 	}
 	else

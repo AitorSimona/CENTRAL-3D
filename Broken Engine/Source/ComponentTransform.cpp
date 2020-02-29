@@ -1,5 +1,4 @@
 #include "ComponentTransform.h"
-#include "ComponentCollider.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
@@ -133,7 +132,7 @@ void ComponentTransform::Load(json& node)
 
 void ComponentTransform::CreateInspectorNode()
 {
-	bool updateCollider = false;
+	updateValues = false;
 
 	// --- Transform Position ---
 	ImGui::Text("Position  ");
@@ -146,7 +145,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##PX", &position.x, dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##PX", &position.x, dragSpeed)) updateValues = true;
 
 	ImGui::SameLine();
 
@@ -154,7 +153,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##PY", &position.y, dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##PY", &position.y, dragSpeed)) updateValues = true;
 
 	ImGui::SameLine();
 
@@ -162,7 +161,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##PZ", &position.z, dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##PZ", &position.z, dragSpeed)) updateValues = true;
 
 	// --- Transform Rotation ---
 	ImGui::Text("Rotation  ");
@@ -173,7 +172,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##RX", &rotation.x, dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##RX", &rotation.x, dragSpeed)) updateValues = true;
 
 	ImGui::SameLine();
 
@@ -181,7 +180,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##RY", &rotation.y, dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##RY", &rotation.y, dragSpeed)) updateValues = true;
 
 	ImGui::SameLine();
 
@@ -189,7 +188,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##RZ", &rotation.z, dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##RZ", &rotation.z, dragSpeed)) updateValues = true;
 
 	// --- Transform Scale ---
 	float scale_dragSpeed = 0.1f;
@@ -202,7 +201,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##SX", &scale.x, scale_dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##SX", &scale.x, scale_dragSpeed)) updateValues = true;
 
 	ImGui::SameLine();
 
@@ -210,7 +209,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##SY", &scale.y, scale_dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##SY", &scale.y, scale_dragSpeed)) updateValues = true;
 
 	ImGui::SameLine();
 
@@ -218,7 +217,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	if (ImGui::DragFloat("##SZ", &scale.z, scale_dragSpeed)) updateCollider = true;
+	if (ImGui::DragFloat("##SZ", &scale.z, scale_dragSpeed)) updateValues = true;
 
 	// --- Transform Set ---
 	if (!GO->Static)
@@ -231,10 +230,6 @@ void ComponentTransform::CreateInspectorNode()
 			SetRotation(rotation);
 	}
 
-
-	ComponentCollider* comp = GO->parent->GetComponent<ComponentCollider>();
-	if (comp && updateCollider)
-		comp->updateValues = true;
 }
 
 void ComponentTransform::UpdateTRS()

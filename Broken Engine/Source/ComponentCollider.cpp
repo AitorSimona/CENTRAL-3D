@@ -179,7 +179,7 @@ void ComponentCollider::UpdateLocalMatrix() {
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (ImGuizmo::IsUsing() || updateValues) { //ON EDITOR
+		if (ImGuizmo::IsUsing() || cTransform->updateValues) { //ON EDITOR
 			dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else {
