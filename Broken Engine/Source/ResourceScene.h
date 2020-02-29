@@ -16,6 +16,7 @@ public:
 	void FreeMemory() override;
 
 	GameObject* GetGOWithName(const char* GO_name);
+	GameObject* GetGOWithUID(uint UID);
 
 	std::unordered_map<uint,GameObject*> NoStaticGameObjects;
 	std::unordered_map<uint, GameObject*> StaticGameObjects;

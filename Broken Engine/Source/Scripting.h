@@ -55,6 +55,15 @@ public:
 	float GetAxisValue(int player_num, const char* joy_axis, float threshold) const;
 	void ShakeController(int player_num, float intensity, uint32 milliseconds) const;
 	void StopControllerShake(int player_num) const;
+
+	uint FindGameObject(const char* go_name);
+	float GetGameObjectPos(uint gameobject_UID, lua_State* L);
+	float GetGameObjectPosX(uint gameobject_UID);
+	float GetGameObjectPosY(uint gameobject_UID);
+	float GetGameObjectPosZ(uint gameobject_UID);
+
+	void TranslateGameObject(uint gameobject_UID, float x, float y, float z);
+
 	//bool IsMouseInGame() const;
 	//int GetMouseRaycastHit(lua_State *L);
 

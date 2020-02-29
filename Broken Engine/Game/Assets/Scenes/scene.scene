@@ -1,11 +1,11 @@
 {
-    "1548218490": {
+    "1718012092": {
         "Components": {
             "0": {
                 "positionx": "0.000000",
                 "positiony": "0.000000",
                 "positionz": "0.000000",
-                "rotationx": "0.309017",
+                "rotationx": "0.000000",
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
@@ -14,13 +14,30 @@
             },
             "1": {
                 "Resources": {
-                    "ResourceMesh": "Library/Meshes/403828242.mesh"
+                    "ResourceMesh": "Library/Meshes/766558555.mesh"
                 }
             },
             "2": {
                 "Resources": {
                     "ResourceMaterial": "DefaultMaterial"
                 }
+            }
+        },
+        "Name": "Test",
+        "Parent": "1703129650"
+    },
+    "2081684361": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
             },
             "9": {
                 "Resources": {
@@ -28,7 +45,7 @@
                 }
             }
         },
-        "Name": "GameObject (0)",
-        "Parent": "828093920"
+        "Name": "Gerardo",
+        "Parent": "1703129650"
     }
 }

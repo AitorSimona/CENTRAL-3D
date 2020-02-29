@@ -192,17 +192,19 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetPositionX", &Scripting::GetPositionX)
 		.addFunction("GetPositionY", &Scripting::GetPositionY)
 		.addFunction("GetPositionZ", &Scripting::GetPositionZ)
-
-		.addFunction("GetRotation", &Scripting::GetRotation)
-		.addFunction("GetRotationX", &Scripting::GetRotationX)
-		.addFunction("GetRotationY", &Scripting::GetRotationY)
-		.addFunction("GetRotationZ", &Scripting::GetRotationZ)
+		//GetGameObject & move an external Gameobject 
+		.addFunction("FindGameObject", &Scripting::FindGameObject)
+		//.addFunction("GetGameObjectPos", &Scripting::GetGameObjectPos)
+		.addFunction("TranslateGameObject", &Scripting::TranslateGameObject)
+		.addFunction("GetGameObjectPosX", &Scripting::GetGameObjectPosX)
+		.addFunction("GetGameObjectPosY", &Scripting::GetGameObjectPosY)
+		.addFunction("GetGameObjectPosZ", &Scripting::GetGameObjectPosZ)
 
 		.addFunction("Translate", &Scripting::Translate)
 		.addFunction("SetPosition", &Scripting::SetPosition)
 
-		.addFunction("RotateObject", &Scripting::RotateObject)
-		.addFunction("SetObjectRotation", &Scripting::RotateObject)
+		/*.addFunction("RotateObject", &Scripting::RotateObject)
+		.addFunction("SetObjectRotation", &Scripting::RotateObject)*/
 
 		//Systems Functions
 		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
@@ -422,7 +424,15 @@ update_status ModuleScripting::Update(float realDT)
 		DoHotReloading();
 
 	if(App->GetAppState() != AppState::PLAY)
+	{
 		previous_AppState = (_AppState)App->GetAppState();
+	
+		for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
+		{
+			(*it)->awoken = false;
+			(*it)->started = false;
+		}
+	}
 
 	// Carles to Didac
 	// 1. You can use the "IsWhatever" functions of App to check the current game state.

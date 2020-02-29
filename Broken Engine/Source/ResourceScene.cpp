@@ -151,6 +151,19 @@ GameObject* ResourceScene::GetGOWithName(const char* GO_name)
 	return ret;
 }
 
+//Return the GameObject with this UID
+GameObject* ResourceScene::GetGOWithUID(uint UID)
+{
+	GameObject* ret_go = nullptr;
+	ret_go = NoStaticGameObjects.find(UID)->second;
+	if (ret_go == nullptr)
+	{
+		ret_go = StaticGameObjects.find(UID)->second;
+	}
+
+	return ret_go;
+}
+
 void ResourceScene::OnOverwrite()
 {
 	// No reason to overwrite scene
