@@ -42,26 +42,19 @@ Image::~Image()
 void Image::Draw()
 {
 	// --- Update transform and rotation to face camera ---
-
-	rotation2D *= DEGTORAD;
-
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
-	float3 center = float3(frustum_pos.x, frustum_pos.y, 10); // si metes el position aqui no deja moverla
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
 
 	// --- Frame image with camera ---
-	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10), // si metes el position aqui si que se mueve (se carga el billboarding)
-		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D, 1));
-	
-	transform.SetTranslatePart(transform.TranslatePart().x + position2D.x, transform.TranslatePart().y + position2D.y, 10); // esto mueve el plano en sus ejes X e Y (se carga el billboarding)
-	transform.SetRotatePartZ(rotation2D); // esto funciona (rotar imagen en su eje Z)
-	
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+		float3(size2D, 1));
+		
 	float3 Movement = App->renderer3D->active_camera->frustum.Front();
 	float3 camera_pos = frustum_pos;
 	
 	if (Movement.IsFinite())
 		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
-
-	rotation2D *= RADTODEG;
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -80,7 +73,7 @@ void Image::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, nearp, 0.0f);
+		position2D.x, position2D.y, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
