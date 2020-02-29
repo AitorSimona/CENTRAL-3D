@@ -151,9 +151,9 @@ void ComponentCollider::UpdateLocalMatrix() {
 		return;
 
 	//Render
-	localMatrix.x = localPosition.x +offset.x;
-	localMatrix.y = localPosition.y +offset.y;
-	localMatrix.z = localPosition.z +offset.z;
+	localMatrix.x = localPosition.x + offset.x;
+	localMatrix.y = localPosition.y + offset.y;
+	localMatrix.z = localPosition.z + offset.z;
 	localMatrix.scaleX = scale.x * originalScale.x; //scale * sizeAABB
 	localMatrix.scaleY = scale.y * originalScale.y;
 	localMatrix.scaleZ = scale.z * originalScale.z;

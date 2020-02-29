@@ -595,16 +595,27 @@ void Scripting::SetPosition(float x, float y, float z, bool local)
 void Scripting::RotateObject(float x, float y, float z)
 {
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+	ComponentCollider* collider = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	ComponentDynamicRigidBody* rb = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
 
-	if (transform)
+	if (collider != nullptr)
 	{
-		float3 rot = transform->GetRotation();
-		rot += float3(x, y, z);
-		transform->SetRotation(rot);
+		PxTransform globalPos = rb->rigidBody->getGlobalPose();
+		Quat quaternion = Quat::FromEulerXYZ(x, y, z);
+		globalPos.q = PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+		rb->rigidBody->setGlobalPose(globalPos);
 	}
-	else
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");	
+
+	//if (transform)
+	//{
+	//	float3 rot = transform->GetRotation();
+	//	rot += float3(x, y, z);
+	//	transform->SetRotation(rot);
+	//}
+	//else
+	//	ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
+
 
 void Scripting::SetObjectRotation(float x, float y, float z)
 {

@@ -13,7 +13,22 @@ ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : 
 {
 	/*if (!(rigidBody = ContainerGO->GetComponent<ComponentDynamicRigidBody>()->rigidBody))
 		rigidBody = physx::PxCreateDynamic(*App->physics->mPhysics, PxTransform(), PxBoxGeometry(), *App->physics->mMaterial, 0.0f);*/
-
+	if (rigidBody != nullptr) {
+		SetMass(mass);
+		SetDensity(density);
+		UseGravity(use_gravity);
+		SetKinematic(is_kinematic);
+		SetLinearVelocity(linear_vel);
+		SetAngularVelocity(angular_vel);
+		SetLinearDamping(linear_damping);
+		SetAngularDamping(angular_damping);
+		FeezePosition_X(freezePosition_X);
+		FeezePosition_Y(freezePosition_Y);
+		FeezePosition_Z(freezePosition_Z);
+		FreezeRotation_X(freezeRotation_X);
+		FreezeRotation_Y(freezeRotation_Y);
+		FreezeRotation_Z(freezeRotation_Z);
+	}
 }
 
 ComponentDynamicRigidBody::~ComponentDynamicRigidBody()
@@ -108,7 +123,8 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 {
 	ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
 
-	ImGui::Text("Mass:"); ImGui::SameLine(); ImGui::DragFloat("##M", &mass);
+	ImGui::Text("Mass:"); ImGui::SameLine(); 
+	if (ImGui::DragFloat("##M", &mass)) SetMass(mass);
 	ImGui::Text("Density:"); ImGui::SameLine(); ImGui::DragFloat("##D", &density);
 	ImGui::Text("Gravity:"); ImGui::SameLine(); ImGui::Checkbox("##G", &use_gravity); 
 	ImGui::Text("Kinematic:"); ImGui::SameLine(); ImGui::Checkbox("##K", &is_kinematic);
@@ -125,22 +141,22 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		ImGui::TreePop();
 	}
 
-	if (rigidBody != nullptr) {
-		SetMass(mass);
-		SetDensity(density);
-		UseGravity(use_gravity);
-		SetKinematic(is_kinematic);
-		SetLinearVelocity(linear_vel);
-		SetAngularVelocity(angular_vel);
-		SetLinearDamping(linear_damping);
-		SetAngularDamping(angular_damping);
-		FeezePosition_X(freezePosition_X);
-		FeezePosition_Y(freezePosition_Y);
-		FeezePosition_Z(freezePosition_Z);
-		FreezeRotation_X(freezeRotation_X);
-		FreezeRotation_Y(freezeRotation_Y);
-		FreezeRotation_Z(freezeRotation_Z);
-	}
+	//if (rigidBody != nullptr) {
+	//	SetMass(mass);
+	//	SetDensity(density);
+	//	UseGravity(use_gravity);
+	//	SetKinematic(is_kinematic);
+	//	SetLinearVelocity(linear_vel);
+	//	SetAngularVelocity(angular_vel);
+	//	SetLinearDamping(linear_damping);
+	//	SetAngularDamping(angular_damping);
+	//	FeezePosition_X(freezePosition_X);
+	//	FeezePosition_Y(freezePosition_Y);
+	//	FeezePosition_Z(freezePosition_Z);
+	//	FreezeRotation_X(freezeRotation_X);
+	//	FreezeRotation_Y(freezeRotation_Y);
+	//	FreezeRotation_Z(freezeRotation_Z);
+	//}
 
 	StaticToDynamicRigidBody();
 }
