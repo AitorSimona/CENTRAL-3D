@@ -100,13 +100,6 @@ private:
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-
-
-
-
-
-	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
-
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 
 public:
