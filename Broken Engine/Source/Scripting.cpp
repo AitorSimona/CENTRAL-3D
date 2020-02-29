@@ -698,7 +698,6 @@ void Scripting::Translate(float x, float y, float z, bool local)
 
 	if (transform)
 	{
-		transform->SetPosition(x, y, z);
 		float3 trans_pos = transform->GetPosition();
 
 		trans_pos.x += x;
