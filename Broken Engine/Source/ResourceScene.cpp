@@ -15,8 +15,8 @@
 ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file)
 {
 	extension = ".scene";
-	name = "scene";
-	resource_file = SCENES_FOLDER + name + extension;
+	resource_file = source_file;
+	original_file = resource_file;
 
 	previewTexID = App->gui->sceneTexID;
 
@@ -24,13 +24,15 @@ ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resou
 
 ResourceScene::~ResourceScene()
 {
+	NoStaticGameObjects.clear();
+	StaticGameObjects.clear();
 }
 
 bool ResourceScene::LoadInMemory()
 {
 	// --- Load scene game objects ---
 
-	if (scene_gos.size() == 0)
+	if (NoStaticGameObjects.size() == 0 && App->fs->Exists(resource_file.c_str()))
 	{
 		// --- Load Scene/model file ---
 		json file = App->GetJLoader()->Load(resource_file.c_str());
@@ -43,13 +45,14 @@ bool ResourceScene::LoadInMemory()
 			// --- Iterate main nodes ---
 			for (json::iterator it = file.begin(); it != file.end(); ++it)
 			{
-				// --- Create a Game Object for each node ---
-				GameObject* go = App->scene_manager->CreateEmptyGameObject();
+				// --- Retrieve GO's UID ---
+				std::string uid = it.key().c_str();
 
-				// --- Retrieve GO's UID and name ---
-				go->SetName(it.key().c_str());
-				std::string uid = file[it.key()]["UID"];
-				go->GetUID() = std::stoi(uid);
+				// --- Create a Game Object for each node ---
+				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
+
+				std::string name = file[it.key()]["Name"];
+				go->SetName(name.c_str());
 
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
@@ -80,7 +83,7 @@ bool ResourceScene::LoadInMemory()
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
-				std::string parent_uid_string = file[objects[i]->GetName()]["Parent"];
+				std::string parent_uid_string = file[std::to_string(objects[i]->GetUID())]["Parent"];
 				uint parent_uid = std::stoi(parent_uid_string);
 
 				for (uint j = 0; j < objects.size(); ++j)
@@ -101,12 +104,63 @@ bool ResourceScene::LoadInMemory()
 void ResourceScene::FreeMemory()
 {
 	// --- Delete all scene game objects ---
-	for (std::unordered_map<uint, GameObject*>::iterator it = scene_gos.begin(); it != scene_gos.end(); ++it)
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
 	{
 		delete (*it).second;
 	}
 
-	scene_gos.clear();
+	NoStaticGameObjects.clear();
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		delete (*it).second;
+	}
+
+	StaticGameObjects.clear();
+
+	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
+}
+
+GameObject* ResourceScene::GetGOWithName(const char* GO_name)
+{
+	GameObject* ret = nullptr;
+
+	std::string GO_stringname = GO_name;
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		std::string name = (*it).second->GetName();
+		if (name.compare(GO_stringname) == 0)
+		{
+			ret = (*it).second;
+			return ret;
+		}
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		std::string name = (*it).second->GetName();
+		if (name.compare(GO_stringname) == 0)
+		{
+			ret = (*it).second;
+			return ret;
+		}
+	}
+
+	return ret;
+}
+
+//Return the GameObject with this UID
+GameObject* ResourceScene::GetGOWithUID(uint UID)
+{
+	GameObject* ret_go = nullptr;
+	ret_go = NoStaticGameObjects.find(UID)->second;
+	if (ret_go == nullptr)
+	{
+		ret_go = StaticGameObjects.find(UID)->second;
+	}
+
+	return ret_go;
 }
 
 void ResourceScene::OnOverwrite()
@@ -116,6 +170,11 @@ void ResourceScene::OnOverwrite()
 
 void ResourceScene::OnDelete()
 {
+	if (this->GetUID() == App->scene_manager->currentScene->GetUID())
+	{
+		App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
+	}
+
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 

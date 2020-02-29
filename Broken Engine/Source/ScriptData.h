@@ -19,7 +19,7 @@ struct ScriptInstance {
 	luabridge::LuaRef my_table_class = 0;
 	bool awoken = false;
 	bool started = false;
+	bool script_is_null = false;
 };
 
 #endif // __SCRIPTDATA_H__
-

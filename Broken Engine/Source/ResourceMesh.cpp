@@ -211,6 +211,10 @@ void ResourceMesh::CreateVAO()
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, texCoord)));
 	glEnableVertexAttribArray(3);
 
+	// --- Vertex Texture coordinates ---
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, animPos_offset)));
+	glEnableVertexAttribArray(4);
+
 	// --- Unbind VAO and VBO ---
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -228,6 +232,8 @@ void ResourceMesh::OnDelete()
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
+
+	if(App->fs->Exists(resource_file.c_str()))
 	App->fs->Remove(resource_file.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);

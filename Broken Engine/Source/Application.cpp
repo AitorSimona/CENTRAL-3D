@@ -14,7 +14,10 @@
 #include "ModuleScripting.h"
 #include "ModuleThreading.h"
 #include "ModuleUI.h"
+#include "ModulePhysics.h"
+#include "ModuleParticles.h"
 
+#include "ModuleAudio.h"
 #include "mmgr/mmgr.h"
 
 Application::Application()
@@ -39,6 +42,9 @@ Application::Application()
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
 	ui_system = new ModuleUI(true);
+	physics = new ModulePhysics(true);
+	particles = new ModuleParticles(true);
+	audio = new ModuleAudio(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -50,7 +56,6 @@ Application::Application()
 	AddModule(event_manager);
 	AddModule(input);
 	AddModule(time);
-
 
 	AddModule(textures);
 	AddModule(hardware);
@@ -64,6 +69,12 @@ Application::Application()
 
 	// Scenes
 	AddModule(scene_manager);
+
+	// Physics & particles
+	AddModule(physics);
+	AddModule(particles);
+
+	AddModule(audio);
 
 	//Gameplay (Scripting)
 	AddModule(scripting);
@@ -196,7 +207,6 @@ void Application::LoadAllStatus(json & file)
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
-
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 

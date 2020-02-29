@@ -8,6 +8,9 @@
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
+#include "ComponentTransform.h"
+
+#include "ResourceScene.h"
 
 #include "Panels.h"
 
@@ -72,6 +75,9 @@ bool ModuleGui::Init(json file)
 
 	panelResources = new PanelResources("Resources");
 	panels.push_back(panelResources);
+
+	panelPhysics = new PanelPhysics("Physics");
+	panels.push_back(panelPhysics);
 
 	LoadStatus(file);
 
@@ -150,12 +156,12 @@ update_status ModuleGui::Update(float dt)
 
 				if (ImGui::MenuItem("Save Scene"))
 				{
-					//App->scene_manager->SaveScene();
+					App->scene_manager->SaveScene(App->scene_manager->currentScene);
 				}
 
 				if (ImGui::MenuItem("Load Scene"))
 				{
-					//App->scene_manager->LoadScene();
+					//App->scene_manager->SetActiveScene();
 				}
 				ImGui::EndMenu();
 			}
@@ -175,31 +181,44 @@ update_status ModuleGui::Update(float dt)
 			{
 				if (ImGui::BeginMenu("3D Object"))
 				{
-
-					if (ImGui::MenuItem("Cube"))
-					{
-						App->scene_manager->LoadCube();
-					}
-					if (ImGui::MenuItem("Sphere"))
-					{
-						App->scene_manager->LoadSphere();
-					}
 					if (ImGui::MenuItem("Empty Game Object"))
 					{
-						App->scene_manager->CreateEmptyGameObject();
+						GameObject* go = App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->currentScene->NoStaticGameObjects[go->GetUID()] = go;
 					}
+
+
+					if (ImGui::MenuItem("Plane"))
+					{
+						GameObject* obj = App->scene_manager->LoadPlane();
+						obj->GetComponent<ComponentTransform>()->SetRotation({ -90, 0, 0});
+						obj->GetComponent<ComponentTransform>()->Scale(10, 10, 10);
+					}
+
+					if (ImGui::MenuItem("Cube"))
+						App->scene_manager->LoadCube();
+
+					if (ImGui::MenuItem("Cylinder"))
+						App->scene_manager->LoadCylinder()->GetComponent<ComponentTransform>()->SetRotation({ -90, 0, 0 });
+
+					if (ImGui::MenuItem("Capsule"))
+						App->scene_manager->LoadCapsule();
+
+					if (ImGui::MenuItem("Sphere"))
+						App->scene_manager->LoadSphere();
+
 					if (ImGui::MenuItem("Camera"))
 					{
 						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->currentScene->NoStaticGameObjects[cam->GetUID()] = cam;
+
 						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
 						cam->AddComponent(Component::ComponentType::MeshRenderer);
 						camera->SetFarPlane(10);
 					}
 
 					if (ImGui::MenuItem("Redo Octree"))
-					{
 						App->scene_manager->RedoOctree();
-					}
 
 					ImGui::EndMenu();
 				}
@@ -277,6 +296,11 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Resources"))
 				{
 					panelResources->OnOff();
+				}
+
+				if (ImGui::MenuItem("Physics"))
+				{
+					panelPhysics->OnOff();
 				}
 
 				ImGui::EndMenu();
@@ -359,6 +383,7 @@ bool ModuleGui::CleanUp()
 	panelToolbar = nullptr;
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
+	panelPhysics = nullptr;
 
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &materialTexID);

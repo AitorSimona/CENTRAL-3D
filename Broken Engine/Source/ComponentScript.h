@@ -15,6 +15,7 @@ public:
 	void Enable() override;
 	void Disable() override;
 	void CreateInspectorNode() override;
+	void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) override;
 
 	void AssignScript(ResourceScript* script_resource);
 

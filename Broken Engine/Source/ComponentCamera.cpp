@@ -2,6 +2,9 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
+#include "Component.h"
+#include "GameObject.h"
+#include "ComponentAudioListener.h"
 
 #include "Imgui/imgui.h"
 
@@ -242,4 +245,27 @@ void ComponentCamera::SetCameraValues(float4 val)
 	SetFOV(val.x);
 	SetNearPlane(val.y);
 	SetFarPlane(val.z);
+}
+
+void ComponentCamera::Update()
+{
+	if (active_camera)
+	{
+	/*	if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
+		{*/
+			GO->AddComponent(Component::ComponentType::AudioListener);
+			GO->GetComponent<ComponentAudioListener>()->Enable();
+		//}
+		//else
+		//{
+			//GO->GetComponent<ComponentAudioListener>()->Enable();
+		/*}*/
+	}
+	else
+	{
+		if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
+		{
+			GO->GetComponent<ComponentAudioListener>()->Disable();
+		}
+	}
 }

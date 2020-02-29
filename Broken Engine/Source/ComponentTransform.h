@@ -15,16 +15,22 @@ public:
 	float3			GetPosition() const;
 	float3			GetScale() const;
 	float3			GetRotation() const;
+	Quat			GetQuaternionRotation() const;
 	float4x4        GetLocalTransform() const;
 	float4x4        GetGlobalTransform() const;
 	float3		    GetGlobalPosition() const;
 
 	// --- Setters ---
+	void			SetPosition(float3 new_pos);
 	void			SetPosition(float x, float y, float z);
 	void			SetRotation(float3 euler_angles);
+	void			SetRotation(Quat quat);
 	void			Scale(float x, float y, float z);
 	void			SetGlobalTransform(float4x4 new_transform);
 	void			OnUpdateTransform(const float4x4& ParentGlobal);
+	void			SetQuatRotation(Quat rotation);
+
+	void UpdateLocalTransform();
 
 	// --- Save & Load ---
 	json Save() const override;
@@ -36,10 +42,11 @@ public:
 public:
 	bool update_transform = false;
 private:
-	void UpdateLocalTransform();
+	//void UpdateLocalTransform();
 	void UpdateTRS();
 
-private:
+//private;
+public:
 	float4x4 Local_transform = math::float4x4::identity;
 	float4x4 Global_transform = math::float4x4::identity;
 

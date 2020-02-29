@@ -1,11 +1,13 @@
 #include "ResourceScript.h"
 #include "Application.h"
+#include "ModuleFileSystem.h"
+#include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
 
 ResourceScript::ResourceScript(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCRIPT, UID, source_file)
 {
 	extension = ".lua";
-	resource_file = SCRIPTS_FOLDER + std::to_string(UID) + extension;
+	resource_file = source_file;
 }
 
 ResourceScript::~ResourceScript()
@@ -27,8 +29,14 @@ void ResourceScript::OnOverwrite()
 
 void ResourceScript::OnDelete()
 {
+	NotifyUsers(ResourceNotificationType::Deletion);
 
-	//Script Resource doesn't generate any additional memory
+	//FreeMemory();
+	if(App->fs->Exists(resource_file.c_str()))
+		App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }
 
 void ResourceScript::FreeMemory()

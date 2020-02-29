@@ -110,6 +110,7 @@ void Resource::Release()
 		}
 	}
 	else
+
 		ENGINE_CONSOLE_LOG("![Warning]: Trying to release an already released resource: %s", name.c_str());
 }
 
