@@ -616,6 +616,22 @@ void Scripting::SetObjectRotation(float x, float y, float z)
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
+void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
+	{
+		float3 dir = (float3(spotX, spotY, spotZ) - transform->GetPosition());
+
+		float3 rot = transform->GetRotation();
+		rot += dir;
+		transform->SetRotation(rot);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+}
+
 int Scripting::GetRotation(bool local, lua_State* L) const
 {
 	int ret = 0;
@@ -1036,19 +1052,7 @@ void Scripting::SetVolume(float volume)
 //}
 //
 //// Others
-//void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	float3 dir;
-//
-//	if (local)
-//		dir = (float3(spotX, spotY, spotZ) - trs->localTrs.TranslatePart());
-//	else
-//		dir = (float3(spotX, spotY, spotZ) - trs->globalTrs.TranslatePart());
-//
-//	LookTo(dir.x, dir.y, dir.z, local);
-//}
-//
+
 //void Scripting::LookTo(float dirX, float dirY, float dirZ, bool local)
 //{
 //	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);

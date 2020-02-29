@@ -98,6 +98,7 @@ public:
 	//Rotation
 	void RotateObject(float x, float y, float z);
 	void SetObjectRotation(float x, float y, float z);
+	void LookAt(float spotX, float spotY, float spotZ, bool local);
 
 	int GetRotation(bool local, lua_State* L) const;
 	float GetRotationX() const;
