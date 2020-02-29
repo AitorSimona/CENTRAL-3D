@@ -365,7 +365,7 @@ void ModuleRenderer3D::HandleObjectOutlining()
 void ModuleRenderer3D::CreateDefaultShaders()
 {
 	// --- Creating outline drawing shaders ---
-	const char* OutlineVertShaderSrc = "#version 460 core \n"
+	const char* OutlineVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
@@ -374,7 +374,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
 		"}\n";
 
-	const char* OutlineFragShaderSrc = "#version 460 core \n"
+	const char* OutlineFragShaderSrc = "#version 440 core \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
@@ -386,7 +386,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating point/line drawing shaders ---
 
-	const char* linePointVertShaderSrc = "#version 460 core \n"
+	const char* linePointVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"out vec3 ourColor; \n"
 		"in vec3 color; \n"
@@ -398,7 +398,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"ourColor = color; \n"
 		"}\n";
 
-	const char* linePointFragShaderSrc = "#version 460 core \n"
+	const char* linePointFragShaderSrc = "#version 440 core \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
@@ -410,7 +410,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating z buffer shader drawer ---
 
-	const char* zdrawervertex = "#version 460 core \n"
+	const char* zdrawervertex = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform vec2 nearfar; \n"
 		"uniform mat4 model_matrix; \n"
@@ -424,7 +424,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
 		"}\n";
 
-	const char* zdrawerfragment = "#version 460 core \n"
+	const char* zdrawerfragment = "#version 440 core \n"
 		"out vec4 FragColor; \n"
 		"in vec2 nearfarfrag; \n"
 		"in mat4 _projection; \n"
@@ -442,7 +442,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char* vertexShaderSource =
-		"#version 460 core \n"
+		"#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
@@ -460,7 +460,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		;
 
 	const char* fragmentShaderSource =
-		"#version 460 core \n"
+		"#version 440 core \n"
 		"uniform int Texture;\n"
 		"in vec3 ourColor; \n"
 		"in vec2 TexCoord; \n"
