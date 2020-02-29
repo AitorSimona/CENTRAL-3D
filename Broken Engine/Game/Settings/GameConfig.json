@@ -1,13 +1,16 @@
 {
     "Application": {
         "Organization": "CITM - UPC",
-        "Title": "Broken Engine"
+        "Title": "Broken Game"
     },
-    "GUI": null,
     "Input": null,
     "Renderer3D": {
         "VSync": true
     },
+    "SceneManager": {
+		"MainScene": 247218270
+	},
+	"Camera3D": null,
     "Window": {
         "borderless": false,
         "fullscreen": false,

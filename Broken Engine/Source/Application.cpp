@@ -45,7 +45,7 @@ Application::Application()
 	renderer3D = new ModuleRenderer3D(true);
 	scripting = new ModuleScripting(true);
 	camera = new ModuleCamera3D(true);
-	gui = new ModuleGui(!isGame);
+	gui = new ModuleGui(true);
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
@@ -110,7 +110,7 @@ bool Application::Init()
 	COMPILATIONLOGINFO;
 
 	// --- Load App data from JSON files ---
-	json config = JLoader.Load(configpath.data());
+	json config = JLoader.Load(configpath.c_str());
 
 	// --- Create Config with default values if load fails ---
 	if (config.is_null())
@@ -135,6 +135,8 @@ bool Application::Init()
 		item++;
 	}
 
+
+
 	// After all Init calls we call Start() in all modules
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Broken Engine Start --------------");
 	item = list_modules.begin();
@@ -144,6 +146,10 @@ bool Application::Init()
 		ret = (*item)->isEnabled() ? (*item)->Start() : true;
 		item++;
 	}
+
+	//// We load the status of all modules
+
+	//LoadAllStatus(config);
 
 	time->SetMaxFramerate(App->window->GetDisplayRefreshRate());
 
@@ -255,7 +261,9 @@ update_status Application::Update()
 bool Application::CleanUp()
 {
 	// --- Save all Status --- TODO: Should be called by user
+	#ifndef BE_GAME_BUILD
 	SaveAllStatus();
+	#endif
 
 	bool ret = true;
 	std::list<Module*>::reverse_iterator item = list_modules.rbegin();
@@ -321,10 +329,18 @@ json Application::GetDefaultConfig() const
 
 		}},
 
+	#ifndef BE_GAME_BUILD
 		{"GUI", {
 
 		}},
+	#else
+		{"SceneManager", {
 
+		}},
+		{"Camera3D", {
+
+		}},
+	#endif
 		{"Window", {
 			{"width", 1024},
 			{"height", 720},
@@ -342,6 +358,12 @@ json Application::GetDefaultConfig() const
 			{"VSync", true}
 		}},
 	};
+
+	return config;
+}
+
+json Application::GetConfigFile() const {
+	json config = JLoader.Load(configpath.data());
 
 	return config;
 }

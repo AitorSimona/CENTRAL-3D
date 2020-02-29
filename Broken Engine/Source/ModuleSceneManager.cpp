@@ -68,7 +68,6 @@ bool ModuleSceneManager::Init(json file)
 	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, ONGameObjectDestroyed);
 	App->event_manager->AddListener(Event::EventType::Resource_selected, ONResourceSelected);
 
-
 	return true;
 }
 
@@ -107,6 +106,11 @@ bool ModuleSceneManager::Start()
 	//musicSource->SetID(AK::EVENTS::BACKGROUNDMUSIC);
 	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
 	//musicSource->isPlaying = true;
+
+
+	#ifdef BE_GAME_BUILD
+	LoadStatus(App->GetConfigFile());
+	#endif
 
 	return true;
 }
@@ -447,6 +451,15 @@ void ModuleSceneManager::SaveStatus(json & file) const
 
 void ModuleSceneManager::LoadStatus(const json & file)
 {
+#ifdef BE_GAME_BUILD
+	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
+		ResourceScene* scene = (ResourceScene*) App->resources->GetResource(file["SceneManager"]["MainScene"]);
+		SetActiveScene(scene);
+	}
+	else {
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
+	}
+#endif
 }
 
 void ModuleSceneManager::SaveScene(ResourceScene* scene)

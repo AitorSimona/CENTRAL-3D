@@ -1,9 +1,9 @@
 {
-    "2122475477": {
+    "1701233207": {
         "Components": {
             "0": {
                 "positionx": "0.000000",
-                "positiony": "5.851373",
+                "positiony": "0.000000",
                 "positionz": "0.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
@@ -12,24 +12,86 @@
                 "scaley": "1.000000",
                 "scalez": "1.000000"
             },
-            "6": {
-                "emisionRate": "500.000000",
-                "externalAccelerationX": "0.000000",
-                "externalAccelerationY": "10.000000",
-                "externalAccelerationZ": "0.000000",
-                "particlesLifeTime": "1000",
-                "particlesVelocityX": "0.000000",
-                "particlesVelocityY": "0.000000",
-                "particlesVelocityZ": "0.000000",
-                "sizeX": "0.000000",
-                "sizeY": "0.000000",
-                "sizeZ": "0.000000",
-                "velocityRandomFactorX": "5.000000",
-                "velocityRandomFactorY": "5.000000",
-                "velocityRandomFactorZ": "5.000000"
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "DefaultMaterial"
+                }
+            },
+            "3": null,
+            "8": null
+        },
+        "Name": "GameObject (0)",
+        "Parent": "1623732971"
+    },
+    "1842313161": {
+        "Components": {
+            "0": {
+                "positionx": "-0.248059",
+                "positiony": "0.000000",
+                "positionz": "15.028423",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/581660442.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
+        },
+        "Name": "Baker_house",
+        "Parent": "938450235"
+    },
+    "928797612": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/300750452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
+        },
+        "Name": "Chimney",
+        "Parent": "938450235"
+    },
+    "938450235": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "1498964685"
+        "Parent": "1623732971"
     }
 }

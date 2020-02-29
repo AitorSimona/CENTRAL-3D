@@ -21,6 +21,8 @@ public:
 	
 	bool CleanUp() override;
 
+	void LoadStatus(const json& file) override;
+
 	void FrameObject(GameObject* GO);
 	void FrameObject(float3 posToLook);
 	void OnMouseClick(const float mouse_x, const float mouse_y);

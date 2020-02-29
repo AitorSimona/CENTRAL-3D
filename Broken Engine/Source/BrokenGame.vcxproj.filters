@@ -566,7 +566,7 @@
     </ClInclude>
     <ClInclude Include="ModulePhysics.h">
       <Filter>Sources\Modules</Filter>
-      </ClInclude>
+    </ClInclude>
     <ClInclude Include="ImporterScript.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
@@ -619,6 +619,9 @@
       <Filter>Sources\Tools\DeviceID</Filter>
     </ClInclude>
     <ClInclude Include="PanelPhysics.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelGame.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
   </ItemGroup>
@@ -972,6 +975,9 @@
       <Filter>Sources\Tools\DeviceID</Filter>
     </ClCompile>
     <ClCompile Include="PanelPhysics.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelGame.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>

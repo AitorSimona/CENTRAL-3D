@@ -209,6 +209,7 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleThreading.h" />
     <ClInclude Include="ModuleTimeManager.h" />
+    <ClInclude Include="PanelGame.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
     <ClInclude Include="PanelResources.h" />
@@ -362,6 +363,7 @@
     <ClCompile Include="Panel.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
+    <ClCompile Include="PanelGame.cpp" />
     <ClCompile Include="PanelPhysics.cpp" />
     <ClCompile Include="PanelProject.cpp" />
     <ClCompile Include="PanelResources.cpp" />

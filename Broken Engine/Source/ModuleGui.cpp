@@ -70,6 +70,9 @@ bool ModuleGui::Init(json file)
 	panels.push_back(panelPhysics);
 
 	LoadStatus(file);
+	#else
+	panelGame = new PanelGame("Game");
+	panels.push_back(panelGame);
 	#endif
 
 	return true;
@@ -90,7 +93,9 @@ bool ModuleGui::Start()
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
+		#ifndef BE_GAME_BUILD
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Window Docking (Under Active Development)
+		#endif
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Deactivated because of lib crash when resizing window out of Main window bounds
 
 		ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer3D->context);
@@ -126,7 +131,7 @@ update_status ModuleGui::PreUpdate(float dt)
 
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	DockSpace();
+		DockSpace();
 
 	return UPDATE_CONTINUE;
 }
@@ -341,6 +346,7 @@ bool ModuleGui::CleanUp()
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
 	panelPhysics = nullptr;
+	panelGame = nullptr;
 
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &materialTexID);
@@ -431,8 +437,7 @@ void ModuleGui::LoadStatus(const json & file)
 }
 void ModuleGui::HandleInput(SDL_Event * event) const
 {
-	if (!App->isGame)
-		ImGui_ImplSDL2_ProcessEvent(event);
+	ImGui_ImplSDL2_ProcessEvent(event);
 }
 
 bool ModuleGui::IsKeyboardCaptured() const
