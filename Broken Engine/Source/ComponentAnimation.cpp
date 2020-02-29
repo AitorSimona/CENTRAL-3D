@@ -145,6 +145,18 @@ Animation* ComponentAnimation::GetDefaultAnimation() const
 	return animations[0];
 }
 
+void ComponentAnimation::PlayAnimation(const char* name, float speed)
+{
+	for(int i=0; i<animations.size(); ++i)
+	{
+		if (animations[i]->name.compare(name) == 0)
+		{
+			animations[i]->speed = speed;
+			StartBlend(animations[i]);
+		}
+	}
+}
+
 json ComponentAnimation::Save() const
 {
 	json node;
@@ -257,6 +269,8 @@ void ComponentAnimation::CreateInspectorNode()
 				ImGui::PushItemWidth(100); ImGui::InputInt(Start.append(" Start").c_str(), &animations[i]->start, 1, 0);
 				std::string End = animations[i]->name;
 				ImGui::PushItemWidth(100); ImGui::InputInt(End.append(" End").c_str(), &animations[i]->end, 1, 0);
+				std::string Speed = animations[i]->name;
+				ImGui::PushItemWidth(100); ImGui::InputFloat(Speed.append(" Speed").c_str(), &animations[i]->speed, 1, 0);
 				std::string Loop = animations[i]->name;
 				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
 				
@@ -332,7 +346,7 @@ void ComponentAnimation::UpdateJointsTransform()
 
 		// ----------------------- Frame count managment -----------------------------------
 
-		Frame = playing_animation->start + (time * res_anim->ticksPerSecond);
+		Frame = playing_animation->start + (time * playing_animation->speed);
 		if (Frame >= playing_animation->end)
 		{
 			if (!playing_animation->loop)

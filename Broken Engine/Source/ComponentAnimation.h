@@ -16,6 +16,7 @@ struct Animation
 	int end;
 	bool loop = false;
 	bool Default = false;
+	float speed = 30;
 };
 
 
@@ -35,6 +36,7 @@ public:
 	void Update(float dt);
 
 	Animation* GetDefaultAnimation() const;
+	void PlayAnimation(const char* name, float speed);
 
 	// --- Save & Load ---
 	json Save() const override;
