@@ -352,9 +352,11 @@ bool ModuleGui::CleanUp()
 
 	// --- ShutDown ImGui ---
 
+	#ifndef BE_GAME_BUILD
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+	#endif
 
 	return ret;
 }
@@ -429,7 +431,8 @@ void ModuleGui::LoadStatus(const json & file)
 }
 void ModuleGui::HandleInput(SDL_Event * event) const
 {
-	ImGui_ImplSDL2_ProcessEvent(event);
+	if (!App->isGame)
+		ImGui_ImplSDL2_ProcessEvent(event);
 }
 
 bool ModuleGui::IsKeyboardCaptured() const

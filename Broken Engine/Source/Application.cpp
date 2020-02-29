@@ -28,7 +28,11 @@ Application::Application()
 
 	appName = "";
 	log = "Application Logs:";
-	configpath = "Settings/EditorConfig.json";
+	if (isGame)
+		configpath = "Settings/GameConfig.json";
+	else
+		configpath = "Settings/EditorConfig.json";
+
 	RandomNumber = new math::LCG();
 
 	event_manager = new ModuleEventManager(true);

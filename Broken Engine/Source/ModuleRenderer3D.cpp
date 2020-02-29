@@ -167,8 +167,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Unbind fbo ---
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	#ifndef BE_GAME_BUILD
 	// --- Draw ui and swap buffers ---
 	App->gui->Draw();
+	#endif
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context);
