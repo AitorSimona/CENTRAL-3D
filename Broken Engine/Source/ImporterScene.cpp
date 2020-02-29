@@ -110,7 +110,10 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, scene->GetResourceFile(), scene->GetUID());
 
 	if (meta)
+	{
+		meta->Date = App->fs->GetLastModificationTime(scene->GetOriginalFile());
 		IMeta->Save(meta);
-
-	App->resources->AddResourceToFolder(scene);
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Could not load meta from: %s", scene->GetResourceFile());
 }

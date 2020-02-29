@@ -985,6 +985,86 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 	return ret;
 }
 
+std::string ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
+{
+	std::string unique_name;
+	uint instance = 0;
+
+	switch (type)
+	{
+	case Resource::ResourceType::FOLDER:
+		unique_name = "New Folder " + std::to_string(folders.size());
+
+		for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end(); ++it)
+		{
+			if ((*it).second->GetName() == unique_name)
+			{
+				instance++;
+				unique_name = "New Folder" + std::to_string(folders.size() + instance);
+				it = folders.begin();
+			}
+		}
+
+		unique_name.append("/");
+		break;
+
+	case Resource::ResourceType::SCENE:
+		unique_name = "Untitled scene " + std::to_string(scenes.size());
+
+		for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end(); ++it)
+		{
+			if ((*it).second->GetName() == unique_name)
+			{
+				instance++;
+				unique_name = "Untitled scene" + std::to_string(scenes.size() + instance);
+				it = scenes.begin();
+			}
+		}
+
+		unique_name.append(".scene");
+		break;
+
+	case Resource::ResourceType::MATERIAL:
+		unique_name = "New material " + std::to_string(materials.size());
+
+		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end(); ++it)
+		{
+			if ((*it).second->GetName() == unique_name)
+			{
+				instance++;
+				unique_name = "New material" + std::to_string(materials.size() + instance);
+				it = materials.begin();
+			}
+		}
+
+		unique_name.append(".mat");
+		break;
+
+
+	case Resource::ResourceType::SCRIPT:
+		unique_name = "New script " + std::to_string(scripts.size());
+
+		for (std::map<uint, ResourceScript*>::iterator it = scripts.begin(); it != scripts.end(); ++it)
+		{
+			if ((*it).second->GetName() == unique_name)
+			{
+				instance++;
+				unique_name = "New Script" + std::to_string(scripts.size() + instance);
+				it = scripts.begin();
+			}
+		}
+
+		unique_name.append(".lua");
+		break;
+
+	case Resource::ResourceType::UNKNOWN:
+		break;
+
+	}
+
+	return unique_name;
+}
+
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
 	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 10, "Resource Destruction Switch needs to be updated");
