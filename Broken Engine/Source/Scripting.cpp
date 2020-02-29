@@ -345,7 +345,7 @@ int Scripting::GetAxisRealValue(int player_num, const char* axis) const
 	SDL_GameControllerAxis SDL_axis = GetControllerAxisFromString(axis);
 
 	ret = App->input->GetAxis(player,SDL_axis);
-
+	ENGINE_CONSOLE_LOG("%i", ret);
 	return ret;
 }
 
