@@ -18,6 +18,12 @@ public:
 		Camera,
 		Bone,
 		Animation,
+		DynamicRigidBody,
+		Collider,
+		ParticleEmitter,
+		AudioSource,
+		AudioListener,
+		Script,
 		Unknown
 	};
 
@@ -34,6 +40,9 @@ public:
 	bool& GetActive();
 	bool IsEnabled() const;
 
+
+	virtual void Update() {};
+
 	// --- Save & Load ---
 	virtual json Save() const = 0;
 	virtual void Load(json& node) = 0;
@@ -41,6 +50,7 @@ public:
 	virtual void CreateInspectorNode() = 0;
 
 protected:
+
 	bool active = false;
 	GameObject* GO = nullptr;
 
@@ -48,4 +58,3 @@ protected:
 };
 
 #endif
-

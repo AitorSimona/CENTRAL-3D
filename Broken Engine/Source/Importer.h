@@ -20,6 +20,7 @@ public:
 		Animation,
 		Texture,
 		Shader_Object,
+		Script,
 		Meta,
 		Unknown
 	};

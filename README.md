@@ -11,7 +11,7 @@ A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 
 - ImGui 1.72b (with beta docking)
 - ImGuizmo
 - MathGeoLib 1.5 (commit 1994)
-- OpenGL 4.6
+- OpenGL 4.4
 - mmgr
 - par_shapes at commit 281 
 - DevIL 1.8.0

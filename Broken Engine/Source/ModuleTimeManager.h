@@ -22,6 +22,7 @@ public:
 	float GetRealTimeDt()const;
 	uint GetMaxFramerate() const;
 	float GetTimeScale() const;
+	float GetGameplayTimePassed() const;
 
 	// --- Setters ---
 	void SetMaxFramerate(uint maxFramerate);
@@ -38,6 +39,7 @@ private:
 	Timer				fps_timer;
 	float				game_dt = 0.0f;
 	float				realtime_dt = 0.0f;
+	float				gametime_passed = 0.0f;
 	Uint32				frame_count;
 	int					fps_counter;
 	int					last_fps;

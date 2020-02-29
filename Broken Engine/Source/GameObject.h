@@ -15,13 +15,16 @@ class GameObject
 public:
 
 	GameObject(const char* name);
+	GameObject(const char* name, uint UID);
 	virtual ~GameObject();
 	void Enable();
 	void Disable();
 	void Update(float dt);
+	void PostUpdate();
 
 	// --- Getters ---
-	uint&			GetUID();
+	uint			GetUID();
+	void			SetUID(uint uid);
 	std::string		GetName() const;
 	const AABB&	    GetAABB();
 	const OBB&      GetOBB() const;
@@ -42,7 +45,7 @@ public:
 				return ((TComponent*)(components[i]));
 			}
 		}
-		
+
 		return nullptr;
 	}
 
@@ -55,7 +58,7 @@ public:
 	void			SetName(const char* name);
 
 	// --- Utilities ---
-	void RecursiveDelete(bool target = true);
+	void RecursiveDelete();
 	//void OnUpdateTransform();
 	void TransformGlobal(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);

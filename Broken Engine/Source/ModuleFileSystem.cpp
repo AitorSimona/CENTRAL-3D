@@ -62,8 +62,8 @@ bool ModuleFileSystem::Init(json config)
 
 	// Make sure standard paths exist
 	const char* dirs[] = {
-		SETTINGS_FOLDER, ASSETS_FOLDER, LIBRARY_FOLDER, MODELS_FOLDER, 
-		MESHES_FOLDER, BONES_FOLDER, ANIMATIONS_FOLDER, TEXTURES_FOLDER, SCENES_FOLDER, SHADERS_FOLDER
+		SETTINGS_FOLDER, ASSETS_FOLDER, LIBRARY_FOLDER, MODELS_FOLDER,
+		MESHES_FOLDER, BONES_FOLDER, ANIMATIONS_FOLDER, TEXTURES_FOLDER, SCENES_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER
 	};
 
 	for (uint i = 0; i < sizeof(dirs) / sizeof(const char*); ++i)
@@ -118,18 +118,18 @@ update_status ModuleFileSystem::PreUpdate(float dt)
 			{
 				// A file was created, renamed, or deleted in the directory.
 				// Refresh this directory and restart the notification.
-				
+
 				// A directory was created, renamed, or deleted.
 				// Refresh the tree and restart the notification.
 
 				ENGINE_CONSOLE_LOG("Importing files... Rebuilding links...");
 
-				App->resources->HandleFsChanges();			
+				App->resources->HandleFsChanges();
 
 				started_wait = false;
 			}
 
-			// A timeout occurred, this would happen if some value other 
+			// A timeout occurred, this would happen if some value other
 			// than INFINITE is used in the Wait call and no changes occur.
 			// In a single-threaded environment you might not want an
 			// INFINITE wait.
@@ -365,9 +365,9 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 	// --- Watch the subtree for directory creation and deletion ---
 
 	dwChangeHandles[0] = FindFirstChangeNotification(
-		directory,                       // directory to watch 
-		TRUE,                          // watch the subtree 
-		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME
+		directory,                       // directory to watch
+		TRUE,                          // watch the subtree
+		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES
 	);
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
@@ -386,6 +386,13 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 		ENGINE_CONSOLE_LOG("%i", GetLastError());
 	}
 
+}
+
+//Returns a filename without extension
+void ModuleFileSystem::RemoveFileExtension(std::string& file)
+{
+	std::size_t pos = file.find(".");    // position of "." in str
+	file = file.substr(0, pos);     // get from the beginning to "."
 }
 
 

@@ -17,6 +17,7 @@ class ResourceAnimation;
 class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
+class ResourceScript;
 
 class ModuleResourceManager : public Module
 {
@@ -29,6 +30,7 @@ class ModuleResourceManager : public Module
 	friend class ImporterMaterial;
 	friend class ImporterScene;
 	friend class ImporterFolder;
+	friend class ImporterScript;
 	friend class PanelResources;
 	friend class ComponentMeshRenderer;
 public:
@@ -61,6 +63,7 @@ public:
 	//
 	Resource* ImportTexture(Importer::ImportData& IData);
 	Resource* ImportShaderObject(Importer::ImportData& IData);
+	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
 
 	void HandleFsChanges();
@@ -89,6 +92,7 @@ public:
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	bool IsFileImported(const char* file);
+	std::string GetNewUniqueName(Resource::ResourceType type);
 
 	void ONResourceDestroyed(Resource* resource);
 
@@ -116,6 +120,7 @@ private:
 	std::map<uint, ResourceAnimation*> animations;
 	std::map<uint, ResourceTexture*> textures;
 	std::map<uint, ResourceShaderObject*> shader_objects;
+	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 };
 

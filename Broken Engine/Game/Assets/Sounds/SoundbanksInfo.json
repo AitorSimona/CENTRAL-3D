@@ -1,0 +1,77 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "11",
+  "SoundbankVersion": "134",
+  "RootPaths": {
+   "ProjectRoot": "D:\\WWISE_Projects\\Music\\",
+   "SourceFilesRoot": "D:\\WWISE_Projects\\Music\\.cache\\Windows\\",
+   "SoundBanksRoot": "D:\\Github\\Resonance-Engine\\3D Engine\\Game\\Assets\\Sounds\\",
+   "ExternalSourcesInputFile": "",
+   "ExternalSourcesOutputRoot": "D:\\WWISE_Projects\\Music\\GeneratedSoundBanks\\Windows"
+  },
+  "DialogueEvents": [],
+  "StreamedFiles": [],
+  "MediaFilesNotInAnyBank": [],
+  "SoundBanks": [
+   {
+    "Id": "1355168291",
+    "Language": "SFX",
+    "ObjectPath": "Init",
+    "ShortName": "Init",
+    "Path": "Init.bnk"
+   },
+   {
+    "Id": "3161908922",
+    "Language": "SFX",
+    "ObjectPath": "\\SoundBanks\\Default Work Unit\\Main",
+    "ShortName": "Main",
+    "Path": "Main.bnk",
+    "IncludedEvents": [
+     {
+      "Id": "626769978",
+      "Name": "backgroundMusic",
+      "ObjectPath": "\\Events\\Default Work Unit\\backgroundMusic"
+     },
+     {
+      "Id": "1153084749",
+      "Name": "francesco",
+      "ObjectPath": "\\Events\\Default Work Unit\\francesco"
+     },
+     {
+      "Id": "2167849898",
+      "Name": "helicopter",
+      "ObjectPath": "\\Events\\Default Work Unit\\helicopter"
+     }
+    ],
+    "IncludedMemoryFiles": [
+     {
+      "Id": "159884132",
+      "Language": "SFX",
+      "ShortName": "friends.wav",
+      "Path": "SFX\\friends_10C4C929.wem"
+     },
+     {
+      "Id": "672809502",
+      "Language": "SFX",
+      "ShortName": "helicopter.wav",
+      "Path": "SFX\\helicopter_D79FB2B7.wem"
+     },
+     {
+      "Id": "757740205",
+      "Language": "SFX",
+      "ShortName": "tbbt.wav",
+      "Path": "SFX\\tbbt_10C4C929.wem"
+     },
+     {
+      "Id": "857677296",
+      "Language": "SFX",
+      "ShortName": "francesco.wav",
+      "Path": "SFX\\francesco_10C4C929.wem"
+     }
+    ]
+   }
+  ]
+ }
+}

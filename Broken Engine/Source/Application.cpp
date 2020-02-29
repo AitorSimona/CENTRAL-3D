@@ -11,8 +11,12 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
+#include "ModuleScripting.h"
 #include "ModuleThreading.h"
+#include "ModulePhysics.h"
+#include "ModuleParticles.h"
 
+#include "ModuleAudio.h"
 #include "mmgr/mmgr.h"
 
 Application::Application()
@@ -30,11 +34,15 @@ Application::Application()
 	window = new ModuleWindow(true);
 	scene_manager = new ModuleSceneManager(true);
 	renderer3D = new ModuleRenderer3D(true);
+	scripting = new ModuleScripting(true);
 	camera = new ModuleCamera3D(true);
 	gui = new ModuleGui(true);
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
+	physics = new ModulePhysics(true);
+	particles = new ModuleParticles(true);
+	audio = new ModuleAudio(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -47,7 +55,6 @@ Application::Application()
 	AddModule(input);
 	AddModule(time);
 
-
 	AddModule(textures);
 	AddModule(hardware);
 
@@ -59,6 +66,14 @@ Application::Application()
 	// Scenes
 	AddModule(scene_manager);
 
+	// Physics & particles
+	AddModule(physics);
+	AddModule(particles);
+
+	AddModule(audio);
+
+	//Gameplay (Scripting)
+	AddModule(scripting);
 	// Renderer last!
 	AddModule(renderer3D);
 }
@@ -188,12 +203,11 @@ void Application::LoadAllStatus(json & file)
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
-
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
-	
+
 	std::list<Module*>::const_iterator item = list_modules.begin();
-	
+
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
 		ret = (*item)->PreUpdate(time->GetRealTimeDt());
@@ -205,6 +219,14 @@ update_status Application::Update()
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
 		ret = (*item)->Update(time->GetRealTimeDt());
+		item++;
+	}
+
+	item = list_modules.begin();
+
+	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
+	{
+		ret = (*item)->GameUpdate(time->GetGameDt());
 		item++;
 	}
 
@@ -248,7 +270,7 @@ const char * Application::GetAppName() const
 	return appName.data();
 }
 
-void Application::SetAppName(const char* name) 
+void Application::SetAppName(const char* name)
 {
 	appName.assign(name);
 	App->window->SetWinTitle(appName.data());
@@ -260,11 +282,11 @@ void Application::SetOrganizationName(const char* name)
 }
 
 void Application::Log(const char * entry)
-{	
+{
 	if (logs.size() > 1000)
 		logs.erase(logs.begin());
 
-	// --- Append all logs to a string so we can print them on console --- 
+	// --- Append all logs to a string so we can print them on console ---
 	log.append(entry);
 
 	std::string to_add = entry;
@@ -335,5 +357,3 @@ AppState & Application::GetAppState()
 {
 	return EngineState;
 }
-
-

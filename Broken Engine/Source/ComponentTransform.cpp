@@ -6,7 +6,7 @@
 
 #include "mmgr/mmgr.h"
 
-// MYTODO: Explain math behind transform ops 
+// MYTODO: Explain math behind transform ops
 
 ComponentTransform::ComponentTransform(GameObject * ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform)
 {
@@ -58,6 +58,12 @@ void ComponentTransform::SetPosition(float3 new_position)
 	UpdateLocalTransform();
 }
 
+void ComponentTransform::SetPosition(float x, float y, float z)
+{
+	position = float3(x, y, z);
+	UpdateLocalTransform();
+}
+
 void ComponentTransform::SetRotation(float3 euler_angles)
 {
 	// --- Compute desired rotation in radians ---
@@ -78,6 +84,17 @@ void ComponentTransform::SetQuatRotation(Quat rot)
 	rotation_euler = rotation.ToEulerXYZ();
 	rotation_euler *= RADTODEG;
 
+	// --- Update Transform ---
+	UpdateLocalTransform();
+}
+
+void ComponentTransform::SetRotation(Quat quat)
+{
+	// --- Update own variables ---
+	rotation = quat;
+	rotation_euler = quat.ToEulerXYZ() * RADTODEG;
+
+	// --- Update Transform ---
 	UpdateLocalTransform();
 }
 
@@ -159,12 +176,14 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::Text("Position  ");
 	ImGui::SameLine();
 
+	float dragSpeed = 0.25f;
+
 	float3 position = GetPosition();
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PX", &position.x, 0.005f);
+	ImGui::DragFloat("##PX", &position.x, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -172,7 +191,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PY", &position.y, 0.005f);
+	ImGui::DragFloat("##PY", &position.y, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -180,7 +199,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##PZ", &position.z, 0.005f);
+	ImGui::DragFloat("##PZ", &position.z, dragSpeed);
 
 	// --- Transform Rotation ---
 	ImGui::Text("Rotation  ");
@@ -191,7 +210,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##RX", &rotation.x, 0.005f);
+	ImGui::DragFloat("##RX", &rotation.x, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -199,7 +218,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##RY", &rotation.y, 0.005f);
+	ImGui::DragFloat("##RY", &rotation.y, dragSpeed);
 
 	ImGui::SameLine();
 
@@ -207,9 +226,11 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##RZ", &rotation.z, 0.005f);
+	ImGui::DragFloat("##RZ", &rotation.z, dragSpeed);
 
 	// --- Transform Scale ---
+	float scale_dragSpeed = 0.1f;
+
 	ImGui::Text("Scale     ");
 	ImGui::SameLine();
 
@@ -218,7 +239,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SX", &scale.x, 0.005f);
+	ImGui::DragFloat("##SX", &scale.x, scale_dragSpeed);
 
 	ImGui::SameLine();
 
@@ -226,7 +247,7 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SY", &scale.y, 0.005f);
+	ImGui::DragFloat("##SY", &scale.y, scale_dragSpeed);
 
 	ImGui::SameLine();
 
@@ -234,9 +255,9 @@ void ComponentTransform::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-	ImGui::DragFloat("##SZ", &scale.z, 0.005f);
+	ImGui::DragFloat("##SZ", &scale.z, scale_dragSpeed);
 
-	
+
 
 	// --- Transform Set ---
 	if (!GO->Static)

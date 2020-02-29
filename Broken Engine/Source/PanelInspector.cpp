@@ -12,6 +12,10 @@
 #include "ComponentMesh.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
+#include "ComponentCollider.h"
+#include "ComponentParticleEmitter.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
 
 #include "PanelShaderEditor.h"
 
@@ -19,6 +23,7 @@
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
+#include "ComponentScript.h"
 
 #include "mmgr/mmgr.h"
 
@@ -64,7 +69,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer" };
+		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -83,21 +88,78 @@ bool PanelInspector::Draw()
 			ImGui::EndCombo();
 		}
 
+		// --- Handle drag & drop ---
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+			{
+				uint UID = *(const uint*)payload->Data;
+				Resource* resource = App->resources->GetResource(UID, false);
+
+				// MYTODO: Instance resource here, put it on scene (depending on resource)
+				if (resource && resource->GetType() == Resource::ResourceType::SCRIPT)
+				{
+					resource = App->resources->GetResource(UID);
+					ComponentScript* script = (ComponentScript*)Selected->AddComponent(Component::ComponentType::Script);
+					script->AssignScript((ResourceScript*)resource);
+					
+
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
 		// --- Add here temporal conditions to know which component to add ---
 
 		// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
 
-		if (item_current == "ComponentMesh")
+		if (item_current == "Mesh")
 		{
 			Selected->AddComponent(Component::ComponentType::Mesh);
 		}
 
-		if (item_current == "ComponentMeshRenderer")
+		if (item_current == "Mesh Renderer")
 		{
 			Selected->AddComponent(Component::ComponentType::MeshRenderer);
 		}
 
+		if (item_current == "Dynamic RigidBody")
+		{
+			Selected->AddComponent(Component::ComponentType::DynamicRigidBody);
+		}
+
+		if (item_current == "Collider")
+		{
+			Selected->AddComponent(Component::ComponentType::Collider);
+		}
+		if (item_current == "Particle Emitter")
+		{
+			Selected->AddComponent(Component::ComponentType::ParticleEmitter);
+		}
+		if (item_current == "Audio Source")
+		{
+			Selected->AddComponent(Component::ComponentType::AudioSource);
+		}
+
 		item_current = items[0];
+		// MYTODO: move this to the component itself
+
+		// --- Material ---
+		//if (Selected->GetComponent<ComponentMaterial>())
+		//{
+		//	CreateMaterialNode(*Selected);
+		//	ImGui::Separator();
+		//}
+
+		// --- Camera ---
+		//if (Selected->GetComponent<ComponentCamera>())
+		//{
+		//	CreateCameraNode(*Selected);
+		//	ImGui::Separator();
+		//}
+
+
 
 		if(Startup)
 			Startup = false;
@@ -129,5 +191,3 @@ void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 
 	ImGui::EndChild();
 }
-
-

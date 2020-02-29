@@ -11,6 +11,7 @@
 #include "ImporterBone.h"
 #include "ImporterAnimation.h"
 #include "ImporterTexture.h"
+#include "ImporterScript.h"
 #include "ImporterMeta.h"
 
 #endif // __IMPORTERS_H__

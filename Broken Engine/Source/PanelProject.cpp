@@ -4,9 +4,10 @@
 #include "ModuleResourceManager.h"
 #include "ModuleEventManager.h"
 #include "ModuleGui.h"
+#include "ModuleSceneManager.h"
 
-#include "ResourceFolder.h"
-#include "ResourceModel.h"
+#include "Resources.h"
+#include "Importers.h"
 
 #include "mmgr/mmgr.h"
 
@@ -39,7 +40,7 @@ PanelProject::~PanelProject()
 }
 
 
-// MYTODO: Clean this up
+// MYTODO: Clean this up !!!!!!!!!
 
 bool PanelProject::Draw()
 {
@@ -52,6 +53,8 @@ bool PanelProject::Draw()
 	if (ImGui::Begin(name, &enabled, projectFlags))
 	{
 		static std::vector<std::string> filters;
+
+		CreateResourceHandlingPopup();
 
 		ImGui::BeginMenuBar();
 		ImGui::EndMenuBar();
@@ -109,6 +112,115 @@ bool PanelProject::Draw()
 
 
 	return true;
+}
+
+void PanelProject::CreateResourceHandlingPopup()
+{
+	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
+	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
+		ImGui::OpenPopup("Resources");
+
+	if (ImGui::BeginPopup("Resources"))
+	{
+		//ImGui::MenuItem("(dummy menu)", NULL, false, false);
+		//if (ImGui::MenuItem("New")) {}
+		//if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+
+		if (ImGui::BeginMenu("Create"))
+		{
+			if (ImGui::MenuItem("Folder"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::FOLDER);
+
+				Resource* new_folder = App->resources->CreateResource(Resource::ResourceType::FOLDER, std::string(currentDirectory->GetResourceFile()).append(resource_name));
+				ImporterFolder* IFolder = App->resources->GetImporter<ImporterFolder>();
+
+				App->resources->AddResourceToFolder(new_folder);
+
+				resource_name.pop_back();
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, std::string(currentDirectory->GetResourceFile()).append(resource_name), new_folder->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IFolder->Save((ResourceFolder*)new_folder);
+			}
+
+			if (ImGui::MenuItem("Material"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::MATERIAL);
+
+				Resource* new_material = App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(currentDirectory->GetResourceFile()).append(resource_name));
+				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+				App->resources->AddResourceToFolder(new_material);
+
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_material->GetResourceFile(), new_material->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IMat->Save((ResourceMaterial*)new_material);
+			}
+
+			if (ImGui::MenuItem("Script"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::SCRIPT);
+
+				Resource* new_script = App->resources->CreateResource(Resource::ResourceType::SCRIPT, std::string(currentDirectory->GetResourceFile()).append(resource_name));
+				ImporterScript* IScript = App->resources->GetImporter<ImporterScript>();
+
+				App->resources->AddResourceToFolder(new_script);
+
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_script->GetResourceFile(), new_script->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IScript->Save((ResourceScript*)new_script);
+			}
+
+			if (ImGui::MenuItem("Scene"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::SCENE);
+
+				Resource* new_scene = App->resources->CreateResource(Resource::ResourceType::SCENE, std::string(currentDirectory->GetResourceFile()).append(resource_name));
+				ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+
+				App->resources->AddResourceToFolder(new_scene);
+
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_scene->GetResourceFile(), new_scene->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IScene->SaveSceneToFile((ResourceScene*)new_scene);
+			}
+
+			//if (ImGui::BeginMenu("More.."))
+			//{
+			//	ImGui::MenuItem("Hello");
+			//	ImGui::MenuItem("Sailor");
+			//	if (ImGui::BeginMenu("Recurse.."))
+			//	{
+			//		ShowExampleMenuFile();
+			//		ImGui::EndMenu();
+			//	}
+			//	ImGui::EndMenu();
+			//}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndPopup();
+	}
 }
 
 void PanelProject::SetSelected(Resource* new_selected)
@@ -192,6 +304,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (!*it)
 				continue;
 
+			ImGui::PushID((*it)->GetUID());
+
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px);
 			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);
 
@@ -232,6 +346,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(255, 255, 255, 255);
 
+			ImGui::PopID();
+
 			if ((i + 1) % maxColumns == 0)
 				row++;
 			else
@@ -264,8 +380,6 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 					ImGui::SameLine();
 
 				i++;
-
-				ImGui::PushID((*it)->GetUID());
 
 				uint arrowSize = imageSize_px / 4;
 
@@ -303,7 +417,6 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 					}
 				}
 
-				ImGui::PopID();
 			}
 
 			if ((i + 1) % maxColumns == 0)
@@ -321,6 +434,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child)
 {
+	ImGui::PushID(resource->GetUID());
+
 	ImGui::SetCursorPosX(cursor_pos.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px);
 	ImGui::SetCursorPosY(cursor_pos.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);
 
@@ -335,6 +450,7 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 	else
 		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), color);
 
+	// --- Handle selection ---
 	if (selected && selected->GetUID() == resource->GetUID()
 		&& wasclicked && ImGui::IsMouseReleased(0))
 	{
@@ -349,6 +465,7 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
+	// --- Handle drag and drop origin ---
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 	{
 		uint UID = resource->GetUID();
@@ -359,11 +476,17 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 		ImGui::EndDragDropSource();
 	}
 
-
+	// --- Handle selection ---
 	if (ImGui::IsItemClicked())
 	{
 		selected = resource;
 		wasclicked = true;
+	}
+	// --- IF resource is a scene, load it on double click! ---
+	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+	{
+		if (resource->GetType() == Resource::ResourceType::SCENE)
+			App->scene_manager->SetActiveScene((ResourceScene*)resource);
 	}
 
 	ImGui::PopStyleVar();
@@ -376,6 +499,8 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 
 	if (selected && selected->GetUID() == resource->GetUID())
 		color = ImVec4(255, 255, 255, 255);
+
+	ImGui::PopID();
 }
 
 void PanelProject::LimitText(std::string& text)
