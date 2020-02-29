@@ -78,7 +78,7 @@ void ComponentDynamicRigidBody::Load(json& node)
 	std::string freezePosition_X_ = node["freezePosition_X"];
 	std::string freezePosition_Y_ = node["freezePosition_Y"];
 	std::string freezePosition_Z_ = node["freezePosition_Z"];
-	
+
 	std::string freezeRotation_X_ = node["freezeRotation_X"];
 	std::string freezeRotation_Y_ = node["freezeRotation_Y"];
 	std::string freezeRotation_Z_ = node["freezeRotation_Z"];
@@ -123,10 +123,10 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 {
 	ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
 
-	ImGui::Text("Mass:"); ImGui::SameLine(); 
+	ImGui::Text("Mass:"); ImGui::SameLine();
 	if (ImGui::DragFloat("##M", &mass)) SetMass(mass);
 	ImGui::Text("Density:"); ImGui::SameLine(); ImGui::DragFloat("##D", &density);
-	ImGui::Text("Gravity:"); ImGui::SameLine(); ImGui::Checkbox("##G", &use_gravity); 
+	ImGui::Text("Gravity:"); ImGui::SameLine(); ImGui::Checkbox("##G", &use_gravity);
 	ImGui::Text("Kinematic:"); ImGui::SameLine(); ImGui::Checkbox("##K", &is_kinematic);
 	ImGui::Text("Linear Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50); ImGui::DragFloat("##LVX", &linear_vel.x); ImGui::SameLine(); ImGui::DragFloat("##LVY", &linear_vel.y); ImGui::SameLine(); ImGui::DragFloat("##LVZ", &linear_vel.z); ImGui::PopItemWidth();
 	ImGui::Text("Angular Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50); ImGui::DragFloat("##AVX", &angular_vel.x); ImGui::SameLine(); ImGui::DragFloat("##AVY", &angular_vel.y); ImGui::SameLine(); ImGui::DragFloat("##AVZ", &angular_vel.z); ImGui::PopItemWidth();
@@ -136,23 +136,23 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Constraints"))
 	{
-		ImGui::Text("Freeze Position"); ImGui::SameLine(); ImGui::Checkbox("##FPX", &freezePosition_X); ImGui::SameLine(); ImGui::Checkbox("##FPY", &freezePosition_Y); ImGui::SameLine(); ImGui::Checkbox("##FPZ", &freezePosition_Z); 
-		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); ImGui::Checkbox("##FRX", &freezeRotation_X); ImGui::SameLine(); ImGui::Checkbox("##FRY", &freezeRotation_Y); ImGui::SameLine(); ImGui::Checkbox("##FRZ", &freezeRotation_Z); 
+		ImGui::Text("Freeze Position"); ImGui::SameLine(); ImGui::Checkbox("##FPX", &freezePosition_X); ImGui::SameLine(); ImGui::Checkbox("##FPY", &freezePosition_Y); ImGui::SameLine(); ImGui::Checkbox("##FPZ", &freezePosition_Z);
+		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); ImGui::Checkbox("##FRX", &freezeRotation_X); ImGui::SameLine(); ImGui::Checkbox("##FRY", &freezeRotation_Y); ImGui::SameLine(); ImGui::Checkbox("##FRZ", &freezeRotation_Z);
 		ImGui::TreePop();
 	}
 
 	if (rigidBody != nullptr) {
-	//	SetMass(mass);
-	//	SetDensity(density);
-	//	UseGravity(use_gravity);
-	//	SetKinematic(is_kinematic);
-	//	SetLinearVelocity(linear_vel);
-	//	SetAngularVelocity(angular_vel);
-	//	SetLinearDamping(linear_damping);
-	//	SetAngularDamping(angular_damping);
-	//	FeezePosition_X(freezePosition_X);
-	//	FeezePosition_Y(freezePosition_Y);
-	//	FeezePosition_Z(freezePosition_Z);
+		SetMass(mass);
+		SetDensity(density);
+		UseGravity(use_gravity);
+		SetKinematic(is_kinematic);
+		/*SetLinearVelocity(linear_vel);
+		SetAngularVelocity(angular_vel);
+		SetLinearDamping(linear_damping);
+		SetAngularDamping(angular_damping);*/
+		FeezePosition_X(freezePosition_X);
+		FeezePosition_Y(freezePosition_Y);
+		FeezePosition_Z(freezePosition_Z);
 		FreezeRotation_X(freezeRotation_X);
 		FreezeRotation_Y(freezeRotation_Y);
 		FreezeRotation_Z(freezeRotation_Z);
@@ -169,5 +169,3 @@ void ComponentDynamicRigidBody::StaticToDynamicRigidBody()
 		collider->CreateCollider(collider->type, true);
 	}
 }
-
-
