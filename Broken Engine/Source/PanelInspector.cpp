@@ -175,7 +175,14 @@ void PanelInspector::CreateGameObjectNode(GameObject & Selected) const
 {
 	ImGui::BeginChild("child", ImVec2(0, 35), true);
 
-	ImGui::Checkbox("##GOActive", &Selected.GetActive());
+	if (ImGui::Checkbox("##GOActive", &Selected.GetActive()))
+	{
+		if (Selected.GetActive())
+			Selected.Enable();
+		else
+			Selected.Disable();
+	}
+	
 	ImGui::SameLine();
 
 	// --- Game Object Name Setter ---

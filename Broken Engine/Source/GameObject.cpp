@@ -297,11 +297,24 @@ std::vector<Component*>& GameObject::GetComponents()
 void GameObject::Enable()
 {
 	active = true;
+
+	for (int i = 0; i < components.size(); ++i)
+		components[i]->Enable();
+
+	for (int i = 0; i < childs.size(); ++i)
+		childs[i]->Enable();
+
 }
 
 void GameObject::Disable()
 {
 	active = false;
+
+	for (int i = 0; i < components.size(); ++i)
+		components[i]->Disable();
+
+	for (int i = 0; i < childs.size(); ++i)
+		childs[i]->Disable();
 }
 
 uint GameObject::GetUID()

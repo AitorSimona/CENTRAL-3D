@@ -108,8 +108,8 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 {
 	ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
 
-	ImGui::Text("Mass:"); ImGui::SameLine(); ImGui::DragFloat("##M", &mass);
-	ImGui::Text("Density:"); ImGui::SameLine(); ImGui::DragFloat("##D", &density);
+	ImGui::Text("Mass:"); ImGui::SameLine(); ImGui::DragFloat("##M", &mass,1.0f, 0.0f, 100000.0f);
+	ImGui::Text("Density:"); ImGui::SameLine(); ImGui::DragFloat("##D", &density, 1.0f, 0.0f, 100000.0f);
 	ImGui::Text("Gravity:"); ImGui::SameLine(); ImGui::Checkbox("##G", &use_gravity); 
 	ImGui::Text("Kinematic:"); ImGui::SameLine(); ImGui::Checkbox("##K", &is_kinematic);
 	ImGui::Text("Linear Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50); ImGui::DragFloat("##LVX", &linear_vel.x); ImGui::SameLine(); ImGui::DragFloat("##LVY", &linear_vel.y); ImGui::SameLine(); ImGui::DragFloat("##LVZ", &linear_vel.z); ImGui::PopItemWidth();
