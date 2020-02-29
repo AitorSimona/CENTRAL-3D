@@ -60,9 +60,8 @@ bool ModuleResourceManager::Start()
 	App->gui->CreateIcons();
 
 	// --- Create default scene ---
-	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, "DefaultScene");
+	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene");
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
-	App->scene_manager->defaultScene->LoadToMemory();
 
 	// --- Create default material ---
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
@@ -524,7 +523,7 @@ void ModuleResourceManager::HandleFsChanges()
 			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);
 
-			if (resource)
+			if (resource && resource->GetUID() != App->scene_manager->defaultScene->GetUID()) // do not eliminate default scene
 			{
 				resource->OnDelete();
 				delete resource;

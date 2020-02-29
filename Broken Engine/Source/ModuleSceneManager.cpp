@@ -110,6 +110,10 @@ bool ModuleSceneManager::Start()
 	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
 	//musicSource->isPlaying = true;
 
+	// --- Always load default scene ---
+	defaultScene->LoadToMemory();
+
+
 	return true;
 }
 
@@ -474,7 +478,6 @@ void ModuleSceneManager::SaveScene(ResourceScene* scene)
 
 		App->resources->AddResourceToFolder(scene);
 
-
 	}
 }
 
@@ -536,7 +539,7 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.c_str());
-	//currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
 	App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
@@ -911,7 +914,7 @@ GameObject* ModuleSceneManager::LoadCapsule()
 GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 {
 	GameObject* new_object = CreateEmptyGameObject();
-	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+	//currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
 	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(PrimitiveMeshID);

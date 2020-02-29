@@ -5,7 +5,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
 #include "ModuleTextures.h"
-
+#include "ModuleInput.h"
 #include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
@@ -144,6 +144,7 @@ update_status ModuleGui::Update(float dt)
 {
 	// --- Create Main Menu Bar ---
 
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		
@@ -184,7 +185,7 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Empty Game Object"))
 					{
 						GameObject* go = App->scene_manager->CreateEmptyGameObject();
-						App->scene_manager->currentScene->NoStaticGameObjects[go->GetUID()] = go;
+						//App->scene_manager->currentScene->NoStaticGameObjects[go->GetUID()] = go;
 					}
 
 
@@ -210,7 +211,7 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Camera"))
 					{
 						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
-						App->scene_manager->currentScene->NoStaticGameObjects[cam->GetUID()] = cam;
+						//App->scene_manager->currentScene->NoStaticGameObjects[cam->GetUID()] = cam;
 
 						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
 						cam->AddComponent(Component::ComponentType::MeshRenderer);
@@ -340,6 +341,49 @@ update_status ModuleGui::Update(float dt)
 			ImGui::EndMainMenuBar();
 	}
 
+	//if (!ImGui::IsPopupOpen("Save?") && ONdefaultSceneSave)
+	//	ImGui::OpenPopup("Save?");
+
+	//if (ImGui::BeginPopupModal("Save?"))
+	//{
+	//	ImGui::Text("Save change to the following items?");
+	//	ImGui::SetNextItemWidth(-1.0f);
+	//	/*if (ImGui::ListBoxHeader("##", close_queue_unsaved_documents, 6))
+	//	{
+	//		for (int n = 0; n < close_queue.Size; n++)
+	//			if (close_queue[n]->Dirty)
+	//				ImGui::Text("%s", close_queue[n]->Name);
+	//		ImGui::ListBoxFooter();
+	//	}
+
+	//	if (ImGui::Button("Yes", ImVec2(80, 0)))
+	//	{
+	//		for (int n = 0; n < close_queue.Size; n++)
+	//		{
+	//			if (close_queue[n]->Dirty)
+	//				close_queue[n]->DoSave();
+	//			close_queue[n]->DoForceClose();
+	//		}
+	//		close_queue.clear();
+	//		ImGui::CloseCurrentPopup();
+	//	}
+	//	ImGui::SameLine();
+	//	if (ImGui::Button("No", ImVec2(80, 0)))
+	//	{
+	//		for (int n = 0; n < close_queue.Size; n++)
+	//			close_queue[n]->DoForceClose();
+	//		close_queue.clear();
+	//		ImGui::CloseCurrentPopup();
+	//	}
+	//	ImGui::SameLine();
+	//	if (ImGui::Button("Cancel", ImVec2(80, 0)))
+	//	{
+	//		close_queue.clear();
+	//		ImGui::CloseCurrentPopup();
+	//	}*/
+	//	ImGui::EndPopup();
+	//}
+
 
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
@@ -446,6 +490,7 @@ void ModuleGui::RequestBrowser(const char * url) const
 {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
+
 
 void ModuleGui::LogFPS(float fps, float ms)
 {

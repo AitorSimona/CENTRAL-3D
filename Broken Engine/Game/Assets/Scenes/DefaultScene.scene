@@ -1,0 +1,109 @@
+{
+    "1188506837": {
+        "Components": {
+            "0": {
+                "positionx": "-23.351662",
+                "positiony": "0.000000",
+                "positionz": "38.055698",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.159200",
+                "scaley": "1.159200",
+                "scalez": "1.159200"
+            },
+            "15": {
+                "colliderType": "1",
+                "firstCreation": "1",
+                "globalMatrixw": "1.000000",
+                "globalMatrixx": "-23.351662",
+                "globalMatrixy": "1.872108",
+                "globalMatrixz": "38.055698",
+                "globalPositionx": "1.000000",
+                "globalPositiony": "1.000000",
+                "globalPositionz": "1.000000",
+                "height": "1.000000",
+                "lastIndex": "1",
+                "localMatrixw": "1.000000",
+                "localMatrixx": "0.000000",
+                "localMatrixy": "1.615000",
+                "localMatrixz": "0.000000",
+                "localPositionx": "0.000000",
+                "localPositiony": "1.615000",
+                "localPositionz": "0.000000",
+                "offsetx": "0.000000",
+                "offsety": "0.000000",
+                "offsetz": "0.000000",
+                "originalScalex": "1.000000",
+                "originalScaley": "1.000000",
+                "originalScalez": "1.000000",
+                "radius": "1.000000",
+                "scalex": "3.055000",
+                "scaley": "3.435000",
+                "scalez": "4.500000",
+                "tmpScalex": "1.159200",
+                "tmpScaley": "1.159200",
+                "tmpScalez": "1.159200"
+            }
+        },
+        "Name": "GameObject (0)",
+        "Parent": "259912230"
+    },
+    "177902166": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1504631776.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
+        },
+        "Name": "Chimney",
+        "Parent": "1188506837"
+    },
+    "558364960": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1864059883.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Baker_house.mat"
+                }
+            }
+        },
+        "Name": "Baker_house",
+        "Parent": "1188506837"
+    }
+}

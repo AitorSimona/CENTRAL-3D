@@ -123,7 +123,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		FreeSceneBones(&bones);
 		FreeSceneAnimations(&anims);
 
-		rootnode->RecursiveDelete();
+		App->scene_manager->DestroyGameObject(rootnode);
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
