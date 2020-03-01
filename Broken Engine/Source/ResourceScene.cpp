@@ -154,8 +154,9 @@ GameObject* ResourceScene::GetGOWithName(const char* GO_name)
 GameObject* ResourceScene::GetGOWithUID(uint UID)
 {
 	GameObject* ret_go = nullptr;
-	ret_go = NoStaticGameObjects.find(UID)->second;
-	if (ret_go == nullptr)
+	if (!NoStaticGameObjects.empty())
+		ret_go = NoStaticGameObjects.find(UID)->second;
+	if (ret_go == nullptr && !StaticGameObjects.empty())
 	{
 		ret_go = StaticGameObjects.find(UID)->second;
 	}

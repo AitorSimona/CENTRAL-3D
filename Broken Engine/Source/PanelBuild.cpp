@@ -34,7 +34,7 @@ bool PanelBuild::Draw() {
 		ImGui::Separator();
 		ImGui::Text("Main scene:");
 		ImGui::Text("Currently multiple scenes are not supported, main scene is scene.");
-		sceneUID = App->scene_manager->currentScene->GetUID();
+		scenePath = App->scene_manager->currentScene->GetResourceFile();
 		//ResourceScene* selected_scene = App->resources->scenes[0];
 		//static ImGuiComboFlags flags = 0;
 		//if (ImGui::BeginCombo("##Scenes Combo", "Main Scene", flags)) // The second parameter is the label previewed before opening the combo.
@@ -167,7 +167,7 @@ void PanelBuild::makeBuild() {
 	//We write our settings to gameSettings.
 	json gameSettings = App->GetDefaultGameConfig();
 	gameSettings["Application"]["Title"] = buildName;
-	gameSettings["SceneManager"]["MainScene"] = sceneUID;
+	gameSettings["SceneManager"]["MainScene"] = scenePath;
 	gameSettings["Camera3D"]["MainCamera"] = cameraGOUID;
 
 	App->GetJLoader()->Save(settingspath.c_str(), gameSettings);

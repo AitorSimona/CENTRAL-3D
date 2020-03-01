@@ -8,9 +8,10 @@
         "VSync": true
     },
     "SceneManager": {
-		"MainScene": 1901699497
+		"MainScene": "Assets/Scenes/DefaultScene.scene"
 	},
-	"Camera3D": {
+    "Camera3D": {
+        "MainCamera": 584733420
 	},
     "Window": {
         "borderless": false,

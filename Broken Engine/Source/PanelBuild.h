@@ -28,7 +28,7 @@ private:
 	std::vector<GameObject*> cameras;
 	std::string buildName;
 	GameObject* selectedCamera;
-	uint sceneUID;
+	std::string scenePath;
 	uint cameraGOUID;
 
 };
