@@ -81,6 +81,7 @@ ComponentBone* ComponentBone::GetHipBone()
 json ComponentBone::Save() const
 {
 	json node;
+	node["Resources"]["ResourceBone"];
 
 	// --- Store path to component file ---
 	if (res_bone)
