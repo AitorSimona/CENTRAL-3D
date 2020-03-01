@@ -786,11 +786,15 @@ void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
 
 		m.Decompose(pos, rot, scale);
 
+		rot = rot.Inverted();
+
 		transform->SetRotation(rot);
 
-		//PxTransform globalPos(PxVec3(pos.x, pos.y, pos.z), PxQuat(rot.x, rot.y, rot.z, rot.w));
+		/*PxTransform globalPos = rb->rigidBody->getGlobalPose();
+		globalPos.p = PxVec3(pos.x, pos.y, pos.z);
+		globalPos.q = PxQuat(rot.x, rot.y, rot.z, rot.w);
 
-		//collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
+		collider->UpdateTransformByRigidBody(rb, transform, &globalPos);*/
 		
 	}
 	else
