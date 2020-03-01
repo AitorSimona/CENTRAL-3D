@@ -627,6 +627,9 @@
     <ClInclude Include="ScriptingMath.h">
       <Filter>Sources\Modules\Scripting Functions</Filter>
     </ClInclude>
+    <ClInclude Include="PanelBuild.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -988,6 +991,9 @@
     </ClInclude>
     <ClCompile Include="ScriptingMath.cpp">
       <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelBuild.cpp">
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
