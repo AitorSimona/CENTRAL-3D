@@ -103,7 +103,7 @@ bool ModuleSceneManager::Start()
 
 
 	#ifdef BE_GAME_BUILD
-	//App->GetAppState() = AppState::TO_PLAY;
+	App->GetAppState() = AppState::TO_PLAY;
 	LoadStatus(App->GetConfigFile());
 	#endif
 
