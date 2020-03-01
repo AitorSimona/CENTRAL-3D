@@ -104,8 +104,8 @@ bool ModuleSceneManager::Start()
 	//music = LoadCube();
 	//music->AddComponent(Component::ComponentType::AudioSource);
 	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();
-	//musicSource->SetID(AK::EVENTS::BACKGROUNDMUSIC);
-	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->SetID(AK::EVENTS::GERALT_ATTACK);
+	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::GERALT_ATTACK);
 	//musicSource->isPlaying = true;
 
 	return true;
