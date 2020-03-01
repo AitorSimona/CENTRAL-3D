@@ -165,9 +165,12 @@ int ComponentScript::ScriptVarAlreadyInComponent(std::string name)
 json ComponentScript::Save() const
 {
 	json node;
+	node["Resources"]["ResourceScript"];
 
 	// --- Store path to component file ---
+	if(script)
 	node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
+
 	return node;
 }
 

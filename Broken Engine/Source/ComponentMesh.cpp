@@ -39,8 +39,10 @@ const AABB & ComponentMesh::GetAABB() const
 json ComponentMesh::Save() const
 {
 	json node;
+	node["Resources"]["ResourceMesh"];
 
 	// --- Store path to component file ---
+	if(resource_mesh)
 	node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
 
 	return node;

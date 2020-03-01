@@ -160,6 +160,7 @@ void ComponentAnimation::PlayAnimation(const char* name, float speed)
 json ComponentAnimation::Save() const
 {
 	json node;
+	node["Resources"]["ResourceAnimation"];
 
 	// --- Store path to component file ---
 	if (res_anim)

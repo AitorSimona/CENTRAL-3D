@@ -284,7 +284,9 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 json ComponentMeshRenderer::Save() const
 {
 	json node;
+	node["Resources"]["ResourceMaterial"];
 
+	if(material)
 	node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
 
 	//if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse)
