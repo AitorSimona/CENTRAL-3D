@@ -19,6 +19,7 @@ public:
 
 	float GetRealDT() const;
 	float GetDT() const;
+	float GameTime();
 
 	// Input
 	int GetKey(const char* key) const;
@@ -50,6 +51,15 @@ public:
 	float GetAxisValue(int player_num, const char* joy_axis, float threshold) const;
 	void ShakeController(int player_num, float intensity, uint32 milliseconds) const;
 	void StopControllerShake(int player_num) const;
+
+	uint FindGameObject(const char* go_name);
+	float GetGameObjectPos(uint gameobject_UID, lua_State* L);
+	float GetGameObjectPosX(uint gameobject_UID);
+	float GetGameObjectPosY(uint gameobject_UID);
+	float GetGameObjectPosZ(uint gameobject_UID);
+
+	void TranslateGameObject(uint gameobject_UID, float x, float y, float z);
+
 	//bool IsMouseInGame() const;
 	//int GetMouseRaycastHit(lua_State *L);
 
@@ -81,14 +91,53 @@ public:
 
 	//void DestroySelf() const;
 
+	// SYSTEMS FUNCTIONS --------------------------------------------------------------------------------------------------------- //
+	void ActivateParticlesEmission() const;
+	void DeactivateParticlesEmission() const;
+
 	// Position
 	float GetPositionX() const;
 	float GetPositionY() const;
 	float GetPositionZ() const;
-	int GetPosition(bool local, lua_State *L) const;
+	int GetPosition(lua_State *L);
 
 	void Translate(float x, float y, float z, bool local);
 	void SetPosition(float x, float y, float z, bool local);
+
+	//Rotation
+	void RotateObject(float x, float y, float z);
+	void SetObjectRotation(float x, float y, float z);
+	void LookAt(float spotX, float spotY, float spotZ, bool local);
+
+	int GetRotation(bool local, lua_State* L) const;
+	float GetRotationX() const;
+	float GetRotationY() const;
+	float GetRotationZ() const;
+
+	//Physics
+	void SetMass(float mass);
+	float GetMass();
+
+	int GetLinearVelocity(lua_State* L);
+	int GetAngularVelocity(lua_State* L);
+
+	void SetLinearVelocity(float x, float y, float z);
+	void SetAngularVelocity(float x, float y, float z);
+
+	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode);
+	void AddForce(float forceX, float forceY, float forceZ, int ForceMode);
+
+	void SetKinematic(bool enable);
+	void UseGravity(bool enable);
+
+	//Audio
+	void PlayAttackSound();
+	void PlayStepSound();
+
+	void SetVolume(float volume);
+
+	//Animations
+	void StartAnimation(const char* name, float speed);
 
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll

@@ -105,7 +105,9 @@ json ComponentAudioSource::Save() const
 	return node;
 }
 
-void ComponentAudioSource::SetID(AkGameObjectID id)
-{
-	this->id = id;
-}
+void ComponentAudioSource::PlaySFX(uint64 id) { wwiseGO->PlayEvent(id); }
+void ComponentAudioSource::StopSFX(uint64 id) { wwiseGO->StopEvent(id); }
+void ComponentAudioSource::PauseSFX(uint64 id) { wwiseGO->PauseEvent(id); }
+void ComponentAudioSource::ResumeSFX(uint64 id) { wwiseGO->ResumeEvent(id); }
+
+void ComponentAudioSource::SetVolume(float volume) { wwiseGO->SetVolume(id, volume); }

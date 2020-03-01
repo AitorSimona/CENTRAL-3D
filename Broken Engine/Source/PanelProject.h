@@ -25,6 +25,8 @@ public:
 private:
 	static void ONGameObjectSelected(const Event& e);
 	static void ONResourceDestroyed(const Event& e);
+	void CreateResourceHandlingPopup();
+
 private:
 	bool wasclicked = false;
 	uint imageSize_px = 48;

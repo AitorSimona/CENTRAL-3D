@@ -5,11 +5,11 @@
   "SchemaVersion": "11",
   "SoundbankVersion": "134",
   "RootPaths": {
-   "ProjectRoot": "D:\\WWISE_Projects\\Music\\",
-   "SourceFilesRoot": "D:\\WWISE_Projects\\Music\\.cache\\Windows\\",
-   "SoundBanksRoot": "D:\\Github\\Resonance-Engine\\3D Engine\\Game\\Assets\\Sounds\\",
+   "ProjectRoot": "C:\\Users\\Jacobo_G\\Desktop\\wwiseProject\\",
+   "SourceFilesRoot": "C:\\Users\\Jacobo_G\\Desktop\\wwiseProject\\.cache\\Windows\\",
+   "SoundBanksRoot": "C:\\Users\\Jacobo_G\\Documents\\GitHub\\Broken-Engine\\Broken Engine\\Game\\Assets\\Sounds\\",
    "ExternalSourcesInputFile": "",
-   "ExternalSourcesOutputRoot": "D:\\WWISE_Projects\\Music\\GeneratedSoundBanks\\Windows"
+   "ExternalSourcesOutputRoot": "C:\\Users\\Jacobo_G\\Desktop\\wwiseProject\\GeneratedSoundBanks\\Windows"
   },
   "DialogueEvents": [],
   "StreamedFiles": [],
@@ -30,45 +30,28 @@
     "Path": "Main.bnk",
     "IncludedEvents": [
      {
-      "Id": "626769978",
-      "Name": "backgroundMusic",
-      "ObjectPath": "\\Events\\Default Work Unit\\backgroundMusic"
+      "Id": "3764996949",
+      "Name": "Geralt_Attack",
+      "ObjectPath": "\\Events\\Default Work Unit\\Geralt_Attack"
      },
      {
-      "Id": "1153084749",
-      "Name": "francesco",
-      "ObjectPath": "\\Events\\Default Work Unit\\francesco"
-     },
-     {
-      "Id": "2167849898",
-      "Name": "helicopter",
-      "ObjectPath": "\\Events\\Default Work Unit\\helicopter"
+      "Id": "136547680",
+      "Name": "Geralt_Run",
+      "ObjectPath": "\\Events\\Default Work Unit\\Geralt_Run"
      }
     ],
     "IncludedMemoryFiles": [
      {
-      "Id": "159884132",
+      "Id": "111138450",
       "Language": "SFX",
-      "ShortName": "friends.wav",
-      "Path": "SFX\\friends_10C4C929.wem"
+      "ShortName": "Geralt_Run.wav",
+      "Path": "SFX\\Geralt_Run_10C4C929.wem"
      },
      {
-      "Id": "672809502",
+      "Id": "630682896",
       "Language": "SFX",
-      "ShortName": "helicopter.wav",
-      "Path": "SFX\\helicopter_D79FB2B7.wem"
-     },
-     {
-      "Id": "757740205",
-      "Language": "SFX",
-      "ShortName": "tbbt.wav",
-      "Path": "SFX\\tbbt_10C4C929.wem"
-     },
-     {
-      "Id": "857677296",
-      "Language": "SFX",
-      "ShortName": "francesco.wav",
-      "Path": "SFX\\francesco_10C4C929.wem"
+      "ShortName": "Geralt_Attack2.wav",
+      "Path": "SFX\\Geralt_Attack2_10C4C929.wem"
      }
     ]
    }

@@ -9,7 +9,7 @@ class WwiseGameObject
 {
 public:
 
-	WwiseGameObject(unsigned __int64 id, const char* name);
+	WwiseGameObject(uint64 id, const char* name);
 	~WwiseGameObject();
 
 public:
@@ -59,7 +59,6 @@ private:
 public:
 	AkGameObjectID currentListenerID = 0;
 	//unsigned long g_envMAP[255];
-
 };
 
 #endif __ModuleAudio__H__

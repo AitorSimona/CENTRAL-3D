@@ -27,6 +27,7 @@ public:
 
 	void UpdateParticles(float dt);
 	void DrawParticles();
+	void ChangeParticlesColor(float3 color);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::ParticleEmitter; };
 
@@ -61,8 +62,12 @@ private:
 	PxVec3 externalAcceleration = {0,10,0};
 	PxVec3 particlesVelocity = { 0,0,0 };
 	PxVec3 velocityRandomFactor = {5,5,5};
+	
 	//Particle properties
 	int particlesLifeTime=1000;
+	float particlesSize = 1;
+
+	float3 particlesColor = { 1, 1, 1 };
 
 	float spawnClock=0.0f;
 };

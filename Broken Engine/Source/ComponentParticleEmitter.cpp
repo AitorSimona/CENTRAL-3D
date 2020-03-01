@@ -7,7 +7,7 @@
 #include "ComponentTransform.h"
 #include "ModuleParticles.h"
 #include "Particle.h"
-
+#include "Timer.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -35,16 +35,16 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 {
 	App->particles->DeleteEmitter(this);
 
-	if (particleSystem && App->physics->mScene)
-		App->physics->mScene->removeActor(*particleSystem);
-
-
 	for (int i = 0; i < maxParticles; ++i){
 		delete particles[i];
+		//particles[i] = nullptr;
 	}
 
-	indexPool->release();
-	particles.clear();
+	if (particleSystem && App->physics->mScene) {
+		App->physics->mScene->removeActor(*particleSystem);
+		indexPool->release();
+		particles.clear();
+	}
 }
 
 void ComponentParticleEmitter::Enable()
@@ -52,7 +52,7 @@ void ComponentParticleEmitter::Enable()
 	active = true;
 
 	particleSystem = App->physics->mPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
-	particleSystem->setMaxMotionDistance(1000);
+	particleSystem->setMaxMotionDistance(100);
 
 	if (particleSystem)
 		App->physics->mScene->addActor(*particleSystem);
@@ -143,6 +143,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 				//Update particle position
 				float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
 				particles[i]->position =newPosition;
+				particles[i]->diameter = particlesSize;
 			}
 		}
 		// return ownership of the buffers back to the SDK
@@ -176,6 +177,16 @@ void ComponentParticleEmitter::DrawParticles()
 	}
 }
 
+
+void ComponentParticleEmitter::ChangeParticlesColor(float3 color)
+{
+	color /= 255.0f;
+
+	for (int i = 0; i < maxParticles; ++i)
+		particles[i]->color = color;
+}
+
+
 json ComponentParticleEmitter::Save() const
 {
 	json node;
@@ -200,36 +211,80 @@ json ComponentParticleEmitter::Save() const
 
 	node["particlesLifeTime"] = std::to_string(particlesLifeTime);
 
+	node["particlesSize"] = std::to_string(particlesSize);
+
+	node["ColorR"] = std::to_string(particlesColor.x);
+	node["ColorG"] = std::to_string(particlesColor.y);
+	node["ColorB"] = std::to_string(particlesColor.z);
+
 	return node;
 }
 
 void ComponentParticleEmitter::Load(json& node)
 {
-	size.x = node["sizeX"];
-	size.y = node["sizeY"];
-	size.z = node["sizeZ"];
+	//load the strings
+	std::string Lsizex = node["sizeX"];
+	std::string Lsizey = node["sizeY"];
+	std::string Lsizez = node["sizeZ"];
 
-	emisionRate = node["emisionRate"];
+	std::string LemisionRate = node["emisionRate"];
 
-	externalAcceleration.x = node["externalAccelerationX"];
-	externalAcceleration.y = node["externalAccelerationY"];
-	externalAcceleration.z = node["externalAccelerationZ"];
+	std::string LexternalAccelerationx = node["externalAccelerationX"];
+	std::string LexternalAccelerationy = node["externalAccelerationY"];
+	std::string LexternalAccelerationz = node["externalAccelerationZ"];
 
-	particlesVelocity.x = node["particlesVelocityX"];
-	particlesVelocity.y = node["particlesVelocityY"];
-	particlesVelocity.z	= node["particlesVelocityZ"];
+	std::string LparticlesVelocityx = node["particlesVelocityX"];
+	std::string LparticlesVelocityy = node["particlesVelocityY"];
+	std::string LparticlesVelocityz	= node["particlesVelocityZ"];
 
-	velocityRandomFactor.x = node["velocityRandomFactorX"];
-	velocityRandomFactor.y = node["velocityRandomFactorY"];
-	velocityRandomFactor.z = node["velocityRandomFactorZ"];
+	std::string LvelocityRandomFactorx = node["velocityRandomFactorX"];
+	std::string LvelocityRandomFactory = node["velocityRandomFactorY"];
+	std::string LvelocityRandomFactorz = node["velocityRandomFactorZ"];
 
-	particlesLifeTime = node["particlesLifeTime"];
+	std::string LparticlesLifeTime = node["particlesLifeTime"];
+
+	std::string LParticlesSize = node["particlesSize"];
+
+	std::string LColorR = node["ColorR"];
+	std::string LColorG = node["ColorG"];
+	std::string LColorB = node["ColorB"];
+
+	//Pass the strings to the needed dada types
+	size.x = std::stof(Lsizex);
+	size.y = std::stof(Lsizey);
+	size.z = std::stof(Lsizez);
+
+	emisionRate = std::stof(LemisionRate);
+
+	externalAcceleration.x = std::stof(LexternalAccelerationx);
+	externalAcceleration.y = std::stof(LexternalAccelerationy);
+	externalAcceleration.z = std::stof(LexternalAccelerationz);
+
+	particlesVelocity.x = std::stof(LparticlesVelocityx);
+	particlesVelocity.y = std::stof(LparticlesVelocityy);
+	particlesVelocity.z = std::stof(LparticlesVelocityz);
+
+	velocityRandomFactor.x = std::stof(LvelocityRandomFactorx);
+	velocityRandomFactor.y = std::stof(LvelocityRandomFactory);
+	velocityRandomFactor.z = std::stof(LvelocityRandomFactorz);
+
+	particlesLifeTime = std::stof(LparticlesLifeTime);
+
+	particlesSize = std::stof(LParticlesSize);
+
+	particlesColor = float3(std::stof(LColorR), std::stof(LColorG), std::stof(LColorB));
 }
 
 void ComponentParticleEmitter::CreateInspectorNode()
 {
-	//Emitter size
+	if (ImGui::Checkbox("Active", &active)) {
+		if (active)
+			Enable();
+		else
+			Disable();
+	}
 
+	//Emitter size
 	ImGui::Text("Emitter size");
 
 	ImGui::Text("X");
@@ -266,7 +321,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SExternalforcesX", &externalAcceleration.x, 0.005f,-50.0f,50.0f))
+	if (ImGui::DragFloat("##SExternalforcesX", &externalAcceleration.x, 0.05f,-50.0f,50.0f))
 		forceChanged = true;
 
 	ImGui::SameLine();
@@ -274,14 +329,14 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("Y");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SExternalforcesY", &externalAcceleration.y, 0.005f, -50.0f, 50.0f))
+	if (ImGui::DragFloat("##SExternalforcesY", &externalAcceleration.y, 0.05f, -50.0f, 50.0f))
 		forceChanged = true;
 	//Z
 	ImGui::SameLine();
 	ImGui::Text("Z");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SExternalforcesZ", &externalAcceleration.z, 0.005f, -50.0f, 50.0f))
+	if (ImGui::DragFloat("##SExternalforcesZ", &externalAcceleration.z, 0.05f, -50.0f, 50.0f))
 		forceChanged = true;
 
 	if (forceChanged)
@@ -293,20 +348,20 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("X");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.5f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -100.0f, 100.0f);
 
 	ImGui::SameLine();
 	//Y
 	ImGui::Text("Y");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.5f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -100.0f, 100.0f);
 	//Z
 	ImGui::SameLine();
 	ImGui::Text("Z");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.5f, -100.0f, 100.0f);
+	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -100.0f, 100.0f);
 
 	//Random velocity factor
 	ImGui::Text("Velocity random factor");
@@ -331,8 +386,41 @@ void ComponentParticleEmitter::CreateInspectorNode()
 
 	//Particles lifetime
 	ImGui::Text("Particles lifetime (ms)");
-	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 1.0f, 0.0f, 10000.0f);
+	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 3.0f, 0.0f, 10000.0f);
 
+	//Particles size
+	ImGui::Text("Particles size");
+	ImGui::DragFloat("##SParticlesSize", &particlesSize, 0.005f, 0.01f, 3.0f);
+
+	//Particles Color particlesColor
+	ImGui::Text("Particles Color");
+	bool colorChanged = false;
+
+	//R
+	ImGui::Text("R");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	if(ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
+		colorChanged = true;
+
+	ImGui::SameLine();
+	//G
+	ImGui::Text("G");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	if(ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
+		colorChanged = true;
+
+	//B
+	ImGui::SameLine();
+	ImGui::Text("B");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
+		colorChanged = true;
+
+	if (colorChanged)
+		ChangeParticlesColor(particlesColor);
 }
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE

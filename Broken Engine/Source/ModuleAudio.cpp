@@ -8,7 +8,6 @@
 
 #include "mmgr/mmgr.h"
 
-
 #define BANKNAME_INIT "Assets/Sounds/Init.bnk"
 
 using namespace AK;
@@ -175,7 +174,7 @@ void ModuleAudio::Tests(AkGameObjectID id)
 	SoundEngine::SetGameObjectAuxSendValues(id, NULL, 0);
 }
 
-WwiseGameObject::WwiseGameObject(unsigned __int64 id, const char* name)
+WwiseGameObject::WwiseGameObject(uint64 id, const char* name)
 {
 	this->id = id;
 	this->name = name;

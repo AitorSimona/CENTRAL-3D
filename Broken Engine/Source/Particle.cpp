@@ -48,7 +48,7 @@ void Particle::Draw()
 	}
 
 	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float f = diameter / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
@@ -61,6 +61,12 @@ void Particle::Draw()
 	
 	const ResourceMesh* particle_sphere = App->scene_manager->GetSphereMesh();
 	//App->scene_manager->CreateSphere(1, 4,4,particle_sphere);
+
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.x, color.y, color.z);
+
+	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureSupportLocation, -1);
 
 	// --- Draw particles (we use a sphere) ---
 	if (particle_sphere->vertices && particle_sphere->Indices)
@@ -77,7 +83,9 @@ void Particle::Draw()
 		glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 	}
 
-	
+	// --- Set uniforms back to defaults ---
+	glUniform3f(vertexColorLocation, 255, 255, 255);
+	glUniform1i(TextureSupportLocation, 0);
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }

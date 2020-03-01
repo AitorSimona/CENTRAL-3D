@@ -27,8 +27,6 @@ ImporterMaterial::~ImporterMaterial()
 // --- Create Material from Scene and path to file ---
 Resource* ImporterMaterial::Import(ImportData& IData) const
 {
-	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-
 	ImportMaterialData* MatData = (ImportMaterialData*)&IData;
 
 	// --- Get Directory from filename ---
@@ -77,18 +75,20 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 	//	num_diffuse--;
 	//}
 
-	// --- Create meta ---
-
-	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_mat->GetResourceFile(), resource_mat->GetUID());
-
-	if (meta)
-		IMeta->Save(meta);
 
 	// --- Save data ---
 	Save(resource_mat);
 
 	// --- Add resource to relevant folder, some resources need to do it at the end of import since they do not go through ImportAssets, due to being part of a bigger resource (MODEL...) ---
 	App->resources->AddResourceToFolder(resource_mat);
+
+	// --- Create meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_mat->GetResourceFile(), resource_mat->GetUID());
+
+	if (meta)
+		IMeta->Save(meta);
 
 	return resource_mat;
 }
@@ -137,8 +137,8 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	file[mat->GetName()];
 	file["ResourceDiffuse"];
 
-	if(mat->resource_diffuse)
-	file["ResourceDiffuse"] = mat->resource_diffuse->GetOriginalFile();
+	if (mat->resource_diffuse)
+		file["ResourceDiffuse"] = mat->resource_diffuse->GetOriginalFile();
 
 	// --- Serialize JSON to string ---
 	std::string data;
@@ -149,4 +149,16 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	uint size = data.length();
 
 	App->fs->Save(mat->GetResourceFile(), buffer, size);
+
+	// --- Update meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat->GetOriginalFile());
+
+	if (meta)
+	{
+		meta->Date = App->fs->GetLastModificationTime(mat->GetOriginalFile());
+		IMeta->Save(meta);
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Could not load meta from: %s", mat->GetResourceFile());
 }
