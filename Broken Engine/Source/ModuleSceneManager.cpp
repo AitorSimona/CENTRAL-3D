@@ -244,7 +244,7 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 
 void ModuleSceneManager::Draw()
 {
-	#ifndef BE_GAME_BUILD
+	//#ifndef BE_GAME_BUILD
 	// --- Draw Grid ---
 	DrawGrid(true, 75.0f);
 
@@ -252,15 +252,15 @@ void ModuleSceneManager::Draw()
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	#endif
+	//#endif
 	// --- Draw Game Object Meshes ---
 	DrawScene();
 
-	#ifndef BE_GAME_BUILD
+	//#ifndef BE_GAME_BUILD
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	#endif BE_GAME_BUILD
+	//#endif BE_GAME_BUILD
 }
 
 void ModuleSceneManager::DrawScene()

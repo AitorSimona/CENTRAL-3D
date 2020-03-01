@@ -986,6 +986,9 @@
     <ClInclude Include="ScriptingMath.h">
       <Filter>Sources\Modules\Scripting Functions</Filter>
     </ClInclude>
+    <ClCompile Include="ScriptingMath.cpp">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleThreading.cpp">

@@ -45,7 +45,7 @@ Application::Application()
 	renderer3D = new ModuleRenderer3D(true);
 	scripting = new ModuleScripting(true);
 	camera = new ModuleCamera3D(true);
-	gui = new ModuleGui(true);
+	gui = new ModuleGui(!isGame);
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);

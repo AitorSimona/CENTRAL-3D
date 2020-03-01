@@ -209,6 +209,7 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleThreading.h" />
     <ClInclude Include="ModuleTimeManager.h" />
+    <ClInclude Include="PanelBuild.h" />
     <ClInclude Include="PanelGame.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
@@ -257,6 +258,7 @@
     <ClInclude Include="ResourceTexture.h" />
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
+    <ClInclude Include="ScriptingMath.h" />
     <ClInclude Include="ScriptVar.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
@@ -362,6 +364,7 @@
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="Panel.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
+    <ClCompile Include="PanelBuild.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
     <ClCompile Include="PanelGame.cpp" />
     <ClCompile Include="PanelPhysics.cpp" />
@@ -390,6 +393,7 @@
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Scripting.cpp" />
+    <ClCompile Include="ScriptingMath.cpp" />
     <ClCompile Include="ScriptVar.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wwise.cpp" />

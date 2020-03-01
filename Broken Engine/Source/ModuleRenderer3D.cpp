@@ -75,6 +75,28 @@ bool ModuleRenderer3D::Init(json file)
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
+	// --- Create screen quad ---
+	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 	// --- Check if graphics driver supports shaders in binary format ---
 	//GLint formats = 0;
 	//glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
@@ -159,7 +181,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->particles->DrawParticles();
 
 	// --- Selected Object Outlining ---
+	#ifndef BE_GAME_BUILD
 	HandleObjectOutlining();
+	#endif
 
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);
@@ -168,7 +192,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// --- Draw ui and swap buffers ---
+	#ifdef BE_GAME_BUILD
+	RenderFramebuffer();
+	#else
 	App->gui->Draw();
+	#endif
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context);
@@ -186,8 +214,11 @@ bool ModuleRenderer3D::CleanUp()
 	delete linepointShader;
 	delete ZDrawerShader;
 	delete OutlineShader;
+	delete screenShader;
 
 	glDeleteFramebuffers(1, &fbo);
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteBuffers(1, &quadVBO);
 	SDL_GL_DeleteContext(context);
 
 	return true;
@@ -269,6 +300,26 @@ void ModuleRenderer3D::CreateFramebuffer()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void ModuleRenderer3D::RenderFramebuffer() 
+{
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// clear all relevant buffers
+	float backColor = 0.65f;
+	glClearColor(backColor, backColor, backColor, 1.0f); // set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	screenShader->use();
+
+	glBindVertexArray(quadVAO);
+	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+	glBindTexture(GL_TEXTURE_2D, rendertexture);	// use the color attachment texture as the texture of the quad plane
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+	glEnable(GL_DEPTH_TEST);
+	defaultShader->use();
 }
 
 bool ModuleRenderer3D::SetVSync(bool vsync)
@@ -476,4 +527,28 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
 	defaultShader->name = "Standard";
 	defaultShader->use();
+
+	const char* screenVertexShader =
+		"#version 440 core \n"
+		"layout (location = 0) in vec2 aPos\n"
+		"layout (location = 1) in vec2 aTexCoords; \n"
+		"out vec2 TexCoords; \n"
+		"void main(){ \n"
+		"gl_position = vec4(aPos.x, aPos.y, 0.0, 1.0); \n"
+		"TexCoords = aTexCoords; \n"
+		"} \n"
+		;
+
+	const char* screenFragmentShader =
+		"#version 440 core \n"
+		"out vec4 FragColor;\n"
+		"in vec2 TexCoords; \n"
+		"uniform sampler2D screenTexture; \n"
+		"void main(){ \n"
+		"FragColor = texture(screenTexture, TexCoords); \n"
+		"} \n"
+		;
+
+	screenShader = new ResourceShader(screenVertexShader, screenFragmentShader, false);
+	screenShader->name = "Screen";
 }

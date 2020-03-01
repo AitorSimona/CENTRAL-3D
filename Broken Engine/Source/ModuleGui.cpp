@@ -437,7 +437,8 @@ void ModuleGui::LoadStatus(const json & file)
 }
 void ModuleGui::HandleInput(SDL_Event * event) const
 {
-	ImGui_ImplSDL2_ProcessEvent(event);
+	if(!App->isGame)
+		ImGui_ImplSDL2_ProcessEvent(event);
 }
 
 bool ModuleGui::IsKeyboardCaptured() const
