@@ -131,7 +131,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	float backColor = 0.65f;
 	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	//glClearDepth(0.0f);
+	glClearDepth(0.0f);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glClearColor(backColor, backColor, backColor, 1.0f);
@@ -167,8 +167,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 
 	// --- Bind fbo ---
+    #ifndef BE_GAME_BUILD
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
+	#endif
 	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
 	glDepthFunc(GL_GREATER);
 
@@ -191,11 +192,13 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glDepthFunc(GL_LESS);
 
 	// --- Unbind fbo ---
+	#ifndef BE_GAME_BUILD
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	#endif
 
 	// --- Draw ui and swap buffers ---
 	#ifdef BE_GAME_BUILD
-	RenderFramebuffer();
+	//RenderFramebuffer();
 	#else
 	App->gui->Draw();
 	#endif
@@ -312,7 +315,7 @@ void ModuleRenderer3D::RenderFramebuffer()
 	glClearColor(backColor, backColor, backColor, 1.0f); // set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	screenShader->use();
+	//screenShader->use();
 
 	glBindVertexArray(quadVAO);
 	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
