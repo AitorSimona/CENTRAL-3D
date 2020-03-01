@@ -213,9 +213,9 @@ json ComponentParticleEmitter::Save() const
 
 	node["particlesSize"] = std::to_string(particlesSize);
 
-	node["velocityRandomFactorR"] = std::to_string(particlesColor.x);
-	node["velocityRandomFactorG"] = std::to_string(particlesColor.y);
-	node["velocityRandomFactorB"] = std::to_string(particlesColor.z);
+	node["ColorR"] = std::to_string(particlesColor.x);
+	node["ColorG"] = std::to_string(particlesColor.y);
+	node["ColorB"] = std::to_string(particlesColor.z);
 
 	return node;
 }
@@ -245,9 +245,9 @@ void ComponentParticleEmitter::Load(json& node)
 
 	std::string LParticlesSize = node["particlesSize"];
 
-	std::string LColorR = node["sizeX"];
-	std::string LColorG = node["sizeY"];
-	std::string LColorB = node["sizeZ"];
+	std::string LColorR = node["ColorR"];
+	std::string LColorG = node["ColorG"];
+	std::string LColorB = node["ColorB"];
 
 	//Pass the strings to the needed dada types
 	size.x = std::stof(Lsizex);
