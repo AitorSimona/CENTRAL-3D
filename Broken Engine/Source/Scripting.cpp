@@ -15,6 +15,10 @@
 #include "ComponentAudioSource.h"
 #include "ComponentAnimation.h"
 
+#include "../Game/Assets/Sounds/Wwise_IDs.h"
+#include "ComponentAudioSource.h"
+#include "ModuleAudio.h"
+
 #include "ScriptData.h"
 
 
@@ -1038,42 +1042,32 @@ void Scripting::DeactivateParticlesEmission() const
 
 
 //AUDIO --------------------------------------------------------------
-void Scripting::PlayAudioSFX(uint64 id)
+void Scripting::PlayAttackSound()
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+	sound->SetID(AK::EVENTS::GERALT_ATTACK);
 
 	if (sound)
-		sound->PlaySFX(id);
+	{
+		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_ATTACK);
+		sound->wwiseGO->PlayEvent(AK::EVENTS::GERALT_ATTACK);
+		sound->isPlaying = true;
+	}
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void Scripting::StopAudioSFX(uint64 id)
+void Scripting::PlayStepSound()
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+	sound->SetID(AK::EVENTS::GERALT_RUN);
 
 	if (sound)
-		sound->StopSFX(id);
-	else
-		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
-}
-
-void Scripting::PauseAudioSFX(uint64 id)
-{
-	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
-
-	if (sound)
-		sound->PauseSFX(id);
-	else
-		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
-}
-
-void Scripting::ResumeAudioSFX(uint64 id)
-{
-	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
-
-	if (sound)
-		sound->ResumeSFX(id);
+	{
+		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_RUN);
+		sound->wwiseGO->PlayEvent(AK::EVENTS::GERALT_RUN);
+		sound->isPlaying = true;
+	}
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
@@ -1088,16 +1082,7 @@ void Scripting::SetVolume(float volume)
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-
-void Scripting::SetAudioID(uint64 id)
-{
-	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
-
-	if (sound)
-		sound->SetID(id);
-	else
-		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
-}
+//ANIMATION ----------------------------------------------------------
 void Scripting::StartAnimation(const char* name, float speed)
 {
 	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();

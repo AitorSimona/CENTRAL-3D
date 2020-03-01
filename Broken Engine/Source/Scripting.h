@@ -131,13 +131,10 @@ public:
 	void UseGravity(bool enable);
 
 	//Audio
-	void PlayAudioSFX(uint64 id);
-	void StopAudioSFX(uint64 id);
-	void PauseAudioSFX(uint64 id);
-	void ResumeAudioSFX(uint64 id);
+	void PlayAttackSound();
+	void PlayStepSound();
 
 	void SetVolume(float volume);
-	void SetAudioID(uint64 id);
 
 	//Animations
 	void StartAnimation(const char* name, float speed);

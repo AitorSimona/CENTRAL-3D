@@ -28,10 +28,7 @@
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
 
-#include "../Game/Assets/Sounds/Wwise_IDs.h"
-#include "ComponentAudioSource.h"
 #include "Component.h"
-#include "ModuleAudio.h"
 
 #include "ResourceScene.h"
 
@@ -101,14 +98,6 @@ bool ModuleSceneManager::Start()
 	CreateGrid(10.0f);
 
 	glGenVertexArrays(1, &PointLineVAO);
-
-	//Hardcoded Debug for audio
-	//music = LoadCube();
-	//music->AddComponent(Component::ComponentType::AudioSource);
-	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();
-	//musicSource->SetID(AK::EVENTS::GERALT_ATTACK);
-	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::GERALT_ATTACK);
-	//musicSource->isPlaying = true;
 
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
