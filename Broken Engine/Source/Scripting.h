@@ -14,10 +14,6 @@ public:
 	// ENGINE TRANSLATOR
 	// General
 
-	// Systems Functions
-	void ActivateParticlesEmission() const;
-	void DeactivateParticlesEmission() const;
-
 	//--------------------------------------------------Comented all functions for now, since we are testing in the 1st place the module itself------------------------//
 	void LogFromLua(const char* string);
 
@@ -95,6 +91,10 @@ public:
 
 	//void DestroySelf() const;
 
+	// SYSTEMS FUNCTIONS --------------------------------------------------------------------------------------------------------- //
+	void ActivateParticlesEmission() const;
+	void DeactivateParticlesEmission() const;
+
 	// Position
 	float GetPositionX() const;
 	float GetPositionY() const;
@@ -131,12 +131,13 @@ public:
 	void UseGravity(bool enable);
 
 	//Audio
-	void PlayAudioSFX();
-	void StopAudioSFX();
-	void PauseAudioSFX();
-	void ResumeAudioSFX();
+	void PlayAttackSound();
+	void PlayStepSound();
 
 	void SetVolume(float volume);
+
+	//Animations
+	void StartAnimation(const char* name, float speed);
 
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll

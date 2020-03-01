@@ -7,6 +7,8 @@
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 class ResourceMesh;
+class ComponentDynamicRigidBody;
+class ComponentTransform;
 
 class ComponentCollider : public Component
 {
@@ -29,6 +31,9 @@ public:
 
 	void UpdateLocalMatrix();
 
+	void UpdateTransformByRigidBody(ComponentDynamicRigidBody* dynamicRB, ComponentTransform* cTransform, physx::PxTransform* globalPos = nullptr);
+
+
 	// --- Save & Load ---
 	json Save() const override;
 	void Load(json& node) override;
@@ -48,6 +53,7 @@ public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;
 	bool editCollider = false;
+	bool updateValues = false;
 	float3 localPosition = float3::zero;
 	float3 originalScale = float3::one;
 	physx::PxRigidStatic* rigidStatic = nullptr;

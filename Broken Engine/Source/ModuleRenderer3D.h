@@ -27,6 +27,7 @@ public:
 	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
 	void CreateFramebuffer();
 	void RenderFramebuffer();
+	//void NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex);
 
 	// --- Setters ---
 	bool SetVSync(bool vsync);

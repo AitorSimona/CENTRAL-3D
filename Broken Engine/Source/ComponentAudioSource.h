@@ -26,10 +26,10 @@ public:
 
 public:
 
-	void PlaySFX();
-	void StopSFX();
-	void PauseSFX();
-	void ResumeSFX();
+	void PlaySFX(uint64 id);
+	void StopSFX(uint64 id);
+	void PauseSFX(uint64 id);
+	void ResumeSFX(uint64 id);
 
 	void SetVolume(float volume);
 

@@ -15,8 +15,7 @@
 ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file)
 {
 	extension = ".scene";
-	name = "scene";
-	resource_file = SCENES_FOLDER + name + extension;
+	resource_file = source_file;
 	original_file = resource_file;
 
 	previewTexID = App->gui->sceneTexID;
@@ -171,9 +170,19 @@ void ResourceScene::OnOverwrite()
 
 void ResourceScene::OnDelete()
 {
-	FreeMemory();
-	App->fs->Remove(resource_file.c_str());
+	if (this->GetUID() == App->scene_manager->defaultScene->GetUID())
+	{
+		if (this->GetUID() == App->scene_manager->currentScene->GetUID())
+		{
+			App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
+		}
 
-	App->resources->RemoveResourceFromFolder(this);
-	App->resources->ONResourceDestroyed(this);
+		FreeMemory();
+		App->fs->Remove(resource_file.c_str());
+
+		App->resources->RemoveResourceFromFolder(this);
+		App->resources->ONResourceDestroyed(this);
+	}
+
 }
+

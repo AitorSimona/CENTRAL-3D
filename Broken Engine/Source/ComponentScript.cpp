@@ -40,7 +40,9 @@ void ComponentScript::CreateInspectorNode()
 
 	std::string name = this->script_name + "(Script)";
 	ImGui::Checkbox("Active", &active); ImGui::SameLine();
-	if (ImGui::TreeNodeEx(name.data(), base_flags)) {
+
+	if (ImGui::TreeNodeEx(name.data(), base_flags))
+	{
 		if (this->script != nullptr)
 		{
 			if (ImGui::Button("Open Script File")) {
@@ -163,9 +165,12 @@ int ComponentScript::ScriptVarAlreadyInComponent(std::string name)
 json ComponentScript::Save() const
 {
 	json node;
+	node["Resources"]["ResourceScript"];
 
 	// --- Store path to component file ---
+	if(script)
 	node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
+
 	return node;
 }
 

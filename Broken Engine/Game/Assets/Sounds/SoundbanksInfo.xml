@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="134">
 	<RootPaths>
-		<ProjectRoot>D:\WWISE_Projects\Music\</ProjectRoot>
-		<SourceFilesRoot>D:\WWISE_Projects\Music\.cache\Windows\</SourceFilesRoot>
-		<SoundBanksRoot>D:\Github\Resonance-Engine\3D Engine\Game\Assets\Sounds\</SoundBanksRoot>
+		<ProjectRoot>C:\Users\Jacobo_G\Desktop\wwiseProject\</ProjectRoot>
+		<SourceFilesRoot>C:\Users\Jacobo_G\Desktop\wwiseProject\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>C:\Users\Jacobo_G\Documents\GitHub\Broken-Engine\Broken Engine\Game\Assets\Sounds\</SoundBanksRoot>
 		<ExternalSourcesInputFile></ExternalSourcesInputFile>
-		<ExternalSourcesOutputRoot>D:\WWISE_Projects\Music\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+		<ExternalSourcesOutputRoot>C:\Users\Jacobo_G\Desktop\wwiseProject\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
 	</RootPaths>
 	<DialogueEvents/>
 	<StreamedFiles/>
@@ -21,26 +21,17 @@
 			<ShortName>Main</ShortName>
 			<Path>Main.bnk</Path>
 			<IncludedEvents>
-				<Event Id="626769978" Name="backgroundMusic" ObjectPath="\Events\Default Work Unit\backgroundMusic"/>
-				<Event Id="1153084749" Name="francesco" ObjectPath="\Events\Default Work Unit\francesco"/>
-				<Event Id="2167849898" Name="helicopter" ObjectPath="\Events\Default Work Unit\helicopter"/>
+				<Event Id="3764996949" Name="Geralt_Attack" ObjectPath="\Events\Default Work Unit\Geralt_Attack"/>
+				<Event Id="136547680" Name="Geralt_Run" ObjectPath="\Events\Default Work Unit\Geralt_Run"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="159884132" Language="SFX">
-					<ShortName>friends.wav</ShortName>
-					<Path>SFX\friends_10C4C929.wem</Path>
+				<File Id="111138450" Language="SFX">
+					<ShortName>Geralt_Run.wav</ShortName>
+					<Path>SFX\Geralt_Run_10C4C929.wem</Path>
 				</File>
-				<File Id="672809502" Language="SFX">
-					<ShortName>helicopter.wav</ShortName>
-					<Path>SFX\helicopter_D79FB2B7.wem</Path>
-				</File>
-				<File Id="757740205" Language="SFX">
-					<ShortName>tbbt.wav</ShortName>
-					<Path>SFX\tbbt_10C4C929.wem</Path>
-				</File>
-				<File Id="857677296" Language="SFX">
-					<ShortName>francesco.wav</ShortName>
-					<Path>SFX\francesco_10C4C929.wem</Path>
+				<File Id="630682896" Language="SFX">
+					<ShortName>Geralt_Attack2.wav</ShortName>
+					<Path>SFX\Geralt_Attack2_10C4C929.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

@@ -8,7 +8,6 @@
 
 #include "mmgr/mmgr.h"
 
-
 #define BANKNAME_INIT "Assets/Sounds/Init.bnk"
 
 using namespace AK;

@@ -13,6 +13,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
 #include "ModuleThreading.h"
+#include "ModuleUI.h"
 #include "ModulePhysics.h"
 #include "ModuleParticles.h"
 
@@ -48,6 +49,7 @@ Application::Application()
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);
+	ui_system = new ModuleUI(true);
 	physics = new ModulePhysics(true);
 	particles = new ModuleParticles(true);
 	audio = new ModuleAudio(true);
@@ -70,6 +72,8 @@ Application::Application()
 	AddModule(window);
 	AddModule(camera);
 	AddModule(gui);
+
+	AddModule(ui_system);
 
 	// Scenes
 	AddModule(scene_manager);

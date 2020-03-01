@@ -217,11 +217,18 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetMass", &Scripting::GetMass)
 		.addFunction("SetMass", &Scripting::SetMass)
 
+		.addFunction("LookAt", &Scripting::LookAt)
 		.addFunction("AddTorque", &Scripting::AddTorque)
 		.addFunction("AddForce", &Scripting::AddForce)
 
 		.addFunction("UseGravity", &Scripting::UseGravity)
 		.addFunction("SetKinematic", &Scripting::SetKinematic)
+		
+		.addFunction("PlayAttackSound", &Scripting::PlayAttackSound)
+		.addFunction("PlayStepSound", &Scripting::PlayStepSound)
+		.addFunction("SetVolume", &Scripting::SetVolume)
+
+		.addFunction("PlayAnimation", &Scripting::StartAnimation)
 
 		.endClass()
 		.endNamespace();

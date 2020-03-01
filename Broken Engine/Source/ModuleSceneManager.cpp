@@ -13,12 +13,14 @@
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
 #include "ComponentCamera.h"
+#include "ComponentBone.h"
 
 
 #include "ModuleGui.h"
 
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
+#include "ImporterMeta.h"
 
 #include "par/par_shapes.h"
 
@@ -26,10 +28,7 @@
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
 
-#include "../Game/Assets/Sounds/Wwise_IDs.h"
-#include "ComponentAudioSource.h"
 #include "Component.h"
-#include "ModuleAudio.h"
 
 #include "ResourceScene.h"
 
@@ -99,13 +98,9 @@ bool ModuleSceneManager::Start()
 
 	glGenVertexArrays(1, &PointLineVAO);
 
-	//Hardcoded Debug for audio
-	//music = LoadCube();
-	//music->AddComponent(Component::ComponentType::AudioSource);
-	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();
-	//musicSource->SetID(AK::EVENTS::BACKGROUNDMUSIC);
-	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
-	//musicSource->isPlaying = true;
+	// --- Always load default scene ---
+	defaultScene->LoadToMemory();
+
 
 
 	#ifdef BE_GAME_BUILD
@@ -275,7 +270,7 @@ void ModuleSceneManager::DrawScene()
 
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetName() != root->GetName())
+			if ((*it).second->GetUID() != root->GetUID())
 			{
 				// --- Search for Renderer Component ---
 				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
@@ -311,9 +306,16 @@ void ModuleSceneManager::DrawScene()
 				glStencilMask(0xFF);
 			}
 
+
+
+
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 				MeshRenderer->Draw();
+
+			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
+			if (C_Bone)
+				C_Bone->DebugDrawBones();
 
 			if (SelectedGameObject == (*it))
 			{
@@ -473,7 +475,21 @@ void ModuleSceneManager::SaveScene(ResourceScene* scene)
 	if (scene)
 	{
 		ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+
+		// --- Create meta ---
+		if (!App->resources->IsFileImported(scene->GetOriginalFile()))
+		{
+			ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, scene->GetResourceFile(), scene->GetUID());
+
+			if (meta)
+				IMeta->Save(meta);
+		}
+
 		IScene->SaveSceneToFile(scene);
+
+		App->resources->AddResourceToFolder(scene);
+
 	}
 }
 
@@ -534,7 +550,7 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	go_count++;
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data());
+	GameObject* new_object = new GameObject(Name.c_str());
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
 	App->scene_manager->GetRootGO()->AddChildGO(new_object);
@@ -569,7 +585,7 @@ void ModuleSceneManager::ResetGameObjectUID(GameObject* go)
 GameObject * ModuleSceneManager::CreateRootGameObject()
 {
 	// --- Create New Game Object Name ---
-	std::string Name = "root";
+	std::string Name = "root1";
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.c_str());
@@ -910,6 +926,8 @@ GameObject* ModuleSceneManager::LoadCapsule()
 GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 {
 	GameObject* new_object = CreateEmptyGameObject();
+	//currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+
 	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(PrimitiveMeshID);
 
