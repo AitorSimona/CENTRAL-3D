@@ -454,27 +454,29 @@ void ModuleSceneManager::SaveStatus(json & file) const
 void ModuleSceneManager::LoadStatus(const json & file)
 {
 #ifdef BE_GAME_BUILD
-	//if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
-	//	ResourceScene* scene = (ResourceScene*) App->resources->GetResource(file["SceneManager"]["MainScene"]);
-	//	if (scene != nullptr)
-	//		SetActiveScene(scene);
-	//	if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
-	//		GameObject* camera;
-	//		camera = scene->GetGOWithUID(file["Camera3D"]["MainCamera"]);
-	//		if (camera != nullptr) {
-	//			ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
-	//			if (camera_component != nullptr) {
-	//				//App->renderer3D->SetActiveCamera(camera_component);
-	//				//App->renderer3D->SetCullingCamera(camera_component);
-	//				App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
-	//				App->renderer3D->culling_camera = camera->GetComponent<ComponentCamera>();
-	//			}
-	//		}
-	//	}
-	//}
-	//else {
-	//	ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
-	//}
+	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
+		ResourceScene* scene = (ResourceScene*) App->resources->GetResource(file["SceneManager"]["MainScene"]);
+		if (scene != nullptr)
+			SetActiveScene(scene);
+		if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
+			GameObject* camera;
+			camera = scene->GetGOWithUID(file["Camera3D"]["MainCamera"]);
+			if (camera != nullptr) {
+				ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
+				if (camera_component != nullptr) {
+					//App->renderer3D->SetActiveCamera(camera_component);
+					//App->renderer3D->SetCullingCamera(camera_component);
+					App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
+					App->renderer3D->culling_camera = camera->GetComponent<ComponentCamera>();
+				}
+			}
+		}
+		else
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main camera for game.", );
+	}
+	else {
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
+	}
 #endif
 }
 

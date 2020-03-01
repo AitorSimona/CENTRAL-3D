@@ -41,12 +41,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\Game\</OutDir>
+    <OutDir>$(SolutionDir)$(Configuration)</OutDir>
     <IntDir>$(Configuration)\Game\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)</OutDir>
     <IntDir>$(Configuration)\Game\</IntDir>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -63,7 +64,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Game\$(ProjectName).exe" "$(SolutionDir)$(Configuration)\Game\$(ProjectName).exe"</Command>
+      <Command>copy /Y "$(SolutionDir)Game\$(ProjectName).exe" "$(SolutionDir)$(Configuration)\$(ProjectName).exe"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying exe into game folder</Message>
@@ -88,7 +89,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Game\$(ProjectName).exe" "$(SolutionDir)$(Configuration)\Game\$(ProjectName).exe"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Configuration)\$(ProjectName).exe" "$(SolutionDir)Game\$(ProjectName).exe"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying exe into game folder</Message>
