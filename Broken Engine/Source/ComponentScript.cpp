@@ -193,8 +193,9 @@ void ComponentScript::Load(json& node)
 		// --- We want to be notified of any resource event ---
 		if (script)
 			script->AddUser(GO);
-	}
 
+		AssignScript((ResourceScript*)this->script);
+	}
 }
 
 //void ComponentScript::Save(json & file)
