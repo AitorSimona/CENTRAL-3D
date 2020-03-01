@@ -60,55 +60,21 @@ void ComponentAnimation::Update(float dt)
 
 	if (App->GetAppState() == AppState::PLAY)
 	{
-		
 
 		if (linked_bones == false)
 			DoBoneLink();
 
 		time += dt;
 
-		if (blending == false)
+		if (animations.size() > 0)
 		{
-			UpdateJointsTransform();
-		}
-		else
-			BlendAnimations(blend_time_value);
+			if (blending == false)
+				UpdateJointsTransform();
+			else
+				BlendAnimations(blend_time_value);
 
-		if (has_skeleton)
-			UpdateMesh(GO);
-
-		if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-		{
-			//prev_anim = playing_animation;
-			StartBlend(animations[2]);
-			time = 0;
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) // press key
-		{
-			//prev_anim = playing_animation;
-
-			animations[1]->Default = true;
-			animations[0]->Default = false;
-
-			if (playing_animation->loop)
-			{
-				StartBlend(animations[1]);
-				time = 0;
-			}
-
-		}
-		if (App->input->GetKey(SDL_SCANCODE_2) == KEY_UP) //release key
-		{
-			animations[1]->Default = false;
-			animations[0]->Default = true;
-
-			if (playing_animation->loop)
-			{
-				StartBlend(GetDefaultAnimation());
-				time = 0;
-			}
-
+			if (has_skeleton)
+				UpdateMesh(GO);
 		}
 	}
 	else
@@ -117,9 +83,6 @@ void ComponentAnimation::Update(float dt)
 		if(animations.size()>0)
 			playing_animation = GetDefaultAnimation();
 	}
-	
-
-
 }
 
 Animation* ComponentAnimation::CreateAnimation(std::string name, uint start, uint end, bool loop, bool Default)
@@ -147,9 +110,14 @@ Animation* ComponentAnimation::GetDefaultAnimation() const
 
 void ComponentAnimation::PlayAnimation(const char* name, float speed)
 {
-	for(int i=0; i<animations.size(); ++i)
+	for (int i = 0; i < animations.size(); ++i)
 	{
-		if (animations[i]->name.compare(name) == 0)
+		if (animations[i] == nullptr)
+		{
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("Create an animation to play it!");
+			break;
+		}
+		else if (animations[i]->name.compare(name) == 0)
 		{
 			animations[i]->speed = speed;
 			StartBlend(animations[i]);
@@ -253,7 +221,6 @@ void ComponentAnimation::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Animation"))
 	{
-		
 
 		if (res_anim)
 		{

@@ -12,8 +12,8 @@ struct Animation
 	Animation(std::string name, uint start, uint end, bool loop, bool Default) : name(name), start(start), end(end), loop(loop), Default(Default) {};
 
 	std::string name;
-	int start;
-	int end;
+	int start = 0;
+	int end = 0;
 	bool loop = false;
 	bool Default = false;
 	float speed = 30;
@@ -36,7 +36,7 @@ public:
 	void Update(float dt);
 
 	Animation* GetDefaultAnimation() const;
-	void PlayAnimation(const char* name, float speed);
+	void PlayAnimation(const char* name, float speed = 30);
 
 	// --- Save & Load ---
 	json Save() const override;
