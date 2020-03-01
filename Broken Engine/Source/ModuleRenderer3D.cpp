@@ -399,13 +399,13 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	const char* linePointVertShaderSrc = "#version 460 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"out vec3 ourColor; \n"
-		"in vec3 color; \n"
+		"uniform vec3 Color; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"ourColor = color; \n"
+		"ourColor = Color; \n"
 		"}\n";
 
 	const char* linePointFragShaderSrc = "#version 460 core \n"
@@ -458,6 +458,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"layout(location = 2) in vec3 color; \n"
 		"layout (location = 3) in vec2 texCoord; \n"
 		"layout (location = 4) in vec3 animPos_offset; \n"
+		"uniform vec3 Color; \n"
 		"out vec3 ourColor; \n"
 		"out vec2 TexCoord; \n"
 		"uniform mat4 model_matrix; \n"
@@ -469,7 +470,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"final_pos = position; \n"
 		"}\n"
 		"gl_Position = projection * view * model_matrix * vec4 (final_pos, 1.0f); \n"
-		"ourColor = color; \n"
+		"ourColor = Color; \n"
 		"TexCoord = texCoord; \n"
 		"}\n"
 		;

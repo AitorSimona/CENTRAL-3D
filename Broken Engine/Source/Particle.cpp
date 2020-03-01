@@ -62,8 +62,8 @@ void Particle::Draw()
 	const ResourceMesh* particle_sphere = App->scene_manager->GetSphereMesh();
 	//App->scene_manager->CreateSphere(1, 4,4,particle_sphere);
 
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, color.x, color.y, color.z);
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.x, color.y, color.z);
 
 	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
 	glUniform1i(TextureSupportLocation, -1);
@@ -84,6 +84,7 @@ void Particle::Draw()
 	}
 
 	// --- Set uniforms back to defaults ---
+	glUniform3f(vertexColorLocation, 255, 255, 255);
 	glUniform1i(TextureSupportLocation, 0);
 
 	glUseProgram(App->renderer3D->defaultShader->ID);

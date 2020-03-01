@@ -114,8 +114,8 @@ void ComponentCollider::Draw()
 
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, globalMatrix.Transposed().ptr());
 
-			int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-			glVertexAttrib3f(vertexColorLocation, 125, 125, 0);
+			int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+			glUniform3f(vertexColorLocation, 125, 125, 125);
 
 			int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
 			glUniform1i(TextureSupportLocation, -1);
@@ -138,6 +138,7 @@ void ComponentCollider::Draw()
 
 			// --- Set uniforms back to defaults ---
 			glUniform1i(TextureSupportLocation, 0);
+			glUniform3f(vertexColorLocation, 255, 255, 255);
 		}
 	
 }
