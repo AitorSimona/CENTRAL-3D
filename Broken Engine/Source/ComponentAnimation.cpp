@@ -55,7 +55,7 @@ void ComponentAnimation::Update(float dt)
 		has_skeleton = HasSkeleton(childs);
 
 		DoLink();
-		playing_animation = CreateAnimation("Idle", 0, 0, true, true);
+		//playing_animation = CreateAnimation("Idle", 0, 0, true, true);
 	}
 
 	if (App->GetAppState() == AppState::PLAY)
@@ -212,7 +212,16 @@ void ComponentAnimation::Load(json& node)
 		bool loop = node["Animations"][iterator]["Loop"];
 		bool Default = node["Animations"][iterator]["Default"];
 
-		CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
+		/*if (name.compare("Idle") == 0)
+		{
+			animations[0]->start = std::stoi(start);
+			animations[0]->end = std::stoi(end);
+			animations[0]->loop = loop;
+			animations[0]->Default = Default;
+		}
+		else*/
+			CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
+		
 	}
 
 }
