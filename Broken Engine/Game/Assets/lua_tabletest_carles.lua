@@ -34,7 +34,16 @@ function KeyboardInputs ()	--Process Debug Keyboard Inputs
 end
 
 function MovementInputs ()	--Process Movement Inputs
+	if mov_input_x ~= 0.0 or mov_input_z ~= 0.0
+	then
+		mov_speed_x = lua_table.mov_speed_max * mov_input_x
+		mov_speed_z = lua_table.mov_speed_max * mov_input_z
+
+		_x, mov_speed_y, _z = lua_table.Functions:GetLinearVelocity ()
+        lua_table.Functions:SetLinearVelocity (mov_speed_x, mov_speed_y, mov_speed_z)
+
         lua_table.Functions:LookAt(0, lua_table.Functions:GetPositionY(), 0, false)
+	end
 end
 
 function lua_table:Awake ()

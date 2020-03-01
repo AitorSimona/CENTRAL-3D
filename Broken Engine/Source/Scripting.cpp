@@ -786,15 +786,28 @@ void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
 
 		m.Decompose(pos, rot, scale);
 
-		transform->SetRotation(rot);
+		rot = rot.Inverted();
 
-		//PxTransform globalPos(PxVec3(pos.x, pos.y, pos.z), PxQuat(rot.x, rot.y, rot.z, rot.w));
 
-		//collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
-		
+		if (rb && collider)
+		{
+			if (!rb->rigidBody)
+				return;
+
+			PxTransform globalPos = rb->rigidBody->getGlobalPose();
+			PxQuat quat = PxQuat(rot.x, rot.y, rot.z, rot.w);
+			globalPos = PxTransform(globalPos.p, quat);
+
+			collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
+		}
+		else
+			transform->SetRotation(rot);
+
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+
+
 }
 
 int Scripting::GetRotation(bool local, lua_State* L) const

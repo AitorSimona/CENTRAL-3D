@@ -84,7 +84,7 @@ bool ModulePhysics::Init(json config)
 	mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.3f);
+	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0.0f);
 
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();

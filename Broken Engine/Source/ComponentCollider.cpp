@@ -194,6 +194,9 @@ void ComponentCollider::UpdateLocalMatrix() {
 
 void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {
 	PxTransform transform;
+	if (!RB)
+		return;
+
 	if (globalPos) {
 		transform = PxTransform(globalPos->p, globalPos->q);
 		RB->rigidBody->setGlobalPose(transform);
