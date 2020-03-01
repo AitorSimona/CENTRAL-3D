@@ -69,10 +69,10 @@ bool ModuleGui::Init(json file)
 	panelPhysics = new PanelPhysics("Physics");
 	panels.push_back(panelPhysics);
 
+	panelBuild = new PanelBuild("Build");
+	panels.push_back(panelBuild);
+
 	LoadStatus(file);
-	#else
-	panelGame = new PanelGame("Game");
-	panels.push_back(panelGame);
 	#endif
 
 	return true;
@@ -159,6 +159,10 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Load Scene"))
 				{
 					//App->scene_manager->SetActiveScene();
+				}
+
+				if (ImGui::MenuItem("Build Game")) {
+					panelBuild->SetOnOff(true);
 				}
 				ImGui::EndMenu();
 			}
@@ -346,7 +350,7 @@ bool ModuleGui::CleanUp()
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
 	panelPhysics = nullptr;
-	panelGame = nullptr;
+	panelBuild = nullptr;
 
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &materialTexID);
@@ -420,8 +424,14 @@ void ModuleGui::LogFPS(float fps, float ms)
 
 void ModuleGui::SaveStatus(json &file) const  
 {
-	for (uint i = 0; i < panels.size(); ++i)
-		file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
+	//MYTODO: Added exception for Build because Build should never be enabled at start
+	//maybe we should call SaveStatus on every panel
+	for (uint i = 0; i < panels.size(); ++i) {
+		if (panels[i]->GetName() == "Build")
+			file["GUI"][panels[i]->GetName()] = false;
+		else
+			file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
+	}
 };
 
 void ModuleGui::LoadStatus(const json & file) 

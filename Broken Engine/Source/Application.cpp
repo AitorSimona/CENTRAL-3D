@@ -25,11 +25,11 @@ Application::Application()
 	isGame = true;
 	EngineState = AppState::PLAY;
 	#endif
-
+	gameconfigpath = "Settings/GameConfig.json";
 	appName = "";
 	log = "Application Logs:";
 	if (isGame)
-		configpath = "Settings/GameConfig.json";
+		configpath = gameconfigpath;
 	else
 		configpath = "Settings/EditorConfig.json";
 
@@ -111,6 +111,7 @@ bool Application::Init()
 
 	// --- Load App data from JSON files ---
 	json config = JLoader.Load(configpath.c_str());
+	gameConfig = JLoader.Load(gameconfigpath.c_str());
 
 	// --- Create Config with default values if load fails ---
 	if (config.is_null())
@@ -341,6 +342,40 @@ json Application::GetDefaultConfig() const
 
 		}},
 	#endif
+		{"Window", {
+			{"width", 1024},
+			{"height", 720},
+			{"fullscreen", false},
+			{"resizable", true},
+			{"borderless", false},
+			{"fullscreenDesktop", false}
+		}},
+
+		{"Input", {
+
+		}},
+
+		{"Renderer3D", {
+			{"VSync", true}
+		}},
+	};
+
+	return config;
+}
+
+json Application::GetDefaultGameConfig() const {
+	// --- Create Game Config with default values ---
+	json config = {
+		{"Application", {
+			{"Organization", orgName}
+
+		}},
+		{"SceneManager", {
+
+		}},
+		{"Camera3D", {
+
+		}},
 		{"Window", {
 			{"width", 1024},
 			{"height", 720},

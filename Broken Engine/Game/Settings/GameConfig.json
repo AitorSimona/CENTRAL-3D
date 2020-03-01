@@ -10,7 +10,9 @@
     "SceneManager": {
 		"MainScene": 95193893
 	},
-	"Camera3D": null,
+	"Camera3D": {
+		"MainCamera": 0
+	},
     "Window": {
         "borderless": false,
         "fullscreen": false,

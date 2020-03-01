@@ -13,6 +13,6 @@
 #include "PanelShaderEditor.h"
 #include "PanelResources.h"
 #include "PanelPhysics.h"
-#include "PanelGame.h"
+#include "PanelBuild.h"
 
 #endif // __PANELS_H__

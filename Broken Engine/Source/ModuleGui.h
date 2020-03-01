@@ -17,7 +17,7 @@ class PanelProject;
 class PanelShaderEditor;
 class PanelResources;
 class PanelPhysics;
-class PanelGame;
+class PanelBuild;
 
 class ModuleGui : public Module
 {
@@ -58,7 +58,7 @@ public:
 	PanelInspector*		panelInspector = nullptr;
 	PanelHierarchy*		panelHierarchy = nullptr;
 	PanelScene*			panelScene = nullptr;
-	PanelGame*			panelGame = nullptr;
+	PanelBuild*			panelBuild = nullptr;
 	PanelToolbar*       panelToolbar = nullptr;
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;

@@ -5,10 +5,15 @@
 #include "Panel.h"
 #include <string>
 #include <vector>
+#include "Globals.h"
+#include "JSONLoader.h"
 
 class GameObject;
 
 class PanelBuild : public Panel {
+public:
+	PanelBuild(char* name);
+	~PanelBuild();
 
 	bool Draw();
 	inline void OnOff() override;
@@ -21,10 +26,10 @@ private:
 
 private:
 	std::vector<GameObject*> cameras;
-
 	std::string buildName;
-	unsigned int sceneUUID;
-	unsigned int cameraGOUUID;
+	GameObject* selectedCamera;
+	uint sceneUID;
+	uint cameraGOUID;
 
 };
 

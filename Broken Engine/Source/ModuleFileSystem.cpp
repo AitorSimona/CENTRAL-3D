@@ -281,10 +281,10 @@ bool ModuleFileSystem::Copy(const char * source, const char * destination)
 		PHYSFS_close(dst);
 		ret = true;
 
-		ENGINE_CONSOLE_LOG("File System copied file [%s] to [%s]", source, destination);
+		//ENGINE_CONSOLE_LOG("File System copied file [%s] to [%s]", source, destination);
 	}
-	else
-		ENGINE_CONSOLE_LOG("File System error while copy from [%s] to [%s]", source, destination);
+	/*else*/
+		//ENGINE_CONSOLE_LOG("File System error while copy from [%s] to [%s]", source, destination);
 
 	return ret;
 }

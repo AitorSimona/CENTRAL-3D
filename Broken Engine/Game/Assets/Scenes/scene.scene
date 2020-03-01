@@ -26,6 +26,52 @@
         "Name": "Chimney",
         "Parent": "2063000135"
     },
+    "1525798265": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "DefaultMaterial"
+                }
+            },
+            "3": null
+        },
+        "Name": "GameObject (4)",
+        "Parent": "1894011420"
+    },
+    "1933963251": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "DefaultMaterial"
+                }
+            },
+            "3": null
+        },
+        "Name": "GameObject (3)",
+        "Parent": "1894011420"
+    },
     "2063000135": {
         "Components": {
             "0": {
@@ -41,14 +87,14 @@
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "49392698"
+        "Parent": "1894011420"
     },
     "359122116": {
         "Components": {
             "0": {
-                "positionx": "-1.204429",
+                "positionx": "0.000000",
                 "positiony": "0.000000",
-                "positionz": "8.831388",
+                "positionz": "0.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",

@@ -455,6 +455,12 @@ void ModuleSceneManager::LoadStatus(const json & file)
 	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
 		ResourceScene* scene = (ResourceScene*) App->resources->GetResource(file["SceneManager"]["MainScene"]);
 		SetActiveScene(scene);
+		if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
+			GameObject* camera;
+			camera = scene->GetGOWithUID(file["Camera3D"]["MainCamera"]);
+			App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
+			App->renderer3D->culling_camera = camera->GetComponent<ComponentCamera>();
+		}
 	}
 	else {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
