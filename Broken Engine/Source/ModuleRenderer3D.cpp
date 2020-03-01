@@ -184,9 +184,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->particles->DrawParticles();
 
 	// --- Selected Object Outlining ---
-	#ifndef BE_GAME_BUILD
+	//#ifndef BE_GAME_BUILD
 	HandleObjectOutlining();
-	#endif
+	/*#endif*/
 
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);

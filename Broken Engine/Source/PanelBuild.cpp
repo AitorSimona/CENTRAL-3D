@@ -149,7 +149,7 @@ void PanelBuild::makeBuild() {
 		std::string extension = (files[i].substr(files[i].find_last_of(".") + 1));
 		App->fs->NormalizePath(extension);
 
-		if (extension == "dll" || extension == "ini")
+		if (extension == "dll" || extension == "ini" || extension == "meta")
 			App->fs->Copy(files[i].c_str(), (buildName + "/" + files[i]).c_str());
 	}
 	static const char* directories[] = { ASSETS_FOLDER, SETTINGS_FOLDER, LIBRARY_FOLDER, TEXTURES_FOLDER, MESHES_FOLDER, SCENES_FOLDER,
