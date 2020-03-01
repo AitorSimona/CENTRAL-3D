@@ -8,8 +8,21 @@
 #include "GameObject.h"
 #include <queue>
 #include "Component.h"
+#include "Imgui/imgui.h"
 
 bool PanelBuild::Draw() {
+	ImGuiWindowFlags settingsFlags = 0;
+	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
+
+	if (ImGui::Begin(name, &enabled, settingsFlags)) {
+		ImGui::Separator();
+		ImGui::Text("Choose build name");
+
+		ImGui::End();
+	}
+
+
+
 	return true;
 }
 
@@ -33,7 +46,7 @@ void PanelBuild::findCameras() {
 	std::queue<GameObject*> GOqueue;
 	GOqueue.push(App->scene_manager->GetRootGO());
 
-	while (!GOqueue.empty) {
+	while (!GOqueue.empty()) {
 		GameObject* current = GOqueue.front();
 		GOqueue.pop();
 
