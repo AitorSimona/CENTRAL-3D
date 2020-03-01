@@ -18,6 +18,7 @@ class PanelShaderEditor;
 class PanelResources;
 class PanelPhysics;
 class PanelBuild;
+class PanelGame;
 
 class ModuleGui : public Module
 {
@@ -65,6 +66,7 @@ public:
 	PanelShaderEditor*  panelShaderEditor = nullptr;
 	PanelResources*		panelResources = nullptr;
 	PanelPhysics*		panelPhysics = nullptr;
+	PanelGame*			panelGame = nullptr;
 
 	float sceneWidth = 0.0f;
 	float sceneHeight = 0.0f;

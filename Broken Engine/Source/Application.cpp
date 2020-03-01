@@ -24,7 +24,6 @@ Application::Application()
 {
 	#ifdef BE_GAME_BUILD
 	isGame = true;
-	EngineState = AppState::PLAY;
 	#endif
 	appName = "";
 	log = "Application Logs:";
@@ -45,7 +44,7 @@ Application::Application()
 	renderer3D = new ModuleRenderer3D(true);
 	scripting = new ModuleScripting(true);
 	camera = new ModuleCamera3D(true);
-	gui = new ModuleGui(!isGame);
+	gui = new ModuleGui(true);
 	textures = new ModuleTextures(true);
 	resources = new ModuleResourceManager(true);
 	threading = new ModuleThreading(true);

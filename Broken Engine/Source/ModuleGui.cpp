@@ -83,6 +83,9 @@ bool ModuleGui::Init(json file)
 	panels.push_back(panelBuild);
 
 	LoadStatus(file);
+	#else
+	panelGame = new PanelGame("Game");
+	panels.push_back(panelGame);
 	#endif
 
 	return true;
@@ -103,9 +106,7 @@ bool ModuleGui::Start()
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
-		#ifndef BE_GAME_BUILD
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Window Docking (Under Active Development)
-		#endif
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Deactivated because of lib crash when resizing window out of Main window bounds
 
 		ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer3D->context);
@@ -407,15 +408,18 @@ update_status ModuleGui::Update(float dt)
 update_status ModuleGui::PostUpdate(float dt)
 {
 	// --- Iterate panels and draw ---
-	for (uint i = 0; i < panels.size(); ++i)
-	{
+	for (uint i = 0; i < panels.size(); ++i) {
 		if (panels[i]->IsEnabled())
 			panels[i]->Draw();
 	}
 
 	// End dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	ImGui::End();
+		ImGui::End();
+
+	#ifdef BE_GAME_BUILD
+	ImGui::EndFrame();
+	#endif
 
 	return UPDATE_CONTINUE;
 }
@@ -453,11 +457,9 @@ bool ModuleGui::CleanUp()
 
 	// --- ShutDown ImGui ---
 
-	#ifndef BE_GAME_BUILD
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
-	#endif
 
 	return ret;
 }

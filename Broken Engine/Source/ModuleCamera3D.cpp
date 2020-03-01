@@ -39,10 +39,6 @@ bool ModuleCamera3D::Start()
 {
 	ENGINE_CONSOLE_LOG("Setting up the camera");
 
-#ifdef BE_GAME_BUILD
-	
-#endif
-
 	bool ret = true;
 	camera->frustum.SetPos(float3(0.0f, 25.0f,-50.0f));
 	camera->SetFOV(60.0f);

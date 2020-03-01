@@ -102,8 +102,8 @@ bool ModuleSceneManager::Start()
 	defaultScene->LoadToMemory();
 
 
-
 	#ifdef BE_GAME_BUILD
+	//App->GetAppState() = AppState::TO_PLAY;
 	LoadStatus(App->GetConfigFile());
 	#endif
 
@@ -239,7 +239,7 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 
 void ModuleSceneManager::Draw()
 {
-	//#ifndef BE_GAME_BUILD
+	#ifndef BE_GAME_BUILD
 	// --- Draw Grid ---
 	DrawGrid(true, 75.0f);
 
@@ -247,15 +247,15 @@ void ModuleSceneManager::Draw()
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	//#endif
+	#endif
 	// --- Draw Game Object Meshes ---
 	DrawScene();
 
-	//#ifndef BE_GAME_BUILD
+	#ifndef BE_GAME_BUILD
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//#endif BE_GAME_BUILD
+	#endif BE_GAME_BUILD
 }
 
 void ModuleSceneManager::DrawScene()
@@ -454,27 +454,27 @@ void ModuleSceneManager::SaveStatus(json & file) const
 void ModuleSceneManager::LoadStatus(const json & file)
 {
 #ifdef BE_GAME_BUILD
-	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
-		ResourceScene* scene = (ResourceScene*) App->resources->GetResource(file["SceneManager"]["MainScene"]);
-		if (scene != nullptr)
-			SetActiveScene(scene);
-		if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
-			GameObject* camera;
-			camera = scene->GetGOWithUID(file["Camera3D"]["MainCamera"]);
-			if (camera != nullptr) {
-				ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
-				if (camera_component != nullptr) {
-					//App->renderer3D->SetActiveCamera(camera_component);
-					//App->renderer3D->SetCullingCamera(camera_component);
-					App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
-					App->renderer3D->culling_camera = camera->GetComponent<ComponentCamera>();
-				}
-			}
-		}
-	}
-	else {
-		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
-	}
+	//if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
+	//	ResourceScene* scene = (ResourceScene*) App->resources->GetResource(file["SceneManager"]["MainScene"]);
+	//	if (scene != nullptr)
+	//		SetActiveScene(scene);
+	//	if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
+	//		GameObject* camera;
+	//		camera = scene->GetGOWithUID(file["Camera3D"]["MainCamera"]);
+	//		if (camera != nullptr) {
+	//			ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
+	//			if (camera_component != nullptr) {
+	//				//App->renderer3D->SetActiveCamera(camera_component);
+	//				//App->renderer3D->SetCullingCamera(camera_component);
+	//				App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
+	//				App->renderer3D->culling_camera = camera->GetComponent<ComponentCamera>();
+	//			}
+	//		}
+	//	}
+	//}
+	//else {
+	//	ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
+	//}
 #endif
 }
 

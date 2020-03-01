@@ -197,9 +197,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	#endif
 
 	// --- Draw ui and swap buffers ---
-	#ifdef BE_GAME_BUILD
-	//RenderFramebuffer();
-	#else
+	#ifndef BE_GAME_BUILD
 	App->gui->Draw();
 	#endif
 

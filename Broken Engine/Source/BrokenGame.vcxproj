@@ -45,7 +45,7 @@
     <IntDir>$(Configuration)\Game\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\Game\</OutDir>
+    <OutDir>$(SolutionDir)$(Configuration)</OutDir>
     <IntDir>$(Configuration)\Game\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
