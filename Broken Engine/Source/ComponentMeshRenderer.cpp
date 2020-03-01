@@ -179,11 +179,12 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
+
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
 
 	if (draw_vertexnormals && mesh.vertices->normal)
 	{
-		glVertexAttrib3f(vertexColorLocation, 1.0, 1.0, 0);
+		glUniform3f(vertexColorLocation,255, 255, 0);
 
 		// --- Draw Vertex Normals ---
 		float3* vertices = new float3[mesh.IndicesSize * 2];
@@ -225,7 +226,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 	if (draw_facenormals)
 	{
-		glVertexAttrib3f(vertexColorLocation, 0, 1.0, 1.0);
+		glUniform3f(vertexColorLocation, 0, 255, 255);
 		Triangle face;
 		float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
 		
@@ -262,17 +263,20 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 		// --- Draw lines ---
 		glLineWidth(3.0f);
-		glColor3f(255, 255, 0);
+		//glColor3f(255, 255, 0);
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 		glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
 		glBindVertexArray(0);
-		glColor3f(255, 255, 255);
+		//glColor3f(255, 255, 255);
 		glLineWidth(1.0f);
 
 		// --- Delete VBO and vertices ---
 		glDeleteBuffers(1, &VBO);
 		delete[] vertices;
 	}
+
+	glUniform3f(vertexColorLocation, 255, 255, 255);
+
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
