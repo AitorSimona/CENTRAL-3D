@@ -8,6 +8,9 @@
 #include "Imgui/imgui.h"
 #include "ModuleGui.h"
 
+#include "ImporterMeta.h"
+#include "ResourceMeta.h"
+
 ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Script)
 {
 	type = ComponentType::Script;
@@ -177,17 +180,20 @@ json ComponentScript::Save() const
 void ComponentScript::Load(json& node)
 {
 	std::string path = node["Resources"]["ResourceScript"];
-	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
-	path = path.substr(0, path.find_last_of("."));
 
-	//if (resource_mesh)
-	//	resource_mesh->Release();
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-	script = (ResourceScript*)App->resources->GetResource(std::stoi(path));
+	if (IMeta)
+	{
+		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path.c_str());
 
-	// --- We want to be notified of any resource event ---
-	if (script)
-		script->AddUser(GO);
+		if (meta)
+			script = (ResourceScript*)App->resources->GetResource(meta->GetUID());
+
+		// --- We want to be notified of any resource event ---
+		if (script)
+			script->AddUser(GO);
+	}
 
 }
 
