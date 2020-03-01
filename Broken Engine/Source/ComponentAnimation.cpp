@@ -75,41 +75,6 @@ void ComponentAnimation::Update(float dt)
 
 			if (has_skeleton)
 				UpdateMesh(GO);
-
-			if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-			{
-				//prev_anim = playing_animation;
-				StartBlend(animations[2]);
-				time = 0;
-			}
-
-			if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) // press key
-			{
-				//prev_anim = playing_animation;
-
-				animations[1]->Default = true;
-				animations[0]->Default = false;
-
-				if (playing_animation->loop)
-				{
-					StartBlend(animations[1]);
-					time = 0;
-				}
-
-			}
-			if (App->input->GetKey(SDL_SCANCODE_2) == KEY_UP) //release key
-			{
-				animations[1]->Default = false;
-				animations[0]->Default = true;
-
-				if (playing_animation->loop)
-				{
-					StartBlend(GetDefaultAnimation());
-					time = 0;
-				}
-
-			}
-		
 		}
 	}
 	else
@@ -118,10 +83,6 @@ void ComponentAnimation::Update(float dt)
 		if(animations.size()>0)
 			playing_animation = GetDefaultAnimation();
 	}
-	
-	
-
-
 }
 
 Animation* ComponentAnimation::CreateAnimation(std::string name, uint start, uint end, bool loop, bool Default)
@@ -260,7 +221,6 @@ void ComponentAnimation::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Animation"))
 	{
-		
 
 		if (res_anim)
 		{
