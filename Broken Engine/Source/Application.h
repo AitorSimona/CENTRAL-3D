@@ -96,9 +96,6 @@ private:
 	std::string			appName;
 	std::string			orgName;
 	std::string			configpath;
-	std::string			gameconfigpath;
-
-	json				gameConfig;
 
 	LCG*		  RandomNumber = nullptr;
 
