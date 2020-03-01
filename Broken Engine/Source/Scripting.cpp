@@ -788,17 +788,26 @@ void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
 
 		rot = rot.Inverted();
 
-		transform->SetRotation(rot);
 
-		/*PxTransform globalPos = rb->rigidBody->getGlobalPose();
-		globalPos.p = PxVec3(pos.x, pos.y, pos.z);
-		globalPos.q = PxQuat(rot.x, rot.y, rot.z, rot.w);
+		if (rb && collider)
+		{
+			if (!rb->rigidBody)
+				return;
 
-		collider->UpdateTransformByRigidBody(rb, transform, &globalPos);*/
-		
+			PxTransform globalPos = rb->rigidBody->getGlobalPose();
+			PxQuat quat = PxQuat(rot.x, rot.y, rot.z, rot.w);
+			globalPos = PxTransform(globalPos.p, quat);
+
+			collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
+		}
+		else
+			transform->SetRotation(rot);
+
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+
+
 }
 
 int Scripting::GetRotation(bool local, lua_State* L) const
