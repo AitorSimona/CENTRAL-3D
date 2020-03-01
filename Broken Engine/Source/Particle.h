@@ -19,7 +19,7 @@ public:
 public:
 
 	float3 position = { 0,0,0 };
-
+	float3 color = { 0,0,0 };
 	uint lifeTime=1;
 	uint spawnTime = 1;
 	float diameter=1;

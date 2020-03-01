@@ -21,6 +21,7 @@
 #include "ResourceMaterial.h"
 
 #include "ImporterMeta.h"
+#include "ImporterMaterial.h"
 #include "ResourceMeta.h"
 
 #include "Imgui/imgui.h"
@@ -441,6 +442,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	ImGui::Separator();
 	ImGui::PushID("Material");
 
+	// --- Material node ---
 	if (material)
 	{
 		// --- Mat preview
@@ -514,6 +516,12 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							material->resource_diffuse->Release();
 
 						material->resource_diffuse = (ResourceTexture*)App->resources->GetResource(UID);
+
+						// --- Save material so we update path to texture ---
+						ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+						if(IMat)
+						IMat->Save(material);
 					}						
 				}
 
