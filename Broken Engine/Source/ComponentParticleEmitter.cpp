@@ -177,6 +177,16 @@ void ComponentParticleEmitter::DrawParticles()
 	}
 }
 
+
+void ComponentParticleEmitter::ChangeParticlesColor(float3 color)
+{
+	color /= 255.0f;
+
+	for (int i = 0; i < maxParticles; ++i)
+		particles[i]->color = color;
+}
+
+
 json ComponentParticleEmitter::Save() const
 {
 	json node;
@@ -202,6 +212,10 @@ json ComponentParticleEmitter::Save() const
 	node["particlesLifeTime"] = std::to_string(particlesLifeTime);
 
 	node["particlesSize"] = std::to_string(particlesSize);
+
+	node["velocityRandomFactorR"] = std::to_string(particlesColor.x);
+	node["velocityRandomFactorG"] = std::to_string(particlesColor.y);
+	node["velocityRandomFactorB"] = std::to_string(particlesColor.z);
 
 	return node;
 }
@@ -231,6 +245,10 @@ void ComponentParticleEmitter::Load(json& node)
 
 	std::string LParticlesSize = node["particlesSize"];
 
+	std::string LColorR = node["sizeX"];
+	std::string LColorG = node["sizeY"];
+	std::string LColorB = node["sizeZ"];
+
 	//Pass the strings to the needed dada types
 	size.x = std::stof(Lsizex);
 	size.y = std::stof(Lsizey);
@@ -253,6 +271,8 @@ void ComponentParticleEmitter::Load(json& node)
 	particlesLifeTime = std::stof(LparticlesLifeTime);
 
 	particlesSize = std::stof(LParticlesSize);
+
+	particlesColor = float3(std::stof(LColorR), std::stof(LColorG), std::stof(LColorB));
 }
 
 void ComponentParticleEmitter::CreateInspectorNode()
@@ -372,6 +392,35 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::Text("Particles size");
 	ImGui::DragFloat("##SParticlesSize", &particlesSize, 0.005f, 0.01f, 3.0f);
 
+	//Particles Color particlesColor
+	ImGui::Text("Particles Color");
+	bool colorChanged = false;
+
+	//R
+	ImGui::Text("R");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	if(ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
+		colorChanged = true;
+
+	ImGui::SameLine();
+	//G
+	ImGui::Text("G");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	if(ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
+		colorChanged = true;
+
+	//B
+	ImGui::SameLine();
+	ImGui::Text("B");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
+		colorChanged = true;
+
+	if (colorChanged)
+		ChangeParticlesColor(particlesColor);
 }
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE

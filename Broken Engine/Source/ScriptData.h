@@ -23,4 +23,3 @@ struct ScriptInstance {
 };
 
 #endif // __SCRIPTDATA_H__
-

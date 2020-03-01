@@ -17,24 +17,17 @@ end
 function lua_table:Update ()
 	dt = lua_table["Functions"]:dt ()
 
-	--Object Transformations
-	--lua_table["Functions"]:AddForce(10, 10, 10, 0)
+	--lua_table["Functions"]:RotateObject(0,45,0)
 
-	--rotX, rotY, rotZ = lua_table["Functions"]:GetAngularVelocity()
-	--posX, posY, posZ = lua_table["Functions"]:GetLinearVelocity()
-	--mass = lua_table["Functions"]:UseGravity(false)
 
 	--lua_table["Functions"]:LOG (rotX)
 	--lua_table["Functions"]:LOG (posX)
 	--lua_table["Functions"]:LOG (mass)
 
-	lua_table["Functions"]:SetAudioID(2167849898)
-	lua_table["Functions"]:PlayAudio(2167849898)
-
 	--Particles Emission Activation/Deactivation
 	--lua_table["Functions"]:ActivateParticlesEmission()
 	--lua_table["Functions"]:DeactivateParticlesEmission()
-	
+
 end
 
 return lua_table

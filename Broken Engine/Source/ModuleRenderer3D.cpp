@@ -6,6 +6,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
 #include "ModuleResourceManager.h"
+#include "ModuleUI.h"
 #include "ModuleParticles.h"
 
 #include "GameObject.h"
@@ -59,7 +60,7 @@ bool ModuleRenderer3D::Init(json file)
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		// Initialize glad
-		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) 
+		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
 		{
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Error initializing glad! %s\n");
 			ret = false;
@@ -154,6 +155,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
+	App->ui_system->Draw();
 
 	// --- Draw Particles ---
 	App->particles->DrawParticles();
@@ -270,6 +272,14 @@ void ModuleRenderer3D::CreateFramebuffer()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+//void ModuleRenderer3D::NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex)
+//{
+//	glGenBuffers(1, (GLuint*)&(id_vertex));
+//	glBindBuffer(GL_ARRAY_BUFFER, id_vertex);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * size * 3, vertex, GL_STATIC_DRAW);
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+//}
 
 bool ModuleRenderer3D::SetVSync(bool vsync)
 {
@@ -389,13 +399,13 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	const char* linePointVertShaderSrc = "#version 460 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"out vec3 ourColor; \n"
-		"in vec3 color; \n"
+		"uniform vec3 Color; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"ourColor = color; \n"
+		"ourColor = Color; \n"
 		"}\n";
 
 	const char* linePointFragShaderSrc = "#version 460 core \n"
@@ -447,14 +457,20 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
 		"layout (location = 3) in vec2 texCoord; \n"
+		"layout (location = 4) in vec3 animPos_offset; \n"
+		"uniform vec3 Color; \n"
 		"out vec3 ourColor; \n"
 		"out vec2 TexCoord; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"ourColor = color; \n"
+		"vec3 final_pos = animPos_offset;\n"
+		"if(animPos_offset.x == 0 && animPos_offset.y == 0 && animPos_offset.z == 0){\n"
+		"final_pos = position; \n"
+		"}\n"
+		"gl_Position = projection * view * model_matrix * vec4 (final_pos, 1.0f); \n"
+		"ourColor = Color; \n"
 		"TexCoord = texCoord; \n"
 		"}\n"
 		;

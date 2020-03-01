@@ -7,7 +7,7 @@
 ResourceScript::ResourceScript(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCRIPT, UID, source_file)
 {
 	extension = ".lua";
-	resource_file = SCRIPTS_FOLDER + std::to_string(UID) + extension;
+	resource_file = source_file;
 }
 
 ResourceScript::~ResourceScript()

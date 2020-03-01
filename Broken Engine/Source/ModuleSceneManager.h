@@ -100,7 +100,6 @@ private:
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 
 public:
@@ -110,15 +109,19 @@ public:
 	bool display_tree = false;
 	bool display_boundingboxes = false;
 	ResourceScene* currentScene = nullptr;
+
+	ResourceMesh* plane = nullptr;
+
+	// do not destroy
+	ResourceScene* defaultScene = nullptr;
 private:
 
 	// --- Do not modify, just use ---
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* sphere = nullptr;
 	ResourceMesh* capsule = nullptr;
-	ResourceMesh* plane = nullptr;
 	ResourceMesh* cylinder = nullptr;
-	ResourceScene* defaultScene = nullptr;
+
 
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;

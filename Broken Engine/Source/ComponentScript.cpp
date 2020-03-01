@@ -40,7 +40,9 @@ void ComponentScript::CreateInspectorNode()
 
 	std::string name = this->script_name + "(Script)";
 	ImGui::Checkbox("Active", &active); ImGui::SameLine();
-	if (ImGui::TreeNodeEx(name.data(), base_flags)) {
+
+	if (ImGui::TreeNodeEx(name.data(), base_flags))
+	{
 		if (this->script != nullptr)
 		{
 			if (ImGui::Button("Open Script File")) {

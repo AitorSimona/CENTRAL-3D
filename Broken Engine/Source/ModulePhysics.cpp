@@ -83,10 +83,8 @@ bool ModulePhysics::Init(json config)
 	mScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0);	//Global visualization scale which gets multiplied with the individual scales
 	mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
-	
 
-
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.2f);
+	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0.0f);
 
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();
@@ -96,7 +94,7 @@ bool ModulePhysics::Init(json config)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 	//-------------------------------------
-	
+	//BoxCollider(0, 10, 0);
 	PlaneCollider(0, 0, 0);
 	
 	return true;

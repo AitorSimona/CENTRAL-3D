@@ -36,6 +36,7 @@ public:
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
 
+
 	void LogFPS(float fps, float ms);
 
 	void SaveStatus(json &file) const override;
@@ -69,6 +70,7 @@ public:
 	uint prefabTexID = 0;
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
+
 private:
 	bool show_demo_window = false;
 
