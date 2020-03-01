@@ -27,6 +27,7 @@ public:
 
 	void UpdateParticles(float dt);
 	void DrawParticles();
+	void ChangeParticlesColor(float3 color);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::ParticleEmitter; };
 
@@ -65,6 +66,8 @@ private:
 	//Particle properties
 	int particlesLifeTime=1000;
 	float particlesSize = 1;
+
+	float3 particlesColor = { 1, 1, 1 };
 
 	float spawnClock=0.0f;
 };
