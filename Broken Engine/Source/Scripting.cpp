@@ -1082,6 +1082,34 @@ void Scripting::SetVolume(float volume)
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
+void Scripting::StopAttackSound()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+	sound->SetID(AK::EVENTS::GERALT_ATTACK);
+
+	if (sound)
+	{
+		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_ATTACK);
+		sound->isPlaying = false;
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
+void Scripting::StopStepSound()
+{
+	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
+	sound->SetID(AK::EVENTS::GERALT_RUN);
+
+	if (sound)
+	{
+		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_RUN);
+		sound->isPlaying = false;
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
+}
+
 //ANIMATION ----------------------------------------------------------
 void Scripting::StartAnimation(const char* name, float speed)
 {
