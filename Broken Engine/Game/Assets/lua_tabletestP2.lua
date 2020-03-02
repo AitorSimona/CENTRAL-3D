@@ -1,6 +1,6 @@
 local Functions = Debug.Scripting ()
 
-function	GetTablelua_tabletest ()
+function	GetTablelua_tabletestP2 ()
 local lua_table = {}
 lua_table["position_x"] = 0
 lua_table["Functions"] = Debug.Scripting ()
@@ -27,8 +27,8 @@ function lua_table:Update ()
 	--Particles Emission Activation/Deactivation
 	--lua_table["Functions"]:ActivateParticlesEmission()
 	--lua_table["Functions"]:DeactivateParticlesEmission()
-	--lua_table["Functions"]:Translate(1.0,0.0,0.0)
-	lua_table["Functions"]:SetLinearVelocity(1.0,0.0,0.0)
+	--lua_table["Functions"]:Translate(-1.0,0.0,0.0)
+	lua_table["Functions"]:SetLinearVelocity(-1.0,0.0,0.0)
 
 end
 
