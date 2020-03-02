@@ -14,7 +14,7 @@
 #include "ModuleEventManager.h"
 #include "ComponentCamera.h"
 #include "ComponentBone.h"
-
+#include "ModuleUI.h"
 
 #include "ModuleGui.h"
 
@@ -73,11 +73,11 @@ bool ModuleSceneManager::Init(json file)
 bool ModuleSceneManager::Start()
 {
 	// --- Create primitives ---
-	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
-	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
-	capsule = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCapsule");
-	plane = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultPlane");
-	cylinder = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCylinder");
+	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 0);
+	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 1);
+	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 2);
+	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 3);
+	cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 4);
 
 	CreateCube(1, 1, 1, cube);
 	CreateSphere(1.0f, 25, 25, sphere);
@@ -524,6 +524,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 
 			// --- Clear root ---
 			root->childs.clear();
+
+			App->ui_system->Clear();
 		}
 
 		currentScene = scene; // force this so gos are not added to another scene

@@ -1,0 +1,30 @@
+{
+    "330474594": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "4": null,
+            "5": {
+                "Resources": {
+                    "ResourceTexture": "Library/Textures/558537928.dds"
+                },
+                "position2Dx": "-0.390000",
+                "position2Dy": "-1.000000",
+                "size2Dx": "0.440000",
+                "size2Dy": "0.290000"
+            }
+        },
+        "Name": "GameObject (0)",
+        "Parent": "535376271"
+    }
+}

@@ -74,7 +74,7 @@ void ModuleUI::Draw() const
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 	
 	// Draw UI
 	for (int i = 0; i < canvas.size(); i++)
@@ -87,6 +87,11 @@ void ModuleUI::Draw() const
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	//glPopMatrix();
+}
+
+void ModuleUI::Clear()
+{
+	canvas.clear();
 }
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)

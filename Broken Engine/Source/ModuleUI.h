@@ -17,6 +17,8 @@ public:
 
 	void Draw() const;
 	void AddCanvas(Canvas* c) { canvas.push_back(c); }
+	
+	void Clear();
 
 	bool CheckMousePos(Component* element, SDL_Rect collider);
 	bool CheckClick(Component* element, bool draggable);
