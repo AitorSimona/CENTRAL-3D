@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
+    <ProjectGuid>{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
-    <ProjectName>Broken Engine</ProjectName>
+    <ProjectName>BEG</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,10 +40,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)</OutDir>
+    <IntDir>$(Configuration)\Game\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)</OutDir>
+    <IntDir>$(Configuration)\Game\</IntDir>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -52,12 +56,19 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>BE_GAME_BUILD;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)Game\$(ProjectName).exe" "$(SolutionDir)$(Configuration)\$(ProjectName).exe"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying exe into game folder</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -68,7 +79,7 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BE_GAME_BUILD;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -77,15 +88,29 @@
       <SubSystem>Windows</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)$(Configuration)\$(ProjectName).exe" "$(SolutionDir)Game\$(ProjectName).exe"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying exe into game folder</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentAnimation.h" />
-    <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentAudioListener.h" />
     <ClInclude Include="ComponentAudioSource.h" />
+    <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
@@ -211,9 +236,9 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleThreading.h" />
     <ClInclude Include="ModuleTimeManager.h" />
+    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="PanelBuild.h" />
     <ClInclude Include="PanelGame.h" />
-    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
     <ClInclude Include="PanelResources.h" />
@@ -261,11 +286,11 @@
     <ClInclude Include="ResourceShaderObject.h" />
     <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
-    <ClInclude Include="Text.h" />
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
     <ClInclude Include="ScriptingMath.h" />
     <ClInclude Include="ScriptVar.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="wwise.h" />
@@ -275,9 +300,9 @@
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentAnimation.cpp" />
-    <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentAudioListener.cpp" />
     <ClCompile Include="ComponentAudioSource.cpp" />
+    <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
@@ -407,10 +432,10 @@
     <ClCompile Include="ResourceShaderObject.cpp" />
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
-    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptingMath.cpp" />
     <ClCompile Include="ScriptVar.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wwise.cpp" />
     <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp" />
@@ -419,7 +444,7 @@
     <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Broken Engine.rc" />
+    <ResourceCompile Include="BrokenGame.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="EXE ICON.ico" />

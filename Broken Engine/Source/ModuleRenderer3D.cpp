@@ -76,6 +76,28 @@ bool ModuleRenderer3D::Init(json file)
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
+	// --- Create screen quad ---
+	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 	// --- Check if graphics driver supports shaders in binary format ---
 	//GLint formats = 0;
 	//glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
@@ -109,7 +131,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	float backColor = 0.65f;
 	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	//glClearDepth(0.0f);
+	glClearDepth(0.0f);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glClearColor(backColor, backColor, backColor, 1.0f);
@@ -145,8 +167,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 
 	// --- Bind fbo ---
+    #ifndef BE_GAME_BUILD
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
+	#endif
 	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
 	glDepthFunc(GL_GREATER);
 
@@ -161,16 +184,22 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->particles->DrawParticles();
 
 	// --- Selected Object Outlining ---
+	//#ifndef BE_GAME_BUILD
 	HandleObjectOutlining();
+	/*#endif*/
 
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);
 
 	// --- Unbind fbo ---
+	#ifndef BE_GAME_BUILD
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	#endif
 
 	// --- Draw ui and swap buffers ---
+	#ifndef BE_GAME_BUILD
 	App->gui->Draw();
+	#endif
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context);
@@ -188,8 +217,11 @@ bool ModuleRenderer3D::CleanUp()
 	delete linepointShader;
 	delete ZDrawerShader;
 	delete OutlineShader;
+	delete screenShader;
 
 	glDeleteFramebuffers(1, &fbo);
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteBuffers(1, &quadVBO);
 	SDL_GL_DeleteContext(context);
 
 	return true;
@@ -273,6 +305,26 @@ void ModuleRenderer3D::CreateFramebuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void ModuleRenderer3D::RenderFramebuffer() 
+{
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// clear all relevant buffers
+	float backColor = 0.65f;
+	glClearColor(backColor, backColor, backColor, 1.0f); // set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//screenShader->use();
+
+	glBindVertexArray(quadVAO);
+	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+	glBindTexture(GL_TEXTURE_2D, rendertexture);	// use the color attachment texture as the texture of the quad plane
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+	glEnable(GL_DEPTH_TEST);
+	defaultShader->use();
+}
+
 //void ModuleRenderer3D::NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex)
 //{
 //	glGenBuffers(1, (GLuint*)&(id_vertex));
@@ -280,6 +332,7 @@ void ModuleRenderer3D::CreateFramebuffer()
 //	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * size * 3, vertex, GL_STATIC_DRAW);
 //	glBindBuffer(GL_ARRAY_BUFFER, 0);
 //}
+
 
 bool ModuleRenderer3D::SetVSync(bool vsync)
 {
@@ -375,7 +428,7 @@ void ModuleRenderer3D::HandleObjectOutlining()
 void ModuleRenderer3D::CreateDefaultShaders()
 {
 	// --- Creating outline drawing shaders ---
-	const char* OutlineVertShaderSrc = "#version 460 core \n"
+	const char* OutlineVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
@@ -384,7 +437,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
 		"}\n";
 
-	const char* OutlineFragShaderSrc = "#version 460 core \n"
+	const char* OutlineFragShaderSrc = "#version 440 core \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
@@ -396,7 +449,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating point/line drawing shaders ---
 
-	const char* linePointVertShaderSrc = "#version 460 core \n"
+	const char* linePointVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"out vec3 ourColor; \n"
 		"uniform vec3 Color; \n"
@@ -408,7 +461,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"ourColor = Color; \n"
 		"}\n";
 
-	const char* linePointFragShaderSrc = "#version 460 core \n"
+	const char* linePointFragShaderSrc = "#version 440 core \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
@@ -420,7 +473,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating z buffer shader drawer ---
 
-	const char* zdrawervertex = "#version 460 core \n"
+	const char* zdrawervertex = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform vec2 nearfar; \n"
 		"uniform mat4 model_matrix; \n"
@@ -434,7 +487,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
 		"}\n";
 
-	const char* zdrawerfragment = "#version 460 core \n"
+	const char* zdrawerfragment = "#version 440 core \n"
 		"out vec4 FragColor; \n"
 		"in vec2 nearfarfrag; \n"
 		"in mat4 _projection; \n"
@@ -452,7 +505,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char* vertexShaderSource =
-		"#version 460 core \n"
+		"#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
@@ -476,7 +529,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		;
 
 	const char* fragmentShaderSource =
-		"#version 460 core \n"
+		"#version 440 core \n"
 		"uniform int Texture;\n"
 		"in vec3 ourColor; \n"
 		"in vec2 TexCoord; \n"
@@ -492,4 +545,28 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
 	defaultShader->name = "Standard";
 	defaultShader->use();
+
+	const char* screenVertexShader =
+		"#version 440 core \n"
+		"layout (location = 0) in vec2 aPos\n"
+		"layout (location = 1) in vec2 aTexCoords; \n"
+		"out vec2 TexCoords; \n"
+		"void main(){ \n"
+		"gl_position = vec4(aPos.x, aPos.y, 0.0, 1.0); \n"
+		"TexCoords = aTexCoords; \n"
+		"} \n"
+		;
+
+	const char* screenFragmentShader =
+		"#version 440 core \n"
+		"out vec4 FragColor;\n"
+		"in vec2 TexCoords; \n"
+		"uniform sampler2D screenTexture; \n"
+		"void main(){ \n"
+		"FragColor = texture(screenTexture, TexCoords); \n"
+		"} \n"
+		;
+
+	screenShader = new ResourceShader(screenVertexShader, screenFragmentShader, false);
+	screenShader->name = "Screen";
 }

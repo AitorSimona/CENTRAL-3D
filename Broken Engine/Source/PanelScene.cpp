@@ -148,6 +148,12 @@ bool PanelScene::Draw()
 		ImGui::End();
 	}
 	
+	App->gui->sceneHeight = height;
+	App->gui->sceneWidth = width;
+	App->gui->sceneX = posX;
+	App->gui->sceneY = posY;
+	App->gui->hoveringScene = SceneHovered;
+
 	ImGui::End();
 
 	return true;

@@ -6,8 +6,6 @@
 #include "GameObject.h"
 #include "ModuleGui.h"
 
-#include "PanelScene.h"
-
 #include "mmgr/mmgr.h"
 
 ModuleUI::ModuleUI(bool start_enabled) : Module(start_enabled)
@@ -66,7 +64,7 @@ void ModuleUI::Draw() const
 	glLoadIdentity();
 	//glPushMatrix();
 
-	glOrtho(0, App->gui->panelScene->height, 0, App->gui->panelScene->width, -1, 1);
+	glOrtho(0, App->gui->sceneHeight, 0, App->gui->sceneWidth, -1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

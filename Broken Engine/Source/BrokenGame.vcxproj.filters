@@ -82,8 +82,11 @@
     <Filter Include="Sources\Tools\DeviceID">
       <UniqueIdentifier>{7c511496-d653-456c-8542-c8926a418e2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Modules\Modules">
+      <UniqueIdentifier>{1926d976-4f03-45d9-8c61-59e00b33445a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Sources\UI">
-      <UniqueIdentifier>{8fd71839-7427-4452-a126-48ab57e7aed5}</UniqueIdentifier>
+      <UniqueIdentifier>{50abded5-2d8e-4569-a7ec-f159658bf702}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -621,8 +624,38 @@
     <ClInclude Include="gpudetect\dxgi1_4.h">
       <Filter>Sources\Tools\DeviceID</Filter>
     </ClInclude>
+    <ClInclude Include="PanelPhysics.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelGame.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelBuild.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingMath.h">
+      <Filter>Sources\Modules\Scripting Functions</Filter>
+    </ClInclude>
     <ClInclude Include="ModuleUI.h">
       <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAnimation.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentBone.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceBone.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAnimation.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterAnimation.h">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterBone.h">
+      <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="Canvas.h">
       <Filter>Sources\UI</Filter>
@@ -632,36 +665,6 @@
     </ClInclude>
     <ClInclude Include="Text.h">
       <Filter>Sources\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentAnimation.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentBone.h">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceAnimation.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceBone.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterAnimation.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImporterBone.h">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClInclude>
-    <ClInclude Include="PanelPhysics.h">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="PanelGame.h">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptingMath.h">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
-    </ClInclude>
-    <ClInclude Include="PanelBuild.h">
-      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1019,14 +1022,41 @@
     <ClCompile Include="PanelGame.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
-    <ClInclude Include="ScriptingMath.h">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
-    </ClInclude>
+    <ClCompile Include="PanelBuild.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
     <ClCompile Include="ScriptingMath.cpp">
       <Filter>Sources\Modules\Scripting Functions</Filter>
     </ClCompile>
-    <ClCompile Include="PanelBuild.cpp">
-      <Filter>Sources\EditorPanels</Filter>
+    <ClCompile Include="ModuleUI.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAnimation.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentBone.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAnimation.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceBone.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterAnimation.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterBone.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Sources\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1082,36 +1112,6 @@
     <ClCompile Include="gpudetect\DeviceId.cpp">
       <Filter>Sources\Tools\DeviceID</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleUI.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentAnimation.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentBone.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceAnimation.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceBone.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterAnimation.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ImporterBone.cpp">
-      <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="EXE ICON.ico">
@@ -1142,7 +1142,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Broken Engine.rc">
+    <ResourceCompile Include="BrokenGame.rc">
       <Filter>Sources\VSResources</Filter>
     </ResourceCompile>
   </ItemGroup>
