@@ -1,0 +1,4696 @@
+{
+    "1002422507": {
+        "Components": {
+            "0": {
+                "positionx": "398.825317",
+                "positiony": "512.498779",
+                "positionz": "36.152344",
+                "rotationw": "0.068148",
+                "rotationx": "0.000000",
+                "rotationy": "0.997675",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496091"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__55_",
+        "Parent": "232355806"
+    },
+    "1007010637": {
+        "Components": {
+            "0": {
+                "positionx": "2100.960938",
+                "positiony": "553.985352",
+                "positionz": "2721.910156",
+                "rotationw": "0.986232",
+                "rotationx": "0.016260",
+                "rotationy": "-0.164544",
+                "rotationz": "0.002713",
+                "scalex": "0.090368",
+                "scaley": "0.141400",
+                "scalez": "1.215962"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__4__2",
+        "Parent": "232355806"
+    },
+    "1009275414": {
+        "Components": {
+            "0": {
+                "positionx": "-5040.000977",
+                "positiony": "14931.001953",
+                "positionz": "6800.000488",
+                "rotationw": "0.989294",
+                "rotationx": "0.000000",
+                "rotationy": "0.145933",
+                "rotationz": "0.000000",
+                "scalex": "25.258335",
+                "scaley": "1.032900",
+                "scalez": "66.790131"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__13__1",
+        "Parent": "1996740322"
+    },
+    "1014394563": {
+        "Components": {
+            "0": {
+                "positionx": "780.701416",
+                "positiony": "15529.869141",
+                "positionz": "12260.216797",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "24.485893",
+                "scaley": "1.032900",
+                "scalez": "26.652582"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1312676634.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Outside_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube_1",
+        "Parent": "1996740322"
+    },
+    "1016655381": {
+        "Components": {
+            "0": {
+                "positionx": "-1036.047607",
+                "positiony": "1169.200439",
+                "positionz": "504.073364",
+                "rotationw": "0.989353",
+                "rotationx": "0.000000",
+                "rotationy": "0.145533",
+                "rotationz": "0.000000",
+                "scalex": "3.604601",
+                "scaley": "4.730387",
+                "scalez": "2.997900"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1136037474.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Default_Material.mat"
+                }
+            }
+        },
+        "Name": "Cube_2",
+        "Parent": "1469479897"
+    },
+    "1018646813": {
+        "Components": {
+            "0": {
+                "positionx": "1623.628418",
+                "positiony": "493.601074",
+                "positionz": "1852.294189",
+                "rotationw": "0.442116",
+                "rotationx": "0.000000",
+                "rotationy": "0.896958",
+                "rotationz": "0.000000",
+                "scalex": "1.158664",
+                "scaley": "1.281409",
+                "scalez": "1.435234"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__48_",
+        "Parent": "232355806"
+    },
+    "1044576153": {
+        "Components": {
+            "0": {
+                "positionx": "-1942.000000",
+                "positiony": "-130.399902",
+                "positionz": "-1298.999268",
+                "rotationw": "0.981379",
+                "rotationx": "0.000000",
+                "rotationy": "0.192082",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Name": "Sign__2_",
+        "Parent": "2050126005"
+    },
+    "1053153836": {
+        "Components": {
+            "0": {
+                "positionx": "98023.375000",
+                "positiony": "57653.968750",
+                "positionz": "59162.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.640955",
+                "scaley": "1.009795",
+                "scalez": "104.939674"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__4__7",
+        "Parent": "222151500"
+    },
+    "1063334711": {
+        "Components": {
+            "0": {
+                "positionx": "344.443298",
+                "positiony": "716.327698",
+                "positionz": "1288.753418",
+                "rotationw": "-0.258871",
+                "rotationx": "0.678767",
+                "rotationy": "0.532287",
+                "rotationz": "-0.434662",
+                "scalex": "0.313724",
+                "scaley": "1.375502",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__9_",
+        "Parent": "621525162"
+    },
+    "1082441744": {
+        "Components": {
+            "0": {
+                "positionx": "-16594.851563",
+                "positiony": "6573.444824",
+                "positionz": "10290.979492",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.726873",
+                "scaley": "0.158191",
+                "scalez": "2.469052"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__6",
+        "Parent": "2001309903"
+    },
+    "1098668254": {
+        "Components": {
+            "0": {
+                "positionx": "758.070313",
+                "positiony": "523.400879",
+                "positionz": "-97.726074",
+                "rotationw": "0.985259",
+                "rotationx": "0.016276",
+                "rotationy": "-0.170271",
+                "rotationz": "0.002618",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__13__2",
+        "Parent": "232355806"
+    },
+    "1108140784": {
+        "Components": {
+            "0": {
+                "positionx": "376.533142",
+                "positiony": "754.777283",
+                "positionz": "1258.973145",
+                "rotationw": "0.694055",
+                "rotationx": "-0.305663",
+                "rotationy": "-0.203875",
+                "rotationz": "0.619107",
+                "scalex": "0.313724",
+                "scaley": "1.375503",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__6_",
+        "Parent": "621525162"
+    },
+    "1110751898": {
+        "Components": {
+            "0": {
+                "positionx": "97453.375000",
+                "positiony": "57653.968750",
+                "positionz": "57592.371094",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__7__4",
+        "Parent": "222151500"
+    },
+    "1123224281": {
+        "Components": {
+            "0": {
+                "positionx": "-4979.000977",
+                "positiony": "15004.000977",
+                "positionz": "8181.000488",
+                "rotationw": "0.936473",
+                "rotationx": "-0.004617",
+                "rotationy": "-0.350669",
+                "rotationz": "-0.005366",
+                "scalex": "4.581244",
+                "scaley": "0.547215",
+                "scalez": "3.985795"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1657891830.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Egg.mat"
+                }
+            }
+        },
+        "Name": "Cube__16__1",
+        "Parent": "1996740322"
+    },
+    "1134705545": {
+        "Components": {
+            "0": {
+                "positionx": "-1230.000000",
+                "positiony": "-5990.000000",
+                "positionz": "-24421.000000",
+                "rotationw": "0.906901",
+                "rotationx": "0.011889",
+                "rotationy": "0.421021",
+                "rotationz": "0.011420",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Name": "Carriage__2_",
+        "Parent": "162772109"
+    },
+    "1140161022": {
+        "Components": {
+            "0": {
+                "positionx": "-2331.489746",
+                "positiony": "694.388428",
+                "positionz": "698.357178",
+                "rotationw": "-0.167374",
+                "rotationx": "0.000000",
+                "rotationy": "0.985893",
+                "rotationz": "0.000000",
+                "scalex": "1.638694",
+                "scaley": "3.937902",
+                "scalez": "11.797467"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__25_",
+        "Parent": "232355806"
+    },
+    "1180518500": {
+        "Components": {
+            "0": {
+                "positionx": "58591.929688",
+                "positiony": "62179.515625",
+                "positionz": "45373.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__7",
+        "Parent": "814661755"
+    },
+    "1189004125": {
+        "Components": {
+            "0": {
+                "positionx": "1558.133057",
+                "positiony": "3638.988281",
+                "positionz": "4825.912598",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.148395",
+                "scaley": "0.982564",
+                "scalez": "0.107187"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__2_",
+        "Parent": "375443938"
+    },
+    "119092320": {
+        "Components": {
+            "0": {
+                "positionx": "-16598.050781",
+                "positiony": "6590.442383",
+                "positionz": "10180.979492",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.551786",
+                "scaley": "0.359157",
+                "scalez": "0.238572"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__6__3",
+        "Parent": "1555300199"
+    },
+    "1210310687": {
+        "Components": {
+            "0": {
+                "positionx": "97123.375000",
+                "positiony": "57653.968750",
+                "positionz": "56692.371094",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__8__4",
+        "Parent": "222151500"
+    },
+    "1221032816": {
+        "Components": {
+            "0": {
+                "positionx": "-1765.741821",
+                "positiony": "694.388428",
+                "positionz": "-1686.682251",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__40_",
+        "Parent": "232355806"
+    },
+    "1241031905": {
+        "Components": {
+            "0": {
+                "positionx": "-5376.000488",
+                "positiony": "15004.000977",
+                "positionz": "7086.000488",
+                "rotationw": "0.710778",
+                "rotationx": "-0.006410",
+                "rotationy": "-0.703381",
+                "rotationz": "-0.003005",
+                "scalex": "4.581245",
+                "scaley": "0.547215",
+                "scalez": "3.985795"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1657891830.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Egg.mat"
+                }
+            }
+        },
+        "Name": "Cube__15__1",
+        "Parent": "1996740322"
+    },
+    "1250832547": {
+        "Components": {
+            "0": {
+                "positionx": "-16667.449219",
+                "positiony": "6590.445313",
+                "positionz": "10325.979492",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.229536",
+                "scaley": "0.359157",
+                "scalez": "3.049279"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__5__4",
+        "Parent": "1134705545"
+    },
+    "1309243180": {
+        "Components": {
+            "0": {
+                "positionx": "47199.996094",
+                "positiony": "81900.000000",
+                "positionz": "-21319.996094",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "226.910690",
+                "scaley": "13.440220",
+                "scalez": "89.497528"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1553951831.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Invisible.mat"
+                }
+            }
+        },
+        "Name": "Cube__3_",
+        "Parent": "1999036711"
+    },
+    "1309972888": {
+        "Components": {
+            "0": {
+                "positionx": "54231.937500",
+                "positiony": "62179.515625",
+                "positionz": "47013.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__13__3",
+        "Parent": "814661755"
+    },
+    "1315736791": {
+        "Components": {
+            "0": {
+                "positionx": "538.589111",
+                "positiony": "694.388428",
+                "positionz": "-844.950073",
+                "rotationw": "0.480130",
+                "rotationx": "0.000000",
+                "rotationy": "0.877197",
+                "rotationz": "0.000000",
+                "scalex": "1.638696",
+                "scaley": "3.937902",
+                "scalez": "12.646441"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__11_",
+        "Parent": "232355806"
+    },
+    "1319839325": {
+        "Components": {
+            "0": {
+                "positionx": "1573.234741",
+                "positiony": "493.601074",
+                "positionz": "2575.128906",
+                "rotationw": "0.442116",
+                "rotationx": "0.000000",
+                "rotationy": "0.896958",
+                "rotationz": "0.000000",
+                "scalex": "0.557549",
+                "scaley": "1.281409",
+                "scalez": "0.647705"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__46_",
+        "Parent": "232355806"
+    },
+    "1341898570": {
+        "Components": {
+            "0": {
+                "positionx": "46300.000000",
+                "positiony": "81259.992188",
+                "positionz": "-15589.999023",
+                "rotationw": "0.999848",
+                "rotationx": "-0.005780",
+                "rotationy": "0.016435",
+                "rotationz": "-0.000095",
+                "scalex": "34.671814",
+                "scaley": "13.440219",
+                "scalez": "76.202682"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1749257485.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Water.mat"
+                }
+            }
+        },
+        "Name": "Cube__5_",
+        "Parent": "1999036711"
+    },
+    "1345609663": {
+        "Components": {
+            "0": {
+                "positionx": "-1932.276978",
+                "positiony": "694.388428",
+                "positionz": "-1015.422485",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__37_",
+        "Parent": "232355806"
+    },
+    "1348596164": {
+        "Components": {
+            "0": {
+                "positionx": "-1601.962036",
+                "positiony": "694.388428",
+                "positionz": "-1779.989502",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__43_",
+        "Parent": "232355806"
+    },
+    "136119829": {
+        "Components": {
+            "0": {
+                "positionx": "-4510.000000",
+                "positiony": "14993.000977",
+                "positionz": "7215.000488",
+                "rotationw": "0.892981",
+                "rotationx": "-0.005171",
+                "rotationy": "-0.450038",
+                "rotationz": "-0.004834",
+                "scalex": "4.581243",
+                "scaley": "0.547215",
+                "scalez": "3.985793"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1657891830.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Egg.mat"
+                }
+            }
+        },
+        "Name": "Cube__17__1",
+        "Parent": "1996740322"
+    },
+    "1370964497": {
+        "Components": {
+            "0": {
+                "positionx": "1558.132568",
+                "positiony": "3657.687500",
+                "positionz": "4835.712402",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.807988",
+                "scaley": "0.527736",
+                "scalez": "0.107187"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__1_",
+        "Parent": "375443938"
+    },
+    "1371927609": {
+        "Components": {
+            "0": {
+                "positionx": "1900.006348",
+                "positiony": "512.498779",
+                "positionz": "354.262695",
+                "rotationw": "0.054393",
+                "rotationx": "0.000000",
+                "rotationy": "0.998520",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496092"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__59_",
+        "Parent": "232355806"
+    },
+    "1376327578": {
+        "Components": {
+            "0": {
+                "positionx": "2099.218994",
+                "positiony": "512.498779",
+                "positionz": "279.853027",
+                "rotationw": "0.054393",
+                "rotationx": "0.000000",
+                "rotationy": "0.998520",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496092"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__57_",
+        "Parent": "232355806"
+    },
+    "1385516241": {
+        "Components": {
+            "0": {
+                "positionx": "-1968.497437",
+                "positiony": "694.388428",
+                "positionz": "-1647.312256",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__41_",
+        "Parent": "232355806"
+    },
+    "139431005": {
+        "Components": {
+            "0": {
+                "positionx": "99229.382813",
+                "positiony": "57653.968750",
+                "positionz": "62457.375000",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__13__4",
+        "Parent": "222151500"
+    },
+    "1430745952": {
+        "Components": {
+            "0": {
+                "positionx": "-16594.851563",
+                "positiony": "6573.445313",
+                "positionz": "10290.979492",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.726873",
+                "scaley": "0.158191",
+                "scalez": "2.469052"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__5",
+        "Parent": "1134705545"
+    },
+    "1434165210": {
+        "Components": {
+            "0": {
+                "positionx": "-1845.269165",
+                "positiony": "505.412354",
+                "positionz": "-1220.934326",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "1.459024",
+                "scaley": "1.061550",
+                "scalez": "1.399393"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__70_",
+        "Parent": "232355806"
+    },
+    "1450173679": {
+        "Components": {
+            "0": {
+                "positionx": "1625.990723",
+                "positiony": "512.498779",
+                "positionz": "399.144531",
+                "rotationw": "0.054393",
+                "rotationx": "0.000000",
+                "rotationy": "0.998520",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496092"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__60_",
+        "Parent": "232355806"
+    },
+    "1469479897": {
+        "Components": {
+            "0": {
+                "positionx": "1039.395264",
+                "positiony": "62.944092",
+                "positionz": "-733.561523",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.393701",
+                "scaley": "0.393701",
+                "scalez": "0.393701"
+            }
+        },
+        "Name": "Tents",
+        "Parent": "232355806"
+    },
+    "1494098444": {
+        "Components": {
+            "0": {
+                "positionx": "477.503906",
+                "positiony": "531.707031",
+                "positionz": "-460.279297",
+                "rotationw": "0.999455",
+                "rotationx": "0.015433",
+                "rotationy": "0.028584",
+                "rotationz": "0.005795",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__9__2",
+        "Parent": "232355806"
+    },
+    "1504316240": {
+        "Components": {
+            "0": {
+                "positionx": "-1485.032837",
+                "positiony": "694.388428",
+                "positionz": "-1364.635010",
+                "rotationw": "0.117700",
+                "rotationx": "0.000000",
+                "rotationy": "0.993049",
+                "rotationz": "0.000000",
+                "scalex": "1.638695",
+                "scaley": "3.937902",
+                "scalez": "11.437028"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__19_",
+        "Parent": "232355806"
+    },
+    "151451114": {
+        "Components": {
+            "0": {
+                "positionx": "55531.925781",
+                "positiony": "62179.515625",
+                "positionz": "46523.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__10__2",
+        "Parent": "814661755"
+    },
+    "1519504389": {
+        "Components": {
+            "0": {
+                "positionx": "376.533142",
+                "positiony": "754.777283",
+                "positionz": "1258.973145",
+                "rotationw": "-0.439360",
+                "rotationx": "0.618146",
+                "rotationy": "0.492333",
+                "rotationz": "-0.427162",
+                "scalex": "0.313724",
+                "scaley": "1.375505",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__7_",
+        "Parent": "621525162"
+    },
+    "1528145643": {
+        "Components": {
+            "0": {
+                "positionx": "98269.382813",
+                "positiony": "57653.968750",
+                "positionz": "59837.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__16__2",
+        "Parent": "222151500"
+    },
+    "1543086529": {
+        "Components": {
+            "0": {
+                "positionx": "56361.933594",
+                "positiony": "62179.515625",
+                "positionz": "46213.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__8__3",
+        "Parent": "814661755"
+    },
+    "1555300199": {
+        "Components": {
+            "0": {
+                "positionx": "16225.000000",
+                "positiony": "-6266.000488",
+                "positionz": "-9575.001953",
+                "rotationw": "0.986232",
+                "rotationx": "0.016260",
+                "rotationy": "-0.164544",
+                "rotationz": "0.002713",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Name": "Carriage__1_",
+        "Parent": "162772109"
+    },
+    "1598094373": {
+        "Components": {
+            "0": {
+                "positionx": "698.617188",
+                "positiony": "523.414063",
+                "positionz": "-118.548340",
+                "rotationw": "0.985259",
+                "rotationx": "0.016276",
+                "rotationy": "-0.170271",
+                "rotationz": "0.002618",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__14__2",
+        "Parent": "232355806"
+    },
+    "1599154049": {
+        "Components": {
+            "0": {
+                "positionx": "56541.929688",
+                "positiony": "62140.042969",
+                "positionz": "46153.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "59.815334",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1545853982.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_1.mat"
+                }
+            }
+        },
+        "Name": "Cube__1__6",
+        "Parent": "814661755"
+    },
+    "1603385190": {
+        "Components": {
+            "0": {
+                "positionx": "-16667.449219",
+                "positiony": "6590.445313",
+                "positionz": "10325.981445",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.229536",
+                "scaley": "0.359157",
+                "scalez": "3.049279"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__5__5",
+        "Parent": "2001309903"
+    },
+    "1616762016": {
+        "Components": {
+            "0": {
+                "positionx": "-1977.552612",
+                "positiony": "539.664063",
+                "positionz": "1043.238770",
+                "rotationw": "0.170540",
+                "rotationx": "0.000000",
+                "rotationy": "0.985351",
+                "rotationz": "0.000000",
+                "scalex": "3.912892",
+                "scaley": "1.597646",
+                "scalez": "3.963625"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/2079087733.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Stone.mat"
+                }
+            }
+        },
+        "Name": "Cube__53_",
+        "Parent": "232355806"
+    },
+    "1622847877": {
+        "Components": {
+            "0": {
+                "positionx": "306.453430",
+                "positiony": "766.058655",
+                "positionz": "1286.183594",
+                "rotationw": "-0.332892",
+                "rotationx": "0.618515",
+                "rotationy": "0.675678",
+                "rotationz": "-0.223790",
+                "scalex": "0.313724",
+                "scaley": "1.375504",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__4_",
+        "Parent": "621525162"
+    },
+    "1623306570": {
+        "Components": {
+            "0": {
+                "positionx": "1558.134033",
+                "positiony": "3657.688965",
+                "positionz": "4835.711914",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.807988",
+                "scaley": "0.527736",
+                "scalez": "0.107187"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__1__2",
+        "Parent": "1044576153"
+    },
+    "162772109": {
+        "Components": {
+            "0": {
+                "positionx": "1857.157959",
+                "positiony": "546.006348",
+                "positionz": "1881.549561",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.393701",
+                "scaley": "0.393701",
+                "scalez": "0.393701"
+            }
+        },
+        "Name": "Carriages",
+        "Parent": "232355806"
+    },
+    "164520380": {
+        "Components": {
+            "0": {
+                "positionx": "2055.492188",
+                "positiony": "531.278320",
+                "positionz": "2670.954102",
+                "rotationw": "0.986232",
+                "rotationx": "0.016260",
+                "rotationy": "-0.164543",
+                "rotationz": "0.002713",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__8__2",
+        "Parent": "232355806"
+    },
+    "1647308213": {
+        "Components": {
+            "0": {
+                "positionx": "-2414.166992",
+                "positiony": "694.388428",
+                "positionz": "-2329.201904",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "1.638696",
+                "scaley": "3.937902",
+                "scalez": "9.123602"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__28_",
+        "Parent": "232355806"
+    },
+    "1650759128": {
+        "Components": {
+            "0": {
+                "positionx": "1495.675659",
+                "positiony": "694.388428",
+                "positionz": "-1045.737427",
+                "rotationw": "0.760226",
+                "rotationx": "0.000000",
+                "rotationy": "0.649659",
+                "rotationz": "0.000000",
+                "scalex": "1.638698",
+                "scaley": "3.937902",
+                "scalez": "12.646456"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__10_",
+        "Parent": "232355806"
+    },
+    "1651307165": {
+        "Components": {
+            "0": {
+                "positionx": "2092.208984",
+                "positiony": "555.944336",
+                "positionz": "2656.087891",
+                "rotationw": "0.986232",
+                "rotationx": "0.016260",
+                "rotationy": "-0.164544",
+                "rotationz": "0.002713",
+                "scalex": "0.610939",
+                "scaley": "0.141400",
+                "scalez": "0.093926"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__6__2",
+        "Parent": "232355806"
+    },
+    "165171443": {
+        "Components": {
+            "0": {
+                "positionx": "-4029.000732",
+                "positiony": "15169.001953",
+                "positionz": "7036.000488",
+                "rotationw": "0.875154",
+                "rotationx": "0.092044",
+                "rotationy": "0.227175",
+                "rotationz": "0.417164",
+                "scalex": "8.473336",
+                "scaley": "1.032900",
+                "scalez": "89.863106"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__7__1",
+        "Parent": "1996740322"
+    },
+    "1662267410": {
+        "Components": {
+            "0": {
+                "positionx": "-107.080200",
+                "positiony": "694.388428",
+                "positionz": "-163.847656",
+                "rotationw": "0.151923",
+                "rotationx": "0.000000",
+                "rotationy": "0.988392",
+                "rotationz": "0.000000",
+                "scalex": "1.638694",
+                "scaley": "3.937902",
+                "scalez": "7.300069"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__12_",
+        "Parent": "232355806"
+    },
+    "1692004727": {
+        "Components": {
+            "0": {
+                "positionx": "86762.281250",
+                "positiony": "81900.007813",
+                "positionz": "57251.507813",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "176.227631",
+                "scaley": "13.440220",
+                "scalez": "89.497528"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1553951831.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Invisible.mat"
+                }
+            }
+        },
+        "Name": "Cube__2__3",
+        "Parent": "1999036711"
+    },
+    "169353076": {
+        "Components": {
+            "0": {
+                "positionx": "-1323.615601",
+                "positiony": "694.388428",
+                "positionz": "324.341309",
+                "rotationw": "0.056070",
+                "rotationx": "0.000000",
+                "rotationy": "0.998427",
+                "rotationz": "0.000000",
+                "scalex": "3.096484",
+                "scaley": "3.937902",
+                "scalez": "7.602712"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__21_",
+        "Parent": "232355806"
+    },
+    "1697858533": {
+        "Components": {
+            "0": {
+                "positionx": "59011.937500",
+                "positiony": "62179.515625",
+                "positionz": "45213.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__2__6",
+        "Parent": "814661755"
+    },
+    "1705602878": {
+        "Components": {
+            "0": {
+                "positionx": "1818.904053",
+                "positiony": "512.498779",
+                "positionz": "746.782227",
+                "rotationw": "-0.043523",
+                "rotationx": "0.000000",
+                "rotationy": "0.999053",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496090"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__62_",
+        "Parent": "232355806"
+    },
+    "1712468601": {
+        "Components": {
+            "0": {
+                "positionx": "-1681.883179",
+                "positiony": "694.388428",
+                "positionz": "1438.514404",
+                "rotationw": "0.578259",
+                "rotationx": "0.000000",
+                "rotationy": "-0.815853",
+                "rotationz": "-0.000000",
+                "scalex": "1.638696",
+                "scaley": "3.937902",
+                "scalez": "11.797475"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__26_",
+        "Parent": "232355806"
+    },
+    "1749176616": {
+        "Components": {
+            "0": {
+                "positionx": "-2212.592285",
+                "positiony": "527.459473",
+                "positionz": "300.325439",
+                "rotationw": "0.147846",
+                "rotationx": "0.000000",
+                "rotationy": "0.989010",
+                "rotationz": "0.000000",
+                "scalex": "4.208181",
+                "scaley": "0.674876",
+                "scalez": "0.364727"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__64_",
+        "Parent": "232355806"
+    },
+    "1758939861": {
+        "Components": {
+            "0": {
+                "positionx": "2936.000488",
+                "positiony": "-130.400391",
+                "positionz": "-2309.999512",
+                "rotationw": "0.962734",
+                "rotationx": "0.000000",
+                "rotationy": "-0.270450",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Name": "Sign__1_",
+        "Parent": "2050126005"
+    },
+    "1763081443": {
+        "Components": {
+            "0": {
+                "positionx": "362.393372",
+                "positiony": "774.449768",
+                "positionz": "1245.623535",
+                "rotationw": "0.650827",
+                "rotationx": "-0.388388",
+                "rotationy": "-0.334304",
+                "rotationz": "0.560197",
+                "scalex": "0.313724",
+                "scaley": "1.375504",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__3_",
+        "Parent": "621525162"
+    },
+    "1773587065": {
+        "Components": {
+            "0": {
+                "positionx": "2116.189453",
+                "positiony": "531.278320",
+                "positionz": "2691.787109",
+                "rotationw": "0.986232",
+                "rotationx": "0.016260",
+                "rotationy": "-0.164543",
+                "rotationz": "0.002713",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__7__2",
+        "Parent": "232355806"
+    },
+    "1775187486": {
+        "Components": {
+            "0": {
+                "positionx": "-16522.750000",
+                "positiony": "6590.443359",
+                "positionz": "10331.981445",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.229536",
+                "scaley": "0.359157",
+                "scalez": "3.088543"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__4__5",
+        "Parent": "2001309903"
+    },
+    "1776218800": {
+        "Components": {
+            "0": {
+                "positionx": "-16594.851563",
+                "positiony": "6573.445313",
+                "positionz": "10290.980469",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.726873",
+                "scaley": "0.158191",
+                "scalez": "2.469052"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__4",
+        "Parent": "1555300199"
+    },
+    "178584522": {
+        "Components": {
+            "0": {
+                "positionx": "98023.375000",
+                "positiony": "57653.968750",
+                "positionz": "59162.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__5__7",
+        "Parent": "222151500"
+    },
+    "1805482956": {
+        "Components": {
+            "0": {
+                "positionx": "-2099.599609",
+                "positiony": "493.601074",
+                "positionz": "-331.957886",
+                "rotationw": "0.155901",
+                "rotationx": "0.000000",
+                "rotationy": "0.987773",
+                "rotationz": "0.000000",
+                "scalex": "1.638700",
+                "scaley": "1.281409",
+                "scalez": "1.387599"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__31_",
+        "Parent": "232355806"
+    },
+    "1839729411": {
+        "Components": {
+            "0": {
+                "positionx": "97693.375000",
+                "positiony": "57653.968750",
+                "positionz": "58262.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__6__7",
+        "Parent": "222151500"
+    },
+    "1855254099": {
+        "Components": {
+            "0": {
+                "positionx": "-1633.458374",
+                "positiony": "493.601074",
+                "positionz": "-523.296509",
+                "rotationw": "0.155901",
+                "rotationx": "0.000000",
+                "rotationy": "0.987773",
+                "rotationz": "0.000000",
+                "scalex": "1.023282",
+                "scaley": "1.281409",
+                "scalez": "0.835826"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__33_",
+        "Parent": "232355806"
+    },
+    "1877065883": {
+        "Components": {
+            "0": {
+                "positionx": "55111.933594",
+                "positiony": "62179.515625",
+                "positionz": "46683.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__11__3",
+        "Parent": "814661755"
+    },
+    "1888714186": {
+        "Components": {
+            "0": {
+                "positionx": "-1956.047607",
+                "positiony": "1169.200317",
+                "positionz": "1080.073120",
+                "rotationw": "0.985127",
+                "rotationx": "0.000000",
+                "rotationy": "-0.171829",
+                "rotationz": "0.000000",
+                "scalex": "3.324971",
+                "scaley": "4.730387",
+                "scalez": "4.333465"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1136037474.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Default_Material.mat"
+                }
+            }
+        },
+        "Name": "Cube__1__5",
+        "Parent": "1469479897"
+    },
+    "188934968": {
+        "Components": {
+            "0": {
+                "positionx": "-16522.750000",
+                "positiony": "6590.443359",
+                "positionz": "10331.978516",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.229536",
+                "scaley": "0.359157",
+                "scalez": "3.088543"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__4__3",
+        "Parent": "1555300199"
+    },
+    "1890207128": {
+        "Components": {
+            "0": {
+                "positionx": "44039.996094",
+                "positiony": "81230.000000",
+                "positionz": "-18200.000000",
+                "rotationw": "0.936657",
+                "rotationx": "-0.005415",
+                "rotationy": "-0.350201",
+                "rotationz": "0.002024",
+                "scalex": "97.015686",
+                "scaley": "13.440219",
+                "scalez": "89.497536"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1749257485.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Water.mat"
+                }
+            }
+        },
+        "Name": "Cube__4_",
+        "Parent": "1999036711"
+    },
+    "1895300345": {
+        "Components": {
+            "0": {
+                "positionx": "-1201.568481",
+                "positiony": "694.388428",
+                "positionz": "-2376.446045",
+                "rotationw": "0.180315",
+                "rotationx": "0.000000",
+                "rotationy": "0.983609",
+                "rotationz": "0.000000",
+                "scalex": "1.638698",
+                "scaley": "3.937902",
+                "scalez": "11.437041"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__23_",
+        "Parent": "232355806"
+    },
+    "1895816478": {
+        "Components": {
+            "0": {
+                "positionx": "54661.933594",
+                "positiony": "62179.515625",
+                "positionz": "46853.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__12__3",
+        "Parent": "814661755"
+    },
+    "191762882": {
+        "Components": {
+            "0": {
+                "positionx": "649.999756",
+                "positiony": "15529.867188",
+                "positionz": "4870.000488",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "27.652586",
+                "scaley": "1.032900",
+                "scalez": "42.199036"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__5__1",
+        "Parent": "1996740322"
+    },
+    "1926839722": {
+        "Components": {
+            "0": {
+                "positionx": "-1095.269409",
+                "positiony": "694.388428",
+                "positionz": "1340.089355",
+                "rotationw": "0.877044",
+                "rotationx": "0.000000",
+                "rotationy": "-0.480410",
+                "rotationz": "0.000000",
+                "scalex": "1.638696",
+                "scaley": "3.937901",
+                "scalez": "7.609539"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__27_",
+        "Parent": "232355806"
+    },
+    "1948075210": {
+        "Components": {
+            "0": {
+                "positionx": "98899.375000",
+                "positiony": "57653.968750",
+                "positionz": "61557.375000",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__14__3",
+        "Parent": "222151500"
+    },
+    "1965257970": {
+        "Components": {
+            "0": {
+                "positionx": "2047.843750",
+                "positiony": "554.063477",
+                "positionz": "2701.182617",
+                "rotationw": "0.986232",
+                "rotationx": "0.016260",
+                "rotationy": "-0.164543",
+                "rotationz": "0.002713",
+                "scalex": "0.090368",
+                "scaley": "0.141400",
+                "scalez": "1.200503"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__5__2",
+        "Parent": "232355806"
+    },
+    "1969181214": {
+        "Components": {
+            "0": {
+                "positionx": "1290.557617",
+                "positiony": "694.388428",
+                "positionz": "2064.498779",
+                "rotationw": "0.972280",
+                "rotationx": "-0.000000",
+                "rotationy": "-0.233821",
+                "rotationz": "0.000000",
+                "scalex": "1.638696",
+                "scaley": "3.937902",
+                "scalez": "11.246946"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__13_",
+        "Parent": "232355806"
+    },
+    "1996163426": {
+        "Components": {
+            "0": {
+                "positionx": "-8670.000977",
+                "positiony": "15529.867188",
+                "positionz": "2600.000488",
+                "rotationw": "0.999729",
+                "rotationx": "0.000000",
+                "rotationy": "-0.023288",
+                "rotationz": "0.000000",
+                "scalex": "25.234596",
+                "scaley": "1.032900",
+                "scalez": "31.329250"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__11__1",
+        "Parent": "1996740322"
+    },
+    "1996740322": {
+        "Components": {
+            "0": {
+                "positionx": "1481.619995",
+                "positiony": "-5617.369629",
+                "positionz": "-2228.892578",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.393701",
+                "scaley": "0.393701",
+                "scalez": "0.393701"
+            }
+        },
+        "Name": "Ground",
+        "Parent": "232355806"
+    },
+    "1999036711": {
+        "Components": {
+            "0": {
+                "positionx": "-5664.245117",
+                "positiony": "-6295.375488",
+                "positionz": "-1347.706543",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.083296",
+                "scaley": "0.083296",
+                "scalez": "0.083296"
+            }
+        },
+        "Name": "Invisible_Walls",
+        "Parent": "232355806"
+    },
+    "2001309903": {
+        "Components": {
+            "0": {
+                "positionx": "12998.000000",
+                "positiony": "-6084.000488",
+                "positionz": "-16531.000000",
+                "rotationw": "0.999857",
+                "rotationx": "0.015572",
+                "rotationy": "0.003784",
+                "rotationz": "0.005411",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Name": "Carriage__3_",
+        "Parent": "162772109"
+    },
+    "2003357989": {
+        "Components": {
+            "0": {
+                "positionx": "2063.785889",
+                "positiony": "493.601074",
+                "positionz": "2867.648438",
+                "rotationw": "0.442116",
+                "rotationx": "0.000000",
+                "rotationy": "0.896958",
+                "rotationz": "0.000000",
+                "scalex": "0.700975",
+                "scaley": "1.281409",
+                "scalez": "0.765458"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__47_",
+        "Parent": "232355806"
+    },
+    "2015706819": {
+        "Components": {
+            "0": {
+                "positionx": "362.393372",
+                "positiony": "774.449768",
+                "positionz": "1245.623535",
+                "rotationw": "0.757905",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.652365",
+                "scalex": "0.313724",
+                "scaley": "1.375503",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__2_",
+        "Parent": "621525162"
+    },
+    "2036804097": {
+        "Components": {
+            "0": {
+                "positionx": "-1095.000244",
+                "positiony": "1169.200317",
+                "positionz": "1971.999878",
+                "rotationw": "0.953777",
+                "rotationx": "0.000000",
+                "rotationy": "-0.300515",
+                "rotationz": "0.000000",
+                "scalex": "3.324972",
+                "scaley": "4.730386",
+                "scalez": "3.658338"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1136037474.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Default_Material.mat"
+                }
+            }
+        },
+        "Name": "Cube__2__5",
+        "Parent": "1469479897"
+    },
+    "2039533300": {
+        "Components": {
+            "0": {
+                "positionx": "-16598.048828",
+                "positiony": "6590.445801",
+                "positionz": "10180.977539",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.551786",
+                "scaley": "0.359157",
+                "scalez": "0.238572"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__6__4",
+        "Parent": "1134705545"
+    },
+    "2049079875": {
+        "Components": {
+            "0": {
+                "positionx": "-1310.000244",
+                "positiony": "15529.867188",
+                "positionz": "4680.000977",
+                "rotationw": "0.961567",
+                "rotationx": "0.000000",
+                "rotationy": "0.274569",
+                "rotationz": "0.000000",
+                "scalex": "66.231773",
+                "scaley": "1.032900",
+                "scalez": "27.318142"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__6__1",
+        "Parent": "1996740322"
+    },
+    "2050126005": {
+        "Components": {
+            "0": {
+                "positionx": "1187.749268",
+                "positiony": "-847.615356",
+                "positionz": "885.871826",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.393701",
+                "scaley": "0.393701",
+                "scalez": "0.393701"
+            }
+        },
+        "Name": "Signs",
+        "Parent": "232355806"
+    },
+    "2070012107": {
+        "Components": {
+            "0": {
+                "positionx": "-2021.647339",
+                "positiony": "527.459473",
+                "positionz": "558.199463",
+                "rotationw": "-0.336845",
+                "rotationx": "0.000000",
+                "rotationy": "0.941560",
+                "rotationz": "0.000000",
+                "scalex": "2.383445",
+                "scaley": "0.674876",
+                "scalez": "0.364728"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__65_",
+        "Parent": "232355806"
+    },
+    "207457888": {
+        "Components": {
+            "0": {
+                "positionx": "-4980.000488",
+                "positiony": "15520.001953",
+                "positionz": "7274.000977",
+                "rotationw": "0.820052",
+                "rotationx": "-0.005805",
+                "rotationy": "-0.572246",
+                "rotationz": "-0.004051",
+                "scalex": "2.754144",
+                "scaley": "1.032900",
+                "scalez": "27.690649"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__14__1",
+        "Parent": "1996740322"
+    },
+    "2094194017": {
+        "Components": {
+            "0": {
+                "positionx": "-1683.851929",
+                "positiony": "493.601074",
+                "positionz": "213.711426",
+                "rotationw": "0.155901",
+                "rotationx": "0.000000",
+                "rotationy": "0.987773",
+                "rotationz": "0.000000",
+                "scalex": "2.136577",
+                "scaley": "1.281409",
+                "scalez": "2.059065"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__34_",
+        "Parent": "232355806"
+    },
+    "2096624365": {
+        "Components": {
+            "0": {
+                "positionx": "-490.000000",
+                "positiony": "1245.000122",
+                "positionz": "1360.999756",
+                "rotationw": "0.910116",
+                "rotationx": "0.000000",
+                "rotationy": "-0.414354",
+                "rotationz": "0.000000",
+                "scalex": "2.772460",
+                "scaley": "3.614678",
+                "scalez": "2.940033"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1136037474.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Default_Material.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__2",
+        "Parent": "1469479897"
+    },
+    "2100764245": {
+        "Components": {
+            "0": {
+                "positionx": "443.313538",
+                "positiony": "694.388428",
+                "positionz": "508.986816",
+                "rotationw": "0.445204",
+                "rotationx": "0.000000",
+                "rotationy": "0.895429",
+                "rotationz": "0.000000",
+                "scalex": "1.638696",
+                "scaley": "3.937902",
+                "scalez": "9.091255"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__18_",
+        "Parent": "232355806"
+    },
+    "2126003248": {
+        "Components": {
+            "0": {
+                "positionx": "-1698.418579",
+                "positiony": "694.388428",
+                "positionz": "-1457.942139",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__39_",
+        "Parent": "232355806"
+    },
+    "2146586571": {
+        "Components": {
+            "0": {
+                "positionx": "99469.382813",
+                "positiony": "57653.968750",
+                "positionz": "63127.363281",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__12__4",
+        "Parent": "222151500"
+    },
+    "222151500": {
+        "Components": {
+            "0": {
+                "positionx": "-6699.560059",
+                "positiony": "-4274.902832",
+                "positionz": "-2224.084229",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.083296",
+                "scaley": "0.083296",
+                "scalez": "0.083296"
+            }
+        },
+        "Name": "Fence",
+        "Parent": "232355806"
+    },
+    "232355806": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.023400",
+                "scaley": "0.023400",
+                "scalez": "0.023400"
+            }
+        },
+        "Name": "GameObject (0)",
+        "Parent": "1473596996"
+    },
+    "232958431": {
+        "Components": {
+            "0": {
+                "positionx": "-1519.678833",
+                "positiony": "539.664063",
+                "positionz": "714.892578",
+                "rotationw": "0.273960",
+                "rotationx": "0.000000",
+                "rotationy": "0.961741",
+                "rotationz": "0.000000",
+                "scalex": "2.331952",
+                "scaley": "1.597646",
+                "scalez": "2.706277"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/2079087733.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Stone.mat"
+                }
+            }
+        },
+        "Name": "Cube__54_",
+        "Parent": "232355806"
+    },
+    "233985805": {
+        "Components": {
+            "0": {
+                "positionx": "99799.375000",
+                "positiony": "57653.968750",
+                "positionz": "64027.363281",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1136037474.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Default_Material.mat"
+                }
+            }
+        },
+        "Name": "Cube__11__4",
+        "Parent": "222151500"
+    },
+    "25204607": {
+        "Components": {
+            "0": {
+                "positionx": "98599.375000",
+                "positiony": "57653.968750",
+                "positionz": "60737.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__15__2",
+        "Parent": "222151500"
+    },
+    "265204545": {
+        "Components": {
+            "0": {
+                "positionx": "589.701416",
+                "positiony": "15529.869141",
+                "positionz": "9631.214844",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "26.646933",
+                "scaley": "1.032900",
+                "scalez": "26.652582"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__1__4",
+        "Parent": "1996740322"
+    },
+    "275804348": {
+        "Components": {
+            "0": {
+                "positionx": "1333.470947",
+                "positiony": "694.388428",
+                "positionz": "-31.957886",
+                "rotationw": "0.935951",
+                "rotationx": "0.000000",
+                "rotationy": "0.352131",
+                "rotationz": "0.000000",
+                "scalex": "1.638696",
+                "scaley": "3.937902",
+                "scalez": "3.385918"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__16_",
+        "Parent": "232355806"
+    },
+    "282541452": {
+        "Components": {
+            "0": {
+                "positionx": "96823.375000",
+                "positiony": "57653.968750",
+                "positionz": "55872.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__9__4",
+        "Parent": "222151500"
+    },
+    "312570328": {
+        "Components": {
+            "0": {
+                "positionx": "817.000244",
+                "positiony": "15530.001953",
+                "positionz": "12745.003906",
+                "rotationw": "0.997320",
+                "rotationx": "0.000000",
+                "rotationy": "0.073165",
+                "rotationz": "0.000000",
+                "scalex": "6.424119",
+                "scaley": "1.032900",
+                "scalez": "15.513366"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1597195690.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Road_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__4__1",
+        "Parent": "1996740322"
+    },
+    "326461781": {
+        "Components": {
+            "0": {
+                "positionx": "2079.419922",
+                "positiony": "547.828125",
+                "positionz": "2697.227539",
+                "rotationw": "0.986232",
+                "rotationx": "0.016260",
+                "rotationy": "-0.164544",
+                "rotationz": "0.002713",
+                "scalex": "0.679871",
+                "scaley": "0.062280",
+                "scalez": "0.972068"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__3",
+        "Parent": "232355806"
+    },
+    "33301024": {
+        "Components": {
+            "0": {
+                "positionx": "96493.382813",
+                "positiony": "57653.968750",
+                "positionz": "54972.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.816384",
+                "scaley": "4.980917",
+                "scalez": "1.008876"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__10__3",
+        "Parent": "222151500"
+    },
+    "355758715": {
+        "Components": {
+            "0": {
+                "positionx": "-2170.859375",
+                "positiony": "694.388428",
+                "positionz": "-1810.304321",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__42_",
+        "Parent": "232355806"
+    },
+    "374149594": {
+        "Components": {
+            "0": {
+                "positionx": "57231.929688",
+                "positiony": "62179.515625",
+                "positionz": "45883.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__6__6",
+        "Parent": "814661755"
+    },
+    "375443938": {
+        "Components": {
+            "0": {
+                "positionx": "-2797.737305",
+                "positiony": "-130.399902",
+                "positionz": "-236.588623",
+                "rotationw": "0.955232",
+                "rotationx": "0.000000",
+                "rotationy": "0.295859",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            }
+        },
+        "Name": "Sign",
+        "Parent": "2050126005"
+    },
+    "384350516": {
+        "Components": {
+            "0": {
+                "positionx": "98023.375000",
+                "positiony": "57813.964844",
+                "positionz": "59162.367188",
+                "rotationw": "0.984734",
+                "rotationx": "0.000000",
+                "rotationy": "0.174068",
+                "rotationz": "0.000000",
+                "scalex": "0.640955",
+                "scaley": "1.009795",
+                "scalez": "104.939674"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__8",
+        "Parent": "222151500"
+    },
+    "392971629": {
+        "Components": {
+            "0": {
+                "positionx": "996.069458",
+                "positiony": "694.388428",
+                "positionz": "14.892456",
+                "rotationw": "0.348333",
+                "rotationx": "0.000000",
+                "rotationy": "0.937371",
+                "rotationz": "0.000000",
+                "scalex": "1.638697",
+                "scaley": "3.937902",
+                "scalez": "7.220812"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__17_",
+        "Parent": "232355806"
+    },
+    "416886228": {
+        "Components": {
+            "0": {
+                "positionx": "1647.250610",
+                "positiony": "527.459473",
+                "positionz": "647.176025",
+                "rotationw": "0.062818",
+                "rotationx": "0.000000",
+                "rotationy": "0.998025",
+                "rotationz": "0.000000",
+                "scalex": "2.775905",
+                "scaley": "0.674876",
+                "scalez": "0.364728"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__68_",
+        "Parent": "232355806"
+    },
+    "426696446": {
+        "Components": {
+            "0": {
+                "positionx": "-1314.954468",
+                "positiony": "539.664063",
+                "positionz": "1094.026367",
+                "rotationw": "-0.016439",
+                "rotationx": "0.000000",
+                "rotationy": "0.999865",
+                "rotationz": "0.000000",
+                "scalex": "1.185651",
+                "scaley": "1.597646",
+                "scalez": "1.067511"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/2079087733.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Stone.mat"
+                }
+            }
+        },
+        "Name": "Cube__51_",
+        "Parent": "232355806"
+    },
+    "466985478": {
+        "Components": {
+            "0": {
+                "positionx": "1388.982788",
+                "positiony": "694.388428",
+                "positionz": "312.530273",
+                "rotationw": "0.997401",
+                "rotationx": "0.000000",
+                "rotationy": "-0.072050",
+                "rotationz": "0.000000",
+                "scalex": "1.638697",
+                "scaley": "3.937902",
+                "scalez": "5.909054"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__15_",
+        "Parent": "232355806"
+    },
+    "481003357": {
+        "Components": {
+            "0": {
+                "positionx": "-1755.111694",
+                "positiony": "694.388428",
+                "positionz": "-981.564270",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__44_",
+        "Parent": "232355806"
+    },
+    "489665941": {
+        "Components": {
+            "0": {
+                "positionx": "229.871094",
+                "positiony": "517.443359",
+                "positionz": "-88.069824",
+                "rotationw": "0.897609",
+                "rotationx": "0.011640",
+                "rotationy": "0.440484",
+                "rotationz": "0.011673",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__11__2",
+        "Parent": "232355806"
+    },
+    "496594309": {
+        "Components": {
+            "0": {
+                "positionx": "58141.929688",
+                "positiony": "62179.515625",
+                "positionz": "45543.910156",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__4__6",
+        "Parent": "814661755"
+    },
+    "504069253": {
+        "Components": {
+            "0": {
+                "positionx": "-16522.750000",
+                "positiony": "6590.446289",
+                "positionz": "10331.976563",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.229536",
+                "scaley": "0.359157",
+                "scalez": "3.088543"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__4__4",
+        "Parent": "1134705545"
+    },
+    "519060525": {
+        "Components": {
+            "0": {
+                "positionx": "-2254.718262",
+                "positiony": "493.601074",
+                "positionz": "-171.328003",
+                "rotationw": "0.155901",
+                "rotationx": "0.000000",
+                "rotationy": "0.987773",
+                "rotationz": "0.000000",
+                "scalex": "1.638700",
+                "scaley": "1.281409",
+                "scalez": "3.758241"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__30_",
+        "Parent": "232355806"
+    },
+    "561850361": {
+        "Components": {
+            "0": {
+                "positionx": "-1429.914917",
+                "positiony": "694.388428",
+                "positionz": "-341.012939",
+                "rotationw": "-0.096327",
+                "rotationx": "0.000000",
+                "rotationy": "0.995350",
+                "rotationz": "0.000000",
+                "scalex": "2.908631",
+                "scaley": "3.937902",
+                "scalez": "11.797494"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__20_",
+        "Parent": "232355806"
+    },
+    "572629330": {
+        "Components": {
+            "0": {
+                "positionx": "-2307.867676",
+                "positiony": "694.388428",
+                "positionz": "-352.824097",
+                "rotationw": "0.155901",
+                "rotationx": "0.000000",
+                "rotationy": "0.987773",
+                "rotationz": "0.000000",
+                "scalex": "1.638700",
+                "scaley": "3.937902",
+                "scalez": "11.797503"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__24_",
+        "Parent": "232355806"
+    },
+    "579302778": {
+        "Components": {
+            "0": {
+                "positionx": "191.460938",
+                "positiony": "515.470703",
+                "positionz": "-38.018555",
+                "rotationw": "0.897609",
+                "rotationx": "0.011640",
+                "rotationy": "0.440484",
+                "rotationz": "0.011673",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__12__2",
+        "Parent": "232355806"
+    },
+    "581656013": {
+        "Components": {
+            "0": {
+                "positionx": "-16598.050781",
+                "positiony": "6590.443359",
+                "positionz": "10180.979492",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.551786",
+                "scaley": "0.359157",
+                "scalez": "0.238572"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__6__5",
+        "Parent": "2001309903"
+    },
+    "581978798": {
+        "Components": {
+            "0": {
+                "positionx": "1825.596924",
+                "positiony": "512.498779",
+                "positionz": "78.278320",
+                "rotationw": "0.083818",
+                "rotationx": "0.000000",
+                "rotationy": "0.996481",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496091"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__58_",
+        "Parent": "232355806"
+    },
+    "598511524": {
+        "Components": {
+            "0": {
+                "positionx": "1789.376587",
+                "positiony": "493.601074",
+                "positionz": "-494.556396",
+                "rotationw": "0.285694",
+                "rotationx": "0.000000",
+                "rotationy": "0.958321",
+                "rotationz": "0.000000",
+                "scalex": "1.357194",
+                "scaley": "1.281409",
+                "scalez": "1.381519"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__36_",
+        "Parent": "232355806"
+    },
+    "599528059": {
+        "Components": {
+            "0": {
+                "positionx": "-16667.451172",
+                "positiony": "6590.442871",
+                "positionz": "10325.979492",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.229536",
+                "scaley": "0.359157",
+                "scalez": "3.049279"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__5__3",
+        "Parent": "1555300199"
+    },
+    "603202149": {
+        "Components": {
+            "0": {
+                "positionx": "-8560.000000",
+                "positiony": "15529.869141",
+                "positionz": "7010.000977",
+                "rotationw": "0.987496",
+                "rotationx": "0.000000",
+                "rotationy": "0.157644",
+                "rotationz": "0.000000",
+                "scalex": "42.737808",
+                "scaley": "1.032900",
+                "scalez": "71.083900"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__9__1",
+        "Parent": "1996740322"
+    },
+    "604045716": {
+        "Components": {
+            "0": {
+                "positionx": "1558.134277",
+                "positiony": "3638.990723",
+                "positionz": "4825.913086",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.148395",
+                "scaley": "0.982564",
+                "scalez": "0.107187"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__2__1",
+        "Parent": "1758939861"
+    },
+    "604819301": {
+        "Components": {
+            "0": {
+                "positionx": "97262.281250",
+                "positiony": "81752.000000",
+                "positionz": "48471.496094",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "41.899593",
+                "scaley": "13.440220",
+                "scalez": "89.497528"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1553951831.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Invisible.mat"
+                }
+            }
+        },
+        "Name": "Cube__1__3",
+        "Parent": "1999036711"
+    },
+    "618913989": {
+        "Components": {
+            "0": {
+                "positionx": "414.601563",
+                "positiony": "530.915283",
+                "positionz": "-456.493164",
+                "rotationw": "0.999455",
+                "rotationx": "0.015433",
+                "rotationy": "0.028584",
+                "rotationz": "0.005795",
+                "scalex": "0.090368",
+                "scaley": "0.447354",
+                "scalez": "0.307815"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__10__1",
+        "Parent": "232355806"
+    },
+    "621525162": {
+        "Components": {
+            "0": {
+                "positionx": "392.335938",
+                "positiony": "220.015869",
+                "positionz": "-771.557739",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.393701",
+                "scaley": "0.393701",
+                "scalez": "0.393701"
+            }
+        },
+        "Name": "Bonfire",
+        "Parent": "232355806"
+    },
+    "669708373": {
+        "Components": {
+            "0": {
+                "positionx": "1747.644287",
+                "positiony": "512.498779",
+                "positionz": "903.475342",
+                "rotationw": "0.023649",
+                "rotationx": "0.041047",
+                "rotationy": "0.998873",
+                "rotationz": "-0.002996",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496091"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__63_",
+        "Parent": "232355806"
+    },
+    "699914665": {
+        "Components": {
+            "0": {
+                "positionx": "1448.037964",
+                "positiony": "694.388428",
+                "positionz": "1072.372803",
+                "rotationw": "0.996163",
+                "rotationx": "0.000000",
+                "rotationy": "0.087522",
+                "rotationz": "0.000000",
+                "scalex": "1.638697",
+                "scaley": "3.937902",
+                "scalez": "10.695509"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__14_",
+        "Parent": "232355806"
+    },
+    "709809345": {
+        "Components": {
+            "0": {
+                "positionx": "-1364.167114",
+                "positiony": "539.664063",
+                "positionz": "1252.687744",
+                "rotationw": "0.056070",
+                "rotationx": "0.000000",
+                "rotationy": "0.998427",
+                "rotationz": "0.000000",
+                "scalex": "2.148882",
+                "scaley": "1.597646",
+                "scalez": "1.469451"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/2079087733.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Stone.mat"
+                }
+            }
+        },
+        "Name": "Cube__49_",
+        "Parent": "232355806"
+    },
+    "733799641": {
+        "Components": {
+            "0": {
+                "positionx": "350.006470",
+                "positiony": "512.498779",
+                "positionz": "-87.863403",
+                "rotationw": "0.239211",
+                "rotationx": "0.000000",
+                "rotationy": "0.970968",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496092"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__56_",
+        "Parent": "232355806"
+    },
+    "741774804": {
+        "Components": {
+            "0": {
+                "positionx": "1288.589111",
+                "positiony": "527.459473",
+                "positionz": "-368.965820",
+                "rotationw": "-0.422096",
+                "rotationx": "0.000000",
+                "rotationy": "0.906551",
+                "rotationz": "0.000000",
+                "scalex": "4.187262",
+                "scaley": "0.674876",
+                "scalez": "0.364728"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__67_",
+        "Parent": "232355806"
+    },
+    "742833512": {
+        "Components": {
+            "0": {
+                "positionx": "56811.933594",
+                "positiony": "62179.515625",
+                "positionz": "46043.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__7__3",
+        "Parent": "814661755"
+    },
+    "745525601": {
+        "Components": {
+            "0": {
+                "positionx": "1506.699341",
+                "positiony": "512.498779",
+                "positionz": "758.199463",
+                "rotationw": "0.054393",
+                "rotationx": "0.000000",
+                "rotationy": "0.998520",
+                "rotationz": "0.000000",
+                "scalex": "0.142529",
+                "scaley": "0.322915",
+                "scalez": "0.496092"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1326800452.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Corpse.mat"
+                }
+            }
+        },
+        "Name": "Cube__61_",
+        "Parent": "232355806"
+    },
+    "74726379": {
+        "Components": {
+            "0": {
+                "positionx": "1690.557617",
+                "positiony": "493.601074",
+                "positionz": "-774.871338",
+                "rotationw": "0.442116",
+                "rotationx": "0.000000",
+                "rotationy": "0.896958",
+                "rotationz": "0.000000",
+                "scalex": "1.357194",
+                "scaley": "1.281409",
+                "scalez": "1.822776"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__45_",
+        "Parent": "232355806"
+    },
+    "75648055": {
+        "Components": {
+            "0": {
+                "positionx": "307.483459",
+                "positiony": "747.906677",
+                "positionz": "1253.583496",
+                "rotationw": "-0.005718",
+                "rotationx": "0.676099",
+                "rotationy": "0.734231",
+                "rotationz": "-0.061337",
+                "scalex": "0.313724",
+                "scaley": "1.375504",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__8_",
+        "Parent": "621525162"
+    },
+    "763918145": {
+        "Components": {
+            "0": {
+                "positionx": "2182.014404",
+                "positiony": "694.388428",
+                "positionz": "1737.805664",
+                "rotationw": "0.995565",
+                "rotationx": "0.000000",
+                "rotationy": "0.094078",
+                "rotationz": "0.000000",
+                "scalex": "1.638697",
+                "scaley": "3.937902",
+                "scalez": "13.826738"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__7_",
+        "Parent": "232355806"
+    },
+    "76998641": {
+        "Components": {
+            "0": {
+                "positionx": "2188.195313",
+                "positiony": "694.388428",
+                "positionz": "-321.327881",
+                "rotationw": "0.990988",
+                "rotationx": "0.000000",
+                "rotationy": "0.133949",
+                "rotationz": "0.000000",
+                "scalex": "1.638697",
+                "scaley": "3.937902",
+                "scalez": "12.646450"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__9_",
+        "Parent": "232355806"
+    },
+    "771762188": {
+        "Components": {
+            "0": {
+                "positionx": "2239.376465",
+                "positiony": "694.388428",
+                "positionz": "588.120850",
+                "rotationw": "0.985059",
+                "rotationx": "0.000000",
+                "rotationy": "-0.172217",
+                "rotationz": "0.000000",
+                "scalex": "1.638697",
+                "scaley": "3.937902",
+                "scalez": "11.482967"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__8_",
+        "Parent": "232355806"
+    },
+    "774411786": {
+        "Components": {
+            "0": {
+                "positionx": "1710.242676",
+                "positiony": "493.601074",
+                "positionz": "-328.414551",
+                "rotationw": "0.285694",
+                "rotationx": "0.000000",
+                "rotationy": "0.958321",
+                "rotationz": "0.000000",
+                "scalex": "2.637174",
+                "scaley": "1.281409",
+                "scalez": "2.608216"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__35_",
+        "Parent": "232355806"
+    },
+    "786238563": {
+        "Components": {
+            "0": {
+                "positionx": "-4396.000488",
+                "positiony": "14995.001953",
+                "positionz": "7975.000488",
+                "rotationw": "0.928344",
+                "rotationx": "-0.004737",
+                "rotationy": "-0.371654",
+                "rotationz": "-0.005261",
+                "scalex": "4.581243",
+                "scaley": "0.547215",
+                "scalez": "3.985792"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1657891830.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Egg.mat"
+                }
+            }
+        },
+        "Name": "Cube__18__1",
+        "Parent": "1996740322"
+    },
+    "794590383": {
+        "Components": {
+            "0": {
+                "positionx": "2048.038086",
+                "positiony": "527.459473",
+                "positionz": "422.372803",
+                "rotationw": "-0.152816",
+                "rotationx": "0.000000",
+                "rotationy": "0.988255",
+                "rotationz": "0.000000",
+                "scalex": "5.559312",
+                "scaley": "0.674876",
+                "scalez": "0.364729"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__69_",
+        "Parent": "232355806"
+    },
+    "814442808": {
+        "Components": {
+            "0": {
+                "positionx": "-5990.000000",
+                "positiony": "15225.001953",
+                "positionz": "7290.000488",
+                "rotationw": "-0.142483",
+                "rotationx": "0.423377",
+                "rotationy": "0.892604",
+                "rotationz": "-0.060895",
+                "scalex": "7.751606",
+                "scaley": "1.032900",
+                "scalez": "68.087151"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__8__1",
+        "Parent": "1996740322"
+    },
+    "814661755": {
+        "Components": {
+            "0": {
+                "positionx": "-3510.859375",
+                "positiony": "-4681.989746",
+                "positionz": "-1077.234253",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.083296",
+                "scaley": "0.083296",
+                "scalez": "0.083296"
+            }
+        },
+        "Name": "Orchard",
+        "Parent": "232355806"
+    },
+    "814876338": {
+        "Components": {
+            "0": {
+                "positionx": "55901.933594",
+                "positiony": "62179.515625",
+                "positionz": "46393.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__9__3",
+        "Parent": "814661755"
+    },
+    "825614780": {
+        "Components": {
+            "0": {
+                "positionx": "-8190.000977",
+                "positiony": "15529.867188",
+                "positionz": "-100.000000",
+                "rotationw": "0.999729",
+                "rotationx": "0.000000",
+                "rotationy": "-0.023288",
+                "rotationz": "0.000000",
+                "scalex": "35.502556",
+                "scaley": "1.032900",
+                "scalez": "35.282997"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__12__1",
+        "Parent": "1996740322"
+    },
+    "832834924": {
+        "Components": {
+            "0": {
+                "positionx": "1180.321411",
+                "positiony": "527.459473",
+                "positionz": "-927.233521",
+                "rotationw": "0.285174",
+                "rotationx": "0.000000",
+                "rotationy": "0.958476",
+                "rotationz": "0.000000",
+                "scalex": "7.079545",
+                "scaley": "0.674876",
+                "scalez": "0.364728"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__66_",
+        "Parent": "232355806"
+    },
+    "845282166": {
+        "Components": {
+            "0": {
+                "positionx": "-2244.875488",
+                "positiony": "694.388428",
+                "positionz": "-1423.690186",
+                "rotationw": "-0.096327",
+                "rotationx": "0.000000",
+                "rotationy": "0.995350",
+                "rotationz": "0.000000",
+                "scalex": "1.638699",
+                "scaley": "3.937901",
+                "scalez": "11.797494"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__22_",
+        "Parent": "232355806"
+    },
+    "85795470": {
+        "Components": {
+            "0": {
+                "positionx": "79092.289063",
+                "positiony": "81900.007813",
+                "positionz": "48471.496094",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "41.899593",
+                "scaley": "13.440220",
+                "scalez": "89.497528"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1553951831.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Invisible.mat"
+                }
+            }
+        },
+        "Name": "Cube",
+        "Parent": "1999036711"
+    },
+    "861071075": {
+        "Components": {
+            "0": {
+                "positionx": "1558.133301",
+                "positiony": "3657.689453",
+                "positionz": "4835.711914",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.807988",
+                "scaley": "0.527736",
+                "scalez": "0.107187"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__1__1",
+        "Parent": "1758939861"
+    },
+    "863730995": {
+        "Components": {
+            "0": {
+                "positionx": "-1989.757690",
+                "positiony": "694.388428",
+                "positionz": "-1422.509033",
+                "rotationw": "-0.097361",
+                "rotationx": "0.000000",
+                "rotationy": "0.995249",
+                "rotationz": "0.000000",
+                "scalex": "0.624249",
+                "scaley": "3.937902",
+                "scalez": "0.634707"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1868598741.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cube__38_",
+        "Parent": "232355806"
+    },
+    "868569825": {
+        "Components": {
+            "0": {
+                "positionx": "-1638.182495",
+                "positiony": "493.601074",
+                "positionz": "-363.060303",
+                "rotationw": "0.155901",
+                "rotationx": "0.000000",
+                "rotationy": "0.987773",
+                "rotationz": "0.000000",
+                "scalex": "3.890658",
+                "scaley": "1.281409",
+                "scalez": "2.840309"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__32_",
+        "Parent": "232355806"
+    },
+    "876037865": {
+        "Components": {
+            "0": {
+                "positionx": "786.000244",
+                "positiony": "15530.001953",
+                "positionz": "11502.001953",
+                "rotationw": "0.998114",
+                "rotationx": "0.000000",
+                "rotationy": "-0.061381",
+                "rotationz": "0.000000",
+                "scalex": "6.424118",
+                "scaley": "1.032900",
+                "scalez": "13.339345"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1597195690.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Road_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__3__1",
+        "Parent": "1996740322"
+    },
+    "880929238": {
+        "Components": {
+            "0": {
+                "positionx": "-2118.104004",
+                "positiony": "493.601074",
+                "positionz": "-99.674438",
+                "rotationw": "0.155901",
+                "rotationx": "0.000000",
+                "rotationy": "0.987773",
+                "rotationz": "0.000000",
+                "scalex": "1.638700",
+                "scaley": "1.281409",
+                "scalez": "3.774957"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1301095548.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Leaves.mat"
+                }
+            }
+        },
+        "Name": "Cube__29_",
+        "Parent": "232355806"
+    },
+    "882408653": {
+        "Components": {
+            "0": {
+                "positionx": "354.003357",
+                "positiony": "729.698303",
+                "positionz": "1281.983398",
+                "rotationw": "0.503232",
+                "rotationx": "-0.460570",
+                "rotationy": "-0.435081",
+                "rotationz": "0.587654",
+                "scalex": "0.313724",
+                "scaley": "1.375504",
+                "scalez": "0.313724"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/502153664.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Tree_Log.mat"
+                }
+            }
+        },
+        "Name": "Cylinder__5_",
+        "Parent": "621525162"
+    },
+    "89056635": {
+        "Components": {
+            "0": {
+                "positionx": "-1325.978149",
+                "positiony": "539.664063",
+                "positionz": "1168.435791",
+                "rotationw": "-0.041773",
+                "rotationx": "0.000000",
+                "rotationy": "0.999127",
+                "rotationz": "0.000000",
+                "scalex": "2.028242",
+                "scaley": "1.597646",
+                "scalez": "1.469449"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/2079087733.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Stone.mat"
+                }
+            }
+        },
+        "Name": "Cube__50_",
+        "Parent": "232355806"
+    },
+    "891978015": {
+        "Components": {
+            "0": {
+                "positionx": "-1831.096313",
+                "positiony": "539.664063",
+                "positionz": "1177.097168",
+                "rotationw": "-0.041773",
+                "rotationx": "0.000000",
+                "rotationy": "0.999127",
+                "rotationz": "0.000000",
+                "scalex": "3.912885",
+                "scaley": "1.597646",
+                "scalez": "2.760948"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/2079087733.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Stone.mat"
+                }
+            }
+        },
+        "Name": "Cube__52_",
+        "Parent": "232355806"
+    },
+    "932858283": {
+        "Components": {
+            "0": {
+                "positionx": "57681.929688",
+                "positiony": "62179.515625",
+                "positionz": "45723.914063",
+                "rotationw": "0.983693",
+                "rotationx": "0.000000",
+                "rotationy": "0.179856",
+                "rotationz": "0.000000",
+                "scalex": "2.314867",
+                "scaley": "7.078703",
+                "scalez": "100.928596"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/242258344.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Orchard_2.mat"
+                }
+            }
+        },
+        "Name": "Cube__5__6",
+        "Parent": "814661755"
+    },
+    "94534435": {
+        "Components": {
+            "0": {
+                "positionx": "1558.134033",
+                "positiony": "3638.989502",
+                "positionz": "4825.912598",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "0.148395",
+                "scaley": "0.982564",
+                "scalez": "0.107187"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/565433201.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Wood.mat"
+                }
+            }
+        },
+        "Name": "Cube__2__2",
+        "Parent": "1044576153"
+    },
+    "993125929": {
+        "Components": {
+            "0": {
+                "positionx": "857.701416",
+                "positiony": "15529.869141",
+                "positionz": "7125.214355",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "27.652586",
+                "scaley": "1.032900",
+                "scalez": "26.652582"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1257741815.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Forest_Ground.mat"
+                }
+            }
+        },
+        "Name": "Cube__2__4",
+        "Parent": "1996740322"
+    },
+    "998308123": {
+        "Components": {
+            "0": {
+                "positionx": "48609.996094",
+                "positiony": "81230.000000",
+                "positionz": "-18310.000000",
+                "rotationw": "0.897052",
+                "rotationx": "-0.005186",
+                "rotationy": "-0.441888",
+                "rotationz": "0.002554",
+                "scalex": "97.015701",
+                "scaley": "13.440219",
+                "scalez": "89.497543"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1749257485.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/Water.mat"
+                }
+            }
+        },
+        "Name": "Cube__6_",
+        "Parent": "1999036711"
+    }
+}
