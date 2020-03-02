@@ -121,6 +121,7 @@ void ComponentAnimation::PlayAnimation(const char* name, float speed)
 		{
 			animations[i]->speed = speed;
 			StartBlend(animations[i]);
+			time = 0;
 		}
 	}
 }
