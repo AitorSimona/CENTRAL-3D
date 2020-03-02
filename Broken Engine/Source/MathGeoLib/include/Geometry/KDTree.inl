@@ -22,6 +22,7 @@
 #include "Ray.h"
 #include "../Math/assume.h"
 #include "../Math/MathFunc.h"
+#include <algorithm>
 
 MATH_BEGIN_NAMESPACE
 

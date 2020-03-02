@@ -7,7 +7,7 @@
 //#include "Imgui/imgui_internal.h"
 //#include "Imgui/ImGuizmo/ImGuizmo.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
-#include "mmgr/mmgr.h"
+//#include "mmgr/mmgr.h"
 
 ModuleEditorUI::ModuleEditorUI(bool start_enabled) : Module(start_enabled) {
 	name = "EditorUI";

@@ -70,7 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(Configuration)\$(ProjectName)</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>$(Configuration)\$(ProjectName)</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -87,10 +92,10 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Game\$(ProjectName).dll" "$(SolutionDir)$(Configuration)\$(ProjectName).dll"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Configuration)\$(ProjectName).dll" "$(SolutionDir)Game\$(ProjectName).dll"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy dll</Message>
+      <Message>Copy dll into game folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -106,10 +111,10 @@
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Game\$(ProjectName).dll" "$(SolutionDir)$(Configuration)\$(ProjectName).dll"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Configuration)\$(ProjectName).dll" "$(SolutionDir)Game\$(ProjectName).dll"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy dll</Message>
+      <Message>Copy dll into game folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
