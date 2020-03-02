@@ -71,6 +71,7 @@ bool PanelBuild::Draw() {
 			}
 			ImGui::Separator();
 			if (ImGui::Button("Build the game!")) {
+				App->scene_manager->SaveScene(App->scene_manager->currentScene);
 				makeBuild();
 			}
 		}
