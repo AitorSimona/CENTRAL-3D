@@ -22,7 +22,7 @@ PanelBuild::~PanelBuild() {
 
 bool PanelBuild::Draw() {
 	ImGuiWindowFlags settingsFlags = 0;
-	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoDocking;
+	settingsFlags = ImGuiWindowFlags_NoDocking;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags)) {
 		ImGui::Separator();
@@ -61,7 +61,7 @@ bool PanelBuild::Draw() {
 					bool is_selected = (selectedCamera == cameras[n]);
 					if (ImGui::Selectable(cameras[n]->GetName().c_str(), is_selected)) {
 						selectedCamera = cameras[n];
-						cameraGOUID = selectedCamera->GetUID();
+						//cameraName = selectedCamera->GetName();
 						//MYTODO: scene should have its main camera saved we should set it here once it has it
 					}
 					if (is_selected)
@@ -71,7 +71,6 @@ bool PanelBuild::Draw() {
 			}
 			ImGui::Separator();
 			if (ImGui::Button("Build the game!")) {
-				App->scene_manager->SaveScene(App->scene_manager->currentScene);
 				makeBuild();
 			}
 		}
@@ -90,6 +89,7 @@ bool PanelBuild::Draw() {
 inline void PanelBuild::OnOff() {
 	if (!enabled) {
 		enabled = true;
+		//App->scene_manager->SaveScene(App->scene_manager->currentScene);
 		findCameras();
 		if (cameras.size() > 0)
 			selectedCamera = cameras[0];
@@ -102,6 +102,7 @@ inline void PanelBuild::OnOff() {
 
 inline void PanelBuild::SetOnOff(bool set) {
 	if (set) {
+		//App->scene_manager->SaveScene(App->scene_manager->currentScene);
 		findCameras();
 		if (cameras.size() > 0)
 			selectedCamera = cameras[0];
@@ -168,7 +169,7 @@ void PanelBuild::makeBuild() {
 	json gameSettings = App->GetDefaultGameConfig();
 	gameSettings["Application"]["Title"] = buildName;
 	gameSettings["SceneManager"]["MainScene"] = scenePath;
-	gameSettings["Camera3D"]["MainCamera"] = cameraGOUID;
+	gameSettings["Camera3D"]["MainCamera"] = selectedCamera->GetName();
 
 	App->GetJLoader()->Save(settingspath.c_str(), gameSettings);
 

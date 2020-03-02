@@ -29,7 +29,7 @@ private:
 	std::string buildName;
 	GameObject* selectedCamera;
 	std::string scenePath;
-	uint cameraGOUID;
+	//std::string cameraName;
 
 };
 

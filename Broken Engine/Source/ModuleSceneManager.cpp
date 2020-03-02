@@ -462,7 +462,8 @@ void ModuleSceneManager::LoadStatus(const json & file)
 			scene->LoadToMemory();
 			if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
 				GameObject* camera;
-				camera = scene->GetGOWithUID(file["Camera3D"]["MainCamera"]);
+				std::string cameraName = file["Camera3D"]["MainCamera"];
+				camera = scene->GetGOWithName(cameraName.c_str());
 				if (camera != nullptr) {
 					ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
 					if (camera_component != nullptr) {
