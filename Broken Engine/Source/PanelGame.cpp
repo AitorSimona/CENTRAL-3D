@@ -17,6 +17,9 @@ PanelGame::~PanelGame()
 
 bool PanelGame::Draw() 
 {
+	if (App->GetAppState() == AppState::EDITOR)
+		App->GetAppState() = AppState::TO_PLAY;
+
 	App->gui->sceneHeight = App->window->GetWindowHeight();
 	App->gui->sceneWidth = App->window->GetWindowWidth();
 

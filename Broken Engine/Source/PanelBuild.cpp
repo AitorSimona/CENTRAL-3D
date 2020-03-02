@@ -153,7 +153,7 @@ void PanelBuild::makeBuild() {
 			App->fs->Copy(files[i].c_str(), (buildName + "/" + files[i]).c_str());
 	}
 	static const char* directories[] = { ASSETS_FOLDER, SETTINGS_FOLDER, LIBRARY_FOLDER, TEXTURES_FOLDER, MESHES_FOLDER, SCENES_FOLDER,
-		MODELS_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER, SHADERS_ASSETS_FOLDER, SOUNDS_FOLDER };
+		MODELS_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER, SHADERS_ASSETS_FOLDER, SOUNDS_FOLDER, ANIMATIONS_FOLDER, BONES_FOLDER};
 
 	for (int i = 0; i < IM_ARRAYSIZE(directories); ++i) {
 		App->fs->CreateDirectoryA((buildName + "/" + directories[i]).c_str());
