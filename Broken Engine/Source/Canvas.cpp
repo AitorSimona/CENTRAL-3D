@@ -27,6 +27,7 @@ Canvas::Canvas(GameObject* gameObject) : Component(gameObject, Component::Compon
 
 Canvas::~Canvas()
 {
+	App->ui_system->RemoveCanvas(this);
 }
 
 void Canvas::Draw() const

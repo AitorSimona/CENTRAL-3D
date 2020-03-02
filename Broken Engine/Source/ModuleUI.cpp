@@ -89,6 +89,18 @@ void ModuleUI::Draw() const
 	//glPopMatrix();
 }
 
+void ModuleUI::RemoveCanvas(Canvas* c)
+{
+	for (std::vector<Canvas*>::iterator it = canvas.begin(); it != canvas.end(); ++it)
+	{
+		if(*it && (*it)->GetContainerGameObject() && (*it)->GetContainerGameObject()->GetUID() == c->GetContainerGameObject()->GetUID())
+		{
+			canvas.erase(it);
+			break;
+		}
+	}
+}
+
 void ModuleUI::Clear()
 {
 	canvas.clear();

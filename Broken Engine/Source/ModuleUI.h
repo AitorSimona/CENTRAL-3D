@@ -17,6 +17,7 @@ public:
 
 	void Draw() const;
 	void AddCanvas(Canvas* c) { canvas.push_back(c); }
+	void RemoveCanvas(Canvas* c);
 	
 	void Clear();
 

@@ -1,5 +1,5 @@
 {
-    "330474594": {
+    "2046306231": {
         "Components": {
             "0": {
                 "positionx": "0.000000",
@@ -18,13 +18,13 @@
                 "Resources": {
                     "ResourceTexture": "Library/Textures/558537928.dds"
                 },
-                "position2Dx": "-0.390000",
-                "position2Dy": "-1.000000",
-                "size2Dx": "0.440000",
-                "size2Dy": "0.290000"
+                "position2Dx": "-0.470000",
+                "position2Dy": "-1.010000",
+                "size2Dx": "0.510000",
+                "size2Dy": "0.250000"
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "535376271"
+        "Parent": "1796675664"
     }
 }
