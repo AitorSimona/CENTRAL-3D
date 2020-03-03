@@ -22,7 +22,7 @@ public:
 	ModuleSceneManager(bool start_enabled = true);
 	~ModuleSceneManager();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	//void ONEvent(const Event& event) const override;
 	update_status PreUpdate(float dt) override;

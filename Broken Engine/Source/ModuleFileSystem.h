@@ -22,7 +22,7 @@ public:
 	~ModuleFileSystem();
 
 	// Called before render is available
-	bool Init(json config) override;
+	bool Init(json& file) override;
 
 	update_status PreUpdate(float dt) override;
 

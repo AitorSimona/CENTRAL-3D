@@ -45,7 +45,7 @@ ModuleFileSystem::~ModuleFileSystem() {
 }
 
 // Called before render is available
-bool ModuleFileSystem::Init(json config) {
+bool ModuleFileSystem::Init(json& file) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Loading File System");
 	bool ret = true;
 

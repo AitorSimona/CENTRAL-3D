@@ -6,6 +6,7 @@
 #include "BrokenCore.h"
 
 #include <vector>
+class ImGuiContext;
 //
 //class PanelSettings;
 //class PanelAbout;
@@ -27,7 +28,7 @@ public:
 	ModuleGui(bool start_enabled = true);
 	~ModuleGui();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
@@ -38,6 +39,8 @@ public:
 	void RequestBrowser(const char * url) const;
 	void AddPanel(Panel* npanel);
 	bool isHoveringScene() const;
+
+	ImGuiContext* getImgUICtx() const;
 
 	void LogFPS(float fps, float ms);
 

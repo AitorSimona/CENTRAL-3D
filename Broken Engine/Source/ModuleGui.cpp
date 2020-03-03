@@ -35,7 +35,7 @@ ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 ModuleGui::~ModuleGui()
 {}
 
-bool ModuleGui::Init(json file)
+bool ModuleGui::Init(json& file)
 {
 	// --- Create UI Panels ---
 
@@ -239,6 +239,10 @@ void ModuleGui::AddPanel(Panel* npanel) {
 
 bool ModuleGui::isHoveringScene() const {
 	return isSceneHovered;
+}
+
+ImGuiContext* ModuleGui::getImgUICtx() const {
+	return ImGui::GetCurrentContext();
 }
 
 void ModuleGui::LogFPS(float fps, float ms)

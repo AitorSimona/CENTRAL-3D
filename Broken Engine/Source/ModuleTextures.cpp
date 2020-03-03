@@ -24,7 +24,7 @@ ModuleTextures::ModuleTextures(bool start_enabled) : Module(start_enabled) {
 
 ModuleTextures::~ModuleTextures() {}
 
-bool ModuleTextures::Init(json file) {
+bool ModuleTextures::Init(json& file) {
 	bool ret = true;
 
 	// Check versions

@@ -15,7 +15,7 @@ public:
 	// Destructor
 	virtual ~ModuleWindow();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	bool CleanUp() override;
 

@@ -20,7 +20,7 @@ public:
 	ModuleInput(bool start_enabled = true);
 	~ModuleInput();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	update_status PreUpdate(float dt) override;
 	bool CleanUp() override;
 

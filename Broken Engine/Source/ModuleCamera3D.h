@@ -17,7 +17,7 @@ public:
 	ModuleCamera3D(bool start_enabled = true);
 	~ModuleCamera3D();
 
-	bool Init(json config) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status Update(float dt) override;
 	void UpdateCamera();

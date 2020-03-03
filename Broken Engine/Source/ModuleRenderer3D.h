@@ -16,7 +16,7 @@ public:
 	ModuleRenderer3D(bool start_enabled = true);
 	~ModuleRenderer3D();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;

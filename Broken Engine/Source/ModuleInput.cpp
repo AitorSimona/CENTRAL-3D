@@ -22,7 +22,7 @@ ModuleInput::~ModuleInput() {
 }
 
 // Called before render is available
-bool ModuleInput::Init(json file) {
+bool ModuleInput::Init(json& file) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);

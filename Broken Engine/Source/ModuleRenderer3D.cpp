@@ -32,7 +32,7 @@ ModuleRenderer3D::~ModuleRenderer3D() {
 }
 
 // Called before render is available
-bool ModuleRenderer3D::Init(json file) {
+bool ModuleRenderer3D::Init(json& file) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Creating 3D Renderer context");
 
 	bool ret = true;

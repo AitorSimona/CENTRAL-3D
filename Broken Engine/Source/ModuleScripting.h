@@ -29,7 +29,7 @@ public:
 
 
 public:
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start();
 	bool CleanUp();
 

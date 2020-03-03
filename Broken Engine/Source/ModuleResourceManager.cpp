@@ -31,7 +31,7 @@ ModuleResourceManager::~ModuleResourceManager()
 {
 }
 
-bool ModuleResourceManager::Init(json file)
+bool ModuleResourceManager::Init(json& file)
 {
 
 	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---

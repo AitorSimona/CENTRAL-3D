@@ -19,7 +19,7 @@ ModuleWindow::~ModuleWindow() {
 }
 
 // Called before render is available
-bool ModuleWindow::Init(json file) {
+bool ModuleWindow::Init(json& file) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Init SDL window & surface");
 	bool ret = true;
 

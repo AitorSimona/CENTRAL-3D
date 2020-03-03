@@ -300,7 +300,7 @@ void ModuleScripting::NotifyHotReloading() {
 }
 
 
-bool ModuleScripting::Init(json file) {
+bool ModuleScripting::Init(json& file) {
 	//Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);

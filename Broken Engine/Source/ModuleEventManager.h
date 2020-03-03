@@ -46,7 +46,7 @@ public:
 	ModuleEventManager(bool start_enabled = true);
 	~ModuleEventManager();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
 	bool CleanUp() override;

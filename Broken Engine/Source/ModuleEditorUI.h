@@ -20,7 +20,7 @@ public:
 	ModuleEditorUI(bool start_enabled = true);
 	~ModuleEditorUI();
 
-	bool Init(BrokenEngine::json file) override;
+	bool Init(BrokenEngine::json& file) override;
 	update_status Update(float dt) override;
 
 public:

@@ -48,7 +48,7 @@ ModuleSceneManager::~ModuleSceneManager() {
 }
 
 
-bool ModuleSceneManager::Init(json file) {
+bool ModuleSceneManager::Init(json& file) {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));

@@ -13,7 +13,7 @@ ModuleEventManager::ModuleEventManager(bool start_enabled) {
 ModuleEventManager::~ModuleEventManager() {
 }
 
-bool ModuleEventManager::Init(json file) {
+bool ModuleEventManager::Init(json& file) {
 
 
 	return true;

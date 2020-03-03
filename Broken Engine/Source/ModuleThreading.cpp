@@ -9,7 +9,7 @@ ModuleThreading::ModuleThreading(bool start_enabled) : Module(start_enabled) {
 ModuleThreading::~ModuleThreading() {
 }
 
-bool ModuleThreading::Init(json file) {
+bool ModuleThreading::Init(json& file) {
 	concurrentThreads = std::thread::hardware_concurrency();
 	return true;
 }

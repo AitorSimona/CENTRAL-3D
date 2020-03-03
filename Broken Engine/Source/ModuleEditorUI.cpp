@@ -2,10 +2,10 @@
 #include "EngineApplication.h"
 #include "Panels.h"
 #include "Imgui/imgui.h"
-//#include "imgui/imgui_impl_sdl.h"
-//#include "imgui/imgui_impl_opengl3.h"
-//#include "Imgui/imgui_internal.h"
-//#include "Imgui/ImGuizmo/ImGuizmo.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "Imgui/imgui_internal.h"
+#include "Imgui/ImGuizmo/ImGuizmo.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 //#include "mmgr/mmgr.h"
 
@@ -16,7 +16,7 @@ ModuleEditorUI::ModuleEditorUI(bool start_enabled) : Module(start_enabled) {
 ModuleEditorUI::~ModuleEditorUI() {
 }
 
-bool ModuleEditorUI::Init(BrokenEngine::json file) {
+bool ModuleEditorUI::Init(BrokenEngine::json& file) {
 
 	// --- Create UI Panels ---
 	panelSettings = new PanelSettings("Settings");
@@ -56,6 +56,7 @@ bool ModuleEditorUI::Init(BrokenEngine::json file) {
 
 update_status ModuleEditorUI::Update(float dt) {
 	//// --- Create Main Menu Bar ---
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
 	if (ImGui::BeginMainMenuBar())
 	{

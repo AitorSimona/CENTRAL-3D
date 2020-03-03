@@ -29,7 +29,7 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled) {
 ModuleCamera3D::~ModuleCamera3D() {
 }
 
-bool ModuleCamera3D::Init(json config) {
+bool ModuleCamera3D::Init(json& file) {
 	App->renderer3D->SetActiveCamera(camera);
 	App->renderer3D->SetCullingCamera(camera);
 	return true;
