@@ -206,8 +206,7 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 
 	std::string name = GO->GetName();
 	transform = RB->rigidBody->getGlobalPose();
-	float x = transform.p.x - offset.x;
-	
+
 	bool isFalling = RB->rigidBody->getLinearVelocity().y != 0.0f;
 
 	if (isFalling)
@@ -374,7 +373,7 @@ void ComponentCollider::Load(json& node)
 
 	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
 
-	firstCreation = true;
+	firstCreation = false;
 
 	toPlay = false;
 
@@ -602,9 +601,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				originalScale = GO->GetOBB().Size();
 
 				center = GO->GetAABB().CenterPoint();
-
-				offset = center;//returns the offset of the collider from the AABB
-				firstCreation = true;
 			}
 			offset.Mul(tScale);
 
@@ -621,11 +617,21 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				App->physics->mScene->addActor(*rigidStatic);
 			}
 
-			transform->SetRotation(q);
-			transform->SetGlobalTransform(transform->Local_transform);
-			GO->UpdateAABB();
+			if (!firstCreation)
+			{
+				if (GO->GetName() == "gerardo2")
+					int a = 0;
+				transform->SetRotation(q);
+				transform->SetGlobalTransform(transform->Local_transform);
+				GO->UpdateAABB();
+				UpdateLocalMatrix();
 
-			UpdateLocalMatrix();
+				//center = GO->GetAABB().CenterPoint();
+				center = GO->GetOBB().CenterPoint();
+				offset = center - transform->GetPosition();//returns the offset of the collider from the AABB
+				firstCreation = true;
+			}
+
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::BOX;
 			break;
