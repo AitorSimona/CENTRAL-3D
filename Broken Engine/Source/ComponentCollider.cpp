@@ -589,6 +589,17 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!firstCreation)
 			{
 				originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
+				Quat q = Quat::FromEulerXYZ(45 * DEGTORAD, 45 * DEGTORAD, 45 * DEGTORAD);
+				//q.InverseAndNormalize();
+				OBB obb = GO->GetAABB().Transform(q);
+				obb.Scale(obb.CenterPoint(), scale);
+
+				originalScale = obb.Size();
+
+				offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
+				firstCreation = true;
+
+				originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
 				offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
 				firstCreation = true; 
 			}
