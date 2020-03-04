@@ -43,6 +43,8 @@ public:
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
+	float4x4 GetGlobalMatrix() { return globalMatrix; }
+
 private:
 	template <class Geometry>
 	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
