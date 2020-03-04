@@ -151,13 +151,15 @@ void ComponentCollider::UpdateLocalMatrix() {
 	if (!rigidStatic && !dynamicRB)
 		return;
 
+	if (GO->GetName() == "cube")
+		int a = 0;
 	//Render
 	localMatrix.x = localPosition.x + offset.x;
 	localMatrix.y = localPosition.y + offset.y;
 	localMatrix.z = localPosition.z + offset.z;
-	localMatrix.scaleX = scale.x * originalScale.x; //scale * sizeAABB
-	localMatrix.scaleY = scale.y * originalScale.y;
-	localMatrix.scaleZ = scale.z * originalScale.z;
+	localMatrix.scaleX = scale.x; //scale * sizeAABB
+	localMatrix.scaleY = scale.y;
+	localMatrix.scaleZ = scale.z;
 
 	math::float4x4 gt = cTransform->GetGlobalTransform();
 	globalMatrix = gt * localMatrix;
@@ -166,12 +168,6 @@ void ComponentCollider::UpdateLocalMatrix() {
 	float3 pos, scale;
 	Quat rot;
 	globalMatrix.Decompose(pos, rot, scale);
-	scale = cTransform->GetScale();
-
-	if (!scale.Equals(tmpScale)) {
-		editCollider = true;
-		tmpScale = scale;
-	}
 
 	PxVec3 posi(pos.x, pos.y, pos.z);
 	PxQuat quati(rot.x, rot.y, rot.z, rot.w);
@@ -220,7 +216,9 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 	{
 		float3 pos, scale;
 		Quat rot;
-		globalMatrix.Decompose(pos, rot, scale);
+		cTransform->GetContainerGameObject()->parent->GetComponent<ComponentTransform>()->GetGlobalTransform() * localMatrix;
+		float4x4 a = cTransform->GetGlobalTransform();
+		a.Decompose(pos, rot, scale);
 
 		PxVec3 posi(pos.x, pos.y, pos.z);
 		PxQuat quati(rot.x, rot.y, rot.z, rot.w);
@@ -297,10 +295,6 @@ json ComponentCollider::Save() const
 
 	node["colliderType"] = std::to_string(colliderType);
 
-	node["tmpScalex"] = std::to_string(tmpScale.x);
-	node["tmpScaley"] = std::to_string(tmpScale.y);
-	node["tmpScalez"] = std::to_string(tmpScale.z);
-
 	node["firstCreation"] = std::to_string(firstCreation);
 
 	return node;
@@ -345,10 +339,6 @@ void ComponentCollider::Load(json& node)
 
 	std::string colliderType_ = node["colliderType"];
 
-	std::string tmpScalex = node["tmpScalex"];
-	std::string tmpScaley = node["tmpScaley"];
-	std::string tmpScalez = node["tmpScalez"];
-
 	std::string firstCreation_ = node["firstCreation"];
 
 	localPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
@@ -371,8 +361,6 @@ void ComponentCollider::Load(json& node)
 	height = std::stof(height_);
 	lastIndex = std::stoi(lastIndex_);
 	colliderType = std::stoi(colliderType_);
-
-	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
 
 	firstCreation = true;
 
@@ -509,7 +497,7 @@ void ComponentCollider::CreateInspectorNode()
 
 					ImGui::DragFloat("##SZ", &scale.z, 0.005f, 0.01f, 1000.0f);
 
-					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z || editCollider)
+					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z || GO->GetComponent<ComponentTransform>()->updateValues)
 						CreateCollider(COLLIDER_TYPE::BOX, true);
 
 					break;
@@ -608,7 +596,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			}
 			offset.Mul(tScale);
 
-			boxGeometry = PxBoxGeometry(PxVec3(originalScale.x * tScale.x * scale.x * 0.5, originalScale.y * tScale.y * scale.y * 0.5, originalScale.z * tScale.z * scale.z * 0.5));
+			boxGeometry = PxBoxGeometry(PxVec3((originalScale.x + tScale.x) * scale.x * 0.5, (originalScale.y + tScale.y) * scale.y * 0.5, (originalScale.z + tScale.z) * scale.z * 0.5));
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
