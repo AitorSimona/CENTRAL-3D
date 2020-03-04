@@ -473,7 +473,6 @@ void GameObject::UpdateAABB()
 	{
 		obb = mesh->GetAABB();
 		obb.Transform(transform->GetGlobalTransform());
-
 		aabb.SetNegativeInfinity();
 		aabb.Enclose(obb);
 	}

@@ -586,28 +586,25 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
 			Quat q = transform->rotation;
-			Quat q2 = q;
+			Quat qInverse = q;
 			if (!firstCreation)
 			{
-				
-				q.InverseAndNormalize();
-				transform->rotation = q;
+				qInverse.InverseAndNormalize();
+				Quat tmp = q * qInverse;
+				transform->rotation = tmp;
+
+				transform->SetRotation(transform->rotation);
+				transform->UpdateLocalTransform();
 				transform->SetGlobalTransform(transform->Local_transform);
+
 				GO->UpdateAABB();
 
 				originalScale = GO->GetOBB().Size();
-				center = GO->GetAABB().CenterPoint();
 
-				/*transform->rotation = q2;
-				transform->SetGlobalTransform(transform->Local_transform);
-				GO->UpdateAABB();*/
+				center = GO->GetAABB().CenterPoint();
 
 				offset = center;//returns the offset of the collider from the AABB
 				firstCreation = true;
-
-				//originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
-				//offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
-				//firstCreation = true; 
 			}
 			offset.Mul(tScale);
 
@@ -617,7 +614,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			shape->setGeometry(boxGeometry);
 			
 			PxTransform position(PxVec3(center.x, center.y, center.z));
-			//centerPosition = center;
 			
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
@@ -625,7 +621,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				App->physics->mScene->addActor(*rigidStatic);
 			}
 
-			transform->rotation = q2;
+			transform->SetRotation(q);
 			transform->SetGlobalTransform(transform->Local_transform);
 			GO->UpdateAABB();
 
