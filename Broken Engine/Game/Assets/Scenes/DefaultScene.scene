@@ -32,9 +32,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995249",
                 "rotationz": "0.000000",
-                "scalex": "1.458946",
+                "scalex": "1.458966",
                 "scaley": "1.061550",
-                "scalez": "1.399315"
+                "scalez": "1.399335"
             },
             "1": {
                 "Resources": {
@@ -61,8 +61,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandMiddle4",
@@ -250,8 +250,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:LeftHandRing4",
@@ -304,7 +304,10 @@
                 "radius": "1.000000",
                 "scalex": "0.320000",
                 "scaley": "0.275000",
-                "scalez": "0.290000"
+                "scalez": "0.290000",
+                "tmpScalex": "1.638696",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "3.385918"
             },
             "2": {
                 "Resources": {
@@ -372,8 +375,8 @@
                 "rotationy": "0.000028",
                 "rotationz": "-0.000027",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             },
             "12": {
                 "Resources": {
@@ -394,9 +397,9 @@
                 "rotationx": "-0.005171",
                 "rotationy": "-0.450038",
                 "rotationz": "-0.004834",
-                "scalex": "4.581159",
+                "scalex": "4.581181",
                 "scaley": "0.547215",
-                "scalez": "3.985715"
+                "scalez": "3.985735"
             },
             "1": {
                 "Resources": {
@@ -543,7 +546,10 @@
                 "radius": "1.000000",
                 "scalex": "0.075000",
                 "scaley": "2.070000",
-                "scalez": "0.075000"
+                "scalez": "0.075000",
+                "tmpScalex": "35.502556",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "35.282997"
             },
             "2": {
                 "Resources": {
@@ -622,7 +628,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496170"
+                "scalez": "0.496150"
             },
             "1": {
                 "Resources": {
@@ -713,7 +719,10 @@
                 "radius": "1.000000",
                 "scalex": "0.250000",
                 "scaley": "0.265000",
-                "scalez": "0.080000"
+                "scalez": "0.080000",
+                "tmpScalex": "1.638697",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "13.826738"
             },
             "2": {
                 "Resources": {
@@ -734,9 +743,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.985351",
                 "rotationz": "0.000000",
-                "scalex": "3.913204",
+                "scalex": "3.913124",
                 "scaley": "1.597646",
-                "scalez": "3.963937"
+                "scalez": "3.963857"
             },
             "1": {
                 "Resources": {
@@ -847,9 +856,9 @@
     "1182725463": {
         "Components": {
             "0": {
-                "positionx": "16.750000",
-                "positiony": "0.000000",
-                "positionz": "0.000000",
+                "positionx": "-1700.000000",
+                "positiony": "527.000000",
+                "positionz": "-2217.000000",
                 "rotationw": "1.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
@@ -867,45 +876,45 @@
                 "Animations": {
                     "0": {
                         "Default": false,
+                        "End": "330",
+                        "Loop": true,
+                        "Name": "Idle",
+                        "Start": "2"
+                    },
+                    "1": {
+                        "Default": false,
                         "End": "372",
                         "Loop": true,
                         "Name": "Walk",
                         "Start": "331"
                     },
-                    "1": {
+                    "2": {
                         "Default": false,
                         "End": "391",
                         "Loop": true,
                         "Name": "Run",
                         "Start": "373"
                     },
-                    "2": {
+                    "3": {
                         "Default": false,
                         "End": "430",
                         "Loop": false,
                         "Name": "Light",
                         "Start": "392"
                     },
-                    "3": {
+                    "4": {
                         "Default": false,
                         "End": "486",
                         "Loop": false,
                         "Name": "Heavy",
                         "Start": "431"
                     },
-                    "4": {
+                    "5": {
                         "Default": false,
                         "End": "1037",
                         "Loop": false,
                         "Name": "Evade",
                         "Start": "1005"
-                    },
-                    "5": {
-                        "Default": false,
-                        "End": "330",
-                        "Loop": true,
-                        "Name": "Idle",
-                        "Start": "2"
                     },
                     "Size": "6"
                 },
@@ -937,9 +946,9 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "16.750000",
-                "globalMatrixy": "20.000000",
-                "globalMatrixz": "0.000000",
+                "globalMatrixx": "-1700.000000",
+                "globalMatrixy": "547.000000",
+                "globalMatrixz": "-2217.000000",
                 "globalPositionx": "1.000000",
                 "globalPositiony": "1.000000",
                 "globalPositionz": "1.000000",
@@ -961,7 +970,10 @@
                 "radius": "1.000000",
                 "scalex": "15.000000",
                 "scaley": "38.000000",
-                "scalez": "15.000000"
+                "scalez": "15.000000",
+                "tmpScalex": "1.000000",
+                "tmpScaley": "1.000000",
+                "tmpScalez": "1.000000"
             },
             "16": {
                 "ColorB": "1.000000",
@@ -986,7 +998,7 @@
             "17": null
         },
         "Name": "gerardo2",
-        "Parent": "1250576641"
+        "Parent": "856730436"
     },
     "1187905000": {
         "Components": {
@@ -999,8 +1011,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:LeftHandIndex4",
@@ -1016,9 +1028,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995350",
                 "rotationz": "0.000000",
-                "scalex": "2.908865",
+                "scalex": "2.908805",
                 "scaley": "3.937902",
-                "scalez": "11.798466"
+                "scalez": "11.798216"
             },
             "1": {
                 "Resources": {
@@ -1053,7 +1065,10 @@
                 "radius": "1.000000",
                 "scalex": "0.185000",
                 "scaley": "0.330000",
-                "scalez": "0.085000"
+                "scalez": "0.085000",
+                "tmpScalex": "2.908634",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.797506"
             },
             "2": {
                 "Resources": {
@@ -1098,8 +1113,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:LeftToe_End",
@@ -1166,9 +1181,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638856",
+                "scalex": "1.638816",
                 "scaley": "3.937902",
-                "scalez": "11.798601"
+                "scalez": "11.798321"
             },
             "1": {
                 "Resources": {
@@ -1179,9 +1194,9 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "-2313.551025",
+                "globalMatrixx": "-2313.550781",
                 "globalMatrixy": "694.486877",
-                "globalMatrixz": "-354.663910",
+                "globalMatrixz": "-354.663879",
                 "globalPositionx": "519.255859",
                 "globalPositiony": "393.790161",
                 "globalPositionz": "1172.875488",
@@ -1203,7 +1218,10 @@
                 "radius": "1.000000",
                 "scalex": "0.225000",
                 "scaley": "0.275000",
-                "scalez": "0.085000"
+                "scalez": "0.085000",
+                "tmpScalex": "1.638704",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.797531"
             },
             "2": {
                 "Resources": {
@@ -1253,8 +1271,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:RightToe_End",
@@ -1339,9 +1357,9 @@
                 "rotationx": "0.423377",
                 "rotationy": "0.892604",
                 "rotationz": "-0.060895",
-                "scalex": "7.751215",
+                "scalex": "7.751316",
                 "scaley": "1.032900",
-                "scalez": "68.083015"
+                "scalez": "68.084084"
             },
             "1": {
                 "Resources": {
@@ -1420,7 +1438,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496170"
+                "scalez": "0.496150"
             },
             "1": {
                 "Resources": {
@@ -1443,7 +1461,7 @@
                 "positiony": "694.388428",
                 "positionz": "2064.498779",
                 "rotationw": "0.972280",
-                "rotationx": "0.000000",
+                "rotationx": "-0.000000",
                 "rotationy": "-0.233821",
                 "rotationz": "0.000000",
                 "scalex": "1.638696",
@@ -1483,7 +1501,10 @@
                 "radius": "1.000000",
                 "scalex": "0.165000",
                 "scaley": "0.275000",
-                "scalez": "0.100000"
+                "scalez": "0.100000",
+                "tmpScalex": "1.638696",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.246946"
             },
             "2": {
                 "Resources": {
@@ -1579,7 +1600,7 @@
                 "rotationy": "0.532287",
                 "rotationz": "-0.434662",
                 "scalex": "0.313724",
-                "scaley": "1.375424",
+                "scaley": "1.375444",
                 "scalez": "0.313724"
             },
             "1": {
@@ -1657,8 +1678,8 @@
                 "rotationx": "-0.000479",
                 "rotationy": "0.000724",
                 "rotationz": "0.999948",
-                "scalex": "1.000063",
-                "scaley": "1.000063",
+                "scalex": "1.000043",
+                "scaley": "1.000043",
                 "scalez": "1.000000"
             },
             "12": {
@@ -1727,8 +1748,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightToe_End",
@@ -1855,7 +1876,10 @@
                 "radius": "1.000000",
                 "scalex": "0.100000",
                 "scaley": "0.285000",
-                "scalez": "0.195000"
+                "scalez": "0.195000",
+                "tmpScalex": "1.638696",
+                "tmpScaley": "3.937901",
+                "tmpScalez": "7.609539"
             },
             "2": {
                 "Resources": {
@@ -2056,7 +2080,10 @@
                 "radius": "1.000000",
                 "scalex": "0.110000",
                 "scaley": "2.855000",
-                "scalez": "0.105000"
+                "scalez": "0.105000",
+                "tmpScalex": "27.652586",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "26.652582"
             },
             "2": {
                 "Resources": {
@@ -2142,8 +2169,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:RightHandIndex4",
@@ -2211,8 +2238,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandRing4",
@@ -2229,8 +2256,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:RightHandMiddle4",
@@ -2455,9 +2482,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638856",
+                "scalex": "1.638816",
                 "scaley": "1.281409",
-                "scalez": "3.775336"
+                "scalez": "3.775238"
             },
             "1": {
                 "Resources": {
@@ -2548,7 +2575,10 @@
                 "radius": "1.000000",
                 "scalex": "0.060000",
                 "scaley": "5.995000",
-                "scalez": "0.040000"
+                "scalez": "0.040000",
+                "tmpScalex": "25.258335",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "66.790131"
             },
             "2": {
                 "Resources": {
@@ -2606,7 +2636,10 @@
                 "radius": "1.000000",
                 "scalex": "0.110000",
                 "scaley": "4.660000",
-                "scalez": "0.105000"
+                "scalez": "0.105000",
+                "tmpScalex": "24.485893",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "26.652582"
             },
             "2": {
                 "Resources": {
@@ -2627,9 +2660,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.999127",
                 "rotationz": "0.000000",
-                "scalex": "3.912726",
+                "scalex": "3.912768",
                 "scaley": "1.597646",
-                "scalez": "2.760805"
+                "scalez": "2.760845"
             },
             "1": {
                 "Resources": {
@@ -2711,7 +2744,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.941560",
                 "rotationz": "0.000000",
-                "scalex": "2.383367",
+                "scalex": "2.383387",
                 "scaley": "0.674876",
                 "scalez": "0.364728"
             },
@@ -3064,7 +3097,7 @@
                 "rotationy": "0.675678",
                 "rotationz": "-0.223790",
                 "scalex": "0.313724",
-                "scaley": "1.375582",
+                "scaley": "1.375562",
                 "scalez": "0.313724"
             },
             "1": {
@@ -3137,9 +3170,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.985893",
                 "rotationz": "0.000000",
-                "scalex": "1.638460",
+                "scalex": "1.638520",
                 "scaley": "3.937902",
-                "scalez": "11.795855"
+                "scalez": "11.796268"
             },
             "1": {
                 "Resources": {
@@ -3174,7 +3207,10 @@
                 "radius": "1.000000",
                 "scalex": "0.180000",
                 "scaley": "0.285000",
-                "scalez": "0.085000"
+                "scalez": "0.085000",
+                "tmpScalex": "1.638538",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.796391"
             },
             "2": {
                 "Resources": {
@@ -3243,7 +3279,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496170"
+                "scalez": "0.496150"
             },
             "1": {
                 "Resources": {
@@ -3298,8 +3334,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:RightHandThumb4",
@@ -3487,7 +3523,10 @@
                 "radius": "1.000000",
                 "scalex": "0.200000",
                 "scaley": "0.270000",
-                "scalez": "0.090000"
+                "scalez": "0.090000",
+                "tmpScalex": "1.638697",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.482967"
             },
             "2": {
                 "Resources": {
@@ -3509,8 +3548,8 @@
                 "rotationy": "-0.000000",
                 "rotationz": "-0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:LeftHandThumb4",
@@ -3554,9 +3593,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.023360",
+                "scalex": "1.023340",
                 "scaley": "1.281409",
-                "scalez": "0.835904"
+                "scalez": "0.835884"
             },
             "1": {
                 "Resources": {
@@ -3611,7 +3650,7 @@
                 "rotationy": "0.492333",
                 "rotationz": "-0.427162",
                 "scalex": "0.313724",
-                "scaley": "1.375583",
+                "scaley": "1.375563",
                 "scalez": "0.313724"
             },
             "1": {
@@ -3638,9 +3677,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.877197",
                 "rotationz": "0.000000",
-                "scalex": "1.638603",
+                "scalex": "1.638625",
                 "scaley": "3.937902",
-                "scalez": "12.645571"
+                "scalez": "12.645795"
             },
             "1": {
                 "Resources": {
@@ -3675,7 +3714,10 @@
                 "radius": "1.000000",
                 "scalex": "0.080000",
                 "scaley": "0.280000",
-                "scalez": "0.130000"
+                "scalez": "0.130000",
+                "tmpScalex": "1.638689",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "12.646386"
             },
             "2": {
                 "Resources": {
@@ -3892,7 +3934,7 @@
                 "rotationz": "0.000000",
                 "scalex": "1.638700",
                 "scaley": "3.937902",
-                "scalez": "11.437347"
+                "scalez": "11.437270"
             },
             "1": {
                 "Resources": {
@@ -3927,7 +3969,10 @@
                 "radius": "1.000000",
                 "scalex": "0.195000",
                 "scaley": "0.265000",
-                "scalez": "0.080000"
+                "scalez": "0.080000",
+                "tmpScalex": "1.638699",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.437045"
             },
             "2": {
                 "Resources": {
@@ -3964,9 +4009,9 @@
     "1857231193": {
         "Components": {
             "0": {
-                "positionx": "-48.808105",
-                "positiony": "0.000000",
-                "positionz": "0.000000",
+                "positionx": "-1643.000000",
+                "positiony": "527.000000",
+                "positionz": "-2217.000000",
                 "rotationw": "1.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
@@ -4054,9 +4099,9 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "-48.808105",
-                "globalMatrixy": "20.000000",
-                "globalMatrixz": "0.000000",
+                "globalMatrixx": "-1643.000000",
+                "globalMatrixy": "547.000000",
+                "globalMatrixz": "-2217.000000",
                 "globalPositionx": "1.000000",
                 "globalPositiony": "1.000000",
                 "globalPositionz": "1.000000",
@@ -4078,7 +4123,10 @@
                 "radius": "1.000000",
                 "scalex": "15.000000",
                 "scaley": "38.000000",
-                "scalez": "15.000000"
+                "scalez": "15.000000",
+                "tmpScalex": "1.000000",
+                "tmpScaley": "1.000000",
+                "tmpScalez": "1.000000"
             },
             "16": {
                 "ColorB": "1.000000",
@@ -4103,7 +4151,7 @@
             "17": null
         },
         "Name": "gerardo1",
-        "Parent": "1250576641"
+        "Parent": "856730436"
     },
     "1859078477": {
         "Components": {
@@ -4143,9 +4191,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.998427",
                 "rotationz": "0.000000",
-                "scalex": "2.148964",
+                "scalex": "2.148944",
                 "scaley": "1.597646",
-                "scalez": "1.469529"
+                "scalez": "1.469509"
             },
             "1": {
                 "Resources": {
@@ -4171,7 +4219,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.958476",
                 "rotationz": "0.000000",
-                "scalex": "7.080016",
+                "scalex": "7.079895",
                 "scaley": "0.674876",
                 "scalez": "0.364728"
             },
@@ -4348,8 +4396,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandPinky4",
@@ -4624,7 +4672,10 @@
                 "radius": "1.000000",
                 "scalex": "0.040000",
                 "scaley": "1.000000",
-                "scalez": "0.035000"
+                "scalez": "0.035000",
+                "tmpScalex": "42.737808",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "71.083900"
             },
             "2": {
                 "Resources": {
@@ -4913,9 +4964,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.988392",
                 "rotationz": "0.000000",
-                "scalex": "1.638538",
+                "scalex": "1.638578",
                 "scaley": "3.937902",
-                "scalez": "7.299346"
+                "scalez": "7.299530"
             },
             "1": {
                 "Resources": {
@@ -4950,7 +5001,10 @@
                 "radius": "1.000000",
                 "scalex": "0.300000",
                 "scaley": "0.270000",
-                "scalez": "0.145000"
+                "scalez": "0.145000",
+                "tmpScalex": "1.638684",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "7.300023"
             },
             "2": {
                 "Resources": {
@@ -5096,9 +5150,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.989010",
                 "rotationz": "0.000000",
-                "scalex": "4.207637",
+                "scalex": "4.207777",
                 "scaley": "0.674876",
-                "scalez": "0.364649"
+                "scalez": "0.364669"
             },
             "1": {
                 "Resources": {
@@ -5148,12 +5202,12 @@
                 "positionx": "362.393372",
                 "positiony": "774.449768",
                 "positionz": "1245.623535",
-                "rotationw": "0.650827",
+                "rotationw": "0.650826",
                 "rotationx": "-0.388388",
                 "rotationy": "-0.334304",
                 "rotationz": "0.560197",
                 "scalex": "0.313724",
-                "scaley": "1.375504",
+                "scaley": "1.375505",
                 "scalez": "0.313724"
             },
             "1": {
@@ -5380,7 +5434,10 @@
                 "radius": "1.000000",
                 "scalex": "0.100000",
                 "scaley": "4.910000",
-                "scalez": "0.110000"
+                "scalez": "0.110000",
+                "tmpScalex": "26.646933",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "26.652582"
             },
             "2": {
                 "Resources": {
@@ -5423,10 +5480,10 @@
                 "rotationw": "0.578259",
                 "rotationx": "0.000000",
                 "rotationy": "-0.815853",
-                "rotationz": "0.000000",
-                "scalex": "1.638618",
+                "rotationz": "-0.000000",
+                "scalex": "1.638638",
                 "scaley": "3.937902",
-                "scalez": "11.796958"
+                "scalez": "11.797087"
             },
             "1": {
                 "Resources": {
@@ -5461,7 +5518,10 @@
                 "radius": "1.000000",
                 "scalex": "0.100000",
                 "scaley": "0.265000",
-                "scalez": "0.170000"
+                "scalez": "0.170000",
+                "tmpScalex": "1.638693",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.797456"
             },
             "2": {
                 "Resources": {
@@ -5483,8 +5543,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftToe_End",
@@ -5666,9 +5726,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.999127",
                 "rotationz": "0.000000",
-                "scalex": "2.028163",
+                "scalex": "2.028184",
                 "scaley": "1.597646",
-                "scalez": "1.469371"
+                "scalez": "1.469391"
             },
             "1": {
                 "Resources": {
@@ -5694,9 +5754,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.993049",
                 "rotationz": "0.000000",
-                "scalex": "1.638617",
+                "scalex": "1.638637",
                 "scaley": "3.937902",
-                "scalez": "11.436470"
+                "scalez": "11.436612"
             },
             "1": {
                 "Resources": {
@@ -5731,7 +5791,10 @@
                 "radius": "1.000000",
                 "scalex": "0.285000",
                 "scaley": "0.255000",
-                "scalez": "0.095000"
+                "scalez": "0.095000",
+                "tmpScalex": "1.638694",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "11.437021"
             },
             "2": {
                 "Resources": {
@@ -5804,8 +5867,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandIndex4",
@@ -5840,8 +5903,8 @@
                 "rotationy": "-0.000000",
                 "rotationz": "-0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandThumb4",
@@ -6038,7 +6101,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.906551",
                 "rotationz": "0.000000",
-                "scalex": "4.187162",
+                "scalex": "4.187188",
                 "scaley": "0.674876",
                 "scalez": "0.364728"
             },
@@ -6089,7 +6152,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "-0.023288",
                 "rotationz": "0.000000",
-                "scalex": "25.234447",
+                "scalex": "25.234486",
                 "scaley": "1.032900",
                 "scalez": "31.329157"
             },
@@ -6126,7 +6189,10 @@
                 "radius": "1.000000",
                 "scalex": "0.105000",
                 "scaley": "2.090000",
-                "scalez": "0.085000"
+                "scalez": "0.085000",
+                "tmpScalex": "25.234589",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "31.329243"
             },
             "2": {
                 "Resources": {
@@ -6147,9 +6213,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "2.136784",
+                "scalex": "2.136733",
                 "scaley": "1.281409",
-                "scalez": "2.059243"
+                "scalez": "2.059197"
             },
             "1": {
                 "Resources": {
@@ -6177,7 +6243,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496170"
+                "scalez": "0.496150"
             },
             "1": {
                 "Resources": {
@@ -6204,8 +6270,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandIndex4",
@@ -6223,7 +6289,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496168"
+                "scalez": "0.496148"
             },
             "1": {
                 "Resources": {
@@ -6559,7 +6625,10 @@
                 "radius": "1.000000",
                 "scalex": "0.310000",
                 "scaley": "0.255000",
-                "scalez": "0.095000"
+                "scalez": "0.095000",
+                "tmpScalex": "1.638697",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "10.695509"
             },
             "2": {
                 "Resources": {
@@ -6608,8 +6677,8 @@
                 "rotationx": "-0.000479",
                 "rotationy": "0.000724",
                 "rotationz": "0.999948",
-                "scalex": "1.000062",
-                "scaley": "1.000062",
+                "scalex": "1.000042",
+                "scaley": "1.000042",
                 "scalez": "1.000000"
             },
             "12": {
@@ -6682,9 +6751,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638856",
+                "scalex": "1.638816",
                 "scaley": "1.281409",
-                "scalez": "1.387754"
+                "scalez": "1.387714"
             },
             "1": {
                 "Resources": {
@@ -6710,9 +6779,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.998427",
                 "rotationz": "0.000000",
-                "scalex": "3.096640",
+                "scalex": "3.096600",
                 "scaley": "3.937902",
-                "scalez": "7.603055"
+                "scalez": "7.602966"
             },
             "1": {
                 "Resources": {
@@ -6747,7 +6816,10 @@
                 "radius": "1.000000",
                 "scalex": "0.285000",
                 "scaley": "0.290000",
-                "scalez": "0.140000"
+                "scalez": "0.140000",
+                "tmpScalex": "3.096490",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "7.602725"
             },
             "2": {
                 "Resources": {
@@ -6809,7 +6881,7 @@
             "3": null
         },
         "Name": "camera",
-        "Parent": "1250576641"
+        "Parent": "856730436"
     },
     "553163909": {
         "Components": {
@@ -6844,9 +6916,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.274569",
                 "rotationz": "0.000000",
-                "scalex": "66.231178",
+                "scalex": "66.231331",
                 "scaley": "1.032900",
-                "scalez": "27.317869"
+                "scalez": "27.317938"
             },
             "1": {
                 "Resources": {
@@ -6881,7 +6953,10 @@
                 "radius": "1.000000",
                 "scalex": "0.035000",
                 "scaley": "2.575000",
-                "scalez": "0.050000"
+                "scalez": "0.050000",
+                "tmpScalex": "66.231743",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "27.318127"
             },
             "2": {
                 "Resources": {
@@ -7041,7 +7116,10 @@
                 "radius": "1.000000",
                 "scalex": "0.225000",
                 "scaley": "0.270000",
-                "scalez": "0.080000"
+                "scalez": "0.080000",
+                "tmpScalex": "1.638697",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "12.646450"
             },
             "2": {
                 "Resources": {
@@ -7085,9 +7163,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638856",
+                "scalex": "1.638816",
                 "scaley": "1.281409",
-                "scalez": "3.758620"
+                "scalez": "3.758522"
             },
             "1": {
                 "Resources": {
@@ -7114,8 +7192,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:HeadTop_End",
@@ -7155,8 +7233,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:HeadTop_End",
@@ -7223,8 +7301,8 @@
                 "rotationx": "0.000553",
                 "rotationy": "0.001695",
                 "rotationz": "0.999948",
-                "scalex": "1.000120",
-                "scaley": "1.000120",
+                "scalex": "1.000080",
+                "scaley": "1.000080",
                 "scalez": "1.000000"
             },
             "12": {
@@ -7293,8 +7371,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:LeftHandMiddle4",
@@ -7333,9 +7411,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995350",
                 "rotationz": "0.000000",
-                "scalex": "1.638855",
+                "scalex": "1.638815",
                 "scaley": "3.937901",
-                "scalez": "11.798466"
+                "scalez": "11.798216"
             },
             "1": {
                 "Resources": {
@@ -7346,9 +7424,9 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "-2219.148438",
+                "globalMatrixx": "-2219.149170",
                 "globalMatrixy": "694.388428",
-                "globalMatrixz": "-1428.716797",
+                "globalMatrixz": "-1428.716675",
                 "globalPositionx": "387.055664",
                 "globalPositiony": "393.790070",
                 "globalPositionz": "1189.280518",
@@ -7370,7 +7448,10 @@
                 "radius": "1.000000",
                 "scalex": "0.250000",
                 "scaley": "0.245000",
-                "scalez": "0.085000"
+                "scalez": "0.085000",
+                "tmpScalex": "1.638701",
+                "tmpScaley": "3.937901",
+                "tmpScalez": "11.797506"
             },
             "2": {
                 "Resources": {
@@ -7456,7 +7537,10 @@
                 "radius": "1.000000",
                 "scalex": "0.425000",
                 "scaley": "0.270000",
-                "scalez": "0.175000"
+                "scalez": "0.175000",
+                "tmpScalex": "1.638697",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "5.909054"
             },
             "2": {
                 "Resources": {
@@ -7506,8 +7590,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:LeftHandPinky4",
@@ -7552,8 +7636,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:RightHandPinky4",
@@ -7565,13 +7649,13 @@
                 "positionx": "-4980.000488",
                 "positiony": "15520.001953",
                 "positionz": "7274.000977",
-                "rotationw": "0.820051",
+                "rotationw": "0.820052",
                 "rotationx": "-0.005805",
                 "rotationy": "-0.572246",
                 "rotationz": "-0.004051",
-                "scalex": "2.754140",
+                "scalex": "2.754138",
                 "scaley": "1.032900",
-                "scalez": "27.690571"
+                "scalez": "27.690559"
             },
             "1": {
                 "Resources": {
@@ -7606,7 +7690,10 @@
                 "radius": "1.000000",
                 "scalex": "0.115000",
                 "scaley": "2.040000",
-                "scalez": "0.215000"
+                "scalez": "0.215000",
+                "tmpScalex": "2.754143",
+                "tmpScaley": "1.032900",
+                "tmpScalez": "27.690626"
             },
             "2": {
                 "Resources": {
@@ -7628,8 +7715,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandPinky4",
@@ -7647,7 +7734,7 @@
                 "rotationz": "0.000000",
                 "scalex": "1.638701",
                 "scaley": "3.937902",
-                "scalez": "12.646784"
+                "scalez": "12.646699"
             },
             "1": {
                 "Resources": {
@@ -7682,7 +7769,10 @@
                 "radius": "1.000000",
                 "scalex": "0.085000",
                 "scaley": "0.280000",
-                "scalez": "0.295000"
+                "scalez": "0.295000",
+                "tmpScalex": "1.638701",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "12.646475"
             },
             "2": {
                 "Resources": {
@@ -7732,8 +7822,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             }
         },
         "Name": "mixamorig:RightHandRing4",
@@ -7847,8 +7937,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandMiddle4",
@@ -7921,7 +8011,7 @@
             }
         },
         "Name": "GameObject (73)",
-        "Parent": "1250576641"
+        "Parent": "856730436"
     },
     "803450784": {
         "Components": {
@@ -7933,9 +8023,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995249",
                 "rotationz": "0.000000",
-                "scalex": "1.638618",
+                "scalex": "1.638638",
                 "scaley": "3.937902",
-                "scalez": "9.123180"
+                "scalez": "9.123291"
             },
             "1": {
                 "Resources": {
@@ -7948,7 +8038,7 @@
                 "globalMatrixw": "1.000000",
                 "globalMatrixx": "-2413.640625",
                 "globalMatrixy": "691.809082",
-                "globalMatrixz": "-2350.043701",
+                "globalMatrixz": "-2350.043945",
                 "globalPositionx": "337.575195",
                 "globalPositiony": "393.790161",
                 "globalPositionz": "926.820190",
@@ -7970,7 +8060,10 @@
                 "radius": "1.000000",
                 "scalex": "0.290000",
                 "scaley": "0.290000",
-                "scalez": "0.115000"
+                "scalez": "0.115000",
+                "tmpScalex": "1.638695",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "9.123596"
             },
             "2": {
                 "Resources": {
@@ -7991,8 +8084,8 @@
                 "rotationx": "0.000553",
                 "rotationy": "0.001695",
                 "rotationz": "0.999948",
-                "scalex": "1.000122",
-                "scaley": "1.000122",
+                "scalex": "1.000082",
+                "scaley": "1.000082",
                 "scalez": "1.000000"
             },
             "12": {
@@ -8241,9 +8334,9 @@
                 "rotationx": "-0.006410",
                 "rotationy": "-0.703381",
                 "rotationz": "-0.003005",
-                "scalex": "4.581323",
+                "scalex": "4.581303",
                 "scaley": "0.547215",
-                "scalez": "3.985879"
+                "scalez": "3.985859"
             },
             "1": {
                 "Resources": {
@@ -8316,8 +8409,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandThumb4",
@@ -8361,9 +8454,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.937371",
                 "rotationz": "0.000000",
-                "scalex": "1.638775",
+                "scalex": "1.638755",
                 "scaley": "3.937902",
-                "scalez": "7.221123"
+                "scalez": "7.221043"
             },
             "1": {
                 "Resources": {
@@ -8398,7 +8491,10 @@
                 "radius": "1.000000",
                 "scalex": "0.185000",
                 "scaley": "0.255000",
-                "scalez": "0.160000"
+                "scalez": "0.160000",
+                "tmpScalex": "1.638702",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "7.220832"
             },
             "2": {
                 "Resources": {
@@ -8419,9 +8515,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "3.891042",
+                "scalex": "3.890944",
                 "scaley": "1.281409",
-                "scalez": "2.840560"
+                "scalez": "2.840494"
             },
             "1": {
                 "Resources": {
@@ -8472,7 +8568,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496170"
+                "scalez": "0.496150"
             },
             "1": {
                 "Resources": {
@@ -8605,9 +8701,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.895429",
                 "rotationz": "0.000000",
-                "scalex": "1.638618",
+                "scalex": "1.638638",
                 "scaley": "3.937902",
-                "scalez": "9.090892"
+                "scalez": "9.090983"
             },
             "1": {
                 "Resources": {
@@ -8642,7 +8738,10 @@
                 "radius": "1.000000",
                 "scalex": "0.165000",
                 "scaley": "0.265000",
-                "scalez": "0.160000"
+                "scalez": "0.160000",
+                "tmpScalex": "1.638691",
+                "tmpScaley": "3.937902",
+                "tmpScalez": "9.091232"
             },
             "2": {
                 "Resources": {
@@ -8664,8 +8763,8 @@
                 "rotationy": "0.000028",
                 "rotationz": "-0.000027",
                 "scalex": "1.000000",
-                "scaley": "1.000063",
-                "scalez": "1.000063"
+                "scaley": "1.000043",
+                "scalez": "1.000043"
             },
             "12": {
                 "Resources": {
@@ -8686,7 +8785,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.988255",
                 "rotationz": "0.000000",
-                "scalex": "5.559913",
+                "scalex": "5.559758",
                 "scaley": "0.674876",
                 "scalez": "0.364729"
             },
@@ -8714,9 +8813,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.961741",
                 "rotationz": "0.000000",
-                "scalex": "2.331874",
+                "scalex": "2.331894",
                 "scaley": "1.597646",
-                "scalez": "2.706199"
+                "scalez": "2.706219"
             },
             "1": {
                 "Resources": {
@@ -8845,8 +8944,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000062",
-                "scalez": "1.000062"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandRing4",
