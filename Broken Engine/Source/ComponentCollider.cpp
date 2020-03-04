@@ -582,26 +582,32 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
 		
-			float3 center = GO->GetAABB().CenterPoint();
+			float3 center;
 
 			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
-			
+			Quat q = transform->rotation;
+			Quat q2 = q;
 			if (!firstCreation)
 			{
-				originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
-				Quat q = Quat::FromEulerXYZ(45 * DEGTORAD, 45 * DEGTORAD, 45 * DEGTORAD);
-				//q.InverseAndNormalize();
-				OBB obb = GO->GetAABB().Transform(q);
-				obb.Scale(obb.CenterPoint(), scale);
+				
+				q.InverseAndNormalize();
+				transform->rotation = q;
+				transform->SetGlobalTransform(transform->Local_transform);
+				GO->UpdateAABB();
 
-				originalScale = obb.Size();
+				originalScale = GO->GetOBB().Size();
+				center = GO->GetAABB().CenterPoint();
 
-				offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
+				/*transform->rotation = q2;
+				transform->SetGlobalTransform(transform->Local_transform);
+				GO->UpdateAABB();*/
+
+				offset = center;//returns the offset of the collider from the AABB
 				firstCreation = true;
 
-				originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
-				offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
-				firstCreation = true; 
+				//originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
+				//offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
+				//firstCreation = true; 
 			}
 			offset.Mul(tScale);
 
@@ -618,6 +624,12 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 				App->physics->mScene->addActor(*rigidStatic);
 			}
+
+			transform->rotation = q2;
+			transform->SetGlobalTransform(transform->Local_transform);
+			GO->UpdateAABB();
+
+			UpdateLocalMatrix();
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::BOX;
 			break;
