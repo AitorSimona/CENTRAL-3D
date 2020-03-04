@@ -117,24 +117,6 @@ void ComponentDynamicRigidBody::Load(json& node)
 
 	angular_damping = std::stoi(angular_damping_);
 
-	ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
-	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
-
-	if (collider)
-	{
-		float3 pos, scale;
-		Quat rot;
-		collider->GetGlobalMatrix().Decompose(pos, rot, scale);
-
-		PxVec3 posi(pos.x, pos.y, pos.z);
-		PxQuat quati(rot.x, rot.y, rot.z, rot.w);
-		PxTransform transform(posi, quati);
-
-		rigidBody->setGlobalPose(transform);
-
-		collider->UpdateTransformByRigidBody(this, cTransform);
-	}
-
 }
 
 void ComponentDynamicRigidBody::CreateInspectorNode()

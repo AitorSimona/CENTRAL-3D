@@ -1,5 +1,5 @@
 #include "ComponentTransform.h"
-
+#include "Application.h"
 #include "GameObject.h"
 #include "Imgui/imgui.h"
 #include "Math.h"

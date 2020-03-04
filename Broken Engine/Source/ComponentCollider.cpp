@@ -193,7 +193,8 @@ void ComponentCollider::UpdateLocalMatrix() {
 	}
 }
 
-void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {
+void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {	
+	
 	PxTransform transform;
 	if (!RB)
 		return;
@@ -214,6 +215,21 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 
 	cTransform->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
 	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
+
+	if (App->GetAppState() == AppState::PLAY && !toPlay)
+	{
+		float3 pos, scale;
+		Quat rot;
+		globalMatrix.Decompose(pos, rot, scale);
+
+		PxVec3 posi(pos.x, pos.y, pos.z);
+		PxQuat quati(rot.x, rot.y, rot.z, rot.w);
+		PxTransform transform(posi, quati);
+
+		RB->rigidBody->setGlobalPose(transform);
+
+		toPlay = true;
+	}
 }
 
 json ComponentCollider::Save() const
@@ -360,6 +376,8 @@ void ComponentCollider::Load(json& node)
 
 	firstCreation = true;
 
+	toPlay = false;
+
 	std::string colliderEnum = node["colliderType"];
 
 	lastIndex = 0;
@@ -389,24 +407,6 @@ void ComponentCollider::Load(json& node)
 	}
 
 	UpdateLocalMatrix();
-
-	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
-	ComponentDynamicRigidBody* rb = GO->GetComponent<ComponentDynamicRigidBody>();
-
-	if (rb)
-	{
-		float3 pos, scale;
-		Quat rot;
-		globalMatrix.Decompose(pos, rot, scale);
-
-		PxVec3 posi(pos.x, pos.y, pos.z);
-		PxQuat quati(rot.x, rot.y, rot.z, rot.w);
-		PxTransform transform(posi, quati);
-
-		rb->rigidBody->setGlobalPose(transform);
-		PxTransform t = rb->rigidBody->getGlobalPose();
-		UpdateTransformByRigidBody(rb, cTransform);
-	}
 }
 
 void ComponentCollider::CreateInspectorNode()

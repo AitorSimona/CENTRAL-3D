@@ -71,6 +71,7 @@ private:
 	int colliderType = 0;
 	float3 tmpScale = float3::one;
 	bool firstCreation = false;
+	bool toPlay = false;
 };
 
 #endif __COMPONENT_COLLIDER_H__

@@ -32,9 +32,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995249",
                 "rotationz": "0.000000",
-                "scalex": "1.458981",
+                "scalex": "1.458967",
                 "scaley": "1.061550",
-                "scalez": "1.399350"
+                "scalez": "1.399336"
             },
             "1": {
                 "Resources": {
@@ -61,8 +61,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:RightHandMiddle4",
@@ -250,8 +250,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandRing4",
@@ -375,8 +375,8 @@
                 "rotationy": "0.000028",
                 "rotationz": "-0.000027",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             },
             "12": {
                 "Resources": {
@@ -397,9 +397,9 @@
                 "rotationx": "-0.005171",
                 "rotationy": "-0.450038",
                 "rotationz": "-0.004834",
-                "scalex": "4.581197",
+                "scalex": "4.581182",
                 "scaley": "0.547215",
-                "scalez": "3.985750"
+                "scalez": "3.985736"
             },
             "1": {
                 "Resources": {
@@ -628,7 +628,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496135"
+                "scalez": "0.496149"
             },
             "1": {
                 "Resources": {
@@ -743,9 +743,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.985351",
                 "rotationz": "0.000000",
-                "scalex": "3.913064",
+                "scalex": "3.913120",
                 "scaley": "1.597646",
-                "scalez": "3.963797"
+                "scalez": "3.963853"
             },
             "1": {
                 "Resources": {
@@ -856,9 +856,9 @@
     "1182725463": {
         "Components": {
             "0": {
-                "positionx": "0.000000",
-                "positiony": "0.000000",
-                "positionz": "0.000000",
+                "positionx": "-1700.000000",
+                "positiony": "527.000000",
+                "positionz": "-2217.000000",
                 "rotationw": "1.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
@@ -876,45 +876,45 @@
                 "Animations": {
                     "0": {
                         "Default": false,
+                        "End": "330",
+                        "Loop": true,
+                        "Name": "Idle",
+                        "Start": "2"
+                    },
+                    "1": {
+                        "Default": false,
                         "End": "372",
                         "Loop": true,
                         "Name": "Walk",
                         "Start": "331"
                     },
-                    "1": {
+                    "2": {
                         "Default": false,
                         "End": "391",
                         "Loop": true,
                         "Name": "Run",
                         "Start": "373"
                     },
-                    "2": {
+                    "3": {
                         "Default": false,
                         "End": "430",
                         "Loop": false,
                         "Name": "Light",
                         "Start": "392"
                     },
-                    "3": {
+                    "4": {
                         "Default": false,
                         "End": "486",
                         "Loop": false,
                         "Name": "Heavy",
                         "Start": "431"
                     },
-                    "4": {
+                    "5": {
                         "Default": false,
                         "End": "1037",
                         "Loop": false,
                         "Name": "Evade",
                         "Start": "1005"
-                    },
-                    "5": {
-                        "Default": false,
-                        "End": "330",
-                        "Loop": true,
-                        "Name": "Idle",
-                        "Start": "2"
                     },
                     "Size": "6"
                 },
@@ -946,9 +946,9 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "0.000000",
-                "globalMatrixy": "20.000000",
-                "globalMatrixz": "0.000000",
+                "globalMatrixx": "-1700.000000",
+                "globalMatrixy": "547.000000",
+                "globalMatrixz": "-2217.000000",
                 "globalPositionx": "1.000000",
                 "globalPositiony": "1.000000",
                 "globalPositionz": "1.000000",
@@ -998,7 +998,7 @@
             "17": null
         },
         "Name": "gerardo2",
-        "Parent": "67392524"
+        "Parent": "1568557322"
     },
     "1187905000": {
         "Components": {
@@ -1011,8 +1011,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandIndex4",
@@ -1028,9 +1028,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995350",
                 "rotationz": "0.000000",
-                "scalex": "2.908760",
+                "scalex": "2.908802",
                 "scaley": "3.937902",
-                "scalez": "11.798027"
+                "scalez": "11.798203"
             },
             "1": {
                 "Resources": {
@@ -1113,8 +1113,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftToe_End",
@@ -1181,9 +1181,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638786",
+                "scalex": "1.638814",
                 "scaley": "3.937902",
-                "scalez": "11.798111"
+                "scalez": "11.798307"
             },
             "1": {
                 "Resources": {
@@ -1196,7 +1196,7 @@
                 "globalMatrixw": "1.000000",
                 "globalMatrixx": "-2313.550781",
                 "globalMatrixy": "694.486877",
-                "globalMatrixz": "-354.663818",
+                "globalMatrixz": "-354.663849",
                 "globalPositionx": "519.255859",
                 "globalPositiony": "393.790161",
                 "globalPositionz": "1172.875488",
@@ -1271,8 +1271,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightToe_End",
@@ -1357,9 +1357,9 @@
                 "rotationx": "0.423377",
                 "rotationy": "0.892604",
                 "rotationz": "-0.060895",
-                "scalex": "7.751391",
+                "scalex": "7.751321",
                 "scaley": "1.032900",
-                "scalez": "68.084869"
+                "scalez": "68.084137"
             },
             "1": {
                 "Resources": {
@@ -1438,7 +1438,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496135"
+                "scalez": "0.496149"
             },
             "1": {
                 "Resources": {
@@ -1600,7 +1600,7 @@
                 "rotationy": "0.532287",
                 "rotationz": "-0.434662",
                 "scalex": "0.313724",
-                "scaley": "1.375459",
+                "scaley": "1.375445",
                 "scalez": "0.313724"
             },
             "1": {
@@ -1678,8 +1678,8 @@
                 "rotationx": "-0.000479",
                 "rotationy": "0.000724",
                 "rotationz": "0.999948",
-                "scalex": "1.000028",
-                "scaley": "1.000028",
+                "scalex": "1.000042",
+                "scaley": "1.000042",
                 "scalez": "1.000000"
             },
             "12": {
@@ -1748,8 +1748,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:RightToe_End",
@@ -2169,8 +2169,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandIndex4",
@@ -2238,8 +2238,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:LeftHandRing4",
@@ -2256,8 +2256,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandMiddle4",
@@ -2482,9 +2482,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638786",
+                "scalex": "1.638814",
                 "scaley": "1.281409",
-                "scalez": "3.775165"
+                "scalez": "3.775233"
             },
             "1": {
                 "Resources": {
@@ -2660,9 +2660,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.999127",
                 "rotationz": "0.000000",
-                "scalex": "3.912798",
+                "scalex": "3.912770",
                 "scaley": "1.597646",
-                "scalez": "2.760868"
+                "scalez": "2.760847"
             },
             "1": {
                 "Resources": {
@@ -2744,7 +2744,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.941560",
                 "rotationz": "0.000000",
-                "scalex": "2.383402",
+                "scalex": "2.383388",
                 "scaley": "0.674876",
                 "scalez": "0.364728"
             },
@@ -3097,7 +3097,7 @@
                 "rotationy": "0.675678",
                 "rotationz": "-0.223790",
                 "scalex": "0.313724",
-                "scaley": "1.375547",
+                "scaley": "1.375561",
                 "scalez": "0.313724"
             },
             "1": {
@@ -3170,9 +3170,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.985893",
                 "rotationz": "0.000000",
-                "scalex": "1.638565",
+                "scalex": "1.638523",
                 "scaley": "3.937902",
-                "scalez": "11.796578"
+                "scalez": "11.796288"
             },
             "1": {
                 "Resources": {
@@ -3208,9 +3208,9 @@
                 "scalex": "0.180000",
                 "scaley": "0.285000",
                 "scalez": "0.085000",
-                "tmpScalex": "1.638685",
+                "tmpScalex": "1.638538",
                 "tmpScaley": "3.937902",
-                "tmpScalez": "11.797405"
+                "tmpScalez": "11.796391"
             },
             "2": {
                 "Resources": {
@@ -3279,7 +3279,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496135"
+                "scalez": "0.496149"
             },
             "1": {
                 "Resources": {
@@ -3334,8 +3334,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandThumb4",
@@ -3548,8 +3548,8 @@
                 "rotationy": "-0.000000",
                 "rotationz": "-0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandThumb4",
@@ -3593,9 +3593,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.023325",
+                "scalex": "1.023339",
                 "scaley": "1.281409",
-                "scalez": "0.835869"
+                "scalez": "0.835883"
             },
             "1": {
                 "Resources": {
@@ -3650,7 +3650,7 @@
                 "rotationy": "0.492333",
                 "rotationz": "-0.427162",
                 "scalex": "0.313724",
-                "scaley": "1.375548",
+                "scaley": "1.375562",
                 "scalez": "0.313724"
             },
             "1": {
@@ -3677,9 +3677,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.877197",
                 "rotationz": "0.000000",
-                "scalex": "1.638645",
+                "scalex": "1.638626",
                 "scaley": "3.937902",
-                "scalez": "12.645965"
+                "scalez": "12.645806"
             },
             "1": {
                 "Resources": {
@@ -3934,7 +3934,7 @@
                 "rotationz": "0.000000",
                 "scalex": "1.638700",
                 "scaley": "3.937902",
-                "scalez": "11.437212"
+                "scalez": "11.437266"
             },
             "1": {
                 "Resources": {
@@ -4009,9 +4009,9 @@
     "1857231193": {
         "Components": {
             "0": {
-                "positionx": "-48.808105",
-                "positiony": "0.000000",
-                "positionz": "0.000000",
+                "positionx": "-1643.000000",
+                "positiony": "527.000000",
+                "positionz": "-2217.000000",
                 "rotationw": "1.000000",
                 "rotationx": "0.000000",
                 "rotationy": "0.000000",
@@ -4099,9 +4099,9 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "-48.808105",
-                "globalMatrixy": "20.000000",
-                "globalMatrixz": "0.000000",
+                "globalMatrixx": "-1643.000000",
+                "globalMatrixy": "547.000000",
+                "globalMatrixz": "-2217.000000",
                 "globalPositionx": "1.000000",
                 "globalPositiony": "1.000000",
                 "globalPositionz": "1.000000",
@@ -4151,7 +4151,7 @@
             "17": null
         },
         "Name": "gerardo1",
-        "Parent": "67392524"
+        "Parent": "1568557322"
     },
     "1859078477": {
         "Components": {
@@ -4191,9 +4191,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.998427",
                 "rotationz": "0.000000",
-                "scalex": "2.148928",
+                "scalex": "2.148943",
                 "scaley": "1.597646",
-                "scalez": "1.469494"
+                "scalez": "1.469508"
             },
             "1": {
                 "Resources": {
@@ -4219,7 +4219,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.958476",
                 "rotationz": "0.000000",
-                "scalex": "7.079805",
+                "scalex": "7.079889",
                 "scaley": "0.674876",
                 "scalez": "0.364728"
             },
@@ -4396,8 +4396,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:RightHandPinky4",
@@ -4964,9 +4964,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.988392",
                 "rotationz": "0.000000",
-                "scalex": "1.638608",
+                "scalex": "1.638580",
                 "scaley": "3.937902",
-                "scalez": "7.299669"
+                "scalez": "7.299539"
             },
             "1": {
                 "Resources": {
@@ -5150,9 +5150,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.989010",
                 "rotationz": "0.000000",
-                "scalex": "4.207882",
+                "scalex": "4.207784",
                 "scaley": "0.674876",
-                "scalez": "0.364684"
+                "scalez": "0.364670"
             },
             "1": {
                 "Resources": {
@@ -5202,12 +5202,12 @@
                 "positionx": "362.393372",
                 "positiony": "774.449768",
                 "positionz": "1245.623535",
-                "rotationw": "0.650826",
+                "rotationw": "0.650827",
                 "rotationx": "-0.388388",
                 "rotationy": "-0.334304",
                 "rotationz": "0.560197",
                 "scalex": "0.313724",
-                "scaley": "1.375505",
+                "scaley": "1.375504",
                 "scalez": "0.313724"
             },
             "1": {
@@ -5481,9 +5481,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "-0.815853",
                 "rotationz": "-0.000000",
-                "scalex": "1.638653",
+                "scalex": "1.638639",
                 "scaley": "3.937902",
-                "scalez": "11.797185"
+                "scalez": "11.797093"
             },
             "1": {
                 "Resources": {
@@ -5543,8 +5543,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:LeftToe_End",
@@ -5726,9 +5726,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.999127",
                 "rotationz": "0.000000",
-                "scalex": "2.028199",
+                "scalex": "2.028185",
                 "scaley": "1.597646",
-                "scalez": "1.469406"
+                "scalez": "1.469392"
             },
             "1": {
                 "Resources": {
@@ -5754,9 +5754,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.993049",
                 "rotationz": "0.000000",
-                "scalex": "1.638652",
+                "scalex": "1.638638",
                 "scaley": "3.937902",
-                "scalez": "11.436720"
+                "scalez": "11.436620"
             },
             "1": {
                 "Resources": {
@@ -5767,9 +5767,9 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "-1478.596069",
+                "globalMatrixx": "-1478.596191",
                 "globalMatrixy": "699.192688",
-                "globalMatrixz": "-1363.087402",
+                "globalMatrixz": "-1363.087524",
                 "globalPositionx": "426.685303",
                 "globalPositiony": "393.790161",
                 "globalPositionz": "1150.320801",
@@ -5867,8 +5867,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:LeftHandIndex4",
@@ -5903,8 +5903,8 @@
                 "rotationy": "-0.000000",
                 "rotationz": "-0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:LeftHandThumb4",
@@ -6101,7 +6101,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.906551",
                 "rotationz": "0.000000",
-                "scalex": "4.187207",
+                "scalex": "4.187189",
                 "scaley": "0.674876",
                 "scalez": "0.364728"
             },
@@ -6152,9 +6152,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "-0.023288",
                 "rotationz": "0.000000",
-                "scalex": "25.234514",
+                "scalex": "25.234488",
                 "scaley": "1.032900",
-                "scalez": "31.329168"
+                "scalez": "31.329157"
             },
             "1": {
                 "Resources": {
@@ -6213,9 +6213,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "2.136693",
+                "scalex": "2.136731",
                 "scaley": "1.281409",
-                "scalez": "2.059165"
+                "scalez": "2.059195"
             },
             "1": {
                 "Resources": {
@@ -6243,7 +6243,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496135"
+                "scalez": "0.496149"
             },
             "1": {
                 "Resources": {
@@ -6270,8 +6270,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:RightHandIndex4",
@@ -6289,7 +6289,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496133"
+                "scalez": "0.496147"
             },
             "1": {
                 "Resources": {
@@ -6677,8 +6677,8 @@
                 "rotationx": "-0.000479",
                 "rotationy": "0.000724",
                 "rotationz": "0.999948",
-                "scalex": "1.000027",
-                "scaley": "1.000027",
+                "scalex": "1.000041",
+                "scaley": "1.000041",
                 "scalez": "1.000000"
             },
             "12": {
@@ -6751,9 +6751,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638786",
+                "scalex": "1.638814",
                 "scaley": "1.281409",
-                "scalez": "1.387685"
+                "scalez": "1.387712"
             },
             "1": {
                 "Resources": {
@@ -6779,9 +6779,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.998427",
                 "rotationz": "0.000000",
-                "scalex": "3.096570",
+                "scalex": "3.096598",
                 "scaley": "3.937902",
-                "scalez": "7.602901"
+                "scalez": "7.602962"
             },
             "1": {
                 "Resources": {
@@ -6881,7 +6881,7 @@
             "3": null
         },
         "Name": "camera",
-        "Parent": "67392524"
+        "Parent": "1568557322"
     },
     "553163909": {
         "Components": {
@@ -6916,9 +6916,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.274569",
                 "rotationz": "0.000000",
-                "scalex": "66.231445",
+                "scalex": "66.231339",
                 "scaley": "1.032900",
-                "scalez": "27.317999"
+                "scalez": "27.317944"
             },
             "1": {
                 "Resources": {
@@ -7163,9 +7163,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "1.638786",
+                "scalex": "1.638814",
                 "scaley": "1.281409",
-                "scalez": "3.758449"
+                "scalez": "3.758517"
             },
             "1": {
                 "Resources": {
@@ -7192,8 +7192,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:HeadTop_End",
@@ -7233,8 +7233,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:HeadTop_End",
@@ -7301,8 +7301,8 @@
                 "rotationx": "0.000553",
                 "rotationy": "0.001695",
                 "rotationz": "0.999948",
-                "scalex": "1.000050",
-                "scaley": "1.000050",
+                "scalex": "1.000078",
+                "scaley": "1.000078",
                 "scalez": "1.000000"
             },
             "12": {
@@ -7371,8 +7371,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandMiddle4",
@@ -7411,9 +7411,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995350",
                 "rotationz": "0.000000",
-                "scalex": "1.638785",
+                "scalex": "1.638813",
                 "scaley": "3.937901",
-                "scalez": "11.798027"
+                "scalez": "11.798203"
             },
             "1": {
                 "Resources": {
@@ -7424,7 +7424,7 @@
                 "colliderType": "1",
                 "firstCreation": "1",
                 "globalMatrixw": "1.000000",
-                "globalMatrixx": "-2219.149658",
+                "globalMatrixx": "-2219.149170",
                 "globalMatrixy": "694.388428",
                 "globalMatrixz": "-1428.716675",
                 "globalPositionx": "387.055664",
@@ -7590,8 +7590,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:LeftHandPinky4",
@@ -7636,8 +7636,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandPinky4",
@@ -7715,8 +7715,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:LeftHandPinky4",
@@ -7734,7 +7734,7 @@
                 "rotationz": "0.000000",
                 "scalex": "1.638701",
                 "scaley": "3.937902",
-                "scalez": "12.646636"
+                "scalez": "12.646695"
             },
             "1": {
                 "Resources": {
@@ -7822,8 +7822,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             }
         },
         "Name": "mixamorig:RightHandRing4",
@@ -7937,8 +7937,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:LeftHandMiddle4",
@@ -8011,7 +8011,7 @@
             }
         },
         "Name": "GameObject (73)",
-        "Parent": "67392524"
+        "Parent": "1568557322"
     },
     "803450784": {
         "Components": {
@@ -8023,9 +8023,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.995249",
                 "rotationz": "0.000000",
-                "scalex": "1.638653",
+                "scalex": "1.638639",
                 "scaley": "3.937902",
-                "scalez": "9.123370"
+                "scalez": "9.123297"
             },
             "1": {
                 "Resources": {
@@ -8038,7 +8038,7 @@
                 "globalMatrixw": "1.000000",
                 "globalMatrixx": "-2413.640625",
                 "globalMatrixy": "691.809082",
-                "globalMatrixz": "-2350.044189",
+                "globalMatrixz": "-2350.043945",
                 "globalPositionx": "337.575195",
                 "globalPositiony": "393.790161",
                 "globalPositionz": "926.820190",
@@ -8084,8 +8084,8 @@
                 "rotationx": "0.000553",
                 "rotationy": "0.001695",
                 "rotationz": "0.999948",
-                "scalex": "1.000052",
-                "scaley": "1.000052",
+                "scalex": "1.000080",
+                "scaley": "1.000080",
                 "scalez": "1.000000"
             },
             "12": {
@@ -8334,9 +8334,9 @@
                 "rotationx": "-0.006410",
                 "rotationy": "-0.703381",
                 "rotationz": "-0.003005",
-                "scalex": "4.581288",
+                "scalex": "4.581302",
                 "scaley": "0.547215",
-                "scalez": "3.985844"
+                "scalez": "3.985858"
             },
             "1": {
                 "Resources": {
@@ -8409,8 +8409,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:RightHandThumb4",
@@ -8454,9 +8454,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.937371",
                 "rotationz": "0.000000",
-                "scalex": "1.638740",
+                "scalex": "1.638754",
                 "scaley": "3.937902",
-                "scalez": "7.220984"
+                "scalez": "7.221039"
             },
             "1": {
                 "Resources": {
@@ -8515,9 +8515,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.987773",
                 "rotationz": "0.000000",
-                "scalex": "3.890871",
+                "scalex": "3.890939",
                 "scaley": "1.281409",
-                "scalez": "2.840448"
+                "scalez": "2.840491"
             },
             "1": {
                 "Resources": {
@@ -8568,7 +8568,7 @@
                 "rotationz": "0.000000",
                 "scalex": "0.142529",
                 "scaley": "0.322915",
-                "scalez": "0.496135"
+                "scalez": "0.496149"
             },
             "1": {
                 "Resources": {
@@ -8701,9 +8701,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.895429",
                 "rotationz": "0.000000",
-                "scalex": "1.638653",
+                "scalex": "1.638639",
                 "scaley": "3.937902",
-                "scalez": "9.091051"
+                "scalez": "9.090988"
             },
             "1": {
                 "Resources": {
@@ -8763,8 +8763,8 @@
                 "rotationy": "0.000028",
                 "rotationz": "-0.000027",
                 "scalex": "1.000000",
-                "scaley": "1.000028",
-                "scalez": "1.000028"
+                "scaley": "1.000042",
+                "scalez": "1.000042"
             },
             "12": {
                 "Resources": {
@@ -8785,7 +8785,7 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.988255",
                 "rotationz": "0.000000",
-                "scalex": "5.559643",
+                "scalex": "5.559750",
                 "scaley": "0.674876",
                 "scalez": "0.364729"
             },
@@ -8813,9 +8813,9 @@
                 "rotationx": "0.000000",
                 "rotationy": "0.961741",
                 "rotationz": "0.000000",
-                "scalex": "2.331909",
+                "scalex": "2.331895",
                 "scaley": "1.597646",
-                "scalez": "2.706234"
+                "scalez": "2.706220"
             },
             "1": {
                 "Resources": {
@@ -8944,8 +8944,8 @@
                 "rotationy": "0.000000",
                 "rotationz": "0.000000",
                 "scalex": "1.000000",
-                "scaley": "1.000027",
-                "scalez": "1.000027"
+                "scaley": "1.000041",
+                "scalez": "1.000041"
             }
         },
         "Name": "mixamorig:RightHandRing4",
