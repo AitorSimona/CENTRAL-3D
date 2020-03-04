@@ -4,7 +4,7 @@
 #include "Math.h"
 #include <vector>
 
-class Canvas : public Component
+class ComponentCanvas : public Component
 {
 public:
 	enum State
@@ -18,8 +18,8 @@ public:
 	};
 
 public:
-	Canvas(GameObject* gameObject);
-	virtual ~Canvas();
+	ComponentCanvas(GameObject* gameObject);
+	virtual ~ComponentCanvas();
 
 	void Draw() const;
 	void AddElement(Component* element) { elements.push_back(element); }

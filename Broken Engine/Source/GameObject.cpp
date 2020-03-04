@@ -14,9 +14,9 @@
 #include "ComponentAudioListener.h"
 #include "ComponentAudioSource.h"
 
-#include "Canvas.h"
-#include "Text.h"
-#include "Image.h"
+#include "ComponentCanvas.h"
+#include "ComponentText.h"
+#include "ComponentImage.h"
 //#include "Button.h"
 //#include "CheckBox.h"
 //#include "InputText.h"
@@ -298,16 +298,16 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 				component = new ComponentAnimation(this);
 				break;
 
-			case Component::ComponentType::Canvas:
-				component = new Canvas(this);
+			case Component::ComponentType::ComponentCanvas:
+				component = new ComponentCanvas(this);
 				break;
 
-			case Component::ComponentType::Text:
-				component = new Text(this);
+			case Component::ComponentType::ComponentText:
+				component = new ComponentText(this);
 				break;
 
-			case Component::ComponentType::Image:
-				component = new Image(this);
+			case Component::ComponentType::ComponentImage:
+				component = new ComponentImage(this);
 				break;
 
 				case Component::ComponentType::Script:

@@ -76,15 +76,6 @@
     <Filter Include="Sources\3rd Party\Wwise">
       <UniqueIdentifier>{b90738d8-f3dc-4dd8-8522-89c6eabc40c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Modules\Scripting Functions">
-      <UniqueIdentifier>{14efcff7-e13e-475f-a0e3-9238402bc333}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Tools\DeviceID">
-      <UniqueIdentifier>{7c511496-d653-456c-8542-c8926a418e2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\UI">
-      <UniqueIdentifier>{8fd71839-7427-4452-a126-48ab57e7aed5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Tools\Timers">
       <UniqueIdentifier>{ddeddff6-a05e-4826-a66f-abab7447c99f}</UniqueIdentifier>
     </Filter>
@@ -94,40 +85,34 @@
     <Filter Include="Sources\Tools\HeaderUtilities">
       <UniqueIdentifier>{e711fd67-b625-4c1d-ad44-ecd50dc82721}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Tools\Scripting\Scripting Functions">
+      <UniqueIdentifier>{14efcff7-e13e-475f-a0e3-9238402bc333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Modules\Core">
+      <UniqueIdentifier>{d86027b7-f9d4-4fed-a5ed-7b35e68052bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Main">
+      <UniqueIdentifier>{07021bbe-3ee1-4ed9-990d-b7dd909d0d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd Party\Device">
+      <UniqueIdentifier>{c2fa2cc8-462c-48f6-a334-7669a54ad6ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd Party\Device\gpudetect">
+      <UniqueIdentifier>{7c511496-d653-456c-8542-c8926a418e2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game Objects\Components\UIElements">
+      <UniqueIdentifier>{8fd71839-7427-4452-a126-48ab57e7aed5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
       <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleCamera3D.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleInput.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleRenderer3D.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleWindow.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Sources\Tools\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleHardware.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleGui.h">
-      <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Panel.h">
       <Filter>Sources\EditorPanels</Filter>
@@ -137,9 +122,6 @@
     </ClInclude>
     <ClInclude Include="PanelSettings.h">
       <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="Globals.h">
-      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="json\json.hpp">
       <Filter>Sources\3rd Party\json</Filter>
@@ -177,9 +159,6 @@
     <ClInclude Include="mmgr\nommgr.h">
       <Filter>Sources\3rd Party\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="PanelConsole.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
@@ -198,17 +177,11 @@
     <ClInclude Include="par\par_shapes.h">
       <Filter>Sources\3rd Party\par shapes</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleFileSystem.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="JSONLoader.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="VSresource.h">
       <Filter>Sources\VSResources</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTextures.h">
-      <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Sources\Game Objects\Components</Filter>
@@ -477,12 +450,6 @@
     <ClInclude Include="MathGeoLib\include\Time\Clock.h">
       <Filter>Sources\3rd Party\MathGeoLib\Time</Filter>
     </ClInclude>
-    <ClInclude Include="MathGeoLib\include\SystemInfo.h">
-      <Filter>Sources\3rd Party</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTimeManager.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceShader.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
@@ -519,9 +486,6 @@
     <ClInclude Include="ImporterFolder.h">
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleEventManager.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentMeshRenderer.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
@@ -530,9 +494,6 @@
     </ClInclude>
     <ClInclude Include="PanelResources.h">
       <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleResourceManager.h">
-      <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleScripting.h">
       <Filter>Sources\Modules</Filter>
@@ -559,10 +520,10 @@
       <Filter>Sources\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="Scripting.h">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
+      <Filter>Sources\Tools\Scripting\Scripting Functions</Filter>
     </ClInclude>
     <ClInclude Include="LuaIncludes.h">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
+      <Filter>Sources\Tools\Scripting\Scripting Functions</Filter>
     </ClInclude>
     <ClInclude Include="ComponentCollider.h">
       <Filter>Sources\Game Objects\Components</Filter>
@@ -576,9 +537,6 @@
     <ClInclude Include="Errors.h" />
     <ClInclude Include="ComponentParticleEmitter.h">
       <Filter>Sources\Game Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>Sources\Game Objects</Filter>
     </ClInclude>
     <ClInclude Include="ModulePhysics.h">
       <Filter>Sources\Modules</Filter>
@@ -604,15 +562,6 @@
     <ClInclude Include="ModuleUI.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="Canvas.h">
-      <Filter>Sources\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Sources\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>Sources\UI</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentAnimation.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
@@ -635,7 +584,7 @@
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="ScriptingMath.h">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
+      <Filter>Sources\Tools\Scripting\Scripting Functions</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Sources\Tools\Timers</Filter>
@@ -659,48 +608,84 @@
       <Filter>Sources\Tools\HeaderUtilities</Filter>
     </ClInclude>
     <ClInclude Include="gpudetect\DeviceId.h">
-      <Filter>Sources\Tools\DeviceID</Filter>
+      <Filter>Sources\3rd Party\Device\gpudetect</Filter>
     </ClInclude>
     <ClInclude Include="PerfTimer.h">
       <Filter>Sources\Tools\Timers</Filter>
     </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Sources\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleFileSystem.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleGui.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleHardware.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleInput.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRenderer3D.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleResourceManager.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTextures.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleWindow.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleCamera3D.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleEventManager.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTimeManager.h">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Sources\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Sources\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL.h">
+      <Filter>Sources\Main</Filter>
+    </ClInclude>
     <ClInclude Include="gpudetect\dxgi1_4.h">
-      <Filter>Sources\Tools</Filter>
+      <Filter>Sources\3rd Party\Device\gpudetect</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Sources\Tools\HeaderUtilities</Filter>
     </ClInclude>
     <ClInclude Include="Errors.h">
-      <Filter>Sources\Tools</Filter>
+      <Filter>Sources\Tools\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\SystemInfo.h">
+      <Filter>Sources\3rd Party\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentCanvas.h">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentImage.h">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentText.h">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ModuleCamera3D.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleInput.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleRenderer3D.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleWindow.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Color.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Sources\Tools\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleHardware.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleGui.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Panel.cpp">
       <Filter>Sources\EditorPanels</Filter>
@@ -735,9 +720,6 @@
     <ClCompile Include="mmgr\mmgr.cpp">
       <Filter>Sources\3rd Party\mmgr</Filter>
     </ClCompile>
-    <ClCompile Include="Globals.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="PanelConsole.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
@@ -753,14 +735,8 @@
     <ClCompile Include="PanelToolbar.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleFileSystem.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="JSONLoader.cpp">
       <Filter>Sources\Resources\Importers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleTextures.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
@@ -936,12 +912,6 @@
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp">
       <Filter>Sources\3rd Party\MathGeoLib\Time</Filter>
     </ClCompile>
-    <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
-      <Filter>Sources\3rd Party</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleTimeManager.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceShader.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
@@ -978,9 +948,6 @@
     <ClCompile Include="ImporterFolder.cpp">
       <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleEventManager.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ComponentMeshRenderer.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
@@ -989,9 +956,6 @@
     </ClCompile>
     <ClCompile Include="PanelResources.cpp">
       <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleResourceManager.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ModuleScripting.cpp">
       <Filter>Sources\Modules</Filter>
@@ -1006,15 +970,14 @@
       <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="Scripting.cpp">
-      <Filter>Sources\Modules\Scripting Functions</Filter>
+      <Filter>Sources\Tools\Scripting\Scripting Functions</Filter>
     </ClCompile>
     <ClCompile Include="gpudetect\DeviceId.cpp">
-      <Filter>Sources\Tools\DeviceID</Filter>
+      <Filter>Sources\3rd Party\Device\gpudetect</Filter>
     </ClCompile>
     <ClCompile Include="PanelPhysics.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptingMath.cpp" />
     <ClCompile Include="PerfTimer.cpp">
       <Filter>Sources\Tools\Timers</Filter>
     </ClCompile>
@@ -1023,6 +986,66 @@
     </ClCompile>
     <ClCompile Include="ScriptVar.cpp">
       <Filter>Sources\Tools\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Sources\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleFileSystem.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleGui.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleHardware.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleInput.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleRenderer3D.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleResourceManager.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTextures.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleWindow.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleCamera3D.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEventManager.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTimeManager.cpp">
+      <Filter>Sources\Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Sources\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Globals.cpp">
+      <Filter>Sources\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Sources\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingMath.cpp">
+      <Filter>Sources\Tools\Scripting\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
+      <Filter>Sources\3rd Party\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCanvas.cpp">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentImage.cpp">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentText.cpp">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1047,9 +1070,6 @@
     <ClCompile Include="gpudetect\DeviceId.cpp" />
     <ClCompile Include="ComponentParticleEmitter.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Sources\Game Objects</Filter>
     </ClCompile>
     <ClCompile Include="ModuleAudio.cpp">
       <Filter>Sources\Modules</Filter>
@@ -1080,15 +1100,6 @@
     </ClCompile>
     <ClCompile Include="ModuleUI.cpp">
       <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Sources\UI</Filter>
     </ClCompile>
     <ClCompile Include="ComponentAnimation.cpp">
       <Filter>Sources\Game Objects\Components</Filter>

@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "ComponentText.h"
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
@@ -7,11 +7,11 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-Text::Text(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Text)
+ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentText)
 {
 	visible = true;
 
-	canvas = (Canvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::ComponentCanvas);
 	//texture = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 	canvas->AddElement(this);
 
@@ -23,33 +23,33 @@ Text::Text(GameObject* gameObject) : Component(gameObject, Component::ComponentT
 }
 
 
-Text::~Text()
+ComponentText::~ComponentText()
 {
 	//font.clean();
 }
 
-void Text::LoadFont(const char* path, int size)
+void ComponentText::LoadFont(const char* path, int size)
 {
 	//font.init(path, size /* size */);
 }
 
-void Text::Draw()
+void ComponentText::Draw()
 {
 	glColor4f(color.r, color.g, color.b, color.a);
 	//glfreetype::print(camera, font, position2D.x, position2D.y, text);
 }
 
-json Text::Save() const
+json ComponentText::Save() const
 {
 	json node;
 	return node;
 }
 
-void Text::Load(json& node)
+void ComponentText::Load(json& node)
 {
 }
 
-void Text::CreateInspectorNode()
+void ComponentText::CreateInspectorNode()
 {
 	ImGui::Checkbox("##TextActive", &GetActive());
 	ImGui::SameLine();
@@ -151,6 +151,6 @@ void Text::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Text);
+		GO->RemoveComponent(Component::ComponentType::ComponentText);
 	}
 }

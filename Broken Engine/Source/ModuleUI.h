@@ -1,6 +1,6 @@
 #pragma once
 #include "Module.h"
-#include "Canvas.h"
+#include "ComponentCanvas.h"
 #include <vector>
 
 class ModuleUI : public Module
@@ -16,13 +16,13 @@ public:
 	bool CleanUp() override;
 
 	void Draw() const;
-	void AddCanvas(Canvas* c) { canvas.push_back(c); }
+	void AddCanvas(ComponentCanvas* c) { canvas.push_back(c); }
 
 	bool CheckMousePos(Component* element, SDL_Rect collider);
 	bool CheckClick(Component* element, bool draggable);
 
 public:
-	std::vector<Canvas*> canvas;
+	std::vector<ComponentCanvas*> canvas;
 
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;

@@ -1,15 +1,15 @@
 #pragma once
 #include "Component.h"
-#include "Canvas.h"
+#include "ComponentCanvas.h"
 
 class ResourceTexture;
 
 
-class Image : public Component
+class ComponentImage : public Component
 {
 public:
-	Image(GameObject* gameObject);
-	virtual ~Image();
+	ComponentImage(GameObject* gameObject);
+	virtual ~ComponentImage();
 
 	void Draw();
 
@@ -31,7 +31,7 @@ public:
 	float rotation2D = 0.0f;
 
 public:
-	Canvas* canvas = nullptr;
+	ComponentCanvas* canvas = nullptr;
 	ResourceTexture* texture = nullptr;
 };
 

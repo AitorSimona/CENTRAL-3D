@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "ComponentImage.h"
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
@@ -24,22 +24,22 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-Image::Image(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
+ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentImage)
 {
 	visible = true;
 
-	canvas = (Canvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::ComponentCanvas);
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas->AddElement(this);
 }
 
-Image::~Image()
+ComponentImage::~ComponentImage()
 {
 	if(texture)
 	texture->Release();
 }
 
-void Image::Draw()
+void ComponentImage::Draw()
 {
 	// --- Update transform and rotation to face camera ---
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
@@ -95,17 +95,17 @@ void Image::Draw()
 	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
 
-json Image::Save() const
+json ComponentImage::Save() const
 {
 	json node;
 	return node;
 }
 
-void Image::Load(json& node)
+void ComponentImage::Load(json& node)
 {
 }
 
-void Image::CreateInspectorNode()
+void ComponentImage::CreateInspectorNode()
 {
 	ImGui::Checkbox("##ImageActive", &GetActive());
 	ImGui::SameLine();
@@ -179,6 +179,6 @@ void Image::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Image);
+		GO->RemoveComponent(Component::ComponentType::ComponentImage);
 	}
 }

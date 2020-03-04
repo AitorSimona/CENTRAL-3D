@@ -1,11 +1,11 @@
-#include "Canvas.h"
+#include "ComponentCanvas.h"
 #include "Application.h"
 #include "GameObject.h"
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
 
-#include "Text.h"
-#include "Image.h"
+#include "ComponentText.h"
+#include "ComponentImage.h"
 //#include "Button.h"
 //#include "CheckBox.h"
 //#include "InputText.h"
@@ -14,7 +14,7 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-Canvas::Canvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Canvas)
+ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentCanvas)
 {
 	visible = true;
 	interactable = false;
@@ -25,34 +25,34 @@ Canvas::Canvas(GameObject* gameObject) : Component(gameObject, Component::Compon
 	App->ui_system->AddCanvas(this);
 }
 
-Canvas::~Canvas()
+ComponentCanvas::~ComponentCanvas()
 {
 }
 
-void Canvas::Draw() const
+void ComponentCanvas::Draw() const
 {
 	//draw canvas texture
 
 	// Draw elements inside canvas
 	for (int i = 0; i < elements.size(); i++)
 	{
-		if (elements[i]->GetType() == Component::ComponentType::Canvas)
+		if (elements[i]->GetType() == Component::ComponentType::ComponentCanvas)
 		{
-			Canvas* canvas = (Canvas*)elements[i];
+			ComponentCanvas* canvas = (ComponentCanvas*)elements[i];
 			if (canvas->visible)
 				canvas->Draw();
 			continue;
 		}
-		else if (elements[i]->GetType() == Component::ComponentType::Text)
+		else if (elements[i]->GetType() == Component::ComponentType::ComponentText)
 		{
-			Text* text = (Text*)elements[i];
+			ComponentText* text = (ComponentText*)elements[i];
 			if (text->visible)
 				text->Draw();
 			continue;
 		}
-		else if (elements[i]->GetType() == Component::ComponentType::Image)
+		else if (elements[i]->GetType() == Component::ComponentType::ComponentImage)
 		{
-			Image* image = (Image*)elements[i];
+			ComponentImage* image = (ComponentImage*)elements[i];
 			if (image->visible)
 				image->Draw();
 			continue;
@@ -89,17 +89,17 @@ void Canvas::Draw() const
 	}
 }
 
-json Canvas::Save() const
+json ComponentCanvas::Save() const
 {
 	json node;
 	return node;
 }
 
-void Canvas::Load(json& node)
+void ComponentCanvas::Load(json& node)
 {
 }
 
-void Canvas::CreateInspectorNode()
+void ComponentCanvas::CreateInspectorNode()
 {
 	ImGui::Checkbox("##CanvasActive", &GetActive());
 	ImGui::SameLine();
@@ -150,11 +150,11 @@ void Canvas::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Canvas);
+		GO->RemoveComponent(Component::ComponentType::ComponentCanvas);
 	}
 }
 
-void Canvas::UpdatePosition()
+void ComponentCanvas::UpdatePosition()
 {
 	//for (Component* elem : elements)
 	//{
@@ -162,7 +162,7 @@ void Canvas::UpdatePosition()
 	//}
 }
 
-void Canvas::UpdateCollider()
+void ComponentCanvas::UpdateCollider()
 {
 	collider.x = position2D.x - size2D.x;
 	collider.y = position2D.y - size2D.y;
@@ -170,7 +170,7 @@ void Canvas::UpdateCollider()
 	collider.h = size2D.y * 2;
 }
 
-void Canvas::UpdateState()
+void ComponentCanvas::UpdateState()
 {
 	if (interactable && visible)
 	{
