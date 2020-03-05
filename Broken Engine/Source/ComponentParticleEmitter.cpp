@@ -144,6 +144,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 				float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
 				particles[i]->position =newPosition;
 				particles[i]->diameter = particlesSize;
+				particles[i]->color = particlesColor;
 			}
 		}
 		// return ownership of the buffers back to the SDK
