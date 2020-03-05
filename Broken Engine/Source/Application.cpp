@@ -256,7 +256,6 @@ update_status Application::Update()
 	}
 
 	FinishUpdate();
-
 	return ret;
 }
 
