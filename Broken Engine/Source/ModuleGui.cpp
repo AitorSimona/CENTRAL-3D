@@ -45,7 +45,7 @@ ModuleGui::~ModuleGui()
 bool ModuleGui::Init(json file)
 {
 	// --- Create UI Panels ---
-
+	#ifndef BE_GAME_BUILD
 	panelSettings = new PanelSettings("Settings");
 	panels.push_back(panelSettings);
 
@@ -79,7 +79,14 @@ bool ModuleGui::Init(json file)
 	panelPhysics = new PanelPhysics("Physics");
 	panels.push_back(panelPhysics);
 
+	panelBuild = new PanelBuild("Build");
+	panels.push_back(panelBuild);
+
 	LoadStatus(file);
+	#else
+	panelGame = new PanelGame("Game");
+	panels.push_back(panelGame);
+	#endif
 
 	return true;
 }
@@ -135,7 +142,7 @@ update_status ModuleGui::PreUpdate(float dt)
 
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	DockSpace();
+		DockSpace();
 
 	return UPDATE_CONTINUE;
 }
@@ -143,6 +150,7 @@ update_status ModuleGui::PreUpdate(float dt)
 update_status ModuleGui::Update(float dt)
 {
 	// --- Create Main Menu Bar ---
+	#ifndef BE_GAME_BUILD
 
 
 	if (ImGui::BeginMainMenuBar())
@@ -163,6 +171,10 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::MenuItem("Load Scene"))
 				{
 					//App->scene_manager->SetActiveScene();
+				}
+
+				if (ImGui::MenuItem("Build Game")) {
+					panelBuild->SetOnOff(true);
 				}
 				ImGui::EndMenu();
 			}
@@ -388,21 +400,26 @@ update_status ModuleGui::Update(float dt)
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
 
+	#endif
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleGui::PostUpdate(float dt)
 {
 	// --- Iterate panels and draw ---
-	for (uint i = 0; i < panels.size(); ++i)
-	{
+	for (uint i = 0; i < panels.size(); ++i) {
 		if (panels[i]->IsEnabled())
 			panels[i]->Draw();
 	}
 
 	// End dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	ImGui::End();
+		ImGui::End();
+
+	#ifdef BE_GAME_BUILD
+	ImGui::EndFrame();
+	#endif
 
 	return UPDATE_CONTINUE;
 }
@@ -428,6 +445,7 @@ bool ModuleGui::CleanUp()
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
 	panelPhysics = nullptr;
+	panelBuild = nullptr;
 
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &materialTexID);
@@ -500,8 +518,14 @@ void ModuleGui::LogFPS(float fps, float ms)
 
 void ModuleGui::SaveStatus(json &file) const  
 {
-	for (uint i = 0; i < panels.size(); ++i)
-		file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
+	//MYTODO: Added exception for Build because Build should never be enabled at start
+	//maybe we should call SaveStatus on every panel
+	for (uint i = 0; i < panels.size(); ++i) {
+		if (panels[i]->GetName() == "Build")
+			file["GUI"][panels[i]->GetName()] = false;
+		else
+			file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
+	}
 };
 
 void ModuleGui::LoadStatus(const json & file) 
@@ -517,7 +541,8 @@ void ModuleGui::LoadStatus(const json & file)
 }
 void ModuleGui::HandleInput(SDL_Event * event) const
 {
-	ImGui_ImplSDL2_ProcessEvent(event);
+	if(!App->isGame)
+		ImGui_ImplSDL2_ProcessEvent(event);
 }
 
 bool ModuleGui::IsKeyboardCaptured() const

@@ -1,7 +1,12 @@
+#ifndef __MODULEUI_H__
+#define __MODULEUI_H__
 #pragma once
 #include "Module.h"
-#include "ComponentCanvas.h"
 #include <vector>
+#include "Math.h"
+
+class ComponentCanvas;
+class Component;
 
 class ModuleUI : public Module
 {
@@ -17,6 +22,9 @@ public:
 
 	void Draw() const;
 	void AddCanvas(ComponentCanvas* c) { canvas.push_back(c); }
+	void RemoveCanvas(ComponentCanvas* c);
+	
+	void Clear();
 
 	bool CheckMousePos(Component* element, SDL_Rect collider);
 	bool CheckClick(Component* element, bool draggable);
@@ -27,4 +35,6 @@ public:
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;
 };
+
+#endif
 

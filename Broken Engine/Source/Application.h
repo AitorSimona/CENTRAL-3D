@@ -54,6 +54,8 @@ public:
 	const char * GetAppName() const;
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
+	json GetDefaultGameConfig() const;
+	json GetConfigFile() const;
 	std::vector<std::string>& GetLogs();
 	LCG& GetRandom();
 	JSONLoader* GetJLoader();
@@ -85,6 +87,8 @@ public:
 	ModulePhysics* physics = nullptr;
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
+
+	bool isGame = false;
 
 private:
 

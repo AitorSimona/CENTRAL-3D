@@ -27,6 +27,7 @@ ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject,
 
 ComponentCanvas::~ComponentCanvas()
 {
+	App->ui_system->RemoveCanvas(this);
 }
 
 void ComponentCanvas::Draw() const
@@ -92,6 +93,9 @@ void ComponentCanvas::Draw() const
 json ComponentCanvas::Save() const
 {
 	json node;
+
+
+
 	return node;
 }
 

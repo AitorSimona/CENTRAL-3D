@@ -17,6 +17,8 @@ class PanelProject;
 class PanelShaderEditor;
 class PanelResources;
 class PanelPhysics;
+class PanelBuild;
+class PanelGame;
 
 class ModuleGui : public Module
 {
@@ -58,11 +60,19 @@ public:
 	PanelInspector*		panelInspector = nullptr;
 	PanelHierarchy*		panelHierarchy = nullptr;
 	PanelScene*			panelScene = nullptr;
+	PanelBuild*			panelBuild = nullptr;
 	PanelToolbar*       panelToolbar = nullptr;
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;
 	PanelResources*		panelResources = nullptr;
 	PanelPhysics*		panelPhysics = nullptr;
+	PanelGame*			panelGame = nullptr;
+
+	float sceneWidth = 0.0f;
+	float sceneHeight = 0.0f;
+	float sceneX = 0.0f;
+	float sceneY = 0.0f;
+	bool hoveringScene = false;
 	
 	uint materialTexID = 0;
 	uint folderTexID = 0;

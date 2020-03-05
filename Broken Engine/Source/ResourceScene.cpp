@@ -154,12 +154,15 @@ GameObject* ResourceScene::GetGOWithName(const char* GO_name)
 GameObject* ResourceScene::GetGOWithUID(uint UID)
 {
 	GameObject* ret_go = nullptr;
-	ret_go = NoStaticGameObjects.find(UID)->second;
-	if (ret_go == nullptr)
-	{
-		ret_go = StaticGameObjects.find(UID)->second;
+	std::unordered_map<uint, GameObject*>::iterator it;
+	it = NoStaticGameObjects.find(UID);
+	if (it != NoStaticGameObjects.end())
+		ret_go = it->second;
+	if (ret_go == nullptr) {
+		it = StaticGameObjects.find(UID);
+		if (it != StaticGameObjects.end())
+			ret_go = it->second;
 	}
-
 	return ret_go;
 }
 

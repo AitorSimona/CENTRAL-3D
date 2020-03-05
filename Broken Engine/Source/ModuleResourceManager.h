@@ -32,6 +32,7 @@ class ModuleResourceManager : public Module
 	friend class ImporterFolder;
 	friend class ImporterScript;
 	friend class PanelResources;
+	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
 public:
 
