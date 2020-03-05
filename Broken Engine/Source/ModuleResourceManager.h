@@ -91,7 +91,7 @@ public:
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, const char* source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	bool IsFileImported(const char* file);
-	const char* GetNewUniqueName(Resource::ResourceType type);
+	std::shared_ptr<std::string> GetNewUniqueName(Resource::ResourceType type);
 
 	void ONResourceDestroyed(Resource* resource);
 

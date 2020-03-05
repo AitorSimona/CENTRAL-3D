@@ -1057,10 +1057,10 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 	return ret;
 }
 
-const char* ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
+std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 {
-	std::string unique_name;
 	uint instance = 0;
+	std::string unique_name;
 
 	switch (type)
 	{
@@ -1134,7 +1134,9 @@ const char* ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 
 	}
 
-	return unique_name.c_str();
+	std::unique_ptr<std::string> ret = std::make_unique<std::string>(unique_name);
+	return ret;
+
 }
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)

@@ -8,7 +8,7 @@
 
 //#include "ResourceFolder.h"
 //#include "ResourceModel.h"
-
+#include <memory>
 #include "mmgr/nommgr.h"
 
 // --- Event Manager Callbacks ---
@@ -130,7 +130,8 @@ void PanelProject::CreateResourceHandlingPopup()
 		{
 			if (ImGui::MenuItem("Folder"))
 			{
-				std::string resource_name = EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::FOLDER);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::FOLDER));
 
 				BrokenEngine::Resource* new_folder = EngineApp->resources->CreateResource(BrokenEngine::Resource::ResourceType::FOLDER, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
 				BrokenEngine::ImporterFolder* IFolder = EngineApp->resources->GetImporter<BrokenEngine::ImporterFolder>();
@@ -150,7 +151,8 @@ void PanelProject::CreateResourceHandlingPopup()
 
 			if (ImGui::MenuItem("Material"))
 			{
-				std::string resource_name = EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::MATERIAL);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::MATERIAL));
 
 				BrokenEngine::Resource* new_material = EngineApp->resources->CreateResource(BrokenEngine::Resource::ResourceType::MATERIAL, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
 				BrokenEngine::ImporterMaterial* IMat = EngineApp->resources->GetImporter<BrokenEngine::ImporterMaterial>();
@@ -169,7 +171,8 @@ void PanelProject::CreateResourceHandlingPopup()
 
 			if (ImGui::MenuItem("Script"))
 			{
-				std::string resource_name = EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::SCRIPT);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::SCRIPT));
 
 				BrokenEngine::Resource* new_script = EngineApp->resources->CreateResource(BrokenEngine::Resource::ResourceType::SCRIPT, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
 				BrokenEngine::ImporterScript* IScript = EngineApp->resources->GetImporter<BrokenEngine::ImporterScript>();
@@ -188,7 +191,8 @@ void PanelProject::CreateResourceHandlingPopup()
 
 			if (ImGui::MenuItem("Scene"))
 			{
-				std::string resource_name = EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::SCENE);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(BrokenEngine::Resource::ResourceType::SCENE));
 
 				BrokenEngine::Resource* new_scene = EngineApp->resources->CreateResource(BrokenEngine::Resource::ResourceType::SCENE, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
 				BrokenEngine::ImporterScene* IScene = EngineApp->resources->GetImporter<BrokenEngine::ImporterScene>();
@@ -256,8 +260,10 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 	else
 	ImGui::Text(EngineApp->resources->GetAssetsFolder()->GetName());
 
-	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+		currentDirectory = EngineApp->resources->GetAssetsFolder();
 		EngineApp->resources->setCurrentDirectory(EngineApp->resources->GetAssetsFolder());
+	}
 
 	std::vector<BrokenEngine::ResourceFolder*> folders_path;
 
@@ -274,8 +280,10 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 		else
 			ImGui::Text((*it)->GetName());
 
-		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+			currentDirectory = *it;
 			EngineApp->resources->setCurrentDirectory(*it);
+		}
 
 		ImGui::SameLine();
 	}
@@ -335,8 +343,10 @@ void PanelProject::DrawFolder(BrokenEngine::ResourceFolder* folder)
 			if (ImGui::IsItemClicked())
 				SetSelected(*it);
 
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+				currentDirectory = *it;
 				EngineApp->resources->setCurrentDirectory(*it);
+			}
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x)/2));
 			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);
@@ -488,6 +498,9 @@ void PanelProject::DrawFile(BrokenEngine::Resource* resource, uint i, uint row, 
 		if (resource->GetType() == BrokenEngine::Resource::ResourceType::SCENE)
 			EngineApp->scene_manager->SetActiveScene((BrokenEngine::ResourceScene*)resource);
 	}
+
+	if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete), false))
+		EngineApp->resources->ONResourceDestroyed
 
 	ImGui::PopStyleVar();
 
