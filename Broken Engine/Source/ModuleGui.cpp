@@ -27,6 +27,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "Imgui/imgui_internal.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
+#include "ModuleFileSystem.h"
 
 #include "OpenGL.h"
 
@@ -44,6 +45,9 @@ ModuleGui::~ModuleGui()
 
 bool ModuleGui::Init(json file)
 {
+	if (!App->fs->Exists("imgui.ini"))
+		App->fs->Copy("imgui.ini.bak", "imgui.ini");
+
 	// --- Create UI Panels ---
 	#ifndef BE_GAME_BUILD
 	panelSettings = new PanelSettings("Settings");
