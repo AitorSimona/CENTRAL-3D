@@ -8,6 +8,7 @@
 #include "Timer.h"
 #include "PerfTimer.h"
 #include "MathGeoLib/include/Algorithm/Random/LCG.h"
+#include "RandomGenerator.h"
 #include "JSONLoader.h"
 
 #define MAX_CONSOLE_LOGS 1000
@@ -86,6 +87,10 @@ public:
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
 
+
+	//Random Number Generator
+	RNGen RandomNumberGenerator;
+
 private:
 
 	std::list<Module*> list_modules;
@@ -95,7 +100,7 @@ private:
 	std::string			orgName;
 	std::string			configpath;
 
-	LCG*		  RandomNumber = nullptr;
+	LCG*				RandomNumber = nullptr;
 
 	std::string			log;
 	std::vector<std::string> logs;

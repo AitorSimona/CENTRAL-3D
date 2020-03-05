@@ -103,6 +103,9 @@
     <Filter Include="Sources\Game Objects\Components\UIElements">
       <UniqueIdentifier>{8fd71839-7427-4452-a126-48ab57e7aed5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Tools\Random">
+      <UniqueIdentifier>{c6c363a3-55e5-462c-a353-11d774754249}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -553,12 +556,6 @@
     <ClInclude Include="ComponentAudioListener.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="gpudetect\DeviceId.h">
-      <Filter>Sources\Tools\DeviceID</Filter>
-    </ClInclude>
-    <ClInclude Include="gpudetect\dxgi1_4.h">
-      <Filter>Sources\Tools\DeviceID</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleUI.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -678,6 +675,11 @@
     </ClInclude>
     <ClInclude Include="ComponentText.h">
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\DeviceId.h" />
+    <ClInclude Include="gpudetect\dxgi1_4.h" />
+    <ClInclude Include="RandomGenerator.h">
+      <Filter>Sources\Tools\Random</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1046,6 +1048,9 @@
     </ClCompile>
     <ClCompile Include="ComponentText.cpp">
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomGenerator.cpp">
+      <Filter>Sources\Tools\Random</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

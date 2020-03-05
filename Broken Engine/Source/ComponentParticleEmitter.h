@@ -4,8 +4,6 @@
 #include "Component.h"
 #include "Math.h"
 
-#include <random>
-
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 
@@ -42,10 +40,6 @@ private:
 
 private:
 	
-	//Random number generation - EREASE IN THE FUTURE
-	std::uniform_real_distribution<double> m_DoubleDistribution;
-	std::random_device m_RandomDevice;
-	std::default_random_engine m_RNEngine;
 	PxParticleSystem* particleSystem=nullptr;
 
 	std::vector<Particle*> particles;
