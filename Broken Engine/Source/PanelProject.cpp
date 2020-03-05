@@ -348,7 +348,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			ImGui::PopID();
 
-			if ((i + 1) % maxColumns == 0)
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
 
 			i++;
@@ -398,7 +398,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 					for (std::vector<Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
 					{
-						if ((i + 1) % maxColumns == 0)
+						if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 							row++;
 
 						i++;
@@ -409,7 +409,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			}
 
-			if ((i + 1) % maxColumns == 0)
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
 
 			i++;

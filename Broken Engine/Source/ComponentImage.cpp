@@ -9,6 +9,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
 #include "ModuleSceneManager.h"
+#include "ModuleFileSystem.h"
 
 #include "Component.h"
 #include "ComponentCamera.h"
@@ -98,11 +99,37 @@ void ComponentImage::Draw()
 json ComponentImage::Save() const
 {
 	json node;
+
+	node["Resources"]["ResourceTexture"];
+
+	if (texture)
+		node["Resources"]["ResourceTexture"] = std::string(texture->GetResourceFile());
+
+	node["position2Dx"] = std::to_string(position2D.x);
+	node["position2Dy"] = std::to_string(position2D.y);
+
+	node["size2Dx"] = std::to_string(size2D.x);
+	node["size2Dy"] = std::to_string(size2D.y);
+
 	return node;
 }
 
 void ComponentImage::Load(json& node)
 {
+	std::string path = node["Resources"]["ResourceTexture"];
+	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	path = path.substr(0, path.find_last_of("."));
+
+	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
+
+	std::string position2Dx = node["position2Dx"];
+	std::string position2Dy = node["position2Dy"];
+
+	std::string size2Dx = node["size2Dx"];
+	std::string size2Dy = node["size2Dy"];
+
+	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
+	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
 }
 
 void ComponentImage::CreateInspectorNode()

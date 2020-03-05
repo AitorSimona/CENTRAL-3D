@@ -55,6 +55,8 @@ public:
 	const char * GetAppName() const;
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
+	json GetDefaultGameConfig() const;
+	json GetConfigFile() const;
 	std::vector<std::string>& GetLogs();
 	LCG& GetRandom();
 	JSONLoader* GetJLoader();
@@ -88,8 +90,10 @@ public:
 	ModuleAudio* audio = nullptr;
 
 
+	bool isGame = false;
+
 	//Random Number Generator
-	RNGen RandomNumberGenerator;
+	RNGen RandomNumberGenerator;	
 
 private:
 

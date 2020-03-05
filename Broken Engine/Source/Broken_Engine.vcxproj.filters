@@ -580,6 +580,9 @@
     <ClInclude Include="PanelPhysics.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
+    <ClInclude Include="PanelGame.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
     <ClInclude Include="ScriptingMath.h">
       <Filter>Sources\Tools\Scripting\Scripting Functions</Filter>
     </ClInclude>
@@ -680,6 +683,9 @@
     <ClInclude Include="gpudetect\dxgi1_4.h" />
     <ClInclude Include="RandomGenerator.h">
       <Filter>Sources\Tools\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelBuild.h">
+      <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -978,6 +984,12 @@
       <Filter>Sources\3rd Party\Device\gpudetect</Filter>
     </ClCompile>
     <ClCompile Include="PanelPhysics.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelGame.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelBuild.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="PerfTimer.cpp">

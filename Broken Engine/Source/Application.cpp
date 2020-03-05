@@ -22,9 +22,16 @@
 
 Application::Application()
 {
+	#ifdef BE_GAME_BUILD
+	isGame = true;
+	#endif
 	appName = "";
 	log = "Application Logs:";
-	configpath = "Settings/EditorConfig.json";
+	if (isGame)
+		configpath = "Settings/GameConfig.json";
+	else
+		configpath = "Settings/EditorConfig.json";
+
 	RandomNumber = new math::LCG();
 
 	event_manager = new ModuleEventManager(true);
@@ -105,7 +112,7 @@ bool Application::Init()
 	COMPILATIONLOGINFO;
 
 	// --- Load App data from JSON files ---
-	json config = JLoader.Load(configpath.data());
+	json config = JLoader.Load(configpath.c_str());
 
 	// --- Create Config with default values if load fails ---
 	if (config.is_null())
@@ -130,15 +137,21 @@ bool Application::Init()
 		item++;
 	}
 
+
+
 	// After all Init calls we call Start() in all modules
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Broken Engine Start --------------");
 	item = list_modules.begin();
 
 	while(item != list_modules.end() && ret == true)
 	{
-		ret = (*item)->Start();
+		ret = (*item)->isEnabled() ? (*item)->Start() : true;
 		item++;
 	}
+
+	//// We load the status of all modules
+
+	//LoadAllStatus(config);
 
 	time->SetMaxFramerate(App->window->GetDisplayRefreshRate());
 
@@ -173,7 +186,7 @@ void Application::SaveAllStatus()
 
 	while (item != list_modules.end())
 	{
-		(*item)->SaveStatus(config);
+		if ((*item)->isEnabled()) (*item)->SaveStatus(config);
 		item++;
 	}
 
@@ -199,7 +212,7 @@ void Application::LoadAllStatus(json & file)
 
 	while (item != list_modules.end())
 	{
-		(*item)->LoadStatus(config);
+		if((*item)->isEnabled()) (*item)->LoadStatus(config);
 		item++;
 	}
 }
@@ -214,7 +227,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PreUpdate(time->GetRealTimeDt());
+		ret = (*item)->isEnabled() ? (*item)->PreUpdate(time->GetRealTimeDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
@@ -222,7 +235,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->Update(time->GetRealTimeDt());
+		ret = (*item)->isEnabled() ? (*item)->Update(time->GetRealTimeDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
@@ -230,7 +243,7 @@ update_status Application::Update()
 
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->GameUpdate(time->GetGameDt());
+		ret = (*item)->isEnabled() ? (*item)->GameUpdate(time->GetGameDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
@@ -238,7 +251,7 @@ update_status Application::Update()
 
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PostUpdate(time->GetRealTimeDt());
+		ret = (*item)->isEnabled() ? (*item)->PostUpdate(time->GetRealTimeDt()) : UPDATE_CONTINUE;
 		item++;
 	}
 
@@ -249,7 +262,9 @@ update_status Application::Update()
 bool Application::CleanUp()
 {
 	// --- Save all Status --- TODO: Should be called by user
+	#ifndef BE_GAME_BUILD
 	SaveAllStatus();
+	#endif
 
 	bool ret = true;
 	std::list<Module*>::reverse_iterator item = list_modules.rbegin();
@@ -315,10 +330,18 @@ json Application::GetDefaultConfig() const
 
 		}},
 
+	#ifndef BE_GAME_BUILD
 		{"GUI", {
 
 		}},
+	#else
+		{"SceneManager", {
 
+		}},
+		{"Camera3D", {
+
+		}},
+	#endif
 		{"Window", {
 			{"width", 1024},
 			{"height", 720},
@@ -336,6 +359,46 @@ json Application::GetDefaultConfig() const
 			{"VSync", true}
 		}},
 	};
+
+	return config;
+}
+
+json Application::GetDefaultGameConfig() const {
+	// --- Create Game Config with default values ---
+	json config = {
+		{"Application", {
+			{"Organization", orgName}
+
+		}},
+		{"SceneManager", {
+
+		}},
+		{"Camera3D", {
+
+		}},
+		{"Window", {
+			{"width", 1024},
+			{"height", 720},
+			{"fullscreen", false},
+			{"resizable", true},
+			{"borderless", false},
+			{"fullscreenDesktop", false}
+		}},
+
+		{"Input", {
+
+		}},
+
+		{"Renderer3D", {
+			{"VSync", true}
+		}},
+	};
+
+	return config;
+}
+
+json Application::GetConfigFile() const {
+	json config = JLoader.Load(configpath.data());
 
 	return config;
 }

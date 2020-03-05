@@ -139,7 +139,10 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define SCENES_FOLDER "Assets/Scenes/"
 #define MODELS_FOLDER "Library/Models/"
 #define SHADERS_FOLDER "Library/Shaders/"
+#define SHADERS_ASSETS_FOLDER "Assets/Shaders/"
+#define SOUNDS_FOLDER "Assets/Sounds/"
 #define SCRIPTS_FOLDER "Library/Scripts/"
+#define GAME_EXE "BEG.exe"
 
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096

@@ -74,7 +74,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -211,6 +211,8 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleThreading.h" />
     <ClInclude Include="ModuleTimeManager.h" />
+    <ClInclude Include="PanelBuild.h" />
+    <ClInclude Include="PanelGame.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
@@ -376,7 +378,9 @@
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="Panel.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
+    <ClCompile Include="PanelBuild.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
+    <ClCompile Include="PanelGame.cpp" />
     <ClCompile Include="PanelPhysics.cpp" />
     <ClCompile Include="PanelProject.cpp" />
     <ClCompile Include="PanelResources.cpp" />
