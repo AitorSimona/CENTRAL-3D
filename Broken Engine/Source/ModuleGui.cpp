@@ -14,9 +14,9 @@
 
 #include "Panels.h"
 
-#include "Canvas.h"
-#include "Image.h"
-#include "Text.h"
+#include "ComponentCanvas.h"
+#include "ComponentImage.h"
+#include "ComponentText.h"
 //#include "Button.h"
 //#include "CheckBox.h"
 //#include "InputText.h"
@@ -27,6 +27,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "Imgui/imgui_internal.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
+#include "ModuleFileSystem.h"
 
 #include "OpenGL.h"
 
@@ -44,6 +45,9 @@ ModuleGui::~ModuleGui()
 
 bool ModuleGui::Init(json file)
 {
+	if (!App->fs->Exists("imgui.ini"))
+		App->fs->Copy("imgui.ini.bak", "imgui.ini");
+
 	// --- Create UI Panels ---
 	#ifndef BE_GAME_BUILD
 	panelSettings = new PanelSettings("Settings");
@@ -240,17 +244,17 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Canvas"))
 					{
 						GameObject* canvas_go = App->scene_manager->CreateEmptyGameObject();
-						Canvas* camera = (Canvas*)canvas_go->AddComponent(Component::ComponentType::Canvas);
+						ComponentCanvas* camera = (ComponentCanvas*)canvas_go->AddComponent(Component::ComponentType::ComponentCanvas);
 					}
 					if (ImGui::MenuItem("Image"))
 					{
 						GameObject* image_go = App->scene_manager->CreateEmptyGameObject();
-						Image* image = (Image*)image_go->AddComponent(Component::ComponentType::Image);
+						ComponentImage* image = (ComponentImage*)image_go->AddComponent(Component::ComponentType::ComponentImage);
 					}
 					if (ImGui::MenuItem("Text"))
 					{
 						GameObject* text_go = App->scene_manager->CreateEmptyGameObject();
-						Text* text = (Text*)text_go->AddComponent(Component::ComponentType::Text);
+						ComponentText* text = (ComponentText*)text_go->AddComponent(Component::ComponentType::ComponentText);
 					}
 					if (ImGui::MenuItem("Button", false, false, false))
 					{

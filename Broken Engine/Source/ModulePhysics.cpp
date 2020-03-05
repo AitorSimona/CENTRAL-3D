@@ -127,7 +127,7 @@ bool ModulePhysics::CleanUp()
 void ModulePhysics::PlaneCollider(float posX, float posY, float posZ)
 {
 	PxTransform position = PxTransform(PxVec3(posX, posY, posZ), PxQuat(PxHalfPi, PxVec3(0.0f, 0, 0.0f)));
-	PxRigidStatic* plane = mPhysics->createRigidStatic(position);
+	plane = mPhysics->createRigidStatic(position);
 	plane = PxCreatePlane(*mPhysics, PxPlane(PxVec3(0, 1, 0), 0), *mMaterial);
 	mScene->addActor(*plane);
 }

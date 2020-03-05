@@ -34,5 +34,7 @@ public:
 	PxPhysics* mPhysics = nullptr;
 	PxScene* mScene = nullptr;
 	PxMaterial* mMaterial = nullptr;
+
+	PxRigidStatic* plane = nullptr;
 };
 #endif

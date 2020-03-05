@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
+#include "ComponentTransform.h"
 #include "GameObject.h"
 #include "ModulePhysics.h"
 
@@ -115,7 +116,6 @@ void ComponentDynamicRigidBody::Load(json& node)
 	linear_damping = std::stoi(linear_damping_);
 
 	angular_damping = std::stoi(angular_damping_);
-
 
 }
 
