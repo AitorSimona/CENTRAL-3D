@@ -13,11 +13,14 @@
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
 #include "ComponentCamera.h"
+#include "ComponentBone.h"
+#include "ModuleUI.h"
 
 //#include "ModuleGui.h"
 
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
+#include "ImporterMeta.h"
 
 #include "par/par_shapes.h"
 
@@ -25,6 +28,9 @@
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
 
+#include "Component.h"
+
+#include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
 
@@ -57,18 +63,28 @@ bool ModuleSceneManager::Init(json& file) {
 	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, ONGameObjectDestroyed);
 	App->event_manager->AddListener(Event::EventType::Resource_selected, ONResourceSelected);
 
-
 	return true;
 }
 
 bool ModuleSceneManager::Start() {
 	// --- Create primitives ---
-	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
-	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
+	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 0);
+	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 1);
+	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 2);
+	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 3);
+	cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 4);
 
-	// Not needed since we are checking if resources are in Memory in LoadCube and LoadSphere, which are called by ModuleGui
-	//CreateCube(1, 1, 1, cube);
-	//CreateSphere(1.0f, 25, 25, sphere);
+	CreateCube(1, 1, 1, cube);
+	CreateSphere(1.0f, 25, 25, sphere);
+	CreateCapsule(1, 1, capsule);
+	CreatePlane(1, 1, 1, plane);
+	CreateCylinder(1, 1, cylinder);
+
+	cube->LoadToMemory();
+	sphere->LoadToMemory();
+	capsule->LoadToMemory();
+	plane->LoadToMemory();
+	cylinder->LoadToMemory();
 
 	// --- Create adaptive grid ---
 	glGenVertexArrays(1, &Grid_VAO);
@@ -76,6 +92,9 @@ bool ModuleSceneManager::Start() {
 	CreateGrid(10.0f);
 
 	glGenVertexArrays(1, &PointLineVAO);
+
+	// --- Always load default scene ---
+	defaultScene->LoadToMemory();
 
 	return true;
 }
@@ -88,19 +107,18 @@ update_status ModuleSceneManager::PreUpdate(float dt) {
 
 update_status ModuleSceneManager::Update(float dt) {
 	root->Update(dt);
-
-
 	return UPDATE_CONTINUE;
 }
 
 bool ModuleSceneManager::CleanUp() {
 	root->RecursiveDelete();
-	NoStaticGo.clear();
+
+	delete root;
+	root = nullptr;
 
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
-
 
 	return true;
 }
@@ -202,9 +220,11 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size) {
 		glUniform1i(TextureSupportLocation, 0);*/
 }
 
-void ModuleSceneManager::Draw() {
+void ModuleSceneManager::Draw()
+{
 	// --- Draw Grid ---
-	DrawGrid(true, 75.0f);
+	if (display_grid)
+		DrawGrid(true, 75.0f);
 
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
@@ -224,12 +244,43 @@ void ModuleSceneManager::DrawScene() {
 
 	// MYTODO: Support multiple go selection and draw outline accordingly
 
-	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++) {
-		if ((*it)->GetName() != root->GetName()) {
+	if (currentScene)
+	{
+
+		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
+		{
+			if ((*it).second->GetUID() != root->GetUID())
+			{
+				// --- Search for Renderer Component ---
+				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
+
+				if (SelectedGameObject == (*it).second)
+				{
+					glStencilFunc(GL_ALWAYS, 1, 0xFF);
+					glStencilMask(0xFF);
+				}
+
+				// --- If Found, draw the mesh ---
+				if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
+					MeshRenderer->Draw();
+
+				if (SelectedGameObject == (*it).second)
+				{
+					glStencilMask(0x00);
+				}
+			}
+		}
+		std::vector<GameObject*> static_go;
+		tree.CollectIntersections(static_go, App->renderer3D->culling_camera->frustum);
+
+		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
+		{
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
-			if (SelectedGameObject == (*it)) {
+
+			if (SelectedGameObject == (*it))
+			{
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
 			}
@@ -238,31 +289,16 @@ void ModuleSceneManager::DrawScene() {
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
 				MeshRenderer->Draw();
 
-			if (SelectedGameObject == (*it)) {
+			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
+			if (C_Bone)
+				C_Bone->DebugDrawBones();
+
+			if (SelectedGameObject == (*it))
+			{
 				glStencilMask(0x00);
 			}
 		}
-	}
-	std::vector<GameObject*> static_go;
-	tree.CollectIntersections(static_go, App->renderer3D->culling_camera->frustum);
 
-	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++) {
-		// --- Search for Renderer Component ---
-		ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
-
-
-		if (SelectedGameObject == (*it)) {
-			glStencilFunc(GL_ALWAYS, 1, 0xFF);
-			glStencilMask(0xFF);
-		}
-
-		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
-			MeshRenderer->Draw();
-
-		if (SelectedGameObject == (*it)) {
-			glStencilMask(0x00);
-		}
 	}
 
 }
@@ -275,33 +311,40 @@ uint ModuleSceneManager::GetPointLineVAO() const {
 	return PointLineVAO;
 }
 
-void ModuleSceneManager::RedoOctree() {
-	std::vector<GameObject*> scene_gos;
-	tree.CollectObjects(scene_gos);
+void ModuleSceneManager::RedoOctree()
+{
+	std::vector<GameObject*> NoStaticGameObjects;
+	tree.CollectObjects(NoStaticGameObjects);
 
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
-	for (uint i = 0; i < scene_gos.size(); ++i) {
+	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
+	{
 		//tree.Erase(scene_gos[i]);
-		tree.Insert(scene_gos[i]);
+		tree.Insert(NoStaticGameObjects[i]);
 	}
 
 }
 
-void ModuleSceneManager::SetStatic(GameObject* go) {
-	if (go->Static) {
+void ModuleSceneManager::SetStatic(GameObject * go)
+{
+	if (go->Static)
+	{
+		// --- Insert go into octree and remove it from currentscene's static go map ---
 		tree.Insert(go);
+		currentScene->StaticGameObjects[go->GetUID()] = go;
 
-		for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++) {
-			if ((*it) == go) {
-				NoStaticGo.erase(it);
-				break;
-			}
-		}
+		// --- Erase go from currentscene's no static map ---
+		currentScene->NoStaticGameObjects.erase(go->GetUID());
 	}
-	else {
-		NoStaticGo.push_back(go);
+	else
+	{
+		// --- Add go to currentscene's no static map ---
+		currentScene->NoStaticGameObjects[go->GetUID()] = go;
+
+		// --- Remove go from octree and currentscene's static go map ---
 		tree.Erase(go);
+		currentScene->StaticGameObjects.erase(go->GetUID());
 	}
 }
 
@@ -317,122 +360,152 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const {
 
 void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
+	if (currentScene)
+	{
+		// --- Gather static gos ---
+		std::map<float, GameObject*> candidate_gos;
+		tree.CollectIntersections(candidate_gos, ray);
 
-	// --- Gather static gos ---
-	std::map<float, GameObject*> candidate_gos;
-	tree.CollectIntersections(candidate_gos, ray);
-
-	// --- Gather non-static gos ---
-	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++) {
-		if ((*it)->GetActive() && ray.Intersects((*it)->GetAABB())) {
-			float hit_near, hit_far;
-			if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
-				candidate_gos[hit_near] = *it;
+		// --- Gather non-static gos ---
+		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
+		{
+			if ((*it).second->GetActive() && ray.Intersects((*it).second->GetAABB()))
+			{
+				float hit_near, hit_far;
+				if (ray.Intersects((*it).second->GetOBB(), hit_near, hit_far))
+					candidate_gos[hit_near] = (*it).second;
+			}
 		}
-	}
 
-	GameObject* toSelect = nullptr;
-	for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++) {
-		// --- We have to test triangle by triangle ---
-		ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>();
+		GameObject* toSelect = nullptr;
+		for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
+		{
+			// --- We have to test triangle by triangle ---
+			ComponentMesh* mesh = it->second->GetComponent<ComponentMesh>();
 
-		if (mesh) {
-			if (mesh->resource_mesh) {
-				// --- We need to transform the ray to local mesh space ---
-				LineSegment local = ray;
-				local.Transform(it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted());
+			if (mesh)
+			{
+				if (mesh->resource_mesh)
+				{
+					// --- We need to transform the ray to local mesh space ---
+					LineSegment local = ray;
+					local.Transform(it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted());
 
-				for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++) {
-					float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
-					float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
-					float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
-					// --- Create Triangle given three vertices ---
-					Triangle triangle(a, b, c);
+					for (uint j = 0; j < mesh->resource_mesh->IndicesSize / 3; j++)
+					{
+						float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
+						float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
+						float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
+						// --- Create Triangle given three vertices ---
+						Triangle triangle(a, b, c);
 
-					// --- Test ray/triangle intersection ---
-					if (local.Intersects(triangle, nullptr, nullptr)) {
-						toSelect = it->second;
-						break;
+						// --- Test ray/triangle intersection ---
+						if (local.Intersects(triangle, nullptr, nullptr))
+						{
+							toSelect = it->second;
+							break;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	// --- Set Selected ---
-	//if (toSelect)
-	SetSelectedGameObject(toSelect);
+		// --- Set Selected ---
+		//if (toSelect)
+		SetSelectedGameObject(toSelect);
+	}
 }
 
 void ModuleSceneManager::SaveStatus(json& file) const {
 }
 
-void ModuleSceneManager::LoadStatus(const json& file) {
-}
 
-//void ModuleSceneManager::SaveScene()
-//{
-//	// --- Fill vector with scene's GO's ---
-//	std::vector<GameObject*> scene_gos;
-//	GatherGameObjects(scene_gos, root);
-//
-//	if (scene_gos.size() > 0)
-//	{
-//		std::string Scene_name = "SampleScene";
-//		//App->importer->GetImporterScene()->SaveSceneToFile(scene_gos, Scene_name, SCENE);
-//	}
-//}
-//
-//void ModuleSceneManager::LoadScene()
-//{
-//	std::string Scene_name = SCENES_FOLDER;
-//	Scene_name.append("SampleScene.scene");
-//
-//	SelectedGameObject = nullptr;
-//
-//	RecursiveFreeScene(root);
-//
-//	//if(App->fs->Exists(Scene_name.data()))
-//	//App->importer->GetImporterScene()->Load(Scene_name.data());
-//}
-//
-//void ModuleSceneManager::RecursiveFreeScene(GameObject* go)
-//{
-//	// --- Delete all objects except root (if go is root) ---
-//
-//	if (go->childs.size() > 0)
-//	{
-//		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-//		{
-//			RecursiveFreeScene(*it);
-//		}
-//
-//		go->childs.clear();
-//	}
-//
-//	if (go->GetName() != root->GetName())
-//	{
-//		go->Static = true;
-//		App->scene_manager->SetStatic(go);
-//		App->scene_manager->tree.Erase(go);
-//		delete go;
-//	}
-//}
-
-GameObject* ModuleSceneManager::GetSelectedGameObject() const {
-	return SelectedGameObject;
-}
-
-void ModuleSceneManager::GatherGameObjects(std::vector<GameObject*>& scene_gos, GameObject* go) {
-	// --- Add all childs from go to vector ---
-	if (go->GetName() != root->GetName())
-		scene_gos.push_back(go);
-
-	if (go->childs.size() > 0) {
-		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it) {
-			GatherGameObjects(scene_gos, *it);
+void ModuleSceneManager::LoadGame(const json & file)
+{
+	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
+		std::string sceneName = file["SceneManager"]["MainScene"];
+		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, sceneName.c_str());
+		if (scene != nullptr) {
+			SetActiveScene(scene);
+			scene->LoadToMemory();
+			if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
+				GameObject* camera;
+				std::string cameraName = file["Camera3D"]["MainCamera"];
+				camera = scene->GetGOWithName(cameraName.c_str());
+				if (camera != nullptr) {
+					ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
+					if (camera_component != nullptr) {
+						App->renderer3D->SetActiveCamera(camera_component);
+						App->renderer3D->SetCullingCamera(camera_component);
+						/*	App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
+							App->renderer3D->culling_camera = camera->GetComponent<ComponentCamera>();*/
+					}
+				}
+			}
+			else
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main camera for game.", );
 		}
 	}
+	else {
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
+	}
+}
+
+void ModuleSceneManager::SaveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+
+		// --- Create meta ---
+		if (!App->resources->IsFileImported(scene->GetOriginalFile()))
+		{
+			ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, scene->GetResourceFile(), scene->GetUID());
+
+			if (meta)
+				IMeta->Save(meta);
+		}
+
+		IScene->SaveSceneToFile(scene);
+
+		App->resources->AddResourceToFolder(scene);
+
+	}
+}
+
+void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		SelectedGameObject = nullptr;
+
+		// --- Unload current scene ---
+		if (currentScene)
+		{
+			// --- Reset octree ---
+			tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
+
+			// --- Release current scene ---
+			currentScene->Release();
+
+			// --- Clear root ---
+			root->childs.clear();
+
+			App->ui_system->Clear();
+		}
+
+		currentScene = scene; // force this so gos are not added to another scene
+		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");
+
+}
+
+GameObject* ModuleSceneManager::GetSelectedGameObject() const
+{
+	return SelectedGameObject;
 }
 
 
@@ -458,20 +531,45 @@ GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	go_count++;
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data());
-	NoStaticGo.push_back(new_object);
+	GameObject* new_object = new GameObject(Name.c_str());
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
 	App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }
 
-GameObject* ModuleSceneManager::CreateRootGameObject() {
+GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
+{
 	// --- Create New Game Object Name ---
-	std::string Name = "root";
+	std::string Name = "GameObject ";
+	Name.append("(");
+	Name.append(std::to_string(go_count));
+	Name.append(")");
+
+	go_count++;
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data());
+	GameObject* new_object = new GameObject(Name.data(),UID);
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+
+	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+
+	return new_object;
+}
+
+void ModuleSceneManager::ResetGameObjectUID(GameObject* go)
+{
+
+}
+
+GameObject * ModuleSceneManager::CreateRootGameObject()
+{
+	// --- Create New Game Object Name ---
+	std::string Name = "root1";
+
+	// --- Create empty Game object to be filled out ---
+	GameObject* new_object = new GameObject(Name.c_str());
 
 	return new_object;
 }
@@ -654,7 +752,84 @@ void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, Reso
 	}
 }
 
-void ModuleSceneManager::CreateGrid(float target_distance) {
+void ModuleSceneManager::CreateCylinder(float radius, float height, ResourceMesh* rmesh)
+{
+	// --- Create par shapes cylinder ---
+	//First, create a normal cylinder and put it at (0,0,0)
+	par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(25, 25);
+	par_shapes_translate(Cyl_PrShM, 0, 0, 0);
+	par_shapes_scale(Cyl_PrShM, radius/2, height/2, radius/2);
+
+	//Now create 2 disks around the cylinder (since x, y and z are the same, we can just pick x)
+	float normal[3] = { 0, 0, 1 };
+	float center_axis[3] = { 0, 0, radius };
+	float center_axis2[3] = { 0, 0, 1 };
+	par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(radius/2, 25, center_axis, normal);
+	par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(radius/2, 25, center_axis2, normal);
+
+	//Rotate one of the disks (to make it see outside the cylinder)
+	float RotAxis[3] = { 1, 0, 0 };
+	par_shapes_rotate(Disk2_PrShM, PI, RotAxis);
+	par_shapes_translate(Disk2_PrShM, 0, 0, 1);
+	par_shapes_translate(Disk_PrShM, 0, 0, -0.5f);
+
+	//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
+	par_shapes_mesh* ParshapeMesh = par_shapes_create_empty();
+	par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
+
+	if (ParshapeMesh)
+	{
+		par_shapes_scale(ParshapeMesh, radius/2, height/2, radius/2);
+		LoadParMesh(ParshapeMesh, rmesh);
+	}
+}
+
+void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
+{
+	// --- Create par shapes sphere ---
+	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
+
+	if (mesh)
+	{
+		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
+		LoadParMesh(mesh, rmesh);
+	}
+}
+
+void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh* rmesh)
+{
+	// --- Create spheres and cylinder to build capsule ---
+	par_shapes_mesh* top_sphere = par_shapes_create_hemisphere(25, 25);
+	par_shapes_mesh* bot_sphere = par_shapes_create_hemisphere(25, 25);
+	par_shapes_mesh* cylinder = par_shapes_create_cylinder(25,25);
+	par_shapes_scale(top_sphere, radius / 2, radius / 2, radius / 2);
+	par_shapes_scale(bot_sphere, radius / 2, radius / 2, radius / 2);
+	par_shapes_scale(cylinder, radius / 2, height/2, radius / 2);
+
+	// --- Rotate and translate hemispheres ---
+	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_translate(top_sphere, 0, 0, height / 2);
+	par_shapes_rotate(bot_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_rotate(bot_sphere, float(PAR_PI), (float*)&float3::unitX);
+
+	// --- Merge meshes ---
+	par_shapes_merge_and_free(top_sphere, cylinder);
+	par_shapes_merge_and_free(top_sphere, bot_sphere);
+
+	// --- Position final mesh ---
+	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_translate(top_sphere, 0, height/4, 0);
+
+	if (top_sphere)
+	{
+		LoadParMesh(top_sphere, rmesh);
+	}
+}
+
+void ModuleSceneManager::CreateGrid(float target_distance)
+{
 	// --- Fill vertex data ---
 
 	float distance = target_distance / 4;
@@ -695,30 +870,38 @@ void ModuleSceneManager::CreateGrid(float target_distance) {
 	glBindVertexArray(0);
 }
 
-GameObject* ModuleSceneManager::LoadCube() {
-	// --- If the cube was unloaded, create par shape and extract data again ---
-	if (!cube->IsInMemory())
-		CreateCube(1, 1, 1, cube);
-
-	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(cube->GetUID());
-
-	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
-	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
-
-	return new_object;
+GameObject * ModuleSceneManager::LoadCube()
+{
+	return LoadPrimitiveObject(cube->GetUID());
 }
 
-GameObject* ModuleSceneManager::LoadSphere() {
-	// --- If the sphere was unloaded, create par shape and extract data again ---
-	if (!sphere->IsInMemory())
-		CreateSphere(1.0f, 25, 25, sphere);
+GameObject* ModuleSceneManager::LoadPlane()
+{
+	return LoadPrimitiveObject(plane->GetUID());
+}
 
+GameObject* ModuleSceneManager::LoadSphere()
+{
+	return LoadPrimitiveObject(sphere->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadCylinder()
+{
+	return LoadPrimitiveObject(cylinder->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadCapsule()
+{
+	return LoadPrimitiveObject(capsule->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
+{
 	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(sphere->GetUID());
+	//currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
+	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(PrimitiveMeshID);
 	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 
@@ -728,7 +911,7 @@ GameObject* ModuleSceneManager::LoadSphere() {
 void ModuleSceneManager::DestroyGameObject(GameObject* go) {
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
-
+	delete go;
 	this->go_count--;
 }
 

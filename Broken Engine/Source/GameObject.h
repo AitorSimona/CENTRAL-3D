@@ -17,16 +17,19 @@ class BROKEN_API GameObject {
 public:
 
 	GameObject(const char* name);
+	GameObject(const char* name, uint UID);
 	virtual ~GameObject();
 	void Enable();	
 	void Disable();
 	void Update(float dt);
+	void PostUpdate();
 
 	// --- Getters ---
-	uint& GetUID();
-	std::string	GetName() const;
-	const AABB& GetAABB();
-	const OBB& GetOBB() const;
+	uint			GetUID();
+	void			SetUID(uint uid);
+	const char*		GetName() const;
+	const AABB&	    GetAABB();
+	const OBB&      GetOBB() const;
 
 	bool& GetActive();
 	bool			IsEnabled() const;
@@ -54,11 +57,14 @@ public:
 	void			SetName(const char* name);
 
 	// --- Utilities ---
-	void RecursiveDelete(bool target = true);
-	void OnUpdateTransform();
+	void RecursiveDelete();
+	//void OnUpdateTransform();
+	void TransformGlobal(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
 	void AddChildGO(GameObject* GO);
 	bool FindChildGO(GameObject* GO);
+	void GetAllChilds(std::vector<GameObject*>& collector);
+	GameObject* GetAnimGO(GameObject* GO);
 
 	void UpdateAABB();
 

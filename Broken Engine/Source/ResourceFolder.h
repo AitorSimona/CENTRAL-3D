@@ -7,7 +7,7 @@
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceFolder : public Resource {
 public:
-	ResourceFolder(uint UID, std::string source_file);
+	ResourceFolder(uint UID, const char* source_file);
 	~ResourceFolder();
 
 	bool LoadInMemory() override;

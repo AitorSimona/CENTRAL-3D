@@ -28,7 +28,9 @@ public:
 
 	void SetCameraValues(float4 values);
 
+	void Update() override;
 
+	
 	// --- Utilities ---
 	void Look(const float3& position);
 	void OnUpdateTransform(const float4x4& global);
@@ -47,6 +49,7 @@ public:
 	Frustum		frustum;
 	bool		culling = false;
 	bool		active_camera = false;
+
 };
 
 BE_END_NAMESPACE

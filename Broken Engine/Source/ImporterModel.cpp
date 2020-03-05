@@ -13,6 +13,9 @@
 #include "ImporterMeta.h"
 #include "ImporterMesh.h"
 #include "ImporterMaterial.h"
+#include "ImporterBone.h"
+#include "ImporterAnimation.h"
+#include "ImporterBone.h"
 
 
 #include "Components.h"
@@ -20,6 +23,7 @@
 #include "ResourceModel.h"
 #include "ResourceMeta.h"
 #include "ResourceMaterial.h"
+#include "ResourceAnimation.h"
 
 
 #include "mmgr/mmgr.h"
@@ -62,12 +66,31 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 		std::map<uint, ResourceMesh*> model_meshes;
 		LoadSceneMeshes(scene, model_meshes, MData.path);
 
+		// --- Load animation ---
+		std::map<uint, ResourceAnimation*> anims;
+		LoadSceneAnimations(scene, rootnode, anims, MData.path);
+
 		// --- Load all materials ---
 		std::map<uint, ResourceMaterial*> model_mats;
 		LoadSceneMaterials(scene, model_mats, MData.path, MData.library_deleted);
 
-		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array ---
-		LoadNodes(scene->mRootNode, rootnode, scene, model_gos, MData.path, model_meshes, model_mats);
+		std::vector<aiMesh*> mesh_collector;
+		std::vector<GameObject*> mesh_wbones;
+		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array --
+		if (scene->mRootNode->mNumChildren > 0)
+		{
+			for (int i = 0; i < scene->mRootNode->mNumChildren; ++i)
+			{
+				LoadNodes(scene->mRootNode->mChildren[i], rootnode, scene, model_gos, MData.path, model_meshes, model_mats, mesh_collector, mesh_wbones);
+			}
+		}
+
+		// --- Load bones ---
+		std::map<uint, ResourceBone*> bones;
+		
+		LoadSceneBones(mesh_collector, mesh_wbones, bones, MData.path);
+
+		LoadBones(model_gos, mesh_collector, bones);
 
 		for (uint i = 0; i < model_meshes.size(); ++i) {
 			model->AddResource(model_meshes[i]);
@@ -75,6 +98,15 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 		for (uint j = 0; j < model_mats.size(); ++j) {
 			model->AddResource(model_mats[j]);
 		}
+		for (uint j = 0; j < anims.size(); ++j)
+		{
+			model->AddResource(anims[j]);
+		}
+		for (uint j = 0; j < bones.size(); ++j)
+		{
+			model->AddResource(bones[j]);
+		}
+
 
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
@@ -82,7 +114,10 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 		// --- Free everything ---
 		FreeSceneMaterials(&model_mats);
 		FreeSceneMeshes(&model_meshes);
-		rootnode->RecursiveDelete();
+		FreeSceneBones(&bones);
+		FreeSceneAnimations(&anims);
+
+		App->scene_manager->DestroyGameObject(rootnode);
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
@@ -128,8 +163,21 @@ void ImporterModel::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes)
 	scene_meshes->clear();
 }
 
-void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const {
-	for (uint i = 0; i < scene->mNumMaterials; ++i) {
+void ImporterModel::FreeSceneBones(std::map<uint, ResourceBone*>* scene_bones) const
+{
+	for (std::map<uint, ResourceBone*>::iterator it = scene_bones->begin(); it != scene_bones->end();)
+	{
+		it->second->FreeMemory();
+		it = scene_bones->erase(it);
+	}
+
+	scene_bones->clear();
+}
+
+void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, ResourceMaterial*>& scene_mats, const char* source_file, bool library_deleted) const
+{
+	for (uint i = 0; i < scene->mNumMaterials; ++i)
+	{
 		// MYTODO: Check if mat is being overwritten...
 
 		ImportMaterialData MatData(source_file);
@@ -155,8 +203,111 @@ void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 	}
 }
 
-void ImporterModel::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const {
-	for (std::map<uint, ResourceMaterial*>::iterator it = scene_mats->begin(); it != scene_mats->end();) {
+void ImporterModel::LoadSceneBones(std::vector<aiMesh*>& mesh, std::vector<GameObject*>& mesh_wbones, std::map<uint, ResourceBone*>& bones, const char* source_file) const
+{
+	int i = 0;
+	for (std::vector<aiMesh*>::iterator it = mesh.begin(); it != mesh.end(); it++)
+	{
+		
+		if ((*it)->HasBones())
+		{
+			ImporterBone* IBone = App->resources->GetImporter<ImporterBone>();
+
+			for (int j = 0; j < (*it)->mNumBones; j++)
+			{
+				ImportBoneData BData(source_file);
+				BData.bone = (*it)->mBones[j];
+
+				ComponentMesh* comp_mesh = (ComponentMesh*)mesh_wbones[i]->GetComponent<ComponentMesh>();
+				BData.mesh_UID = comp_mesh->resource_mesh->GetUID();
+
+				if (IBone)
+				{
+					bones[j] = ((ResourceBone*)IBone->Import(BData));
+					bones[j]->SetName((*it)->mBones[j]->mName.C_Str());
+					
+				}
+			}
+		}
+		i++;
+	}
+
+}
+
+void ImporterModel::LoadBones(std::vector<GameObject*> model_gos, std::vector<aiMesh*> mesh_collect, std::map<uint, ResourceBone*> bones) const
+{
+	//GameObjects map
+	std::map<std::string, GameObject*> go_map;
+	for (std::vector<GameObject*>::iterator it = model_gos.begin(); it != model_gos.end(); ++it)
+	{
+		go_map[(*it)->GetName()] = (*it);
+	}
+
+	//ResourceBone map
+	std::map<std::string, ResourceBone*> bone_map;
+	for (int i=0; i<bones.size(); i++)
+	{
+		bone_map[bones[i]->GetName()] = bones[i];
+	}
+
+	for (int i = 0; i < mesh_collect.size(); i++)
+	{
+		for (int j = 0; j < mesh_collect[i]->mNumBones; j++)
+		{
+			//Search for GO that are bones
+			std::map<std::string, GameObject*>::iterator bone = go_map.find(mesh_collect[i]->mBones[j]->mName.C_Str());
+			if (bone != go_map.end())
+			{
+				ComponentBone* comp_bone = (ComponentBone*)bone->second->AddComponent(Component::ComponentType::Bone);
+
+				std::map<std::string, ResourceBone*>::iterator resource_bone = bone_map.find(bone->second->GetName());
+				if (resource_bone != bone_map.end())
+					comp_bone->res_bone = resource_bone->second;
+			}
+		}
+	}
+
+}
+
+void ImporterModel::LoadSceneAnimations(const aiScene* scene, GameObject* GO, std::map<uint, ResourceAnimation*>& anim, const char* source_file) const
+{
+	if (scene->HasAnimations())
+	{
+		ImporterAnimation* IAnim = App->resources->GetImporter<ImporterAnimation>();
+		ComponentAnimation* comp_anim = (ComponentAnimation*)GO->AddComponent(Component::ComponentType::Animation);
+
+		for (int i = 0; i < scene->mNumAnimations; i++)
+		{
+			ImportAnimationData AData(source_file);
+			AData.animation = scene->mAnimations[i];
+			
+
+			if (IAnim)
+			{
+				anim[i] = (ResourceAnimation*)IAnim->Import(AData);
+				comp_anim->res_anim = anim[i];
+			}
+		}
+	}
+}
+
+void ImporterModel::FreeSceneAnimations(std::map<uint, ResourceAnimation*>* anims) const
+{
+
+	for (std::map<uint, ResourceAnimation*>::iterator it = anims->begin(); it != anims->end();)
+	{
+		it->second->FreeMemory();
+		it = anims->erase(it);
+	}
+
+	anims->clear();
+
+}
+
+void ImporterModel::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_mats) const
+{
+	for (std::map<uint, ResourceMaterial*>::iterator it = scene_mats->begin(); it != scene_mats->end();)
+	{
 		it->second->FreeMemory();
 		it = scene_mats->erase(it);
 	}
@@ -164,32 +315,88 @@ void ImporterModel::FreeSceneMaterials(std::map<uint, ResourceMaterial*>* scene_
 	scene_mats->clear();
 }
 
-void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats) const {
+void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiScene* scene, std::vector<GameObject*>& scene_gos, const char* path, std::map<uint, ResourceMesh*>& scene_meshes, std::map<uint, ResourceMaterial*>& scene_mats, std::vector<aiMesh*> &mesh_collector, std::vector<GameObject*>& mesh_wbones) const
+{
 	// --- Load Game Objects from Assimp scene ---
+
+	aiVector3D translation, scaling;
+	aiQuaternion rotation;
+
+	node->mTransformation.Decompose(scaling, rotation, translation);
+
+	float3 pos2(translation.x, translation.y, translation.z);
+	float3 s2(scaling.x, scaling.y, scaling.z);
+	Quat rot2(rotation.x, rotation.y, rotation.z, rotation.w);
+
+	std::string node_name = node->mName.C_Str();
+
+	bool dummyFound = true;
+	while (dummyFound)//Skipp all dummy modules. Assimp loads this fbx nodes to stack all transformations
+	{
+		//All dummy modules have one children (next dummy module or last module containing the mesh)
+		if (node_name.find("_$AssimpFbx$_") != std::string::npos && node->mNumChildren == 1)
+		{
+			//Dummy module have only one child node, so we use that one as our next GameObject
+			node = node->mChildren[0];
+
+			// Accumulate transform 
+			node->mTransformation.Decompose(scaling, rotation, translation);
+			pos2 += float3(translation.x, translation.y, translation.z);
+			s2 = float3(s2.x * scaling.x, s2.y * scaling.y, s2.z * scaling.z);
+			rot2 = rot2 * Quat(rotation.x, rotation.y, rotation.z, rotation.w);
+
+			node_name = node->mName.C_Str();
+
+			//if we find a dummy node we "change" our current node into the dummy one and search
+			//for other dummy nodes inside that one.
+			dummyFound = true;
+		}
+		else
+			dummyFound = false;
+	}
 
 	GameObject* nodeGo = nullptr;
 
-	if (node != scene->mRootNode && node->mNumMeshes > 1) {
-		// --- Create GO per each node that contains a mesh ---
-		nodeGo = App->scene_manager->CreateEmptyGameObject();
-		nodeGo->SetName(node->mName.C_Str());
-		parent->AddChildGO(nodeGo);
-		scene_gos.push_back(nodeGo);
-	}
-	else // If rootnode, set nodeGo as root
-		nodeGo = parent;
+	// --- Create GO per each node that contains a mesh ---
+	nodeGo = App->scene_manager->CreateEmptyGameObject();
+	nodeGo->SetName(node->mName.C_Str());
+	parent->AddChildGO(nodeGo);
+	scene_gos.push_back(nodeGo);
 
-	// --- Iterate children and repeat process ---
-	for (int i = 0; i < node->mNumChildren; ++i) {
-		LoadNodes(node->mChildren[i], nodeGo, scene, scene_gos, path, scene_meshes, scene_mats);
-	}
+	ComponentTransform* transform = nodeGo->GetComponent<ComponentTransform>();
+
+	transform->position = pos2;;
+	transform->scale = s2;
+	transform->rotation = rot2;
+	//transform->UpdateLocalTransform();
+
+
+	int i = 0;
 
 	// --- Iterate and load meshes ---
 	for (int j = 0; j < node->mNumMeshes; ++j) {
 		// --- Create Game Object per mesh ---
-		GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
-		new_object->SetName(node->mName.C_Str());
-		nodeGo->AddChildGO(new_object);
+		GameObject* new_object = nullptr;
+
+		if (node->mNumMeshes > 1)
+		{
+			node_name = scene->mMeshes[node->mMeshes[j]]->mName.C_Str();
+			if (node_name == "")
+				node_name = std::string(nodeGo->GetName()) + "dummy";
+			if (j > 0)
+				node_name = std::string(nodeGo->GetName()) + "_submesh";
+			new_object = App->scene_manager->CreateEmptyGameObject();
+			nodeGo->AddChildGO(new_object);
+			new_object->SetName(node_name.c_str());
+		}
+		else
+		{
+			//If node has only 1 mesh child is the parent itself 
+			new_object = nodeGo;
+		}
+
+		//new_object->SetName(node->mName.C_Str());
+		//parent->AddChildGO(new_object);
 		scene_gos.push_back(new_object);
 
 		// --- Get Scene mesh associated to node's mesh at index ---
@@ -197,8 +404,14 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		aiMesh* mesh = scene->mMeshes[mesh_index];
 		uint mat_index = mesh->mMaterialIndex;
 
-		if (mesh) {
+		if (scene->mMeshes[node->mMeshes[j]]->HasBones())
+		{
+			mesh_collector.push_back(scene->mMeshes[node->mMeshes[j]]);
+			mesh_wbones.push_back(new_object);
+		}
 
+		if (mesh)
+		{
 			// --- Create new Component Mesh to store current scene mesh data ---
 			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 
@@ -206,24 +419,8 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 			new_mesh->resource_mesh = scene_meshes[mesh_index];
 
 			// --- Create Default components ---
-			if (new_mesh) {
-				ComponentTransform* transform = new_object->GetComponent<ComponentTransform>();
-
-				if (transform) {
-					aiVector3D aiscale;
-					aiVector3D aiposition;
-					aiQuaternion airotation;
-					node->mTransformation.Decompose(aiscale, airotation, aiposition);
-					math::Quat quat;
-					quat.x = airotation.x;
-					quat.y = airotation.y;
-					quat.z = airotation.z;
-					quat.w = airotation.w;
-					float3 eulerangles = quat.ToEulerXYZ() * RADTODEG;
-					transform->SetPosition(aiposition.x, aiposition.y, aiposition.z);
-					transform->SetRotation(eulerangles);
-					transform->Scale(aiscale.x, aiscale.y, aiscale.z);
-				}
+			if (new_mesh)
+			{
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 				Renderer->material->Release();
@@ -232,6 +429,13 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 		}
 	}
+
+	// --- Iterate children and repeat process ---
+	for (int i = 0; i < node->mNumChildren; ++i)
+	{
+		LoadNodes(node->mChildren[i], nodeGo, scene, scene_gos, path, scene_meshes, scene_mats, mesh_collector, mesh_wbones);
+	}
+	
 }
 
 
@@ -308,15 +512,17 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			std::vector<GameObject*> objects;
 
 			// --- Iterate main nodes ---
-			for (json::iterator it = file.begin(); it != file.end(); ++it) {
-				// --- Create a Game Object for each node ---
-				GameObject* go = App->scene_manager->CreateEmptyGameObject();
-
-				// --- Retrieve GO's UID and name ---
-				go->SetName(it.key().c_str());
+			for (json::iterator it = file.begin(); it != file.end(); ++it)
+			{
+				// --- Retrieve GO's UID ---
 				std::string uid = file[it.key()]["UID"];
-				go->GetUID() = std::stoi(uid);
 
+				// --- Create a Game Object for each node ---
+				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
+	
+				// --- Retrieve GO's name ---
+				go->SetName(it.key().c_str());
+	
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
 
@@ -355,9 +561,10 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				}
 			}
 
-			// --- Now give unique uids to all gos ---
-			for (uint i = 0; i < objects.size(); ++i) {
-				objects[i]->GetUID() = App->GetRandom().Int();
+			// --- Now give unique uids to all gos so they are brand new ---
+			for (uint i = 0; i < objects.size(); ++i)
+			{
+				objects[i]->SetUID(App->GetRandom().Int());
 			}
 
 			// --- Add pointer to model ---
@@ -390,7 +597,7 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();

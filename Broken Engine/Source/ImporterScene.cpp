@@ -48,34 +48,66 @@ Resource* ImporterScene::Load(const char* path) const {
 	return scene;
 }
 
-std::string ImporterScene::SaveSceneToFile(ResourceScene* scene, std::string& scene_name) const {
+void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
+{
 	// --- Save Scene/Model to file ---
 
 	json file;
 
-	for (int i = 0; i < scene->scene_gos.size(); ++i) {
+	for (std::unordered_map<uint, GameObject*>::iterator it = scene->NoStaticGameObjects.begin(); it != scene->NoStaticGameObjects.end(); ++it)
+	{
+		std::string string_uid = std::to_string((*it).second->GetUID());
 		// --- Create GO Structure ---
-		file[scene->scene_gos[i]->GetName()];
-		file[scene->scene_gos[i]->GetName()]["UID"] = std::to_string(scene->scene_gos[i]->GetUID());
-		file[scene->scene_gos[i]->GetName()]["Parent"] = std::to_string(scene->scene_gos[i]->parent->GetUID());
-		file[scene->scene_gos[i]->GetName()]["Components"];
+		file[string_uid];
+		file[string_uid]["Name"] = (*it).second->GetName();
+		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Components"];
 
-		for (int j = 0; j < scene->scene_gos[i]->GetComponents().size(); ++j) {
+		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
+		{
 			// --- Save Components to file ---
-			file[scene->scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene->scene_gos[i]->GetComponents()[j]->GetType())] = scene->scene_gos[i]->GetComponents()[j]->Save();
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
+		}
+
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = scene->StaticGameObjects.begin(); it != scene->StaticGameObjects.end(); ++it)
+	{
+		std::string string_uid = std::to_string((*it).second->GetUID());
+		// --- Create GO Structure ---
+		file[string_uid];
+		file[string_uid]["Name"] = (*it).second->GetName();
+		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Components"];
+
+		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
+		{
+			// --- Save Components to file ---
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
 		}
 
 	}
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();
 	uint size = data.length();
 
 	App->fs->Save(scene->GetResourceFile(), buffer, size);
+	scene->SetOriginalFile(scene->GetResourceFile());
 
-	return scene_name;
+	// --- Create meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, scene->GetResourceFile(), scene->GetUID());
+
+	if (meta)
+	{
+		meta->Date = App->fs->GetLastModificationTime(scene->GetOriginalFile());
+		IMeta->Save(meta);
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Could not load meta from: %s", scene->GetResourceFile());
 }

@@ -8,7 +8,7 @@
 #include "mmgr/mmgr.h"
 
 using namespace BrokenEngine;
-ResourceFolder::ResourceFolder(uint UID, std::string source_file) : Resource(Resource::ResourceType::FOLDER, UID, source_file) {
+ResourceFolder::ResourceFolder(uint UID, const char* source_file) : Resource(Resource::ResourceType::FOLDER, UID, source_file) {
 	extension = ".folder";
 	resource_file = source_file;
 	previewTexID = App->gui->folderTexID;

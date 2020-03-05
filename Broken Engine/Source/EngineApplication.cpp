@@ -32,15 +32,23 @@ EngineApplication::EngineApplication() {
 	AddModule(resources);
 	AddModule(window);
 	AddModule(camera);
-	AddModule(gui);
 	AddModule(editorui);
+	AddModule(gui);
+	AddModule(ui_system);
 	
-	//// Scenes
+	// Scenes
 	AddModule(scene_manager);
+
+	//Physics and particles
+	AddModule(physics);
+	AddModule(particles);
+
+	//Audio
+	AddModule(audio);
 	
-	////Gameplay (Scripting)
+	//Gameplay (Scripting)
 	AddModule(scripting);
-	//// Renderer last!
+	// Renderer last!
 	AddModule(renderer3D);
 }
 

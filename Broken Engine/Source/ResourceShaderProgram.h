@@ -6,7 +6,7 @@
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceShaderProgram : public Resource {
 public:
-	ResourceShaderProgram(uint UID, std::string source_file);
+	ResourceShaderProgram(uint UID, const char* source_file);
 	~ResourceShaderProgram();
 
 	bool LoadInMemory() override;

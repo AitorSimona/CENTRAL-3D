@@ -16,9 +16,9 @@ public:
 
 	json Load(const char* File) const;
 
-	bool Save(const char* File, json jsonfile);
+	bool Save(const char* File, const json& jsonfile);
 
-	std::string Serialize(json jsonfile);
+	void Serialize(const json& jsonfile, std::string& jsonserialized);
 };
 BE_END_NAMESPACE
 #endif

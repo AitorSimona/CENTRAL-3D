@@ -199,7 +199,7 @@ Resource* ImporterMesh::Load(const char* path) const {
 			uid = uid.substr(0, uid.find_last_of("."));
 
 
-			mesh = App->resources->meshes.find(std::stoi(uid)) != App->resources->meshes.end() ? App->resources->meshes.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, std::string(source_file), std::stoi(uid));
+			mesh = App->resources->meshes.find(std::stoi(uid)) != App->resources->meshes.end() ? App->resources->meshes.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, source_file.c_str(), std::stoi(uid));
 
 			delete[] buffer;
 			buffer = nullptr;

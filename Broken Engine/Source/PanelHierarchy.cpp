@@ -24,12 +24,22 @@ PanelHierarchy::~PanelHierarchy()
 bool PanelHierarchy::Draw()
 {
 	ImGuiWindowFlags settingsFlags = 0;
-	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
+	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_MenuBar;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
+		ImGui::BeginMenuBar();
+		ImGui::Image((ImTextureID)EngineApp->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::SameLine();
+		ImGui::Text(EngineApp->scene_manager->currentScene->GetName());
+		ImGui::EndMenuBar();
+
 		DrawRecursive(EngineApp->scene_manager->GetRootGO());
 	}
+
+	// Deselect the current GameObject when clicking in an empty space of the hierarchy
+	if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
+		EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 
 	ImGui::End();
 
@@ -63,7 +73,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 		node_flags |= ImGuiTreeNodeFlags_Selected;
 
 	// --- Avoid displaying root ---
-	if (Go->GetName().c_str() == EngineApp->scene_manager->GetRootGO()->GetName())
+	if (Go->GetName() == EngineApp->scene_manager->GetRootGO()->GetName())
 	{
 		if (Go->childs.size() > 0)
 		{
@@ -88,7 +98,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 		ImGui::Image((ImTextureID)EngineApp->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::SameLine();
 
-		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName().c_str());
+		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName());
 
 		if (!Go->GetActive())
 		ImGui::PopStyleColor();
@@ -116,7 +126,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 		// --- Set Game Object to be destroyed ---
 		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == BrokenEngine::KEY_DOWN)
 		{
-			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
+			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
 			to_destroy = Go;
 		}
 

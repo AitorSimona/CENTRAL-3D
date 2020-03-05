@@ -65,7 +65,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "ComponentMesh", "ComponentMeshRenderer" };
+		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -109,17 +109,66 @@ bool PanelInspector::Draw()
 
 		// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
 
-		if (item_current == "ComponentMesh")
+		if (item_current == "Mesh")
 		{
 			Selected->AddComponent(BrokenEngine::Component::ComponentType::Mesh);
 		}
 
-		if (item_current == "ComponentMeshRenderer")
+		if (item_current == "Mesh Renderer")
 		{
 			Selected->AddComponent(BrokenEngine::Component::ComponentType::MeshRenderer);
 		}
 
+		if (item_current == "UI Canvas")
+		{
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::Canvas);
+		}
+
+		if (item_current == "UI Image")
+		{
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::Image);
+		}
+
+		if (item_current == "UI Text")
+		{
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::Text);
+		}
+		if (item_current == "Dynamic RigidBody")
+		{
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::DynamicRigidBody);
+		}
+
+		if (item_current == "Collider")
+		{
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::Collider);
+		}
+		if (item_current == "Particle Emitter")
+		{
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::ParticleEmitter);
+		}
+		if (item_current == "Audio Source")
+		{
+			Selected->AddComponent(BrokenEngine::Component::ComponentType::AudioSource);
+		}
+
 		item_current = items[0];
+		// MYTODO: move this to the component itself
+
+		// --- Material ---
+		//if (Selected->GetComponent<ComponentMaterial>())
+		//{
+		//	CreateMaterialNode(*Selected);
+		//	ImGui::Separator();
+		//}
+
+		// --- Camera ---
+		//if (Selected->GetComponent<ComponentCamera>())
+		//{
+		//	CreateCameraNode(*Selected);
+		//	ImGui::Separator();
+		//}
+
+
 
 		if(Startup)
 			Startup = false;
@@ -135,12 +184,19 @@ void PanelInspector::CreateGameObjectNode(BrokenEngine::GameObject & Selected) c
 {
 	ImGui::BeginChild("child", ImVec2(0, 35), true);
 
-	ImGui::Checkbox("##GOActive", &Selected.GetActive());
+	if (ImGui::Checkbox("##GOActive", &Selected.GetActive()))
+	{
+		if (Selected.GetActive())
+			Selected.Enable();
+		else
+			Selected.Disable();
+	}
+
 	ImGui::SameLine();
 
 	// --- Game Object Name Setter ---
 	static char GOName[100] = "";
-	strcpy_s(GOName, 100, Selected.GetName().data());
+	strcpy_s(GOName, 100, Selected.GetName());
 	if (ImGui::InputText("", GOName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 		Selected.SetName(GOName);
 
@@ -151,5 +207,3 @@ void PanelInspector::CreateGameObjectNode(BrokenEngine::GameObject & Selected) c
 
 	ImGui::EndChild();
 }
-
-

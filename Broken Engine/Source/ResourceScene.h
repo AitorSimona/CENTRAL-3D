@@ -9,13 +9,17 @@ class GameObject;
 
 class BROKEN_API ResourceScene : public Resource {
 public:
-	ResourceScene(uint UID, std::string source_file);
+	ResourceScene(uint UID, const char* source_file);
 	~ResourceScene();
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 
-	std::unordered_map<uint, GameObject*> scene_gos;
+	GameObject* GetGOWithName(const char* GO_name);
+	GameObject* GetGOWithUID(uint UID);
+
+	std::unordered_map<uint,GameObject*> NoStaticGameObjects;
+	std::unordered_map<uint, GameObject*> StaticGameObjects;
 
 private:
 	void OnOverwrite() override;

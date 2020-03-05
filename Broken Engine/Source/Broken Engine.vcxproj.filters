@@ -360,6 +360,12 @@
     <ClInclude Include="MathGeoLib\include\Time\Clock.h">
       <Filter>Sources\3rd party\MathGeoLib\Time</Filter>
     </ClInclude>
+    <ClInclude Include="PanelBuild.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelPhysics.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineApplication.cpp">
@@ -553,6 +559,12 @@
     </ClCompile>
     <ClCompile Include="EngineMain.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelBuild.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelPhysics.cpp">
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

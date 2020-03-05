@@ -11,11 +11,10 @@
 
 #include "ResourceMesh.h"
 #include "ComponentCamera.h"
+#include "ComponentAudioListener.h"
 
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
-
-#include "PanelScene.h"
 
 
 #include "mmgr/mmgr.h"
@@ -44,6 +43,7 @@ bool ModuleCamera3D::Start() {
 	camera->SetFOV(60.0f);
 	reference = camera->frustum.Pos();
 	camera->Look({ 0.0f, 0.0f, 0.0f });
+	FrameObject({ 0.0f, 0.0f, 0.0f });
 
 	return ret;
 }
@@ -57,9 +57,23 @@ bool ModuleCamera3D::CleanUp() {
 	return true;
 }
 
+void ModuleCamera3D::LoadStatus(const json& file) 
+{
+	//#ifdef BE_GAME_BUILD
+	//if (file["Camera3D"].find("ActiveCamera") != file["Camera3D"].end()) {
+	//	ResourceScene* scene = (ResourceScene*)App->resources->GetResource(file["SceneManager"]["MainScene"]);
+	//	SetActiveScene(scene);
+	//}
+	//else {
+	//	ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
+	//}
+	//#endif
+}
+
 // -----------------------------------------------------------------
-update_status ModuleCamera3D::Update(float dt) {
-	if (App->GetAppState() == AppState::EDITOR && App->gui->isHoveringScene()) {
+update_status ModuleCamera3D::Update(float dt) 
+{
+	if (App->GetAppState() == AppState::EDITOR && App->gui->isSceneHovered) {
 		m_CameraSpeedDeltaTime = m_CameraSpeed * dt;
 		m_ScrollSpeedDeltaTime = m_ScrollSpeed * dt;
 		m_FinalSpeed = m_CameraSpeedDeltaTime * m_SpeedMultiplicator;
@@ -72,7 +86,8 @@ update_status ModuleCamera3D::Update(float dt) {
 }
 
 void ModuleCamera3D::UpdateCamera() {
-	if (App->GetAppState() == AppState::EDITOR && App->gui->isHoveringScene()) {
+	if (App->GetAppState() == AppState::EDITOR && App->gui->isSceneHovered) 
+	{
 		float3 newPos(0, 0, 0);
 
 		// --- Move ---
@@ -104,8 +119,13 @@ void ModuleCamera3D::UpdateCamera() {
 			CameraPan(m_ScrollSpeedDeltaTime);
 
 		// --- Orbit Object ---
-		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
-			CameraLookAround(m_CameraSpeedDeltaTime, reference);
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+		{
+			if (GameObject* GO = App->scene_manager->GetSelectedGameObject())
+				CameraLookAround(m_CameraSpeedDeltaTime, GO->GetComponent<ComponentTransform>()->GetPosition());
+			else
+				CameraLookAround(m_CameraSpeedDeltaTime, reference);
+		}
 
 		// --- Frame object ---
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
@@ -115,21 +135,21 @@ void ModuleCamera3D::UpdateCamera() {
 				FrameObject(float3(0.0f));
 		}
 
-		// --- Mouse picking ---
-		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
-			float mouse_x = App->input->GetMouseX();
-			float mouse_y = App->input->GetMouseY();
-
-			OnMouseClick(mouse_x, mouse_y);
-		}
-
 		App->scene_manager->CreateGrid(camera->frustum.Pos().Length());
+	}
+
+	// --- Mouse picking ---
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && App->gui->isSceneHovered)
+	{
+		float mouse_x = App->input->GetMouseX();
+		float mouse_y = App->input->GetMouseY();
+
+		OnMouseClick(mouse_x, mouse_y);
 	}
 }
 
 void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y) {
 	// MYTODO: Make this easy to understand / explain
-
 	// Scene window relative coords
 	float normalized_x = (mouse_x - App->gui->sceneX) / App->gui->sceneWidth * (float)App->window->GetWindowWidth();
 	float normalized_y = (mouse_y - App->gui->sceneY) / App->gui->sceneHeight * (float)App->window->GetWindowHeight();
@@ -144,7 +164,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y) {
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 	last_ray = ray;
 
-	App->scene_manager->SelectFromRay(ray);
+	if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_IDLE)
+		App->scene_manager->SelectFromRay(ray);
 }
 
 void ModuleCamera3D::FrameObject(GameObject* GO) {
@@ -173,11 +194,10 @@ void ModuleCamera3D::FrameObject(float3 posToLook) {
 
 	if (Movement.IsFinite())
 		camera->frustum.SetPos(reference - Movement);
-
 }
 
-
-void ModuleCamera3D::CameraPan(float speed) {
+void ModuleCamera3D::CameraPan(float speed)
+{
 	int dx = -App->input->GetMouseXMotion();
 	int dy = App->input->GetMouseYMotion();
 	float factor = abs(camera->frustum.Pos().y) / 100.0f;
@@ -205,8 +225,8 @@ void ModuleCamera3D::CameraZoom(float speed) {
 	camera->frustum.SetPos(camera->frustum.Pos() + Movement);
 }
 
-
-void ModuleCamera3D::ModifySpeedMultiplicator() {
+void ModuleCamera3D::ModifySpeedMultiplicator()
+{
 	m_ScrollingSpeedChange = true;
 	m_SpeedMultiplicator += (m_ScrollSpeedDeltaTime * App->input->GetMouseWheel() * 5.0f);
 
@@ -216,10 +236,10 @@ void ModuleCamera3D::ModifySpeedMultiplicator() {
 		m_SpeedMultiplicator = 0.3f;
 }
 
-
-void ModuleCamera3D::CameraLookAround(float speed, float3 reference) {
-	float dx = -App->input->GetMouseXMotion() * speed;
-	float dy = -App->input->GetMouseYMotion() * speed;
+void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
+{
+	float dx = -App->input->GetMouseXMotion()*speed;
+	float dy = -App->input->GetMouseYMotion()*speed;
 
 	math::Quat rotationX = math::Quat::RotateAxisAngle(float3::unitY, dx * DEGTORAD);
 	math::Quat rotationY = math::Quat::RotateAxisAngle(camera->frustum.WorldRight(), dy * DEGTORAD);

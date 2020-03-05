@@ -207,7 +207,9 @@ void Quadtree::Erase(GameObject* go) {
 		root->Erase(go);
 }
 
-void Quadtree::Clear() {
+void Quadtree::Clear()
+{
+	if(root)
 	delete root;
 }
 

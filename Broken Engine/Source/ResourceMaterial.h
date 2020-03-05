@@ -9,7 +9,7 @@
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceMaterial : public Resource {
 public:
-	ResourceMaterial(uint UID, std::string source_file);
+	ResourceMaterial(uint UID, const char* source_file);
 	~ResourceMaterial();
 
 	bool LoadInMemory() override;

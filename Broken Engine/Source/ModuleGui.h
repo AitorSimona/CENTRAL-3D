@@ -6,7 +6,7 @@
 #include "BrokenCore.h"
 
 #include <vector>
-class ImGuiContext;
+struct ImGuiContext;
 //
 //class PanelSettings;
 //class PanelAbout;
@@ -38,9 +38,9 @@ public:
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
 	void AddPanel(Panel* npanel);
-	bool isHoveringScene() const;
 
 	ImGuiContext* getImgUICtx() const;
+
 
 	void LogFPS(float fps, float ms);
 
@@ -62,10 +62,14 @@ public:
 	PanelInspector*		panelInspector = nullptr;
 	PanelHierarchy*		panelHierarchy = nullptr;
 	PanelScene*			panelScene = nullptr;
+	PanelBuild*			panelBuild = nullptr;
 	PanelToolbar*       panelToolbar = nullptr;
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;
 	PanelResources*		panelResources = nullptr;*/
+	//PanelResources*		panelResources = nullptr;
+	//PanelPhysics*		panelPhysics = nullptr;
+	//PanelGame*			panelGame = nullptr;
 	
 	uint materialTexID = 0;
 	uint folderTexID = 0;
@@ -87,7 +91,7 @@ private:
 	bool capture_keyboard = false;
 	bool capture_mouse = false;
 
-	std::vector<BrokenEngine::Panel*> panels;
+	std::vector<Panel*> panels;
 };
 
 BE_END_NAMESPACE

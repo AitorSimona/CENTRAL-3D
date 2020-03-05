@@ -61,8 +61,8 @@ bool ModuleFileSystem::Init(json& file) {
 	// Make sure standard paths exist
 	const char* dirs[] = {
 		SETTINGS_FOLDER, ASSETS_FOLDER, LIBRARY_FOLDER, MODELS_FOLDER,
-		MESHES_FOLDER, TEXTURES_FOLDER, SCENES_FOLDER, SHADERS_FOLDER,
-		SCRIPTS_FOLDER
+		MESHES_FOLDER, BONES_FOLDER, ANIMATIONS_FOLDER, TEXTURES_FOLDER,
+		SCENES_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER
 	};
 
 	for (uint i = 0; i < sizeof(dirs) / sizeof(const char*); ++i) {
@@ -185,7 +185,7 @@ std::string ModuleFileSystem::GetDirectoryFromPath(std::string& path) {
 	return directory;
 }
 
-void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const {
+void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<const char*>& file_list, std::vector<const char*>& dir_list) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
 
@@ -201,15 +201,17 @@ void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<std::str
 	PHYSFS_freeList(rc);
 }
 
-void ModuleFileSystem::DiscoverDirectories(const char* directory, std::vector<std::string>& dir_list) const {
+void ModuleFileSystem::DiscoverDirectories(const char* directory, const char** dir_list) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
 
 	std::string dir(directory);
 
 	for (i = rc; *i != nullptr; i++) {
-		if (PHYSFS_isDirectory((dir + *i).c_str()))
-			dir_list.push_back(*i);
+		if (PHYSFS_isDirectory((dir + *i).c_str())) {
+			*dir_list = *i;
+			dir_list++;
+		}
 	}
 
 	PHYSFS_freeList(rc);
@@ -259,10 +261,10 @@ bool ModuleFileSystem::Copy(const char* source, const char* destination) {
 		PHYSFS_close(dst);
 		ret = true;
 
-		ENGINE_CONSOLE_LOG("File System copied file [%s] to [%s]", source, destination);
+		//ENGINE_CONSOLE_LOG("File System copied file [%s] to [%s]", source, destination);
 	}
-	else
-		ENGINE_CONSOLE_LOG("File System error while copy from [%s] to [%s]", source, destination);
+	/*else*/
+		//ENGINE_CONSOLE_LOG("File System error while copy from [%s] to [%s]", source, destination);
 
 	return ret;
 }
@@ -332,8 +334,8 @@ void ModuleFileSystem::WatchDirectory(const char* directory) {
 	// --- Watch the subtree for directory creation and deletion ---
 
 	dwChangeHandles[0] = FindFirstChangeNotification(
-		directory,                       // directory to watch 
-		TRUE,                          // watch the subtree 
+		directory,                       // directory to watch
+		TRUE,                          // watch the subtree
 		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES
 	);
 

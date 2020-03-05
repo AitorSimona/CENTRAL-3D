@@ -1,0 +1,1648 @@
+{
+    "1017680947": {
+        "Components": {
+            "0": {
+                "positionx": "0.003813",
+                "positiony": "2.987564",
+                "positionz": "-0.000015",
+                "rotationw": "0.999997",
+                "rotationx": "0.000000",
+                "rotationy": "0.000145",
+                "rotationz": "-0.002581",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1450138308.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandPinky3",
+        "Parent": "2110082863"
+    },
+    "1032646875": {
+        "Components": {
+            "0": {
+                "positionx": "0.000001",
+                "positiony": "22.914724",
+                "positionz": "-0.000015",
+                "rotationw": "0.999998",
+                "rotationx": "-0.000000",
+                "rotationy": "0.002221",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/2014578959.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightForeArm",
+        "Parent": "598372259"
+    },
+    "1064269607": {
+        "Components": {
+            "0": {
+                "positionx": "1.245145",
+                "positiony": "9.458595",
+                "positionz": "-0.033562",
+                "rotationw": "0.998267",
+                "rotationx": "-0.008719",
+                "rotationy": "-0.000701",
+                "rotationz": "0.058191",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1320603902.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandRing1",
+        "Parent": "947527096"
+    },
+    "1101054761": {
+        "Components": {
+            "0": {
+                "positionx": "-1.152036",
+                "positiony": "9.875290",
+                "positionz": "-0.173889",
+                "rotationw": "0.998254",
+                "rotationx": "-0.008501",
+                "rotationy": "-0.004460",
+                "rotationz": "0.058291",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1546882131.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandMiddle1",
+        "Parent": "947527096"
+    },
+    "1283916680": {
+        "Components": {
+            "0": {
+                "positionx": "-0.002588",
+                "positiony": "2.798431",
+                "positionz": "-0.000023",
+                "rotationw": "0.999998",
+                "rotationx": "-0.000000",
+                "rotationy": "-0.000078",
+                "rotationz": "0.002147",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/304556411.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandPinky3",
+        "Parent": "1699936157"
+    },
+    "1316594321": {
+        "Components": {
+            "0": {
+                "positionx": "-0.001887",
+                "positiony": "3.123734",
+                "positionz": "-0.000015",
+                "rotationw": "0.999999",
+                "rotationx": "0.000000",
+                "rotationy": "-0.000064",
+                "rotationz": "0.001033",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1521017811.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandIndex3",
+        "Parent": "1921282810"
+    },
+    "1378882651": {
+        "Components": {
+            "0": {
+                "positionx": "0.000422",
+                "positiony": "3.272537",
+                "positionz": "0.000023",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "-0.000002",
+                "rotationz": "-0.000030",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/797600463.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandIndex2",
+        "Parent": "1602990607"
+    },
+    "1381282070": {
+        "Components": {
+            "0": {
+                "positionx": "-3.461268",
+                "positiony": "9.733376",
+                "positionz": "-0.173744",
+                "rotationw": "0.998286",
+                "rotationx": "-0.008566",
+                "rotationy": "-0.003311",
+                "rotationz": "0.057794",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1635333789.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandIndex1",
+        "Parent": "947527096"
+    },
+    "1414238576": {
+        "Components": {
+            "0": {
+                "positionx": "-0.564442",
+                "positiony": "3.922821",
+                "positionz": "-0.000008",
+                "rotationw": "0.999639",
+                "rotationx": "-0.001697",
+                "rotationy": "0.014067",
+                "rotationz": "0.022832",
+                "scalex": "1.000001",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/109690397.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandThumb3",
+        "Parent": "1604533382"
+    },
+    "1417656305": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "123.895081",
+                "positionz": "173.473419",
+                "rotationw": "0.000000",
+                "rotationx": "0.000000",
+                "rotationy": "1.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000001"
+            },
+            "18": null,
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "DefaultMaterial"
+                }
+            },
+            "3": null
+        },
+        "Name": "GameObject (317)",
+        "Parent": "2130086282"
+    },
+    "1418250059": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "-0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/635958801.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/01 - Default.mat"
+                }
+            }
+        },
+        "Name": "Geralt_Mesh",
+        "Parent": "76208369"
+    },
+    "1448817409": {
+        "Components": {
+            "0": {
+                "positionx": "-0.005077",
+                "positiony": "3.376930",
+                "positionz": "0.000015",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000034",
+                "rotationz": "0.000986",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/303280805.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandRing2",
+        "Parent": "1845528546"
+    },
+    "1495015945": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "17.181831",
+                "positionz": "1.256160",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:HeadTop_End",
+        "Parent": "91786370"
+    },
+    "1521321337": {
+        "Components": {
+            "0": {
+                "positionx": "-0.996857",
+                "positiony": "2.925755",
+                "positionz": "0.000000",
+                "rotationw": "0.976103",
+                "rotationx": "0.000715",
+                "rotationy": "-0.006507",
+                "rotationz": "0.217209",
+                "scalex": "1.000000",
+                "scaley": "1.000001",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1096667980.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandThumb2",
+        "Parent": "1896794548"
+    },
+    "1538610149": {
+        "Components": {
+            "0": {
+                "positionx": "6.548095",
+                "positiony": "-3.932709",
+                "positionz": "-0.023722",
+                "rotationw": "-0.010174",
+                "rotationx": "-0.000479",
+                "rotationy": "0.000724",
+                "rotationz": "0.999948",
+                "scalex": "1.000004",
+                "scaley": "1.000004",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1040832856.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftUpLeg",
+        "Parent": "267704049"
+    },
+    "1568717440": {
+        "Components": {
+            "0": {
+                "positionx": "0.003641",
+                "positiony": "2.471100",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:LeftHandIndex4",
+        "Parent": "1316594321"
+    },
+    "1602990607": {
+        "Components": {
+            "0": {
+                "positionx": "3.566896",
+                "positiony": "9.720634",
+                "positionz": "-0.199051",
+                "rotationw": "0.998301",
+                "rotationx": "-0.007050",
+                "rotationy": "0.004510",
+                "rotationz": "-0.057664",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1702925385.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandIndex1",
+        "Parent": "450550109"
+    },
+    "1604533382": {
+        "Components": {
+            "0": {
+                "positionx": "0.870281",
+                "positiony": "3.020840",
+                "positionz": "-0.000023",
+                "rotationw": "0.977663",
+                "rotationx": "0.000337",
+                "rotationy": "0.004881",
+                "rotationz": "-0.210121",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1091045509.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandThumb2",
+        "Parent": "284232040"
+    },
+    "1626724193": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "6.128931",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:RightToe_End",
+        "Parent": "847406637"
+    },
+    "1655800129": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "6.170155",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:LeftToe_End",
+        "Parent": "430378013"
+    },
+    "1699936157": {
+        "Components": {
+            "0": {
+                "positionx": "-0.005360",
+                "positiony": "3.521408",
+                "positionz": "0.000015",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000011",
+                "rotationz": "0.000302",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/983138002.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandPinky2",
+        "Parent": "1874557621"
+    },
+    "172465367": {
+        "Components": {
+            "0": {
+                "positionx": "-6.548095",
+                "positiony": "-3.932709",
+                "positionz": "-0.020874",
+                "rotationw": "0.010095",
+                "rotationx": "0.000553",
+                "rotationy": "0.001695",
+                "rotationz": "0.999948",
+                "scalex": "1.000004",
+                "scaley": "1.000004",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1852200886.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightUpLeg",
+        "Parent": "267704049"
+    },
+    "1812686854": {
+        "Components": {
+            "0": {
+                "positionx": "1.120569",
+                "positiony": "9.662529",
+                "positionz": "-0.141975",
+                "rotationw": "0.998286",
+                "rotationx": "-0.007085",
+                "rotationy": "0.003926",
+                "rotationz": "-0.057958",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1828245800.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandMiddle1",
+        "Parent": "450550109"
+    },
+    "1813054834": {
+        "Components": {
+            "0": {
+                "positionx": "-0.003498",
+                "positiony": "2.635841",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:LeftHandRing4",
+        "Parent": "279824151"
+    },
+    "1825431500": {
+        "Components": {
+            "0": {
+                "positionx": "0.003586",
+                "positiony": "2.644012",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:RightHandRing4",
+        "Parent": "809932399"
+    },
+    "1845528546": {
+        "Components": {
+            "0": {
+                "positionx": "-1.325569",
+                "positiony": "9.415977",
+                "positionz": "-0.404305",
+                "rotationw": "0.998196",
+                "rotationx": "-0.006649",
+                "rotationy": "0.011585",
+                "rotationz": "-0.058527",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/762276384.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandRing1",
+        "Parent": "450550109"
+    },
+    "1866817948": {
+        "Components": {
+            "0": {
+                "positionx": "0.005234",
+                "positiony": "2.853638",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:RightHandMiddle4",
+        "Parent": "733344006"
+    },
+    "1874557621": {
+        "Components": {
+            "0": {
+                "positionx": "-3.361898",
+                "positiony": "8.331718",
+                "positionz": "-0.144028",
+                "rotationw": "0.998126",
+                "rotationx": "-0.006367",
+                "rotationy": "0.016524",
+                "rotationz": "-0.058571",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1035304052.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandPinky1",
+        "Parent": "450550109"
+    },
+    "1896794548": {
+        "Components": {
+            "0": {
+                "positionx": "-2.551504",
+                "positiony": "2.347111",
+                "positionz": "1.705482",
+                "rotationw": "0.963889",
+                "rotationx": "0.217379",
+                "rotationy": "0.067956",
+                "rotationz": "0.138010",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/297765851.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandThumb1",
+        "Parent": "947527096"
+    },
+    "1902906111": {
+        "Components": {
+            "0": {
+                "positionx": "-0.000590",
+                "positiony": "2.505455",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:RightHandIndex4",
+        "Parent": "227573430"
+    },
+    "1921282810": {
+        "Components": {
+            "0": {
+                "positionx": "-0.001754",
+                "positiony": "3.443031",
+                "positionz": "-0.000008",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "-0.000004",
+                "rotationz": "-0.000043",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/660914173.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandIndex2",
+        "Parent": "1381282070"
+    },
+    "1960506763": {
+        "Components": {
+            "0": {
+                "positionx": "0.000002",
+                "positiony": "9.800953",
+                "positionz": "0.000015",
+                "rotationw": "0.990551",
+                "rotationx": "-0.107252",
+                "rotationy": "0.085350",
+                "rotationz": "-0.004703",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1322625658.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftArm",
+        "Parent": "2094775137"
+    },
+    "2019333237": {
+        "Components": {
+            "0": {
+                "positionx": "0.428528",
+                "positiony": "3.896568",
+                "positionz": "-0.000008",
+                "rotationw": "0.999614",
+                "rotationx": "-0.000998",
+                "rotationy": "-0.007277",
+                "rotationz": "0.026794",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1323428948.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandThumb3",
+        "Parent": "1521321337"
+    },
+    "2042579729": {
+        "Components": {
+            "0": {
+                "positionx": "12.574372",
+                "positiony": "18.167364",
+                "positionz": "14.903395",
+                "rotationw": "0.996271",
+                "rotationx": "-0.000069",
+                "rotationy": "-0.086285",
+                "rotationz": "0.000012",
+                "scalex": "0.943201",
+                "scaley": "0.917793",
+                "scalez": "1.020506"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1499773859.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/2.mat"
+                }
+            }
+        },
+        "Name": "Aux_Sword",
+        "Parent": "737834177"
+    },
+    "2047462732": {
+        "Components": {
+            "0": {
+                "positionx": "-0.001748",
+                "positiony": "3.580765",
+                "positionz": "-0.000031",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "-0.000017",
+                "rotationz": "-0.000237",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/155958350.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandMiddle2",
+        "Parent": "1812686854"
+    },
+    "2050906120": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "35.256672",
+                "positionz": "0.000000",
+                "rotationw": "0.999252",
+                "rotationx": "-0.032954",
+                "rotationy": "0.000473",
+                "rotationz": "-0.020219",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/2127332797.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftLeg",
+        "Parent": "1538610149"
+    },
+    "2094775137": {
+        "Components": {
+            "0": {
+                "positionx": "4.487502",
+                "positiony": "8.658646",
+                "positionz": "-0.135063",
+                "rotationw": "-0.442650",
+                "rotationx": "-0.547326",
+                "rotationy": "-0.444293",
+                "rotationz": "0.554165",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/367171119.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftShoulder",
+        "Parent": "522787241"
+    },
+    "2104735916": {
+        "Components": {
+            "0": {
+                "positionx": "0.001558",
+                "positiony": "3.527908",
+                "positionz": "-0.000015",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/214902414.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandMiddle2",
+        "Parent": "1101054761"
+    },
+    "2110082863": {
+        "Components": {
+            "0": {
+                "positionx": "0.005358",
+                "positiony": "3.409294",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "-0.000009",
+                "rotationz": "-0.000156",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1217332303.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandPinky2",
+        "Parent": "380692690"
+    },
+    "227573430": {
+        "Components": {
+            "0": {
+                "positionx": "0.000167",
+                "positiony": "3.189293",
+                "positionz": "0.000031",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000011",
+                "rotationz": "-0.000151",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/653707601.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandIndex3",
+        "Parent": "1378882651"
+    },
+    "239775686": {
+        "Components": {
+            "0": {
+                "positionx": "0.000001",
+                "positiony": "35.557663",
+                "positionz": "0.000001",
+                "rotationw": "0.855291",
+                "rotationx": "0.516475",
+                "rotationy": "-0.041184",
+                "rotationz": "-0.005914",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/2066057180.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightFoot",
+        "Parent": "509671379"
+    },
+    "267704049": {
+        "Components": {
+            "0": {
+                "positionx": "0.000258",
+                "positiony": "-0.079152",
+                "positionz": "84.613640",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000028",
+                "rotationz": "-0.000027",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/569635905.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:Hips",
+        "Parent": "836752226"
+    },
+    "272554791": {
+        "Components": {
+            "0": {
+                "positionx": "0.001572",
+                "positiony": "3.552650",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000056",
+                "rotationz": "-0.000780",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/202396445.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandMiddle3",
+        "Parent": "2104735916"
+    },
+    "279824151": {
+        "Components": {
+            "0": {
+                "positionx": "0.002482",
+                "positiony": "3.357826",
+                "positionz": "0.000023",
+                "rotationw": "0.999999",
+                "rotationx": "0.000000",
+                "rotationy": "0.000027",
+                "rotationz": "-0.001036",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1965822060.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandRing3",
+        "Parent": "886036506"
+    },
+    "284232040": {
+        "Components": {
+            "0": {
+                "positionx": "2.538838",
+                "positiony": "2.409840",
+                "positionz": "1.785789",
+                "rotationw": "0.959921",
+                "rotationx": "0.217667",
+                "rotationy": "-0.070806",
+                "rotationz": "-0.161741",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1807808341.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandThumb1",
+        "Parent": "450550109"
+    },
+    "371599319": {
+        "Components": {
+            "0": {
+                "positionx": "-0.003131",
+                "positiony": "2.794090",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:LeftHandMiddle4",
+        "Parent": "272554791"
+    },
+    "37245616": {
+        "Components": {
+            "0": {
+                "positionx": "-0.009171",
+                "positiony": "2.365097",
+                "positionz": "0.000008",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:LeftHandPinky4",
+        "Parent": "1017680947"
+    },
+    "380692690": {
+        "Components": {
+            "0": {
+                "positionx": "3.368158",
+                "positiony": "8.157928",
+                "positionz": "-0.247925",
+                "rotationw": "0.998094",
+                "rotationx": "-0.007811",
+                "rotationy": "-0.016499",
+                "rotationz": "0.058953",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/433210970.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandPinky1",
+        "Parent": "947527096"
+    },
+    "430378013": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "14.858744",
+                "positionz": "0.000000",
+                "rotationw": "0.957571",
+                "rotationx": "0.271593",
+                "rotationy": "-0.092753",
+                "rotationz": "0.026307",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/430444857.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftToeBase",
+        "Parent": "528227150"
+    },
+    "44955275": {
+        "Components": {
+            "0": {
+                "positionx": "-0.000001",
+                "positiony": "22.926445",
+                "positionz": "0.000000",
+                "rotationw": "0.999988",
+                "rotationx": "0.000000",
+                "rotationy": "-0.004846",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/364769073.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftForeArm",
+        "Parent": "1960506763"
+    },
+    "450550109": {
+        "Components": {
+            "0": {
+                "positionx": "-0.000001",
+                "positiony": "19.746098",
+                "positionz": "0.000008",
+                "rotationw": "0.998298",
+                "rotationx": "0.007059",
+                "rotationy": "-0.004359",
+                "rotationz": "0.057724",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/549751675.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHand",
+        "Parent": "1032646875"
+    },
+    "509671379": {
+        "Components": {
+            "0": {
+                "positionx": "0.000005",
+                "positiony": "35.258869",
+                "positionz": "0.000000",
+                "rotationw": "0.999185",
+                "rotationx": "-0.034928",
+                "rotationy": "-0.000461",
+                "rotationz": "0.020225",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/867955946.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightLeg",
+        "Parent": "172465367"
+    },
+    "522787241": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "9.497986",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/121601670.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:Spine2",
+        "Parent": "938168626"
+    },
+    "528227150": {
+        "Components": {
+            "0": {
+                "positionx": "0.000001",
+                "positiony": "35.553951",
+                "positionz": "-0.000001",
+                "rotationw": "0.857498",
+                "rotationx": "0.512765",
+                "rotationy": "0.041669",
+                "rotationz": "0.005745",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1531977288.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftFoot",
+        "Parent": "2050906120"
+    },
+    "598372259": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "9.800954",
+                "positionz": "0.000000",
+                "rotationw": "0.993094",
+                "rotationx": "-0.106513",
+                "rotationy": "-0.047323",
+                "rotationz": "-0.013419",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/276166804.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightArm",
+        "Parent": "958777978"
+    },
+    "612713218": {
+        "Components": {
+            "0": {
+                "positionx": "5.581680",
+                "positiony": "27.506016",
+                "positionz": "18.185654",
+                "rotationw": "0.592408",
+                "rotationx": "0.004476",
+                "rotationy": "0.005212",
+                "rotationz": "0.805609",
+                "scalex": "1.261225",
+                "scaley": "1.261225",
+                "scalez": "1.261225"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1417334222.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/2.mat"
+                }
+            }
+        },
+        "Name": "Sword",
+        "Parent": "450550109"
+    },
+    "630245530": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "7.089317",
+                "positionz": "-0.697029",
+                "rotationw": "0.998800",
+                "rotationx": "-0.048983",
+                "rotationy": "-0.000003",
+                "rotationz": "0.000039",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/649330596.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:Spine",
+        "Parent": "267704049"
+    },
+    "703855552": {
+        "Components": {
+            "0": {
+                "positionx": "0.007946",
+                "positiony": "2.347664",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:RightHandPinky4",
+        "Parent": "1283916680"
+    },
+    "726168393": {
+        "Components": {
+            "0": {
+                "positionx": "-0.305841",
+                "positiony": "3.135437",
+                "positionz": "-0.000008",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:RightHandThumb4",
+        "Parent": "1414238576"
+    },
+    "733344006": {
+        "Components": {
+            "0": {
+                "positionx": "-0.003485",
+                "positiony": "3.691223",
+                "positionz": "-0.000015",
+                "rotationw": "0.999999",
+                "rotationx": "0.000000",
+                "rotationy": "-0.000062",
+                "rotationz": "0.001385",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/298966118.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandMiddle3",
+        "Parent": "2047462732"
+    },
+    "737834177": {
+        "Components": {
+            "0": {
+                "positionx": "9.110544",
+                "positiony": "25.413750",
+                "positionz": "3.011995",
+                "rotationw": "0.981378",
+                "rotationx": "0.023201",
+                "rotationy": "-0.011414",
+                "rotationz": "0.190337",
+                "scalex": "1.035511",
+                "scaley": "1.035511",
+                "scalez": "1.035511"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1549339884.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/2.mat"
+                }
+            }
+        },
+        "Name": "SHelter",
+        "Parent": "522787241"
+    },
+    "76208369": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "13": {
+                "Animations": {
+                    "0": {
+                        "Default": false,
+                        "End": "270",
+                        "Loop": true,
+                        "Name": "Idle",
+                        "Start": "0"
+                    },
+                    "Size": "1"
+                },
+                "Resources": {
+                    "ResourceAnimation": "Library/Animations/805953005.anim"
+                }
+            }
+        },
+        "Name": "GameObject (2)",
+        "Parent": "2130086282"
+    },
+    "809932399": {
+        "Components": {
+            "0": {
+                "positionx": "0.001492",
+                "positiony": "3.242485",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "-0.000025",
+                "rotationz": "0.000450",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/908594554.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightHandRing3",
+        "Parent": "1448817409"
+    },
+    "834858675": {
+        "Components": {
+            "0": {
+                "positionx": "0.568323",
+                "positiony": "3.452908",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "0.707107",
+                "rotationy": "-0.000000",
+                "rotationz": "-0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "mixamorig:LeftHandThumb4",
+        "Parent": "2019333237"
+    },
+    "836752226": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "0.000000",
+                "positionz": "0.000000",
+                "rotationw": "0.707107",
+                "rotationx": "-0.707107",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000004",
+                "scalez": "1.000004"
+            }
+        },
+        "Name": "Geralt_Pivot",
+        "Parent": "76208369"
+    },
+    "847406637": {
+        "Components": {
+            "0": {
+                "positionx": "0.000001",
+                "positiony": "15.018747",
+                "positionz": "0.000000",
+                "rotationw": "0.958447",
+                "rotationx": "0.268385",
+                "rotationy": "0.093112",
+                "rotationz": "-0.026073",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1415843400.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightToeBase",
+        "Parent": "239775686"
+    },
+    "886036506": {
+        "Components": {
+            "0": {
+                "positionx": "0.001016",
+                "positiony": "3.147484",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000024",
+                "rotationz": "0.000213",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1402689378.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHandRing2",
+        "Parent": "1064269607"
+    },
+    "91786370": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "2.973579",
+                "positionz": "0.217397",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1283566855.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:Head",
+        "Parent": "945387522"
+    },
+    "938168626": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "8.310760",
+                "positionz": "0.000000",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1709882508.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:Spine1",
+        "Parent": "630245530"
+    },
+    "944400677": {
+        "Components": {
+            "0": {
+                "positionx": "-1.859258",
+                "positiony": "28.126045",
+                "positionz": "3.690922",
+                "rotationw": "0.968297",
+                "rotationx": "0.018298",
+                "rotationy": "0.067775",
+                "rotationz": "0.239733",
+                "scalex": "1.185789",
+                "scaley": "1.185789",
+                "scalez": "1.185789"
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": "Library/Meshes/1549339884.mesh"
+                }
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "Assets/2.mat"
+                }
+            }
+        },
+        "Name": "Shelter",
+        "Parent": "522787241"
+    },
+    "945387522": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "10.685242",
+                "positionz": "0.000002",
+                "rotationw": "0.998800",
+                "rotationx": "0.048983",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/2118492991.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:Neck",
+        "Parent": "522787241"
+    },
+    "947527096": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "19.823063",
+                "positionz": "0.000000",
+                "rotationw": "0.997728",
+                "rotationx": "0.010678",
+                "rotationy": "-0.033098",
+                "rotationz": "-0.057703",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/1593505558.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:LeftHand",
+        "Parent": "44955275"
+    },
+    "958777978": {
+        "Components": {
+            "0": {
+                "positionx": "-4.487498",
+                "positiony": "8.671150",
+                "positionz": "-0.262222",
+                "rotationw": "0.438723",
+                "rotationx": "0.537732",
+                "rotationy": "-0.449593",
+                "rotationz": "0.562346",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "12": {
+                "Resources": {
+                    "ResourceBone": "Library/Bones/587969693.bone"
+                }
+            }
+        },
+        "Name": "mixamorig:RightShoulder",
+        "Parent": "522787241"
+    }
+}

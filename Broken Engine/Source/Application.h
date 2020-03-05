@@ -41,6 +41,10 @@ class ModuleScripting;
 class ModuleTimeManager;
 class ModuleEventManager;
 class ModuleThreading;
+class ModuleUI;
+class ModulePhysics;
+class ModuleParticles;
+class ModuleAudio;
 
 class BROKEN_API Application {
 public:
@@ -49,6 +53,8 @@ public:
 	const char* GetAppName() const;
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
+	json GetDefaultGameConfig() const;
+	json GetConfigFile() const;
 	std::vector<std::string>& GetLogs();
 	LCG& GetRandom();
 	JSONLoader* GetJLoader();
@@ -63,19 +69,25 @@ public:
 public:
 
 	ModuleWindow* window = nullptr;
-  	ModuleInput* input = nullptr;
-  	ModuleRenderer3D* renderer3D = nullptr;
-  	ModuleCamera3D* camera = nullptr;
-  	ModuleGui* gui = nullptr;
-  	ModuleHardware* hardware = nullptr;
-  	ModuleFileSystem* fs = nullptr;
-  	ModuleTextures* textures = nullptr;
-  	ModuleSceneManager* scene_manager = nullptr;
-  	ModuleResourceManager* resources = nullptr;
-    ModuleTimeManager* time = nullptr;
-  	ModuleEventManager* event_manager = nullptr;
-  	ModuleScripting* scripting = nullptr;
-  	ModuleThreading* threading = nullptr;
+	ModuleInput* input = nullptr;
+	ModuleRenderer3D* renderer3D = nullptr;
+	ModuleCamera3D* camera = nullptr;
+	ModuleGui*			gui = nullptr;
+	ModuleHardware* hardware = nullptr;
+	ModuleFileSystem* fs = nullptr;
+	ModuleTextures* textures = nullptr;
+	ModuleSceneManager* scene_manager = nullptr;
+	ModuleResourceManager* resources = nullptr;
+	ModuleTimeManager* time = nullptr;
+	ModuleEventManager* event_manager = nullptr;
+	ModuleScripting* scripting = nullptr;
+	ModuleThreading* threading = nullptr;
+	ModuleUI* ui_system = nullptr;
+	ModulePhysics* physics = nullptr;
+	ModuleParticles* particles = nullptr;
+	ModuleAudio* audio = nullptr;
+
+	bool isGame = false;
 
 private:
 

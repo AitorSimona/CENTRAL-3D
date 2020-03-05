@@ -27,19 +27,22 @@ void ModuleTimeManager::PrepareUpdate() {
 	game_dt = realtime_dt = (float)Gametime_clock.Read() / 1000.0f;
 	Gametime_clock.Start();
 
-	time += realtime_dt * Time_scale;
+	time += realtime_dt*Time_scale;
+	
 
-	switch (App->GetAppState()) {
-	case AppState::TO_PLAY:
-		App->GetAppState() = AppState::PLAY;
-		//App->scene_manager->SaveScene();
-		ENGINE_CONSOLE_LOG("APP STATE PLAY");
-		break;
+	switch (App->GetAppState())
+	{
+		case AppState::TO_PLAY:
+			App->GetAppState() = AppState::PLAY;
+			App->scene_manager->SaveScene(App->scene_manager->currentScene);
+			ENGINE_CONSOLE_LOG("APP STATE PLAY");
+			break;
 
-	case AppState::PLAY:
-		App->scene_manager->SetSelectedGameObject(nullptr);
-		//game_dt *= Time_scale;
-		break;
+		case AppState::PLAY:
+			//App->scene_manager->SetSelectedGameObject(nullptr);
+			game_dt *= Time_scale;
+			gametime_passed += game_dt;
+			break;
 
 	case AppState::TO_PAUSE:
 		App->GetAppState() = AppState::PAUSE;
@@ -52,22 +55,22 @@ void ModuleTimeManager::PrepareUpdate() {
 		game_dt = 0.0f;
 		break;
 
-	case AppState::TO_EDITOR:
-		App->GetAppState() = AppState::EDITOR;
-		//App->scene_manager->LoadScene();
-		ENGINE_CONSOLE_LOG("APP STATE EDITOR");
-		break;
+		case AppState::TO_EDITOR:
+			App->GetAppState() = AppState::EDITOR;
+			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
+			ENGINE_CONSOLE_LOG("APP STATE EDITOR");
+			break;
 
-	case AppState::EDITOR:
-		time = 0.0f;
-		game_dt = 0.0f;
-		break;
+		case AppState::EDITOR:
+			time = 0.0f;
+			game_dt = 0.0f;
+			gametime_passed = 0.0f;
+			break;
 
-	case AppState::STEP:
-		ENGINE_CONSOLE_LOG("APP STATE STEP");
-		App->GetAppState() = AppState::PAUSE;
-		break;
-
+		case AppState::STEP:
+			ENGINE_CONSOLE_LOG("APP STATE STEP");
+			App->GetAppState() = AppState::PAUSE;
+			break;
 	}
 }
 
@@ -103,7 +106,13 @@ float ModuleTimeManager::GetTimeScale() const {
 	return Time_scale;
 }
 
-void ModuleTimeManager::SetMaxFramerate(uint maxFramerate) {
+float ModuleTimeManager::GetGameplayTimePassed() const
+{
+	return gametime_passed;
+}
+
+void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)
+{
 	if (maxFramerate > 0)
 		capped_ms = 1000 / maxFramerate;
 	else

@@ -33,7 +33,7 @@ struct BROKEN_API Uniform {
 
 class BROKEN_API ResourceShader : public Resource {
 public:
-	ResourceShader(uint UID, std::string source_file);
+	ResourceShader(uint UID, const char* source_file);
 
 
 	// constructor reads and builds the shader

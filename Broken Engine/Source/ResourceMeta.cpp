@@ -11,11 +11,11 @@
 
 
 using namespace BrokenEngine;
-ResourceMeta::ResourceMeta(uint UID, std::string source_file) : Resource(Resource::ResourceType::META, UID, source_file) {
+ResourceMeta::ResourceMeta(uint UID, const char* source_file) : Resource(Resource::ResourceType::META, UID, source_file) {
 	extension = ".meta";
 	resource_file = source_file + extension;
 
-	Date = App->fs->GetLastModificationTime(source_file.c_str());
+	Date = App->fs->GetLastModificationTime(source_file);
 
 	previewTexID = App->gui->defaultfileTexID;
 

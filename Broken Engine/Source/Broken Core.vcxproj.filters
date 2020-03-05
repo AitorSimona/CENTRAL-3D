@@ -79,6 +79,12 @@
     <Filter Include="Sources\BrokenEngine\Panel">
       <UniqueIdentifier>{25379e3c-ec2a-453d-8182-58090e8b1519}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\BrokenEngine\Game Objects\Components\UI">
+      <UniqueIdentifier>{8e36da21-d6c3-45eb-9c4a-0a53c18dfd0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\Wwise">
+      <UniqueIdentifier>{66a1222c-d715-4978-80b8-e9d7167be77e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrokenCore.h">
@@ -552,6 +558,78 @@
     <ClInclude Include="EngineLog.h">
       <Filter>Sources\BrokenEngine\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleAudio.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleUI.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAnimation.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAudioListener.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAudioSource.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentBone.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentCollider.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentDynamicRigidBody.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentParticleEmitter.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterAnimation.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterBone.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAnimation.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceBone.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleParticles.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulePhysics.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentText.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentImage.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentCanvas.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\IO\Common\AkFileLocationBase.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\IO\Common\AkFilePackage.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\IO\Common\AkFilePackageLUT.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="wwise.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\SDK\include\AkDefaultIOHookBlocking.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -877,6 +955,78 @@
     </ClCompile>
     <ClCompile Include="BrokenCore.cpp">
       <Filter>Sources\BrokenEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleAudio.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleUI.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAnimation.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAudioListener.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAudioSource.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentBone.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCollider.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentDynamicRigidBody.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentParticleEmitter.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterAnimation.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterBone.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAnimation.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceBone.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleParticles.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModulePhysics.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentText.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentImage.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCanvas.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFilePackage.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFilePackageLUT.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="wwise.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

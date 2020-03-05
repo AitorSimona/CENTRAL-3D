@@ -27,7 +27,7 @@ Resource* ImporterFolder::Import(ImportData& IData) const {
 	// --- Create meta ---
 	std::string new_path = IData.path;
 	new_path.pop_back();
-	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_path, folder->GetUID());
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_path.c_str(), folder->GetUID());
 
 	if (meta)
 		IMeta->Save(meta);
@@ -59,5 +59,25 @@ Resource* ImporterFolder::Load(const char* path) const {
 	return folder;
 }
 
-void ImporterFolder::Save(ResourceFolder* folder) const {
+void ImporterFolder::Save(ResourceFolder* folder) const
+{
+	if (folder)
+	{
+		App->fs->CreateDirectoryA(folder->GetResourceFile());
+
+		std::string new_path = folder->GetOriginalFile();
+		new_path.pop_back();
+
+		// --- Update meta ---
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(new_path.c_str());
+
+		if (meta)
+		{
+			meta->Date = App->fs->GetLastModificationTime(folder->GetOriginalFile());
+			IMeta->Save(meta);
+		}
+		else
+			ENGINE_CONSOLE_LOG("|[error]: Could not load meta from: %s", folder->GetResourceFile());
+	}
 }

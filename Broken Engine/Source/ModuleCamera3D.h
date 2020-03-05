@@ -10,6 +10,7 @@ BE_BEGIN_NAMESPACE
 
 class GameObject;
 class ComponentCamera;
+class ComponentAudioListener;
 
 class BROKEN_API ModuleCamera3D : public Module {
 public:
@@ -23,6 +24,8 @@ public:
 	void UpdateCamera();
 
 	bool CleanUp() override;
+
+	void LoadStatus(const json& file) override;
 
 	void FrameObject(GameObject* GO);
 	void FrameObject(float3 posToLook);
@@ -48,6 +51,7 @@ public:
 
 	float3 reference = { 0.0f,0.0f,0.0f };
 	ComponentCamera* camera = nullptr;
+	ComponentAudioListener* listener = nullptr;
 	LineSegment last_ray;
 
 	float4 m_CustomDefaultCameraValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);

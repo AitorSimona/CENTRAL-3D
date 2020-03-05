@@ -7,7 +7,8 @@
 #include "ResourceMeta.h"
 
 using namespace BrokenEngine;
-ImporterScript::ImporterScript() : Importer(ImporterType::Script) {
+ImporterScript::ImporterScript() : Importer(ImporterType::Script) 
+{
 }
 
 ImporterScript::~ImporterScript() {
@@ -15,6 +16,7 @@ ImporterScript::~ImporterScript() {
 
 Resource* ImporterScript::Import(ImportData& IData) const {
 	ResourceScript* resource_script = (ResourceScript*)App->resources->CreateResource(Resource::ResourceType::SCRIPT, IData.path);
+
 
 	//Pass the relative path
 	resource_script->relative_path = IData.path;
@@ -76,6 +78,8 @@ Resource* ImporterScript::Load(const char* path) const {
 	d_pos = abs_path.find("Debug");
 	std::size_t r_pos = 0;
 	r_pos = abs_path.find("Release");
+	std::size_t g_pos = 0;
+	g_pos = abs_path.find("Game");
 
 	if (d_pos != 4294967295)  // If we are in DEBUG
 	{
@@ -85,6 +89,11 @@ Resource* ImporterScript::Load(const char* path) const {
 	if (r_pos != 4294967295) // If we are in RELEASE
 	{
 		abs_path = abs_path.substr(0, r_pos);
+	}
+
+	if (g_pos != 4294967295) // If we are in a EXE final build
+	{
+		abs_path = abs_path.substr(0, g_pos);
 	}
 
 	abs_path += "Game/";
@@ -99,4 +108,30 @@ Resource* ImporterScript::Load(const char* path) const {
 	resource_script->script_name = file;
 
 	return (Resource*)resource_script;
+}
+
+void ImporterScript::Save(ResourceScript* script)
+{
+	char* data = new char[1]; // Allocate
+	uint size = 1;
+
+	App->fs->Save(script->GetOriginalFile(), data, size);
+
+	if (data)
+	{
+		delete[] data;
+		data = nullptr;
+	}
+
+	// --- Update meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(script->GetOriginalFile());
+
+	if (meta)
+	{
+		meta->Date = App->fs->GetLastModificationTime(script->GetOriginalFile());
+		IMeta->Save(meta);
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Could not load meta from: %s", script->GetResourceFile());
 }

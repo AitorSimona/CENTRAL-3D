@@ -49,7 +49,7 @@ json JSONLoader::Load(const char* File) const {
 	return jsonfile;
 }
 
-bool JSONLoader::Save(const char* File, json jsonfile) {
+bool JSONLoader::Save(const char* File, const json& jsonfile) {
 	// --- Save to File, overwrite if exists ---
 	// Note setw, used to prettify JSON file (adding newlines and spaces)
 
@@ -70,9 +70,6 @@ bool JSONLoader::Save(const char* File, json jsonfile) {
 	return ret;
 }
 
-std::string JSONLoader::Serialize(json jsonfile) {
-	std::string data;
-	data = jsonfile.dump(4);
-
-	return data;
+void JSONLoader::Serialize(const json& jsonfile, std::string& jsonserialized) {
+	jsonserialized = jsonfile.dump(4);
 }

@@ -2,6 +2,12 @@
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
+#include "ModuleRenderer3D.h"
+
+#include "ComponentBone.h"
+#include "ComponentTransform.h"
+
+#include "Math.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
@@ -28,8 +34,10 @@ const AABB& ComponentMesh::GetAABB() const {
 
 json ComponentMesh::Save() const {
 	json node;
+	node["Resources"]["ResourceMesh"];
 
 	// --- Store path to component file ---
+	if(resource_mesh)
 	node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
 
 	return node;
@@ -90,4 +98,77 @@ void ComponentMesh::CreateInspectorNode() {
 	if (ImGui::Button("Delete")) {
 		GO->RemoveComponent(Component::ComponentType::Mesh);
 	}
+}
+
+void ComponentMesh::AddBone(ComponentBone* bone)
+{
+	for (int i = 0; i < bones.size(); i++)
+		if (bones[i] == bone)
+			return;
+
+	bones.push_back(bone);
+}
+
+void ComponentMesh::UpdateDefMesh()
+{
+
+	for (uint i = 0; i < resource_mesh->VerticesSize; ++i)
+	{
+		resource_mesh->vertices[i].animPos_offset[0] = 0.0f;
+		resource_mesh->vertices[i].animPos_offset[1] = 0.0f;
+		resource_mesh->vertices[i].animPos_offset[2] = 0.0f;
+	}
+
+	for (std::vector<ComponentBone*>::iterator it = bones.begin(); it != bones.end(); ++it)
+	{
+		ResourceBone* r_bone = (*it)->res_bone;
+
+		float4x4 mat = (*it)->GetSkeletonTransform();
+		mat = GO->GetComponent<ComponentTransform>()->GetLocalTransform().Inverted() * mat;
+		mat = mat * r_bone->matrix;
+
+		for (uint i = 0; i < r_bone->NumWeights; i++)
+		{
+
+			uint index = r_bone->index_weight[i];
+
+			// -- This is the original vertex
+			float3 tmp = { resource_mesh->vertices[index].position[0],
+						   resource_mesh->vertices[index].position[1],
+						   resource_mesh->vertices[index].position[2]};
+					   			 
+
+
+			float3 _vertex = mat.TransformPos(tmp.x, tmp.y, tmp.z);//LINE OF DEATH
+
+			resource_mesh->vertices[index].animPos_offset[0] += _vertex.x * r_bone->weight[i];
+			resource_mesh->vertices[index].animPos_offset[1] += _vertex.y * r_bone->weight[i];
+			resource_mesh->vertices[index].animPos_offset[2] += _vertex.z * r_bone->weight[i];
+
+			/*if ((resource_mesh->VerticesSize / 3) > 0);
+			{
+				float3 aux_ = { resource_mesh->vertices[index].position[0],
+								resource_mesh->vertices[index].position[1],
+								resource_mesh->vertices[index].position[2] };
+				_vertex = mat.TransformPos(aux_);
+				resource_def_mesh->vertices[index].normal[0] += _vertex.x * r_bone->weight[i];
+				resource_def_mesh->vertices[index].normal[1] += _vertex.y * r_bone->weight[i];
+				resource_def_mesh->vertices[index].normal[2] += _vertex.z * r_bone->weight[i];
+			}*/
+		}
+	}
+
+	// --- Bind it ---
+	glBindVertexArray(resource_mesh->VAO);
+
+	// Bind the VBO 
+	glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->VBO);
+
+	// --- Set all vertex attribute pointers ---
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * resource_mesh->VerticesSize, resource_mesh->vertices, GL_DYNAMIC_DRAW);
+
+	// --- Unbind VAO and VBO ---
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

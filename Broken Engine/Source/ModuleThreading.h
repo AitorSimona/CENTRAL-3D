@@ -27,11 +27,12 @@ public:
 	bool CleanUp() override;
 
 	void AddTask(std::function<void()> newTask);
+	void FinishProcessing();
 
 private:
 	void ShutdownPool();
 	void ProcessTasks(int threadID, std::atomic<bool>& stop);
-	void FinishProcessing();
+
 
 private:
 	std::queue <std::function<void()>> tasksQueue;

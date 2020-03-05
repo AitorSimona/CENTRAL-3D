@@ -21,6 +21,8 @@ public:
 private:
 	static void ONGameObjectSelected(const BrokenEngine::Event& e);
 	static void ONResourceDestroyed(const BrokenEngine::Event& e);
+	void CreateResourceHandlingPopup();
+
 private:
 	bool wasclicked = false;
 	uint imageSize_px = 48;
@@ -30,13 +32,13 @@ private:
 
 	BrokenEngine::Resource* selected = nullptr;
 	uint selected_uid = 0;
-	//BrokenEngine::ResourceFolder* currentDirectory = nullptr;
+	BrokenEngine::ResourceFolder* currentDirectory = nullptr;
 
 	void DrawFolder(BrokenEngine::ResourceFolder* folder);
 	void DrawFile(BrokenEngine::Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);
 	void LimitText( std::string& text);
 
-	void RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters);
+	void RecursiveDirectoryDraw(std::string directory);
 };
 
 #endif

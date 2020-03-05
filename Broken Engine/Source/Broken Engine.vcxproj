@@ -40,14 +40,19 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -63,7 +68,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -165,9 +171,11 @@
     <ClInclude Include="ModuleEditorUI.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="PanelAbout.h" />
+    <ClInclude Include="PanelBuild.h" />
     <ClInclude Include="PanelConsole.h" />
     <ClInclude Include="PanelHierarchy.h" />
     <ClInclude Include="PanelInspector.h" />
+    <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
     <ClInclude Include="PanelResources.h" />
     <ClInclude Include="Panels.h" />
@@ -233,9 +241,11 @@
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleEditorUI.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
+    <ClCompile Include="PanelBuild.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
     <ClCompile Include="PanelHierarchy.cpp" />
     <ClCompile Include="PanelInspector.cpp" />
+    <ClCompile Include="PanelPhysics.cpp" />
     <ClCompile Include="PanelProject.cpp" />
     <ClCompile Include="PanelResources.cpp" />
     <ClCompile Include="PanelScene.cpp" />

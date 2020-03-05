@@ -4,14 +4,16 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
 #include "ModuleTextures.h"
-
-
+#include "ModuleInput.h"
 #include "GameObject.h"
-#include "ComponentCamera.h"
+
+#include "ResourceScene.h"
+//#include "Button.h"
+//#include "CheckBox.h"
+//#include "InputText.h"
+//#include "ProgressBar.h"
 #define NOMINMAX
 #include <Windows.h>
-//
-//#include "Panel.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -27,6 +29,7 @@
 
 
 using namespace BrokenEngine;
+
 ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 {
 	name = "GUI";
@@ -70,6 +73,15 @@ bool ModuleGui::Init(json& file)
 	panels.push_back(panelResources);*/
 
 	//LoadStatus(file);
+	//panelPhysics = new PanelPhysics("Physics");
+	//panels.push_back(panelPhysics);
+
+	//panelBuild = new PanelBuild("Build");
+	//panels.push_back(panelBuild);
+
+	//LoadStatus(file);
+	//panelGame = new PanelGame("Game");
+	//panels.push_back(panelGame);
 
 	return true;
 }
@@ -129,7 +141,7 @@ update_status ModuleGui::PreUpdate(float dt)
 
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	DockSpace();
+		DockSpace();
 
 	return UPDATE_CONTINUE;
 }
@@ -137,15 +149,18 @@ update_status ModuleGui::PreUpdate(float dt)
 update_status ModuleGui::PostUpdate(float dt)
 {
 	// --- Iterate panels and draw ---
-	for (uint i = 0; i < panels.size(); ++i)
-	{
-		if (panels[i]->IsEnabled())
-			panels[i]->Draw();
-	}
+	//for (uint i = 0; i < panels.size(); ++i) {
+	//	if (panels[i]->IsEnabled())
+	//		panels[i]->Draw();
+	//}
 
 	// End dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	ImGui::End();
+		ImGui::End();
+
+	#ifdef BE_GAME_BUILD
+	ImGui::EndFrame();
+	#endif
 
 	return UPDATE_CONTINUE;
 }
@@ -237,10 +252,6 @@ void ModuleGui::AddPanel(Panel* npanel) {
 	panels.push_back(npanel);
 }
 
-bool ModuleGui::isHoveringScene() const {
-	return isSceneHovered;
-}
-
 ImGuiContext* ModuleGui::getImgUICtx() const {
 	return ImGui::GetCurrentContext();
 }
@@ -253,8 +264,14 @@ void ModuleGui::LogFPS(float fps, float ms)
 
 void ModuleGui::SaveStatus(json &file) const  
 {
-	for (uint i = 0; i < panels.size(); ++i)
-		file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
+	//MYTODO: Added exception for Build because Build should never be enabled at start
+	//maybe we should call SaveStatus on every panel
+	for (uint i = 0; i < panels.size(); ++i) {
+		if (panels[i]->GetName() == "Build")
+			file["GUI"][panels[i]->GetName()] = false;
+		else
+			file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
+	}
 };
 
 void ModuleGui::LoadStatus(const json & file) 
@@ -272,7 +289,8 @@ void ModuleGui::LoadStatus(const json & file)
 }
 void ModuleGui::HandleInput(SDL_Event * event) const
 {
-	ImGui_ImplSDL2_ProcessEvent(event);
+	if(!App->isGame)
+		ImGui_ImplSDL2_ProcessEvent(event);
 }
 
 bool ModuleGui::IsKeyboardCaptured() const

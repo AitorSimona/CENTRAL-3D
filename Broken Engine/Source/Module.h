@@ -6,7 +6,6 @@
 #include "JSONLoader.h"
 
 BE_BEGIN_NAMESPACE
-
 struct Event;
 class BROKEN_API Module {
 private:
@@ -14,9 +13,8 @@ private:
 
 public:
 
-	Module(bool start_enabled = true) {
-		enabled = start_enabled;
-	}
+	Module(bool start_enabled = true) : enabled(start_enabled)
+	{}
 
 	virtual ~Module() {
 	}
@@ -54,6 +52,11 @@ public:
 	virtual void SaveStatus(json& file) const {}
 
 	virtual void LoadStatus(const json& file) {}
+
+	virtual bool isEnabled() const 
+	{
+		return enabled;
+	}
 
 protected:
 	std::string name = "Undefined";

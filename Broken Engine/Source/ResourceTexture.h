@@ -6,7 +6,7 @@
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceTexture : public Resource {
 public:
-	ResourceTexture(uint UID, std::string source_file);
+	ResourceTexture(uint UID, const char* source_file);
 	~ResourceTexture();
 
 	bool LoadInMemory() override;

@@ -21,6 +21,7 @@
 #include "ResourceMaterial.h"
 
 #include "ImporterMeta.h"
+#include "ImporterMaterial.h"
 #include "ResourceMeta.h"
 
 #include "Imgui/imgui.h"
@@ -99,15 +100,24 @@ void ComponentMeshRenderer::Draw(bool outline) const {
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 
-	if (mesh && mesh->resource_mesh && mesh->IsEnabled()) {
-		DrawMesh(*mesh->resource_mesh);
-		DrawNormals(*mesh->resource_mesh, *transform);
+	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
+	{
+		//if (mesh->resource_def_mesh)
+		//{
+		//	DrawMesh(*mesh->resource_def_mesh);
+		//}
+		//else
+		//{
+			DrawMesh(*mesh->resource_mesh);
+			DrawNormals(*mesh->resource_mesh, *transform);
+		//}
+
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
 	// --- Draw Frustum ---
-	if (camera)
+	if (camera && !App->isGame)
 		ModuleSceneManager::DrawWire(camera->frustum, White, App->scene_manager->GetPointLineVAO());
 
 	if (App->scene_manager->display_boundingboxes)
@@ -135,7 +145,8 @@ void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const {
 	}
 }
 
-void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const {
+void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
+{
 	// --- Draw Mesh Normals ---
 
 	// --- Set Uniforms ---
@@ -159,10 +170,12 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
 
-	if (draw_vertexnormals && mesh.vertices->normal) {
-		glVertexAttrib3f(vertexColorLocation, 1.0, 1.0, 0);
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+
+	if (draw_vertexnormals && mesh.vertices->normal)
+	{
+		glUniform3f(vertexColorLocation,255, 255, 0);
 
 		// --- Draw Vertex Normals ---
 		float3* vertices = new float3[mesh.IndicesSize * 2];
@@ -201,8 +214,9 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 	// --- Draw Face Normals 
 
-	if (draw_facenormals) {
-		glVertexAttrib3f(vertexColorLocation, 0, 1.0, 1.0);
+	if (draw_facenormals)
+	{
+		glUniform3f(vertexColorLocation, 0, 255, 255);
 		Triangle face;
 		float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
 
@@ -238,11 +252,11 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 		// --- Draw lines ---
 		glLineWidth(3.0f);
-		glColor3f(255, 255, 0);
+		//glColor3f(255, 255, 0);
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 		glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
 		glBindVertexArray(0);
-		glColor3f(255, 255, 255);
+		//glColor3f(255, 255, 255);
 		glLineWidth(1.0f);
 
 		// --- Delete VBO and vertices ---
@@ -250,12 +264,17 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		delete[] vertices;
 	}
 
+	glUniform3f(vertexColorLocation, 255, 255, 255);
+
+
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 json ComponentMeshRenderer::Save() const {
 	json node;
+	node["Resources"]["ResourceMaterial"];
 
+	if(material)
 	node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
 
 	//if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse)
@@ -411,7 +430,9 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 	ImGui::Separator();
 	ImGui::PushID("Material");
 
-	if (material) {
+	// --- Material node ---
+	if (material)
+	{
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
@@ -475,7 +496,13 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 							material->resource_diffuse->Release();
 
 						material->resource_diffuse = (ResourceTexture*)App->resources->GetResource(UID);
-					}
+
+						// --- Save material so we update path to texture ---
+						ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+						if(IMat)
+						IMat->Save(material);
+					}						
 				}
 
 				ImGui::EndDragDropTarget();

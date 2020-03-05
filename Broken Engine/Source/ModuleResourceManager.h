@@ -14,6 +14,8 @@ class ResourceModel;
 class ResourceMaterial;
 class ResourceShader;
 class ResourceMesh;
+class ResourceBone;
+class ResourceAnimation;
 class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
@@ -24,11 +26,14 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterModel;
 	friend class ImporterMeta;
 	friend class ImporterMesh;
+	friend class ImporterBone;
+	friend class ImporterAnimation;
 	friend class ImporterMaterial;
 	friend class ImporterScene;
 	friend class ImporterFolder;
 	friend class ImporterScript;
 	friend class PanelResources;
+	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
 public:
 
@@ -54,6 +59,10 @@ public:
 	Resource* ImportMaterial(Importer::ImportData& IData);
 	Resource* ImportShaderProgram(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
+	//
+	Resource* ImportBone(Importer::ImportData& IData);
+	Resource* ImportAnimation(Importer::ImportData& IData);
+	//
 	Resource* ImportTexture(Importer::ImportData& IData);
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 	Resource* ImportScript(Importer::ImportData& IData);
@@ -78,10 +87,11 @@ public:
 	Resource* GetResource(uint UID, bool loadinmemory = true);
 	void AddResourceToFolder(Resource* resource);
 	void RemoveResourceFromFolder(Resource* resource);
-	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
-	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
+	Resource* CreateResource(Resource::ResourceType type, const char* source_file);
+	Resource* CreateResourceGivenUID(Resource::ResourceType type, const char* source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	bool IsFileImported(const char* file);
+	const char* GetNewUniqueName(Resource::ResourceType type);
 
 	void ONResourceDestroyed(Resource* resource);
 
@@ -101,6 +111,8 @@ public:
 	std::map<uint, ResourceMaterial*> materials;
 	std::map<uint, ResourceShader*> shaders;
 	std::map<uint, ResourceMesh*> meshes;
+	std::map<uint, ResourceBone*> bones;
+	std::map<uint, ResourceAnimation*> animations;
 	std::map<uint, ResourceTexture*> textures;
 	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;

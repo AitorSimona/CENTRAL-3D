@@ -24,9 +24,9 @@ ImporterMaterial::~ImporterMaterial() {
 }
 
 // --- Create Material from Scene and path to file ---
-Resource* ImporterMaterial::Import(ImportData& IData) const {
-	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
+Resource* ImporterMaterial::Import(ImportData& IData) const
+{
 	ImportMaterialData* MatData = (ImportMaterialData*)&IData;
 
 	// --- Get Directory from filename ---
@@ -39,7 +39,7 @@ Resource* ImporterMaterial::Import(ImportData& IData) const {
 
 	// --- Get material's name ---
 	MatData->mat->Get(AI_MATKEY_NAME, material_name);
-	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat"));
+	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat").c_str());
 
 	//// --- Get number of Diffuse textures ---
 	//uint num_diffuse = MatData->mat->GetTextureCount(aiTextureType_DIFFUSE);
@@ -75,18 +75,20 @@ Resource* ImporterMaterial::Import(ImportData& IData) const {
 	//	num_diffuse--;
 	//}
 
-	// --- Create meta ---
-
-	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_mat->GetResourceFile(), resource_mat->GetUID());
-
-	if (meta)
-		IMeta->Save(meta);
 
 	// --- Save data ---
 	Save(resource_mat);
 
 	// --- Add resource to relevant folder, some resources need to do it at the end of import since they do not go through ImportAssets, due to being part of a bigger resource (MODEL...) ---
 	App->resources->AddResourceToFolder(resource_mat);
+
+	// --- Create meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_mat->GetResourceFile(), resource_mat->GetUID());
+
+	if (meta)
+		IMeta->Save(meta);
 
 	return resource_mat;
 }
@@ -135,11 +137,23 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const {
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();
 	uint size = data.length();
 
 	App->fs->Save(mat->GetResourceFile(), buffer, size);
+
+	// --- Update meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat->GetOriginalFile());
+
+	if (meta)
+	{
+		meta->Date = App->fs->GetLastModificationTime(mat->GetOriginalFile());
+		IMeta->Save(meta);
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Could not load meta from: %s", mat->GetResourceFile());
 }

@@ -20,11 +20,11 @@ public:
 	ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 	ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
 
-	/*float width = 0.0f;
+	float width = 0.0f;
 	float height = 0.0f;
 
 	float posX = 0.0f;
-	float posY = 0.0f;*/
+	float posY = 0.0f;
 
 	float CurrentSpeedScrollLabel = 1.0f;
 };

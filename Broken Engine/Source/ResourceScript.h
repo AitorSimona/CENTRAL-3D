@@ -6,7 +6,7 @@
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceScript : public Resource {
 public:
-	ResourceScript(uint uid, std::string source_file);
+	ResourceScript(uint uid, const char* source_file);
 	~ResourceScript();
 
 public:

@@ -27,9 +27,10 @@ public:
 
 	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
 	void CreateFramebuffer();
+	//void NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex);
 
 	// --- Setters ---
-	bool SetVSync(bool vsync);
+	bool SetVSync(bool _vsync);
 	void SetActiveCamera(ComponentCamera* camera);
 	void SetCullingCamera(ComponentCamera* camera);
 
@@ -46,6 +47,7 @@ public:
 	ResourceShader* linepointShader = nullptr;
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
+	ResourceShader* screenShader = nullptr;
 
 	unsigned int VAO = 0;
 	SDL_GLContext context;
@@ -55,6 +57,8 @@ public:
 	uint fbo = 0;
 	uint depthbuffer = 0;
 	uint rendertexture = 0;
+	uint quadVAO = 0;
+	uint quadVBO = 0;
 
 	// --- Flags ---
 	bool vsync = true;
@@ -64,6 +68,7 @@ public:
 	bool color_material = true;
 	bool wireframe = false;
 	bool zdrawer = false;
+	bool renderfbo = true;
 };
 BE_END_NAMESPACE
 #endif

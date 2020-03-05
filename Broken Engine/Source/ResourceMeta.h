@@ -6,7 +6,7 @@
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceMeta : public Resource {
 public:
-	ResourceMeta(uint UID, std::string source_file);
+	ResourceMeta(uint UID, const char* source_file);
 	~ResourceMeta();
 
 	bool LoadInMemory() override;

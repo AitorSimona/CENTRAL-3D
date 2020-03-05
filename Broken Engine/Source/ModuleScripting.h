@@ -12,6 +12,7 @@ class ComponentScript;
 struct ScriptFile;
 struct ScriptInstance;
 
+enum _AppState;
 class BROKEN_API ModuleScripting : public Module {
 public:
 	ModuleScripting(bool start_enabled = true);
@@ -25,7 +26,9 @@ public:
 	ScriptFile* AddScriptFile(ComponentScript* script_component, std::string full_file_path);
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
+	void NullifyScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NotifyHotReloading();
+	bool CheckEverythingCompiles();
 
 
 public:
@@ -47,6 +50,8 @@ private:
 	bool start = true;
 	bool cannot_start = false; //We cannot start if a compilation error would cause a crash on the engine when we start playing
 	bool hot_reloading_waiting = false;
+
+	_AppState previous_AppState = (_AppState)2; // we use the EDITOR value of the script (can't include application.h because it would slow down compilation time)
 
 	void CleanUpInstances();
 

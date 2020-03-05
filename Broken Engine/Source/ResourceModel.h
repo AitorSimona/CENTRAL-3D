@@ -7,7 +7,7 @@
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceModel : public Resource {
 public:
-	ResourceModel(uint UID, std::string source_file);
+	ResourceModel(uint UID, const char* source_file);
 	~ResourceModel();
 
 	bool LoadInMemory() override;

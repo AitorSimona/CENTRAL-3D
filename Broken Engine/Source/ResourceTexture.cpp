@@ -9,7 +9,7 @@
 #include "mmgr/mmgr.h"
 
 using namespace BrokenEngine;
-ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file) {
+ResourceTexture::ResourceTexture(uint UID, const char* source_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file) {
 	extension = ".dds";
 	resource_file = TEXTURES_FOLDER + std::to_string(UID) + extension;
 	buffer_id = App->textures->GetDefaultTextureID();

@@ -34,7 +34,7 @@ Resource* ImporterMeta::Load(const char* path) const {
 	std::string source_file = file["SOURCE"].get<std::string>();
 
 	// Date is retrieved on resource meta constructor
-	resource = App->resources->metas.find(UID) != App->resources->metas.end() ? App->resources->metas.find(UID)->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::META, source_file, UID);
+	resource = App->resources->metas.find(UID) != App->resources->metas.end() ? App->resources->metas.find(UID)->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::META, source_file.c_str(), UID);
 
 	// --- A folder has been renamed ---
 	if (!App->fs->Exists(source_file.c_str())) {
@@ -48,12 +48,12 @@ void ImporterMeta::Save(ResourceMeta* meta) const {
 	json jsonmeta;
 	std::string jsondata;
 	char* meta_buffer = nullptr;
-
+	std::string UIDstr = std::to_string(meta->GetUID());
 	// --- Create Meta ---
 	jsonmeta["UID"] = std::to_string(meta->GetUID());
 	jsonmeta["DATE"] = std::to_string(meta->Date);
 	jsonmeta["SOURCE"] = meta->GetOriginalFile();
-	jsondata = App->GetJLoader()->Serialize(jsonmeta);
+	App->GetJLoader()->Serialize(jsonmeta, jsondata);
 	meta_buffer = (char*)jsondata.c_str();
 
 	App->fs->Save(meta->GetResourceFile(), meta_buffer, jsondata.length());

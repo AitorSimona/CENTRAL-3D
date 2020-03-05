@@ -2,7 +2,10 @@
 #define __IMPORTERSCRIPT_H__
 
 #include "Importer.h"
+
 BE_BEGIN_NAMESPACE
+class ResourceScript;
+
 class BROKEN_API ImporterScript : public Importer {
 public:
 	ImporterScript();
@@ -11,8 +14,9 @@ public:
 	virtual Resource* Import(ImportData& IData) const override;
 	virtual Resource* Load(const char* path) const override;
 
+	void Save(ResourceScript* script);
+
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Script; };
 };
 BE_END_NAMESPACE
 #endif // !__IMPORTERSCRIPT_H__
-

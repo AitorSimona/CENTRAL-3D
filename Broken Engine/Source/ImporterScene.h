@@ -18,7 +18,7 @@ public:
 
 	Resource* Import(ImportData& IData) const override;
 	Resource* Load(const char* path) const override;
-	std::string SaveSceneToFile(ResourceScene* scene, std::string& scene_name) const;
+	void SaveSceneToFile(ResourceScene* scene) const;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Scene; };
 

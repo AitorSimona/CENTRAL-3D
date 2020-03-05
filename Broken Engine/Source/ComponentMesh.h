@@ -1,11 +1,12 @@
 #ifndef __COMPONENT_MESH_H__
 #define __COMPONENT_MESH_H__
 
-#include "Math.h"
 #include "Component.h"
 #include "ResourceMesh.h"
 
 BE_BEGIN_NAMESPACE
+class ComponentBone;
+
 class BROKEN_API ComponentMesh : public Component {
 public:
 
@@ -20,8 +21,14 @@ public:
 	void CreateInspectorNode() override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Mesh; };
+
+	// -- For skinning
+	void AddBone(ComponentBone* bone);
+	void UpdateDefMesh();
+
 public:
 	ResourceMesh* resource_mesh = nullptr;
+	std::vector<ComponentBone*> bones;
 };
 BE_END_NAMESPACE
 #endif

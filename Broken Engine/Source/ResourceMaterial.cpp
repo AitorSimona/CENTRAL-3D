@@ -13,7 +13,7 @@
 #include "mmgr/mmgr.h"
 
 using namespace BrokenEngine;
-ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file) {
+ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file) {
 	extension = ".mat";
 	resource_file = source_file;
 	shader = App->renderer3D->defaultShader;
