@@ -553,12 +553,6 @@
     <ClInclude Include="ComponentAudioListener.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="gpudetect\DeviceId.h">
-      <Filter>Sources\Tools\DeviceID</Filter>
-    </ClInclude>
-    <ClInclude Include="gpudetect\dxgi1_4.h">
-      <Filter>Sources\Tools\DeviceID</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleUI.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -677,6 +671,11 @@
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClInclude>
     <ClInclude Include="ComponentText.h">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\DeviceId.h" />
+    <ClInclude Include="gpudetect\dxgi1_4.h" />
+    <ClInclude Include="ComponentButton.h">
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1045,6 +1044,9 @@
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClCompile>
     <ClCompile Include="ComponentText.cpp">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentButton.cpp">
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClCompile>
   </ItemGroup>

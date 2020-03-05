@@ -24,11 +24,11 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentImage)
+ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
 {
 	visible = true;
 
-	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::ComponentCanvas);
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas->AddElement(this);
 }
@@ -179,6 +179,6 @@ void ComponentImage::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::ComponentImage);
+		GO->RemoveComponent(Component::ComponentType::Image);
 	}
 }

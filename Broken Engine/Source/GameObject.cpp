@@ -17,10 +17,10 @@
 #include "ComponentCanvas.h"
 #include "ComponentText.h"
 #include "ComponentImage.h"
-//#include "Button.h"
-//#include "CheckBox.h"
-//#include "InputText.h"
-//#include "ProgressBar.h"
+#include "ComponentButton.h"
+//#include "ComponentCheckBox.h"
+//#include "ComponentInputText.h"
+//#include "ComponentProgressBar.h"
 
 #include "Math.h"
 
@@ -298,15 +298,15 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 			component = new ComponentAnimation(this);
 			break;
 
-		case Component::ComponentType::ComponentCanvas:
+		case Component::ComponentType::Canvas:
 			component = new ComponentCanvas(this);
 			break;
 
-		case Component::ComponentType::ComponentText:
+		case Component::ComponentType::Text:
 			component = new ComponentText(this);
 			break;
 
-		case Component::ComponentType::ComponentImage:
+		case Component::ComponentType::Image:
 			component = new ComponentImage(this);
 			break;
 
@@ -314,20 +314,20 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 			component = new ComponentScript(this);
 			break;
 
-		//case Component::ComponentType::Button:
-		//	component = new Button(this);
-		//	break;
+		case Component::ComponentType::Button:
+			component = new ComponentButton(this);
+			break;
 
 		//case Component::ComponentType::CheckBox:
-		//	component = new CheckBox(this);
+		//	component = new ComponentCheckBox(this);
 		//	break;
 
 		//case Component::ComponentType::InputText:
-		//	component = new InputText(this);
+		//	component = new ComponentInputText(this);
 		//	break;
 
 		//case Component::ComponentType::ProgressBar:
-		//	component = new ProgressBar(this);
+		//	component = new ComponentProgressBar(this);
 		//	break;
 		}
 

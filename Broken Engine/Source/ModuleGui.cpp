@@ -228,17 +228,17 @@ update_status ModuleGui::Update(float dt)
 					if (ImGui::MenuItem("Canvas"))
 					{
 						GameObject* canvas_go = App->scene_manager->CreateEmptyGameObject();
-						ComponentCanvas* camera = (ComponentCanvas*)canvas_go->AddComponent(Component::ComponentType::ComponentCanvas);
+						ComponentCanvas* camera = (ComponentCanvas*)canvas_go->AddComponent(Component::ComponentType::Canvas);
 					}
 					if (ImGui::MenuItem("Image"))
 					{
 						GameObject* image_go = App->scene_manager->CreateEmptyGameObject();
-						ComponentImage* image = (ComponentImage*)image_go->AddComponent(Component::ComponentType::ComponentImage);
+						ComponentImage* image = (ComponentImage*)image_go->AddComponent(Component::ComponentType::Image);
 					}
 					if (ImGui::MenuItem("Text"))
 					{
 						GameObject* text_go = App->scene_manager->CreateEmptyGameObject();
-						ComponentText* text = (ComponentText*)text_go->AddComponent(Component::ComponentType::ComponentText);
+						ComponentText* text = (ComponentText*)text_go->AddComponent(Component::ComponentType::Text);
 					}
 					if (ImGui::MenuItem("Button", false, false, false))
 					{
