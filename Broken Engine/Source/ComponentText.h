@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "Canvas.h"
+#include "ComponentCanvas.h"
 #include "ResourceTexture.h"
 //#include "TextRenderer.hpp"
 #include "Color.h"
@@ -8,11 +8,11 @@
 #define DEFAULT_FONT_SIZE 25
 #define MAX_TEXT_SIZE 256
 
-class Text : public Component
+class ComponentText : public Component
 {
 public:
-	Text(GameObject* gameObject);
-	virtual ~Text();
+	ComponentText(GameObject* gameObject);
+	virtual ~ComponentText();
 
 	void LoadFont(const char* path, int size);
 
@@ -38,7 +38,7 @@ public:
 	Color color = White;
 
 public:
-	Canvas* canvas = nullptr;
+	ComponentCanvas* canvas = nullptr;
 	ResourceTexture* texture = nullptr;
 	//glfreetype::font_data font;
 

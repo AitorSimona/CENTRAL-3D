@@ -159,7 +159,8 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.scaleY = scale.y * originalScale.y;
 	localMatrix.scaleZ = scale.z * originalScale.z;
 
-	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
+	math::float4x4 gt = cTransform->GetGlobalTransform();
+	globalMatrix = gt * localMatrix;
 
 	//PHYSX DEBUG
 	float3 pos, scale;
@@ -192,7 +193,8 @@ void ComponentCollider::UpdateLocalMatrix() {
 	}
 }
 
-void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {
+void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {	
+	
 	PxTransform transform;
 	if (!RB)
 		return;
@@ -202,11 +204,32 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 		RB->rigidBody->setGlobalPose(transform);
 	}
 
+	std::string name = GO->GetName();
 	transform = RB->rigidBody->getGlobalPose();
 	float x = transform.p.x - offset.x;
-	cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y, transform.p.z - offset.z);
+	
+	bool isFalling = RB->rigidBody->getLinearVelocity().y != 0.0f;
+
+	if (isFalling)
+		cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y - localMatrix.y, transform.p.z - offset.z);
+
 	cTransform->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
 	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
+
+	if (App->GetAppState() == AppState::PLAY && !toPlay)
+	{
+		float3 pos, scale;
+		Quat rot;
+		globalMatrix.Decompose(pos, rot, scale);
+
+		PxVec3 posi(pos.x, pos.y, pos.z);
+		PxQuat quati(rot.x, rot.y, rot.z, rot.w);
+		PxTransform transform(posi, quati);
+
+		RB->rigidBody->setGlobalPose(transform);
+
+		toPlay = true;
+	}
 }
 
 json ComponentCollider::Save() const
@@ -352,6 +375,8 @@ void ComponentCollider::Load(json& node)
 	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
 
 	firstCreation = true;
+
+	toPlay = false;
 
 	std::string colliderEnum = node["colliderType"];
 

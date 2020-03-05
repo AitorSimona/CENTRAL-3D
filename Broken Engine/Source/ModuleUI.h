@@ -1,7 +1,12 @@
+#ifndef __MODULEUI_H__
+#define __MODULEUI_H__
 #pragma once
 #include "Module.h"
-#include "Canvas.h"
 #include <vector>
+#include "Math.h"
+
+class ComponentCanvas;
+class Component;
 
 class ModuleUI : public Module
 {
@@ -16,8 +21,8 @@ public:
 	bool CleanUp() override;
 
 	void Draw() const;
-	void AddCanvas(Canvas* c) { canvas.push_back(c); }
-	void RemoveCanvas(Canvas* c);
+	void AddCanvas(ComponentCanvas* c) { canvas.push_back(c); }
+	void RemoveCanvas(ComponentCanvas* c);
 	
 	void Clear();
 
@@ -25,9 +30,11 @@ public:
 	bool CheckClick(Component* element, bool draggable);
 
 public:
-	std::vector<Canvas*> canvas;
+	std::vector<ComponentCanvas*> canvas;
 
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;
 };
+
+#endif
 

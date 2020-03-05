@@ -125,17 +125,17 @@ bool PanelInspector::Draw()
 
 		if (item_current == "UI Canvas")
 		{
-			Selected->AddComponent(Component::ComponentType::Canvas);
+			Selected->AddComponent(Component::ComponentType::ComponentCanvas);
 		}
 
 		if (item_current == "UI Image")
 		{
-			Selected->AddComponent(Component::ComponentType::Image);
+			Selected->AddComponent(Component::ComponentType::ComponentImage);
 		}
 
 		if (item_current == "UI Text")
 		{
-			Selected->AddComponent(Component::ComponentType::Text);
+			Selected->AddComponent(Component::ComponentType::ComponentText);
 		}
 		if (item_current == "Dynamic RigidBody")
 		{

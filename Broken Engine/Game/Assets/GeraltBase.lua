@@ -9,14 +9,15 @@ local state = {
 	dead = -2,
 	down = -1,
 	idle = 0,
-	move = 1,
-	light = 2,
-	heavy = 3,
-	evade = 4,
-	ability = 5,
-	ultimate = 6,
-	item = 7,
-	revive = 8
+	walk = 1,
+	run = 2,
+	light = 3,
+	heavy = 4,
+	evade = 5,
+	ability = 6,
+	ultimate = 7,
+	item = 8,
+	revive = 9
 }
 local current_state = state.idle	-- Current State
 
@@ -69,7 +70,7 @@ lua_table.key_ability = "BUTTON_B"
 lua_table.key_move = "AXIS_LEFT"
 lua_table.key_aim = "AXIS_RIGHT"
 lua_table.key_joystick_sensibility = 1.0
-local key_joystick_threshold = 0.2
+local key_joystick_threshold = 0.1
 
 lua_table.key_pickup_item = "BUTTON_DPAD_UP"
 lua_table.key_prev_consumable = "BUTTON_DPAD_LEFT"
@@ -80,22 +81,29 @@ lua_table.key_notdef5 = "BUTTON_BACK"
 lua_table.key_notdef6 = "BUTTON_START"
 
 --Inputs
-local mov_input_x = 0.0
+local magnitude = 0
+
+local mov_input_x = 0.0	--Movement Input
 local mov_input_z = 0.0
-	
-local aim_input_x = 0.0
+
+local aim_input_x = 0.0	--Aim Input
 local aim_input_z = 0.0
+
+local rec_input_x = 0.0	--Recorded Input (used to save a specific moment's input)
+local rec_input_z = 0.0
+
+lua_table.input_walk_threshold = 0.8
 
 --Movement
 local mov_speed_x = 0.0
 local mov_speed_z = 0.0
-lua_table.mov_speed_max = 15.0
+lua_table.mov_speed_max = 60
 
 local rot_speed = 0.0
 lua_table.rot_speed_max = 0.0
 lua_table.rot_acc_max = 0.0
 
---Light Attack
+--Light Attack	--IMPROVE: Add variable animation speed
 lua_table.light_attack_damage = 0
 lua_table.light_attack_cost = 0
 
@@ -104,7 +112,7 @@ lua_table.light_attack_combo_start = 600	--Combo timeframe start
 lua_table.light_attack_combo_end = 800		--Combo timeframe end
 lua_table.light_attack_end_time = 1000		--Attack end (return to idle)
 
---Heavy Attack
+--Heavy Attack	--IMPROVE: Add variable animation speed
 lua_table.heavy_attack_damage = 0
 lua_table.heavy_attack_cost = 0
 
@@ -113,10 +121,10 @@ lua_table.heavy_attack_combo_start = 600	--Combo timeframe start
 lua_table.heavy_attack_combo_end = 800		--Combo timeframe end
 lua_table.heavy_attack_end_time = 1000		--Attack end (return to idle)
 
---Evade
+--Evade			--IMPROVE: Add variable animation speed
 lua_table.evade_cost = 0
-lua_table.evade_duration = 300
-lua_table.evade_velocity = 150
+lua_table.evade_duration = 800
+lua_table.evade_velocity = 120
 
 --Ability
 lua_table.ability_cost = 0
@@ -145,7 +153,7 @@ local combo_stack = { 'N', 'N', 'N', 'N' }	-- Last 4 attacks performed (0=none, 
 local rightside = true						-- Last attack side, switches on a succesfully timed attack
 
 --Methods: Short
-function PushBack(array, array_size, new_val)	--Pushes back all values and inserts a new one
+local function PushBack(array, array_size, new_val)	--Pushes back all values and inserts a new one
 	for i = 0, array_size - 2, 1
 	do
 		array[i] = array[i + 1]
@@ -154,24 +162,33 @@ function PushBack(array, array_size, new_val)	--Pushes back all values and inser
 	array[array_size - 1] = new_val
 end
 
-function GoDefaultState()
+local function GoDefaultState()
 	if mov_input_x ~= 0.0 or mov_input_z ~= 0.0
 	then
-		--Animation to MOVE
-		current_state = state.move
+		if lua_table.input_walk_threshold < math.sqrt(mov_input_x ^ 2 + mov_input_z ^ 2)
+		then
+			lua_table.Functions:PlayAnimation("Run", 30.0)
+			lua_table.Functions:PlayStepSound()
+			current_state = state.run
+		else
+			lua_table.Functions:PlayAnimation("Walk", 30.0)
+			lua_table.Functions:PlayStepSound()
+			current_state = state.walk
+		end
 	else
-		--Animation to IDLE
+		lua_table.Functions:PlayAnimation("Idle", 30.0)
+		lua_table.Functions:StopStepSound()
 		current_state = state.idle
 		lua_table.Functions:DeactivateParticlesEmission()	--IMPROVE: Make particle emission more complex than de/activating
 	end
 end
 
-function PerfGameTime()
+local function PerfGameTime()
 	return lua_table.Functions:GameTime() * 1000
 end
 
 --Methods: Massive
-function KeyboardInputs()	--Process Debug Keyboard Inputs
+local function KeyboardInputs()	--Process Debug Keyboard Inputs
 	mov_input_x = 0.0
 	mov_input_z = 0.0
 	
@@ -195,15 +212,34 @@ function KeyboardInputs()	--Process Debug Keyboard Inputs
 	end
 end
 
-function MovementInputs()	--Process Movement Inputs
-	if mov_input_x ~= 0.0 or mov_input_z ~= 0.0
+local function MovementInputs()	--Process Movement Inputs
+	if mov_input_x ~= 0.0 or mov_input_z ~= 0.0														--IF Movement Input
 	then
-		if current_state == state.idle
+		if current_state == state.idle																--IF Idle
 		then
-			--Animation to MOVE
-			lua_table.Functions:ActivateParticlesEmission()
-			current_state = state.move
+			if lua_table.input_walk_threshold < math.sqrt(mov_input_x ^ 2 + mov_input_z ^ 2)		--IF great input
+			then
+				lua_table.Functions:PlayAnimation("Run", 30.0)
+				lua_table.Functions:PlayStepSound()
+				current_state = state.run
+			else																					--IF small input
+				lua_table.Functions:PlayAnimation("Walk", 30.0)
+				lua_table.Functions:PlayStepSound()
+				current_state = state.walk
+			end
+		elseif current_state == state.walk and lua_table.input_walk_threshold < math.sqrt(mov_input_x ^ 2 + mov_input_z ^ 2)	--IF walking and big input
+		then
+			lua_table.Functions:PlayAnimation("Run", 30.0)
+			lua_table.Functions:PlayStepSound()
+			current_state = state.run
+		elseif current_state == state.run and lua_table.input_walk_threshold > math.sqrt(mov_input_x ^ 2 + mov_input_z ^ 2)	--IF running and small input
+		then
+			lua_table.Functions:PlayAnimation("Walk", 30.0)
+			lua_table.Functions:PlayStepSound()
+			current_state = state.walk
 		end
+
+		lua_table.Functions:ActivateParticlesEmission()
 
 		mov_speed_x = lua_table.mov_speed_max * mov_input_x	--Joystick input directly translates to speed, no acceleration
 		mov_speed_z = lua_table.mov_speed_max * mov_input_z
@@ -218,15 +254,17 @@ function MovementInputs()	--Process Movement Inputs
 
 		lua_table.Functions:LookAt(dir_x, _y, dir_z)
 
-	elseif current_state == state.move
+	elseif current_state == state.run or current_state == state.walk
 	then
 		--Animation to IDLE
+		lua_table.Functions:PlayAnimation("Idle", 30.0)
+		lua_table.Functions:StopStepSound()
 		lua_table.Functions:DeactivateParticlesEmission()
 		current_state = state.idle
 	end
 end
 
-function ActionInputs()	--Process Action Inputs
+local function ActionInputs()	--Process Action Inputs
 	input_given = false
 	combo_achieved = false
 
@@ -234,7 +272,7 @@ function ActionInputs()	--Process Action Inputs
 	then
 		action_started_at = PerfGameTime()				--Set timer start mark
 		
-		if current_state <= state.move	--IF Idle or Moving
+		if current_state <= state.run	--IF Idle or Moving
 		then
 			combo_num = 1				--Register combo start
 		elseif current_state == state.light and time_since_action > lua_table.light_attack_combo_start and time_since_action < lua_table.light_attack_combo_end	--IF prev attack light and input on right light timing
@@ -256,7 +294,8 @@ function ActionInputs()	--Process Action Inputs
 
 			PushBack(combo_stack, 4, 'L')
 
-			--Animation to LIGHT
+			lua_table.Functions:PlayAnimation("Light", 30.0)
+			lua_table.Functions:PlayAttackSound()
 			current_state = state.light
 		end
 
@@ -266,7 +305,7 @@ function ActionInputs()	--Process Action Inputs
 	then
 		action_started_at = PerfGameTime()				--Set timer start mark
 		
-		if current_state <= state.move	--IF Idle or Moving
+		if current_state <= state.run	--IF Idle or Moving
 		then
 			combo_num = 1				--Register combo start
 		elseif current_state == state.light and time_since_action > lua_table.light_attack_combo_start and time_since_action < lua_table.light_attack_combo_end	--IF prev attack light and input on right light timing
@@ -288,7 +327,8 @@ function ActionInputs()	--Process Action Inputs
 
 			PushBack(combo_stack, 4, 'H')
 
-			--Animation to HEAVY
+			lua_table.Functions:PlayAnimation("Heavy", 30.0)
+			lua_table.Functions:PlayAttackSound()
 			current_state = state.heavy
 		end
 
@@ -302,13 +342,13 @@ function ActionInputs()	--Process Action Inputs
 			current_action_block_time = lua_table.evade_duration
 			current_action_duration = lua_table.evade_duration
 			
-			_x, mov_speed_y, _z = lua_table.Functions:GetLinearVelocity()	--TODO: Check if truly needed or remove
+			rec_input_x = mov_input_x	--Record evade input
+			rec_input_z = mov_input_z
 
-			magnitude = math.sqrt(mov_input_x ^ 2 + mov_input_z ^ 2)	--Calculate to use unit vector for direction
-
+			magnitude = math.sqrt(rec_input_x ^ 2 + rec_input_x ^ 2)	--Calculate to use unit vector for direction
+			
 			--Do Evade
-			lua_table.Functions:SetLinearVelocity(lua_table.evade_velocity * mov_input_x / magnitude, mov_speed_y, lua_table.evade_velocity * mov_input_z / magnitude)
-
+			lua_table.Functions:PlayAnimation("Evade", 40.0)
 			current_state = state.evade
 			input_given = true
 		end
@@ -354,7 +394,7 @@ function ActionInputs()	--Process Action Inputs
 	return input_given
 end
 
-function SecondaryInputs()	--Process Secondary Inputs
+local function SecondaryInputs()	--Process Secondary Inputs
 	if lua_table.Functions:IsGamepadButton(lua_table.player_ID, lua_table.key_pickup_item, key_state.key_down)			--Pickup Item
 	then
 		--IF consumable (increase counter)
@@ -403,17 +443,17 @@ function lua_table:Update()
 			aim_input_x = lua_table.Functions:GetAxisValue(lua_table.player_ID, lua_table.key_aim .. "X", key_joystick_threshold)
 			aim_input_z = lua_table.Functions:GetAxisValue(lua_table.player_ID, lua_table.key_aim .. "Y", key_joystick_threshold)
 
-			if current_state > state.move	--IF action currently going on, check action timer
+			if current_state > state.run	--IF action currently going on, check action timer
 			then
 				time_since_action = PerfGameTime() - action_started_at
 			end
 
-			if current_state <= state.move or time_since_action > current_action_block_time	--IF state == idle/move or action_input_block_time has ended (Input-allowed environment)
+			if current_state <= state.run or time_since_action > current_action_block_time	--IF state == idle/move or action_input_block_time has ended (Input-allowed environment)
 			then
 				ActionInputs()
 			end
 
-			if current_state <= state.move	--IF there's no action being performed
+			if current_state <= state.run	--IF there's no action being performed
 			then
 				MovementInputs()	--Movement orders
 				--SecondaryInputs()	--Minor ctions with no timer or special animations
@@ -424,6 +464,10 @@ function lua_table:Update()
 				if time_since_action > current_action_duration	--IF action duration up
 				then
 					GoDefaultState()	--Return to move or idle
+				elseif current_state == state.evade
+				then
+					_x, mov_speed_y, _z = lua_table.Functions:GetLinearVelocity()	--TODO: Check if truly needed or remove
+					lua_table.Functions:SetLinearVelocity(lua_table.evade_velocity * rec_input_x / magnitude, mov_speed_y, lua_table.evade_velocity * rec_input_z / magnitude)	--IMPROVE: Speed set on every frame, it would be better to just remove drag during evade
 				end
 			end
 		end

@@ -5,6 +5,8 @@
 #include "ModuleSceneManager.h"
 #include "GameObject.h"
 #include "ModuleGui.h"
+#include "Component.h"
+#include "ComponentCanvas.h"
 
 #include "mmgr/mmgr.h"
 
@@ -89,9 +91,9 @@ void ModuleUI::Draw() const
 	//glPopMatrix();
 }
 
-void ModuleUI::RemoveCanvas(Canvas* c)
+void ModuleUI::RemoveCanvas(ComponentCanvas* c)
 {
-	for (std::vector<Canvas*>::iterator it = canvas.begin(); it != canvas.end(); ++it)
+	for (std::vector<ComponentCanvas*>::iterator it = canvas.begin(); it != canvas.end(); ++it)
 	{
 		if(*it && (*it)->GetContainerGameObject() && (*it)->GetContainerGameObject()->GetUID() == c->GetContainerGameObject()->GetUID())
 		{

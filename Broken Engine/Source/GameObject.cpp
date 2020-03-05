@@ -14,9 +14,9 @@
 #include "ComponentAudioListener.h"
 #include "ComponentAudioSource.h"
 
-#include "Canvas.h"
-#include "Text.h"
-#include "Image.h"
+#include "ComponentCanvas.h"
+#include "ComponentText.h"
+#include "ComponentImage.h"
 //#include "Button.h"
 //#include "CheckBox.h"
 //#include "InputText.h"
@@ -285,50 +285,50 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		case Component::ComponentType::ParticleEmitter:
 			component = new ComponentParticleEmitter(this);
 			break;
-			case Component::ComponentType::AudioSource:
-				component = new ComponentAudioSource(this);
-				break;
-			case Component::ComponentType::AudioListener:
-				component = new ComponentAudioListener(this);
-				break;
-			case Component::ComponentType::Bone:
-				component = new ComponentBone(this);
-				break;
-			case Component::ComponentType::Animation:
-				component = new ComponentAnimation(this);
-				break;
+		case Component::ComponentType::AudioSource:
+			component = new ComponentAudioSource(this);
+			break;
+		case Component::ComponentType::AudioListener:
+			component = new ComponentAudioListener(this);
+			break;
+		case Component::ComponentType::Bone:
+			component = new ComponentBone(this);
+			break;
+		case Component::ComponentType::Animation:
+			component = new ComponentAnimation(this);
+			break;
 
-			case Component::ComponentType::Canvas:
-				component = new Canvas(this);
-				break;
+		case Component::ComponentType::ComponentCanvas:
+			component = new ComponentCanvas(this);
+			break;
 
-			case Component::ComponentType::Text:
-				component = new Text(this);
-				break;
+		case Component::ComponentType::ComponentText:
+			component = new ComponentText(this);
+			break;
 
-			case Component::ComponentType::Image:
-				component = new Image(this);
-				break;
+		case Component::ComponentType::ComponentImage:
+			component = new ComponentImage(this);
+			break;
 
-				case Component::ComponentType::Script:
-					component = new ComponentScript(this);
-					break;
+		case Component::ComponentType::Script:
+			component = new ComponentScript(this);
+			break;
 
-			//case Component::ComponentType::Button:
-			//	component = new Button(this);
-			//	break;
+		//case Component::ComponentType::Button:
+		//	component = new Button(this);
+		//	break;
 
-			//case Component::ComponentType::CheckBox:
-			//	component = new CheckBox(this);
-			//	break;
+		//case Component::ComponentType::CheckBox:
+		//	component = new CheckBox(this);
+		//	break;
 
-			//case Component::ComponentType::InputText:
-			//	component = new InputText(this);
-			//	break;
+		//case Component::ComponentType::InputText:
+		//	component = new InputText(this);
+		//	break;
 
-			//case Component::ComponentType::ProgressBar:
-			//	component = new ProgressBar(this);
-			//	break;
+		//case Component::ComponentType::ProgressBar:
+		//	component = new ProgressBar(this);
+		//	break;
 		}
 
 		if (component)
@@ -492,6 +492,7 @@ void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType ty
 		components[i]->ONResourceEvent(uid, type);
 	}
 
+	// MYTODO: Remove this
 	if (model && type == Resource::ResourceNotificationType::Deletion && model->GetUID() == uid)
 		model = nullptr;
 }

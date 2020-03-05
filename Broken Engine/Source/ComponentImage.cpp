@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "ComponentImage.h"
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
@@ -25,22 +25,22 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-Image::Image(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
+ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentImage)
 {
 	visible = true;
 
-	canvas = (Canvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::ComponentCanvas);
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas->AddElement(this);
 }
 
-Image::~Image()
+ComponentImage::~ComponentImage()
 {
 	if(texture)
 	texture->Release();
 }
 
-void Image::Draw()
+void ComponentImage::Draw()
 {
 	// --- Update transform and rotation to face camera ---
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
@@ -96,7 +96,7 @@ void Image::Draw()
 	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
 
-json Image::Save() const
+json ComponentImage::Save() const
 {
 	json node;
 
@@ -114,7 +114,7 @@ json Image::Save() const
 	return node;
 }
 
-void Image::Load(json& node)
+void ComponentImage::Load(json& node)
 {
 	std::string path = node["Resources"]["ResourceTexture"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
@@ -132,7 +132,7 @@ void Image::Load(json& node)
 	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
 }
 
-void Image::CreateInspectorNode()
+void ComponentImage::CreateInspectorNode()
 {
 	ImGui::Checkbox("##ImageActive", &GetActive());
 	ImGui::SameLine();
@@ -206,6 +206,6 @@ void Image::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Image);
+		GO->RemoveComponent(Component::ComponentType::ComponentImage);
 	}
 }

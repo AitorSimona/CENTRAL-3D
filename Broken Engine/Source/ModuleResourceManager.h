@@ -92,19 +92,22 @@ public:
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-	bool IsFileImported(const char* file);
 	std::string GetNewUniqueName(Resource::ResourceType type);
+	bool IsFileImported(const char* file);
 
 	void ONResourceDestroyed(Resource* resource);
 
 	// --- Getters ---
 	ResourceFolder* GetAssetsFolder();
+	uint GetFileFormatVersion();
 	uint GetDefaultMaterialUID();
 private:
 
 	// --- Available importers ---
 	std::vector<Importer*> importers;
 	std::vector<std::string> filters;
+
+	uint fileFormatVersion = 1;
 
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
