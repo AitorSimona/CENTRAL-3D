@@ -56,7 +56,7 @@ bool ResourceScene::LoadInMemory()
 
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
-
+				
 
 				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
 				{
@@ -65,10 +65,17 @@ bool ResourceScene::LoadInMemory()
 					uint type_uint = std::stoi(type_string);
 					Component::ComponentType type = (Component::ComponentType)type_uint;
 
+					// --- and index ---
+					int c_index = -1;
+					json index = components[it2.key()]["index"];
+
+					if (!index.is_null())
+						c_index = index.get<uint>();
+
 					Component* component = nullptr;
 
 					// --- Create/Retrieve Component ---
-					component = go->AddComponent(type);
+					component = go->AddComponent(type, c_index);
 
 					// --- Load Component Data ---
 					if (component)

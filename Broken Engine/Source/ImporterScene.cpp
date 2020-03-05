@@ -73,6 +73,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		{
 			// --- Save Components to file ---
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
 		}
 
 	}
@@ -90,6 +91,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		{
 			// --- Save Components to file ---
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
 		}
 
 	}

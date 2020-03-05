@@ -40,7 +40,7 @@ public:
 
 		for (uint i = 0; i < components.size(); ++i)
 		{
-			if (components[i]->GetType() == TComponent::GetType())
+			if (components[i] && components[i]->GetType() == TComponent::GetType())
 			{
 				return ((TComponent*)(components[i]));
 			}
@@ -49,7 +49,7 @@ public:
 		return nullptr;
 	}
 
-	Component*		AddComponent(Component::ComponentType type);
+	Component*		AddComponent(Component::ComponentType type, int index = -1);
 	void			RemoveComponent(Component::ComponentType type);
 	Component*		HasComponent(Component::ComponentType type) const;
 	std::vector<Component*>& GetComponents();
