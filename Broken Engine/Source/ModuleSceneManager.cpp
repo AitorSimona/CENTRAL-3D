@@ -67,6 +67,10 @@ bool ModuleSceneManager::Init(json file)
 	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, ONGameObjectDestroyed);
 	App->event_manager->AddListener(Event::EventType::Resource_selected, ONResourceSelected);
 
+	//Add pushbacks for componnets that can be repeated inside a gameobject
+	repeatable_components.push_back((int)Component::ComponentType::Script);
+	repeatable_components.push_back((int)Component::ComponentType::AudioSource);
+
 	return true;
 }
 
