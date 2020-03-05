@@ -3,6 +3,8 @@ local Functions = Debug.Scripting ()
 function	GetTablelua_tabletest ()
 local lua_table = {}
 lua_table["position_x"] = 0
+--lua_table["doraemon"] = "español"
+lua_table["sdaf"] = false
 lua_table["Functions"] = Debug.Scripting ()
 
 function lua_table:Awake ()

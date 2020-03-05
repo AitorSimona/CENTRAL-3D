@@ -43,7 +43,7 @@ json ComponentMesh::Save() const
 
 	// --- Store path to component file ---
 	if(resource_mesh)
-	node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
+		node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
 
 	return node;
 }

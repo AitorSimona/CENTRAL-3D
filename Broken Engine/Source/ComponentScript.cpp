@@ -64,10 +64,10 @@ void ComponentScript::CreateInspectorNode()
 				VarType type = script_variables[i].type;
 				if (type == VarType::DOUBLE)
 				{
-					float auxVal(script_variables[i].editor_value.as_double_number);
+					float auxVal(script_variables[i].editor_value.as_double);
 
 					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f)) {
-						script_variables[i].editor_value.as_double_number = auxVal;
+						script_variables[i].editor_value.as_double = auxVal;
 						script_variables[i].changed_value = true;
 					}
 
@@ -88,13 +88,11 @@ void ComponentScript::CreateInspectorNode()
 						script_variables[i].changed_value = true;
 					}
 				}
-
 			}
 		}
 
 		ImGui::TreePop();
 	}
-
 }
 
 void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
@@ -103,9 +101,6 @@ void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationTy
 	switch (type)
 	{
 	case Resource::ResourceNotificationType::Overwrite:
-		/*if (script && UID == script->GetUID())
-			script = (ResourceScript*)App->resources->GetResource(UID);*/
-
 		if(script && UID == script->GetUID())
 
 		break;
@@ -123,7 +118,7 @@ void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationTy
 	}
 }
 
-//Assigns the resource to the component and sends the script to the module so it can be compiled & used
+// Assigns the resource to the component and sends the script to the module so it can be compiled & used
 void ComponentScript::AssignScript(ResourceScript* script_resource)
 {
 	if (script_resource != nullptr)
@@ -134,20 +129,8 @@ void ComponentScript::AssignScript(ResourceScript* script_resource)
 
 	script_name = this->script->script_name;
 
-	//Send Component info to scripting to create a Script Instance / Lua class
+	// Send Component info to scripting to create a Script Instance / Lua class
 	App->scripting->SendScriptToModule(this);
-	//MYTODO: D�dac trying to compile
-	/*ResourceScript* new_script = (ResourceScript*)App->resources->CreateNewResource(Resource::SCRIPT);
-	this->script = new_script;
-	std::string filename;
-	App->file_system->SplitFilePath(relative_path.data(),nullptr,&filename,nullptr);
-	this->script_name = filename;
-	this->script->script_name = filename;
-	this->script->relative_path = relative_path;
-
-	std::string absolute_path = App->file_system->GetPathToGameFolder(true) + relative_path;
-	this->script->absolute_path = absolute_path;
-	App->scripting->SendScriptToModule(this, absolute_path);*/
 }
 
 int ComponentScript::ScriptVarAlreadyInComponent(std::string name)
@@ -172,7 +155,27 @@ json ComponentScript::Save() const
 
 	// --- Store path to component file ---
 	if(script)
-	node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
+		node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
+
+	for (int i = 0; i < script_variables.size(); ++i) {
+		switch (script_variables[i].type) 
+		{
+		case VarType::BOOLEAN:
+			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Type"] = "Boolean";
+			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Value"] = script_variables[i].editor_value.as_boolean;
+			break;
+
+		case VarType::DOUBLE:
+			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Type"] = "Double";
+			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Value"] = script_variables[i].editor_value.as_double;
+			break;
+
+		case VarType::STRING:
+			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Type"] = "String";
+			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Value"] = script_variables[i].editor_value.as_string;
+			break;
+		}
+	}
 
 	return node;
 }
@@ -197,41 +200,3 @@ void ComponentScript::Load(json& node)
 		AssignScript((ResourceScript*)this->script);
 	}
 }
-
-//void ComponentScript::Save(json & file)
-//{
-//	file["UID"] = this->UID;
-//	file["Active"] = this->active;
-//	file["Script_name"] = this->script_name.c_str();
-//	if (this->script != nullptr)
-//	{
-//		file["Resource_UID"] = this->script->GetUID();
-//		file["Script_Path"] = this->script->relative_path;
-//	}
-//}
-//
-//void ComponentScript::Load(json & file)
-//{
-//	this->UID = file["UID"];
-//	uint32 uid = file["Resource_UID"];
-//	this->active = file["Active"];
-//	std::string name_of_script = file["Script_name"];
-//	std::string path_of_script = file["Script_Path"];
-//
-//	this->script_name = name_of_script;
-//
-//	script = (ResourceScript*)App->resources->Get(uid);
-//	if (script != nullptr)
-//	{
-//		script->AddReference();
-//	}
-//	else
-//	{
-//		script = (ResourceScript*)App->resources->CreateNewResource(Resource::SCRIPT, uid);
-//	}
-//	script->script_name = name_of_script;
-//	script->relative_path = path_of_script;
-//	script->absolute_path = App->file_system->GetPathToGameFolder(true) + path_of_script;
-//
-//	App->scripting->SendScriptToModule(this,path_of_script);
-//}

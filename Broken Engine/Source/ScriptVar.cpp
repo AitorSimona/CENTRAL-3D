@@ -26,8 +26,8 @@ ScriptVar::ScriptVar(double value)
 {
 	type = VarType::DOUBLE;
 
-	script_defined_value.as_double_number = value;
-	editor_value.as_double_number = value;
+	script_defined_value.as_double = value;
+	editor_value.as_double = value;
 }
 
 ScriptVar::~ScriptVar()
@@ -61,7 +61,7 @@ void ScriptVar::ChangeEditorValue(double value)
 {
 	if (type == VarType::DOUBLE)
 	{
-		editor_value.as_double_number = value;
+		editor_value.as_double = value;
 		changed_value = true;
 	}
 	else

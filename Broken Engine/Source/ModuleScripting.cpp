@@ -487,7 +487,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 					if ((*it).changed_value) {
 						switch ((*it).type) {
 						case VarType::DOUBLE:
-							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double_number;
+							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double;
 							break;
 						case VarType::STRING:
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_string;
