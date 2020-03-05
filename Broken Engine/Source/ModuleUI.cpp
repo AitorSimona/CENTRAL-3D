@@ -5,8 +5,8 @@
 #include "ModuleSceneManager.h"
 #include "GameObject.h"
 #include "ModuleGui.h"
-
-#include "PanelScene.h"
+#include "Component.h"
+#include "ComponentCanvas.h"
 
 #include "mmgr/mmgr.h"
 
@@ -66,7 +66,7 @@ void ModuleUI::Draw() const
 	glLoadIdentity();
 	//glPushMatrix();
 
-	glOrtho(0, App->gui->panelScene->height, 0, App->gui->panelScene->width, -1, 1);
+	glOrtho(0, App->gui->sceneHeight, 0, App->gui->sceneWidth, -1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -76,7 +76,7 @@ void ModuleUI::Draw() const
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 	
 	// Draw UI
 	for (int i = 0; i < canvas.size(); i++)
@@ -89,6 +89,23 @@ void ModuleUI::Draw() const
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	//glPopMatrix();
+}
+
+void ModuleUI::RemoveCanvas(ComponentCanvas* c)
+{
+	for (std::vector<ComponentCanvas*>::iterator it = canvas.begin(); it != canvas.end(); ++it)
+	{
+		if(*it && (*it)->GetContainerGameObject() && (*it)->GetContainerGameObject()->GetUID() == c->GetContainerGameObject()->GetUID())
+		{
+			canvas.erase(it);
+			break;
+		}
+	}
+}
+
+void ModuleUI::Clear()
+{
+	canvas.clear();
 }
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)

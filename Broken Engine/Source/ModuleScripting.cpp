@@ -226,6 +226,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		
 		.addFunction("PlayAttackSound", &Scripting::PlayAttackSound)
 		.addFunction("PlayStepSound", &Scripting::PlayStepSound)
+		.addFunction("StopAttackSound", &Scripting::StopAttackSound)
+		.addFunction("StopStepSound", &Scripting::StopStepSound)
 		.addFunction("SetVolume", &Scripting::SetVolume)
 
 		.addFunction("PlayAnimation", &Scripting::StartAnimation)

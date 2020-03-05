@@ -121,9 +121,11 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
+	#ifndef BE_GAME_BUILD
 	// --- Draw Frustum ---
 	if (camera)
 		ModuleSceneManager::DrawWire(camera->frustum, White, App->scene_manager->GetPointLineVAO());
+	#endif
 
 	if(App->scene_manager->display_boundingboxes)
 	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());

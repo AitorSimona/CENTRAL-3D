@@ -39,6 +39,7 @@ Resource* ImporterMeta::Load(const char* path) const
 	json Date = file["DATE"];
 	json fileFormatVersion = file["fileFormatVersion"];
 
+
 	// --- Check for nulls ---
 	if (source_file.is_null() || UID_node.is_null() || Date.is_null())
 		return nullptr;

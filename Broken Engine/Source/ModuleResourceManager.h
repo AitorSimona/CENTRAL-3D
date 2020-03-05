@@ -32,6 +32,7 @@ class ModuleResourceManager : public Module
 	friend class ImporterFolder;
 	friend class ImporterScript;
 	friend class PanelResources;
+	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
 public:
 
@@ -106,7 +107,7 @@ private:
 	std::vector<Importer*> importers;
 	std::vector<std::string> filters;
 
-	uint fileFormatVersion = 1;
+	uint fileFormatVersion = 2;
 
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
