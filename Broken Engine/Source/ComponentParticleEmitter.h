@@ -8,11 +8,8 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
-
-
 class Particle;
 
-using namespace  physx;
 
 class ComponentParticleEmitter : public Component
 {
@@ -46,22 +43,22 @@ private:
 	std::uniform_real_distribution<double> m_DoubleDistribution;
 	std::random_device m_RandomDevice;
 	std::default_random_engine m_RNEngine;
-	PxParticleSystem* particleSystem=nullptr;
+	physx::PxParticleSystem* particleSystem=nullptr;
 
 	std::vector<Particle*> particles;
 
 	unsigned int maxParticles = 2000;
 	bool perParticleRestOffset = false;
 
-	PxParticleExt::IndexPool* indexPool;
+	physx::PxParticleExt::IndexPool* indexPool;
 
 	//Emitter properties
-	PxVec3 size = { 0,0,0 };
+	physx::PxVec3 size = { 0,0,0 };
 	float emisionRate=500.0f;	//in milliseconds
 	uint validParticles=0;
-	PxVec3 externalAcceleration = {0,10,0};
-	PxVec3 particlesVelocity = { 0,0,0 };
-	PxVec3 velocityRandomFactor = {5,5,5};
+	physx::PxVec3 externalAcceleration = {0,10,0};
+	physx::PxVec3 particlesVelocity = { 0,0,0 };
+	physx::PxVec3 velocityRandomFactor = {5,5,5};
 	
 	//Particle properties
 	int particlesLifeTime=1000;
