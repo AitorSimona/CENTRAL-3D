@@ -103,6 +103,8 @@ private:
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 
 public:
+	//Components helper, check AddComponent function
+	std::vector<int> repeatable_components;
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
