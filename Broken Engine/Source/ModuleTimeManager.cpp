@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
+#include "ModulePhysics.h"
 
 #include "mmgr/mmgr.h"
 
@@ -56,6 +57,7 @@ void ModuleTimeManager::PrepareUpdate()
 			break;
 
 		case AppState::TO_EDITOR:
+			App->physics->DeleteActors();
 			App->GetAppState() = AppState::EDITOR;
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
 			ENGINE_CONSOLE_LOG("APP STATE EDITOR");

@@ -92,7 +92,6 @@ void GameObject::Update(float dt)
 		if (components[i]->GetActive())
 			components[i]->Update();
 	}
-
 }
 
 void GameObject::RecursiveDelete()

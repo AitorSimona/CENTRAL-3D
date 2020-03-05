@@ -12,6 +12,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
+#include "ModulePhysics.h"
 #include "ComponentCamera.h"
 #include "ComponentBone.h"
 
@@ -916,6 +917,7 @@ GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 
 void ModuleSceneManager::DestroyGameObject(GameObject * go)
 {
+	//App->physics->DeleteActors(go);
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
 	delete go;
