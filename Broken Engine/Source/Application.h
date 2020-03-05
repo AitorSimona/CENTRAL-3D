@@ -5,10 +5,10 @@
 #include <list>
 #include <string>
 #include <vector>
+#include "RandomGenerator.h"
 #include "Timer.h"
 #include "PerfTimer.h"
 #include "MathGeoLib/include/Algorithm/Random/LCG.h"
-#include "RandomGenerator.h"
 #include "JSONLoader.h"
 
 #define MAX_CONSOLE_LOGS 1000
@@ -46,6 +46,7 @@ class ModuleUI;
 class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
+
 
 class Application
 {
@@ -93,7 +94,7 @@ public:
 	bool isGame = false;
 
 	//Random Number Generator
-	RNGen RandomNumberGenerator;	
+	RNGen RandomNumberGenerator;
 
 private:
 
