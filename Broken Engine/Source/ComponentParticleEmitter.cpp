@@ -8,6 +8,7 @@
 #include "ModuleParticles.h"
 #include "Particle.h"
 #include "Timer.h"
+#include "RandomGenerator.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -26,8 +27,6 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 	
 	for (int i= 0; i < maxParticles; ++i)
 		particles[i] = new Particle();
-
-	m_RNEngine = std::default_random_engine(m_RandomDevice());
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
@@ -424,6 +423,5 @@ void ComponentParticleEmitter::CreateInspectorNode()
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE
 {
-	std::uniform_real_distribution<double> tmp_DoubleDistribution(min, max);
-	return tmp_DoubleDistribution(m_RNEngine);
+	return App->RandomNumberGenerator.GetDoubleRNinRange(min, max);
 }
