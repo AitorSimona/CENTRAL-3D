@@ -338,19 +338,23 @@ void ComponentAnimation::UpdateJointsTransform()
 		float3 position = trans->GetPosition();
 		if (links[i].channel->PosHasKey())
 		{
-			std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
-			std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
 
-			if (next == links[i].channel->PositionKeys.end())
-				next = prev;
-
-			//If both keys are the same, no need to blend
-			if (prev == next)
-				position = prev->second;
+			std::map<double, float3>::iterator pos = links[i].channel->PositionKeys.find(Frame);
+			if (pos != links[i].channel->PositionKeys.end())
+				position = pos->second;
 			else
 			{
-				float value = (Frame - prev->first) / (next->first - prev->first);
-				position = prev->second.Lerp(next->second, value);
+				//Blend prev with next
+				std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
+				std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
+
+				if (next == links[i].channel->PositionKeys.end())
+					next = prev;
+				else
+				{
+					float value = (Frame - prev->first) / (next->first - prev->first);
+					position = prev->second.Lerp(next->second, value);
+				}
 			}
 			
 		}
@@ -359,18 +363,22 @@ void ComponentAnimation::UpdateJointsTransform()
 		Quat rotation = trans->GetQuaternionRotation();
 		if (links[i].channel->RotHasKey())
 		{
-			std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
-			std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
-
-			if (next == links[i].channel->RotationKeys.end())
-				next = prev;
-			//If both keys are the same, no need to blend
-			if (prev == next)
-				rotation = prev->second;
+			std::map<double, Quat>::iterator rot = links[i].channel->RotationKeys.find(Frame);
+			if (rot != links[i].channel->RotationKeys.end())
+				rotation = rot->second;
 			else
 			{
-				float value = (Frame - prev->first) / (next->first - prev->first);
-				rotation = prev->second.Slerp(next->second, value);
+				//Blend prev with next
+				std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
+				std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
+
+				if (next == links[i].channel->RotationKeys.end())
+					next = prev;
+				else
+				{
+					float value = (Frame - prev->first) / (next->first - prev->first);
+					rotation = prev->second.Slerp(next->second, value);
+				}
 			}
 		}
 		trans->SetQuatRotation(rotation);
@@ -379,22 +387,22 @@ void ComponentAnimation::UpdateJointsTransform()
 		float3 scale = trans->GetScale();
 		if (links[i].channel->ScaleHasKey())
 		{
-			std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
-			std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
-
-			if (next == links[i].channel->ScaleKeys.end())
-				next = prev;
-
 			std::map<double, float3>::iterator sca = links[i].channel->ScaleKeys.find(Frame);
 			if (sca != links[i].channel->ScaleKeys.end())
-				scale = sca->second;	
-			//If both keys are the same, no need to blend
-			if (prev == next)
-				scale = prev->second;
+				scale = sca->second;
 			else
 			{
-				float value = (Frame - prev->first) / (next->first - prev->first);
-				scale = prev->second.Lerp(next->second, value);
+				//Blend prev with next
+				std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
+				std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
+
+				if (next == links[i].channel->ScaleKeys.end())
+					next = prev;
+				else
+				{
+					float value = (Frame - prev->first) / (next->first - prev->first);
+					scale = prev->second.Lerp(next->second, value);
+				}
 			}
 		}
 		trans->Scale(scale.x, scale.y, scale.z);
