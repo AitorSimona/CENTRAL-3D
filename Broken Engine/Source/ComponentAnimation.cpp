@@ -137,6 +137,7 @@ json ComponentAnimation::Save() const
 
 	// --- Saving animations ------------------
 	node["Animations"]["Size"] = std::to_string(animations.size());
+	node["Aniamtions"]["BlendTime"] = std::to_string(blend_time_value);
 
 	for (int i = 0; i < animations.size(); ++i)
 	{
@@ -172,6 +173,10 @@ void ComponentAnimation::Load(json& node)
 	std::string size = node["Animations"]["Size"];
 	int anim_size = std::stoi(size);
 
+	std::string blend_time = node ["Aniamtions"]["BlendTime"];
+	blend_time_value = std::stof(blend_time);
+
+
 	for (int i = 0; i < anim_size; ++i)
 	{
 		std::string iterator = std::to_string(i);
@@ -181,15 +186,7 @@ void ComponentAnimation::Load(json& node)
 		bool loop = node["Animations"][iterator]["Loop"];
 		bool Default = node["Animations"][iterator]["Default"];
 
-		/*if (name.compare("Idle") == 0)
-		{
-			animations[0]->start = std::stoi(start);
-			animations[0]->end = std::stoi(end);
-			animations[0]->loop = loop;
-			animations[0]->Default = Default;
-		}
-		else*/
-			CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
+		CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
 		
 	}
 
