@@ -55,12 +55,12 @@ void ResourceFolder::RemoveResource(Resource* resource)
 	}
 }
 
-void ResourceFolder::SetParent(ResourceFolder* parent)
+void ResourceFolder::AddChild(ResourceFolder* resource)
 {
-	if (parent)
+	if (resource && !HasChild(resource))
 	{
-		this->parent = parent;
-		parent->childs.push_back(this);
+		resource->parent = this;
+		childs.push_back(resource);
 	}
 }
 
@@ -105,6 +105,24 @@ bool ResourceFolder::HasResource(Resource* resource)
 	}
 
 	return found;
+}
+
+bool ResourceFolder::HasChild(ResourceFolder* resource)
+{
+	bool found = false;
+
+	for (std::vector<ResourceFolder*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		if ((*it)->GetUID() == resource->GetUID())
+		{
+			found = true;
+			break;
+		}
+	}
+
+	return found;
+
+	return false;
 }
 
 void ResourceFolder::OnOverwrite()
