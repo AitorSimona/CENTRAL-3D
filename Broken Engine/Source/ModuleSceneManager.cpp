@@ -101,6 +101,8 @@ bool ModuleSceneManager::Start()
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
 
+	// --- Create temporal scene for play/stop ---
+	temporalScene = (Resource*)new ResourceScene(App->GetRandom().Int(), "Temp/TemporalScene.scene");
 
 	#ifdef BE_GAME_BUILD
 	//App->GetAppState() = AppState::TO_PLAY;
@@ -528,13 +530,24 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 			App->ui_system->Clear();
 		}
 
-		currentScene = scene; // force this so gos are not added to another scene
-		currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+		if (App->GetAppState() == AppState::TO_EDITOR)
+		{
+			std::string res_path = currentScene->GetResourceFile();
+			currentScene->SetResourceFile(temporalScene->GetResourceFile());
+			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+			currentScene->SetResourceFile(res_path.c_str());
+		}
+		else
+		{
+			currentScene = scene; // force this so gos are not added to another scene
+			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+		}
 	}
 	else
 		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");
 
 }
+
 
 GameObject* ModuleSceneManager::GetSelectedGameObject() const
 {

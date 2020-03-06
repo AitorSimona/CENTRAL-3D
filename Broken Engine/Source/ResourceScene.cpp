@@ -128,6 +128,24 @@ void ResourceScene::FreeMemory()
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }
 
+// Created for on-play temporal scene 
+void ResourceScene::CopyInto(ResourceScene* target)
+{
+	if (target)
+	{
+		// --- Delete all scene game objects ---
+		for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+		{
+			target->NoStaticGameObjects[(*it).first] = (*it).second;
+		}
+
+		for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+		{
+			target->StaticGameObjects[(*it).first] = (*it).second;
+		}
+	}
+}
+
 GameObject* ResourceScene::GetGOWithName(const char* GO_name)
 {
 	GameObject* ret = nullptr;

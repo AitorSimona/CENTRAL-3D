@@ -63,6 +63,7 @@ bool ModuleResourceManager::Start()
 	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene");
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
 
+
 	// --- Create default material ---
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
 	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
