@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include "RandomGenerator.h"
 #include "Timer.h"
 #include "PerfTimer.h"
 #include "MathGeoLib/include/Algorithm/Random/LCG.h"
@@ -45,6 +46,7 @@ class ModuleUI;
 class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
+
 
 class Application
 {
@@ -88,7 +90,11 @@ public:
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
 
+
 	bool isGame = false;
+
+	//Random Number Generator
+	RNGen RandomNumberGenerator;
 
 private:
 
@@ -99,7 +105,7 @@ private:
 	std::string			orgName;
 	std::string			configpath;
 
-	LCG*		  RandomNumber = nullptr;
+	LCG*				RandomNumber = nullptr;
 
 	std::string			log;
 	std::vector<std::string> logs;

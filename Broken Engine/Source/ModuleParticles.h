@@ -7,7 +7,7 @@
 
 class ComponentParticleEmitter;
 
-using namespace physx;
+//using namespace physx;
 
 class ModuleParticles : public Module
 {
