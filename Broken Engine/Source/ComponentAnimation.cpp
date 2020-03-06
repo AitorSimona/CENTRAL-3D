@@ -46,7 +46,7 @@ ComponentAnimation::~ComponentAnimation()
 
 }
 
-void ComponentAnimation::Update(float dt)
+void ComponentAnimation::Update()
 {
 	if (linked_channels == false)
 	{
@@ -64,7 +64,7 @@ void ComponentAnimation::Update(float dt)
 		if (linked_bones == false)
 			DoBoneLink();
 
-		time += dt;
+		time += App->time->GetGameDt();
 
 		if (animations.size() > 0)
 		{
@@ -473,7 +473,7 @@ void ComponentAnimation::UpdateMesh(GameObject* go)
 {
 	ComponentMesh* tmp = go->GetComponent<ComponentMesh>();
 
-	if (tmp != nullptr)
+	if (tmp != nullptr && tmp->bones.size()>0)
 	{
 		tmp->UpdateDefMesh();
 	}
