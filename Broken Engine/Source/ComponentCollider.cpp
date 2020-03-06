@@ -150,16 +150,16 @@ void ComponentCollider::UpdateLocalMatrix() {
 	if (GO->GetName() == "gerald")
 		int a = 0;
 	//Render
-	localMatrix.x = centerPosition.x;
-	localMatrix.y = centerPosition.y;
-	localMatrix.z = centerPosition.z;
+	localMatrix.x = centerPosition.x + offset.x;
+	localMatrix.y = centerPosition.y + offset.y;
+	localMatrix.z = centerPosition.z + offset.z;
 
 	localMatrix.scaleX = colliderSize.x * originalSize.x; //scale * sizeAABB
 	localMatrix.scaleY = colliderSize.y * originalSize.y;
 	localMatrix.scaleZ = colliderSize.z * originalSize.z;
 	
 	globalMatrix = gt * localMatrix;
-	globalMatrix = globalMatrix.FromTRS(globalMatrix.TranslatePart() + offset, globalMatrix.RotatePart(), float3(1,1,1));
+	//globalMatrix = float4x4::FromTRS(localMatrix.TranslatePart(), globalMatrix.RotatePart(), float3(1,1,1));
 
 	//PHYSX DEBUG
 	float3 pos, scale;
@@ -626,14 +626,11 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				firstCreation = true;
 				float3 dir = center - transform->GetGlobalPosition();
 				float3 dir2 = transform->GetQuaternionRotation().Inverted().Mul(dir); // rotate it
-				offset = (dir2 + transform->GetGlobalPosition()); // calculate rotated vector
+				offset = (dir2.Div(tScale));// +transform->GetGlobalPosition()); // calculate rotated vector
 				//offset = center.Div(transform->GetScale()) - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
-				originalOffset = offset;
 			}
 			offset.Mul(tScale);
-			offset.x = originalOffset.x * tScale.x;
-			offset.z = originalOffset.y * tScale.y;
-			offset.y = originalOffset.z * tScale.z;
+
 			UpdateLocalMatrix();
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::BOX;
