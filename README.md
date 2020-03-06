@@ -16,6 +16,7 @@ A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 
 - par_shapes at commit 281 
 - DevIL 1.8.0
 - JSON for Modern C++
+- PhysFS
 - PhysX 3.4.2 
 
 
