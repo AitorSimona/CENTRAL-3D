@@ -26,6 +26,9 @@ ComponentMesh::~ComponentMesh()
 		resource_mesh->Release();
 		resource_mesh->RemoveUser(GO);
 	}
+
+	delete deformable_mesh;
+	deformable_mesh = nullptr;
 }
 
 const AABB & ComponentMesh::GetAABB() const
@@ -121,6 +124,19 @@ void ComponentMesh::AddBone(ComponentBone* bone)
 
 void ComponentMesh::UpdateDefMesh()
 {
+	/*if (!deformable_mesh)
+	{
+		deformable_mesh = new ResourceMesh(App->GetRandom().Int(), resource_mesh->GetOriginalFile());
+
+		deformable_mesh->VerticesSize = resource_mesh->VerticesSize;
+		deformable_mesh->vertices = new Vertex[deformable_mesh->VerticesSize];
+		memcpy(deformable_mesh->vertices, resource_mesh->vertices, deformable_mesh->VerticesSize * sizeof(Vertex));
+
+		deformable_mesh->IndicesSize = resource_mesh->IndicesSize;
+		deformable_mesh->Indices = new uint[deformable_mesh->IndicesSize];
+		memcpy(deformable_mesh->Indices, resource_mesh->Indices, deformable_mesh->IndicesSize * sizeof(uint));
+	}*/
+	
 
 	for (uint i = 0; i < resource_mesh->VerticesSize; ++i)
 	{
