@@ -7,7 +7,6 @@
 class lua_State;
 class GameObject;
 class ComponentScript;
-struct ScriptFile;
 struct ScriptInstance;
 
 enum _AppState;
@@ -23,7 +22,6 @@ public:
 	bool JustCompile(std::string absolute_path);
 	void CompileScriptTableClass(ScriptInstance* script);
 	void SendScriptToModule(ComponentScript* script_component);
-	ScriptFile* AddScriptFile(ComponentScript* script_component, std::string full_file_path);
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NullifyScriptInstanceWithParentComponent(ComponentScript* script_component);
@@ -55,7 +53,6 @@ private:
 
 	void CleanUpInstances();
 
-	std::vector<ScriptFile*> script_files;
 	std::vector<ScriptInstance*> recompiled_instances;
 	std::vector<ScriptInstance*> class_instances;
 };

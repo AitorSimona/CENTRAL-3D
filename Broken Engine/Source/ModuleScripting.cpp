@@ -285,28 +285,6 @@ void ModuleScripting::SendScriptToModule(ComponentScript * script_component)
 	CompileScriptTableClass(s_instance); //Compile so we can give the instance its table/class reference
 }
 
-ScriptFile* ModuleScripting::AddScriptFile(ComponentScript* script_component, std::string full_file_path)
-{
-	ScriptFile* ret = nullptr;
-	std::string filename;
-	App->fs->SplitFilePath(full_file_path.data(),nullptr,&filename,nullptr);
-	for (std::vector<ScriptFile*>::iterator it = script_files.begin(); it != script_files.end(); ++it)
-	{
-		//If this file is already in our list of files
-		Resource* res = (Resource*)script_component->script;
-		if ((*it)->resource_uid == res->GetUID())
-		{
-			return (*it);
-		}
-	}
-
-	ScriptFile* new_file = new ScriptFile;
-	script_files.push_back(new_file);
-	ret = new_file;
-
-	return ret;
-}
-
 //FILL the ScriptVars of the component associated with this script
 void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance * script)
 {
