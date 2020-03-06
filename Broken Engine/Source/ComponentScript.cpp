@@ -1,5 +1,4 @@
 #include "ComponentScript.h"
-//#include "ResourceScript.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
@@ -179,7 +178,7 @@ json ComponentScript::Save() const
 
 void ComponentScript::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceScript"];
+	std::string path = node["Resources"]["ResourceScript"].is_null() ? "0" : node["Resources"]["ResourceScript"];
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
@@ -190,48 +189,12 @@ void ComponentScript::Load(json& node)
 		if (meta)
 			script = (ResourceScript*)App->resources->GetResource(meta->GetUID());
 
+		// this is being done in Assign script!!!
+
 		// --- We want to be notified of any resource event ---
-		if (script)
-			script->AddUser(GO);
+		//if (script)
+		//	script->AddUser(GO); 
 
 		AssignScript((ResourceScript*)this->script);
 	}
 }
-
-//void ComponentScript::Save(json & file)
-//{
-//	file["UID"] = this->UID;
-//	file["Active"] = this->active;
-//	file["Script_name"] = this->script_name.c_str();
-//	if (this->script != nullptr)
-//	{
-//		file["Resource_UID"] = this->script->GetUID();
-//		file["Script_Path"] = this->script->relative_path;
-//	}
-//}
-//
-//void ComponentScript::Load(json & file)
-//{
-//	this->UID = file["UID"];
-//	uint32 uid = file["Resource_UID"];
-//	this->active = file["Active"];
-//	std::string name_of_script = file["Script_name"];
-//	std::string path_of_script = file["Script_Path"];
-//
-//	this->script_name = name_of_script;
-//
-//	script = (ResourceScript*)App->resources->Get(uid);
-//	if (script != nullptr)
-//	{
-//		script->AddReference();
-//	}
-//	else
-//	{
-//		script = (ResourceScript*)App->resources->CreateNewResource(Resource::SCRIPT, uid);
-//	}
-//	script->script_name = name_of_script;
-//	script->relative_path = path_of_script;
-//	script->absolute_path = App->file_system->GetPathToGameFolder(true) + path_of_script;
-//
-//	App->scripting->SendScriptToModule(this,path_of_script);
-//}

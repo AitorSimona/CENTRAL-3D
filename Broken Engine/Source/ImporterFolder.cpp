@@ -35,7 +35,6 @@ Resource* ImporterFolder::Import(ImportData& IData) const
 	if (meta)
 		IMeta->Save(meta);
 
-	App->resources->AddResourceToFolder(folder);
 
 	return folder;
 }

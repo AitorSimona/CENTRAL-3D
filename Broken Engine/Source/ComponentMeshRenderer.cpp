@@ -388,7 +388,7 @@ json ComponentMeshRenderer::Save() const
 
 void ComponentMeshRenderer::Load(json& node)
 {
-	std::string mat_path = node["Resources"]["ResourceMaterial"];
+	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
@@ -400,7 +400,7 @@ void ComponentMeshRenderer::Load(json& node)
 			material->Release();
 
 		if(meta)
-		material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
+			material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
 
 		// --- We want to be notified of any resource event ---
 		if (material)
