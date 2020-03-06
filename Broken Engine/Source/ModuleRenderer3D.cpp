@@ -217,7 +217,6 @@ bool ModuleRenderer3D::CleanUp()
 	delete linepointShader;
 	delete ZDrawerShader;
 	delete OutlineShader;
-	delete screenShader;
 
 	glDeleteFramebuffers(1, &fbo);
 	glDeleteVertexArrays(1, &quadVAO);
@@ -304,35 +303,6 @@ void ModuleRenderer3D::CreateFramebuffer()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
-void ModuleRenderer3D::RenderFramebuffer() 
-{
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	// clear all relevant buffers
-	float backColor = 0.65f;
-	glClearColor(backColor, backColor, backColor, 1.0f); // set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	//screenShader->use();
-
-	glBindVertexArray(quadVAO);
-	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
-	glBindTexture(GL_TEXTURE_2D, rendertexture);	// use the color attachment texture as the texture of the quad plane
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-
-	glEnable(GL_DEPTH_TEST);
-	defaultShader->use();
-}
-
-//void ModuleRenderer3D::NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex)
-//{
-//	glGenBuffers(1, (GLuint*)&(id_vertex));
-//	glBindBuffer(GL_ARRAY_BUFFER, id_vertex);
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * size * 3, vertex, GL_STATIC_DRAW);
-//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-//}
-
 
 bool ModuleRenderer3D::SetVSync(bool vsync)
 {
@@ -540,28 +510,4 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
 	defaultShader->name = "Standard";
 	defaultShader->use();
-
-	const char* screenVertexShader =
-		"#version 440 core \n"
-		"layout (location = 0) in vec2 aPos\n"
-		"layout (location = 1) in vec2 aTexCoords; \n"
-		"out vec2 TexCoords; \n"
-		"void main(){ \n"
-		"gl_position = vec4(aPos.x, aPos.y, 0.0, 1.0); \n"
-		"TexCoords = aTexCoords; \n"
-		"} \n"
-		;
-
-	const char* screenFragmentShader =
-		"#version 440 core \n"
-		"out vec4 FragColor;\n"
-		"in vec2 TexCoords; \n"
-		"uniform sampler2D screenTexture; \n"
-		"void main(){ \n"
-		"FragColor = texture(screenTexture, TexCoords); \n"
-		"} \n"
-		;
-
-	screenShader = new ResourceShader(screenVertexShader, screenFragmentShader, false);
-	screenShader->name = "Screen";
 }

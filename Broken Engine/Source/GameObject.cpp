@@ -85,7 +85,7 @@ void GameObject::Update(float dt)
 
 	for (int i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetActive())
+		if (components[i] && components[i]->GetActive())
 			components[i]->Update();
 	}
 
@@ -248,7 +248,7 @@ GameObject* GameObject::GetAnimGO(GameObject* GO)
 
 }
 
-Component * GameObject::AddComponent(Component::ComponentType type)
+Component * GameObject::AddComponent(Component::ComponentType type, int index)
 {
 	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 19, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
@@ -328,7 +328,30 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		}
 
 		if (component)
-			components.push_back(component);
+		{
+			// --- If index was specified, insert ---
+			if (index >= 0)
+			{
+				// --- Reserve needed space, note that we may leave empty spaces!!! ---
+				if(index+1 > components.size())
+				components.resize(index+1);
+
+
+				// --- Delete element at given index ---
+				if (components[index])
+				{
+					delete components[index];
+					components[index] = nullptr;
+				}
+					
+				// --- Insert element at given index ---
+				components[index] = component;
+			}
+			// --- Else push back ---
+			else 
+				components.push_back(component);
+
+		}
 
 	}
 	else
@@ -347,7 +370,7 @@ void GameObject::RemoveComponent(Component::ComponentType type)
 
 	for (uint i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetType() == type)
+		if (components[i] && components[i]->GetType() == type)
 		{
 			std::vector<Component*>::iterator it = components.begin();
 			it += i;
@@ -366,7 +389,7 @@ Component* GameObject::HasComponent(Component::ComponentType type) const
 
 	for (uint i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetType() == type)
+		if (components[i] && components[i]->GetType() == type)
 		{
 			component = components[i];
 			break;

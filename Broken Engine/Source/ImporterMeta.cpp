@@ -44,7 +44,10 @@ Resource* ImporterMeta::Load(const char* path) const
 		return nullptr;
 
 	uint UID = 0;
-	uint fileFormatv = fileFormatVersion.get<uint>();
+	uint fileFormatv = 0;
+	
+	if(!fileFormatVersion.is_null())
+		fileFormatv = fileFormatVersion.get<uint>();
 
 	// --- Retrieve UID ---
 	if (fileFormatv == 2) // EXAMPLE of usage of deprecated functionality 

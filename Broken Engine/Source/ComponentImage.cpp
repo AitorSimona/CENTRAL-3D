@@ -36,8 +36,11 @@ ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, C
 
 ComponentImage::~ComponentImage()
 {
-	if(texture)
-	texture->Release();
+	if (texture)
+	{
+		texture->Release();
+		texture->RemoveUser(GO);
+	}
 }
 
 void ComponentImage::Draw()
@@ -116,17 +119,20 @@ json ComponentImage::Save() const
 
 void ComponentImage::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceTexture"];
+	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
 	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
 
-	std::string position2Dx = node["position2Dx"];
-	std::string position2Dy = node["position2Dy"];
+	if (texture)
+		texture->AddUser(GO);
 
-	std::string size2Dx = node["size2Dx"];
-	std::string size2Dy = node["size2Dy"];
+	std::string position2Dx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
+	std::string position2Dy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
+
+	std::string size2Dx = node["size2Dx"].is_null() ? "0" : node["size2Dx"];
+	std::string size2Dy = node["size2Dy"].is_null() ? "0" : node["size2Dy"];
 
 	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
 	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));

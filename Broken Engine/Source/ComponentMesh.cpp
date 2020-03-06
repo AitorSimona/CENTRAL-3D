@@ -57,7 +57,7 @@ json ComponentMesh::Save() const
 
 void ComponentMesh::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceMesh"];
+	std::string path = node["Resources"]["ResourceMesh"].is_null() ? "" : node["Resources"]["ResourceMesh"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 

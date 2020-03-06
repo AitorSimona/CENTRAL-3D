@@ -154,7 +154,7 @@ json ComponentAnimation::Save() const
 
 void ComponentAnimation::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceAnimation"];
+	std::string path = node["Resources"]["ResourceAnimation"].is_null() ? "0" : node["Resources"]["ResourceAnimation"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
@@ -170,7 +170,7 @@ void ComponentAnimation::Load(json& node)
 
 	//--- Loading animations ---
 
-	std::string size = node["Animations"]["Size"];
+	std::string size = node["Animations"]["Size"] ? "0" : node["Animations"]["Size"];
 	int anim_size = std::stoi(size);
 
 	std::string blend_time = node ["Aniamtions"]["BlendTime"];
@@ -180,11 +180,11 @@ void ComponentAnimation::Load(json& node)
 	for (int i = 0; i < anim_size; ++i)
 	{
 		std::string iterator = std::to_string(i);
-		std::string name = node["Animations"][iterator]["Name"];
-		std::string start = node["Animations"][iterator]["Start"];
-		std::string end = node["Animations"][iterator]["End"];
-		bool loop = node["Animations"][iterator]["Loop"];
-		bool Default = node["Animations"][iterator]["Default"];
+		std::string name = node["Animations"][iterator]["Name"].is_null() ? "" : node["Animations"][iterator]["Name"];
+		std::string start = node["Animations"][iterator]["Start"].is_null() ? "" : node["Animations"][iterator]["Start"];
+		std::string end = node["Animations"][iterator]["End"].is_null() ? "" : node["Animations"][iterator]["End"];
+		bool loop = node["Animations"][iterator]["Loop"].is_null() ? false : node["Animations"][iterator]["Loop"];
+		bool Default = node["Animations"][iterator]["Default"].is_null() ? false : node["Animations"][iterator]["Default"];
 
 		CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
 		
