@@ -133,6 +133,10 @@ public:
 	//Audio
 	void PlayAttackSound();
 	void PlayStepSound();
+	void StopAttackSound();
+	void StopStepSound();
+
+
 
 	void SetVolume(float volume);
 

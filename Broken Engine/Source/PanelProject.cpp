@@ -93,7 +93,7 @@ bool PanelProject::Draw()
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
 
 		int imageSize_modifier = imageSize_px;
-		ImGui::SetNextItemWidth(100.0f);
+		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x * 0.1f);
 		if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64))
 		{
 			imageSize_px = imageSize_modifier;
@@ -293,7 +293,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		const std::vector<ResourceFolder*>* directories = &folder->GetChilds();
 		uint i = 0;
 		uint row = 0;
-		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px);
+		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px + 1);
 		ImVec4 color = ImVec4(255, 255, 255, 255);
 
 		ImVec2 vec = ImGui::GetCursorPos();
@@ -348,10 +348,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			ImGui::PopID();
 
-			if ((i + 1) % maxColumns == 0)
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
-			else
-				ImGui::SameLine();
 
 			i++;
 		}
@@ -367,24 +365,13 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 			DrawFile(*it, i, row, vec, color);
 
-			bool opened = false;
-
 			// --- Draw model childs ---
 			if ((*it)->GetType() == Resource::ResourceType::MODEL)
 			{
-				opened = true;
-
-				if ((i + 1) % maxColumns == 0)
-					row++;
-				else
-					ImGui::SameLine();
-
-				i++;
-
 				uint arrowSize = imageSize_px / 4;
 
-				ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px/1.1) + imageSize_px/10);
-				ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px/2);
+				ImGui::SetCursorPosX(vec.x + ((i + 1) - row * maxColumns) * (imageSize_px + item_spacingX_px));
+				ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + arrowSize*1.5);
 
 				ResourceModel* model = (ResourceModel*)*it;
 
@@ -397,8 +384,13 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 					uvy = { 0,1 };
 				}
 
+				// --- Force new uid so imgui does not block all buttons after the first one ---
+				ImGui::PushID((*it)->GetUID() + i);
+
 				if (ImGui::ImageButton((ImTextureID)App->gui->playbuttonTexID, ImVec2(arrowSize, arrowSize), uvx, uvy, 0))
 					model->openInProject = !model->openInProject;
+
+				ImGui::PopID();
 
 				if (model->openInProject)
 				{
@@ -406,25 +398,20 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 					for (std::vector<Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
 					{
-						DrawFile(*res, i, row, vec, color, true);
-
-						if ((i + 1) % maxColumns == 0)
+						if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 							row++;
-						else
-							ImGui::SameLine();
 
 						i++;
+
+						DrawFile(*res, i, row, vec, color, true);
 					}
 				}
 
 			}
 
-			if ((i + 1) % maxColumns == 0)
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
-			else
-				ImGui::SameLine();
 
-			if(!opened)
 			i++;
 		}
 	}

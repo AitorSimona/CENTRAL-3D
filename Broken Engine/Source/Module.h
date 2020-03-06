@@ -12,7 +12,7 @@ private :
 
 public:
 
-	Module(bool start_enabled = true)
+	Module(bool start_enabled = true) : enabled(start_enabled)
 	{}
 
 	virtual ~Module()
@@ -58,6 +58,11 @@ public:
 	virtual void SaveStatus(json &file) const {}
 
 	virtual void LoadStatus(const json & file) {}
+
+	virtual bool isEnabled() const 
+	{
+		return enabled;
+	}
 
 protected:
 

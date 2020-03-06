@@ -15,7 +15,7 @@
 #include "ModulePhysics.h"
 #include "ComponentCamera.h"
 #include "ComponentBone.h"
-
+#include "ModuleUI.h"
 
 #include "ModuleGui.h"
 
@@ -68,18 +68,17 @@ bool ModuleSceneManager::Init(json file)
 	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, ONGameObjectDestroyed);
 	App->event_manager->AddListener(Event::EventType::Resource_selected, ONResourceSelected);
 
-
 	return true;
 }
 
 bool ModuleSceneManager::Start()
 {
 	// --- Create primitives ---
-	cube = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCube");
-	sphere = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultSphere");
-	capsule = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCapsule");
-	plane = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultPlane");
-	cylinder = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCylinder");
+	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 0);
+	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 1);
+	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 2);
+	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 3);
+	cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 4);
 
 	CreateCube(1, 1, 1, cube);
 	CreateSphere(1.0f, 25, 25, sphere);
@@ -103,6 +102,11 @@ bool ModuleSceneManager::Start()
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
 
+
+	#ifdef BE_GAME_BUILD
+	//App->GetAppState() = AppState::TO_PLAY;
+	LoadStatus(App->GetConfigFile());
+	#endif
 
 	return true;
 }
@@ -236,6 +240,7 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 
 void ModuleSceneManager::Draw()
 {
+	#ifndef BE_GAME_BUILD
 	// --- Draw Grid ---
 	DrawGrid(true, 75.0f);
 
@@ -243,12 +248,15 @@ void ModuleSceneManager::Draw()
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	#endif
 	// --- Draw Game Object Meshes ---
 	DrawScene();
 
+	#ifndef BE_GAME_BUILD
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	#endif BE_GAME_BUILD
 }
 
 void ModuleSceneManager::DrawScene()
@@ -446,6 +454,35 @@ void ModuleSceneManager::SaveStatus(json & file) const
 
 void ModuleSceneManager::LoadStatus(const json & file)
 {
+#ifdef BE_GAME_BUILD
+	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
+		
+		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, file["SceneManager"]["MainScene"]);
+		if (scene != nullptr) {
+			SetActiveScene(scene);
+			scene->LoadToMemory();
+			if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
+				GameObject* camera;
+				std::string cameraName = file["Camera3D"]["MainCamera"];
+				camera = scene->GetGOWithName(cameraName.c_str());
+				if (camera != nullptr) {
+					ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
+					if (camera_component != nullptr) {
+						App->renderer3D->SetActiveCamera(camera_component);
+						App->renderer3D->SetCullingCamera(camera_component);
+						/*	App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
+							App->renderer3D->culling_camera = camera->GetComponent<ComponentCamera>();*/
+					}
+				}
+			}
+			else
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main camera for game.", );
+		}
+	}
+	else {
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
+	}
+#endif
 }
 
 void ModuleSceneManager::SaveScene(ResourceScene* scene)
@@ -488,6 +525,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 
 			// --- Clear root ---
 			root->childs.clear();
+
+			App->ui_system->Clear();
 		}
 
 		currentScene = scene; // force this so gos are not added to another scene

@@ -17,7 +17,6 @@
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 
-#include "PanelScene.h"
 #include "mmgr/mmgr.h"
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
@@ -60,10 +59,23 @@ bool ModuleCamera3D::CleanUp()
 	return true;
 }
 
+void ModuleCamera3D::LoadStatus(const json& file) 
+{
+	//#ifdef BE_GAME_BUILD
+	//if (file["Camera3D"].find("ActiveCamera") != file["Camera3D"].end()) {
+	//	ResourceScene* scene = (ResourceScene*)App->resources->GetResource(file["SceneManager"]["MainScene"]);
+	//	SetActiveScene(scene);
+	//}
+	//else {
+	//	ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
+	//}
+	//#endif
+}
+
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered)
+	if (App->GetAppState() == AppState::EDITOR && App->gui->hoveringScene)
 	{
 		m_CameraSpeedDeltaTime = m_CameraSpeed * dt;
 		m_ScrollSpeedDeltaTime = m_ScrollSpeed * dt;
@@ -78,7 +90,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 void ModuleCamera3D::UpdateCamera()
 {
-	if (App->GetAppState() == AppState::EDITOR && App->gui->panelScene->SceneHovered)
+	if (App->GetAppState() == AppState::EDITOR && App->gui->hoveringScene)
 	{
 		float3 newPos(0, 0, 0);
 
@@ -113,12 +125,7 @@ void ModuleCamera3D::UpdateCamera()
 
 		// --- Orbit Object ---
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
-		{
-			if (GameObject* GO = App->scene_manager->GetSelectedGameObject())
-				CameraLookAround(m_CameraSpeedDeltaTime, GO->GetComponent<ComponentTransform>()->GetPosition());
-			else
-				CameraLookAround(m_CameraSpeedDeltaTime, reference);
-		}
+			CameraLookAround(m_CameraSpeedDeltaTime, reference);
 
 		// --- Frame object ---
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
@@ -130,11 +137,11 @@ void ModuleCamera3D::UpdateCamera()
 		}
 		
 
-		App->scene_manager->CreateGrid(camera->frustum.Pos().Length());
+		//App->scene_manager->CreateGrid(camera->frustum.Pos().Length()); // rip adaptive grid
 	}
 
 	// --- Mouse picking ---
-	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && App->gui->panelScene->SceneHovered)
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && App->gui->hoveringScene)
 	{
 		float mouse_x = App->input->GetMouseX();
 		float mouse_y = App->input->GetMouseY();
@@ -147,8 +154,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 {
 	// MYTODO: Make this easy to understand / explain
 	// Scene window relative coords
-	float normalized_x = (mouse_x - App->gui->panelScene->posX) / App->gui->panelScene->width * (float)App->window->GetWindowWidth();
-	float normalized_y = (mouse_y - App->gui->panelScene->posY) / App->gui->panelScene->height * (float)App->window->GetWindowHeight();
+	float normalized_x = (mouse_x - App->gui->sceneX) / App->gui->sceneWidth * (float)App->window->GetWindowWidth();
+	float normalized_y = (mouse_y - App->gui->sceneY) / App->gui->sceneHeight * (float)App->window->GetWindowHeight();
 
 	// mouse pos in range -1 - 1
 	normalized_x = ((normalized_x / (float)App->window->GetWindowWidth()) - 0.5) * 2;
@@ -170,6 +177,9 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 	{
 		ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 		ComponentMesh* mesh = GO->GetComponent<ComponentMesh>();
+
+		if (transform)
+			FrameObject(transform->GetGlobalPosition());
 
 		if (mesh && mesh->resource_mesh)
 		{

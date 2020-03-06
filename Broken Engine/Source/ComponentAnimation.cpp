@@ -318,12 +318,11 @@ void ComponentAnimation::DoBoneLink()
 
 void ComponentAnimation::UpdateJointsTransform()
 {
-	for (int i = 0; i < links.size(); i++)
+	for (int i = 0; i < links.size() && playing_animation != nullptr; i++)
 	{
 		ComponentTransform* trans = links[i].gameObject->GetComponent<ComponentTransform>();
 
 		// ----------------------- Frame count managment -----------------------------------
-
 		Frame = playing_animation->start + (time * playing_animation->speed);
 		if (Frame >= playing_animation->end)
 		{
