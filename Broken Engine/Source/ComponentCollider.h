@@ -60,6 +60,7 @@ public:
 	float3 originalSize = float3::one;
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
+	float3 originalOffset = float3::zero;
 
 private:
 	physx::PxShape* shape = nullptr;
