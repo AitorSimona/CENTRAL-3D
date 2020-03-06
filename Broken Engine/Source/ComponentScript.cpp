@@ -153,26 +153,34 @@ json ComponentScript::Save() const
 	json node;
 	node["Resources"]["ResourceScript"];
 
-	// --- Store path to component file ---
+	// Store path to component file
 	if(script)
 		node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
 
+	// Save the public variables of the script
+	char name[50];
+	node["Script variables"]["Count"] = script_variables.size();
+
 	for (int i = 0; i < script_variables.size(); ++i) {
+
+		sprintf_s(name, 50, "Variable %d", i);
+		node["Script variables"][name]["Name"] = script_variables[i].name.c_str();
+
 		switch (script_variables[i].type) 
 		{
 		case VarType::BOOLEAN:
-			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Type"] = "Boolean";
-			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Value"] = script_variables[i].editor_value.as_boolean;
+			node["Script variables"][name]["Type"] = "Boolean";
+			node["Script variables"][name]["Value"] = script_variables[i].editor_value.as_boolean;
 			break;
 
 		case VarType::DOUBLE:
-			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Type"] = "Double";
-			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Value"] = script_variables[i].editor_value.as_double;
+			node["Script variables"][name]["Type"] = "Double";
+			node["Script variables"][name]["Value"] = script_variables[i].editor_value.as_double;
 			break;
 
 		case VarType::STRING:
-			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Type"] = "String";
-			node["Resources"]["Variables"][script_variables[i].name.c_str()]["Value"] = script_variables[i].editor_value.as_string;
+			node["Script variables"][name]["Type"] = "String";
+			node["Script variables"][name]["Value"] = script_variables[i].editor_value.as_string;
 			break;
 		}
 	}
@@ -198,5 +206,34 @@ void ComponentScript::Load(json& node)
 			script->AddUser(GO);
 
 		AssignScript((ResourceScript*)this->script);
+	}
+
+	// Load the public variables of the script
+	char name[50];
+	uint cnt = node["Script variables"]["Count"];
+
+	for (int i = 0; i < cnt; ++i) {
+
+		sprintf_s(name, 50, "Variable %d", i);
+		json js1 = node["Script variables"][name]["Name"];
+		script_variables[i].name = js1.get<std::string>(); 
+
+		json js2 = node["Script variables"][name]["Type"];
+		std::string type = js2.get<std::string>();
+
+		if (type.compare("Boolean") == 0) {
+			script_variables[i].type = VarType::BOOLEAN;
+			script_variables[i].editor_value.as_boolean = node["Script variables"][name]["Value"];
+		}
+		else if (type.compare("Double") == 0) {
+			script_variables[i].type = VarType::DOUBLE;
+			script_variables[i].editor_value.as_double = node["Script variables"][name]["Value"];
+		} 
+		else if (type.compare("String") == 0) {
+			script_variables[i].type = VarType::STRING;
+			json js3 = node["Script variables"][name]["Value"];
+			std::string as_string = js3.get<std::string>();
+			script_variables[i].ChangeEditorValue(as_string.c_str());
+		}
 	}
 }
