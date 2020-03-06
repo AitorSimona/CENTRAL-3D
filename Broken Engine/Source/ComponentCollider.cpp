@@ -176,20 +176,20 @@ void ComponentCollider::UpdateLocalMatrix() {
 	PxQuat quati(rot.x, rot.y, rot.z, rot.w);
 	PxTransform transform(posi, quati);
 
-	//if (!dynamicRB)
-	//	rigidStatic->setGlobalPose(transform); //ON EDITOR
-	//else
-	//{
-	//	if (ImGuizmo::IsUsing() || cTransform->updateValues) { //ON EDITOR
-	//		dynamicRB->rigidBody->setGlobalPose(transform);
-	//	}
-	//	else {
-	//		if (dynamicRB->rigidBody != nullptr) //ON GAME
-	//		{
-	//			UpdateTransformByRigidBody(dynamicRB, cTransform);
-	//		}
-	//	}
-	//}
+	if (!dynamicRB)
+		rigidStatic->setGlobalPose(transform); //ON EDITOR
+	else
+	{
+		if (ImGuizmo::IsUsing() || cTransform->updateValues) { //ON EDITOR
+			dynamicRB->rigidBody->setGlobalPose(transform);
+		}
+		else {
+			if (dynamicRB->rigidBody != nullptr) //ON GAME
+			{
+				UpdateTransformByRigidBody(dynamicRB, cTransform);
+			}
+		}
+	}
 }
 
 void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {	
