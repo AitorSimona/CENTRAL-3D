@@ -575,6 +575,10 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 	float3 tScale = transform->GetScale();
 
+	float3 pos, scale;
+	Quat quat;
+	transform->GetGlobalTransform().Decompose(pos, quat, scale);
+
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
 		
@@ -595,13 +599,13 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 				GO->UpdateAABB();
 
-				originalSize = GO->GetOBB().Size().Div(transform->GetScale());
+				originalSize = GO->GetOBB().Size().Div(scale);
 
 				center = GO->GetAABB().CenterPoint();
 
 			}
 
-			boxGeometry = PxBoxGeometry(PxVec3(originalSize.x * tScale.x * colliderSize.x * 0.5, originalSize.y * tScale.y * colliderSize.y * 0.5, originalSize.z * tScale.z * colliderSize.z * 0.5));
+			boxGeometry = PxBoxGeometry(PxVec3(originalSize.x * scale.x * colliderSize.x * 0.5, originalSize.y * scale.y * colliderSize.y * 0.5, originalSize.z * scale.z * colliderSize.z * 0.5));
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
@@ -614,9 +618,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				App->physics->mScene->addActor(*rigidStatic);
 			}
 
-			float3 pos, scale;
-			Quat quat;
-			transform->GetGlobalTransform().Decompose(pos, quat, scale);
+			
 
 			if (!firstCreation)
 			{
@@ -627,8 +629,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				
 				center = GO->GetAABB().CenterPoint();
 				float3 dir = center - transform->GetGlobalPosition();
-
-
 				float3 dir2 = quat.Inverted().Mul(dir); // rotate it
 				offset = (dir2.Div(scale));// +transform->GetGlobalPosition()); // calculate rotated vector
 				//offset = center.Div(transform->GetScale()) - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
