@@ -105,6 +105,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="ComponentButton.h" />
     <ClInclude Include="ComponentCanvas.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentAnimation.h" />
@@ -298,6 +299,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="ComponentButton.cpp" />
     <ClCompile Include="ComponentCanvas.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentAnimation.cpp" />

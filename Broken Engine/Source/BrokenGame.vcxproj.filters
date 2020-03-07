@@ -687,6 +687,9 @@
     <ClInclude Include="RandomGenerator.h">
       <Filter>Sources\Tools\Random</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentButton.h">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Color.cpp">
@@ -1063,6 +1066,9 @@
     </ClCompile>
     <ClCompile Include="RandomGenerator.cpp">
       <Filter>Sources\Tools\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentButton.cpp">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

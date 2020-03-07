@@ -58,12 +58,12 @@ void ComponentCanvas::Draw() const
 				image->Draw();
 			continue;
 		}
-		//else if (elements[i]->GetType() == Component::ComponentType::Button)
-		//{
-		//	Button* elem = (Button*)elements[i];
-		//	if (elem->visible) 
-		//		elem->Draw();
-		//}
+		else if (elements[i]->GetType() == Component::ComponentType::Button)
+		{
+			ComponentButton* button = (ComponentButton*)elements[i];
+			if (button->visible) 
+				button->Draw();
+		}
 		//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
 		//{
 		//	CheckBox* elem = (CheckBox*)elements[i];

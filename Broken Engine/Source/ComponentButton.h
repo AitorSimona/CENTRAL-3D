@@ -1,8 +1,8 @@
 #pragma once
 #include "Component.h"
 #include "ComponentCanvas.h"
-#include "ComponentImage.h"
-#include "ComponentText.h"
+
+class ResourceTexture;
 
 class ComponentButton : public Component
 {
@@ -41,10 +41,11 @@ public:
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 
+	State state = NOTHING;
+
 public:
 	ComponentCanvas* canvas = nullptr;
-	ResourceTexture* img_texture = nullptr;
-	ResourceTexture* txt_texture = nullptr;
+	ResourceTexture* texture = nullptr;
 
 private:
 	Color idle_color = { 1.0f, 1.0f, 1.0f, 1.0f };

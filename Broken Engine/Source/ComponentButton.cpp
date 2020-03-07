@@ -2,8 +2,24 @@
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
+#include "ModuleUI.h"
 #include "ModuleTextures.h"
+#include "PanelScene.h"
+#include "ModuleGui.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
+#include "ModuleSceneManager.h"
+#include "ModuleFileSystem.h"
 
+#include "ComponentCamera.h"
+#include "ComponentTransform.h"
+//#include "ModuleWindow.h"
+
+#include "ResourceShader.h"
+#include "ResourceTexture.h"
+
+#include "Math.h"
+#include "ResourceMesh.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
@@ -15,7 +31,7 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 	draggable = false;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	img_texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 
 	//font.init("Assets/Fonts/Dukas.ttf", font_size);
 	//font.path = "Assets/Fonts/Dukas.ttf";
@@ -25,42 +41,69 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 
 ComponentButton::~ComponentButton()
 {
-	if (img_texture)
-		img_texture->Release();
-
-	if (txt_texture)
-		txt_texture->Release();
+	if (texture)
+	texture->Release();
 }
 
 void ComponentButton::Draw()
 {
-	//glPushMatrix();
-	//glLoadIdentity();
+	// --- Update transform and rotation to face camera ---
+	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
 
-	//glTranslatef(position2D.x, position2D.y, 1);
-	//glMultTransposeMatrixf(camera->origin_view_matrix);
+	// --- Frame image with camera ---
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+		float3(size2D, 1));
 
-	//glColorColorF(color);
+	float3 Movement = App->renderer3D->active_camera->frustum.Front();
+	float3 camera_pos = frustum_pos;
 
-	//glBindTexture(GL_TEXTURE_2D, material->tex_id);
-	//glEnable(GL_TEXTURE_2D);
-	//glBegin(GL_QUADS);
-	//// Draw A  textured Quad
-	//glTexCoord2i(0, 0); glVertex2f(-size2D.x, -size2D.y);    // Top Left		glVertex2i(100, 100);
-	//glTexCoord2i(0, 1); glVertex2f(-size2D.x, size2D.y);    // Top Right		glVertex2i(100, 500);
-	//glTexCoord2i(1, 1); glVertex2f(size2D.x, size2D.y);    // Bottom Right	glVertex2i(500, 500);
-	//glTexCoord2i(1, 0); glVertex2f(size2D.x, -size2D.y);    // Bottom Left	glVertex2i(500, 100);
+	if (Movement.IsFinite())
+		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
 
-	//glDisable(GL_TEXTURE_2D);
-	//glBindTexture(GL_TEXTURE_2D, 0);
+	// --- Set Uniforms ---
+	glUseProgram(App->renderer3D->defaultShader->ID);
 
-	//glEnd();
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
-	//glPopMatrix();
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+
+	// --- Draw plane with given texture ---
+	glBindVertexArray(App->scene_manager->plane->VAO);
+
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
+	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+
+
+	// --- Set camera back to original position ---
+	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 
 	//glColorColorF(text_color);
 	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
 
+	// --- Update color depending on state ---
 	//if (state == IDLE) ChangeColor(idle_color);
 	//if (state == HOVERED) ChangeColor(hovered_color);
 	//if (state == SELECTED || state == DRAGGING) ChangeColor(selected_color);
@@ -124,10 +167,10 @@ void ComponentButton::CreateInspectorNode()
 		ImGui::Separator();
 		ImGui::Text("Image");
 
-		if (img_texture == nullptr)
+		if (texture == nullptr)
 			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
 		else
-			ImGui::Image((ImTextureID)img_texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
+			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
 
 		//drag and drop
 		if (ImGui::BeginDragDropTarget())
@@ -139,10 +182,10 @@ void ComponentButton::CreateInspectorNode()
 
 				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
 				{
-					if (img_texture)
-						img_texture->Release();
+					if (texture)
+						texture->Release();
 
-					img_texture = (ResourceTexture*)App->resources->GetResource(UID);
+					texture = (ResourceTexture*)App->resources->GetResource(UID);
 				}
 			}
 			ImGui::EndDragDropTarget();

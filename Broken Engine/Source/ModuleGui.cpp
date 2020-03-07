@@ -17,10 +17,10 @@
 #include "ComponentCanvas.h"
 #include "ComponentImage.h"
 #include "ComponentText.h"
-//#include "Button.h"
-//#include "CheckBox.h"
-//#include "InputText.h"
-//#include "ProgressBar.h"
+#include "ComponentButton.h"
+//#include "ComponentCheckBox.h"
+//#include "ComponentInputText.h"
+//#include "ComponentProgressBar.h"
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -256,16 +256,18 @@ update_status ModuleGui::Update(float dt)
 						GameObject* text_go = App->scene_manager->CreateEmptyGameObject();
 						ComponentText* text = (ComponentText*)text_go->AddComponent(Component::ComponentType::Text);
 					}
-					if (ImGui::MenuItem("Button", false, false, false))
+					if (ImGui::MenuItem("Button"))
+					{
+						GameObject* button_go = App->scene_manager->CreateEmptyGameObject();
+						ComponentText* button = (ComponentText*)button_go->AddComponent(Component::ComponentType::Button);
+					}
+					if (ImGui::MenuItem("Checkbox"))
 					{
 					}
-					if (ImGui::MenuItem("Checkbox", false, false, false))
+					if (ImGui::MenuItem("Input Text"))
 					{
 					}
-					if (ImGui::MenuItem("Input Text", false, false, false))
-					{
-					}
-					if (ImGui::MenuItem("Progress Bar", false, false, false))
+					if (ImGui::MenuItem("Progress Bar"))
 					{
 					}
 					ImGui::EndMenu();

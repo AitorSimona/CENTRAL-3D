@@ -4,7 +4,6 @@
 
 class ResourceTexture;
 
-
 class ComponentImage : public Component
 {
 public:
