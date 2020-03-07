@@ -157,13 +157,12 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.scaleZ = colliderSize.z * originalSize.z;
 	
 	globalMatrix = gt * localMatrix;
-	//globalMatrix = float4x4::FromTRS(localMatrix.TranslatePart(), globalMatrix.RotatePart(), float3(1,1,1));
 
 	//PHYSX DEBUG
 	float3 pos, scale;
 	Quat rot;
 	globalMatrix.Decompose(pos, rot, scale);
-	scale = cTransform->GetScale();
+	//scale = cTransform->GetScale();
 
 	if (!scale.Equals(tmpScale)) {
 		editCollider = true;
@@ -615,19 +614,27 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				App->physics->mScene->addActor(*rigidStatic);
 			}
 
+			float3 pos, scale;
+			Quat quat;
+			transform->GetGlobalTransform().Decompose(pos, quat, scale);
 
 			if (!firstCreation)
 			{
-				transform->SetRotation(q);
+				transform->SetRotation(q); //RESET TO ORIGNAL ROTATION
 				//transform->SetGlobalTransform(transform->Local_transform);
 				GO->UpdateAABB();
-				firstCreation = true;
+				firstCreation = true; 
+				
+				center = GO->GetAABB().CenterPoint();
 				float3 dir = center - transform->GetGlobalPosition();
-				float3 dir2 = transform->GetQuaternionRotation().Inverted().Mul(dir); // rotate it
-				offset = (dir2.Div(tScale));// +transform->GetGlobalPosition()); // calculate rotated vector
+
+
+				float3 dir2 = quat.Inverted().Mul(dir); // rotate it
+				offset = (dir2.Div(scale));// +transform->GetGlobalPosition()); // calculate rotated vector
 				//offset = center.Div(transform->GetScale()) - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
+
+				offset.Mul(scale);
 			}
-			offset.Mul(tScale);
 
 			UpdateLocalMatrix();
 
