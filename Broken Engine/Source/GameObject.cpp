@@ -252,9 +252,16 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 19, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
-	// --- Check if there is already a component of the type given ---
+	// --- Check if there is already a component of the type given --- & if it can be repeated
+	bool repeatable_component = false;
+	std::vector<int>::iterator it = App->scene_manager->repeatable_components.begin();
+	for (; it != App->scene_manager->repeatable_components.end(); ++it)
+	{
+		if ((int)type == (*it))
+			repeatable_component = true;
+	}
 
-	if (HasComponent(type) == nullptr)
+	if (HasComponent(type) == nullptr || repeatable_component == true)
 	{
 		switch (type)
 		{

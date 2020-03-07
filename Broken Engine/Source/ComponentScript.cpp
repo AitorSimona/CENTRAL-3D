@@ -40,7 +40,7 @@ void ComponentScript::CreateInspectorNode()
 {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-	std::string name = this->script_name + "(Script)";
+	std::string name = this->script_name + " (Script)";
 	ImGui::Checkbox("Active", &active); ImGui::SameLine();
 
 	if (ImGui::TreeNodeEx(name.data(), base_flags))
@@ -51,9 +51,7 @@ void ComponentScript::CreateInspectorNode()
 				App->gui->RequestBrowser(std::string(script->absolute_path).data());
 			}
 
-			char auxBuffer[256];
-
-			//Display Variables
+			// Display public variables
 			for (int i = 0; i < script_variables.size(); ++i)
 			{
 				std::string auxName = script_variables[i].name.c_str();
@@ -63,13 +61,12 @@ void ComponentScript::CreateInspectorNode()
 				VarType type = script_variables[i].type;
 				if (type == VarType::DOUBLE)
 				{
-					float auxVal(script_variables[i].editor_value.as_double_number);
+					float auxVal(script_variables[i].editor_value.as_double);
 
-					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f)) {
-						script_variables[i].editor_value.as_double_number = auxVal;
+					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f, 0.0f, 0.0f, "%.2f", 1.0f)) {
+						script_variables[i].editor_value.as_double = auxVal;
 						script_variables[i].changed_value = true;
 					}
-
 				}
 				else if (type == VarType::BOOLEAN)
 				{
@@ -78,22 +75,21 @@ void ComponentScript::CreateInspectorNode()
 				}
 				else if (type == VarType::STRING)
 				{
-					strcpy(auxBuffer, script_variables[i].editor_value.as_string);
+					char string[256];
+					strcpy(string, script_variables[i].editor_value.as_string);
 
-					ImGui::InputText(auxName.c_str(), auxBuffer, IM_ARRAYSIZE(auxBuffer));
+					ImGui::InputText(auxName.c_str(), string, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
 
-					if (strcmp(script_variables[i].editor_value.as_string, auxBuffer) != 0) {
-						strcpy(script_variables[i].editor_value.as_string, auxBuffer);
+					if (strcmp(script_variables[i].editor_value.as_string, string) != 0) {
+						strcpy(script_variables[i].editor_value.as_string, string);
 						script_variables[i].changed_value = true;
 					}
 				}
-
 			}
 		}
 
 		ImGui::TreePop();
 	}
-
 }
 
 void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
@@ -102,9 +98,6 @@ void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationTy
 	switch (type)
 	{
 	case Resource::ResourceNotificationType::Overwrite:
-		/*if (script && UID == script->GetUID())
-			script = (ResourceScript*)App->resources->GetResource(UID);*/
-
 		if(script && UID == script->GetUID())
 
 		break;
@@ -122,7 +115,7 @@ void ComponentScript::ONResourceEvent(uint UID, Resource::ResourceNotificationTy
 	}
 }
 
-//Assigns the resource to the component and sends the script to the module so it can be compiled & used
+// Assigns the resource to the component and sends the script to the module so it can be compiled & used
 void ComponentScript::AssignScript(ResourceScript* script_resource)
 {
 	if (script_resource != nullptr)
@@ -133,20 +126,8 @@ void ComponentScript::AssignScript(ResourceScript* script_resource)
 
 	script_name = this->script->script_name;
 
-	//Send Component info to scripting to create a Script Instance / Lua class
+	// Send Component info to scripting to create a Script Instance / Lua class
 	App->scripting->SendScriptToModule(this);
-	//MYTODO: D�dac trying to compile
-	/*ResourceScript* new_script = (ResourceScript*)App->resources->CreateNewResource(Resource::SCRIPT);
-	this->script = new_script;
-	std::string filename;
-	App->file_system->SplitFilePath(relative_path.data(),nullptr,&filename,nullptr);
-	this->script_name = filename;
-	this->script->script_name = filename;
-	this->script->relative_path = relative_path;
-
-	std::string absolute_path = App->file_system->GetPathToGameFolder(true) + relative_path;
-	this->script->absolute_path = absolute_path;
-	App->scripting->SendScriptToModule(this, absolute_path);*/
 }
 
 int ComponentScript::ScriptVarAlreadyInComponent(std::string name)
@@ -169,9 +150,37 @@ json ComponentScript::Save() const
 	json node;
 	node["Resources"]["ResourceScript"];
 
-	// --- Store path to component file ---
+	// Store path to component file
 	if(script)
-	node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
+		node["Resources"]["ResourceScript"] = std::string(script->GetResourceFile());
+
+	// Save the public variables of the script
+	char name[50];
+	node["Script variables"]["Count"] = script_variables.size();
+
+	for (int i = 0; i < script_variables.size(); ++i) {
+
+		sprintf_s(name, 50, "Variable %d", i);
+		node["Script variables"][name]["Name"] = script_variables[i].name.c_str();
+
+		switch (script_variables[i].type) 
+		{
+		case VarType::BOOLEAN:
+			node["Script variables"][name]["Type"] = "Boolean";
+			node["Script variables"][name]["Value"] = script_variables[i].editor_value.as_boolean;
+			break;
+
+		case VarType::DOUBLE:
+			node["Script variables"][name]["Type"] = "Double";
+			node["Script variables"][name]["Value"] = script_variables[i].editor_value.as_double;
+			break;
+
+		case VarType::STRING:
+			node["Script variables"][name]["Type"] = "String";
+			node["Script variables"][name]["Value"] = script_variables[i].editor_value.as_string;
+			break;
+		}
+	}
 
 	return node;
 }
@@ -196,5 +205,34 @@ void ComponentScript::Load(json& node)
 		//	script->AddUser(GO); 
 
 		AssignScript((ResourceScript*)this->script);
+	}
+
+	// Load the public variables of the script
+	char name[50];
+	uint cnt = node["Script variables"]["Count"];
+
+	for (int i = 0; i < cnt; ++i) {
+
+		sprintf_s(name, 50, "Variable %d", i);
+		json js1 = node["Script variables"][name]["Name"];
+		script_variables[i].name = js1.get<std::string>(); 
+
+		json js2 = node["Script variables"][name]["Type"];
+		std::string type = js2.get<std::string>();
+
+		if (type.compare("Boolean") == 0) {
+			script_variables[i].type = VarType::BOOLEAN;
+			script_variables[i].editor_value.as_boolean = node["Script variables"][name]["Value"];
+		}
+		else if (type.compare("Double") == 0) {
+			script_variables[i].type = VarType::DOUBLE;
+			script_variables[i].editor_value.as_double = node["Script variables"][name]["Value"];
+		} 
+		else if (type.compare("String") == 0) {
+			script_variables[i].type = VarType::STRING;
+			json js3 = node["Script variables"][name]["Value"];
+			std::string as_string = js3.get<std::string>();
+			script_variables[i].ChangeEditorValue(as_string.c_str());
+		}
 	}
 }
