@@ -15,7 +15,7 @@ public:
 
 	void AddResource(Resource* resource);
 	void RemoveResource(Resource* resource);
-	void SetParent(ResourceFolder* parent);
+	void AddChild(ResourceFolder* resource);
 	void RemoveChild(ResourceFolder* child);
 	std::vector<Resource*>& GetResources();
 	std::vector<ResourceFolder*>& GetChilds();
@@ -23,6 +23,7 @@ public:
 
 private:
 	bool HasResource(Resource* resource);
+	bool HasChild(ResourceFolder* resource);
 
 	std::vector<Resource*> resources;
 	std::vector<ResourceFolder*> childs;

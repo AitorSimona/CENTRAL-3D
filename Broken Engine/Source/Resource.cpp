@@ -70,7 +70,13 @@ void Resource::SetOriginalFile(const char* new_path) {
 	Repath();
 }
 
-bool Resource::IsInMemory() const {
+void Resource::SetResourceFile(const char* new_path)
+{
+	resource_file = new_path;
+}
+
+bool Resource::IsInMemory() const
+{
 	return instances >= 1;
 }
 

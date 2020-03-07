@@ -62,7 +62,7 @@ bool ModuleResourceManager::Start()
 	App->gui->CreateIcons();
 
 	// --- Create default scene ---
-	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene");
+	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene", 1);
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
 
 	// --- Create default material ---
@@ -122,7 +122,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 
 	// --- If parent is not nullptr add ourselves as childs ---
 	if (parent)
-		folder->SetParent(parent);
+		parent->AddChild(folder);
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it) {
 		SearchAssets(folder,(dir + (*it) + "/").c_str(), filters);
@@ -241,7 +241,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	if (resource)
 	{
-		if(type != Resource::ResourceType::FOLDER && type != Resource::ResourceType::META)
+		if(type != Resource::ResourceType::META)
 		AddResourceToFolder(resource);
 
 		ENGINE_CONSOLE_LOG("Imported successfully: %s", IData.path);
@@ -915,45 +915,20 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
 	App->fs->NormalizePath(extension, true);
 
-
 	Resource::ResourceType type = Resource::ResourceType::UNKNOWN;
 
-	if (extension == "")
-		type = Resource::ResourceType::FOLDER;
-
-	else if (extension == "scene")
-		type = Resource::ResourceType::SCENE;
-
-	else if (extension == "fbx" || extension == "model")
-		type = Resource::ResourceType::MODEL;
-
-	else if (extension == "mat")
-		type = Resource::ResourceType::MATERIAL;
-
-	else if (extension == "shader")
-		type = Resource::ResourceType::SHADER;
-
-	else if (extension == "dds" || extension == "png" || extension == "jpg")
-		type = Resource::ResourceType::TEXTURE;
-
-	else if (extension == "mesh")
-		type = Resource::ResourceType::MESH;
-
-	else if (extension == "bone")
-		type = Resource::ResourceType::BONE;
-
-	else if (extension == "anim")
-		type = Resource::ResourceType::ANIMATION;
-
-	else if (extension == "vertex" || extension == "fragment")
-		type = Resource::ResourceType::SHADER_OBJECT;
-
-	else if (extension == "lua")
-		type = Resource::ResourceType::SCRIPT;
-
-	else if (extension == "meta")
-		type = Resource::ResourceType::META;
-
+	type = extension == "" ? Resource::ResourceType::FOLDER : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "scene" ? Resource::ResourceType::SCENE : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "fbx" || extension == "model" ? Resource::ResourceType::MODEL : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mat" ? Resource::ResourceType::MATERIAL : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "shader" ? Resource::ResourceType::SHADER : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "dds" || extension == "png" || extension == "jpg" ? Resource::ResourceType::TEXTURE : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mesh"  ? Resource::ResourceType::MESH : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "bone" ? Resource::ResourceType::BONE : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "anim" ? Resource::ResourceType::ANIMATION : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "vertex" || extension == "fragment" ? Resource::ResourceType::SHADER_OBJECT : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "lua" ? Resource::ResourceType::SCRIPT : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
 
 	return type;
 }
@@ -961,6 +936,11 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 ResourceFolder* ModuleResourceManager::GetAssetsFolder()
 {
 	return AssetsFolder;
+}
+
+uint ModuleResourceManager::GetFileFormatVersion()
+{
+	return fileFormatVersion;
 }
 
 uint ModuleResourceManager::GetDefaultMaterialUID()
@@ -998,7 +978,7 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 				if (directory == (*it).second->GetOriginalFile())
 				{
 					ResourceFolder* folder = (ResourceFolder*)resource;
-					folder->SetParent((*it).second);
+					(*it).second->AddChild(folder);
 					break;
 				}
 			}
@@ -1260,7 +1240,7 @@ bool ModuleResourceManager::CleanUp()
 	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end();)
 	{
 		//it->second->FreeMemory();
-		// We do not call free memory since scene's game objects have already been deleted (we have dangling pointers in scene's list now!)
+		// We do not call free memory since scene's game objects have already been deleted (we have dangling pointers in scene's maps now!)
 		delete it->second;
 		it = scenes.erase(it);
 	}

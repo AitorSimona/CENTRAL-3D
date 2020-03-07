@@ -140,8 +140,9 @@ bool PanelShaderEditor::Draw()
 
 		ImGui::Separator();
 	}
-
 	ImGui::End();
+
+
 
 	return true;
 }

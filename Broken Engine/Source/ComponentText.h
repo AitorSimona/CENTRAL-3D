@@ -9,7 +9,6 @@
 
 #define DEFAULT_FONT_SIZE 25
 #define MAX_TEXT_SIZE 256
-
 BE_BEGIN_NAMESPACE
 class ResourceTexture;
 class ComponentCanvas;

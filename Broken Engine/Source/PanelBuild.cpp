@@ -71,10 +71,8 @@ bool PanelBuild::Draw() {
 		}
 		else
 			ImGui::Text("You have no cameras in the scene.");
-
-
-		ImGui::End();
 	}
+	ImGui::End();
 
 
 

@@ -28,7 +28,7 @@ extern "C" {
 }
 #endif
 
-//#define IMGUI_DISABLE_DEFAULT_ALLOCATORS   
+#define IMGUI_DISABLE_DEFAULT_ALLOCATORS   
 
 enum main_states {
 	MAIN_CREATION,

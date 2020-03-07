@@ -27,6 +27,11 @@ public:
 	float posY = 0.0f;
 
 	float CurrentSpeedScrollLabel = 1.0f;
+
+private:
+	//Internal stuff for overlay
+	char* overlay;
+	bool overlay_open = true;
 };
 
 #endif

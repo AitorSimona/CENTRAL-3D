@@ -18,6 +18,8 @@ ModuleEditorUI::~ModuleEditorUI() {
 
 bool ModuleEditorUI::Init(Broken::json& file) {
 
+	ImGui::SetAllocatorFunctions(EngineApp->gui->GetImGuiAlloc(), EngineApp->gui->GetImGuiFree());
+
 	// --- Create UI Panels ---
 	panelSettings = new PanelSettings("Settings");
 	panels.push_back(panelSettings);
@@ -57,6 +59,11 @@ bool ModuleEditorUI::Init(Broken::json& file) {
 
 	LoadStatus(file);
 
+	return true;
+}
+
+bool ModuleEditorUI::Start() {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 	return true;
 }
 
@@ -105,7 +112,7 @@ update_status ModuleEditorUI::Update(float dt) {
 				if (ImGui::MenuItem("Plane")) {
 					Broken::GameObject* obj = EngineApp->scene_manager->LoadPlane();
 					obj->GetComponent<Broken::ComponentTransform>()->SetRotation({ -90, 0, 0 });
-					obj->GetComponent<Broken::ComponentTransform>()->Scale(10, 10, 10);
+					obj->GetComponent < Broken::ComponentTransform > ()->Scale(10, 10, 10);
 				}
 
 				if (ImGui::MenuItem("Cube"))
@@ -137,15 +144,15 @@ update_status ModuleEditorUI::Update(float dt) {
 			if (ImGui::BeginMenu("UI Elements")) {
 				if (ImGui::MenuItem("Canvas")) {
 					Broken::GameObject* canvas_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					Broken::ComponentCanvas* camera = (Broken::ComponentCanvas*)canvas_go->AddComponent(Broken::Component::ComponentType::Canvas);
+					Broken::ComponentCanvas* camera = (Broken::ComponentCanvas*)canvas_go->AddComponent(Broken::Component::ComponentType::ComponentCanvas);
 				}
 				if (ImGui::MenuItem("Image")) {
 					Broken::GameObject* image_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					Broken::ComponentImage* image = (Broken::ComponentImage*)image_go->AddComponent(Broken::Component::ComponentType::Image);
+					Broken::ComponentImage* image = (Broken::ComponentImage*)image_go->AddComponent(Broken::Component::ComponentType::ComponentImage);
 				}
 				if (ImGui::MenuItem("Text")) {
 					Broken::GameObject* text_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::Text);
+					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::ComponentText);
 				}
 				if (ImGui::MenuItem("Button", false, false, false)) {
 				}

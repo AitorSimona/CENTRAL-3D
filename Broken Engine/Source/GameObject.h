@@ -39,18 +39,18 @@ public:
 	template<typename TComponent>
 	TComponent* GetComponent() {
 
-		for (uint i = 0; i < components.size(); ++i) {
-			if (components[i]->GetType() == TComponent::GetType()) {
+		for (uint i = 0; i < components.size(); ++i)
+		{
+			if (components[i] && components[i]->GetType() == TComponent::GetType())
 				return ((TComponent*)(components[i]));
-			}
 		}
 
 		return nullptr;
 	}
 
-	Component* AddComponent(Component::ComponentType type);
+	Component*		AddComponent(Component::ComponentType type, int index = -1);
 	void			RemoveComponent(Component::ComponentType type);
-	Component* HasComponent(Component::ComponentType type) const;
+	Component*		HasComponent(Component::ComponentType type) const;
 	std::vector<Component*>& GetComponents();
 
 	// --- Setters ---

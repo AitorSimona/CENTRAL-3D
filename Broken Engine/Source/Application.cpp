@@ -122,15 +122,14 @@ bool Application::Init() {
 	std::string tmp2 = config["Application"]["Organization"];
 	orgName = tmp2;
 
+
 	// Call Init() in all modules
-
 	std::list<Module*>::const_iterator item = list_modules.begin();
-
-	while (item != list_modules.end() && ret == true) {
+	while(item != list_modules.end() && ret == true)
+	{
 		ret = (*item)->Init(config);
 		item++;
 	}
-
 
 
 	// After all Init calls we call Start() in all modules
@@ -248,7 +247,6 @@ update_status Application::Update()
 	}
 
 	FinishUpdate();
-
 	return ret;
 }
 

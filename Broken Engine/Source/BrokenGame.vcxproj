@@ -105,12 +105,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Canvas.h" />
+    <ClInclude Include="ComponentCanvas.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentAnimation.h" />
+    <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentAudioListener.h" />
     <ClInclude Include="ComponentAudioSource.h" />
-    <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
@@ -126,7 +126,7 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\dxgi1_4.h" />
-    <ClInclude Include="Image.h" />
+    <ClInclude Include="ComponentImage.h" />
     <ClInclude Include="Imgui\imconfig.h" />
     <ClInclude Include="Imgui\imgui.h" />
     <ClInclude Include="Imgui\ImGuizmo\ImGuizmo.h" />
@@ -236,9 +236,9 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleThreading.h" />
     <ClInclude Include="ModuleTimeManager.h" />
-    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="PanelBuild.h" />
     <ClInclude Include="PanelGame.h" />
+    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
     <ClInclude Include="PanelResources.h" />
@@ -271,6 +271,7 @@
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceAnimation.h" />
     <ClInclude Include="ResourceBone.h" />
@@ -286,23 +287,23 @@
     <ClInclude Include="ResourceShaderObject.h" />
     <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
+    <ClInclude Include="ComponentText.h" />
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
     <ClInclude Include="ScriptingMath.h" />
     <ClInclude Include="ScriptVar.h" />
-    <ClInclude Include="Text.h" />
     <ClInclude Include="VSresource.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="wwise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="ComponentCanvas.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentAnimation.cpp" />
+    <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentAudioListener.cpp" />
     <ClCompile Include="ComponentAudioSource.cpp" />
-    <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
@@ -314,7 +315,7 @@
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />
-    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="ComponentImage.cpp" />
     <ClCompile Include="Imgui\imgui.cpp" />
     <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="Imgui\imgui_demo.cpp" />
@@ -418,6 +419,7 @@
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
     <ClCompile Include="ResourceBone.cpp" />
@@ -432,10 +434,10 @@
     <ClCompile Include="ResourceShaderObject.cpp" />
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
+    <ClCompile Include="ComponentText.cpp" />
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptingMath.cpp" />
     <ClCompile Include="ScriptVar.cpp" />
-    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wwise.cpp" />
     <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp" />
@@ -444,7 +446,7 @@
     <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="BrokenGame.rc" />
+    <ResourceCompile Include="Broken Engine.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="EXE ICON.ico" />

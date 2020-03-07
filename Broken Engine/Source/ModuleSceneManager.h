@@ -113,6 +113,7 @@ public:
 
 	// do not destroy
 	ResourceScene* defaultScene = nullptr;
+	ResourceScene* temporalScene = nullptr;
 private:
 
 	// --- Do not modify, just use ---

@@ -8,6 +8,7 @@
 #include "GameObject.h"
 
 #include "ResourceScene.h"
+#include "Panel.h"
 //#include "Button.h"
 //#include "CheckBox.h"
 //#include "InputText.h"
@@ -21,6 +22,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "Imgui/imgui_internal.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
+#include "ModuleFileSystem.h"
 
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 
@@ -28,6 +30,14 @@
 
 #include "mmgr/mmgr.h"
 
+
+void* ImGuiCustomAllocator(size_t sz, void* user_data) {
+	return malloc(sz);
+}
+
+void ImGuiCustomDeallocator(void* ptr, void* user_data) {
+	free(ptr);
+}
 
 using namespace Broken;
 
@@ -41,6 +51,9 @@ ModuleGui::~ModuleGui()
 
 bool ModuleGui::Init(json& file)
 {
+	if (!App->fs->Exists("imgui.ini"))
+		App->fs->Copy("imgui.ini.bak", "imgui.ini");
+
 	// --- Create UI Panels ---
 
 	/*panelSettings = new PanelSettings("Settings");
@@ -97,7 +110,7 @@ bool ModuleGui::Start()
 
 	// --- Initialize ImGui ---
 	IMGUI_CHECKVERSION();
-	ImGui::SetAllocatorFunctions(&BEImGuiAllocator, &BEImGuiDeallocator);
+	ImGui::SetAllocatorFunctions(&ImGuiCustomAllocator, &ImGuiCustomDeallocator);
 	ctx = ImGui::CreateContext();
 
 	if (ctx)
@@ -146,6 +159,7 @@ update_status ModuleGui::PreUpdate(float dt)
 
 	return UPDATE_CONTINUE;
 }
+
 
 update_status ModuleGui::PostUpdate(float dt)
 {
@@ -318,11 +332,11 @@ void ModuleGui::CreateIcons()
 	// REMEMBER to gldeletetex them at cleanup!
 }
 
-void* BEImGuiAllocator(size_t sz, void* user_data) {
-	return malloc(sz);
+be_imguialloc ModuleGui::GetImGuiAlloc() const {
+	return &ImGuiCustomAllocator;
 }
 
-void BEImGuiDeallocator(void* ptr, void* user_data) {
-	free(ptr);
+be_imguifree ModuleGui::GetImGuiFree() const {
+	return &ImGuiCustomDeallocator;
 }
 

@@ -16,7 +16,7 @@
 
 using namespace Broken;
 
-ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Canvas)
+ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentCanvas)
 {
 	visible = true;
 	interactable = false;
@@ -39,21 +39,21 @@ void ComponentCanvas::Draw() const
 	// Draw elements inside canvas
 	for (int i = 0; i < elements.size(); i++)
 	{
-		if (elements[i]->GetType() == Component::ComponentType::Canvas)
+		if (elements[i]->GetType() == Component::ComponentType::ComponentCanvas)
 		{
 			ComponentCanvas* canvas = (ComponentCanvas*)elements[i];
 			if (canvas->visible)
 				canvas->Draw();
 			continue;
 		}
-		else if (elements[i]->GetType() == Component::ComponentType::Text)
+		else if (elements[i]->GetType() == Component::ComponentType::ComponentText)
 		{
 			ComponentText* text = (ComponentText*)elements[i];
 			if (text->visible)
 				text->Draw();
 			continue;
 		}
-		else if (elements[i]->GetType() == Component::ComponentType::Image)
+		else if (elements[i]->GetType() == Component::ComponentType::ComponentImage)
 		{
 			ComponentImage* image = (ComponentImage*)elements[i];
 			if (image->visible)
@@ -156,7 +156,7 @@ void ComponentCanvas::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Canvas);
+		GO->RemoveComponent(Component::ComponentType::ComponentCanvas);
 	}
 }
 

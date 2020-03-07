@@ -630,6 +630,9 @@
     <ClInclude Include="Wwise\SDK\include\AkDefaultIOHookBlocking.h">
       <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
     </ClInclude>
+    <ClInclude Include="RandomGenerator.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1027,6 +1030,9 @@
     </ClCompile>
     <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp">
       <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomGenerator.cpp">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

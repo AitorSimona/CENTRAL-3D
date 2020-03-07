@@ -11,6 +11,7 @@
 PanelScene::PanelScene(char* name) : Broken::Panel(name)
 {
 	ImGuizmo::Enable(true);
+	overlay = "Camera Speed Overlay";
 }
 
 PanelScene::~PanelScene()
@@ -29,8 +30,8 @@ bool PanelScene::Draw()
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 		// --- Set image size
-		EngineApp->gui->sceneWidth = ImGui::GetWindowWidth()*0.98;
-		EngineApp->gui->sceneHeight = ImGui::GetWindowHeight()*0.90;
+		width = ImGui::GetWindowWidth()*0.98;
+		height = ImGui::GetWindowHeight()*0.90;
 		ImVec2 size = ImVec2(EngineApp->gui->sceneWidth, EngineApp->gui->sceneHeight);
 
 		// --- Force Window Size ---
@@ -51,8 +52,8 @@ bool PanelScene::Draw()
 		ImGui::Image((ImTextureID)EngineApp->renderer3D->rendertexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
 		// --- Save Image's current position (screen space)
-		EngineApp->gui->sceneX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
-		EngineApp->gui->sceneY = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
+		posX = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
+		posY = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
 
 
 		// --- Handle drag & drop ---
@@ -94,11 +95,16 @@ bool PanelScene::Draw()
 			ImGui::EndMenuBar();
 		}
 
+		EngineApp->gui->sceneHeight = height;
+		EngineApp->gui->sceneWidth = width;
+		EngineApp->gui->sceneX = posX;
+		EngineApp->gui->sceneY = posY;
+		EngineApp->gui->isSceneHovered = ImGui::IsWindowHovered();
 	}
 
 	// --- Handle Guizmo operations ---
 	if(EngineApp->scene_manager->GetSelectedGameObject() != nullptr)
-	HandleGuizmo();
+		HandleGuizmo();
 
 	// --- Update editor camera ---
 	if (!ImGuizmo::IsUsing())
@@ -113,27 +119,20 @@ bool PanelScene::Draw()
 
 	if (CurrentSpeedScrollLabel > 0)
 	{
-		bool open = true;
 		ImVec2 textSize = ImGui::CalcTextSize(" xf.2f", nullptr);
 
 		ImGui::SetNextWindowBgAlpha(CurrentSpeedScrollLabel);
 		ImGui::SetNextWindowPos({ posX + (width / 2.0f) - (textSize.x / 2.0f + 50.0f), posY + (height / 2.0f) - (textSize.y / 2.0f + 50.0f) });
 		CurrentSpeedScrollLabel -= 0.015f;
 		
-		//if (ImGui::Begin("Example: Simple overlay", &open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
-		//{
-		//	ImGui::SetWindowFontScale(3);
-		//	ImGui::Text(" x%.2f", EngineApp->camera->m_SpeedMultiplicator);
-		//}
-		
+		if (ImGui::Begin(overlay, &overlay_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+		{
+			ImGui::SetWindowFontScale(2);
+			ImGui::Text(" x%.2f", EngineApp->camera->m_SpeedMultiplicator);
+		}
 		ImGui::End();
 	}
-	
-	EngineApp->gui->sceneHeight = height;
-	EngineApp->gui->sceneWidth = width;
-	EngineApp->gui->sceneX = posX;
-	EngineApp->gui->sceneY = posY;
-	EngineApp->gui->isSceneHovered = ImGui::IsWindowHovered();
+
 
 	ImGui::End();
 

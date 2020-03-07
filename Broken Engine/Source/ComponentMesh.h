@@ -28,6 +28,8 @@ public:
 
 public:
 	ResourceMesh* resource_mesh = nullptr;
+	ResourceMesh* deformable_mesh = nullptr;
+
 	std::vector<ComponentBone*> bones;
 };
 BE_END_NAMESPACE

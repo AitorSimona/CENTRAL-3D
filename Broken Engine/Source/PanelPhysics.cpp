@@ -75,6 +75,7 @@ bool PanelPhysics::Draw()
 
 		//CreateLayerFilterGrid();
 	}
+	ImGui::End();
 
 	if (tmpGravity != gravity) {
 		EngineApp->physics->mScene->setGravity(tmpGravity);
@@ -92,7 +93,7 @@ bool PanelPhysics::Draw()
 		EngineApp->physics->mMaterial->setRestitution(tmpRestitution);
 	}
 
-	ImGui::End();
+
 
 
 	return true;

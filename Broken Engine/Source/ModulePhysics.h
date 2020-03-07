@@ -15,6 +15,7 @@ namespace physx
 	class PxPhysics;
 	class PxScene;
 	class PxMaterial;
+	class PxRigidStatic;
 }
 
 BE_BEGIN_NAMESPACE
@@ -43,6 +44,8 @@ public:
 	physx::PxPhysics* mPhysics = nullptr;
 	physx::PxScene* mScene = nullptr;
 	physx::PxMaterial* mMaterial = nullptr;
+
+	physx::PxRigidStatic* plane = nullptr;
 };
 
 BE_END_NAMESPACE

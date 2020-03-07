@@ -131,15 +131,21 @@ bool ComponentCamera::ContainsAABB(const AABB& ref) {
 
 json ComponentCamera::Save() const {
 	json node;
-	//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["FOV"] = std::to_string(camera->GetFOV());
-//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["NEARPLANE"] = std::to_string(camera->GetNearPlane());
-//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["FARPLANE"] = std::to_string(camera->GetFarPlane());
-//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["ASPECTRATIO"] = std::to_string(camera->GetAspectRatio());
+
+	node["FOV"] = GetFOV();
+	node["NEARPLANE"] = GetNearPlane();
+	node["FARPLANE"] = GetFarPlane();
+	node["ASPECTRATIO"] = GetAspectRatio();
 
 	return node;
 }
 
-void ComponentCamera::Load(json& node) {
+void ComponentCamera::Load(json& node)
+{
+	SetFOV(node["FOV"].is_null() ? 60.0f : node["FOV"].get<float>());
+	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
+	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
+	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
 }
 
 void ComponentCamera::CreateInspectorNode() {

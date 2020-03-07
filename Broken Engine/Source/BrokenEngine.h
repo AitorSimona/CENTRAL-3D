@@ -83,6 +83,7 @@
 
 // ---Others-----------------------
 #include "Light.h"
+#include "RandomGenerator.h"
 // --------------------------------
 
 // ---Application------------------

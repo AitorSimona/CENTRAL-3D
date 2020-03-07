@@ -1,8 +1,0 @@
-Event	ID	Name			Wwise Object Path	Notes
-	136547680	Geralt_Run			\Default Work Unit\Geralt_Run	
-	3764996949	Geralt_Attack			\Default Work Unit\Geralt_Attack	
-
-In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	111138450	Geralt_Run	C:\Users\Jacobo_G\Desktop\wwiseProject\.cache\Windows\SFX\Geralt_Run_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\Geralt_Run		4091968
-	630682896	Geralt_Attack2	C:\Users\Jacobo_G\Desktop\wwiseProject\.cache\Windows\SFX\Geralt_Attack2_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\Geralt_Attack2		110656
-

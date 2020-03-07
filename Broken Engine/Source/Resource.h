@@ -46,6 +46,7 @@ public:
 	const uint GetNumInstances() const;
 
 	void SetOriginalFile(const char* new_path);
+	void SetResourceFile(const char* new_path); // for temporal scene 
 	void SetUID(uint UID);
 	void SetName(const char* name);
 

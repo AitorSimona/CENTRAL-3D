@@ -24,7 +24,9 @@ ImporterScene::~ImporterScene() {
 
 Resource* ImporterScene::Import(ImportData& IData) const {
 	// --- Meta was deleted, just trigger a load with a new uid ---
-	return Load(IData.path);
+	Resource* scene = Load(IData.path);
+
+	return scene;
 }
 
 Resource* ImporterScene::Load(const char* path) const {
@@ -67,6 +69,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		{
 			// --- Save Components to file ---
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
 		}
 
 	}
@@ -84,6 +87,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		{
 			// --- Save Components to file ---
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
 		}
 
 	}

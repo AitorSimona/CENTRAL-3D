@@ -74,8 +74,9 @@ bool PanelToolbar::Draw()
 		if(scale != EngineApp->time->GetTimeScale())
 			EngineApp->time->SetTimeScale(scale);
 	}
-
 	ImGui::End();
+
+
 
 
 	return true;

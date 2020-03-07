@@ -11,11 +11,11 @@
 
 using namespace Broken;
 
-ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Text)
+ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentText)
 {
 	visible = true;
 
-	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::ComponentCanvas);
 	//texture = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 	canvas->AddElement(this);
 
@@ -155,6 +155,6 @@ void ComponentText::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Text);
+		GO->RemoveComponent(Component::ComponentType::ComponentText);
 	}
 }

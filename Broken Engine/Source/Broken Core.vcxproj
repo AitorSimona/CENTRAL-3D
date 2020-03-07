@@ -306,6 +306,7 @@
     <ClInclude Include="par\par_shapes.h" />
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceAnimation.h" />
     <ClInclude Include="ResourceBone.h" />
@@ -442,6 +443,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
     <ClCompile Include="ResourceBone.cpp" />

@@ -135,7 +135,6 @@ bool PanelResources::Draw()
 
 			ImGui::Separator();
 		}
-
 	}
 	ImGui::End();
 

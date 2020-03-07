@@ -57,59 +57,59 @@ bool PanelProject::Draw()
 
 		CreateResourceHandlingPopup();
 
-		ImGui::BeginMenuBar();
-		ImGui::EndMenuBar();
+		if (ImGui::BeginMenuBar())
+			ImGui::EndMenuBar();
 
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + 38));
 
 		// --- Draw Directories Tree ---
-		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x*0.1,ImGui::GetWindowSize().y));
-
-		RecursiveDirectoryDraw(EngineApp->resources->GetAssetsFolder());
-
+		if (ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x * 0.1, ImGui::GetWindowSize().y)))
+			RecursiveDirectoryDraw(EngineApp->resources->GetAssetsFolder());
 		ImGui::EndChild();
 
 		// --- Draw Explorer ---
 		ImGui::SameLine();
 
-		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y), true, projectFlags);
+		if (ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowSize().y), true, projectFlags)) {
 
-		if(currentDirectory == nullptr)
-			currentDirectory = EngineApp->resources->GetAssetsFolder();
+			if (currentDirectory == nullptr)
+				currentDirectory = EngineApp->resources->GetAssetsFolder();
 
-		DrawFolder(EngineApp->resources->getCurrentDirectory());
+			DrawFolder(EngineApp->resources->getCurrentDirectory());
 
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
+			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
 
 
-		// --- Item resizer and selected resource path display ---
-		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
-		ImGui::BeginMenuBar();
+			// --- Item resizer and selected resource path display ---
+			if (ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
+			{
+				if (ImGui::BeginMenuBar()) {
 
-		if (selected)
-			ImGui::Text(selected->GetName());
+					if (selected)
+						ImGui::Text(selected->GetName());
 
-		ImGui::Spacing();
+					ImGui::Spacing();
 
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
+					ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
 
-		int imageSize_modifier = imageSize_px;
-		ImGui::SetNextItemWidth(100.0f);
-		if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64))
-		{
-			imageSize_px = imageSize_modifier;
+					int imageSize_modifier = imageSize_px;
+					ImGui::SetNextItemWidth(ImGui::GetWindowSize().x * 0.1f);
+					if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64)) {
+						imageSize_px = imageSize_modifier;
+					}
+
+					ImGui::EndMenuBar();
+				}
+			}
+			ImGui::EndChild();
 		}
-
-		ImGui::EndMenuBar();
-		ImGui::EndChild();
-
-
 		ImGui::EndChild();
 	}
+	ImGui::End();
 
 	ImGui::PopStyleVar();
 
-	ImGui::End();
+
 
 
 	return true;
@@ -303,7 +303,7 @@ void PanelProject::DrawFolder(Broken::ResourceFolder* folder)
 		const std::vector<Broken::ResourceFolder*>* directories = &folder->GetChilds();
 		uint i = 0;
 		uint row = 0;
-		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px);
+		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px + 1);
 		ImVec4 color = ImVec4(255, 255, 255, 255);
 
 		ImVec2 vec = ImGui::GetCursorPos();
@@ -360,10 +360,8 @@ void PanelProject::DrawFolder(Broken::ResourceFolder* folder)
 
 			ImGui::PopID();
 
-			if ((i + 1) % maxColumns == 0)
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
-			else
-				ImGui::SameLine();
 
 			i++;
 		}
@@ -379,24 +377,13 @@ void PanelProject::DrawFolder(Broken::ResourceFolder* folder)
 
 			DrawFile(*it, i, row, vec, color);
 
-			bool opened = false;
-
 			// --- Draw model childs ---
 			if ((*it)->GetType() == Broken::Resource::ResourceType::MODEL)
 			{
-				opened = true;
-
-				if ((i + 1) % maxColumns == 0)
-					row++;
-				else
-					ImGui::SameLine();
-
-				i++;
-
 				uint arrowSize = imageSize_px / 4;
 
-				ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px/1.1) + imageSize_px/10);
-				ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px/2);
+				ImGui::SetCursorPosX(vec.x + ((i + 1) - row * maxColumns) * (imageSize_px + item_spacingX_px));
+				ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + arrowSize*1.5);
 
 				Broken::ResourceModel* model = (Broken::ResourceModel*)*it;
 
@@ -409,8 +396,13 @@ void PanelProject::DrawFolder(Broken::ResourceFolder* folder)
 					uvy = { 0,1 };
 				}
 
+				// --- Force new uid so imgui does not block all buttons after the first one ---
+				ImGui::PushID((*it)->GetUID() + i);
+
 				if (ImGui::ImageButton((ImTextureID)EngineApp->gui->playbuttonTexID, ImVec2(arrowSize, arrowSize), uvx, uvy, 0))
 					model->openInProject = !model->openInProject;
+
+				ImGui::PopID();
 
 				if (model->openInProject)
 				{
@@ -418,25 +410,20 @@ void PanelProject::DrawFolder(Broken::ResourceFolder* folder)
 
 					for (std::vector<Broken::Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
 					{
-						DrawFile(*res, i, row, vec, color, true);
-
-						if ((i + 1) % maxColumns == 0)
+						if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 							row++;
-						else
-							ImGui::SameLine();
 
 						i++;
+
+						DrawFile(*res, i, row, vec, color, true);
 					}
 				}
 
 			}
 
-			if ((i + 1) % maxColumns == 0)
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
-			else
-				ImGui::SameLine();
 
-			if(!opened)
 			i++;
 		}
 	}

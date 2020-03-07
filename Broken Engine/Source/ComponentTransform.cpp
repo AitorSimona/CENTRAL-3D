@@ -1,5 +1,5 @@
 #include "ComponentTransform.h"
-
+#include "Application.h"
 #include "GameObject.h"
 #include "Imgui/imgui.h"
 #include "Math.h"
@@ -140,18 +140,18 @@ json ComponentTransform::Save() const {
 
 void ComponentTransform::Load(json& node)
 {
-	std::string posx = node["positionx"];
-	std::string posy = node["positiony"];
-	std::string posz = node["positionz"];
+	std::string posx = node["positionx"].is_null() ? "0" : node["positionx"];
+	std::string posy = node["positiony"].is_null() ? "0" : node["positiony"];
+	std::string posz = node["positionz"].is_null() ? "0" : node["positionz"];
 
-	std::string rotx = node["rotationx"];
-	std::string roty = node["rotationy"];
-	std::string rotz = node["rotationz"];
-	std::string rotw = node["rotationw"];
+	std::string rotx = node["rotationx"].is_null() ? "0" : node["rotationx"];
+	std::string roty = node["rotationy"].is_null() ? "0" : node["rotationy"];
+	std::string rotz = node["rotationz"].is_null() ? "0" : node["rotationz"];
+	std::string rotw = node["rotationw"].is_null() ? "0" : node["rotationw"];
 
-	std::string scalex = node["scalex"];
-	std::string scaley = node["scaley"];
-	std::string scalez = node["scalez"];
+	std::string scalex = node["scalex"].is_null() ? "0" : node["scalex"];
+	std::string scaley = node["scaley"].is_null() ? "0" : node["scaley"];
+	std::string scalez = node["scalez"].is_null() ? "0" : node["scalez"];
 
 	float3 pos = float3(std::stof(posx), std::stof(posy), std::stof(posz));
 	SetPosition(pos);

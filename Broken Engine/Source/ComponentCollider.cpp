@@ -160,7 +160,8 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.scaleY = scale.y * originalScale.y;
 	localMatrix.scaleZ = scale.z * originalScale.z;
 
-	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
+	math::float4x4 gt = cTransform->GetGlobalTransform();
+	globalMatrix = gt * localMatrix;
 
 	//PHYSX DEBUG
 	float3 pos, scale;
@@ -203,11 +204,32 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 		RB->rigidBody->setGlobalPose(transform);
 	}
 
+	std::string name = GO->GetName();
 	transform = RB->rigidBody->getGlobalPose();
 	float x = transform.p.x - offset.x;
-	cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y, transform.p.z - offset.z);
+	
+	bool isFalling = RB->rigidBody->getLinearVelocity().y != 0.0f;
+
+	if (isFalling)
+		cTransform->SetPosition(transform.p.x - offset.x, transform.p.y - offset.y - localMatrix.y, transform.p.z - offset.z);
+
 	cTransform->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
 	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
+
+	if (App->GetAppState() == AppState::PLAY && !toPlay)
+	{
+		float3 pos, scale;
+		Quat rot;
+		globalMatrix.Decompose(pos, rot, scale);
+
+		physx::PxVec3 posi(pos.x, pos.y, pos.z);
+		physx::PxQuat quati(rot.x, rot.y, rot.z, rot.w);
+		physx::PxTransform transform(posi, quati);
+
+		RB->rigidBody->setGlobalPose(transform);
+
+		toPlay = true;
+	}
 }
 
 json ComponentCollider::Save() const
@@ -289,45 +311,45 @@ void ComponentCollider::Load(json& node)
 	ENGINE_CONSOLE_LOG("Load");
 	CreateCollider(COLLIDER_TYPE::NONE, true);
 
-	std::string localPositionx = node["localPositionx"];
-	std::string localPositiony = node["localPositiony"];
-	std::string localPositionz = node["localPositionz"];
+	std::string localPositionx = node["localPositionx"].is_null() ? "0" : node["localPositionx"];
+	std::string localPositiony = node["localPositiony"].is_null() ? "0" : node["localPositiony"];
+	std::string localPositionz = node["localPositionz"].is_null() ? "0" : node["localPositionz"];
 
-	std::string originalScalex = node["originalScalex"];
-	std::string originalScaley = node["originalScaley"];
-	std::string originalScalez = node["originalScalez"];
+	std::string originalScalex = node["originalScalex"].is_null() ? "0" : node["originalScalex"];
+	std::string originalScaley = node["originalScaley"].is_null() ? "0" : node["originalScaley"];
+	std::string originalScalez = node["originalScalez"].is_null() ? "0" : node["originalScalez"];
 
-	std::string offsetx = node["offsetx"];
-	std::string offsety = node["offsety"];
-	std::string offsetz = node["offsetz"];
+	std::string offsetx = node["offsetx"].is_null() ? "0" : node["offsetx"];
+	std::string offsety = node["offsety"].is_null() ? "0" : node["offsety"];
+	std::string offsetz = node["offsetz"].is_null() ? "0" : node["offsetz"];
 
-	std::string localMatrixx = node["localMatrixx"];
-	std::string localMatrixy = node["localMatrixy"];
-	std::string localMatrixz = node["localMatrixz"];
-	std::string localMatrixw = node["localMatrixw"];
+	std::string localMatrixx = node["localMatrixx"].is_null() ? "0" : node["localMatrixx"];
+	std::string localMatrixy = node["localMatrixy"].is_null() ? "0" : node["localMatrixy"];
+	std::string localMatrixz = node["localMatrixz"].is_null() ? "0" : node["localMatrixz"];
+	std::string localMatrixw = node["localMatrixw"].is_null() ? "0" : node["localMatrixw"];
 
-	std::string globalMatrixx = node["globalMatrixx"];
-	std::string globalMatrixy = node["globalMatrixy"];
-	std::string globalMatrixz = node["globalMatrixz"];
-	std::string globalMatrixw = node["globalMatrixw"];
+	std::string globalMatrixx = node["globalMatrixx"].is_null() ? "0" : node["globalMatrixx"];
+	std::string globalMatrixy = node["globalMatrixy"].is_null() ? "0" : node["globalMatrixy"];
+	std::string globalMatrixz = node["globalMatrixz"].is_null() ? "0" : node["globalMatrixz"];
+	std::string globalMatrixw = node["globalMatrixw"].is_null() ? "0" : node["globalMatrixw"];
 
-	std::string scalex = node["scalex"];
-	std::string scaley = node["scaley"];
-	std::string scalez = node["scalez"];
+	std::string scalex = node["scalex"].is_null() ? "0" : node["scalex"];
+	std::string scaley = node["scaley"].is_null() ? "0" : node["scaley"];
+	std::string scalez = node["scalez"].is_null() ? "0" : node["scalez"];
 
-	std::string radius_ = node["radius"];
+	std::string radius_ = node["radius"].is_null() ? "0" : node["radius"];
 
-	std::string height_ = node["height"];
+	std::string height_ = node["height"].is_null() ? "0" : node["height"];
 
-	std::string lastIndex_ = node["lastIndex"];
+	std::string lastIndex_ = node["lastIndex"].is_null() ? "0" : node["lastIndex"];
 
-	std::string colliderType_ = node["colliderType"];
+	std::string colliderType_ = node["colliderType"].is_null() ? "0" : node["colliderType"];
 
-	std::string tmpScalex = node["tmpScalex"];
-	std::string tmpScaley = node["tmpScaley"];
-	std::string tmpScalez = node["tmpScalez"];
+	std::string tmpScalex = node["tmpScalex"].is_null() ? "0" : node["tmpScalex"];
+	std::string tmpScaley = node["tmpScaley"].is_null() ? "0" : node["tmpScaley"];
+	std::string tmpScalez = node["tmpScalez"].is_null() ? "0" : node["tmpScalez"];
 
-	std::string firstCreation_ = node["firstCreation"];
+	std::string firstCreation_ = node["firstCreation"].is_null() ? "0" : node["firstCreation"];
 
 	localPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
 	originalScale = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
@@ -353,6 +375,8 @@ void ComponentCollider::Load(json& node)
 	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
 
 	firstCreation = true;
+
+	toPlay = false;
 
 	std::string colliderEnum = node["colliderType"];
 

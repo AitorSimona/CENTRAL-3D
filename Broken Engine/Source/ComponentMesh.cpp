@@ -23,6 +23,13 @@ ComponentMesh::~ComponentMesh() {
 		resource_mesh->Release();
 		resource_mesh->RemoveUser(GO);
 	}
+
+	if (deformable_mesh)
+	{
+		delete deformable_mesh;
+		deformable_mesh = nullptr;
+	}
+	
 }
 
 const AABB& ComponentMesh::GetAABB() const {
@@ -43,8 +50,9 @@ json ComponentMesh::Save() const {
 	return node;
 }
 
-void ComponentMesh::Load(json& node) {
-	std::string path = node["Resources"]["ResourceMesh"];
+void ComponentMesh::Load(json& node)
+{
+	std::string path = node["Resources"]["ResourceMesh"].is_null() ? "" : node["Resources"]["ResourceMesh"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
@@ -111,12 +119,28 @@ void ComponentMesh::AddBone(ComponentBone* bone)
 
 void ComponentMesh::UpdateDefMesh()
 {
-
-	for (uint i = 0; i < resource_mesh->VerticesSize; ++i)
+	if (!deformable_mesh)
 	{
-		resource_mesh->vertices[i].animPos_offset[0] = 0.0f;
-		resource_mesh->vertices[i].animPos_offset[1] = 0.0f;
-		resource_mesh->vertices[i].animPos_offset[2] = 0.0f;
+		deformable_mesh = new ResourceMesh(App->GetRandom().Int(), "");
+
+
+		deformable_mesh->VerticesSize = resource_mesh->VerticesSize;
+		deformable_mesh->vertices = new Vertex[deformable_mesh->VerticesSize];
+		memcpy(deformable_mesh->vertices, resource_mesh->vertices, deformable_mesh->VerticesSize * sizeof(Vertex));
+
+		deformable_mesh->IndicesSize = resource_mesh->IndicesSize;
+		deformable_mesh->Indices = new uint[deformable_mesh->IndicesSize];
+		memcpy(deformable_mesh->Indices, resource_mesh->Indices, deformable_mesh->IndicesSize * sizeof(uint));
+
+		deformable_mesh->LoadInMemory();
+	}
+	
+
+	for (uint i = 0; i < deformable_mesh->VerticesSize; ++i)
+	{
+		deformable_mesh->vertices[i].position[0] = 0.0f;
+		deformable_mesh->vertices[i].position[1] = 0.0f;
+		deformable_mesh->vertices[i].position[2] = 0.0f;
 	}
 
 	for (std::vector<ComponentBone*>::iterator it = bones.begin(); it != bones.end(); ++it)
@@ -134,16 +158,16 @@ void ComponentMesh::UpdateDefMesh()
 
 			// -- This is the original vertex
 			float3 tmp = { resource_mesh->vertices[index].position[0],
-						   resource_mesh->vertices[index].position[1],
-						   resource_mesh->vertices[index].position[2]};
+						  resource_mesh->vertices[index].position[1],
+						  resource_mesh->vertices[index].position[2]};
 					   			 
 
 
 			float3 _vertex = mat.TransformPos(tmp.x, tmp.y, tmp.z);//LINE OF DEATH
 
-			resource_mesh->vertices[index].animPos_offset[0] += _vertex.x * r_bone->weight[i];
-			resource_mesh->vertices[index].animPos_offset[1] += _vertex.y * r_bone->weight[i];
-			resource_mesh->vertices[index].animPos_offset[2] += _vertex.z * r_bone->weight[i];
+			deformable_mesh->vertices[index].position[0] += _vertex.x * r_bone->weight[i];
+			deformable_mesh->vertices[index].position[1] += _vertex.y * r_bone->weight[i];
+			deformable_mesh->vertices[index].position[2] += _vertex.z * r_bone->weight[i];
 
 			/*if ((resource_mesh->VerticesSize / 3) > 0);
 			{
@@ -159,14 +183,14 @@ void ComponentMesh::UpdateDefMesh()
 	}
 
 	// --- Bind it ---
-	glBindVertexArray(resource_mesh->VAO);
+	glBindVertexArray(deformable_mesh->VAO);
 
 	// Bind the VBO 
-	glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, deformable_mesh->VBO);
 
 	// --- Set all vertex attribute pointers ---
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * resource_mesh->VerticesSize, resource_mesh->vertices, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * deformable_mesh->VerticesSize, deformable_mesh->vertices, GL_DYNAMIC_DRAW);
 
 	// --- Unbind VAO and VBO ---
 	glBindVertexArray(0);

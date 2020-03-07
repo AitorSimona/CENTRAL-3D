@@ -5,6 +5,9 @@
 #include "Resource.h"
 #include "Importer.h"
 
+class PanelBuild;
+class PanelResources;
+
 BE_BEGIN_NAMESPACE
 
 class ResourceFolder;
@@ -101,7 +104,19 @@ public:
 
 	// --- Getters ---
 	ResourceFolder* GetAssetsFolder();
+	uint GetFileFormatVersion();
 	uint GetDefaultMaterialUID();
+private:
+
+	// --- Available importers ---
+	std::vector<Importer*> importers;
+	std::vector<std::string> filters;
+
+	uint fileFormatVersion = 2;
+
+	// Use this pointers only for read ops! If you want to get the resource use GetResource function
+	ResourceFolder* AssetsFolder = nullptr;
+	ResourceMaterial* DefaultMaterial = nullptr;
 
 	//MYTODO Temporary public for resource panel
 	// --- Available resources ---
@@ -118,17 +133,8 @@ public:
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 
-private:
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;
-
-	// --- Available importers ---
-	std::vector<Importer*> importers;
-	std::vector<std::string> filters;
-
-	// Use this pointers only for read ops! If you want to get the resource use GetResource function
-	ResourceFolder* AssetsFolder = nullptr;
-	ResourceMaterial* DefaultMaterial = nullptr;
 
 
 

@@ -67,16 +67,14 @@ bool PanelConsole::Draw()
 			}
 
 			ImGui::PopStyleVar();
-
 		}
+		ImGui::EndChild();
 
 		if(ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
 		ImGui::SetScrollHereY(1.0f);
-
-		ImGui::EndChild();
-
-		ImGui::End();
+		
 	}
+	ImGui::End();
 
 
 	return true;

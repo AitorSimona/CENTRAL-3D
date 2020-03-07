@@ -76,6 +76,7 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 
 		std::vector<aiMesh*> mesh_collector;
 		std::vector<GameObject*> mesh_wbones;
+
 		// --- Use scene->mNumMeshes to iterate on scene->mMeshes array --
 		if (scene->mRootNode->mNumChildren > 0)
 		{

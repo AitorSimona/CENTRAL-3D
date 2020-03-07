@@ -4,8 +4,6 @@
 #include "Component.h"
 #include "Math.h"
 
-#include <random>
-
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 BE_BEGIN_NAMESPACE
@@ -39,12 +37,7 @@ private:
 	double GetRandomValue(double min, double max); //MUST EREASE IN THE FUTURE
 
 private:
-	
-	//Random number generation - EREASE IN THE FUTURE
-	std::uniform_real_distribution<double> m_DoubleDistribution;
-	std::random_device m_RandomDevice;
-	std::default_random_engine m_RNEngine;
-	physx::PxParticleSystem* particleSystem=nullptr;
+	physx::PxParticleSystem* particleSystem = nullptr;
 
 	std::vector<Particle*> particles;
 
@@ -60,16 +53,15 @@ private:
 	physx::PxVec3 externalAcceleration = {0,10,0};
 	physx::PxVec3 particlesVelocity = { 0,0,0 };
 	physx::PxVec3 velocityRandomFactor = {5,5,5};
-	
+
 	//Particle properties
 	int particlesLifeTime=1000;
 	float particlesSize = 1;
 
-	float3 particlesColor = { 1, 1, 1 };
+	float3 particlesColor = { 255, 255, 255 };
 
 	float spawnClock=0.0f;
 };
-
 BE_END_NAMESPACE
 
 #endif //__COMPONENT_PARTICLE_EMITTER__

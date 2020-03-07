@@ -123,17 +123,17 @@ bool PanelInspector::Draw()
 
 		if (item_current == "UI Canvas")
 		{
-			Selected->AddComponent(Broken::Component::ComponentType::Canvas);
+			Selected->AddComponent(Broken::Component::ComponentType::ComponentCanvas);
 		}
 
 		if (item_current == "UI Image")
 		{
-			Selected->AddComponent(Broken::Component::ComponentType::Image);
+			Selected->AddComponent(Broken::Component::ComponentType::ComponentImage);
 		}
 
 		if (item_current == "UI Text")
 		{
-			Selected->AddComponent(Broken::Component::ComponentType::Text);
+			Selected->AddComponent(Broken::Component::ComponentType::ComponentText);
 		}
 		if (item_current == "Dynamic RigidBody")
 		{
@@ -172,10 +172,9 @@ bool PanelInspector::Draw()
 
 
 
-		if(Startup)
+		if (Startup)
 			Startup = false;
 	}
-
 	ImGui::End();
 
 

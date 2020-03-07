@@ -25,6 +25,7 @@ public:
 	~ModuleEditorUI();
 
 	bool Init(Broken::json& file) override;
+	bool Start() override;
 	update_status Update(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;

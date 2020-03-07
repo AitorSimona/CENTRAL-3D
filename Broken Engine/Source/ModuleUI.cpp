@@ -5,6 +5,7 @@
 #include "ModuleSceneManager.h"
 #include "GameObject.h"
 #include "ModuleGui.h"
+#include "Component.h"
 #include "ComponentCanvas.h"
 
 #include "mmgr/mmgr.h"

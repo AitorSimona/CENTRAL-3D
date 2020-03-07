@@ -37,7 +37,7 @@ public:
 	ComponentAnimation(GameObject* ContainerGO);
 	virtual ~ComponentAnimation();
 
-	void Update(float dt);
+	void Update() override;
 
 	Animation* GetDefaultAnimation() const;
 	void PlayAnimation(const char* name, float speed = 30);
@@ -85,7 +85,7 @@ private:
 	bool has_skeleton = false;
 	bool blending = false;
 
-	int Frame = 0;
+	float Frame = 0;
 	float time = 0;
 
 	//---- blend vars ------------

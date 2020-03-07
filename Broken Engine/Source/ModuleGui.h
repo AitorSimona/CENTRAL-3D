@@ -19,7 +19,11 @@ struct ImGuiContext;
 //class PanelShaderEditor;
 //class PanelResources;
 
+typedef void* (*be_imguialloc)(size_t sz, void* user_data);
+typedef void (*be_imguifree)(void* ptr, void* user_data);
+
 BE_BEGIN_NAMESPACE
+class Panel;
 
 class BROKEN_API ModuleGui : public Module
 {
@@ -53,6 +57,9 @@ public:
 	bool IsMouseCaptured() const;
 
 	void CreateIcons();
+
+	be_imguialloc GetImGuiAlloc() const;
+	be_imguifree GetImGuiFree() const;
 
 public:
 

@@ -207,7 +207,6 @@ bool ModuleRenderer3D::CleanUp() {
 	delete linepointShader;
 	delete ZDrawerShader;
 	delete OutlineShader;
-	delete screenShader;
 
 	glDeleteFramebuffers(1, &fbo);
 	glDeleteVertexArrays(1, &quadVAO);
@@ -290,15 +289,6 @@ void ModuleRenderer3D::CreateFramebuffer() {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
-//void ModuleRenderer3D::NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex)
-//{
-//	glGenBuffers(1, (GLuint*)&(id_vertex));
-//	glBindBuffer(GL_ARRAY_BUFFER, id_vertex);
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * size * 3, vertex, GL_STATIC_DRAW);
-//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-//}
-
 
 bool ModuleRenderer3D::SetVSync(bool _vsync)
 {
@@ -463,7 +453,6 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
 		"layout (location = 3) in vec2 texCoord; \n"
-		"layout (location = 4) in vec3 animPos_offset; \n"
 		"uniform vec3 Color; \n"
 		"out vec3 ourColor; \n"
 		"out vec2 TexCoord; \n"
@@ -471,11 +460,7 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
-		"vec3 final_pos = animPos_offset;\n"
-		"if(animPos_offset.x == 0 && animPos_offset.y == 0 && animPos_offset.z == 0){\n"
-		"final_pos = position; \n"
-		"}\n"
-		"gl_Position = projection * view * model_matrix * vec4 (final_pos, 1.0f); \n"
+		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
 		"ourColor = Color; \n"
 		"TexCoord = texCoord; \n"
 		"}\n"
@@ -498,29 +483,5 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
 	defaultShader->name = "Standard";
 	defaultShader->use();
-
-	const char* screenVertexShader =
-		"#version 440 core \n"
-		"layout (location = 0) in vec2 aPos\n"
-		"layout (location = 1) in vec2 aTexCoords; \n"
-		"out vec2 TexCoords; \n"
-		"void main(){ \n"
-		"gl_position = vec4(aPos.x, aPos.y, 0.0, 1.0); \n"
-		"TexCoords = aTexCoords; \n"
-		"} \n"
-		;
-
-	const char* screenFragmentShader =
-		"#version 440 core \n"
-		"out vec4 FragColor;\n"
-		"in vec2 TexCoords; \n"
-		"uniform sampler2D screenTexture; \n"
-		"void main(){ \n"
-		"FragColor = texture(screenTexture, TexCoords); \n"
-		"} \n"
-		;
-
-	screenShader = new ResourceShader(screenVertexShader, screenFragmentShader, false);
-	screenShader->name = "Screen";
 }
 
