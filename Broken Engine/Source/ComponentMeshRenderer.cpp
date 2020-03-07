@@ -107,16 +107,12 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
 	{
-		//if (mesh->resource_def_mesh)
-		//{
-		//	DrawMesh(*mesh->resource_def_mesh);
-		//}
-		//else
-		//{
+		if(mesh->deformable_mesh)
+			DrawMesh(*mesh->deformable_mesh);
+		else
 			DrawMesh(*mesh->resource_mesh);
-			DrawNormals(*mesh->resource_mesh, *transform);
-		//}
 
+		DrawNormals(*mesh->resource_mesh, *transform);
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -388,7 +384,7 @@ json ComponentMeshRenderer::Save() const
 
 void ComponentMeshRenderer::Load(json& node)
 {
-	std::string mat_path = node["Resources"]["ResourceMaterial"];
+	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
@@ -400,7 +396,7 @@ void ComponentMeshRenderer::Load(json& node)
 			material->Release();
 
 		if(meta)
-		material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
+			material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
 
 		// --- We want to be notified of any resource event ---
 		if (material)

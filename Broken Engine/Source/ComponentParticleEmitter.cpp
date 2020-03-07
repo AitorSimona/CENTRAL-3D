@@ -221,31 +221,31 @@ json ComponentParticleEmitter::Save() const
 void ComponentParticleEmitter::Load(json& node)
 {
 	//load the strings
-	std::string Lsizex = node["sizeX"];
-	std::string Lsizey = node["sizeY"];
-	std::string Lsizez = node["sizeZ"];
+	std::string Lsizex = node["sizeX"].is_null() ? "0" : node["sizeX"];
+	std::string Lsizey = node["sizeY"].is_null() ? "0" : node["sizeY"];
+	std::string Lsizez = node["sizeZ"].is_null() ? "0" : node["sizeZ"];
 
-	std::string LemisionRate = node["emisionRate"];
+	std::string LemisionRate = node["emisionRate"].is_null() ? "0" : node["emisionRate"]; // typo: emission
 
-	std::string LexternalAccelerationx = node["externalAccelerationX"];
-	std::string LexternalAccelerationy = node["externalAccelerationY"];
-	std::string LexternalAccelerationz = node["externalAccelerationZ"];
+	std::string LexternalAccelerationx = node["externalAccelerationX"].is_null() ? "0" : node["externalAccelerationX"];
+	std::string LexternalAccelerationy = node["externalAccelerationY"].is_null() ? "0" : node["externalAccelerationY"];
+	std::string LexternalAccelerationz = node["externalAccelerationZ"].is_null() ? "0" : node["externalAccelerationZ"];
 
-	std::string LparticlesVelocityx = node["particlesVelocityX"];
-	std::string LparticlesVelocityy = node["particlesVelocityY"];
-	std::string LparticlesVelocityz	= node["particlesVelocityZ"];
+	std::string LparticlesVelocityx = node["particlesVelocityX"].is_null() ? "0" : node["particlesVelocityX"];
+	std::string LparticlesVelocityy = node["particlesVelocityY"].is_null() ? "0" : node["particlesVelocityY"];
+	std::string LparticlesVelocityz	= node["particlesVelocityZ"].is_null() ? "0" : node["particlesVelocityZ"];
 
-	std::string LvelocityRandomFactorx = node["velocityRandomFactorX"];
-	std::string LvelocityRandomFactory = node["velocityRandomFactorY"];
-	std::string LvelocityRandomFactorz = node["velocityRandomFactorZ"];
+	std::string LvelocityRandomFactorx = node["velocityRandomFactorX"].is_null() ? "0" : node["velocityRandomFactorX"];
+	std::string LvelocityRandomFactory = node["velocityRandomFactorY"].is_null() ? "0" : node["velocityRandomFactorY"];
+	std::string LvelocityRandomFactorz = node["velocityRandomFactorZ"].is_null() ? "0" : node["velocityRandomFactorZ"];
 
-	std::string LparticlesLifeTime = node["particlesLifeTime"];
+	std::string LparticlesLifeTime = node["particlesLifeTime"].is_null() ? "0" : node["particlesLifeTime"];
 
-	std::string LParticlesSize = node["particlesSize"];
+	std::string LParticlesSize = node["particlesSize"].is_null() ? "0" : node["particlesSize"];
 
-	std::string LColorR = node["ColorR"];
-	std::string LColorG = node["ColorG"];
-	std::string LColorB = node["ColorB"];
+	std::string LColorR = node["ColorR"].is_null() ? "0" : node["ColorR"];
+	std::string LColorG = node["ColorG"].is_null() ? "0" : node["ColorG"];
+	std::string LColorB = node["ColorB"].is_null() ? "0" : node["ColorB"];
 
 	//Pass the strings to the needed dada types
 	size.x = std::stof(Lsizex);

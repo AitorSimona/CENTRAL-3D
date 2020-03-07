@@ -15,6 +15,8 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 
+	void CopyInto(ResourceScene* target);
+
 	GameObject* GetGOWithName(const char* GO_name);
 	GameObject* GetGOWithUID(uint UID);
 

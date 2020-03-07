@@ -77,10 +77,6 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		TransformGlobal(this);
 
-	ComponentAnimation* anim = this->GetComponent<ComponentAnimation>();
-	if (GetComponent<ComponentAnimation>())
-		anim->Update(dt);
-
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);
@@ -88,10 +84,9 @@ void GameObject::Update(float dt)
 
 	for (int i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetActive())
+		if (components[i] && components[i]->GetActive())
 			components[i]->Update();
 	}
-
 }
 
 void GameObject::RecursiveDelete()
@@ -251,14 +246,21 @@ GameObject* GameObject::GetAnimGO(GameObject* GO)
 
 }
 
-Component * GameObject::AddComponent(Component::ComponentType type)
+Component * GameObject::AddComponent(Component::ComponentType type, int index)
 {
 	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 19, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
-	// --- Check if there is already a component of the type given ---
+	// --- Check if there is already a component of the type given --- & if it can be repeated
+	bool repeatable_component = false;
+	std::vector<int>::iterator it = App->scene_manager->repeatable_components.begin();
+	for (; it != App->scene_manager->repeatable_components.end(); ++it)
+	{
+		if ((int)type == (*it))
+			repeatable_component = true;
+	}
 
-	if (HasComponent(type) == nullptr)
+	if (HasComponent(type) == nullptr || repeatable_component == true)
 	{
 		switch (type)
 		{
@@ -331,7 +333,30 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		}
 
 		if (component)
-			components.push_back(component);
+		{
+			// --- If index was specified, insert ---
+			if (index >= 0)
+			{
+				// --- Reserve needed space, note that we may leave empty spaces!!! ---
+				if(index+1 > components.size())
+				components.resize(index+1);
+
+
+				// --- Delete element at given index ---
+				if (components[index])
+				{
+					delete components[index];
+					components[index] = nullptr;
+				}
+					
+				// --- Insert element at given index ---
+				components[index] = component;
+			}
+			// --- Else push back ---
+			else 
+				components.push_back(component);
+
+		}
 
 	}
 	else
@@ -350,7 +375,7 @@ void GameObject::RemoveComponent(Component::ComponentType type)
 
 	for (uint i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetType() == type)
+		if (components[i] && components[i]->GetType() == type)
 		{
 			std::vector<Component*>::iterator it = components.begin();
 			it += i;
@@ -369,7 +394,7 @@ Component* GameObject::HasComponent(Component::ComponentType type) const
 
 	for (uint i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetType() == type)
+		if (components[i] && components[i]->GetType() == type)
 		{
 			component = components[i];
 			break;
@@ -472,7 +497,6 @@ void GameObject::UpdateAABB()
 	{
 		obb = mesh->GetAABB();
 		obb.Transform(transform->GetGlobalTransform());
-
 		aabb.SetNegativeInfinity();
 		aabb.Enclose(obb);
 	}

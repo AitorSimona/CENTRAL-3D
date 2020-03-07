@@ -10,6 +10,8 @@
 
 using namespace physx;
 
+class GameObject;
+
 class ModulePhysics : public Module
 {
 public:
@@ -25,6 +27,8 @@ public:
 	void BoxCollider(float posX, float posY, float posZ);
 
 	void SimulatePhysics(float dt, float speed = 1.0f);
+
+	void DeleteActors(GameObject* go = nullptr);
 
 public:
 	

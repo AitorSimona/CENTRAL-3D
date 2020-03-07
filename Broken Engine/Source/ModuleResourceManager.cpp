@@ -60,7 +60,7 @@ bool ModuleResourceManager::Start()
 	App->gui->CreateIcons();
 
 	// --- Create default scene ---
-	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene");
+	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene", 1);
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
 
 	// --- Create default material ---
@@ -119,7 +119,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 
 	// --- If parent is not nullptr add ourselves as childs ---
 	if (parent)
-		folder->SetParent(parent);
+		parent->AddChild(folder);
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
@@ -239,7 +239,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	if (resource)
 	{
-		if(type != Resource::ResourceType::FOLDER && type != Resource::ResourceType::META)
+		if(type != Resource::ResourceType::META)
 		AddResourceToFolder(resource);
 
 		ENGINE_CONSOLE_LOG("Imported successfully: %s", IData.path);
@@ -415,7 +415,6 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 	if (IsFileImported(IData.path))
 		texture = ITex->Load(IData.path);
 
-
 	// --- Else call relevant importer ---
 	else
 	{
@@ -457,10 +456,17 @@ Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
 	// --- If the resource is already in library, load from there ---
 	if (IsFileImported(IData.path))
 		script = IScr->Load(IData.path);
-	// --- Else call relevant importer ---
-	else
-		script = IScr->Import(IData);
 
+	// --- Else call relevant importer ---
+	else {
+		std::string new_path = IData.path;
+
+		if (IData.dropped)
+			new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
+		IData.path = new_path.c_str();
+		script = IScr->Import(IData);
+	}
 
 	return script;
 }
@@ -976,7 +982,7 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 				if (directory == (*it).second->GetOriginalFile())
 				{
 					ResourceFolder* folder = (ResourceFolder*)resource;
-					folder->SetParent((*it).second);
+					(*it).second->AddChild(folder);
 					break;
 				}
 			}

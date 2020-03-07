@@ -285,28 +285,6 @@ void ModuleScripting::SendScriptToModule(ComponentScript * script_component)
 	CompileScriptTableClass(s_instance); //Compile so we can give the instance its table/class reference
 }
 
-ScriptFile* ModuleScripting::AddScriptFile(ComponentScript* script_component, std::string full_file_path)
-{
-	ScriptFile* ret = nullptr;
-	std::string filename;
-	App->fs->SplitFilePath(full_file_path.data(),nullptr,&filename,nullptr);
-	for (std::vector<ScriptFile*>::iterator it = script_files.begin(); it != script_files.end(); ++it)
-	{
-		//If this file is already in our list of files
-		Resource* res = (Resource*)script_component->script;
-		if ((*it)->resource_uid == res->GetUID())
-		{
-			return (*it);
-		}
-	}
-
-	ScriptFile* new_file = new ScriptFile;
-	script_files.push_back(new_file);
-	ret = new_file;
-
-	return ret;
-}
-
 //FILL the ScriptVars of the component associated with this script
 void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance * script)
 {
@@ -473,9 +451,7 @@ update_status ModuleScripting::Update(float realDT)
 
 update_status ModuleScripting::GameUpdate(float gameDT)
 {
-	Scripting Scripting;
-
-	if (cannot_start == false &&  App->GetAppState() ==AppState::PLAY)
+	if (cannot_start == false && App->GetAppState() == AppState::PLAY)
 	{
 		const uint origSize = class_instances.size();	// This avoids messing the iteration with newly Instantiated scripts
 		for (uint i = 0; i < origSize; ++i)
@@ -487,7 +463,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 					if ((*it).changed_value) {
 						switch ((*it).type) {
 						case VarType::DOUBLE:
-							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double_number;
+							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double;
 							break;
 						case VarType::STRING:
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_string;

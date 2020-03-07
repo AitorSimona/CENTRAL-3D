@@ -46,7 +46,7 @@ ComponentAnimation::~ComponentAnimation()
 
 }
 
-void ComponentAnimation::Update(float dt)
+void ComponentAnimation::Update()
 {
 	if (linked_channels == false)
 	{
@@ -64,7 +64,7 @@ void ComponentAnimation::Update(float dt)
 		if (linked_bones == false)
 			DoBoneLink();
 
-		time += dt;
+		time += App->time->GetGameDt();
 
 		if (animations.size() > 0)
 		{
@@ -137,6 +137,7 @@ json ComponentAnimation::Save() const
 
 	// --- Saving animations ------------------
 	node["Animations"]["Size"] = std::to_string(animations.size());
+	node["Animations"]["BlendTime"] = std::to_string(blend_time_value);
 
 	for (int i = 0; i < animations.size(); ++i)
 	{
@@ -153,7 +154,7 @@ json ComponentAnimation::Save() const
 
 void ComponentAnimation::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceAnimation"];
+	std::string path = node["Resources"]["ResourceAnimation"].is_null() ? "0" : node["Resources"]["ResourceAnimation"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
@@ -169,27 +170,23 @@ void ComponentAnimation::Load(json& node)
 
 	//--- Loading animations ---
 
-	std::string size = node["Animations"]["Size"];
+	std::string size = node["Animations"]["Size"].is_null() ? "0" : node["Animations"]["Size"];
 	int anim_size = std::stoi(size);
+
+	std::string blend_time = node ["Animations"]["BlendTime"].is_null() ? "0" : node["Animations"]["BlendTime"];
+	blend_time_value = std::stof(blend_time);
+
 
 	for (int i = 0; i < anim_size; ++i)
 	{
 		std::string iterator = std::to_string(i);
-		std::string name = node["Animations"][iterator]["Name"];
-		std::string start = node["Animations"][iterator]["Start"];
-		std::string end = node["Animations"][iterator]["End"];
-		bool loop = node["Animations"][iterator]["Loop"];
-		bool Default = node["Animations"][iterator]["Default"];
+		std::string name = node["Animations"][iterator]["Name"].is_null() ? "" : node["Animations"][iterator]["Name"];
+		std::string start = node["Animations"][iterator]["Start"].is_null() ? "" : node["Animations"][iterator]["Start"];
+		std::string end = node["Animations"][iterator]["End"].is_null() ? "" : node["Animations"][iterator]["End"];
+		bool loop = node["Animations"][iterator]["Loop"].is_null() ? false : node["Animations"][iterator]["Loop"];
+		bool Default = node["Animations"][iterator]["Default"].is_null() ? false : node["Animations"][iterator]["Default"];
 
-		/*if (name.compare("Idle") == 0)
-		{
-			animations[0]->start = std::stoi(start);
-			animations[0]->end = std::stoi(end);
-			animations[0]->loop = loop;
-			animations[0]->Default = Default;
-		}
-		else*/
-			CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
+		CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
 		
 	}
 
@@ -338,19 +335,23 @@ void ComponentAnimation::UpdateJointsTransform()
 		float3 position = trans->GetPosition();
 		if (links[i].channel->PosHasKey())
 		{
-			std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
-			std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
 
-			if (next == links[i].channel->PositionKeys.end())
-				next = prev;
-
-			//If both keys are the same, no need to blend
-			if (prev == next)
-				position = prev->second;
+			std::map<double, float3>::iterator pos = links[i].channel->PositionKeys.find(Frame);
+			if (pos != links[i].channel->PositionKeys.end())
+				position = pos->second;
 			else
 			{
-				float value = (Frame - prev->first) / (next->first - prev->first);
-				position = prev->second.Lerp(next->second, value);
+				//Blend prev with next
+				std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
+				std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
+
+				if (next == links[i].channel->PositionKeys.end())
+					next = prev;
+				else
+				{
+					float value = (Frame - prev->first) / (next->first - prev->first);
+					position = prev->second.Lerp(next->second, value);
+				}
 			}
 			
 		}
@@ -359,18 +360,22 @@ void ComponentAnimation::UpdateJointsTransform()
 		Quat rotation = trans->GetQuaternionRotation();
 		if (links[i].channel->RotHasKey())
 		{
-			std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
-			std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
-
-			if (next == links[i].channel->RotationKeys.end())
-				next = prev;
-			//If both keys are the same, no need to blend
-			if (prev == next)
-				rotation = prev->second;
+			std::map<double, Quat>::iterator rot = links[i].channel->RotationKeys.find(Frame);
+			if (rot != links[i].channel->RotationKeys.end())
+				rotation = rot->second;
 			else
 			{
-				float value = (Frame - prev->first) / (next->first - prev->first);
-				rotation = prev->second.Slerp(next->second, value);
+				//Blend prev with next
+				std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
+				std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
+
+				if (next == links[i].channel->RotationKeys.end())
+					next = prev;
+				else
+				{
+					float value = (Frame - prev->first) / (next->first - prev->first);
+					rotation = prev->second.Slerp(next->second, value);
+				}
 			}
 		}
 		trans->SetQuatRotation(rotation);
@@ -379,22 +384,22 @@ void ComponentAnimation::UpdateJointsTransform()
 		float3 scale = trans->GetScale();
 		if (links[i].channel->ScaleHasKey())
 		{
-			std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
-			std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
-
-			if (next == links[i].channel->ScaleKeys.end())
-				next = prev;
-
 			std::map<double, float3>::iterator sca = links[i].channel->ScaleKeys.find(Frame);
 			if (sca != links[i].channel->ScaleKeys.end())
-				scale = sca->second;	
-			//If both keys are the same, no need to blend
-			if (prev == next)
-				scale = prev->second;
+				scale = sca->second;
 			else
 			{
-				float value = (Frame - prev->first) / (next->first - prev->first);
-				scale = prev->second.Lerp(next->second, value);
+				//Blend prev with next
+				std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
+				std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
+
+				if (next == links[i].channel->ScaleKeys.end())
+					next = prev;
+				else
+				{
+					float value = (Frame - prev->first) / (next->first - prev->first);
+					scale = prev->second.Lerp(next->second, value);
+				}
 			}
 		}
 		trans->Scale(scale.x, scale.y, scale.z);
@@ -473,7 +478,7 @@ void ComponentAnimation::UpdateMesh(GameObject* go)
 {
 	ComponentMesh* tmp = go->GetComponent<ComponentMesh>();
 
-	if (tmp != nullptr)
+	if (tmp != nullptr && tmp->bones.size()>0)
 	{
 		tmp->UpdateDefMesh();
 	}

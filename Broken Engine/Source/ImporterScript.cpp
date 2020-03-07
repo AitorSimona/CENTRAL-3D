@@ -35,14 +35,15 @@ Resource* ImporterScript::Import(ImportData& IData) const
 	if (d_pos != 4294967295)  // If we are in DEBUG
 	{
 		abs_path = abs_path.substr(0,d_pos);
+		abs_path += "Game/";
 	}
-
-	if (r_pos != 4294967295) // If we are in RELEASE
+	else if (r_pos != 4294967295) // If we are in RELEASE
 	{
 		abs_path = abs_path.substr(0,r_pos);
+		abs_path += "Game/";
 	}
 
-	abs_path += "Game/";
+	
 	abs_path += IData.path;
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();
@@ -88,19 +89,21 @@ Resource* ImporterScript::Load(const char* path) const
 	if (d_pos != 4294967295)  // If we are in DEBUG
 	{
 		abs_path = abs_path.substr(0, d_pos);
+		abs_path += "Game/";
 	}
 
 	if (r_pos != 4294967295) // If we are in RELEASE
 	{
 		abs_path = abs_path.substr(0, r_pos);
+		abs_path += "Game/";
 	}
 
-	if (g_pos != 4294967295) // If we are in a EXE final build
-	{
-		abs_path = abs_path.substr(0, g_pos);
-	}
+	//if (g_pos != 4294967295) // If we are in a EXE final build
+	//{
+	//	abs_path = abs_path.substr(0, g_pos);
+	//}
 
-	abs_path += "Game/";
+	
 	abs_path += path;
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();
