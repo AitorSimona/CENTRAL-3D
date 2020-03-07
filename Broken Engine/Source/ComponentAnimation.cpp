@@ -137,7 +137,7 @@ json ComponentAnimation::Save() const
 
 	// --- Saving animations ------------------
 	node["Animations"]["Size"] = std::to_string(animations.size());
-	node["Aniamtions"]["BlendTime"] = std::to_string(blend_time_value);
+	node["Animations"]["BlendTime"] = std::to_string(blend_time_value);
 
 	for (int i = 0; i < animations.size(); ++i)
 	{
@@ -170,10 +170,10 @@ void ComponentAnimation::Load(json& node)
 
 	//--- Loading animations ---
 
-	std::string size = node["Animations"]["Size"] ? "0" : node["Animations"]["Size"];
+	std::string size = node["Animations"]["Size"].is_null() ? "0" : node["Animations"]["Size"];
 	int anim_size = std::stoi(size);
 
-	std::string blend_time = node ["Aniamtions"]["BlendTime"];
+	std::string blend_time = node ["Animations"]["BlendTime"].is_null() ? "0" : node["Animations"]["BlendTime"];
 	blend_time_value = std::stof(blend_time);
 
 
