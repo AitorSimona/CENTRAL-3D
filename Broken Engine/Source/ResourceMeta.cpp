@@ -10,7 +10,7 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceMeta::ResourceMeta(uint UID, const char* source_file) : Resource(Resource::ResourceType::META, UID, source_file) {
 	extension = ".meta";
 	resource_file = source_file + extension;

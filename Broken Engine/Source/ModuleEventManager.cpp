@@ -2,7 +2,7 @@
 
 
 #include "mmgr/mmgr.h"
-using namespace BrokenEngine;
+using namespace Broken;
 ModuleEventManager::ModuleEventManager(bool start_enabled) {
 	BROKEN_ASSERT(static_cast<int>(Event::EventType::invalid) == EVENT_TYPES - 1, "EVENT_TYPES macro needs to be updated!");
 

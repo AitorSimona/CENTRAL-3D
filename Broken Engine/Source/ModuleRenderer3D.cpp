@@ -27,7 +27,7 @@
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
 #include "mmgr/mmgr.h"
-using namespace BrokenEngine;
+using namespace Broken;
 ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled) {
 
 }

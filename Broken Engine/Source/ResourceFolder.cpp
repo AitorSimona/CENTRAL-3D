@@ -7,7 +7,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceFolder::ResourceFolder(uint UID, const char* source_file) : Resource(Resource::ResourceType::FOLDER, UID, source_file) {
 	extension = ".folder";
 	resource_file = source_file;

@@ -9,7 +9,7 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Text)
 {

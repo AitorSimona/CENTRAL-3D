@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 
-class BrokenEngine::GameObject;
+class Broken::GameObject;
 
-class PanelBuild : public BrokenEngine::Panel {
+class PanelBuild : public Broken::Panel {
 public:
 	PanelBuild(char* name);
 	~PanelBuild();
@@ -20,12 +20,12 @@ public:
 private:
 	void findCameras();
 	void makeBuild();
-	void copyAllFolderMT(const char* path);
+	void copyAllFolderMT(std::shared_ptr<std::string> path, std::shared_ptr<std::string> build);
 
 private:
-	std::vector<BrokenEngine::GameObject*> cameras;
+	std::vector<Broken::GameObject*> cameras;
 	std::string buildName;
-	BrokenEngine::GameObject* selectedCamera;
+	Broken::GameObject* selectedCamera;
 	std::string scenePath;
 	//std::string cameraName;
 

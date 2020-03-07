@@ -19,9 +19,6 @@
     <Filter Include="Sources\3rd party\Imgui">
       <UniqueIdentifier>{71ff72d8-f9ee-433b-98ad-2397b874048c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\3rd party\Imgui\ImGuizmo">
-      <UniqueIdentifier>{ad6af1d3-585a-432f-8f23-57e0a952d1a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Helpers">
       <UniqueIdentifier>{8ea028ee-87c9-4ccc-98df-0332177e920e}</UniqueIdentifier>
     </Filter>
@@ -51,6 +48,9 @@
     </Filter>
     <Filter Include="Sources\3rd party\MathGeoLib\Time">
       <UniqueIdentifier>{444c1e4b-b6bb-4280-9fa0-6a31bc8ccbcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd party\Imgui\ImGuizmo">
+      <UniqueIdentifier>{319e935e-aded-4788-b84c-e6b5eef8f7b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -89,33 +89,6 @@
     </ClInclude>
     <ClInclude Include="PanelShaderEditor.h">
       <Filter>Sources\EditorPanels</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imconfig.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui_impl_opengl3.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui_impl_sdl.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui_internal.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imstb_rectpack.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imstb_textedit.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imstb_truetype.h">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\ImGuizmo\ImGuizmo.h">
-      <Filter>Sources\3rd party\Imgui\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="Panels.h">
       <Filter>Sources\Helpers</Filter>
@@ -366,6 +339,33 @@
     <ClInclude Include="PanelPhysics.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
+    <ClInclude Include="Imgui\ImGuizmo\ImGuizmo.h">
+      <Filter>Sources\3rd party\Imgui\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imconfig.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_impl_opengl3.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_impl_sdl.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_internal.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_rectpack.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_textedit.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_truetype.h">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineApplication.cpp">
@@ -400,27 +400,6 @@
     </ClCompile>
     <ClCompile Include="PanelToolbar.cpp">
       <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui.cpp">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_demo.cpp">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_draw.cpp">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_impl_opengl3.cpp">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_impl_sdl.cpp">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_widgets.cpp">
-      <Filter>Sources\3rd party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp">
-      <Filter>Sources\3rd party\Imgui\ImGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="mmgr\mmgr.cpp">
       <Filter>Sources\3rd party\mmgr</Filter>
@@ -565,6 +544,27 @@
     </ClCompile>
     <ClCompile Include="PanelPhysics.cpp">
       <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Sources\3rd party\Imgui\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_demo.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_draw.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_impl_opengl3.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_impl_sdl.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_widgets.cpp">
+      <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

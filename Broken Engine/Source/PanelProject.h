@@ -7,7 +7,7 @@
 #include "Imgui/imgui.h"
 
 
-class PanelProject : public BrokenEngine::Panel
+class PanelProject : public Broken::Panel
 {
 public:
 
@@ -15,12 +15,12 @@ public:
 	~PanelProject();
 
 	bool Draw();
-	void SetSelected(BrokenEngine::Resource* new_selected);
-	//const BrokenEngine::Resource* GetcurrentDirectory() const;
+	void SetSelected(Broken::Resource* new_selected);
+	//const Broken::Resource* GetcurrentDirectory() const;
 
 private:
-	static void ONGameObjectSelected(const BrokenEngine::Event& e);
-	static void ONResourceDestroyed(const BrokenEngine::Event& e);
+	static void ONGameObjectSelected(const Broken::Event& e);
+	static void ONResourceDestroyed(const Broken::Event& e);
 	void CreateResourceHandlingPopup();
 
 private:
@@ -30,15 +30,15 @@ private:
 	uint item_spacingY_px = 15;
 	uint maxColumns = 10;
 
-	BrokenEngine::Resource* selected = nullptr;
+	Broken::Resource* selected = nullptr;
 	uint selected_uid = 0;
-	BrokenEngine::ResourceFolder* currentDirectory = nullptr;
+	Broken::ResourceFolder* currentDirectory = nullptr;
 
-	void DrawFolder(BrokenEngine::ResourceFolder* folder);
-	void DrawFile(BrokenEngine::Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);
+	void DrawFolder(Broken::ResourceFolder* folder);
+	void DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);
 	void LimitText( std::string& text);
 
-	void RecursiveDirectoryDraw(std::string directory);
+	void RecursiveDirectoryDraw(Broken::ResourceFolder* directory);
 };
 
 #endif

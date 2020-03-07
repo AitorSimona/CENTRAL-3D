@@ -6,7 +6,7 @@
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ImporterScript::ImporterScript() : Importer(ImporterType::Script) 
 {
 }

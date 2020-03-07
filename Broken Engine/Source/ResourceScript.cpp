@@ -4,7 +4,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceScript::ResourceScript(uint UID, const char* source_file) : Resource(Resource::ResourceType::SCRIPT, UID, source_file) {
 	extension = ".lua";
 	resource_file = source_file;

@@ -6,7 +6,7 @@
 
 
 #include "mmgr/mmgr.h"
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceShaderObject::ResourceShaderObject(uint UID, const char* source_file) : Resource(Resource::ResourceType::SHADER_OBJECT, UID, source_file) {
 	// MYTODO: Should be .vert, .frag ... should go to library folder? ---
 	extension = ".shobj";

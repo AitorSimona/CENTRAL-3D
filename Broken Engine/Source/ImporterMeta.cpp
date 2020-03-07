@@ -8,7 +8,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ImporterMeta::ImporterMeta() : Importer(Importer::ImporterType::Meta) {
 }
 

@@ -5,7 +5,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 json JSONLoader::Load(const char* File) const {
 
 	// MYTODO: Use PhysFS and check if file exists!

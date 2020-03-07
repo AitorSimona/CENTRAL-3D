@@ -15,7 +15,7 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ModuleFileSystem::ModuleFileSystem(bool start_enabled, const char* game_path) : Module(start_enabled) {
 	name = "File System";
@@ -185,7 +185,21 @@ std::string ModuleFileSystem::GetDirectoryFromPath(std::string& path) {
 	return directory;
 }
 
-void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<const char*>& file_list, std::vector<const char*>& dir_list) const {
+void ModuleFileSystem::DiscoverFiles(const char* directory, std::shared_ptr<strvec> file_list) const {
+	char** rc = PHYSFS_enumerateFiles(directory);
+	char** i;
+
+	std::string dir(directory);
+
+	for (i = rc; *i != nullptr; i++) {
+		if (!PHYSFS_isDirectory((dir + *i).c_str()))
+			(*file_list).push_back(*i);
+	}
+
+	PHYSFS_freeList(rc);
+}
+
+void ModuleFileSystem::DiscoverDirectories(const char* directory, std::shared_ptr<strvec> dirs) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
 
@@ -193,25 +207,37 @@ void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<const ch
 
 	for (i = rc; *i != nullptr; i++) {
 		if (PHYSFS_isDirectory((dir + *i).c_str()))
-			dir_list.push_back(*i);
-		else
-			file_list.push_back(*i);
+			(*dirs).push_back(*i);
 	}
 
 	PHYSFS_freeList(rc);
 }
 
-void ModuleFileSystem::DiscoverDirectories(const char* directory, const char** dir_list) const {
+void ModuleFileSystem::DiscoverFilesAndDirectories(const char* directory, std::shared_ptr<strvec> file_list, std::shared_ptr<strvec> dir_list) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
-	char** i;
 
 	std::string dir(directory);
 
-	for (i = rc; *i != nullptr; i++) {
-		if (PHYSFS_isDirectory((dir + *i).c_str())) {
-			*dir_list = *i;
-			dir_list++;
-		}
+	for (char** i = rc; *i != nullptr; i++) {
+		if (PHYSFS_isDirectory((dir + *i).c_str()))
+			(*dir_list).push_back(*i);
+		else
+			(*file_list).push_back(*i);
+	}
+
+	PHYSFS_freeList(rc);
+}
+
+void ModuleFileSystem::DiscoverFilesAndDirectories(const char* directory, strvec& file_list, strvec& dir_list) const {
+	char** rc = PHYSFS_enumerateFiles(directory);
+
+	std::string dir(directory);
+
+	for (char** i = rc; *i != nullptr; i++) {
+		if (PHYSFS_isDirectory((dir + *i).c_str()))
+			dir_list.push_back(*i);
+		else
+			file_list.push_back(*i);
 	}
 
 	PHYSFS_freeList(rc);

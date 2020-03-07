@@ -24,7 +24,7 @@
 
 // ENGINE TRANSLATOR
 // General
-using namespace BrokenEngine;
+using namespace Broken;
 Scripting::Scripting() {
 }
 

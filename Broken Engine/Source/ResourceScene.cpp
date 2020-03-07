@@ -11,7 +11,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceScene::ResourceScene(uint UID, const char* source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file) {
 	extension = ".scene";
 	resource_file = source_file;

@@ -9,7 +9,7 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 // MYTODO: TO BE DELETED ONCE SHADERS REWORK IS DONE 
 Resource::Resource(ResourceType type) {
 	this->type = type;

@@ -7,7 +7,7 @@
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled) {
 	window = NULL;

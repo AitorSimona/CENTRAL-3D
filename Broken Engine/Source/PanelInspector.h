@@ -3,7 +3,7 @@
 
 #include "BrokenEngine.h"
 
-class PanelInspector : public BrokenEngine::Panel
+class PanelInspector : public Broken::Panel
 {
 public:
 
@@ -15,7 +15,7 @@ public:
 	bool Startup = true;
 
 private:
-	void CreateGameObjectNode(BrokenEngine::GameObject& Selected) const;
+	void CreateGameObjectNode(Broken::GameObject& Selected) const;
 };
 
 #endif

@@ -11,7 +11,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene) {
 
 }

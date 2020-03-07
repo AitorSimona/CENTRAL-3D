@@ -1,1 +1,26 @@
-null
+{
+    "1056261022": {
+        "Components": {
+            "0": {
+                "positionx": "0.000000",
+                "positiony": "6.208468",
+                "positionz": "-12.033963",
+                "rotationw": "1.000000",
+                "rotationx": "0.000000",
+                "rotationy": "0.000000",
+                "rotationz": "0.000000",
+                "scalex": "1.000000",
+                "scaley": "1.000000",
+                "scalez": "1.000000"
+            },
+            "2": {
+                "Resources": {
+                    "ResourceMaterial": "DefaultMaterial"
+                }
+            },
+            "3": null
+        },
+        "Name": "GameObject (0)",
+        "Parent": "459193244"
+    }
+}

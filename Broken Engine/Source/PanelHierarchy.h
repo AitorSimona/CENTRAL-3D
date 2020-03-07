@@ -3,7 +3,7 @@
 
 #include "BrokenEngine.h"
 
-class PanelHierarchy : public BrokenEngine::Panel
+class PanelHierarchy : public Broken::Panel
 {
 public:
 
@@ -13,12 +13,12 @@ public:
 	bool Draw();
 
 private:
-	void DrawRecursive(BrokenEngine::GameObject* Go);
+	void DrawRecursive(Broken::GameObject* Go);
 
-	BrokenEngine::GameObject* to_destroy = nullptr;
+	Broken::GameObject* to_destroy = nullptr;
 	bool end_drag = false;
-	BrokenEngine::GameObject* target = nullptr;
-	BrokenEngine::GameObject* dragged = nullptr;
+	Broken::GameObject* target = nullptr;
+	Broken::GameObject* dragged = nullptr;
 };
 
 #endif

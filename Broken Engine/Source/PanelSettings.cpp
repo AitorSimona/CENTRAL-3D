@@ -13,7 +13,7 @@
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 
 
-PanelSettings::PanelSettings(char * name): BrokenEngine::Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
+PanelSettings::PanelSettings(char * name): Broken::Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
 {
 
 }
@@ -25,6 +25,8 @@ PanelSettings::~PanelSettings()
 
 bool PanelSettings::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
 
@@ -248,7 +250,7 @@ inline void PanelSettings::RendererNode() const
 
 inline void PanelSettings::EngineCameraNode() const
 {
-	BrokenEngine::ComponentCamera* cam = EngineApp->camera->camera;
+	Broken::ComponentCamera* cam = EngineApp->camera->camera;
 
 	// --- Camera Speed ---
 	float camSpeed = EngineApp->camera->m_CameraSpeed;
@@ -347,7 +349,7 @@ inline void PanelSettings::SoftwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);	
-	BrokenEngine::SoftwareInfo swInfo = EngineApp->hardware->GetSwInfo();
+	Broken::SoftwareInfo swInfo = EngineApp->hardware->GetSwInfo();
 
 	// --- INFO
 	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate().c_str());
@@ -376,7 +378,7 @@ inline void PanelSettings::RAMMemoryNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	BrokenEngine::MemoryHardware HardwareInfo = EngineApp->hardware->GetMemInfo();
+	Broken::MemoryHardware HardwareInfo = EngineApp->hardware->GetMemInfo();
 
 	// --- INFO
 	ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetRAMSizeFromSDL()) + " GB").c_str()));
@@ -409,8 +411,8 @@ inline void PanelSettings::HardwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	BrokenEngine::ProcessorHardware CPUData = EngineApp->hardware->GetProcessorInfo();
-	BrokenEngine::GPUHardware GPUData = EngineApp->hardware->GetGraphicsCardInfo();
+	Broken::ProcessorHardware CPUData = EngineApp->hardware->GetProcessorInfo();
+	Broken::GPUHardware GPUData = EngineApp->hardware->GetGraphicsCardInfo();
 
 	// --- INFO
 	ImGui::Text("PROCESSOR INFORMATION (CPU)");

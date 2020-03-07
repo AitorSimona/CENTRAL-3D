@@ -10,7 +10,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceModel::ResourceModel(uint UID, const char* source_file) : Resource(Resource::ResourceType::MODEL, UID, source_file) {
 	extension = ".model";
 	resource_file = MODELS_FOLDER + std::to_string(UID) + extension;

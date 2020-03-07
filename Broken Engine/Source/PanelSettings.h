@@ -7,7 +7,7 @@
 #include <vector>
 
 
-class PanelSettings : public BrokenEngine::Panel
+class PanelSettings : public Broken::Panel
 {
 public:
 

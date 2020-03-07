@@ -16,7 +16,7 @@ ModuleEditorUI::ModuleEditorUI(bool start_enabled) : Module(start_enabled) {
 ModuleEditorUI::~ModuleEditorUI() {
 }
 
-bool ModuleEditorUI::Init(BrokenEngine::json& file) {
+bool ModuleEditorUI::Init(Broken::json& file) {
 
 	// --- Create UI Panels ---
 	panelSettings = new PanelSettings("Settings");
@@ -63,7 +63,6 @@ bool ModuleEditorUI::Init(BrokenEngine::json& file) {
 update_status ModuleEditorUI::Update(float dt) {
 	//// --- Create Main Menu Bar ---
 	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
-
 	if (ImGui::BeginMainMenuBar()) {
 
 		if (ImGui::BeginMenu("File")) {
@@ -98,22 +97,22 @@ update_status ModuleEditorUI::Update(float dt) {
 		if (ImGui::BeginMenu("GameObject")) {
 			if (ImGui::BeginMenu("3D Object")) {
 				if (ImGui::MenuItem("Empty Game Object")) {
-					BrokenEngine::GameObject* go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::GameObject* go = EngineApp->scene_manager->CreateEmptyGameObject();
 					//App->scene_manager->currentScene->NoStaticGameObjects[go->GetUID()] = go;
 				}
 
 
 				if (ImGui::MenuItem("Plane")) {
-					BrokenEngine::GameObject* obj = EngineApp->scene_manager->LoadPlane();
-					obj->GetComponent<BrokenEngine::ComponentTransform>()->SetRotation({ -90, 0, 0 });
-					obj->GetComponent<BrokenEngine::ComponentTransform>()->Scale(10, 10, 10);
+					Broken::GameObject* obj = EngineApp->scene_manager->LoadPlane();
+					obj->GetComponent<Broken::ComponentTransform>()->SetRotation({ -90, 0, 0 });
+					obj->GetComponent<Broken::ComponentTransform>()->Scale(10, 10, 10);
 				}
 
 				if (ImGui::MenuItem("Cube"))
 					EngineApp->scene_manager->LoadCube();
 
 				if (ImGui::MenuItem("Cylinder"))
-					EngineApp->scene_manager->LoadCylinder()->GetComponent<BrokenEngine::ComponentTransform>()->SetRotation({ -90, 0, 0 });
+					EngineApp->scene_manager->LoadCylinder()->GetComponent<Broken::ComponentTransform>()->SetRotation({ -90, 0, 0 });
 
 				if (ImGui::MenuItem("Capsule"))
 					EngineApp->scene_manager->LoadCapsule();
@@ -122,11 +121,11 @@ update_status ModuleEditorUI::Update(float dt) {
 					EngineApp->scene_manager->LoadSphere();
 
 				if (ImGui::MenuItem("Camera")) {
-					BrokenEngine::GameObject* cam = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::GameObject* cam = EngineApp->scene_manager->CreateEmptyGameObject();
 					//App->scene_manager->currentScene->NoStaticGameObjects[cam->GetUID()] = cam;
 
-					BrokenEngine::ComponentCamera* camera = (BrokenEngine::ComponentCamera*)cam->AddComponent(BrokenEngine::Component::ComponentType::Camera);
-					cam->AddComponent(BrokenEngine::Component::ComponentType::MeshRenderer);
+					Broken::ComponentCamera* camera = (Broken::ComponentCamera*)cam->AddComponent(Broken::Component::ComponentType::Camera);
+					cam->AddComponent(Broken::Component::ComponentType::MeshRenderer);
 					camera->SetFarPlane(10);
 				}
 
@@ -137,16 +136,16 @@ update_status ModuleEditorUI::Update(float dt) {
 			}
 			if (ImGui::BeginMenu("UI Elements")) {
 				if (ImGui::MenuItem("Canvas")) {
-					BrokenEngine::GameObject* canvas_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					BrokenEngine::ComponentCanvas* camera = (BrokenEngine::ComponentCanvas*)canvas_go->AddComponent(BrokenEngine::Component::ComponentType::Canvas);
+					Broken::GameObject* canvas_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentCanvas* camera = (Broken::ComponentCanvas*)canvas_go->AddComponent(Broken::Component::ComponentType::Canvas);
 				}
 				if (ImGui::MenuItem("Image")) {
-					BrokenEngine::GameObject* image_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					BrokenEngine::ComponentImage* image = (BrokenEngine::ComponentImage*)image_go->AddComponent(BrokenEngine::Component::ComponentType::Image);
+					Broken::GameObject* image_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentImage* image = (Broken::ComponentImage*)image_go->AddComponent(Broken::Component::ComponentType::Image);
 				}
 				if (ImGui::MenuItem("Text")) {
-					BrokenEngine::GameObject* text_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					BrokenEngine::ComponentText* text = (BrokenEngine::ComponentText*)text_go->AddComponent(BrokenEngine::Component::ComponentType::Text);
+					Broken::GameObject* text_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::Text);
 				}
 				if (ImGui::MenuItem("Button", false, false, false)) {
 				}
@@ -236,6 +235,7 @@ update_status ModuleEditorUI::Update(float dt) {
 }
 
 update_status ModuleEditorUI::PostUpdate(float dt) {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 	for (uint i = 0; i < panels.size(); ++i) {
 	if (panels[i]->IsEnabled())
 		panels[i]->Draw();
@@ -263,7 +263,7 @@ bool ModuleEditorUI::CleanUp() {
 	return true;
 }
 
-void ModuleEditorUI::SaveStatus(BrokenEngine::json& file) const {
+void ModuleEditorUI::SaveStatus(Broken::json& file) const {
 	//MYTODO: Added exception for Build because Build should never be enabled at start
 	//maybe we should call SaveStatus on every panel
 	for (uint i = 0; i < panels.size(); ++i) {
@@ -274,7 +274,7 @@ void ModuleEditorUI::SaveStatus(BrokenEngine::json& file) const {
 	}
 };
 
-void ModuleEditorUI::LoadStatus(const BrokenEngine::json& file) {
+void ModuleEditorUI::LoadStatus(const Broken::json& file) {
 
 	for (uint i = 0; i < panels.size(); ++i) {
 

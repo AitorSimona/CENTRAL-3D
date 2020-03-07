@@ -2,7 +2,7 @@
 #include "mmgr/nommgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 ModuleThreading::ModuleThreading(bool start_enabled) : Module(start_enabled) {
 }
 

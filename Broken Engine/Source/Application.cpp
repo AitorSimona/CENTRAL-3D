@@ -21,12 +21,11 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+BE_BEGIN_NAMESPACE
+Application* App = nullptr;
+BE_END_NAMESPACE;
 
-namespace BrokenEngine {
-	Application* App = nullptr;
-}
-
+using namespace Broken;
 
 Application::Application() {
 

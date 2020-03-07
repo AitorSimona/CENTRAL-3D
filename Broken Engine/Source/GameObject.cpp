@@ -27,7 +27,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 GameObject::GameObject(const char* name) {
 	UID = App->GetRandom().Int();

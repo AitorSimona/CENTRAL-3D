@@ -17,7 +17,7 @@
 	#define BROKEN_API __declspec(dllimport)
 #endif
 
-#define BE_BEGIN_NAMESPACE namespace BrokenEngine {
+#define BE_BEGIN_NAMESPACE namespace Broken {
 #define BE_END_NAMESPACE }
 
 //Just in case -- Null redefinition
@@ -30,13 +30,13 @@
 // LOGGING -----------------------------------------------------------------------
 // Visual Studio Console will log both system & engine consoles!!!!!!!!!!!
 /// Print only in Engine Console
-#define ENGINE_CONSOLE_LOG(format, ...) BrokenEngine::EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define ENGINE_CONSOLE_LOG(format, ...) Broken::EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// Print only in System Console
-#define SYSTEM_CONSOLE_LOG(format, ...) BrokenEngine::SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define SYSTEM_CONSOLE_LOG(format, ...) Broken::SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// Print in both Consoles
-#define ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) BrokenEngine::EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); BrokenEngine::SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) Broken::EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); Broken::SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// First info at Compilation
-#define COMPILATIONLOGINFO BrokenEngine::LogCompilationFirstMessage()
+#define COMPILATIONLOGINFO Broken::LogCompilationFirstMessage()
 
 BE_BEGIN_NAMESPACE
 /// Log functions

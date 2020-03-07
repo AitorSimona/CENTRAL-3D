@@ -11,7 +11,7 @@
 #include "Module.h"
 
 
-#define ADDTASK(object, function, ...) BrokenEngine::ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
+#define ADDTASK(object, function, ...) Broken::ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
 
 BE_BEGIN_NAMESPACE
 

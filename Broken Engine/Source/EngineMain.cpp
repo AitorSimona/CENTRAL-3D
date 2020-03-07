@@ -35,7 +35,7 @@
 //	MAIN_EXIT
 //};
 //
-//extern BrokenEngine::Application* BrokenEngine::CreateApplication();
+//extern Broken::Application* Broken::CreateApplication();
 //
 //EngineApplication* gameApp = NULL; 
 //int main(int argc, char** argv) {
@@ -49,7 +49,7 @@
 //		case MAIN_CREATION:
 //
 //			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
-//			gameApp = (EngineApplication*)BrokenEngine::CreateApplication();
+//			gameApp = (EngineApplication*)Broken::CreateApplication();
 //			state = MAIN_START;
 //			break;
 //
@@ -69,7 +69,7 @@
 //
 //		case MAIN_UPDATE:
 //		{
-//			int update_return = BrokenEngine::App->Update();
+//			int update_return = Broken::App->Update();
 //
 //			if (update_return == UPDATE_ERROR) {
 //				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Update exits with ERROR");

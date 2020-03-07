@@ -1,6 +1,6 @@
 #include "Importer.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 // MYTODO: passing type may be unneeded
 Importer::Importer(ImporterType type) {
 	this->type = type;

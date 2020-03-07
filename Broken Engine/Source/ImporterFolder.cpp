@@ -10,7 +10,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ImporterFolder::ImporterFolder() : Importer(Importer::ImporterType::Folder) {
 }
 

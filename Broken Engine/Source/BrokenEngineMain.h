@@ -28,6 +28,8 @@ extern "C" {
 }
 #endif
 
+//#define IMGUI_DISABLE_DEFAULT_ALLOCATORS   
+
 enum main_states {
 	MAIN_CREATION,
 	MAIN_START,
@@ -36,9 +38,9 @@ enum main_states {
 	MAIN_EXIT
 };
 
-extern BrokenEngine::Application* BrokenEngine::CreateApplication();
+extern Broken::Application* Broken::CreateApplication();
 
-BrokenEngine::Application* gameApp = NULL;
+Broken::Application* gameApp = NULL;
 int main(int argc, char** argv) {
 	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
 
@@ -50,7 +52,7 @@ int main(int argc, char** argv) {
 		case MAIN_CREATION:
 
 			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
-			gameApp = BrokenEngine::CreateApplication();
+			gameApp = Broken::CreateApplication();
 			state = MAIN_START;
 			break;
 
@@ -70,7 +72,7 @@ int main(int argc, char** argv) {
 
 		case MAIN_UPDATE:
 		{
-			int update_return = BrokenEngine::App->Update();
+			int update_return = Broken::App->Update();
 
 			if (update_return == UPDATE_ERROR) {
 				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Update exits with ERROR");

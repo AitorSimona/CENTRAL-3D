@@ -14,7 +14,7 @@
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ComponentBone::ComponentBone(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Bone)
 {

@@ -3,7 +3,7 @@
 
 #include "BrokenEngine.h"
 
-class PanelAbout : public BrokenEngine::Panel
+class PanelAbout : public Broken::Panel
 {
 public:
 

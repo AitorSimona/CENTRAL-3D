@@ -4,7 +4,7 @@
 #include "BrokenEngine.h"
 #include <vector>
 
-class PanelShaderEditor : public BrokenEngine::Panel
+class PanelShaderEditor : public Broken::Panel
 {
 public:
 
@@ -12,10 +12,10 @@ public:
 	~PanelShaderEditor();
 
 	bool Draw();
-	void DisplayAndUpdateUniforms(BrokenEngine::ResourceMaterial* resource_mat);
+	void DisplayAndUpdateUniforms(Broken::ResourceMaterial* resource_mat);
 
 private:
-	BrokenEngine::ResourceShader* currentShader = nullptr;
+	Broken::ResourceShader* currentShader = nullptr;
 };
 
 #endif

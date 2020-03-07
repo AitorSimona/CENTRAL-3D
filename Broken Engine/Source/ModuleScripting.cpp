@@ -31,7 +31,7 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 }
 

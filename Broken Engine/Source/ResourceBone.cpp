@@ -8,7 +8,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ResourceBone::ResourceBone(uint UID, const char* source_file) : Resource(Resource::ResourceType::BONE, UID, source_file)
 {

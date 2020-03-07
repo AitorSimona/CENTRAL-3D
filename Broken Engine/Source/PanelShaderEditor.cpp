@@ -29,7 +29,7 @@ bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags)
 	return ImGui::InputTextMultiline(label, (char*)str->c_str(), str->capacity() + 1, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), flags, InputTextCallback, (void*)str);
 }
 
-PanelShaderEditor::PanelShaderEditor(char * name) : BrokenEngine::Panel(name)
+PanelShaderEditor::PanelShaderEditor(char * name) : Broken::Panel(name)
 {
 }
 
@@ -40,6 +40,8 @@ PanelShaderEditor::~PanelShaderEditor()
 
 bool PanelShaderEditor::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar;
 
@@ -144,7 +146,7 @@ bool PanelShaderEditor::Draw()
 	return true;
 }
 
-void PanelShaderEditor::DisplayAndUpdateUniforms(BrokenEngine::ResourceMaterial* resource_mat)
+void PanelShaderEditor::DisplayAndUpdateUniforms(Broken::ResourceMaterial* resource_mat)
 {
 	// Note this is being done before any render happens
 

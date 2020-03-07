@@ -4,7 +4,7 @@
 #include <queue>
 #include "Imgui/imgui.h"
 
-PanelBuild::PanelBuild(char* name) : BrokenEngine::Panel(name){
+PanelBuild::PanelBuild(char* name) : Broken::Panel(name){
 	buildName = "Broken Engine Game";
 	enabled = false;
 }
@@ -13,6 +13,8 @@ PanelBuild::~PanelBuild() {
 }
 
 bool PanelBuild::Draw() {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoDocking;
 
@@ -108,14 +110,14 @@ inline void PanelBuild::SetOnOff(bool set) {
 //MYTODO: this should not be needed, when scene saves its own main camera
 void PanelBuild::findCameras() {
 	cameras.clear();
-	std::queue<BrokenEngine::GameObject*> GOqueue;
+	std::queue<Broken::GameObject*> GOqueue;
 	GOqueue.push(EngineApp->scene_manager->GetRootGO());
 
 	while (!GOqueue.empty()) {
-		BrokenEngine::GameObject* current = GOqueue.front();
+		Broken::GameObject* current = GOqueue.front();
 		GOqueue.pop();
 
-		BrokenEngine::Component* cameraComponent = current->HasComponent(BrokenEngine::Component::ComponentType::Camera);
+		Broken::Component* cameraComponent = current->HasComponent(Broken::Component::ComponentType::Camera);
 		if (cameraComponent != nullptr)
 			cameras.push_back(current);
 
@@ -134,24 +136,25 @@ void PanelBuild::makeBuild() {
 	//We copy the executable
 	EngineApp->fs->Copy(GAME_EXE, (buildName + "/" + buildName + ".exe").c_str());
 
-	std::vector<const char*> files;
-	std::vector<const char*> dirs;
-	EngineApp->fs->DiscoverFiles("", files, dirs);
+	std::shared_ptr<Broken::strvec> files = std::make_shared<Broken::strvec>();
+	EngineApp->fs->DiscoverFiles("", files);
 
 	//We copy all dlls and .ini
-	for (int i = 0; i < files.size(); ++i) {
-		std::string extension = (std::string(files[i]).substr(std::string(files[i]).find_last_of(".") + 1));
+	for (Broken::strvec::iterator it = (*files).begin(); it != (*files).end(); ++it) {
+		std::string extension = ((*it).substr((*it).find_last_of(".") + 1));
 		EngineApp->fs->NormalizePath(extension);
 
 		if (extension == "dll" || extension == "ini" || extension == "meta")
-			EngineApp->fs->Copy(files[i], (buildName + "/" + files[i]).c_str());
+			EngineApp->fs->Copy((*it).c_str(), (buildName + "/" + *it).c_str());
 	}
 	static const char* directories[] = { ASSETS_FOLDER, SETTINGS_FOLDER, LIBRARY_FOLDER, TEXTURES_FOLDER, MESHES_FOLDER, SCENES_FOLDER,
 		MODELS_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER, SHADERS_ASSETS_FOLDER, SOUNDS_FOLDER, ANIMATIONS_FOLDER, BONES_FOLDER};
 
+	std::shared_ptr<std::string> build = std::make_shared<std::string>(buildName);
 	for (int i = 0; i < IM_ARRAYSIZE(directories); ++i) {
+		std::shared_ptr<std::string> dir = std::make_shared<std::string>(directories[i]);
 		EngineApp->fs->CreateDirectoryA((buildName + "/" + directories[i]).c_str());
-		EngineApp->threading->ADDTASK(this, PanelBuild::copyAllFolderMT, directories[i]);
+		EngineApp->threading->ADDTASK(this, PanelBuild::copyAllFolderMT, dir, build);
 	}
 
 	//We wait for the module threading to finish tasks
@@ -159,7 +162,7 @@ void PanelBuild::makeBuild() {
 
 	std::string settingspath = buildName + "/Settings/GameConfig.json";
 	//We write our settings to gameSettings.
-	BrokenEngine::json gameSettings = EngineApp->GetDefaultGameConfig();
+	Broken::json gameSettings = EngineApp->GetDefaultGameConfig();
 	gameSettings["Application"]["Title"] = buildName;
 	gameSettings["SceneManager"]["MainScene"] = scenePath;
 	gameSettings["Camera3D"]["MainCamera"] = selectedCamera->GetName();
@@ -169,18 +172,19 @@ void PanelBuild::makeBuild() {
 	SetOnOff(false);
 }
 
-void PanelBuild::copyAllFolderMT(const char* path) {
-	std::string _path = path;
+void PanelBuild::copyAllFolderMT(std::shared_ptr<std::string> path, std::shared_ptr<std::string> build) {
+	std::string _path = *path;
 	//EngineApp->fs->CreateDirectoryA((buildName + "/" + _path).c_str());
-	std::vector<const char*> files;
-	std::vector<const char*> dirs;
-	EngineApp->fs->DiscoverFiles(path, files, dirs);
+	std::shared_ptr<std::vector<std::string>> files = std::make_shared<std::vector<std::string>>();
+	EngineApp->fs->DiscoverFiles((*path).c_str(), files);
 
 	//// We recursively process another folder in another task
 	//for (int i = 0; i < dirs.size(); ++i)
 	//	EngineApp->threading->ADDTASK(this, PanelBuild::copyAllFolderMT, (_path + "/" + dirs[i]).c_str());
 
-	for (int i = 0; i < files.size(); ++i) {
-		EngineApp->fs->Copy((_path + files[i]).c_str(), (buildName + "/" + _path + "/" + files[i]).c_str());
+	for (std::vector<std::string>::iterator it = (*files).begin(); it != (*files).end(); ++it) {
+		std::string curr_path = _path + *it;
+		std::string new_path = *build + "/" + _path + *it;
+		EngineApp->fs->Copy(curr_path.c_str(), new_path.c_str());
 	}
 }

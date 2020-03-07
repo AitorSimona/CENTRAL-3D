@@ -90,6 +90,7 @@ private:
 
 	bool capture_keyboard = false;
 	bool capture_mouse = false;
+	ImGuiContext* ctx = nullptr;
 
 	std::vector<Panel*> panels;
 };

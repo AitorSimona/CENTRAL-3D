@@ -18,20 +18,20 @@ class PanelPhysics;
 
 
 
-class ModuleEditorUI : public BrokenEngine::Module
+class ModuleEditorUI : public Broken::Module
 {
 public:
 	ModuleEditorUI(bool start_enabled = true);
 	~ModuleEditorUI();
 
-	bool Init(BrokenEngine::json& file) override;
+	bool Init(Broken::json& file) override;
 	update_status Update(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
 
 
-	void SaveStatus(BrokenEngine::json& file) const override;
-	void LoadStatus(const BrokenEngine::json& file) override;
+	void SaveStatus(Broken::json& file) const override;
+	void LoadStatus(const Broken::json& file) override;
 
 public:
 
@@ -49,7 +49,7 @@ public:
 	PanelPhysics*		panelPhysics = nullptr;
 
 private:
-	std::vector<BrokenEngine::Panel*> panels;
+	std::vector<Broken::Panel*> panels;
 	bool show_demo_window = false;
 
 };

@@ -18,7 +18,7 @@
 #include "mmgr/mmgr.h"
 
 //using namespace physx;
-using namespace BrokenEngine;
+using namespace Broken;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {

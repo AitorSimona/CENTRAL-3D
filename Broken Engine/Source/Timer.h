@@ -2,24 +2,25 @@
 #define __TIMER_H__
 
 #include "SDL\include\SDL.h"
+#include "BrokenCore.h"
 
-namespace BrokenEngine {
-	class Timer {
-	public:
+BE_BEGIN_NAMESPACE
+class BROKEN_API Timer {
+public:
 
-		// Constructor
-		Timer();
+	// Constructor
+	Timer();
 
-		void Start();
-		void Stop();
+	void Start();
+	void Stop();
 
-		Uint32 Read();
+	Uint32 Read();
 
-	private:
+private:
 
-		bool	running;
-		Uint32	started_at;
-		Uint32	stopped_at;
-	};
-}
+	bool	running;
+	Uint32	started_at;
+	Uint32	stopped_at;
+};
+BE_END_NAMESPACE
 #endif //__TIMER_H__

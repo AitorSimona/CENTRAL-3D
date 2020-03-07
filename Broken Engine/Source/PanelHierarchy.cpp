@@ -13,7 +13,7 @@
 //
 //#include "mmgr/mmgr.h"
 
-PanelHierarchy::PanelHierarchy(char * name) : BrokenEngine::Panel(name)
+PanelHierarchy::PanelHierarchy(char * name) : Broken::Panel(name)
 {
 }
 
@@ -23,6 +23,8 @@ PanelHierarchy::~PanelHierarchy()
 
 bool PanelHierarchy::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_MenuBar;
 
@@ -63,7 +65,7 @@ bool PanelHierarchy::Draw()
 	return true;
 }
 
-void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
+void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 {
 	// --- Set node flags ---
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -77,7 +79,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 	{
 		if (Go->childs.size() > 0)
 		{
-			for (std::vector<BrokenEngine::GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
+			for (std::vector<Broken::GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
 			{
 				DrawRecursive(*it);
 			}
@@ -106,7 +108,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			ImGui::SetDragDropPayload("GO", Go, sizeof(BrokenEngine::GameObject));        // Set payload to carry the index of our item (could be anything)
+			ImGui::SetDragDropPayload("GO", Go, sizeof(Broken::GameObject));        // Set payload to carry the index of our item (could be anything)
 			dragged = Go;
 			ImGui::EndDragDropSource();
 		}
@@ -124,7 +126,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 		}
 
 		// --- Set Game Object to be destroyed ---
-		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == BrokenEngine::KEY_DOWN)
+		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		{
 			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
 			to_destroy = Go;
@@ -141,7 +143,7 @@ void PanelHierarchy::DrawRecursive(BrokenEngine::GameObject * Go)
 			// --- Check for children and draw them the same way ---
 			if (Go->childs.size() > 0)
 			{
-				for (std::vector<BrokenEngine::GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
+				for (std::vector<Broken::GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
 				{
 					DrawRecursive(*it);
 				}

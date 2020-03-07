@@ -8,7 +8,7 @@
 
 #include "mmgr/mmgr.h"
 
-PanelScene::PanelScene(char* name) : BrokenEngine::Panel(name)
+PanelScene::PanelScene(char* name) : Broken::Panel(name)
 {
 	ImGuizmo::Enable(true);
 }
@@ -21,6 +21,8 @@ PanelScene::~PanelScene()
 
 bool PanelScene::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse;
 
@@ -59,13 +61,13 @@ bool PanelScene::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				BrokenEngine::Resource* resource = EngineApp->resources->GetResource(UID, false);
+				Broken::Resource* resource = EngineApp->resources->GetResource(UID, false);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if (resource && resource->GetType() == BrokenEngine::Resource::ResourceType::MODEL)
+				if (resource && resource->GetType() == Broken::Resource::ResourceType::MODEL)
 				{
 					resource = EngineApp->resources->GetResource(UID);
-					EngineApp->resources->GetImporter < BrokenEngine::ImporterModel > ()->InstanceOnCurrentScene(resource->GetResourceFile(), (BrokenEngine::ResourceModel*)resource);
+					EngineApp->resources->GetImporter < Broken::ImporterModel > ()->InstanceOnCurrentScene(resource->GetResourceFile(), (Broken::ResourceModel*)resource);
 				}
 			}
 
@@ -118,11 +120,11 @@ bool PanelScene::Draw()
 		ImGui::SetNextWindowPos({ posX + (width / 2.0f) - (textSize.x / 2.0f + 50.0f), posY + (height / 2.0f) - (textSize.y / 2.0f + 50.0f) });
 		CurrentSpeedScrollLabel -= 0.015f;
 		
-		if (ImGui::Begin("Example: Simple overlay", &open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
-		{
-			ImGui::SetWindowFontScale(3);
-			ImGui::Text(" x%.2f", EngineApp->camera->m_SpeedMultiplicator);
-		}
+		//if (ImGui::Begin("Example: Simple overlay", &open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+		//{
+		//	ImGui::SetWindowFontScale(3);
+		//	ImGui::Text(" x%.2f", EngineApp->camera->m_SpeedMultiplicator);
+		//}
 		
 		ImGui::End();
 	}
@@ -141,17 +143,17 @@ bool PanelScene::Draw()
 void PanelScene::HandleGuizmo()
 {
 	// --- Set Current Guizmo operation ---
-	if (ImGui::IsWindowHovered() && EngineApp->input->GetMouseButton(SDL_BUTTON_RIGHT) == BrokenEngine::KEY_IDLE)
+	if (ImGui::IsWindowHovered() && EngineApp->input->GetMouseButton(SDL_BUTTON_RIGHT) == Broken::KEY_IDLE)
 	{
-		if (EngineApp->input->GetKey(SDL_SCANCODE_W) == BrokenEngine::KEY_DOWN)
+		if (EngineApp->input->GetKey(SDL_SCANCODE_W) == Broken::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-		if (EngineApp->input->GetKey(SDL_SCANCODE_E) == BrokenEngine::KEY_DOWN)
+		if (EngineApp->input->GetKey(SDL_SCANCODE_E) == Broken::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::ROTATE;
-		if (EngineApp->input->GetKey(SDL_SCANCODE_R) == BrokenEngine::KEY_DOWN)
+		if (EngineApp->input->GetKey(SDL_SCANCODE_R) == Broken::KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
-	BrokenEngine::GameObject* selectedGO = EngineApp->scene_manager->GetSelectedGameObject();
+	Broken::GameObject* selectedGO = EngineApp->scene_manager->GetSelectedGameObject();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();
@@ -159,7 +161,7 @@ void PanelScene::HandleGuizmo()
 
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<BrokenEngine::ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
+	memcpy(modelMatrix, selectedGO->GetComponent<Broken::ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
@@ -170,7 +172,7 @@ void PanelScene::HandleGuizmo()
 	{
 		float4x4 newTransform;
 		newTransform.Set(modelMatrix);
-		selectedGO->GetComponent<BrokenEngine::ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
+		selectedGO->GetComponent<Broken::ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
 	}
 }
 

@@ -2,7 +2,7 @@
 #include "EngineApplication.h"
 #include "Imgui/imgui.h"
 
-PanelAbout::PanelAbout(char * name) : BrokenEngine::Panel(name)
+PanelAbout::PanelAbout(char * name) : Broken::Panel(name)
 {
 }
 
@@ -12,6 +12,8 @@ PanelAbout::~PanelAbout()
 
 bool PanelAbout::Draw() 
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
 

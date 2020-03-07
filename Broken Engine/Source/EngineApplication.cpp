@@ -4,7 +4,7 @@
 
 EngineApplication* EngineApp = NULL;
 
-BrokenEngine::Application* BrokenEngine::CreateApplication() {
+Broken::Application* Broken::CreateApplication() {
 	return new EngineApplication();
 }
 

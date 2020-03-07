@@ -33,12 +33,14 @@ PanelInspector::~PanelInspector()
 
 bool PanelInspector::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		BrokenEngine::GameObject* Selected = EngineApp->scene_manager->GetSelectedGameObject();
+		Broken::GameObject* Selected = EngineApp->scene_manager->GetSelectedGameObject();
 
 		if (Selected == nullptr)
 		{
@@ -51,9 +53,9 @@ bool PanelInspector::Draw()
 
 		// --- Components ---
 
-		std::vector<BrokenEngine::Component*>* components = &Selected->GetComponents();
+		std::vector<Broken::Component*>* components = &Selected->GetComponents();
 
-		for (std::vector<BrokenEngine::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
+		for (std::vector<Broken::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
 		{
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
@@ -90,14 +92,14 @@ bool PanelInspector::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				BrokenEngine::Resource* resource = EngineApp->resources->GetResource(UID, false);
+				Broken::Resource* resource = EngineApp->resources->GetResource(UID, false);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if (resource && resource->GetType() == BrokenEngine::Resource::ResourceType::SCRIPT)
+				if (resource && resource->GetType() == Broken::Resource::ResourceType::SCRIPT)
 				{
 					resource = EngineApp->resources->GetResource(UID);
-					BrokenEngine::ComponentScript* script = (BrokenEngine::ComponentScript*)Selected->AddComponent(BrokenEngine::Component::ComponentType::Script);
-					script->AssignScript((BrokenEngine::ResourceScript*)resource);
+					Broken::ComponentScript* script = (Broken::ComponentScript*)Selected->AddComponent(Broken::Component::ComponentType::Script);
+					script->AssignScript((Broken::ResourceScript*)resource);
 
 				}
 			}
@@ -111,44 +113,44 @@ bool PanelInspector::Draw()
 
 		if (item_current == "Mesh")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::Mesh);
+			Selected->AddComponent(Broken::Component::ComponentType::Mesh);
 		}
 
 		if (item_current == "Mesh Renderer")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::MeshRenderer);
+			Selected->AddComponent(Broken::Component::ComponentType::MeshRenderer);
 		}
 
 		if (item_current == "UI Canvas")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::Canvas);
+			Selected->AddComponent(Broken::Component::ComponentType::Canvas);
 		}
 
 		if (item_current == "UI Image")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::Image);
+			Selected->AddComponent(Broken::Component::ComponentType::Image);
 		}
 
 		if (item_current == "UI Text")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::Text);
+			Selected->AddComponent(Broken::Component::ComponentType::Text);
 		}
 		if (item_current == "Dynamic RigidBody")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::DynamicRigidBody);
+			Selected->AddComponent(Broken::Component::ComponentType::DynamicRigidBody);
 		}
 
 		if (item_current == "Collider")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::Collider);
+			Selected->AddComponent(Broken::Component::ComponentType::Collider);
 		}
 		if (item_current == "Particle Emitter")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::ParticleEmitter);
+			Selected->AddComponent(Broken::Component::ComponentType::ParticleEmitter);
 		}
 		if (item_current == "Audio Source")
 		{
-			Selected->AddComponent(BrokenEngine::Component::ComponentType::AudioSource);
+			Selected->AddComponent(Broken::Component::ComponentType::AudioSource);
 		}
 
 		item_current = items[0];
@@ -180,7 +182,7 @@ bool PanelInspector::Draw()
 	return true;
 }
 
-void PanelInspector::CreateGameObjectNode(BrokenEngine::GameObject & Selected) const
+void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 {
 	ImGui::BeginChild("child", ImVec2(0, 35), true);
 

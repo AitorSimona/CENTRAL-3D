@@ -19,7 +19,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled) {
 	camera = new ComponentCamera(nullptr);

@@ -8,7 +8,7 @@
 
 #include "Imgui/imgui.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Camera) {
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetPos(float3::zero);

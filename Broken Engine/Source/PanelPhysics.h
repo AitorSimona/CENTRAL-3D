@@ -4,7 +4,7 @@
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 #include "BrokenEngine.h"
 
-class PanelPhysics : public BrokenEngine::Panel
+class PanelPhysics : public Broken::Panel
 {
 public:
 

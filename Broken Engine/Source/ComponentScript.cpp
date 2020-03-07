@@ -10,7 +10,7 @@
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 
 ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Script)

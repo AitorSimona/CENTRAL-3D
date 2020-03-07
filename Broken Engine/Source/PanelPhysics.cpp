@@ -6,7 +6,7 @@
 
 #include "mmgr/mmgr.h"
 
-PanelPhysics::PanelPhysics(char* name) : BrokenEngine::Panel(name)
+PanelPhysics::PanelPhysics(char* name) : Broken::Panel(name)
 {
 }
 
@@ -16,6 +16,8 @@ PanelPhysics::~PanelPhysics()
 
 bool PanelPhysics::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	gravity = EngineApp->physics->mScene->getGravity();
 	staticFriction = EngineApp->physics->mMaterial->getStaticFriction();
 	dynamicFriction = EngineApp->physics->mMaterial->getDynamicFriction();

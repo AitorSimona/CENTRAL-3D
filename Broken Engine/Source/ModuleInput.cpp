@@ -9,7 +9,7 @@
 #include "mmgr/mmgr.h"
 
 #define MAX_KEYS 300
-using namespace BrokenEngine;
+using namespace Broken;
 
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled) {
 	keyboard = new KEY_STATE[MAX_KEYS];

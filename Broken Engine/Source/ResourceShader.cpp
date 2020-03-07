@@ -13,7 +13,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceShader::ResourceShader(uint UID, const char* source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file) {
 	extension = ".shader";
 	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;

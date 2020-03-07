@@ -3,7 +3,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 Panel::Panel(char* name) : name(name) {}
 
 Panel::~Panel() {}

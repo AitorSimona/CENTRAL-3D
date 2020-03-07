@@ -5,7 +5,7 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ComponentAudioSource::ComponentAudioSource( GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::AudioSource)
 {

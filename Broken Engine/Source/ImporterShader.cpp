@@ -7,7 +7,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader) {
 }
 

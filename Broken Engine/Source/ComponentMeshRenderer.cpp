@@ -29,7 +29,7 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::MeshRenderer) {
 	material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 }

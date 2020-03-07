@@ -7,7 +7,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceShaderProgram::ResourceShaderProgram(uint UID, const char* source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file) {
 	// MYTODO: Should go to library folder?
 	extension = ".shader";

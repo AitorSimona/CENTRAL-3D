@@ -14,6 +14,7 @@
 //#include "ProgressBar.h"
 #define NOMINMAX
 #include <Windows.h>
+#include <functional>
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -28,7 +29,7 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 {
@@ -95,11 +96,11 @@ bool ModuleGui::Start()
 	sceneHeight = App->window->GetWindowHeight();
 
 	// --- Initialize ImGui ---
-
 	IMGUI_CHECKVERSION();
-	ImGuiContext * context = ImGui::CreateContext();
+	ImGui::SetAllocatorFunctions(&BEImGuiAllocator, &BEImGuiDeallocator);
+	ctx = ImGui::CreateContext();
 
-	if (context)
+	if (ctx)
 	{
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("Successfully created ImGui context");
 
@@ -198,7 +199,7 @@ bool ModuleGui::CleanUp()
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
+	ImGui::DestroyContext(ctx);
 
 	return ret;
 }
@@ -253,7 +254,7 @@ void ModuleGui::AddPanel(Panel* npanel) {
 }
 
 ImGuiContext* ModuleGui::getImgUICtx() const {
-	return ImGui::GetCurrentContext();
+	return ctx;
 }
 
 void ModuleGui::LogFPS(float fps, float ms)
@@ -315,5 +316,13 @@ void ModuleGui::CreateIcons()
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
+}
+
+void* BEImGuiAllocator(size_t sz, void* user_data) {
+	return malloc(sz);
+}
+
+void BEImGuiDeallocator(void* ptr, void* user_data) {
+	free(ptr);
 }
 

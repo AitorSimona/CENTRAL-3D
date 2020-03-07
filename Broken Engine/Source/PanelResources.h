@@ -5,7 +5,7 @@
 
 struct ImVec4;
 
-class PanelResources : public BrokenEngine::Panel
+class PanelResources : public Broken::Panel
 {
 public:
 
@@ -15,7 +15,7 @@ public:
 	bool Draw();
 
 private:
-	void DrawResourceNode(BrokenEngine::Resource* resource, ImVec4& color);
+	void DrawResourceNode(Broken::Resource* resource, ImVec4& color);
 };
 
 #endif

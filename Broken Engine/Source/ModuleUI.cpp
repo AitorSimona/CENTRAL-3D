@@ -9,7 +9,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ModuleUI::ModuleUI(bool start_enabled) : Module(start_enabled)
 {

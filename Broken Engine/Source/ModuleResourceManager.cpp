@@ -17,7 +17,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 // --- Get Assimp LOGS and print them to console ---
 void MyAssimpCallback(const char* msg, char* userData)
 {
@@ -109,12 +109,12 @@ std::string ModuleResourceManager::DuplicateIntoGivenFolder(const char* path, co
 // --- Sweep over all files in given directory, if those files pass the given filters, call Import and if it succeeds add them to the given resource folder ---
 ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters)
 {
-	std::vector<const char*> files;
-	std::vector<const char*> dirs;
+	std::vector<std::string> files;
+	std::vector<std::string> dirs;
 
 	std::string dir((directory) ? directory : "");
 
-	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+	App->fs->DiscoverFilesAndDirectories(dir.c_str(), files, dirs);
 
 	// --- Import folder ---
 	Importer::ImportData IData(dir.c_str());
@@ -124,15 +124,14 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 	if (parent)
 		folder->SetParent(parent);
 
-	for (std::vector<const char*>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
-	{
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it) {
 		SearchAssets(folder,(dir + (*it) + "/").c_str(), filters);
 	}
 
 	// --- Now import all of its engine-supported files ---
 	std::sort(files.begin(), files.end());
 
-	for (std::vector<const char*>::const_iterator it = files.begin(); it != files.end(); ++it)
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
 	{
 		const std::string& str = *it;
 
@@ -540,7 +539,7 @@ void ModuleResourceManager::HandleFsChanges()
 
 		for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
 		{
-			for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
+			for (strvec::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
 			{
 				// --- If the meta corresponds to the file ---
 				if ((*meta).second->GetOriginalFile() == *files)
@@ -652,24 +651,23 @@ void ModuleResourceManager::HandleFsChanges()
 
 void ModuleResourceManager::RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret)
 {
-	std::vector<const char*> files;
-	std::vector<const char*> dirs;
+	std::vector<std::string> files;
+	std::vector<std::string> dirs;
 
 	std::string dir((directory) ? directory : "");
 
-	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+	App->fs->DiscoverFilesAndDirectories(dir.c_str(), files, dirs);
 
-	for (std::vector<const char*>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
-		RetrieveFilesAndDirectories((dir + (*it) + "/").c_str(), ret);
+		RetrieveFilesAndDirectories((dir + *it + "/").c_str(), ret);
 	}
-
 	// --- Now iterate all of its engine-supported files ---
 	std::sort(files.begin(), files.end());
 
 	std::vector<std::string> compatible_files;
 
-	for (std::vector<const char*>::const_iterator it = files.begin(); it != files.end(); ++it)
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
 	{
 		const std::string& str = *it;
 
@@ -1134,8 +1132,7 @@ std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::R
 
 	}
 
-	std::unique_ptr<std::string> ret = std::make_unique<std::string>(unique_name);
-	return ret;
+	return std::make_shared<std::string>(unique_name);
 
 }
 

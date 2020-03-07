@@ -7,7 +7,7 @@
 #include "mmgr/mmgr.h"
 
 
-PanelResources::PanelResources(char* name) : BrokenEngine::Panel(name)
+PanelResources::PanelResources(char* name) : Broken::Panel(name)
 {
 }
 
@@ -18,6 +18,7 @@ PanelResources::~PanelResources()
 bool PanelResources::Draw()
 {
 	// --- Simply print on screen all resources references number (debug purposes) ---
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
 	ImGuiWindowFlags resourcesFlags = 0;
 	resourcesFlags = ImGuiWindowFlags_NoFocusOnAppearing;
@@ -27,7 +28,7 @@ bool PanelResources::Draw()
 	{
 		if (ImGui::CollapsingHeader("Folders"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceFolder*>::const_iterator it = EngineApp->resources->folders.begin(); it != EngineApp->resources->folders.end(); ++it)
+			for (std::map<uint, Broken::ResourceFolder*>::const_iterator it = EngineApp->resources->folders.begin(); it != EngineApp->resources->folders.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -39,7 +40,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Scenes"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceScene*>::const_iterator it = EngineApp->resources->scenes.begin(); it != EngineApp->resources->scenes.end(); ++it)
+			for (std::map<uint, Broken::ResourceScene*>::const_iterator it = EngineApp->resources->scenes.begin(); it != EngineApp->resources->scenes.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -52,7 +53,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Models"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceModel*>::const_iterator it = EngineApp->resources->models.begin(); it != EngineApp->resources->models.end(); ++it)
+			for (std::map<uint, Broken::ResourceModel*>::const_iterator it = EngineApp->resources->models.begin(); it != EngineApp->resources->models.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -64,7 +65,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Materials"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceMaterial*>::const_iterator it = EngineApp->resources->materials.begin(); it != EngineApp->resources->materials.end(); ++it)
+			for (std::map<uint, Broken::ResourceMaterial*>::const_iterator it = EngineApp->resources->materials.begin(); it != EngineApp->resources->materials.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -76,7 +77,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Shaders"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceShader*>::const_iterator it = EngineApp->resources->shaders.begin(); it != EngineApp->resources->shaders.end(); ++it)
+			for (std::map<uint, Broken::ResourceShader*>::const_iterator it = EngineApp->resources->shaders.begin(); it != EngineApp->resources->shaders.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -88,7 +89,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Meshes"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceMesh*>::const_iterator it = EngineApp->resources->meshes.begin(); it != EngineApp->resources->meshes.end(); ++it)
+			for (std::map<uint, Broken::ResourceMesh*>::const_iterator it = EngineApp->resources->meshes.begin(); it != EngineApp->resources->meshes.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -100,7 +101,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Textures"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceTexture*>::const_iterator it = EngineApp->resources->textures.begin(); it != EngineApp->resources->textures.end(); ++it)
+			for (std::map<uint, Broken::ResourceTexture*>::const_iterator it = EngineApp->resources->textures.begin(); it != EngineApp->resources->textures.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -112,7 +113,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Shader Objects"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceShaderObject*>::const_iterator it = EngineApp->resources->shader_objects.begin(); it != EngineApp->resources->shader_objects.end(); ++it)
+			for (std::map<uint, Broken::ResourceShaderObject*>::const_iterator it = EngineApp->resources->shader_objects.begin(); it != EngineApp->resources->shader_objects.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -124,7 +125,7 @@ bool PanelResources::Draw()
 		}
 		if (ImGui::CollapsingHeader("Metas"))
 		{
-			for (std::map<uint, BrokenEngine::ResourceMeta*>::const_iterator it = EngineApp->resources->metas.begin(); it != EngineApp->resources->metas.end(); ++it)
+			for (std::map<uint, Broken::ResourceMeta*>::const_iterator it = EngineApp->resources->metas.begin(); it != EngineApp->resources->metas.end(); ++it)
 			{
 				if ((*it).second)
 				{
@@ -141,7 +142,7 @@ bool PanelResources::Draw()
 	return true;
 }
 
-void PanelResources::DrawResourceNode(BrokenEngine::Resource* resource, ImVec4& color)
+void PanelResources::DrawResourceNode(Broken::Resource* resource, ImVec4& color)
 {
 	ImGui::Text(resource->GetName());
 	ImGui::SameLine();

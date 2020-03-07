@@ -6,7 +6,7 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-PanelToolbar::PanelToolbar(char * name) : BrokenEngine::Panel(name)
+PanelToolbar::PanelToolbar(char * name) : Broken::Panel(name)
 {
 }
 
@@ -16,6 +16,8 @@ PanelToolbar::~PanelToolbar()
 
 bool PanelToolbar::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar;
 
@@ -37,27 +39,27 @@ bool PanelToolbar::Draw()
 
 		if(ImGui::Button("PLAY"))
 		{
-			if (EngineApp->GetAppState() == BrokenEngine::AppState::PLAY || EngineApp->GetAppState() == BrokenEngine::AppState::PAUSE)
-				EngineApp->GetAppState() = BrokenEngine::AppState::TO_EDITOR;
+			if (EngineApp->GetAppState() == Broken::AppState::PLAY || EngineApp->GetAppState() == Broken::AppState::PAUSE)
+				EngineApp->GetAppState() = Broken::AppState::TO_EDITOR;
 			else
-				EngineApp->GetAppState() = BrokenEngine::AppState::TO_PLAY;
+				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
 		}
 		ImGui::SameLine();
 
 		if (ImGui::Button("PAUSE"))
 		{
-			if (EngineApp->GetAppState() == BrokenEngine::AppState::PLAY)
-				EngineApp->GetAppState() = BrokenEngine::AppState::TO_PAUSE;
-			else if (EngineApp->GetAppState() == BrokenEngine::AppState::PAUSE)
-				EngineApp->GetAppState() = BrokenEngine::AppState::TO_PLAY;
+			if (EngineApp->GetAppState() == Broken::AppState::PLAY)
+				EngineApp->GetAppState() = Broken::AppState::TO_PAUSE;
+			else if (EngineApp->GetAppState() == Broken::AppState::PAUSE)
+				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
 
 		}
 		ImGui::SameLine();
 
 		if (ImGui::Button("STEP"))
 		{
-			if (EngineApp->GetAppState() == BrokenEngine::AppState::PAUSE)
-				EngineApp->GetAppState() = BrokenEngine::AppState::STEP;
+			if (EngineApp->GetAppState() == Broken::AppState::PAUSE)
+				EngineApp->GetAppState() = Broken::AppState::STEP;
 
 		}
 

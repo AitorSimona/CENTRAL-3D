@@ -7,7 +7,7 @@
 #define MAX_EVENTS 1000
 #define EVENT_TYPES 7
 
-typedef void (*Function)(const BrokenEngine::Event& e);
+typedef void (*Function)(const Broken::Event& e);
 
 BE_BEGIN_NAMESPACE
 

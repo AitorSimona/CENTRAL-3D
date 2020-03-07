@@ -16,7 +16,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ImporterMaterial::ImporterMaterial() : Importer(Importer::ImporterType::Material) {
 }
 

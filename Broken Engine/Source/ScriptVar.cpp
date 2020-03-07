@@ -2,7 +2,7 @@
 #include "BrokenCore.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 ScriptVar::ScriptVar() {
 
 }

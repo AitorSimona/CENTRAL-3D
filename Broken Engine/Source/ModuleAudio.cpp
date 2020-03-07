@@ -11,7 +11,7 @@
 #define BANKNAME_INIT "Assets/Sounds/Init.bnk"
 
 //using namespace AK;
-using namespace BrokenEngine;
+using namespace Broken;
 
 CAkDefaultIOHookBlocking g_lowLevelIO;
 

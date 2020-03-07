@@ -4,7 +4,7 @@
 #include "BrokenEngine.h"
 #include "Imgui/imgui.h"
 
-class PanelConsole : public BrokenEngine::Panel
+class PanelConsole : public Broken::Panel
 {
 public:
 

@@ -10,7 +10,7 @@
 #include "Math.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ResourceAnimation::ResourceAnimation(uint UID, const char* source_file) : Resource(Resource::ResourceType::ANIMATION, UID, source_file)
 {

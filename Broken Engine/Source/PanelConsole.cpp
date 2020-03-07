@@ -3,7 +3,7 @@
 
 #include "mmgr/mmgr.h"
 
-PanelConsole::PanelConsole(char * name) : BrokenEngine::Panel(name)
+PanelConsole::PanelConsole(char * name) : Broken::Panel(name)
 {
 }
 
@@ -14,6 +14,7 @@ PanelConsole::~PanelConsole()
 
 bool PanelConsole::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
 	ImGuiWindowFlags consoleFlags = 0;
 	consoleFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
@@ -74,9 +75,9 @@ bool PanelConsole::Draw()
 
 		ImGui::EndChild();
 
+		ImGui::End();
 	}
 
-	ImGui::End();
 
 	return true;
 }

@@ -12,13 +12,13 @@
 
 
 //Redefining
-#define EX_ENGINE_CONSOLE_LOG(format, ...) BrokenEngine::ExEngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define EX_ENGINE_CONSOLE_LOG(format, ...) Broken::ExEngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// Print only in System Console
-#define EX_SYSTEM_CONSOLE_LOG(format, ...) BrokenEngine::ExSystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define EX_SYSTEM_CONSOLE_LOG(format, ...) Broken::ExSystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// Print in both Consoles
-#define EX_ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) BrokenEngine::ExEngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); BrokenEngine::ExSystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define EX_ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) Broken::ExEngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); Broken::ExSystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// First info at Compilation
-#define EX_COMPILATIONLOGINFO BrokenEngine::ExLogCompilationFirstMessage()
+#define EX_COMPILATIONLOGINFO Broken::ExLogCompilationFirstMessage()
 
 BE_BEGIN_NAMESPACE
 void BROKEN_API ExLogCompilationFirstMessage();

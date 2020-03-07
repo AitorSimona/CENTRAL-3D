@@ -6,7 +6,7 @@
 #include "BrokenEngine.h"
 
 
-class PanelGame : public BrokenEngine::Panel {
+class PanelGame : public Broken::Panel {
 public:
 	PanelGame(char* name);
 	~PanelGame();

@@ -10,7 +10,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 static sMStats m_MemoryInfo_StatsFromMMRG;
 void RecalculateMemStatisticsFromMMGR() {
 	m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();

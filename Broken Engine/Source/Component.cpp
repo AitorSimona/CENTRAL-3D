@@ -3,7 +3,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 Component::Component(GameObject* ContainerGO, Component::ComponentType type) {
 	GO = ContainerGO;
 	this->type = type;

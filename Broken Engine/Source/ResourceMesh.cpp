@@ -11,7 +11,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceMesh::ResourceMesh(uint UID, const char* source_file) : Resource(Resource::ResourceType::MESH, UID, source_file) {
 	extension = ".mesh";
 	resource_file = MESHES_FOLDER + std::to_string(UID) + extension;

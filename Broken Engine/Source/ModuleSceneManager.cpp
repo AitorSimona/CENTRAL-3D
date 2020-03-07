@@ -34,7 +34,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 // --- Event Manager Callbacks ---
 
 void ModuleSceneManager::ONResourceSelected(const Event& e) {

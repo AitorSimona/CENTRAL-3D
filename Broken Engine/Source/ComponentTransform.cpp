@@ -7,7 +7,7 @@
 #include "mmgr/mmgr.h"
 
 // MYTODO: Explain math behind transform ops 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ComponentTransform::ComponentTransform(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform) {
 }

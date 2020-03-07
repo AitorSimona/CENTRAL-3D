@@ -8,7 +8,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 ResourceTexture::ResourceTexture(uint UID, const char* source_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file) {
 	extension = ".dds";
 	resource_file = TEXTURES_FOLDER + std::to_string(UID) + extension;

@@ -17,9 +17,9 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 
-BrokenEngine::ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::ParticleEmitter)
+Broken::ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
 	Enable();
 	

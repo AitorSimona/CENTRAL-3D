@@ -31,7 +31,7 @@
 
 #include "mmgr/mmgr.h"
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ModulePhysics::ModulePhysics(bool start_enabled)
 {

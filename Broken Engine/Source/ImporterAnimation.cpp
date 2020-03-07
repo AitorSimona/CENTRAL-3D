@@ -12,7 +12,7 @@
 #include "mmgr/mmgr.h"
 
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 ImporterAnimation::ImporterAnimation() : Importer(Importer::ImporterType::Animation)
 {

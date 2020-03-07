@@ -4,7 +4,7 @@
 #include "BrokenEngine.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 
-class PanelScene : public BrokenEngine::Panel
+class PanelScene : public Broken::Panel
 {
 public:
 

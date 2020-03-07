@@ -19,7 +19,7 @@
 #define QUADTREE_MAX_ITEMS 10
 #define QUADTREE_MIN_SIZE 10.0f 
 
-using namespace BrokenEngine;
+using namespace Broken;
 
 QuadtreeNode::QuadtreeNode(const AABB& box) : box(box) {
 	parent = childs[NET] = childs[SET] = childs[SWT] = childs[NWT] = childs[NEB] = childs[SEB] = childs[SWB] = childs[NWB] = nullptr;

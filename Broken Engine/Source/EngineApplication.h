@@ -5,7 +5,7 @@
 
 class ModuleEditorUI;
 
-class EngineApplication : public BrokenEngine::Application {
+class EngineApplication : public Broken::Application {
 
 public:
 
