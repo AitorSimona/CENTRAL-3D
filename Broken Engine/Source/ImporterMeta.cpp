@@ -44,9 +44,10 @@ Resource* ImporterMeta::Load(const char* path) const
 		return nullptr;
 
 	uint UID = 0;
+	uint fileFormatv = fileFormatVersion.get<uint>();
 
 	// --- Retrieve UID ---
-	if (App->resources->GetFileFormatVersion() == 2) // EXAMPLE of usage of deprecated functionality 
+	if (fileFormatv == 2) // EXAMPLE of usage of deprecated functionality 
 		UID = UID_node.get<uint>();
 	else
 		UID = std::stoi(UID_node.get<std::string>());
@@ -56,10 +57,7 @@ Resource* ImporterMeta::Load(const char* path) const
 
 	// --- Fill meta ---
 	if (resource)
-	{
-		if (!fileFormatVersion.is_null())
-			resource->fileFormatVersion = fileFormatVersion.get<uint>();
-	}
+		resource->fileFormatVersion = fileFormatv;
 
 	// --- A folder has been renamed ---
 	if (!App->fs->Exists(source_file.get<std::string>().c_str()))

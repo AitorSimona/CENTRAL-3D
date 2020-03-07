@@ -5,6 +5,7 @@
     },
     "GUI": {
         "About": false,
+        "Build": false,
         "Console": true,
         "Hierarchy": true,
         "Inspector": true,
