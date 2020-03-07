@@ -152,7 +152,7 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.y = centerPosition.y + offset.y;
 	localMatrix.z = centerPosition.z + offset.z;
 
-	localMatrix.scaleX = colliderSize.x * originalSize.x; //scale * sizeAABB
+	localMatrix.scaleX = colliderSize.x * originalSize.x;
 	localMatrix.scaleY = colliderSize.y * originalSize.y;
 	localMatrix.scaleZ = colliderSize.z * originalSize.z;
 	
@@ -162,7 +162,6 @@ void ComponentCollider::UpdateLocalMatrix() {
 	float3 pos, scale;
 	Quat rot;
 	globalMatrix.Decompose(pos, rot, scale);
-	//scale = cTransform->GetScale();
 
 	if (!scale.Equals(tmpScale)) {
 		editCollider = true;
@@ -584,7 +583,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		
 			float3 center;
 
-			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
+			PxBoxGeometry boxGeometry;
 			Quat q = transform->rotation;
 			Quat qInverse = q;
 			if (!firstCreation)
@@ -595,7 +594,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 				transform->SetRotation(transform->rotation);
 				transform->UpdateLocalTransform();
-				//transform->SetGlobalTransform(transform->Global_transform);
 
 				GO->UpdateAABB();
 
@@ -623,15 +621,14 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!firstCreation)
 			{
 				transform->SetRotation(q); //RESET TO ORIGNAL ROTATION
-				//transform->SetGlobalTransform(transform->Local_transform);
+
 				GO->UpdateAABB();
 				firstCreation = true; 
 				
 				center = GO->GetAABB().CenterPoint();
 				float3 dir = center - transform->GetGlobalPosition();
 				float3 dir2 = quat.Inverted().Mul(dir); // rotate it
-				offset = (dir2.Div(scale));// +transform->GetGlobalPosition()); // calculate rotated vector
-				//offset = center.Div(transform->GetScale()) - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
+				offset = (dir2.Div(scale));
 
 				offset.Mul(scale);
 			}
