@@ -1,5 +1,4 @@
 #include "ComponentScript.h"
-//#include "ResourceScript.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
@@ -188,7 +187,7 @@ json ComponentScript::Save() const
 
 void ComponentScript::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceScript"];
+	std::string path = node["Resources"]["ResourceScript"].is_null() ? "0" : node["Resources"]["ResourceScript"];
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
@@ -199,9 +198,11 @@ void ComponentScript::Load(json& node)
 		if (meta)
 			script = (ResourceScript*)App->resources->GetResource(meta->GetUID());
 
+		// this is being done in Assign script!!!
+
 		// --- We want to be notified of any resource event ---
-		if (script)
-			script->AddUser(GO);
+		//if (script)
+		//	script->AddUser(GO); 
 
 		AssignScript((ResourceScript*)this->script);
 	}

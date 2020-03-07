@@ -26,8 +26,6 @@ public:
 
 	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
 	void CreateFramebuffer();
-	void RenderFramebuffer();
-	//void NewVertexBuffer(Vertex* vertex, uint& size, uint& id_vertex);
 
 	// --- Setters ---
 	bool SetVSync(bool vsync);
@@ -47,7 +45,6 @@ public:
 	ResourceShader* linepointShader = nullptr;
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
-	ResourceShader* screenShader = nullptr;
 
 	unsigned int VAO = 0;
 	SDL_GLContext context;

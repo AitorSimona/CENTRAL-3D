@@ -71,30 +71,30 @@ json ComponentDynamicRigidBody::Save() const
 
 void ComponentDynamicRigidBody::Load(json& node)
 {
-	std::string mass_ = node["mass"];
-	std::string density_ = node["density"];
-	std::string use_gravity_ = node["use_gravity"];
-	std::string is_kinematic_ = node["is_kinematic"];
+	std::string mass_ = node["mass"].is_null() ? "0" : node["mass"];
+	std::string density_ = node["density"].is_null() ? "0" : node["density"];
+	std::string use_gravity_ = node["use_gravity"].is_null() ? "0" : node["use_gravity"];
+	std::string is_kinematic_ = node["is_kinematic"].is_null() ? "0" : node["is_kinematic"];
 
-	std::string freezePosition_X_ = node["freezePosition_X"];
-	std::string freezePosition_Y_ = node["freezePosition_Y"];
-	std::string freezePosition_Z_ = node["freezePosition_Z"];
+	std::string freezePosition_X_ = node["freezePosition_X"].is_null() ? "0" : node["freezePosition_X"];
+	std::string freezePosition_Y_ = node["freezePosition_Y"].is_null() ? "0" : node["freezePosition_Y"];
+	std::string freezePosition_Z_ = node["freezePosition_Z"].is_null() ? "0" : node["freezePosition_Z"];
 
-	std::string freezeRotation_X_ = node["freezeRotation_X"];
-	std::string freezeRotation_Y_ = node["freezeRotation_Y"];
-	std::string freezeRotation_Z_ = node["freezeRotation_Z"];
+	std::string freezeRotation_X_ = node["freezeRotation_X"].is_null() ? "0" : node["freezeRotation_X"];
+	std::string freezeRotation_Y_ = node["freezeRotation_Y"].is_null() ? "0" : node["freezeRotation_Y"];
+	std::string freezeRotation_Z_ = node["freezeRotation_Z"].is_null() ? "0" : node["freezeRotation_Z"];
 
-	std::string linear_velx = node["linear_velx"];
-	std::string linear_vely = node["linear_vely"];
-	std::string linear_velz = node["linear_velz"];
+	std::string linear_velx = node["linear_velx"].is_null() ? "0" : node["linear_velx"];
+	std::string linear_vely = node["linear_vely"].is_null() ? "0" : node["linear_vely"];
+	std::string linear_velz = node["linear_velz"].is_null() ? "0" : node["linear_velz"];
 
-	std::string angular_velx = node["angular_velx"];
-	std::string angular_vely = node["angular_vely"];
-	std::string angular_velz = node["angular_velz"];
+	std::string angular_velx = node["angular_velx"].is_null() ? "0" : node["angular_velx"];
+	std::string angular_vely = node["angular_vely"].is_null() ? "0" : node["angular_vely"];
+	std::string angular_velz = node["angular_velz"].is_null() ? "0" : node["angular_velz"];
 
-	std::string linear_damping_ = node["linear_damping"];
+	std::string linear_damping_ = node["linear_damping"].is_null() ? "0" : node["linear_damping"];
 
-	std::string angular_damping_ = node["angular_damping"];
+	std::string angular_damping_ = node["angular_damping"].is_null() ? "0" : node["angular_damping"];
 
 	mass = std::stof(mass_);
 	density = std::stof(density_);
