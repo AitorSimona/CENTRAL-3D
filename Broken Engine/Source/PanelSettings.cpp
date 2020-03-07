@@ -565,6 +565,9 @@ inline void PanelSettings::LibrariesNode() const
 
 	if (ImGui::Button("MMGR")) { App->gui->RequestBrowser("http://www.paulnettle.com/"); }
 
+	if (ImGui::Button("PhysX")) { App->gui->RequestBrowser("https://github.com/NVIDIAGameWorks/PhysX-3.4/releases/tag/v3.4.2-bsd"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "3.4.2");
+
 }
 
 void PanelSettings::AddFPS(float fps, float ms)

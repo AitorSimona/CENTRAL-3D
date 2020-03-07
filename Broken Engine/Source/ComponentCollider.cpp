@@ -31,12 +31,6 @@ ComponentCollider::~ComponentCollider()
 
 void ComponentCollider::Draw() 
 {
-	if (App->GetAppState() == AppState::TO_EDITOR)
-	{
-		ENGINE_CONSOLE_LOG("Deleted");
-		Delete();
-	}
-
 	if (shape)
 	{
 		// --- Get shape's dimensions ---
@@ -151,22 +145,23 @@ void ComponentCollider::UpdateLocalMatrix() {
 	if (!rigidStatic && !dynamicRB)
 		return;
 
-	//Render
-	localMatrix.x = localPosition.x + offset.x;
-	localMatrix.y = localPosition.y + offset.y;
-	localMatrix.z = localPosition.z + offset.z;
-	localMatrix.scaleX = scale.x * originalScale.x; //scale * sizeAABB
-	localMatrix.scaleY = scale.y * originalScale.y;
-	localMatrix.scaleZ = scale.z * originalScale.z;
-
 	math::float4x4 gt = cTransform->GetGlobalTransform();
+
+	//Render
+	localMatrix.x = centerPosition.x + offset.x;
+	localMatrix.y = centerPosition.y + offset.y;
+	localMatrix.z = centerPosition.z + offset.z;
+
+	localMatrix.scaleX = colliderSize.x * originalSize.x;
+	localMatrix.scaleY = colliderSize.y * originalSize.y;
+	localMatrix.scaleZ = colliderSize.z * originalSize.z;
+	
 	globalMatrix = gt * localMatrix;
 
 	//PHYSX DEBUG
 	float3 pos, scale;
 	Quat rot;
 	globalMatrix.Decompose(pos, rot, scale);
-	scale = cTransform->GetScale();
 
 	if (!scale.Equals(tmpScale)) {
 		editCollider = true;
@@ -259,21 +254,21 @@ json ComponentCollider::Save() const
 
 	node["colliderType"] = std::to_string(colliderType);
 
-	node["localPositionx"] = std::to_string(localPosition.x);
-	node["localPositiony"] = std::to_string(localPosition.y);
-	node["localPositionz"] = std::to_string(localPosition.z);
+	node["localPositionx"] = std::to_string(centerPosition.x);
+	node["localPositiony"] = std::to_string(centerPosition.y);
+	node["localPositionz"] = std::to_string(centerPosition.z);
 
-	node["originalScalex"] = std::to_string(originalScale.x);
-	node["originalScaley"] = std::to_string(originalScale.y);
-	node["originalScalez"] = std::to_string(originalScale.z);
+	node["originalScalex"] = std::to_string(originalSize.x);
+	node["originalScaley"] = std::to_string(originalSize.y);
+	node["originalScalez"] = std::to_string(originalSize.z);
 
 	node["offsetx"] = std::to_string(offset.x);
 	node["offsety"] = std::to_string(offset.y);
 	node["offsetz"] = std::to_string(offset.z);
 
-	node["globalPositionx"] = std::to_string(originalScale.x);
-	node["globalPositiony"] = std::to_string(originalScale.y);
-	node["globalPositionz"] = std::to_string(originalScale.z);
+	node["globalPositionx"] = std::to_string(originalSize.x);
+	node["globalPositiony"] = std::to_string(originalSize.y);
+	node["globalPositionz"] = std::to_string(originalSize.z);
 
 	node["localMatrixx"] = std::to_string(localMatrix.x);
 	node["localMatrixy"] = std::to_string(localMatrix.y);
@@ -285,9 +280,9 @@ json ComponentCollider::Save() const
 	node["globalMatrixz"] = std::to_string(globalMatrix.z);
 	node["globalMatrixw"] = std::to_string(globalMatrix.w);
 
-	node["scalex"] = std::to_string(scale.x);
-	node["scaley"] = std::to_string(scale.y);
-	node["scalez"] = std::to_string(scale.z);
+	node["scalex"] = std::to_string(colliderSize.x);
+	node["scaley"] = std::to_string(colliderSize.y);
+	node["scalez"] = std::to_string(colliderSize.z);
 
 	node["radius"] = std::to_string(radius);
 
@@ -351,8 +346,8 @@ void ComponentCollider::Load(json& node)
 
 	std::string firstCreation_ = node["firstCreation"].is_null() ? "0" : node["firstCreation"];
 
-	localPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
-	originalScale = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
+	centerPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
+	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
 	offset = float3(std::stof(offsetx), std::stof(offsety), std::stof(offsetz));
 	
 	localMatrix.x = std::stof(localMatrixx);
@@ -365,7 +360,7 @@ void ComponentCollider::Load(json& node)
 	globalMatrix.z = std::stof(globalMatrixz);
 	globalMatrix.w = std::stof(globalMatrixw);
 
-	scale = float3(std::stof(scalex), std::stof(scaley), std::stof(scalez));
+	colliderSize = float3(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 
 	radius = std::stof(radius_);
 	height = std::stof(height_);
@@ -437,7 +432,7 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (shape)
 		{
-			float3* position = &localPosition;
+			float3* position = &centerPosition;
 			
 			ImGui::Text("Center");
 			ImGui::Text("X");
@@ -473,9 +468,9 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 					ImGui::DragFloat("##R", &radius, 0.005f);
 					
-					scale.x = radius;
-					scale.y = radius;
-					scale.z = radius;
+					colliderSize.x = radius;
+					colliderSize.y = radius;
+					colliderSize.z = radius;
 
 					if (prevRadius != radius || editCollider)
 						CreateCollider(COLLIDER_TYPE::SPHERE, true);
@@ -485,13 +480,13 @@ void ComponentCollider::CreateInspectorNode()
 
 				case PxGeometryType::eBOX:
 				{
-					float3 prevScale = scale;
+					float3 prevScale = colliderSize;
 					ImGui::Text("Size");
 					ImGui::Text("X");
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::DragFloat("##SX", &scale.x, 0.005f, 0.01f, 1000.0f);
+					ImGui::DragFloat("##SX", &colliderSize.x, 0.005f, 0.01f, 1000.0f);
 
 					ImGui::SameLine();
 
@@ -499,7 +494,7 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::DragFloat("##SY", &scale.y, 0.005f, 0.01f, 1000.0f);
+					ImGui::DragFloat("##SY", &colliderSize.y, 0.005f, 0.01f, 1000.0f);
 
 					ImGui::SameLine();
 
@@ -507,9 +502,9 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::DragFloat("##SZ", &scale.z, 0.005f, 0.01f, 1000.0f);
+					ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
 
-					if (prevScale.x != scale.x || prevScale.y != scale.y || prevScale.z != scale.z || editCollider)
+					if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider)
 						CreateCollider(COLLIDER_TYPE::BOX, true);
 
 					break;
@@ -530,9 +525,9 @@ void ComponentCollider::CreateInspectorNode()
 					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 					ImGui::DragFloat("##H", &height, 0.005f);
 
-					scale.x = radius;
-					scale.y = height;
-					scale.z = radius;
+					colliderSize.x = radius;
+					colliderSize.y = height;
+					colliderSize.z = radius;
 
 					if (prevRadius != radius || prevheight != height || editCollider)
 						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
@@ -575,38 +570,70 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		return;
 	}
 
-	PxTransform localTransform(PxVec3(localPosition.x, localPosition.y, localPosition.z));
+	PxTransform localTransform(PxVec3(centerPosition.x, centerPosition.y, centerPosition.z));
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 	float3 tScale = transform->GetScale();
+
+	float3 pos, scale;
+	Quat quat;
+	transform->GetGlobalTransform().Decompose(pos, quat, scale);
 
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
 		
-			float3 center = GO->GetAABB().CenterPoint();
+			float3 center;
 
-			PxBoxGeometry boxGeometry;// (PxVec3(baseScale.x, baseScale.y, baseScale.z));
-			
+			PxBoxGeometry boxGeometry;
+			Quat q = transform->rotation;
+			Quat qInverse = q;
 			if (!firstCreation)
 			{
-				originalScale = GO->GetAABB().HalfSize().Mul(scale) * 2;
-				offset = center - transform->GetGlobalPosition();//returns the offset of the collider from the AABB
-				firstCreation = true; 
-			}
-			offset.Mul(tScale);
+				qInverse.InverseAndNormalize();
+				Quat tmp = q * qInverse;
+				transform->rotation = tmp;
 
-			boxGeometry = PxBoxGeometry(PxVec3(originalScale.x * tScale.x * scale.x * 0.5, originalScale.y * tScale.y * scale.y * 0.5, originalScale.z * tScale.z * scale.z * 0.5));
+				transform->SetRotation(transform->rotation);
+				transform->UpdateLocalTransform();
+
+				GO->UpdateAABB();
+
+				originalSize = GO->GetOBB().Size().Div(scale);
+
+				center = GO->GetAABB().CenterPoint();
+
+			}
+
+			boxGeometry = PxBoxGeometry(PxVec3(originalSize.x * scale.x * colliderSize.x * 0.5, originalSize.y * scale.y * colliderSize.y * 0.5, originalSize.z * scale.z * colliderSize.z * 0.5));
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
 			
 			PxTransform position(PxVec3(center.x, center.y, center.z));
-			//centerPosition = center;
 			
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 				App->physics->mScene->addActor(*rigidStatic);
 			}
+
+			
+
+			if (!firstCreation)
+			{
+				transform->SetRotation(q); //RESET TO ORIGNAL ROTATION
+
+				GO->UpdateAABB();
+				firstCreation = true; 
+				
+				center = GO->GetAABB().CenterPoint();
+				float3 dir = center - transform->GetGlobalPosition();
+				float3 dir2 = quat.Inverted().Mul(dir); // rotate it
+				offset = (dir2.Div(scale));
+
+				offset.Mul(scale);
+			}
+
+			UpdateLocalMatrix();
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::BOX;
 			break;
@@ -626,7 +653,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::PLANE: {
-			PxBoxGeometry planeGeometry(PxVec3(scale.x, 0.0001f, scale.z));
+			PxBoxGeometry planeGeometry(PxVec3(colliderSize.x, 0.0001f, colliderSize.z));
 			shape = App->physics->mPhysics->createShape(planeGeometry, *App->physics->mMaterial);
 			shape->setGeometry(planeGeometry);
 

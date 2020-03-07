@@ -88,7 +88,6 @@ void GameObject::Update(float dt)
 		if (components[i] && components[i]->GetActive())
 			components[i]->Update();
 	}
-
 }
 
 void GameObject::RecursiveDelete()
@@ -492,7 +491,6 @@ void GameObject::UpdateAABB()
 	{
 		obb = mesh->GetAABB();
 		obb.Transform(transform->GetGlobalTransform());
-
 		aabb.SetNegativeInfinity();
 		aabb.Enclose(obb);
 	}

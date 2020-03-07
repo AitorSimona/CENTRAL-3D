@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
+#include "ModulePhysics.h"
 #include "ModuleFileSystem.h"
 
 #include "ResourceScene.h"
@@ -31,7 +32,7 @@ void ModuleTimeManager::PrepareUpdate()
 	Gametime_clock.Start();
 
 	time += realtime_dt*Time_scale;
-	
+
 
 	switch (App->GetAppState())
 	{
@@ -64,6 +65,8 @@ void ModuleTimeManager::PrepareUpdate()
 			break;
 
 		case AppState::TO_EDITOR:
+			App->physics->DeleteActors();
+			App->GetAppState() = AppState::EDITOR;
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
 
 			// --- Clear temporal scene, eliminate temporal files/directory ---
