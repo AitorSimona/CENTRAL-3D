@@ -18,12 +18,14 @@
 
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
+#include "ImporterMeta.h"
 
 #include "par/par_shapes.h"
 
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
+#include "ResourceScene.h"
 
 
 #include "mmgr/mmgr.h"
@@ -32,7 +34,8 @@
 
 void ModuleSceneManager::ONResourceSelected(const Event& e)
 {
-	App->scene_manager->SetSelectedGameObject(nullptr);
+	if (App->scene_manager->SelectedGameObject)
+		App->scene_manager->SetSelectedGameObject(nullptr);
 }
 
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
@@ -67,8 +70,20 @@ bool ModuleSceneManager::Init(json file)
 bool ModuleSceneManager::Start()
 {
 	// --- Create primitives ---
-	//cube = CreateCube(1, 1, 1);
-	//sphere = CreateSphere(1.0f, 25, 25);
+	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
+	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
+	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
+	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
+
+	CreateCube(1, 1, 1, cube);
+	CreateSphere(1.0f, 25, 25, sphere);
+	CreateCapsule(1, 1, capsule);
+	CreatePlane(1, 1, 1, plane);
+
+	cube->LoadToMemory();
+	sphere->LoadToMemory();
+	capsule->LoadToMemory();
+	plane->LoadToMemory();
 
 	// --- Create adaptive grid ---
 	glGenVertexArrays(1, &Grid_VAO);
@@ -76,6 +91,12 @@ bool ModuleSceneManager::Start()
 	CreateGrid(10.0f);
 
 	glGenVertexArrays(1, &PointLineVAO);
+
+	// --- Always load default scene ---
+	defaultScene->LoadToMemory();
+
+	// --- Create temporal scene for play/stop ---
+	temporalScene = (Resource*)new ResourceScene(App->GetRandom().Int(), "Temp/TemporalScene.scene");
 
 	return true;
 }
@@ -98,29 +119,38 @@ update_status ModuleSceneManager::Update(float dt)
 bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
-	NoStaticGo.clear();
+
+	delete root;
+	root = nullptr;
 
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
-
 
 	return true;
 }
 
 void ModuleSceneManager::DrawGrid()
 {
+	App->renderer3D->defaultShader->use();
+
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
+	float gridColor = 0.8f;
 	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+	glVertexAttrib3f(vertexColorLocation, gridColor, gridColor, gridColor);
 
-	glLineWidth(2.0f);
+	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureSupportLocation, -1);
+
+	glLineWidth(1.7f);
 	glBindVertexArray(Grid_VAO);
 	glDrawArrays(GL_LINES, 0, 84);
 	glBindVertexArray(0);
 	glLineWidth(1.0f);
+
+	glUniform1i(TextureSupportLocation, 0);
 }
 
 void ModuleSceneManager::Draw()
@@ -143,97 +173,64 @@ void ModuleSceneManager::Draw()
 void ModuleSceneManager::DrawScene()
 {
 	if (display_tree)
-	RecursiveDrawQuadtree(tree.root);
+		RecursiveDrawQuadtree(tree.root);
 
-	for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+	// MYTODO: Support multiple go selection and draw outline accordingly
+
+	if (currentScene)
 	{
-		if ((*it)->GetName() != root->GetName())
-		{
-			// --- Search for Renderer Component --- 
-			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
-			if(SelectedGameObject == (*it))
+		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
+		{
+			if ((*it).second->GetUID() != root->GetUID())
 			{
+				// --- Search for Renderer Component ---
+				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
+
+				if (SelectedGameObject == (*it).second)
+				{
 					glStencilFunc(GL_ALWAYS, 1, 0xFF);
 					glStencilMask(0xFF);
+				}
+
+				// --- If Found, draw the mesh ---
+				if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
+					MeshRenderer->Draw();
+
+				if (SelectedGameObject == (*it).second)
+				{
+					glStencilMask(0x00);
+				}
+			}
+		}
+		std::vector<GameObject*> static_go;
+		tree.CollectIntersections(static_go, App->renderer3D->culling_camera->frustum);
+
+		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
+		{
+			// --- Search for Renderer Component ---
+			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
+
+
+			if (SelectedGameObject == (*it))
+			{
+				glStencilFunc(GL_ALWAYS, 1, 0xFF);
+				glStencilMask(0xFF);
 			}
 
+
 			// --- If Found, draw the mesh ---
-			if (MeshRenderer && MeshRenderer->IsEnabled())
-					MeshRenderer->Draw();
+			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
+				MeshRenderer->Draw();
+
 
 			if (SelectedGameObject == (*it))
 			{
 				glStencilMask(0x00);
 			}
 		}
+
 	}
-	std::vector<GameObject*> static_go;
-	tree.CollectIntersections(static_go, App->renderer3D->culling_camera->frustum);
-
-	for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
-	{
-		// --- Search for Renderer Component --- 
-		ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
-
-
-		if (SelectedGameObject == (*it))
-		{
-			glStencilFunc(GL_ALWAYS, 1, 0xFF);
-			glStencilMask(0xFF);
-		}
-
-		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled())
-			MeshRenderer->Draw();
-
-		if (SelectedGameObject == (*it))
-		{
-			glStencilMask(0x00);
-		}
-	}
-
-	//--- Draw ray --- 
-	
-	// MYTODO: MEMORY LEAK (should search for a better way of drawing lines (shader?))
-
-
-	//if (App->camera->last_ray.IsFinite())
-	//{
-	//	glLineWidth(3.0f);
-
-	//	float3 vertices[2] = { App->camera->last_ray.a,
-	//		App->camera->last_ray.b };
-
-	//	unsigned int VBO;
-	//	uint line_VAO;
-	//	glGenVertexArrays(1, &line_VAO);
-	//	glGenBuffers(1, &VBO);
-	//	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	//	glBindVertexArray(line_VAO);
-
-	//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	//	glEnableVertexAttribArray(0);
-	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	glBindVertexArray(0);
-
-
-	//	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-	//	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-	//	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	//	glVertexAttrib3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
-
-	//	glBindVertexArray(line_VAO);
-	//	glDrawArrays(GL_LINES, 0, 2);
-	//	glBindVertexArray(0);
-	//	glLineWidth(1.0f);
-
-	//}
-
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const
@@ -248,38 +245,37 @@ uint ModuleSceneManager::GetPointLineVAO() const
 
 void ModuleSceneManager::RedoOctree()
 {
-	std::vector<GameObject*> scene_gos;
-	tree.CollectObjects(scene_gos);
+	std::vector<GameObject*> NoStaticGameObjects;
+	tree.CollectObjects(NoStaticGameObjects);
 
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
-	for (uint i = 0; i < scene_gos.size(); ++i)
+	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
 	{
 		//tree.Erase(scene_gos[i]);
-		tree.Insert(scene_gos[i]);
+		tree.Insert(NoStaticGameObjects[i]);
 	}
-
 }
 
 void ModuleSceneManager::SetStatic(GameObject * go)
 {
 	if (go->Static)
 	{
+		// --- Insert go into octree and remove it from currentscene's static go map ---
 		tree.Insert(go);
+		currentScene->StaticGameObjects[go->GetUID()] = go;
 
-		for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
-		{
-			if ((*it) == go)
-			{
-				NoStaticGo.erase(it);
-				break;
-			}
-		}
+		// --- Erase go from currentscene's no static map ---
+		currentScene->NoStaticGameObjects.erase(go->GetUID());
 	}
 	else
 	{
-		NoStaticGo.push_back(go);
+		// --- Add go to currentscene's no static map ---
+		currentScene->NoStaticGameObjects[go->GetUID()] = go;
+
+		// --- Remove go from octree and currentscene's static go map ---
 		tree.Erase(go);
+		currentScene->StaticGameObjects.erase(go->GetUID());
 	}
 }
 
@@ -301,20 +297,20 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 
-	//if (!App->gui->IsMouseCaptured())
-	//{
+	if (currentScene)
+	{
 		// --- Gather static gos ---
 		std::map<float, GameObject*> candidate_gos;
 		tree.CollectIntersections(candidate_gos, ray);
 
 		// --- Gather non-static gos ---
-		for (std::vector<GameObject*>::iterator it = NoStaticGo.begin(); it != NoStaticGo.end(); it++)
+		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if (ray.Intersects((*it)->GetAABB()))
+			if ((*it).second->GetActive() && ray.Intersects((*it).second->GetAABB()))
 			{
 				float hit_near, hit_far;
-				if (ray.Intersects((*it)->GetOBB(), hit_near, hit_far))
-					candidate_gos[hit_near] = *it;
+				if (ray.Intersects((*it).second->GetOBB(), hit_near, hit_far))
+					candidate_gos[hit_near] = (*it).second;
 			}
 		}
 
@@ -326,7 +322,6 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 
 			if (mesh)
 			{
-
 				if (mesh->resource_mesh)
 				{
 					// --- We need to transform the ray to local mesh space ---
@@ -353,10 +348,9 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 		}
 
 		// --- Set Selected ---
-		if (toSelect)
-			SetSelectedGameObject(toSelect);
-
-	/*}*/
+		//if (toSelect)
+		SetSelectedGameObject(toSelect);
+	}
 }
 
 void ModuleSceneManager::SaveStatus(json & file) const
@@ -367,73 +361,69 @@ void ModuleSceneManager::LoadStatus(const json & file)
 {
 }
 
-//void ModuleSceneManager::SaveScene()
-//{
-//	// --- Fill vector with scene's GO's ---
-//	std::vector<GameObject*> scene_gos;
-//	GatherGameObjects(scene_gos, root);
-//
-//	if (scene_gos.size() > 0)
-//	{
-//		std::string Scene_name = "SampleScene";
-//		//App->importer->GetImporterScene()->SaveSceneToFile(scene_gos, Scene_name, SCENE);
-//	}
-//}
-//
-//void ModuleSceneManager::LoadScene()
-//{
-//	std::string Scene_name = SCENES_FOLDER;
-//	Scene_name.append("SampleScene.scene");
-//
-//	SelectedGameObject = nullptr;
-//
-//	RecursiveFreeScene(root);
-//
-//	//if(App->fs->Exists(Scene_name.data()))
-//	//App->importer->GetImporterScene()->Load(Scene_name.data());
-//}
-//
-//void ModuleSceneManager::RecursiveFreeScene(GameObject* go)
-//{
-//	// --- Delete all objects except root (if go is root) ---
-//
-//	if (go->childs.size() > 0)
-//	{
-//		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-//		{
-//			RecursiveFreeScene(*it);
-//		}
-//
-//		go->childs.clear();
-//	}
-//
-//	if (go->GetName() != root->GetName())
-//	{
-//		go->Static = true;
-//		App->scene_manager->SetStatic(go);
-//		App->scene_manager->tree.Erase(go);
-//		delete go;
-//	}
-//}
+void ModuleSceneManager::SaveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+
+		// --- Create meta ---
+		if (!App->resources->IsFileImported(scene->GetOriginalFile()))
+		{
+			ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, scene->GetResourceFile(), scene->GetUID());
+
+			if (meta)
+				IMeta->Save(meta);
+		}
+
+		IScene->SaveSceneToFile(scene);
+
+		App->resources->AddResourceToFolder(scene);
+
+	}
+}
+
+void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
+{
+	if (scene)
+	{
+		SelectedGameObject = nullptr;
+
+		// --- Unload current scene ---
+		if (currentScene)
+		{
+			// --- Reset octree ---
+			tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
+
+			// --- Release current scene ---
+			currentScene->Release();
+
+			// --- Clear root ---
+			root->childs.clear();
+		}
+
+		if (App->GetAppState() == AppState::TO_EDITOR)
+		{
+			std::string res_path = currentScene->GetResourceFile();
+			currentScene->SetResourceFile(temporalScene->GetResourceFile());
+			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+			currentScene->SetResourceFile(res_path.c_str());
+		}
+		else
+		{
+			currentScene = scene; // force this so gos are not added to another scene
+			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+		}
+	}
+	else
+		CONSOLE_LOG("|[error]: Trying to load invalid scene");
+
+}
 
 GameObject* ModuleSceneManager::GetSelectedGameObject() const
 {
 	return SelectedGameObject;
-}
-
-void ModuleSceneManager::GatherGameObjects(std::vector<GameObject*>& scene_gos, GameObject* go)
-{
-	// --- Add all childs from go to vector ---
-	if(go->GetName() != root->GetName())
-	scene_gos.push_back(go);
-
-	if (go->childs.size() > 0)
-	{
-		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
-		{
-			GatherGameObjects(scene_gos, *it);
-		}
-	}
 }
 
 
@@ -441,12 +431,13 @@ void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
 {
 	SelectedGameObject = go;
 
-	if (SelectedGameObject)
-	{
-		Event e(Event::EventType::GameObject_selected);
-		e.go = go;
-		App->event_manager->PushEvent(e);
-	}
+	// MYTODO: Temporal adjustment for GameObject deselection
+	//if (SelectedGameObject)
+	//{
+	Event e(Event::EventType::GameObject_selected);
+	e.go = go;
+	App->event_manager->PushEvent(e);
+	//}
 }
 
 GameObject * ModuleSceneManager::CreateEmptyGameObject() 
@@ -460,8 +451,27 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	go_count++;
 
 	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.data());
-	NoStaticGo.push_back(new_object);
+	GameObject* new_object = new GameObject(Name.c_str());
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
+
+	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+
+	return new_object;
+}
+
+GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
+{
+	// --- Create New Game Object Name ---
+	std::string Name = "GameObject ";
+	Name.append("(");
+	Name.append(std::to_string(go_count));
+	Name.append(")");
+
+	go_count++;
+
+	// --- Create empty Game object to be filled out ---
+	GameObject* new_object = new GameObject(Name.data(), UID);
+	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
 	App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
@@ -514,9 +524,6 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 		new_mesh->Indices[i] = mesh->triangles[i];
 	}
 
-
-	//new_mesh->LoadInMemory();
-	//new_mesh->CreateAABB();
 	par_shapes_free_mesh(mesh);
 }
 
@@ -614,12 +621,10 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ)
+void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
 {
-	// --- Generating 6 planes and merging them to create a cube, since par shapes cube 
-	// does not have uvs / normals 
-
-	ResourceMesh* new_mesh;//= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
+	// --- Generating 6 planes and merging them to create a cube, since par shapes cube
+	// does not have uvs / normals
 
 	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
 	par_shapes_mesh* top = par_shapes_create_plane(1, 1);
@@ -630,10 +635,10 @@ ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float siz
 
 	par_shapes_translate(mesh, -0.5f, -0.5f, 0.5f);
 
-	par_shapes_rotate(top, -float(PAR_PI*0.5), (float*)&float3::unitX);
+	par_shapes_rotate(top, -float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(top, -0.5f, 0.5f, 0.5f);
 
-	par_shapes_rotate(bottom, float(PAR_PI*0.5), (float*)&float3::unitX);
+	par_shapes_rotate(bottom, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(bottom, -0.5f, -0.5f, -0.5f);
 
 	par_shapes_rotate(back, float(PAR_PI), (float*)&float3::unitX);
@@ -642,7 +647,7 @@ ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float siz
 	par_shapes_rotate(left, float(-PAR_PI * 0.5), (float*)&float3::unitY);
 	par_shapes_translate(left, -0.5f, -0.5f, -0.5f);
 
-	par_shapes_rotate(right, float(PAR_PI*0.5), (float*)&float3::unitY);
+	par_shapes_rotate(right, float(PAR_PI * 0.5), (float*)&float3::unitY);
 	par_shapes_translate(right, 0.5f, -0.5f, 0.5f);
 
 	par_shapes_merge_and_free(mesh, top);
@@ -654,26 +659,62 @@ ResourceMesh* ModuleSceneManager::CreateCube(float sizeX, float sizeY, float siz
 	if (mesh)
 	{
 		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
-		LoadParMesh(mesh, new_mesh);
+		LoadParMesh(mesh, rmesh);
 	}
-
-	return new_mesh;
 }
 
-ResourceMesh* ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks)
+void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh)
 {
-	ResourceMesh* new_mesh; //= (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH);
-
 	// --- Create par shapes sphere ---
-	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
+	par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
 	if (mesh)
 	{
 		par_shapes_scale(mesh, Radius / 2, Radius / 2, Radius / 2);
-		LoadParMesh(mesh, new_mesh);
+		LoadParMesh(mesh, rmesh);
 	}
+}
 
-	return new_mesh;
+void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
+{
+	// --- Create par shapes sphere ---
+	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
+
+	if (mesh)
+	{
+		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
+		LoadParMesh(mesh, rmesh);
+	}
+}
+
+void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh* rmesh)
+{
+	// --- Create spheres and cylinder to build capsule ---
+	par_shapes_mesh* top_sphere = par_shapes_create_hemisphere(25, 25);
+	par_shapes_mesh* bot_sphere = par_shapes_create_hemisphere(25, 25);
+	par_shapes_mesh* cylinder = par_shapes_create_cylinder(25, 25);
+	par_shapes_scale(top_sphere, radius / 2, radius / 2, radius / 2);
+	par_shapes_scale(bot_sphere, radius / 2, radius / 2, radius / 2);
+	par_shapes_scale(cylinder, radius / 2, height / 2, radius / 2);
+
+	// --- Rotate and translate hemispheres ---
+	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_translate(top_sphere, 0, 0, height / 2);
+	par_shapes_rotate(bot_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_rotate(bot_sphere, float(PAR_PI), (float*)&float3::unitX);
+
+	// --- Merge meshes ---
+	par_shapes_merge_and_free(top_sphere, cylinder);
+	par_shapes_merge_and_free(top_sphere, bot_sphere);
+
+	// --- Position final mesh ---
+	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
+	par_shapes_translate(top_sphere, 0, height / 4, 0);
+
+	if (top_sphere)
+	{
+		LoadParMesh(top_sphere, rmesh);
+	}
 }
 
 void ModuleSceneManager::CreateGrid(float target_distance)
@@ -719,32 +760,44 @@ void ModuleSceneManager::CreateGrid(float target_distance)
 	glBindVertexArray(0);
 }
 
-GameObject * ModuleSceneManager::LoadCube()
+GameObject* ModuleSceneManager::LoadCube()
+{
+	return LoadPrimitive(cube->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadPlane()
+{
+	return LoadPrimitive(plane->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadSphere()
+{
+	return LoadPrimitive(sphere->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadCapsule()
+{
+	return LoadPrimitive(capsule->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadPrimitive(uint UID)
 {
 	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = cube;
-	//cube->instances++;
+
+	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
+	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(UID);
+
 	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
+	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 
 	return new_object;
 }
 
-GameObject * ModuleSceneManager::LoadSphere()
-{
-	GameObject* new_object = CreateEmptyGameObject();
-	ComponentMesh * comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
-	comp_mesh->resource_mesh = sphere;
-	//sphere->instances++;
-	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
-
-	return new_object;
-}
-
-void ModuleSceneManager::DestroyGameObject(GameObject * go)
+void ModuleSceneManager::DestroyGameObject(GameObject* go)
 {
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
-
+	delete go;
 	this->go_count--;
 }
+

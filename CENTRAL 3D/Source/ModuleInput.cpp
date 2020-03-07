@@ -4,6 +4,9 @@
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
 
+#include "ModuleResourceManager.h"
+#include "Importer.h"
+
 #include "mmgr/mmgr.h"
 
 #define MAX_KEYS 300
@@ -125,13 +128,18 @@ update_status ModuleInput::PreUpdate(float dt)
 			break;
 
 			case SDL_DROPFILE:
-				// --- Call Importer on file drop ---
-
+			// --- Call Resource Manager on file drop ---
+			{
 				std::string DroppedFile_path = e.drop.file;
+				Importer::ImportData IData("null_path");
 
-				//App->importer->LoadFromPath(e.drop.file);
+				IData.path = DroppedFile_path.c_str();
+				//IData(DroppedFile_path.c_str());
+				IData.dropped = true;
+				App->resources->ImportAssets(IData);
 
 				SDL_free((char*)DroppedFile_path.data());
+			}
 			break;
 		}
 	}

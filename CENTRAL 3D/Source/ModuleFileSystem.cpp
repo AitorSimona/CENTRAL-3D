@@ -58,7 +58,7 @@ bool ModuleFileSystem::Init(json config)
 
 	// enable us to write in the game's dir area
 	if (PHYSFS_setWriteDir(".") == 0)
-		CONSOLE_LOG("File System error while creating write dir: %s\n", PHYSFS_getLastError());
+		CONSOLE_LOG("|[error]: File System error while creating write dir: %s\n", PHYSFS_getLastError());
 
 	// Make sure standard paths exist
 	const char* dirs[] = {
@@ -74,7 +74,6 @@ bool ModuleFileSystem::Init(json config)
 
 	// Generate IO interfaces
 	CreateAssimpIO();
-
 
 	// Ask SDL for a write dir
 	char* write_path = SDL_GetPrefPath(App->GetOrganizationName(), App->GetAppName());
@@ -367,7 +366,9 @@ void ModuleFileSystem::WatchDirectory(const char* directory)
 	dwChangeHandles[0] = FindFirstChangeNotification(
 		directory,                       // directory to watch 
 		TRUE,                          // watch the subtree 
-		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME
+		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME 
+		| FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_LAST_WRITE
+		| FILE_NOTIFY_CHANGE_SIZE
 	);
 
 	if (dwChangeHandles[0] == INVALID_HANDLE_VALUE)
@@ -415,11 +416,11 @@ uint ModuleFileSystem::Load(const char* file, char** buffer) const
 			{
 				CONSOLE_LOG("File System error while reading from file %s: %s\n", file, PHYSFS_getLastError());
 
-				//if (buffer)
-				//{
-				//	delete[] buffer;
-				//	buffer = nullptr;
-				//}
+				if (buffer)
+				{
+					delete[] buffer;
+					buffer = nullptr;
+				}
 			}
 			else
 				ret = readed;

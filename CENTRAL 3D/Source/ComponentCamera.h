@@ -25,7 +25,6 @@ public:
 	void SetFOV(float fov);
 	void SetAspectRatio(float ar);
 
-	
 	// --- Utilities ---
 	void Look(const float3& position);
 	void OnUpdateTransform(const float4x4& global);
@@ -37,10 +36,10 @@ public:
 	// --- Save & Load ---
 	json Save() const override;
 	void Load(json& node) override;
+	void CreateInspectorNode() override;
 
 public:
 	Frustum		frustum;
-	bool		update_projection = true;
 	bool		culling = false;
 	bool		active_camera = false;
 };

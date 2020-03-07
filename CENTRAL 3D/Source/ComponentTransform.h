@@ -25,10 +25,13 @@ public:
 	void			Scale(float x, float y, float z);
 	void			SetGlobalTransform(float4x4 new_transform);
 	void			OnUpdateTransform(const float4x4& ParentGlobal);
+	void			SetQuatRotation(Quat rotation);
 
 	// --- Save & Load ---
 	json Save() const override;
 	void Load(json& node) override;
+	void CreateInspectorNode() override;
+
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Transform; };
 
@@ -37,6 +40,7 @@ public:
 private:
 	void UpdateLocalTransform();
 	void UpdateTRS();
+
 
 private:
 	float4x4 Local_transform = math::float4x4::identity;

@@ -9,12 +9,24 @@
 #include "Math.h"
 
 #include "ResourceModel.h"
+#include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
 
 GameObject::GameObject(const char* name)
 {
 	UID = App->GetRandom().Int();
+	this->name = name;
+	// --- Add transform ---
+	AddComponent(Component::ComponentType::Transform);
+	UpdateAABB();
+
+	Enable();
+}
+
+GameObject::GameObject(const char* name, uint UID)
+{
+	this->UID = UID;
 	this->name = name;
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
@@ -44,35 +56,54 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		this->OnUpdateTransform();
 
+	// --- Update components ---
+	for (int i = 0; i < components.size(); ++i)
+	{
+		if (components[i] && components[i]->GetActive())
+			components[i]->Update();
+	}
+
+	// --- Update child game objects
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);
 	}
-
 }
 
 void GameObject::RecursiveDelete(bool target)
 {
-	// --- Delete all childs of given GO, also destroys GO ---
+	// --- Delete all childs of given GO ---
 
-	if (this->childs.size() > 0)
+	if (childs.size() > 0)
 	{
-		for (std::vector<GameObject*>::iterator it = this->childs.begin(); it != this->childs.end(); ++it)
+		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 		{
-			(*it)->RecursiveDelete(false);			
+			(*it)->RecursiveDelete();
+			delete* it;
 		}
 
-		this->childs.clear();
+		childs.clear();
 	}
-	// --- If this is the first object GO given to Recursive delete, erase it from parent's list ---
-	if (target && this->parent)
-		this->parent->RemoveChildGO(this);
 
-	this->Static = true;
-	App->scene_manager->SetStatic(this);
-	App->scene_manager->tree.Erase(this);
+	std::unordered_map<uint, GameObject*>::iterator it;
 
-	delete this;
+	// --- If go is static eliminate it from octree and scene static go map ---
+	if (Static)
+	{
+		it = App->scene_manager->currentScene->StaticGameObjects.find(UID);
+
+		if (it != App->scene_manager->currentScene->StaticGameObjects.end())
+			App->scene_manager->currentScene->StaticGameObjects.erase(UID);
+
+		App->scene_manager->tree.Erase(this);
+	}
+	else // If it is not static just eliminate it from scene nostatic go map ---
+	{
+		it = App->scene_manager->currentScene->NoStaticGameObjects.find(UID);;
+
+		if (it != App->scene_manager->currentScene->NoStaticGameObjects.end())
+			App->scene_manager->currentScene->NoStaticGameObjects.erase(UID);
+	}
 }
 
 void GameObject::OnUpdateTransform()
@@ -153,17 +184,15 @@ bool GameObject::FindChildGO(GameObject * GO)
 	return ret;
 }
 
-Component * GameObject::AddComponent(Component::ComponentType type)
+Component* GameObject::AddComponent(Component::ComponentType type, int index)
 {
 	static_assert(static_cast<int>(Component::ComponentType::Unknown) == 4, "Component Creation Switch needs to be updated");
-
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given ---
 
 	if (HasComponent(type) == nullptr)
 	{
-
 		switch (type)
 		{
 		case Component::ComponentType::Transform:
@@ -182,7 +211,30 @@ Component * GameObject::AddComponent(Component::ComponentType type)
 		}
 
 		if (component)
-			components.push_back(component);
+		{
+			// --- If index was specified, insert ---
+			if (index >= 0)
+			{
+				// --- Reserve needed space, note that we may leave empty spaces!!! ---
+				if (index + 1 > components.size())
+					components.resize(index + 1);
+
+
+				// --- Delete element at given index ---
+				if (components[index])
+				{
+					delete components[index];
+					components[index] = nullptr;
+				}
+
+				// --- Insert element at given index ---
+				components[index] = component;
+			}
+			// --- Else push back ---
+			else
+				components.push_back(component);
+
+		}
 
 	}
 	else
@@ -201,7 +253,7 @@ void GameObject::RemoveComponent(Component::ComponentType type)
 
 	for (uint i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetType() == type)
+		if (components[i] && components[i]->GetType() == type)
 		{
 			std::vector<Component*>::iterator it = components.begin();
 			it += i;
@@ -220,7 +272,7 @@ Component* GameObject::HasComponent(Component::ComponentType type) const
 
 	for (uint i = 0; i < components.size(); ++i)
 	{
-		if (components[i]->GetType() == type)
+		if (components[i] && components[i]->GetType() == type)
 		{
 			component = components[i];
 			break;
@@ -238,16 +290,47 @@ std::vector<Component*>& GameObject::GetComponents()
 void GameObject::Enable()
 {
 	active = true;
+
+	for (int i = 0; i < components.size(); ++i)
+		components[i]->Enable();
+
+	for (int i = 0; i < childs.size(); ++i)
+		childs[i]->Enable();
 }
 
 void GameObject::Disable()
 {
 	active = false;
+
+	for (int i = 0; i < components.size(); ++i)
+		components[i]->Disable();
+
+	for (int i = 0; i < childs.size(); ++i)
+		childs[i]->Disable();
 }
 
 uint& GameObject::GetUID()
 {
 	return UID;
+}
+
+void GameObject::SetUID(uint uid)
+{
+	// --- Try to eliminate go from current scene ---
+	App->scene_manager->currentScene->NoStaticGameObjects.erase(UID);
+	App->scene_manager->currentScene->StaticGameObjects.erase(UID);
+
+	UID = uid;
+
+	if (Static)
+	{
+		App->scene_manager->currentScene->StaticGameObjects[UID] = this;
+	}
+	else
+	{
+		App->scene_manager->currentScene->NoStaticGameObjects[UID] = this;
+
+	}
 }
 
 std::string GameObject::GetName() const
@@ -310,6 +393,7 @@ void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType ty
 		components[i]->ONResourceEvent(uid, type);
 	}
 
+	// MYTODO: Remove this
 	if (model && type == Resource::ResourceNotificationType::Deletion && model->GetUID() == uid)
 		model = nullptr;
 }

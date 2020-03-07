@@ -2,6 +2,9 @@
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
+#include "ModuleFileSystem.h"
+
+#include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
 
@@ -33,13 +36,17 @@ void ModuleTimeManager::PrepareUpdate()
 	{
 		case AppState::TO_PLAY:
 			App->GetAppState() = AppState::PLAY;
-			//App->scene_manager->SaveScene();
+			
+			// --- Create temporal directory/scene ---
+			App->fs->CreateDirectoryA("Temp");
+			App->scene_manager->currentScene->CopyInto(App->scene_manager->temporalScene);
+			App->scene_manager->SaveScene(App->scene_manager->temporalScene);
+
 			CONSOLE_LOG("APP STATE PLAY");
 			break;
 
 		case AppState::PLAY:
-			App->scene_manager->SetSelectedGameObject(nullptr);
-			//game_dt *= Time_scale;
+			game_dt *= Time_scale;
 			break;
 
 		case AppState::TO_PAUSE:
@@ -54,8 +61,16 @@ void ModuleTimeManager::PrepareUpdate()
 			break;
 
 		case AppState::TO_EDITOR:
+			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
+
+			// --- Clear temporal scene, eliminate temporal files/directory ---
+			App->scene_manager->temporalScene->NoStaticGameObjects.clear();
+			App->scene_manager->temporalScene->StaticGameObjects.clear();
+			App->fs->Remove(App->scene_manager->temporalScene->GetResourceFile());
+			App->fs->Remove(std::string(App->scene_manager->temporalScene->GetResourceFile()).append(".meta").c_str());
+			App->fs->Remove("Temp/");
+
 			App->GetAppState() = AppState::EDITOR;
-			//App->scene_manager->LoadScene();
 			CONSOLE_LOG("APP STATE EDITOR");
 			break;
 

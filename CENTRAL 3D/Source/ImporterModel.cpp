@@ -122,7 +122,10 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 
 		// --- Else, Import mesh data (fill new_mesh) ---
 		if (IMesh)
+		{
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
+			scene_meshes[i]->SetName(scene->mMeshes[i]->mName.C_Str());
+		}
 
 	}
 }
@@ -313,6 +316,10 @@ Resource* ImporterModel::Load(const char* path) const
 
 						if (to_Add)
 						{
+							// --- Give mesh a name ---
+							if (to_Add->GetType() == Resource::ResourceType::MESH)
+								to_Add->SetName(it.key().c_str());
+
 							//to_Add->SetParent(resource);
 							resource->AddResource(to_Add);
 						}
@@ -333,69 +340,70 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 	{
 		// --- Load Scene/model file ---
 		json file = App->GetJLoader()->Load(model_path);
-	
+
 		// --- Delete buffer data ---
 		if (!file.is_null())
 		{
 			std::vector<GameObject*> objects;
-	
+
 			// --- Iterate main nodes ---
 			for (json::iterator it = file.begin(); it != file.end(); ++it)
 			{
-				// --- Create a Game Object for each node ---
-				GameObject* go = App->scene_manager->CreateEmptyGameObject();
-	
-				// --- Retrieve GO's UID and name ---
-				go->SetName(it.key().data());
+				// --- Retrieve GO's UID ---
 				std::string uid = file[it.key()]["UID"];
-				go->GetUID() = std::stoi(uid);
-	
+
+				// --- Create a Game Object for each node ---
+				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
+
+				// --- Retrieve GO's name ---
+				go->SetName(it.key().c_str());
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
-	
-	
+
+
 				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
 				{
 					// --- Determine ComponentType ---
 					std::string type_string = it2.key();
 					uint type_uint = std::stoi(type_string);
 					Component::ComponentType type = (Component::ComponentType)type_uint;
-	
+
 					Component* component = nullptr;
-	
+
 					// --- Create/Retrieve Component ---
 					component = go->AddComponent(type);
-	
+
 					// --- Load Component Data ---
 					if (component)
 						component->Load(components[type_string]);
-	
+
 				}
-	
+
 				objects.push_back(go);
 			}
-	
+
 
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
 				std::string parent_uid_string = file[objects[i]->GetName()]["Parent"];
 				uint parent_uid = std::stoi(parent_uid_string);
-			
+
 				for (uint j = 0; j < objects.size(); ++j)
 				{
 					if (parent_uid == objects[j]->GetUID())
 					{
 						objects[j]->AddChildGO(objects[i]);
-					break;
+						break;
 					}
 				}
 			}
 
-			// --- Now give unique uids to all gos ---
+			// --- Now give unique uids to all gos so they are brand new ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
-				objects[i]->GetUID() = App->GetRandom().Int();
+				objects[i]->SetUID(App->GetRandom().Int());
 			}
 
 			// --- Add pointer to model ---

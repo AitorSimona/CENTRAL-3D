@@ -9,6 +9,8 @@
 class ResourceFolder;
 class Resource;
 struct Event;
+struct ImVec2;
+struct ImVec4;
 
 class PanelProject : public Panel
 {
@@ -19,12 +21,17 @@ public:
 
 	bool Draw();
 	void SetSelected(Resource* new_selected);
+	const Resource* GetcurrentDirectory() const;
+
 private:
 	static void ONGameObjectSelected(const Event& e);
 	static void ONResourceDestroyed(const Event& e);
+	void CreateResourceHandlingPopup();
+
 private:
+	bool wasclicked = false;
 	uint imageSize_px = 48;
-	uint item_spacingX_px = 10;
+	uint item_spacingX_px = 20;
 	uint item_spacingY_px = 15;
 	uint maxColumns = 10;
 
@@ -33,7 +40,8 @@ private:
 	ResourceFolder* currentDirectory = nullptr;
 
 	void DrawFolder(ResourceFolder* folder);
-	void LimitText( std::string& text);
+	void DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);
+	void LimitText(std::string& text);
 
 	void RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters);
 };

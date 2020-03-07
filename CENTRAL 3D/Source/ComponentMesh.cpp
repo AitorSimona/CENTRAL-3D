@@ -4,6 +4,7 @@
 #include "ModuleFileSystem.h"
 
 #include "GameObject.h"
+#include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
 
@@ -32,16 +33,18 @@ const AABB & ComponentMesh::GetAABB() const
 json ComponentMesh::Save() const
 {
 	json node;
+	node["Resources"]["ResourceMesh"];
 
 	// --- Store path to component file ---
-	node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
+	if (resource_mesh)
+		node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
 
 	return node;
 }
 
 void ComponentMesh::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceMesh"];
+	std::string path = node["Resources"]["ResourceMesh"].is_null() ? "" : node["Resources"]["ResourceMesh"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
@@ -72,6 +75,28 @@ void ComponentMesh::ONResourceEvent(uint UID, Resource::ResourceNotificationType
 
 	default:
 		break;
+	}
+}
+
+void ComponentMesh::CreateInspectorNode()
+{
+	ImGui::Checkbox("##MeshActive", &GetActive());
+	ImGui::SameLine();
+
+	if (resource_mesh && ImGui::TreeNode("Mesh"))
+	{
+		std::string Triangle_count = "Triangles   ";
+		Triangle_count.append(std::to_string(resource_mesh->IndicesSize / 3));
+		ImGui::Text(Triangle_count.data());
+
+		ImGui::TreePop();
+	}
+
+	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
+
+	ImGui::SameLine();
+	if (ImGui::Button("Delete")) {
+		GO->RemoveComponent(Component::ComponentType::Mesh);
 	}
 }
 

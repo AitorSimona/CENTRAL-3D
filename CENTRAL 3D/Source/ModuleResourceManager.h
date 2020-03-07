@@ -24,7 +24,9 @@ class ModuleResourceManager : public Module
 	friend class ImporterMesh;
 	friend class ImporterMaterial;
 	friend class ImporterFolder;
+	friend class ImporterScene;
 	friend class PanelResources;
+	friend class ComponentMeshRenderer;
 public:
 
 	// --- Basic ---
@@ -40,7 +42,7 @@ public:
 public:
 
 	// --- Importing ---
-	std::string DuplicateIntoAssetsFolder(const char* path);
+	std::string DuplicateIntoGivenFolder(const char* path, const char* folder_path);
 	ResourceFolder* SearchAssets(ResourceFolder* parent, const char* directory, std::vector<std::string>& filters);
 	Resource* ImportAssets(Importer::ImportData& IData);
 	Resource* ImportFolder(Importer::ImportData& IData);
@@ -78,18 +80,23 @@ public:
 	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
 	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
+	std::string GetNewUniqueName(Resource::ResourceType type);
 	bool IsFileImported(const char* file);
 
 	void ONResourceDestroyed(Resource* resource);
 
 	// --- Getters ---
 	ResourceFolder* GetAssetsFolder();
+	uint GetFileFormatVersion();
 	uint GetDefaultMaterialUID();
+
 private:
 
 	// --- Available importers ---
 	std::vector<Importer*> importers;
 	std::vector<std::string> filters;
+
+	uint fileFormatVersion = 2;
 
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;

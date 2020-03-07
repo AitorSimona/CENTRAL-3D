@@ -12,10 +12,12 @@ struct aiScene;
 struct ImportMaterialData;
 struct par_shapes_mesh_s;
 class ResourceMesh;
+class ResourceScene;
 struct Event;
 
 class ModuleSceneManager : public Module
 {
+	friend class ModuleResourceManager;
 public:
 
 	ModuleSceneManager(bool start_enabled = true);
@@ -30,9 +32,13 @@ public:
 
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
+	GameObject* CreateEmptyGameObjectGivenUID(uint UID);
+
 	void CreateGrid(float target_distance);
-	GameObject* LoadCube();
 	GameObject* LoadSphere();
+	GameObject* LoadCube();
+	GameObject* LoadCapsule();
+	GameObject* LoadPlane();
 
 	void DestroyGameObject(GameObject* go);
 
@@ -55,9 +61,8 @@ public:
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;
 	void LoadStatus(const json & file) override;
-	//void SaveScene();
-	//void LoadScene();
-	//void RecursiveFreeScene(GameObject* go);
+	void SaveScene(ResourceScene* scene);
+	void SetActiveScene(ResourceScene* scene);
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -67,6 +72,12 @@ public:
 		box.GetCornerPoints(corners);
 		DrawWireFromVertices(corners, color, VAO);
 	};
+	// --- Primitives ---
+	GameObject* LoadPrimitive(uint UID);
+	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
+	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
+	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 
 private:
 	// --- Event Callbacks ---
@@ -74,34 +85,39 @@ private:
 	static void ONGameObjectDestroyed(const Event& e);
 
 private:
-	void GatherGameObjects(std::vector<GameObject*> & scene_gos, GameObject* go);
+
 	GameObject* CreateRootGameObject();
 	void DrawScene();
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-	ResourceMesh* CreateCube(float sizeX, float sizeY, float sizeZ);
-	ResourceMesh* CreateSphere(float Radius, int slices, int slacks);
-
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
+
 public:
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	std::vector<GameObject*> NoStaticGo;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
+	ResourceScene* currentScene = nullptr;
 
 
+	// do not destroy
+	ResourceScene* defaultScene = nullptr;
+	ResourceScene* temporalScene = nullptr;
 private:
+
+	// --- Do not modify, just use ---
+	ResourceMesh* cube = nullptr;
+	ResourceMesh* sphere = nullptr;
+	ResourceMesh* capsule = nullptr;
+	ResourceMesh* plane = nullptr;
+
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
 	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;
-
-	ResourceMesh* cube = nullptr;
-	ResourceMesh* sphere = nullptr;
 };
 
 #endif

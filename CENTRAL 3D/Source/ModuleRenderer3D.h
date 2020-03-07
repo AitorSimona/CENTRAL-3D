@@ -35,6 +35,12 @@ public:
 	// --- Getters ---
 	bool GetVSync() const;
 
+private:
+	void HandleObjectOutlining();
+	void CreateDefaultShaders();
+
+	uint maxSimultaneousTextures = 0;
+
 public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;

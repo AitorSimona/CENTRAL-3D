@@ -76,11 +76,14 @@ bool PanelScene::Draw()
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
 				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID);
+				Resource* resource = App->resources->GetResource(UID, false);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if(resource->GetType() == Resource::ResourceType::MODEL)
-				App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), (ResourceModel*)resource);
+				if (resource && resource->GetType() == Resource::ResourceType::MODEL)
+				{
+					resource = App->resources->GetResource(UID);
+					App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), (ResourceModel*)resource);
+				}
 			}
 
 			ImGui::EndDragDropTarget();
@@ -113,7 +116,7 @@ bool PanelScene::Draw()
 
 	// --- Handle Guizmo operations ---
 	if(App->scene_manager->GetSelectedGameObject() != nullptr)
-	HandleGuizmo();
+		HandleGuizmo();
 
 	// --- Update editor camera ---
 	if (ImGuizmo::IsUsing() == false)
@@ -127,7 +130,7 @@ bool PanelScene::Draw()
 void PanelScene::HandleGuizmo()
 {
 	// --- Set Current Guizmo operation ---
-	if (ImGui::IsWindowHovered())
+	if (ImGui::IsWindowHovered() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_IDLE)
 	{
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
 			guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -148,7 +151,7 @@ void PanelScene::HandleGuizmo()
 	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
-	ImGuizmo::MODE mode = ImGuizmo::MODE::WORLD; // or Local ??
+	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
 	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
 
 	// --- Update Selected go transform ---

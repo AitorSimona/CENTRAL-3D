@@ -47,8 +47,6 @@ public:
 	unsigned int Load(const char* file, char** buffer) const;
 	SDL_RWops* Load(const char* file) const;
 
-
-
 	// IO interfaces for other libs to handle files via PHYSfs
 	aiFileIO* GetAssimpIO();
 
@@ -68,7 +66,6 @@ private:
 	bool started_wait = false;
 	Timer wait_timer;
 	uint32 wait_time = 1000; // ms
-
 
 	void CreateAssimpIO();
 

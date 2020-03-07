@@ -20,6 +20,7 @@ public:
 	bool CleanUp() override;
 
 	void FrameObject(GameObject* GO);
+	void Frame(float3 position);
 	void OnMouseClick(const float mouse_x, const float mouse_y);
 
 private:

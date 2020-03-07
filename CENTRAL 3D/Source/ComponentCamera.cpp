@@ -1,5 +1,11 @@
 #include "ComponentCamera.h"
+#include "Application.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
 
+#include "Imgui/imgui.h"
+
+#include "mmgr/mmgr.h"
 
 ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Camera)
 {
@@ -11,8 +17,6 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 	frustum.SetViewPlaneDistances(0.1f, 2000.0f);
 	frustum.SetPerspective(1.0f, 1.0f);
 	SetAspectRatio(1.0f);
-
-	update_projection = true;
 }
 
 ComponentCamera::~ComponentCamera()
@@ -54,28 +58,19 @@ float4x4 ComponentCamera::GetOpenGLProjectionMatrix()
 void ComponentCamera::SetNearPlane(float distance)
 {
 	if (distance > 0 && distance < frustum.FarPlaneDistance())
-	{
 		frustum.SetViewPlaneDistances(distance, frustum.FarPlaneDistance());
-		update_projection = true;
-	}
-
 }
 
 void ComponentCamera::SetFarPlane(float distance)
 {
 	if (distance > 0 && distance > frustum.NearPlaneDistance())
-	{
 		frustum.SetViewPlaneDistances(frustum.NearPlaneDistance(), distance);
-		update_projection = true;
-	}
 }
 
 void ComponentCamera::SetFOV(float fov)
 {
 	float aspect_ratio = frustum.AspectRatio();
-
 	frustum.SetVerticalFovAndAspectRatio(fov * DEGTORAD, frustum.AspectRatio());
-	update_projection = true;
 }
 
 void ComponentCamera::SetAspectRatio(float ar)
@@ -85,7 +80,6 @@ void ComponentCamera::SetAspectRatio(float ar)
 		ar = 1.0f;
 
 	frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), ar);
-	update_projection = true;
 }
 
 
@@ -97,8 +91,6 @@ void ComponentCamera::Look(const float3 & position)
 
 	frustum.SetFront(matrix.MulDir(frustum.Front()).Normalized());
 	frustum.SetUp(matrix.MulDir(frustum.Up()).Normalized());
-
-	update_projection = true;
 }
 
 void ComponentCamera::OnUpdateTransform(const float4x4 & global)
@@ -112,7 +104,6 @@ void ComponentCamera::OnUpdateTransform(const float4x4 & global)
 	global.Decompose(position, quat, scale);
 
 	frustum.SetPos(position);
-	update_projection = true;
 }
 
 bool ComponentCamera::ContainsAABB(const AABB & ref)
@@ -153,14 +144,74 @@ bool ComponentCamera::ContainsAABB(const AABB & ref)
 json ComponentCamera::Save() const
 {
 	json node;
-	//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["FOV"] = std::to_string(camera->GetFOV());
-//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["NEARPLANE"] = std::to_string(camera->GetNearPlane());
-//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["FARPLANE"] = std::to_string(camera->GetFarPlane());
-//file[scene_gos[i]->GetName()]["Components"][std::to_string((uint)scene_gos[i]->GetComponents()[j]->GetType())]["ASPECTRATIO"] = std::to_string(camera->GetAspectRatio());
+
+	node["FOV"] = GetFOV();
+	node["NEARPLANE"] = GetNearPlane();
+	node["FARPLANE"] = GetFarPlane();
+	node["ASPECTRATIO"] = GetAspectRatio();
 
 	return node;
 }
 
 void ComponentCamera::Load(json& node)
 {
+	SetFOV(node["FOV"].is_null() ? 60.0f : node["FOV"].get<float>());
+	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
+	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
+	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
+}
+
+void ComponentCamera::CreateInspectorNode()
+{
+	if (ImGui::TreeNode("Camera"))
+	{
+		if (ImGui::Checkbox("Active Camera", &active_camera))
+			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
+
+		if (ImGui::Checkbox("Culling Camera", &culling))
+			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
+
+		// --- Camera FOV ---
+		ImGui::Text("FOV");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		float fov = GetFOV();
+		ImGui::DragFloat("##FOV", &fov, 0.05f, 0.005f, 179.0f);
+
+		if (fov != GetFOV())
+			SetFOV(fov);
+
+		// --- Camera Planes ---
+		float nearPlane = GetNearPlane();
+		float farPlane = GetFarPlane();
+
+		ImGui::Text("Camera Planes");
+		ImGui::SameLine();
+
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		ImGui::DragFloat("##NearPlane", &nearPlane, 0.005f, 0.01f, farPlane - 0.01f);
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		ImGui::DragFloat("##FarPlane", &farPlane, 0.005f, nearPlane + 0.01f, 10000.0f);
+
+		if (nearPlane != GetNearPlane())
+			SetNearPlane(nearPlane);
+		if (farPlane != GetFarPlane())
+			SetFarPlane(farPlane);
+
+		// --- Camera Aspect Ratio ---
+		float aspectRatio = GetAspectRatio();
+
+		ImGui::Text("Aspect Ratio");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);
+
+		if (aspectRatio != GetAspectRatio())
+			SetAspectRatio(aspectRatio);
+
+		ImGui::TreePop();
+	}
 }

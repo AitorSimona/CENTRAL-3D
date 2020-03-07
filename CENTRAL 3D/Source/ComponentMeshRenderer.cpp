@@ -21,7 +21,11 @@
 #include "ResourceMaterial.h"
 
 #include "ImporterMeta.h"
+#include "ImporterMaterial.h"
 #include "ResourceMeta.h"
+
+#include "Imgui/imgui.h"
+
 
 #include "mmgr/mmgr.h"
 
@@ -115,7 +119,7 @@ void ComponentMeshRenderer::Draw(bool outline) const
 		ModuleSceneManager::DrawWire(camera->frustum, White, App->scene_manager->GetPointLineVAO());
 
 	if(App->scene_manager->display_boundingboxes)
-	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
+		ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 }
 
 void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
@@ -148,7 +152,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 {
 	// --- Draw Mesh Normals ---
 
-	// --- Set Uniforms ---
+		// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->linepointShader->ID);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
@@ -160,7 +164,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
@@ -170,13 +174,13 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, 1.0, 1.0, 0);
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
 
 	if (draw_vertexnormals && mesh.vertices->normal)
 	{
-		// --- Draw Vertex Normals ---
+		glUniform3f(vertexColorLocation, 255, 255, 0);
 
+		// --- Draw Vertex Normals ---
 		float3* vertices = new float3[mesh.IndicesSize * 2];
 
 		for (uint i = 0; i < mesh.IndicesSize; ++i)
@@ -193,13 +197,12 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*mesh.IndicesSize*2, vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize * 2, vertices, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-
 
 		// --- Draw lines ---
 		glLineWidth(3.0f);
@@ -208,19 +211,19 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindVertexArray(0);
 		glLineWidth(1.0f);
 
-
 		// --- Delete VBO and vertices ---
 		glDeleteBuffers(1, &VBO);
 		delete[] vertices;
 	}
-	
+
 	// --- Draw Face Normals 
 
 	if (draw_facenormals)
 	{
+		glUniform3f(vertexColorLocation, 0, 255, 255);
 		Triangle face;
-		float3* vertices = new float3[mesh.IndicesSize/3*2];
-		
+		float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
+
 		// --- Compute face normals ---
 		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
 		{
@@ -234,8 +237,8 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 			face_normal.Normalize();
 
-			vertices[j*2] = float3(face_center.x, face_center.y, face_center.z);
-			vertices[(j*2) + 1] = float3(face_center.x + face_normal.x*NORMAL_LENGTH, face_center.y + face_normal.y*NORMAL_LENGTH, face_center.z + face_normal.z*NORMAL_LENGTH);
+			vertices[j * 2] = float3(face_center.x, face_center.y, face_center.z);
+			vertices[(j * 2) + 1] = float3(face_center.x + face_normal.x * NORMAL_LENGTH, face_center.y + face_normal.y * NORMAL_LENGTH, face_center.z + face_normal.z * NORMAL_LENGTH);
 		}
 
 		// --- Create VAO, VBO ---
@@ -245,7 +248,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 		glEnableVertexAttribArray(0);
@@ -253,11 +256,12 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindVertexArray(0);
 
 		// --- Draw lines ---
-
 		glLineWidth(3.0f);
+		//glColor3f(255, 255, 0);
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 		glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
 		glBindVertexArray(0);
+		//glColor3f(255, 255, 255);
 		glLineWidth(1.0f);
 
 		// --- Delete VBO and vertices ---
@@ -265,14 +269,19 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		delete[] vertices;
 	}
 
+	glUniform3f(vertexColorLocation, 255, 255, 255);
+
+
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 json ComponentMeshRenderer::Save() const
 {
 	json node;
+	node["Resources"]["ResourceMaterial"];
 
-	node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
+	if (material)
+		node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
 
 	//if (scene_gos[i]->GetComponent<ComponentMaterial>(Component::ComponentType::Material)->resource_material->resource_diffuse)
 //{
@@ -371,7 +380,7 @@ json ComponentMeshRenderer::Save() const
 
 void ComponentMeshRenderer::Load(json& node)
 {
-	std::string mat_path = node["Resources"]["ResourceMaterial"];
+	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
@@ -383,7 +392,7 @@ void ComponentMeshRenderer::Load(json& node)
 			material->Release();
 
 		if(meta)
-		material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
+			material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
 
 		// --- We want to be notified of any resource event ---
 		if (material)
@@ -411,4 +420,122 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 		break;
 	}
 }
+
+void ComponentMeshRenderer::CreateInspectorNode()
+{
+	ImGui::Checkbox("##RenActive", &GetActive());
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("Mesh Renderer"))
+	{
+
+		ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
+		ImGui::SameLine();
+		ImGui::Checkbox("Face Normals  ", &draw_facenormals);
+		ImGui::SameLine();
+		ImGui::Checkbox("Checkers", &checkers);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::NewLine();
+	ImGui::Separator();
+	ImGui::PushID("Material");
+
+	// --- Material node ---
+	if (material)
+	{
+		// --- Mat preview
+		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
+		ImGui::SameLine();
+
+		if (ImGui::TreeNode(material->GetName()))
+		{
+			static ImGuiComboFlags flags = 0;
+
+			ImGui::Text("Shader");
+			ImGui::SameLine();
+
+			const char* item_current = material->shader->name.c_str();
+			if (ImGui::BeginCombo("##Shader", item_current, flags))
+			{
+				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+				{
+					bool is_selected = (item_current == it->second->name);
+
+					if (ImGui::Selectable(it->second->name.c_str(), is_selected))
+					{
+						item_current = it->second->name.c_str();
+						material->shader = it->second;
+						material->shader->GetAllUniforms(material->uniforms);
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+
+			// --- Print Texture Path ---
+			//std::string Path = "Path: ";
+			//Path.append(material->resource_diffuse->Texture_path);
+
+			//ImGui::Text(Path.data());
+
+			if (material->resource_diffuse)
+			{
+				// --- Print Texture Width and Height ---
+				ImGui::Text(std::to_string(material->resource_diffuse->Texture_width).c_str());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(material->resource_diffuse->Texture_height).c_str());
+			}
+
+			//ImGui::Text("Shader Uniforms");
+			//App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material);
+			//ImGui::TreePop();
+
+			ImGui::NewLine();
+
+			// --- Texture Preview ---
+			if (material->resource_diffuse)
+				ImGui::ImageButton((void*)(uint)material->resource_diffuse->GetPreviewTexID(), ImVec2(20, 20));
+			else
+				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+			// --- Handle drag & drop ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					Resource* resource = App->resources->GetResource(UID, false);
+
+					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+					{
+						if (material->resource_diffuse)
+							material->resource_diffuse->Release();
+
+						material->resource_diffuse = (ResourceTexture*)App->resources->GetResource(UID);
+
+						// --- Save material so we update path to texture ---
+						ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+						if (IMat)
+							IMat->Save(material);
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::SameLine();
+			ImGui::Text("Albedo");
+			ImGui::TreePop();
+		}
+	}
+
+	ImGui::PopID();
+}
+
+
 

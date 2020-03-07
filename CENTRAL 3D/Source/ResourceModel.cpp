@@ -46,8 +46,28 @@ void ResourceModel::FreeMemory()
 
 void ResourceModel::AddResource(Resource* resource)
 {
-	if(!HasResource(resource))
-	resources.push_back(resource);
+	if (!HasResource(resource))
+	{
+		resource->has_parent = true;
+		resources.push_back(resource);
+	}
+}
+
+void ResourceModel::RemoveResource(Resource* resource)
+{
+	for (std::vector<Resource*>::iterator it = resources.begin(); it != resources.end(); ++it)
+	{
+		if ((*it)->GetUID() == resource->GetUID())
+		{
+			resources.erase(it);
+			break;
+		}
+	}
+}
+
+std::vector<Resource*>* ResourceModel::GetResources()
+{
+	return &resources;
 }
 
 bool ResourceModel::HasResource(Resource* resource)

@@ -121,7 +121,7 @@ update_status ModuleGui::PreUpdate(float dt)
 
 	// Begin dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	DockSpace();
+		DockSpace();
 
 	return UPDATE_CONTINUE;
 }
@@ -142,7 +142,7 @@ update_status ModuleGui::Update(float dt)
 
 				if (ImGui::MenuItem("Save Scene"))
 				{
-					//App->scene_manager->SaveScene();
+					App->scene_manager->SaveScene(App->scene_manager->currentScene);
 				}
 
 				if (ImGui::MenuItem("Load Scene"))
@@ -167,31 +167,31 @@ update_status ModuleGui::Update(float dt)
 			{
 				if (ImGui::BeginMenu("3D Object"))
 				{
+					if (ImGui::MenuItem("Empty Game Object"))
+						GameObject* go = App->scene_manager->CreateEmptyGameObject();
+
+					if (ImGui::MenuItem("Plane"))
+						App->scene_manager->LoadPlane();
 
 					if (ImGui::MenuItem("Cube"))
-					{
-						//App->scene_manager->LoadCube();
-					}
+						App->scene_manager->LoadCube();
+
+					if (ImGui::MenuItem("Capsule"))
+						App->scene_manager->LoadCapsule();
+
 					if (ImGui::MenuItem("Sphere"))
-					{
-						//App->scene_manager->LoadSphere();
-					}
-					if (ImGui::MenuItem("Empty Game Object"))
-					{
-						//App->scene_manager->CreateEmptyGameObject();
-					}
+						App->scene_manager->LoadSphere();
+
 					if (ImGui::MenuItem("Camera"))
 					{
-						//GameObject* cam = App->scene_manager->CreateEmptyGameObject();
-						//ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
-						//camera->SetFarPlane(10);
-						//cam->AddComponent(Component::ComponentType::Renderer);
+						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
+						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
+						cam->AddComponent(Component::ComponentType::MeshRenderer);
+						camera->SetFarPlane(10);
 					}
 
 					if (ImGui::MenuItem("Redo Octree"))
-					{
 						App->scene_manager->RedoOctree();
-					}
 
 					ImGui::EndMenu();
 				}
@@ -300,7 +300,7 @@ update_status ModuleGui::PostUpdate(float dt)
 
 	// End dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	ImGui::End();
+		ImGui::End();
 
 	return UPDATE_CONTINUE;
 }
@@ -326,8 +326,15 @@ bool ModuleGui::CleanUp()
 	panelProject = nullptr;
 	panelShaderEditor = nullptr;
 
-	// --- ShutDown ImGui ---
+	// --- Delete editor textures ---
+	glDeleteTextures(1, &materialTexID);
+	glDeleteTextures(1, &folderTexID);
+	glDeleteTextures(1, &defaultfileTexID);
+	glDeleteTextures(1, &prefabTexID);
+	glDeleteTextures(1, &playbuttonTexID);
+	glDeleteTextures(1, &sceneTexID);
 
+	// --- ShutDown ImGui ---
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -395,7 +402,6 @@ void ModuleGui::SaveStatus(json &file) const
 
 void ModuleGui::LoadStatus(const json & file) 
 {
-	
 	for (uint i = 0; i < panels.size(); ++i)
 	{
 		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end())
@@ -426,5 +432,10 @@ void ModuleGui::CreateIcons()
 	folderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, -1);
 	defaultfileTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, -1);
 	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Material Icon.png", width, height, -1);
+	prefabTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Prefab.png", width, height, -1);
+	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
+	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
+
+	// REMEMBER to gldeletetex them at cleanup!
 }
 

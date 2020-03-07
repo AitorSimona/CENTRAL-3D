@@ -13,6 +13,7 @@ public:
 	void FreeMemory() override;
 
 	uint Date = 0;
+	uint fileFormatVersion = 0;
 
 private:
 	void OnOverwrite() override;

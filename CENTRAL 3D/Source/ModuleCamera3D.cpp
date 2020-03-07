@@ -41,11 +41,10 @@ bool ModuleCamera3D::Start()
 	CONSOLE_LOG("Setting up the camera");
 
 	bool ret = true;
-	camera->frustum.SetPos(float3(0.0f,0.0f,-50.0f));
+	camera->frustum.SetPos(float3(0.0f,25.0f,-50.0f));
 	camera->SetFOV(60.0f);
 	reference = camera->frustum.Pos();
-	camera->update_projection = true;
-
+	camera->Look({ 0.0f, 0.0f, 0.0f });
 
 	return ret;
 }
@@ -80,7 +79,7 @@ void ModuleCamera3D::UpdateCamera()
 		float3 newPos(0, 0, 0);
 
 		// --- Move ---
-		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 		{
 			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * speed;
 			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * speed;
@@ -102,11 +101,11 @@ void ModuleCamera3D::UpdateCamera()
 			CameraPan(speed);
 
 		// --- Zoom ---
-		if (/*!App->gui->IsMouseCaptured() && */abs(App->input->GetMouseWheel()) > 0)
+		if (abs(App->input->GetMouseWheel()) > 0)
 			CameraZoom(speed);
 
 		// --- Orbit Object ---
-		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
 			CameraLookAround(speed, reference);
 
 		// --- Frame object ---
@@ -145,7 +144,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 	last_ray = ray;
 
-	App->scene_manager->SelectFromRay(ray);
+	if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_IDLE)
+		App->scene_manager->SelectFromRay(ray);
 }
 
 void ModuleCamera3D::FrameObject(GameObject* GO)
@@ -154,6 +154,9 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 	{
 		ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 		ComponentMesh* mesh = GO->GetComponent<ComponentMesh>();
+
+		if (transform)
+			Frame(transform->GetGlobalPosition());
 
 		if (mesh && mesh->resource_mesh)
 		{
@@ -166,10 +169,19 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 			float3 Movement = camera->frustum.Front() * (2 * mesh->GetAABB().HalfDiagonal().Length());
 
 			if(Movement.IsFinite())
-			camera->frustum.SetPos(reference - Movement);
+				camera->frustum.SetPos(reference - Movement);
 		}
 		
 	}
+}
+
+void ModuleCamera3D::Frame(float3 position)
+{
+	reference = position;
+	float3 Movement = camera->frustum.Front() * 30.0f;
+
+	if (Movement.IsFinite())
+		camera->frustum.SetPos(reference - Movement);
 }
 
 
@@ -221,5 +233,5 @@ void ModuleCamera3D::CameraLookAround(float speed, float3 reference)
 	camera->frustum.SetPos(reference + (-camera->frustum.Front() * distance));
 
 	if(!reference.Equals(this->reference))
-	this->reference = camera->frustum.Pos() + camera->frustum.Front() * (camera->frustum.Pos()).Length();
+		this->reference = camera->frustum.Pos() + camera->frustum.Front() * (camera->frustum.Pos()).Length();
 }

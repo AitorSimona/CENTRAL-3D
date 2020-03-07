@@ -2,6 +2,10 @@
 
 #include "GameObject.h"
 
+#include "Imgui/imgui.h"
+
+#include "mmgr/mmgr.h"
+
 // MYTODO: Explain math behind transform ops 
 
 ComponentTransform::ComponentTransform(GameObject * ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform)
@@ -47,6 +51,16 @@ void ComponentTransform::SetPosition(float x, float y, float z)
 {
 	position = float3(x, y, z);
 
+	UpdateLocalTransform();
+}
+
+void ComponentTransform::SetQuatRotation(Quat rot)
+{
+	rotation = rot;
+	rotation_euler = rotation.ToEulerXYZ();
+	rotation_euler *= RADTODEG;
+
+	// --- Update Transform ---
 	UpdateLocalTransform();
 }
 
@@ -106,6 +120,7 @@ json ComponentTransform::Save() const
   	node["rotationx"] = std::to_string(rotation.x);
   	node["rotationy"] = std::to_string(rotation.y);
   	node["rotationz"] = std::to_string(rotation.z);
+	node["rotationw"] = std::to_string(rotation.w);
 
   	node["scalex"] = std::to_string(scale.x);
   	node["scaley"] = std::to_string(scale.y);
@@ -116,10 +131,128 @@ json ComponentTransform::Save() const
 
 void ComponentTransform::Load(json& node)
 {
+	std::string posx = node["positionx"].is_null() ? "0" : node["positionx"];
+	std::string posy = node["positiony"].is_null() ? "0" : node["positiony"];
+	std::string posz = node["positionz"].is_null() ? "0" : node["positionz"];
+
+	std::string rotx = node["rotationx"].is_null() ? "0" : node["rotationx"];
+	std::string roty = node["rotationy"].is_null() ? "0" : node["rotationy"];
+	std::string rotz = node["rotationz"].is_null() ? "0" : node["rotationz"];
+	std::string rotw = node["rotationw"].is_null() ? "0" : node["rotationw"];
+
+	std::string scalex = node["scalex"].is_null() ? "0" : node["scalex"];
+	std::string scaley = node["scaley"].is_null() ? "0" : node["scaley"];
+	std::string scalez = node["scalez"].is_null() ? "0" : node["scalez"];
+
+	float3 pos = float3(std::stof(posx), std::stof(posy), std::stof(posz));
+	SetPosition(pos.x, pos.y, pos.z);
+	SetQuatRotation(Quat(std::stof(rotx), std::stof(roty), std::stof(rotz), std::stof(rotw)));
+	Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 }
 
 void ComponentTransform::UpdateTRS()
 {
 	Local_transform.Decompose(position, rotation, scale);
 	rotation_euler = rotation.ToEulerXYZ()*RADTODEG;
+}
+
+
+void ComponentTransform::CreateInspectorNode()
+{
+	// --- Transform Position ---
+	ImGui::Text("Position  ");
+	ImGui::SameLine();
+
+	float dragSpeed = 0.25f;
+
+	float3 position = GetPosition();
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##PX", &position.x, dragSpeed))
+
+	ImGui::SameLine();
+
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##PY", &position.y, dragSpeed))
+
+	ImGui::SameLine();
+
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##PZ", &position.z, dragSpeed))
+
+	// --- Transform Rotation ---
+	ImGui::Text("Rotation  ");
+	ImGui::SameLine();
+
+	float3 rotation = GetRotation();
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##RX", &rotation.x, dragSpeed))
+
+	ImGui::SameLine();
+
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##RY", &rotation.y, dragSpeed))
+
+	ImGui::SameLine();
+
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##RZ", &rotation.z, dragSpeed))
+
+	// --- Transform Scale ---
+	float scale_dragSpeed = 0.1f;
+
+	ImGui::Text("Scale     ");
+	ImGui::SameLine();
+
+	float3 scale = GetScale();
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##SX", &scale.x, dragSpeed))
+
+	ImGui::SameLine();
+
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##SY", &scale.y, dragSpeed))
+
+	ImGui::SameLine();
+
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+	if (ImGui::DragFloat("##SZ", &scale.z, dragSpeed))
+
+	// --- Transform Set ---
+	if (!GO->Static)
+	{
+		if (!GetPosition().Equals(position))
+			SetPosition(position.x, position.y, position.z);
+		if (!GetScale().Equals(scale))
+			Scale(scale.x, scale.y, scale.z);
+		if (!GetRotation().Equals(rotation))
+			SetRotation(rotation);
+	}
+
 }

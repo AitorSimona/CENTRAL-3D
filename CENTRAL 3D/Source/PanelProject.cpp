@@ -4,8 +4,10 @@
 #include "ModuleResourceManager.h"
 #include "ModuleEventManager.h"
 #include "ModuleGui.h"
+#include "ModuleSceneManager.h"
 
-#include "ResourceFolder.h"
+#include "Resources.h"
+#include "Importers.h"
 
 #include "Imgui/imgui.h"
 
@@ -26,7 +28,7 @@ void PanelProject::ONResourceDestroyed(const Event& e)
 
 // -------------------------------
 
-PanelProject::PanelProject(char * name) : Panel(name)
+PanelProject::PanelProject(char* name) : Panel(name)
 {
 	// --- Add Event Listeners ---
 	App->event_manager->AddListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
@@ -41,7 +43,7 @@ PanelProject::~PanelProject()
 }
 
 
-// MYTODO: Clean this up
+// MYTODO: Clean this up !!!!!!!!!
 
 bool PanelProject::Draw()
 {
@@ -55,13 +57,15 @@ bool PanelProject::Draw()
 	{
 		static std::vector<std::string> filters;
 
+		CreateResourceHandlingPopup();
+
 		ImGui::BeginMenuBar();
 		ImGui::EndMenuBar();
 
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + 38));
 
 		// --- Draw Directories Tree ---
-		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x*0.1,ImGui::GetWindowSize().y));
+		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x * 0.1, ImGui::GetWindowSize().y));
 
 		RecursiveDirectoryDraw(ASSETS_FOLDER, filters);
 
@@ -70,9 +74,9 @@ bool PanelProject::Draw()
 		// --- Draw Explorer ---
 		ImGui::SameLine();
 
-		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y), true, projectFlags);
+		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowSize().y), true, projectFlags);
 
-		if(currentDirectory == nullptr)
+		if (currentDirectory == nullptr)
 			currentDirectory = App->resources->GetAssetsFolder();
 
 		DrawFolder(currentDirectory);
@@ -85,14 +89,14 @@ bool PanelProject::Draw()
 		ImGui::BeginMenuBar();
 
 		if (selected)
-			ImGui::Text(selected->GetOriginalFile());
+			ImGui::Text(selected->GetName());
 
 		ImGui::Spacing();
 
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
 
 		int imageSize_modifier = imageSize_px;
-		ImGui::SetNextItemWidth(100.0f);
+		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x * 0.1f);
 		if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64))
 		{
 			imageSize_px = imageSize_modifier;
@@ -113,6 +117,97 @@ bool PanelProject::Draw()
 	return true;
 }
 
+void PanelProject::CreateResourceHandlingPopup()
+{
+	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
+	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
+		ImGui::OpenPopup("Resources");
+
+	if (ImGui::BeginPopup("Resources"))
+	{
+		//ImGui::MenuItem("(dummy menu)", NULL, false, false);
+		//if (ImGui::MenuItem("New")) {}
+		//if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+
+		if (ImGui::BeginMenu("Create"))
+		{
+			if (ImGui::MenuItem("Folder"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::FOLDER);
+
+				Resource* new_folder = App->resources->CreateResource(Resource::ResourceType::FOLDER, std::string(currentDirectory->GetResourceFile()).append(resource_name));
+				ImporterFolder* IFolder = App->resources->GetImporter<ImporterFolder>();
+
+				App->resources->AddResourceToFolder(new_folder);
+
+				resource_name.pop_back();
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, std::string(currentDirectory->GetResourceFile()).append(resource_name), new_folder->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IFolder->Save((ResourceFolder*)new_folder);
+			}
+
+			if (ImGui::MenuItem("Material"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::MATERIAL);
+
+				Resource* new_material = App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(currentDirectory->GetResourceFile()).append(resource_name));
+				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+				App->resources->AddResourceToFolder(new_material);
+
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_material->GetResourceFile(), new_material->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IMat->Save((ResourceMaterial*)new_material);
+			}
+
+
+			if (ImGui::MenuItem("Scene"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::SCENE);
+
+				Resource* new_scene = App->resources->CreateResource(Resource::ResourceType::SCENE, std::string(currentDirectory->GetResourceFile()).append(resource_name));
+				ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+
+				App->resources->AddResourceToFolder(new_scene);
+
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_scene->GetResourceFile(), new_scene->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IScene->SaveSceneToFile((ResourceScene*)new_scene);
+			}
+
+			//if (ImGui::BeginMenu("More.."))
+			//{
+			//	ImGui::MenuItem("Hello");
+			//	ImGui::MenuItem("Sailor");
+			//	if (ImGui::BeginMenu("Recurse.."))
+			//	{
+			//		ShowExampleMenuFile();
+			//		ImGui::EndMenu();
+			//	}
+			//	ImGui::EndMenu();
+			//}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndPopup();
+	}
+}
+
 void PanelProject::SetSelected(Resource* new_selected)
 {
 	selected = new_selected;
@@ -128,6 +223,11 @@ void PanelProject::SetSelected(Resource* new_selected)
 		selected_uid = 0;
 }
 
+const Resource* PanelProject::GetcurrentDirectory() const
+{
+	return currentDirectory;
+}
+
 
 void PanelProject::DrawFolder(ResourceFolder* folder)
 {
@@ -139,7 +239,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	if (currentDirectory == App->resources->GetAssetsFolder())
 		ImGui::TextColored(ImVec4(0, 120, 255, 255), App->resources->GetAssetsFolder()->GetName());
 	else
-	ImGui::Text(App->resources->GetAssetsFolder()->GetName());
+		ImGui::Text(App->resources->GetAssetsFolder()->GetName());
 
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
 		currentDirectory = App->resources->GetAssetsFolder();
@@ -155,9 +255,9 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	for (std::vector<ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
 	{
 		if (currentDirectory == *it)
-			ImGui::TextColored(ImVec4(0, 120, 255, 255),(*it)->GetName());
+			ImGui::TextColored(ImVec4(0, 120, 255, 255), (*it)->GetName());
 		else
-		ImGui::Text((*it)->GetName());
+			ImGui::Text((*it)->GetName());
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
 			currentDirectory = *it;
@@ -178,7 +278,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		const std::vector<ResourceFolder*>* directories = &folder->GetChilds();
 		uint i = 0;
 		uint row = 0;
-		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px);
+		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px + 1);
 		ImVec4 color = ImVec4(255, 255, 255, 255);
 
 		ImVec2 vec = ImGui::GetCursorPos();
@@ -188,6 +288,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		{
 			if (!*it)
 				continue;
+
+			ImGui::PushID((*it)->GetUID());
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px);
 			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);
@@ -221,7 +323,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 				currentDirectory = *it;
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x)/2));
+			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));
 			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);
 
 			ImGui::TextColored(color, item_name.c_str());
@@ -229,10 +331,10 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (selected && selected->GetUID() == (*it)->GetUID())
 				color = ImVec4(255, 255, 255, 255);
 
-			if ((i + 1) % maxColumns == 0)
+			ImGui::PopID();
+
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
-			else
-				ImGui::SameLine();
 
 			i++;
 		}
@@ -243,47 +345,57 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (!*it)
 				continue;
 
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns)* (imageSize_px + item_spacingX_px) + item_spacingX_px);
-			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);
+			if ((*it)->has_parent)
+				continue;
 
-			std::string item_name = (*it)->GetName();
-			LimitText(item_name);
+			DrawFile(*it, i, row, vec, color);
 
-			if (selected && selected->GetUID() == (*it)->GetUID())
-				color = ImVec4(0, 120, 255, 255);
-
-			ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0),color);
-
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
-
-			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			// --- Draw model childs ---
+			if ((*it)->GetType() == Resource::ResourceType::MODEL)
 			{
-				uint UID = (*it)->GetUID();
-				ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
-				ImGui::Text(item_name.c_str());
-				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
-				ImGui::Image((ImTextureID)(*it)->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0));
-				ImGui::EndDragDropSource();
+				uint arrowSize = imageSize_px / 4;
+
+				ImGui::SetCursorPosX(vec.x + ((i + 1) - row * maxColumns) * (imageSize_px + item_spacingX_px));
+				ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + arrowSize * 1.5);
+
+				ResourceModel* model = (ResourceModel*)*it;
+
+				ImVec2 uvx = { 0,1 };
+				ImVec2 uvy = { 1,0 };
+				// --- Set arrow direction ---
+				if (model->openInProject)
+				{
+					uvx = { 1,0 };
+					uvy = { 0,1 };
+				}
+
+				// --- Force new uid so imgui does not block all buttons after the first one ---
+				ImGui::PushID((*it)->GetUID() + i);
+
+				if (ImGui::ImageButton((ImTextureID)App->gui->playbuttonTexID, ImVec2(arrowSize, arrowSize), uvx, uvy, 0))
+					model->openInProject = !model->openInProject;
+
+				ImGui::PopID();
+
+				if (model->openInProject)
+				{
+					std::vector<Resource*>* model_resources = model->GetResources();
+
+					for (std::vector<Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
+					{
+						if (maxColumns != 0 && (i + 1) % maxColumns == 0)
+							row++;
+
+						i++;
+
+						DrawFile(*res, i, row, vec, color, true);
+					}
+				}
+
 			}
 
-			ImGui::PopStyleVar();
-
-			if (ImGui::IsItemClicked())
-				SetSelected(*it);
-
-
-			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));
-			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);
-
-			ImGui::TextColored(color,item_name.c_str());
-
-			if (selected && selected->GetUID() == (*it)->GetUID())
-				color = ImVec4(255, 255, 255, 255);
-
-			if ((i + 1) % maxColumns == 0)
+			if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 				row++;
-			else
-				ImGui::SameLine();
 
 			i++;
 		}
@@ -292,9 +404,80 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	ImGui::PopStyleVar();
 }
 
+void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child)
+{
+	ImGui::PushID(resource->GetUID());
+
+	ImGui::SetCursorPosX(cursor_pos.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px);
+	ImGui::SetCursorPosY(cursor_pos.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px);
+
+	std::string item_name = resource->GetName();
+	LimitText(item_name);
+
+	if (selected && selected->GetUID() == resource->GetUID())
+		color = ImVec4(0, 120, 255, 255);
+
+	if (child)
+		ImGui::ImageButton((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.15, 0.15, 0.15, 1), color);
+	else
+		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), color);
+
+	// --- Handle selection ---
+	if (selected && selected->GetUID() == resource->GetUID()
+		&& wasclicked && ImGui::IsMouseReleased(0))
+	{
+		if (ImGui::IsItemHovered())
+		{
+			SetSelected(resource);
+			wasclicked = false;
+		}
+		else
+			SetSelected(nullptr);
+	}
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
+
+	// --- Handle drag and drop origin ---
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+	{
+		uint UID = resource->GetUID();
+		ImGui::SetDragDropPayload("resource", &UID, sizeof(uint));
+		ImGui::Text(item_name.c_str());
+		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 20.0f));
+		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::EndDragDropSource();
+	}
+
+	// --- Handle selection ---
+	if (ImGui::IsItemClicked())
+	{
+		selected = resource;
+		wasclicked = true;
+	}
+	// --- IF resource is a scene, load it on double click! ---
+	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+	{
+		if (resource->GetType() == Resource::ResourceType::SCENE)
+			App->scene_manager->SetActiveScene((ResourceScene*)resource);
+	}
+
+	ImGui::PopStyleVar();
+
+
+	ImGui::SetCursorPosX(cursor_pos.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x) / 2));
+	ImGui::SetCursorPosY(cursor_pos.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);
+
+	ImGui::TextColored(color, item_name.c_str());
+
+	if (selected && selected->GetUID() == resource->GetUID())
+		color = ImVec4(255, 255, 255, 255);
+
+	ImGui::PopID();
+}
+
 void PanelProject::LimitText(std::string& text)
 {
-	uint textSizeX_px = ImGui::CalcTextSize(text.c_str(),nullptr).x;
+	uint textSizeX_px = ImGui::CalcTextSize(text.c_str(), nullptr).x;
 	uint dotsSizeX_px = ImGui::CalcTextSize("...", nullptr, false, 0).x;
 
 	// --- The total pixel space available is the text picel space + dots pixel space ---
@@ -307,7 +490,7 @@ void PanelProject::LimitText(std::string& text)
 }
 
 // MYTODO: To be substituted (folders/files are already loaded)
-void PanelProject::RecursiveDirectoryDraw(const char * directory, std::vector<std::string>& filters)
+void PanelProject::RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -325,63 +508,4 @@ void PanelProject::RecursiveDirectoryDraw(const char * directory, std::vector<st
 			ImGui::TreePop();
 		}
 	}
-
-	//std::sort(files.begin(), files.end());
-
-	//for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
-	//{
-	//	const std::string& str = *it;
-
-	//	bool pass_filter = false;
-
-	//	if (filters.size() > 0)
-	//	{
-	//		for (uint i = 0; i < filters.size(); ++i)
-	//		{
-	//			if (str.substr(str.find_last_of(".") + 1) == filters[i])
-	//			{
-	//				pass_filter = true;
-	//				break;
-	//			}
-	//		}
-	//	}
-	//	else
-	//		pass_filter = true;
-
-	//	//if (pass_filter && ImGui::TreeNodeEx(str.c_str(), ImGuiTreeNodeFlags_Leaf))
-	//	//{
-	//	//	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-	//	//	{
-	//	//		// Not using this at all due to data corruption
-	//	//		ImGui::SetDragDropPayload("FBX", str.data(), str.size()); 
-
-	//	//		dragged = ASSETS_FOLDER;
-	//	//		dragged.append(str.data());
-	//	//		ImGui::EndDragDropSource();
-	//	//	}
-
-	//	//	std::string path = directory;
-	//	//	path.append((*it).data());
-
-	//	//	//uint saved_date = App->resources->GetModDateFromMeta(path.data());
-
-	//	//	//// TO BE IMPLEMENTED 
-	//	//	//// --- If file is changed, reimport ---
-	//	//	//if (App->fs->GetLastModificationTime(path.data()) != saved_date)
-	//	//	//{
-
-	//	//	//}
-	//	//	//// --- If file is deleted, delete all related files in library and meta ---
-	//	//	//else if (saved_date == 0)
-	//	//	//{
-	//	//	//	//uint uid = App->resources->GetUIDFromMeta(path.data());
-
-	//	//	//	//std::string lib_path = MODELS_FOLDER;
-
-
-	//	//	//}
-
-	//	//	ImGui::TreePop();
-	//	//}
-	//}
 }
