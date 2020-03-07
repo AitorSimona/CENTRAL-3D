@@ -6,6 +6,8 @@
 * GitHub repository: [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 * GitHub website: [Website](https://aitorsimona.github.io/CENTRAL-3D/)
 
+ATTENTION: After the resource manager revamp some stuff has to be rewritten!!
+
 ## Expanding CENTRAL 3D
  - After 0.3, everything was done during my holidays, twofold purpose:
 
