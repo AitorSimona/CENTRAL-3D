@@ -147,8 +147,6 @@ void ComponentCollider::UpdateLocalMatrix() {
 
 	math::float4x4 gt = cTransform->GetGlobalTransform();
 
-	if (GO->GetName() == "gerald")
-		int a = 0;
 	//Render
 	localMatrix.x = centerPosition.x + offset.x;
 	localMatrix.y = centerPosition.y + offset.y;
