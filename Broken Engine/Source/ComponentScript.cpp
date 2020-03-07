@@ -41,7 +41,7 @@ void ComponentScript::CreateInspectorNode()
 {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-	std::string name = this->script_name + "(Script)";
+	std::string name = this->script_name + " (Script)";
 	ImGui::Checkbox("Active", &active); ImGui::SameLine();
 
 	if (ImGui::TreeNodeEx(name.data(), base_flags))
@@ -52,9 +52,7 @@ void ComponentScript::CreateInspectorNode()
 				App->gui->RequestBrowser(std::string(script->absolute_path).data());
 			}
 
-			char auxBuffer[256];
-
-			//Display Variables
+			// Display public variables
 			for (int i = 0; i < script_variables.size(); ++i)
 			{
 				std::string auxName = script_variables[i].name.c_str();
@@ -66,11 +64,10 @@ void ComponentScript::CreateInspectorNode()
 				{
 					float auxVal(script_variables[i].editor_value.as_double);
 
-					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f)) {
+					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f, 0.0f, 0.0f, "%.2f", 1.0f)) {
 						script_variables[i].editor_value.as_double = auxVal;
 						script_variables[i].changed_value = true;
 					}
-
 				}
 				else if (type == VarType::BOOLEAN)
 				{
@@ -79,12 +76,13 @@ void ComponentScript::CreateInspectorNode()
 				}
 				else if (type == VarType::STRING)
 				{
-					strcpy(auxBuffer, script_variables[i].editor_value.as_string);
+					char string[256];
+					strcpy(string, script_variables[i].editor_value.as_string);
 
-					ImGui::InputText(auxName.c_str(), auxBuffer, IM_ARRAYSIZE(auxBuffer));
+					ImGui::InputText(auxName.c_str(), string, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
 
-					if (strcmp(script_variables[i].editor_value.as_string, auxBuffer) != 0) {
-						strcpy(script_variables[i].editor_value.as_string, auxBuffer);
+					if (strcmp(script_variables[i].editor_value.as_string, string) != 0) {
+						strcpy(script_variables[i].editor_value.as_string, string);
 						script_variables[i].changed_value = true;
 					}
 				}

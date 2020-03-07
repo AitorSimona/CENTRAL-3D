@@ -28,7 +28,6 @@ public:
 	void NotifyHotReloading();
 	bool CheckEverythingCompiles();
 
-
 public:
 	bool Init(json file) override;
 	bool Start();

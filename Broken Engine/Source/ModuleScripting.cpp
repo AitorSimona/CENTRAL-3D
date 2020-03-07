@@ -451,9 +451,7 @@ update_status ModuleScripting::Update(float realDT)
 
 update_status ModuleScripting::GameUpdate(float gameDT)
 {
-	Scripting Scripting;
-
-	if (cannot_start == false &&  App->GetAppState() ==AppState::PLAY)
+	if (cannot_start == false && App->GetAppState() == AppState::PLAY)
 	{
 		const uint origSize = class_instances.size();	// This avoids messing the iteration with newly Instantiated scripts
 		for (uint i = 0; i < origSize; ++i)

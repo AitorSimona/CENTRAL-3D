@@ -23,7 +23,6 @@ public:
 	// Returns -1 if the ScriptVar was not found in the vector
 	int ScriptVarAlreadyInComponent(std::string name);
 
-
 	//Correct SAve & Load from Central 3D
 	json Save() const override;
 	void Load(json& node) override;
