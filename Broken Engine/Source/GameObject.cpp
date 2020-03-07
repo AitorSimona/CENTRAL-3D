@@ -78,10 +78,6 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		TransformGlobal(this);
 
-	ComponentAnimation* anim = this->GetComponent<ComponentAnimation>();
-	if (GetComponent<ComponentAnimation>())
-		anim->Update(dt);
-
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		(*it)->Update(dt);

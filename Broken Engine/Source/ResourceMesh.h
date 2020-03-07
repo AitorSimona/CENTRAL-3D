@@ -11,7 +11,6 @@ struct Vertex
 	float normal[3];
 	unsigned char color[4];
 	float texCoord[2];
-	float animPos_offset[3] = { 0,0,0 };
 };
 
 class ResourceMesh : public Resource
