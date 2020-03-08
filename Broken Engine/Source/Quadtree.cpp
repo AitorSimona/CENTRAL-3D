@@ -6,18 +6,18 @@
 #include "mmgr/mmgr.h"
 
 // --- All child indexes ---
-#define NET 0
-#define SET 1
-#define SWT 2
-#define NWT 3
-#define NEB 4
-#define SEB 5
-#define SWB 6
-#define NWB 7
+#define NET 0	//North-east  TOP
+#define SET 1	//Suth-east   TOP
+#define SWT 2	//South-west  TOP
+#define NWT 3	//North-west  TOP
+#define NEB 4	//North-east  BOT
+#define SEB 5	//Suth-east	  BOT
+#define SWB 6	//South-west  BOT
+#define NWB 7	//North-west  BOT
 
 // --- Max items before subdividing ---
-#define QUADTREE_MAX_ITEMS 10
-#define QUADTREE_MIN_SIZE 10.0f 
+#define QUADTREE_MAX_ITEMS 3
+#define QUADTREE_MIN_SIZE 3.0f 
 
 
 QuadtreeNode::QuadtreeNode(const AABB& box) : box(box)
@@ -46,6 +46,7 @@ void QuadtreeNode::Insert(GameObject* go)
 		(objects.size() < QUADTREE_MAX_ITEMS ||
 		(box.HalfSize().LengthSq() <= QUADTREE_MIN_SIZE * QUADTREE_MIN_SIZE)))
 		objects.push_back(go);
+	
 	else
 	{
 		if (IsLeaf() == true)
@@ -96,7 +97,6 @@ void QuadtreeNode::CreateChilds()
 	childs[NWT] = new QuadtreeNode(box);
 	childs[NWT]->CreateNode(NWT);
 
-
 	// NorthEast - BOT
 	childs[NEB] = new QuadtreeNode(box);
 	childs[NEB]->CreateNode(NEB);
@@ -123,14 +123,15 @@ void QuadtreeNode::CreateNode(uint index)
 	//2 3
 
 	float3 minPoint, maxPoint;
-	minPoint.y = this->box.minPoint.y;
-	maxPoint.y = this->box.maxPoint.y;
+	minPoint.y = (index < 4)? (this->box.minPoint.y + this->box.maxPoint.y) / 2: this->box.minPoint.y;
+	maxPoint.y = (index < 4)? this->box.maxPoint.y : (this->box.minPoint.y + this->box.maxPoint.y)/2;
 
-	minPoint.x = (index / 2) == 1 ? this->box.minPoint.x : (this->box.maxPoint.x + this->box.minPoint.x) / 2;
-	maxPoint.x = (index / 2) == 1 ? (this->box.maxPoint.x + this->box.minPoint.x) / 2 : this->box.maxPoint.x;
+	minPoint.x = ((index / 2) == 1 || (index / 2)==3) ? this->box.minPoint.x : (this->box.maxPoint.x + this->box.minPoint.x) / 2;
+	maxPoint.x = ((index / 2) == 1 || (index / 2)==3 )? (this->box.maxPoint.x + this->box.minPoint.x) / 2 : this->box.maxPoint.x;
 
 	minPoint.z = index % 2 == 0 ? this->box.minPoint.z : (this->box.maxPoint.z + this->box.minPoint.z) / 2;
 	maxPoint.z = index % 2 == 0 ? (this->box.maxPoint.z + this->box.minPoint.z) / 2 : this->box.maxPoint.z;
+
 	box = AABB(minPoint, maxPoint);
 }
 

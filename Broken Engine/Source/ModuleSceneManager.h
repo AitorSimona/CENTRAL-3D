@@ -88,7 +88,9 @@ public:
 	const ResourceMesh* GetCapsuleMesh() const { return capsule; }
 	const ResourceMesh* GetPlaneMesh() const { return plane; }
 	const ResourceMesh* GetCylinderMesh() const { return cylinder; }
+
 private:
+
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);
 	static void ONGameObjectDestroyed(const Event& e);

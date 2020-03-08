@@ -110,6 +110,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 			particles[index[0]]->lifeTime = particlesLifeTime;
 			particles[index[0]]->spawnTime = SDL_GetTicks();
+			particles[index[0]]->color = particlesColor/255.0f;
 		}
 	}
 
@@ -141,7 +142,6 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 				float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
 				particles[i]->position =newPosition;
 				particles[i]->diameter = particlesSize;
-				particles[i]->color = particlesColor;
 			}
 		}
 		// return ownership of the buffers back to the SDK
@@ -417,8 +417,8 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
 		colorChanged = true;
 
-	if (colorChanged)
-		ChangeParticlesColor(particlesColor);
+	/*if (colorChanged)
+		ChangeParticlesColor(particlesColor);*/
 }
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE

@@ -263,17 +263,18 @@ void ModuleSceneManager::Draw()
 
 void ModuleSceneManager::DrawScene()
 {
-	if (display_tree)
+
 	RecursiveDrawQuadtree(tree.root);
 
-	// MYTODO: Support multiple go selection and draw outline accordingly
+	if (display_tree)
+		RecursiveDrawQuadtree(tree.root);
 
+	// MYTODO: Support multiple go selection and draw outline accordingly
 	if (currentScene)
 	{
-
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetUID() != root->GetUID())
+			if ((*it).second->GetUID() != root->GetUID() && App->renderer3D->culling_camera->frustum.Intersects((*it).second->GetAABB()) )
 			{
 				// --- Search for Renderer Component ---
 				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
@@ -302,15 +303,11 @@ void ModuleSceneManager::DrawScene()
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
-
 			if (SelectedGameObject == (*it))
 			{
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
 			}
-
-
-
 
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
@@ -325,7 +322,6 @@ void ModuleSceneManager::DrawScene()
 				glStencilMask(0x00);
 			}
 		}
-
 	}
 
 }
@@ -387,7 +383,8 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 		}
 	}
 
-	DrawWire(node->box, Red, GetPointLineVAO());
+	if (node->IsLeaf())
+		DrawWire(node->box, Red, GetPointLineVAO());
 }
 
 void ModuleSceneManager::SelectFromRay(LineSegment & ray)
