@@ -1,5 +1,8 @@
 #include "ModulePhysics.h"
 #include "Application.h"
+#include "ModuleSceneManager.h"
+#include "ComponentCollider.h"
+#include "GameObject.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -149,3 +152,19 @@ void ModulePhysics::SimulatePhysics(float dt, float speed)
 	mScene->simulate(dt * speed);
 	mScene->fetchResults(true);
 }
+
+void ModulePhysics::DeleteActors(GameObject* go)
+{
+	if (go == nullptr)
+		go = App->scene_manager->GetRootGO();
+
+	if (go->childs.size() > 0)
+	{
+		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
+		{
+			if ((*it)->GetComponent<ComponentCollider>() != nullptr)
+				(*it)->GetComponent<ComponentCollider>()->Delete();
+		}
+	}
+}
+

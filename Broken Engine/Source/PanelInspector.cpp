@@ -67,7 +67,7 @@ bool PanelInspector::Draw()
 
 		static ImGuiComboFlags flags = 0;
 
-		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text" };
+		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
 		static const char* item_current = items[0];
 
 		ImGui::NewLine();
@@ -123,18 +123,24 @@ bool PanelInspector::Draw()
 
 		if (item_current == "UI Canvas")
 		{
-			Selected->AddComponent(Broken::Component::ComponentType::ComponentCanvas);
+			Selected->AddComponent(Broken::Component::ComponentType::Canvas);
 		}
 
 		if (item_current == "UI Image")
 		{
-			Selected->AddComponent(Broken::Component::ComponentType::ComponentImage);
+			Selected->AddComponent(Broken::Component::ComponentType::Image);
 		}
 
 		if (item_current == "UI Text")
 		{
-			Selected->AddComponent(Broken::Component::ComponentType::ComponentText);
+			Selected->AddComponent(Broken::Component::ComponentType::Text);
 		}
+
+		if (item_current == "UI Button")
+		{
+			Selected->AddComponent(Broken::Component::ComponentType::Button);
+		}
+
 		if (item_current == "Dynamic RigidBody")
 		{
 			Selected->AddComponent(Broken::Component::ComponentType::DynamicRigidBody);

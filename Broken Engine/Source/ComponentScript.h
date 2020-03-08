@@ -21,10 +21,9 @@ public:
 
 	void AssignScript(ResourceScript* script_resource);
 
-	//This function returns the index inside the vector of scriptvars of Script variable using its name as reference
-	//Returns -1 if the ScriptVar was not found in the vector
+	// This function returns the index inside the vector of scriptvars of Script variable using its name as reference
+	// Returns -1 if the ScriptVar was not found in the vector
 	int ScriptVarAlreadyInComponent(std::string name);
-
 
 	//Correct SAve & Load from Central 3D
 	json Save() const override;

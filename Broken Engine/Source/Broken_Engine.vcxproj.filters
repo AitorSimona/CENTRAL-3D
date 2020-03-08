@@ -681,6 +681,9 @@
     </ClInclude>
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\dxgi1_4.h" />
+    <ClInclude Include="ComponentButton.h">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+	</ClInclude>
     <ClInclude Include="RandomGenerator.h">
       <Filter>Sources\Tools\Random</Filter>
     </ClInclude>
@@ -1059,6 +1062,9 @@
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClCompile>
     <ClCompile Include="ComponentText.cpp">
+      <Filter>Sources\Game Objects\Components\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentButton.cpp">
       <Filter>Sources\Game Objects\Components\UIElements</Filter>
     </ClCompile>
     <ClCompile Include="RandomGenerator.cpp">

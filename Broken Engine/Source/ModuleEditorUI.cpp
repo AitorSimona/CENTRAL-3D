@@ -144,17 +144,19 @@ update_status ModuleEditorUI::Update(float dt) {
 			if (ImGui::BeginMenu("UI Elements")) {
 				if (ImGui::MenuItem("Canvas")) {
 					Broken::GameObject* canvas_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					Broken::ComponentCanvas* camera = (Broken::ComponentCanvas*)canvas_go->AddComponent(Broken::Component::ComponentType::ComponentCanvas);
+					Broken::ComponentCanvas* camera = (Broken::ComponentCanvas*)canvas_go->AddComponent(Broken::Component::ComponentType::Canvas);
 				}
 				if (ImGui::MenuItem("Image")) {
 					Broken::GameObject* image_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					Broken::ComponentImage* image = (Broken::ComponentImage*)image_go->AddComponent(Broken::Component::ComponentType::ComponentImage);
+					Broken::ComponentImage* image = (Broken::ComponentImage*)image_go->AddComponent(Broken::Component::ComponentType::Image);
 				}
 				if (ImGui::MenuItem("Text")) {
 					Broken::GameObject* text_go = EngineApp->scene_manager->CreateEmptyGameObject();
-					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::ComponentText);
+					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::Text);
 				}
 				if (ImGui::MenuItem("Button", false, false, false)) {
+					Broken::GameObject* button_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentText* button = (Broken::ComponentText*)button_go->AddComponent(Broken::Component::ComponentType::Button);
 				}
 				if (ImGui::MenuItem("Checkbox", false, false, false)) {
 				}

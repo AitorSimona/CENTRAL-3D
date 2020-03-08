@@ -47,25 +47,25 @@ public:
 
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
+	void Delete();
+
 private:
 	template <class Geometry>
 	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
-
-	void Delete();
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;
 	bool editCollider = false;
 	bool updateValues = false;
-	float3 localPosition = float3::zero;
-	float3 originalScale = float3::one;
+	float3 centerPosition = float3::zero;
+	float3 originalSize = float3::one;
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
 
 private:
 	physx::PxShape* shape = nullptr;
-	float3 scale = float3(1, 1, 1);
+	float3 colliderSize = float3(1, 1, 1);
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
 	float radius = 1.0f, height = 1.0f;

@@ -12,6 +12,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
+#include "ModulePhysics.h"
 #include "ComponentCamera.h"
 #include "ComponentBone.h"
 #include "ModuleUI.h"
@@ -62,6 +63,10 @@ bool ModuleSceneManager::Init(json& file) {
 	// --- Add Event Listeners ---
 	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, ONGameObjectDestroyed);
 	App->event_manager->AddListener(Event::EventType::Resource_selected, ONResourceSelected);
+
+	//Add pushbacks for componnets that can be repeated inside a gameobject
+	repeatable_components.push_back((int)Component::ComponentType::Script);
+	repeatable_components.push_back((int)Component::ComponentType::AudioSource);
 
 	return true;
 }
@@ -929,7 +934,9 @@ GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 	return new_object;
 }
 
-void ModuleSceneManager::DestroyGameObject(GameObject* go) {
+void ModuleSceneManager::DestroyGameObject(GameObject * go)
+{
+	//App->physics->DeleteActors(go);
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
 	delete go;

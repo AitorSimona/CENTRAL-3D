@@ -1,11 +1,6 @@
 #ifndef MODULE_PHYSICS_H_
 #define MODULE_PHYSICS_H_
 #include "Module.h"
-//
-//#include "PhysX_3.4/Include/PxPhysicsAPI.h"
-//#include "PhysX_3.4/Include/pvd/PxPvd.h"
-//#include "PhysX_3.4/Include/pvd/PxPvdSceneClient.h"
-//#include "PhysX_3.4/Include/pvd/PxPvdTransport.h"
 
 namespace physx
 {
@@ -19,6 +14,7 @@ namespace physx
 }
 
 BE_BEGIN_NAMESPACE
+class GameObject;
 
 class BROKEN_API ModulePhysics : public Module
 {
@@ -35,6 +31,8 @@ public:
 	void BoxCollider(float posX, float posY, float posZ);
 
 	void SimulatePhysics(float dt, float speed = 1.0f);
+
+	void DeleteActors(GameObject* go = nullptr);
 
 public:
 	

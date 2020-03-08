@@ -6,17 +6,17 @@
 
 #include "ComponentText.h"
 #include "ComponentImage.h"
-//#include "Button.h"
-//#include "CheckBox.h"
-//#include "InputText.h"
-//#include "ProgressBar.h"
+#include "ComponentButton.h"
+//#include "ComponentCheckBox.h"
+//#include "ComponentInputText.h"
+//#include "ComponentProgressBar.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
 
-ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentCanvas)
+ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Canvas)
 {
 	visible = true;
 	interactable = false;
@@ -39,33 +39,33 @@ void ComponentCanvas::Draw() const
 	// Draw elements inside canvas
 	for (int i = 0; i < elements.size(); i++)
 	{
-		if (elements[i]->GetType() == Component::ComponentType::ComponentCanvas)
+		if (elements[i]->GetType() == Component::ComponentType::Canvas)
 		{
 			ComponentCanvas* canvas = (ComponentCanvas*)elements[i];
 			if (canvas->visible)
 				canvas->Draw();
 			continue;
 		}
-		else if (elements[i]->GetType() == Component::ComponentType::ComponentText)
+		else if (elements[i]->GetType() == Component::ComponentType::Text)
 		{
 			ComponentText* text = (ComponentText*)elements[i];
 			if (text->visible)
 				text->Draw();
 			continue;
 		}
-		else if (elements[i]->GetType() == Component::ComponentType::ComponentImage)
+		else if (elements[i]->GetType() == Component::ComponentType::Image)
 		{
 			ComponentImage* image = (ComponentImage*)elements[i];
 			if (image->visible)
 				image->Draw();
 			continue;
 		}
-		//else if (elements[i]->GetType() == Component::ComponentType::Button)
-		//{
-		//	Button* elem = (Button*)elements[i];
-		//	if (elem->visible) 
-		//		elem->Draw();
-		//}
+		else if (elements[i]->GetType() == Component::ComponentType::Button)
+		{
+			ComponentButton* button = (ComponentButton*)elements[i];
+			if (button->visible) 
+				button->Draw();
+		}
 		//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
 		//{
 		//	CheckBox* elem = (CheckBox*)elements[i];
@@ -156,7 +156,7 @@ void ComponentCanvas::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::ComponentCanvas);
+		GO->RemoveComponent(Component::ComponentType::Canvas);
 	}
 }
 

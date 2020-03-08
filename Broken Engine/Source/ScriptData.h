@@ -7,14 +7,9 @@
 #include "ComponentScript.h"
 
 BE_BEGIN_NAMESPACE
-//We don't want to include all the luabridge library in ModuleScripting.h so we don't include it everywhere where we include Module Scripting
-struct ScriptFile {
-	std::string name;
-	std::string full_path;
-	uint32 resource_uid;
-};
 
-struct ScriptInstance {
+//We don't want to include all the luabridge library in ModuleScripting.h so we don't include it everywhere where we include Module Scripting
+struct BROKEN_API ScriptInstance {
 	ComponentScript* my_component = nullptr;
 	luabridge::LuaRef my_table_class = 0;
 	bool awoken = false;

@@ -633,6 +633,9 @@
     <ClInclude Include="RandomGenerator.h">
       <Filter>Sources\BrokenEngine\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentButton.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1033,6 +1036,9 @@
     </ClCompile>
     <ClCompile Include="RandomGenerator.cpp">
       <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentButton.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
