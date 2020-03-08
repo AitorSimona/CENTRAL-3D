@@ -41,7 +41,7 @@ public:
 public:
 	bool visible = true;
 
-	float2 size2D = { 100,100 };
+	float2 size2D = { 10,10 };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 
