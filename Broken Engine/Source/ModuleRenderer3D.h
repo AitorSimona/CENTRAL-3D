@@ -46,6 +46,7 @@ public:
 	ResourceShader* linepointShader = nullptr;
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
+	ResourceShader* textShader = nullptr;
 
 	unsigned int VAO = 0;
 	SDL_GLContext context;

@@ -3,14 +3,28 @@
 #pragma once
 #include "Module.h"
 #include <vector>
+#include <map>
 #include "Math.h"
 
 BE_BEGIN_NAMESPACE
+
+
 
 class ComponentCanvas;
 class Component;
 class BROKEN_API ModuleUI : public Module
 {
+public:
+
+	struct Character {
+		GLuint	TextureID;  // ID handle of the glyph texture
+		float2	Size;       // Size of glyph
+		float2	Bearing;    // Offset from baseline to left/top of glyph
+		GLuint	Advance;    // Offset to advance to next glyph
+	};
+
+	std::map<GLchar, Character> characters;
+	GLuint VAO, VBO;
 public:
 	ModuleUI(bool start_enabled = true);
 	~ModuleUI();
@@ -35,6 +49,7 @@ public:
 
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;
+
 };
 
 BE_END_NAMESPACE
