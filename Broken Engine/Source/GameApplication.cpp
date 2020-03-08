@@ -2,14 +2,14 @@
 #include "ModuleGameManager.h"
 #include "BrokenEngineMain.h"
 
-GameApplication* gameApp = NULL;
+GameApplication* GameApp = NULL;
 
 Broken::Application* Broken::CreateApplication() {
 	return new GameApplication();
 }
 
 GameApplication::GameApplication() {
-	gameApp = this;
+	GameApp = this;
 	isGame = true;
 	SetConfigPath("Settings/GameConfig.json");
 
@@ -20,7 +20,7 @@ GameApplication::GameApplication() {
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
 
-	//gui->SetEnabled(false);
+	gui->SetEnabled(false);
 
 	// Main Modules
 	AddModule(threading);

@@ -15,6 +15,6 @@ public:
 	ModuleGameManager* game_manager;
 };
 
-extern GameApplication* gameApp;
+extern GameApplication* GameApp;
 #endif
 

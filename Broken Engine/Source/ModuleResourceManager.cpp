@@ -526,7 +526,7 @@ void ModuleResourceManager::HandleFsChanges()
 		// --- Meta's associated file has been deleted, print warning and eliminate lib files ---
 		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
 		{
-			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
+			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
 
 			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);

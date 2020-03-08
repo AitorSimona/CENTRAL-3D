@@ -44,11 +44,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(Configuration)\$(ProjectName)</IntDir>
+    <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath)</IncludePath>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>$(Configuration)\$(ProjectName)</IntDir>
+    <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,7 +89,7 @@
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)$(Configuration)\$(ProjectName).dll" "$(SolutionDir)Game\$(ProjectName).dll"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Configuration)\$(ProjectName).dll" "$(SolutionDir)Game\$(ProjectName)_DEBUG.dll"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy dll into game folder</Message>
