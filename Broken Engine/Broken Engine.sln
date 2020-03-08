@@ -15,30 +15,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BEG", "Source\BEG.vcxproj",
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Debug|x64.ActiveCfg = Debug|Win32
 		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Debug|x86.ActiveCfg = Debug|Win32
 		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Debug|x86.Build.0 = Debug|Win32
-		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Release|x64.ActiveCfg = Release|Win32
 		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Release|x86.ActiveCfg = Release|Win32
 		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Release|x86.Build.0 = Release|Win32
-		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Debug|x64.ActiveCfg = Debug|Win32
 		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Debug|x86.ActiveCfg = Debug|Win32
 		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Debug|x86.Build.0 = Debug|Win32
-		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Release|x64.ActiveCfg = Release|Win32
 		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Release|x86.ActiveCfg = Release|Win32
 		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Release|x86.Build.0 = Release|Win32
-		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Debug|x64.ActiveCfg = Debug|x64
-		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Debug|x64.Build.0 = Debug|x64
 		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Debug|x86.ActiveCfg = Debug|Win32
 		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Debug|x86.Build.0 = Debug|Win32
-		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Release|x64.ActiveCfg = Release|x64
-		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Release|x64.Build.0 = Release|x64
 		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Release|x86.ActiveCfg = Release|Win32
 		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
