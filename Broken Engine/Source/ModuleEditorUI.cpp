@@ -28,7 +28,7 @@ bool ModuleEditorUI::Init(Broken::json& file) {
 	panels.push_back(panelAbout);
 
 	panelConsole = new PanelConsole("Console");
-	EngineApp->gui->AddPanel(panelConsole);
+	panels.push_back(panelConsole);
 
 	panelInspector = new PanelInspector("Inspector");
 	panels.push_back(panelInspector);
