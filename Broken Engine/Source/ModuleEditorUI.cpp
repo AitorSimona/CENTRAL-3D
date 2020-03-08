@@ -206,6 +206,10 @@ update_status ModuleEditorUI::Update(float dt) {
 				panelPhysics->OnOff();
 			}
 
+			if (ImGui::MenuItem("Console")) {
+				panelConsole->OnOff();
+			}
+
 			ImGui::EndMenu();
 		}
 
