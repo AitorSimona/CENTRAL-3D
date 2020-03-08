@@ -141,6 +141,10 @@ update_status ModuleFileSystem::PreUpdate(float dt) {
 // Called before quitting
 bool ModuleFileSystem::CleanUp() {
 	//LOG("Freeing File System subsystem");
+	//We cleanup all the arrays not deleted
+	for (std::vector<std::vector<std::string>*>::iterator it = returned_arrays.begin(); it != returned_arrays.end(); ++it) 	
+		delete *it;
+	returned_arrays.clear();
 
 	return true;
 }
@@ -185,50 +189,77 @@ std::string ModuleFileSystem::GetDirectoryFromPath(std::string& path) {
 	return directory;
 }
 
-void ModuleFileSystem::DiscoverFiles(const char* directory, std::shared_ptr<strvec> file_list) const {
+void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<std::string>& file_list) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
 
 	std::string dir(directory);
 
 	for (i = rc; *i != nullptr; i++) {
-		if (!PHYSFS_isDirectory((dir + *i).c_str()))
+		if (!PHYSFS_isDirectory((dir + *i).c_str())) {
+			file_list.push_back(*i);
+		}
+	}
+
+	PHYSFS_freeList(rc);
+}
+
+const std::vector<std::string>* ModuleFileSystem::ExDiscoverFiles(const char* directory) {
+	char** rc = PHYSFS_enumerateFiles(directory);
+	char** i;
+
+	std::string dir(directory);
+	std::vector<std::string>* file_list = new std::vector<std::string>;
+
+	for (i = rc; *i != nullptr; i++) {
+		if (!PHYSFS_isDirectory((dir + *i).c_str())) {
 			(*file_list).push_back(*i);
+		}
 	}
 
+	//(*file_list).push_back(nullptr);
+
 	PHYSFS_freeList(rc);
+	returned_arrays.push_back(file_list);
+	return file_list;
 }
 
-void ModuleFileSystem::DiscoverDirectories(const char* directory, std::shared_ptr<strvec> dirs) const {
+void ModuleFileSystem::DiscoverDirectories(const char* directory, std::vector<std::string>& dirs) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
 
 	std::string dir(directory);
 
 	for (i = rc; *i != nullptr; i++) {
-		if (PHYSFS_isDirectory((dir + *i).c_str()))
-			(*dirs).push_back(*i);
+		if (PHYSFS_isDirectory((dir + *i).c_str())) {
+			dirs.push_back(*i);
+		}
 	}
 
 	PHYSFS_freeList(rc);
 }
 
-void ModuleFileSystem::DiscoverFilesAndDirectories(const char* directory, std::shared_ptr<strvec> file_list, std::shared_ptr<strvec> dir_list) const {
+const std::vector<std::string>* ModuleFileSystem::ExDiscoverDirectories(const char* directory) {
 	char** rc = PHYSFS_enumerateFiles(directory);
+	char** i;
 
 	std::string dir(directory);
+	std::vector<std::string>* dir_list = new std::vector<std::string>;
 
-	for (char** i = rc; *i != nullptr; i++) {
-		if (PHYSFS_isDirectory((dir + *i).c_str()))
+	for (i = rc; *i != nullptr; i++) {
+		if (PHYSFS_isDirectory((dir + *i).c_str())) {
 			(*dir_list).push_back(*i);
-		else
-			(*file_list).push_back(*i);
+		}
 	}
 
+	//(*dir_list).push_back(nullptr);
+
 	PHYSFS_freeList(rc);
+	returned_arrays.push_back(dir_list);
+	return dir_list;
 }
 
-void ModuleFileSystem::DiscoverFilesAndDirectories(const char* directory, strvec& file_list, strvec& dir_list) const {
+void ModuleFileSystem::DiscoverFilesAndDirectories(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
 
 	std::string dir(directory);
@@ -442,6 +473,16 @@ SDL_RWops* ModuleFileSystem::Load(const char* file) const {
 	}
 	else
 		return nullptr;
+}
+
+void ModuleFileSystem::DeleteArray(const std::vector<std::string>* to_delete) {
+	for (std::vector<std::vector<std::string>*>::iterator it = returned_arrays.begin(); it != returned_arrays.end(); ++it) 		{
+		if (to_delete == *it) {
+			delete *it;
+			returned_arrays.erase(it);
+			break;
+		}
+	}
 }
 
 

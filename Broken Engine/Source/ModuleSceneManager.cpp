@@ -99,10 +99,8 @@ bool ModuleSceneManager::Start() {
 	// --- Create temporal scene for play/stop ---
 	temporalScene = (Resource*)new ResourceScene(App->GetRandom().Int(), "Temp/TemporalScene.scene");
 
-	#ifdef BE_GAME_BUILD
-	//App->GetAppState() = AppState::TO_PLAY;
-	LoadStatus(App->GetConfigFile());
-	#endif
+	//if (App->isGame)
+	//	LoadStatus(App->GetConfigFile());
 
 	return true;
 }
@@ -120,6 +118,9 @@ update_status ModuleSceneManager::Update(float dt) {
 
 bool ModuleSceneManager::CleanUp() {
 	root->RecursiveDelete();
+
+	if (temporalScene != nullptr)
+		delete temporalScene;
 
 	delete root;
 	root = nullptr;
@@ -430,6 +431,7 @@ void ModuleSceneManager::SaveStatus(json& file) const {
 
 void ModuleSceneManager::LoadGame(const json & file)
 {
+	int bar = 1;
 	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
 		std::string sceneName = file["SceneManager"]["MainScene"];
 		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, sceneName.c_str());

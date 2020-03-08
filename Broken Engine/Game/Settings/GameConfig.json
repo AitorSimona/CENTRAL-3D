@@ -3,15 +3,11 @@
         "Organization": "CITM - UPC",
         "Title": "Broken Game"
     },
+    "GUI": null,
     "Input": null,
     "Renderer3D": {
         "VSync": true
     },
-    "SceneManager": {
-		"MainScene": "Assets/Scenes/DefaultScene.scene"
-	},
-    "Camera3D": {
-	},
     "Window": {
         "borderless": false,
         "fullscreen": false,

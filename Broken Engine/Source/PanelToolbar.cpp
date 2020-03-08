@@ -8,6 +8,8 @@
 
 PanelToolbar::PanelToolbar(char * name) : Broken::Panel(name)
 {
+	play_button = "PLAY";
+	pause_button = "PAUSE";
 }
 
 PanelToolbar::~PanelToolbar()
@@ -37,33 +39,46 @@ bool PanelToolbar::Draw()
 
 		ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
 
-		if(ImGui::Button("PLAY"))
+		Broken::AppState app_status = EngineApp->GetAppState();
+
+		if(ImGui::Button(play_button.c_str()))
 		{
-			if (EngineApp->GetAppState() == Broken::AppState::PLAY || EngineApp->GetAppState() == Broken::AppState::PAUSE)
+			if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE) {
 				EngineApp->GetAppState() = Broken::AppState::TO_EDITOR;
-			else
+				play_button = "PLAY";
+				pause_button = "PAUSE";
+			}
+			else {
 				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
+				play_button = "STOP";
+			}
 		}
 		ImGui::SameLine();
 
-		if (ImGui::Button("PAUSE"))
-		{
-			if (EngineApp->GetAppState() == Broken::AppState::PLAY)
-				EngineApp->GetAppState() = Broken::AppState::TO_PAUSE;
-			else if (EngineApp->GetAppState() == Broken::AppState::PAUSE)
-				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
+		if (app_status != Broken::AppState::EDITOR && app_status != Broken::AppState::TO_EDITOR) {
+			if (ImGui::Button(pause_button.c_str())) {
+				if (app_status == Broken::AppState::PLAY) {
+					EngineApp->GetAppState() = Broken::AppState::TO_PAUSE;
+					pause_button = "PLAY";
+				}
+				else if (app_status == Broken::AppState::PAUSE) {
+					EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
+					pause_button = "PAUSE";
+				}
 
+			}
+			ImGui::SameLine();
+
+			if (app_status == Broken::AppState::PAUSE) {
+				if (ImGui::Button("STEP")) {
+					if (app_status == Broken::AppState::PAUSE)
+						EngineApp->GetAppState() = Broken::AppState::STEP;
+
+				}
+
+				ImGui::SameLine();
+			}
 		}
-		ImGui::SameLine();
-
-		if (ImGui::Button("STEP"))
-		{
-			if (EngineApp->GetAppState() == Broken::AppState::PAUSE)
-				EngineApp->GetAppState() = Broken::AppState::STEP;
-
-		}
-
-		ImGui::SameLine();
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.05f);
 
 		float scale = EngineApp->time->GetTimeScale();

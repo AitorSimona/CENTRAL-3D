@@ -536,9 +536,6 @@
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp">
       <Filter>Sources\3rd party\MathGeoLib\Time</Filter>
     </ClCompile>
-    <ClCompile Include="EngineMain.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="PanelBuild.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>

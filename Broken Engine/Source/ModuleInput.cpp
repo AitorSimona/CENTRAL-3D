@@ -150,6 +150,12 @@ update_status ModuleInput::PreUpdate(float dt) {
 				App->window->SetWindowHeight(e.window.data2);
 				App->window->UpdateWindowSize();
 			}
+			else if (e.window.event == SDL_WINDOWEVENT_ENTER) {
+				App->window->SetMouseFocus(true);
+			}
+			else if (e.window.event == SDL_WINDOWEVENT_LEAVE) {
+				App->window->SetMouseFocus(false);
+			}
 		}
 		break;
 
@@ -166,43 +172,41 @@ update_status ModuleInput::PreUpdate(float dt) {
 			SDL_free((char*)DroppedFile_path.data());
 			break;
 
-			//When a controller is plugged in
-			case SDL_CONTROLLERDEVICEADDED:
+		//When a controller is plugged in
+		case SDL_CONTROLLERDEVICEADDED:
+			int n_joys = SDL_NumJoysticks();
+
+			if (SDL_IsGameController(n_joys - 1))
 			{
-				int n_joys = SDL_NumJoysticks();
-
-				if (SDL_IsGameController(n_joys - 1))
+				for (int i = 0; i < n_joys; ++i)
 				{
-					for (int i = 0; i < n_joys; ++i)
+					if (controllers[i].id_ptr == nullptr) // If there isn't a gamepad connected  already
 					{
-						if (controllers[i].id_ptr == nullptr) // If there isn't a gamepad connected  already
+						if (controllers[i].index == -1) //First time a gamepad has been connected
 						{
-							if (controllers[i].index == -1) //First time a gamepad has been connected
-							{
-								controllers[i].id_ptr = SDL_GameControllerOpen(index_addition_controllers);
+							controllers[i].id_ptr = SDL_GameControllerOpen(index_addition_controllers);
 
-								controllers[i].haptic_ptr = SDL_HapticOpen(index_addition_controllers);
-								SDL_HapticRumbleInit(controllers[i].haptic_ptr);
+							controllers[i].haptic_ptr = SDL_HapticOpen(index_addition_controllers);
+							SDL_HapticRumbleInit(controllers[i].haptic_ptr);
 
-								controllers[i].index = index_addition_controllers;
-								ENGINE_CONSOLE_LOG("Gamepad %d was Connected for the 1st Time!", i+1);
-								//LoadConfigBinding((PLAYER)controllers[i].index);
-							}
-							else    //The gamepad was disconnected at some point and is now being reconnected
-							{
-								controllers[i].id_ptr = SDL_GameControllerOpen(controllers[i].index);
-								ENGINE_CONSOLE_LOG("Gamepad %d was reconnected!", i);
-							}
-
-
-							// This index will assign the proper index for a gamapd that has been connected once
-							// in case it is disconnected and connected again it will use the value of the var 
-							// at the moment of opening the gamepad
-							if (index_addition_controllers < MAX_GAMEPADS - 1)
-								index_addition_controllers++;
-
-							break;
+							controllers[i].index = index_addition_controllers;
+							ENGINE_CONSOLE_LOG("Gamepad %d was Connected for the 1st Time!", i+1);
+							//LoadConfigBinding((PLAYER)controllers[i].index);
 						}
+						else    //The gamepad was disconnected at some point and is now being reconnected
+						{
+							controllers[i].id_ptr = SDL_GameControllerOpen(controllers[i].index);
+							ENGINE_CONSOLE_LOG("Gamepad %d was reconnected!", i);
+						}
+
+
+						// This index will assign the proper index for a gamapd that has been connected once
+						// in case it is disconnected and connected again it will use the value of the var 
+						// at the moment of opening the gamepad
+						if (index_addition_controllers < MAX_GAMEPADS - 1)
+							index_addition_controllers++;
+
+						break;
 					}
 				}
 			}

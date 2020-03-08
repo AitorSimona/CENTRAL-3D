@@ -32,10 +32,10 @@ Application::Application() {
 	App = this;
 	appName = "";
 	log = "Application Logs:";
-	if (isGame)
-		configpath = "Settings/GameConfig.json";
-	else
-		configpath = "Settings/EditorConfig.json";
+	//if (isGame)
+	//	configpath = "Settings/GameConfig.json";
+	//else
+	//	configpath = "Settings/EditorConfig.json";
 
 	RandomNumber = new math::LCG();
 
@@ -252,11 +252,18 @@ update_status Application::Update()
 
 bool Application::CleanUp() {
 	// --- Save all Status --- TODO: Should be called by user
-	if (isGame)
+	if (!isGame)
 		SaveAllStatus();
 
 	bool ret = true;
 	std::list<Module*>::reverse_iterator item = list_modules.rbegin();
+
+	while (item != list_modules.rend() && ret == true) {
+		ret = (*item)->isEnabled() ? (*item)->Stop() : true;
+		item++;
+	}
+
+	item = list_modules.rbegin();
 
 	while (item != list_modules.rend() && ret == true) {
 		ret = (*item)->CleanUp();
@@ -267,6 +274,10 @@ bool Application::CleanUp() {
 
 void Application::AddModule(Module* mod) {
 	list_modules.push_back(mod);
+}
+
+void Application::SetConfigPath(const char* path) {
+	configpath = path;
 }
 
 
@@ -288,7 +299,7 @@ void Application::Log(const char* entry) {
 		logs.erase(logs.begin());
 
 	// --- Append all logs to a string so we can print them on console ---
-	log.append(entry);
+	//log.append(entry);
 
 	std::string to_add = entry;
 	logs.push_back(to_add);
@@ -333,9 +344,9 @@ json Application::GetDefaultConfig() const {
 	return config;
 }
 
-json Application::GetDefaultGameConfig() const {
+void Application::GetDefaultGameConfig(json& config) const {
 	// --- Create Game Config with default values ---
-	json config = {
+	config = {
 		{"Application", {
 			{"Organization", orgName}
 
@@ -363,14 +374,12 @@ json Application::GetDefaultGameConfig() const {
 			{"VSync", true}
 		}},
 	};
-
-	return config;
 }
 
-json Application::GetConfigFile() const {
-	json config = JLoader.Load(configpath.data());
+json& Application::GetConfigFile() {
+	tempjson = JLoader.Load(configpath.data());
 
-	return config;
+	return tempjson;
 }
 
 std::vector<std::string>& Application::GetLogs()

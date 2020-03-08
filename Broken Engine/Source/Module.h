@@ -27,6 +27,10 @@ public:
 		return true;
 	}
 
+	virtual bool Stop() {
+		return true;
+	}
+
 	virtual void ONEvent(const Event& event) const {}
 
 	virtual update_status PreUpdate(float dt) {
@@ -52,6 +56,10 @@ public:
 	virtual void SaveStatus(json& file) const {}
 
 	virtual void LoadStatus(const json& file) {}
+
+	virtual void SetEnabled(bool new_enabled) {
+		enabled = new_enabled;
+	}
 
 	virtual bool isEnabled() const 
 	{

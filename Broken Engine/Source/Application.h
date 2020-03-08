@@ -54,8 +54,8 @@ public:
 	const char* GetAppName() const;
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
-	json GetDefaultGameConfig() const;
-	json GetConfigFile() const;
+	void GetDefaultGameConfig(json& config) const;
+	json& GetConfigFile();
 	std::vector<std::string>& GetLogs();
 	LCG& GetRandom();
 	JSONLoader* GetJLoader();
@@ -102,6 +102,7 @@ private:
 	std::string			appName;
 	std::string			orgName;
 	std::string			configpath;
+	json				tempjson;
 
 	LCG*				RandomNumber = nullptr;
 
@@ -123,6 +124,7 @@ public:
 
 protected:
 	void AddModule(Module* mod);
+	void SetConfigPath(const char* path);
 
 private:
 	void PrepareUpdate();

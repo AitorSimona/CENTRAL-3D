@@ -39,7 +39,7 @@ public:
 	update_status Update(float dt) override;
 	update_status GameUpdate(float gameDT);
 
-	void Stop();
+	bool Stop() override;
 
 public:
 	ScriptInstance* current_script;

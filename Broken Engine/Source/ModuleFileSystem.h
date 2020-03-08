@@ -13,8 +13,6 @@ struct aiFileIO;
 
 BE_BEGIN_NAMESPACE
 
-//A vector of strings in std
-typedef  std::vector<std::string> strvec;
 
 class BROKEN_API ModuleFileSystem : public Module {
 public:
@@ -38,10 +36,11 @@ public:
 	bool IsDirectory(const char* file) const;
 	void CreateDirectory(const char* directory);
 	std::string GetDirectoryFromPath(std::string& path);
-	void DiscoverFiles(const char* directory, std::shared_ptr<strvec> files) const;
-	void DiscoverDirectories(const char* directory, std::shared_ptr<strvec> dirs) const;
-	void DiscoverFilesAndDirectories(const char* directory, std::shared_ptr<strvec> file_list, std::shared_ptr<strvec> dir_list) const;
-	void DiscoverFilesAndDirectories(const char* directory, strvec& file_list, strvec& dir_list) const;
+	void DiscoverFiles(const char* directory, std::vector<std::string>& files) const;
+	const std::vector<std::string>* ExDiscoverFiles(const char* directory);
+	void DiscoverDirectories(const char* directory, std::vector<std::string>& dirs) const;
+	const std::vector<std::string>* ExDiscoverDirectories(const char* directory);
+	void DiscoverFilesAndDirectories(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const;
 	bool CopyFromOutsideFS(const char* full_path, const char* destination);
 	bool Copy(const char* source, const char* destination);
 	void SplitFilePath(const char* full_path, std::string* path, std::string* file = nullptr, std::string* extension = nullptr) const;
@@ -56,6 +55,8 @@ public:
 	unsigned int Load(const char* file, char** buffer) const;
 	SDL_RWops* Load(const char* file) const;
 
+
+	void DeleteArray(const std::vector<std::string>* to_delete);
 
 
 	// IO interfaces for other libs to handle files via PHYSfs
@@ -77,6 +78,9 @@ private:
 	bool started_wait = false;
 	Timer wait_timer;
 	uint32 wait_time = 1000; // ms
+
+	// --- Vector of returned char** ---
+	std::vector<std::vector<std::string>*> returned_arrays;
 
 
 	void CreateAssimpIO();

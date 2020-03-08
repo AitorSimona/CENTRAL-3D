@@ -539,7 +539,7 @@ void ModuleResourceManager::HandleFsChanges()
 
 		for (std::map<std::string, std::vector<std::string>>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
 		{
-			for (strvec::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
+			for (std::vector<std::string>::iterator files = (*dir).second.begin(); files != (*dir).second.end(); ++files)
 			{
 				// --- If the meta corresponds to the file ---
 				if ((*meta).second->GetOriginalFile() == *files)

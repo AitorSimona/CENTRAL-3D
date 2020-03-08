@@ -40,9 +40,9 @@ enum main_states {
 
 extern Broken::Application* Broken::CreateApplication();
 
-Broken::Application* gameApp = NULL;
+Broken::Application* mainApp = NULL;
 int main(int argc, char** argv) {
-	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app '%s'...", TITLE);
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting app...");
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -52,14 +52,14 @@ int main(int argc, char** argv) {
 		case MAIN_CREATION:
 
 			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Creation --------------");
-			gameApp = Broken::CreateApplication();
+			mainApp = Broken::CreateApplication();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
 			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application Init --------------");
-			if (gameApp->Init() == false) {
+			if (mainApp->Init() == false) {
 				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 		case MAIN_FINISH:
 
 			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("-------------- Application CleanUp --------------");
-			if (gameApp->CleanUp() == false) {
+			if (mainApp->CleanUp() == false) {
 				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Application CleanUp exits with ERROR");
 			}
 			else
@@ -99,9 +99,9 @@ int main(int argc, char** argv) {
 
 		}
 	}
-	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Exiting app '%s'...\n", TITLE);
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Exiting app %s...\n", mainApp->GetAppName());
 
-	delete gameApp;
+	delete mainApp;
 	return main_return;
 }
 

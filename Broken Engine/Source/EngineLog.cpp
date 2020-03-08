@@ -7,10 +7,13 @@ void ExLogCompilationFirstMessage() {
 }
 
 void ExEngineConsoleLog(const char file[], int line, const char* format, ...) {
-	va_list args;
-	va_start(args, format);
-	Broken::EngineConsoleLog(file, line, format, args);
-	va_end(args);
+	static char tmp_string[MAX_BUF_SIZE];
+	va_list ap;
+	va_start(ap, format);
+	vsprintf_s(tmp_string, MAX_BUF_SIZE, format, ap);
+	va_end(ap);
+
+	Broken::EngineConsoleLog(file, line, tmp_string);
 }
 
 void ExSystemConsoleLog(const char file[], int line, const char* format, ...) {

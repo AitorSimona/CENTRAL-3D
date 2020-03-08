@@ -1,5 +1,6 @@
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
+#include "BrokenEngineMain.h"
 
 
 EngineApplication* EngineApp = NULL;
@@ -10,6 +11,7 @@ Broken::Application* Broken::CreateApplication() {
 
 EngineApplication::EngineApplication() {
 	EngineApp = this;
+	SetConfigPath("Settings/EditorConfig.json");
 
 	//We initiate our own modules
 	editorui = new ModuleEditorUI();

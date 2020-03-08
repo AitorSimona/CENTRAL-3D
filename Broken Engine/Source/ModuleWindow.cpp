@@ -128,6 +128,10 @@ void ModuleWindow::SetWindowHeight(uint height) {
 	UpdateWindowSize();
 }
 
+void ModuleWindow::SetMouseFocus(bool focus) {
+	mouse_focus = focus;
+}
+
 uint ModuleWindow::GetWindowWidth() const {
 	return screen_width;
 }
@@ -243,6 +247,10 @@ bool ModuleWindow::IsBorderless() const {
 
 bool ModuleWindow::IsFullscreenDesktop() const {
 	return fullscreen_desktop;
+}
+
+bool ModuleWindow::isMouseFocused() const {
+	return mouse_focus;
 }
 
 void ModuleWindow::SetWinBrightness(float value) {

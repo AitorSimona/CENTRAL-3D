@@ -31,6 +31,7 @@ public:
 	void SetTitle(const char* title);
 	void SetWindowWidth(uint width);
 	void SetWindowHeight(uint height);
+	void SetMouseFocus(bool focus);
 
 	// --- Only App should access this, through SetAppName ---
 	void SetWinTitle(const char* name);
@@ -46,6 +47,7 @@ public:
 	bool IsResizable() const;
 	bool IsBorderless() const;
 	bool IsFullscreenDesktop() const;
+	bool isMouseFocused() const;
 
 	// --- Save/Load ----
 	void SaveStatus(json& file) const override;
@@ -72,6 +74,7 @@ private:
 	bool resizable = true;
 	bool borderless = false;
 	bool fullscreen_desktop = false;
+	bool mouse_focus = false;
 };
 BE_END_NAMESPACE
 #endif // __MODULEWINDOW_H__

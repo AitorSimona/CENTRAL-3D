@@ -510,7 +510,9 @@ void ModuleScripting::CleanUpInstances() {
 }
 
 
-void ModuleScripting::Stop() {
+bool ModuleScripting::Stop() {
 	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
 		(*it)->awoken = (*it)->started = false;
+
+	return true;
 }

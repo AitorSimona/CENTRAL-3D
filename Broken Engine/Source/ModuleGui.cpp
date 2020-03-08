@@ -173,11 +173,18 @@ update_status ModuleGui::PostUpdate(float dt)
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		ImGui::End();
 
-	#ifdef BE_GAME_BUILD
-	ImGui::EndFrame();
-	#endif
-
 	return UPDATE_CONTINUE;
+}
+
+bool ModuleGui::Stop() {
+
+	// --- ShutDown ImGui ---
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext(ctx);
+
+	return true;
 }
 
 bool ModuleGui::CleanUp()
@@ -209,24 +216,23 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
 
-	// --- ShutDown ImGui ---
-
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext(ctx);
-
 	return ret;
 }
 
 void ModuleGui::Draw() const
 {
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	if (this->isEnabled()) {
+		if (!App->isGame) {
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
+			if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
+		}
+		else
+			ImGui::EndFrame();
 	}
 
 }
