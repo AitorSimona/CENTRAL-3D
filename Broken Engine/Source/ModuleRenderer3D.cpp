@@ -447,20 +447,24 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 
 	// --- Creating text rendering shaders ---
 
-	const char* textVertShaderSrc = "#version 440 core \n"
-		"layout (location = 0) in vec4 vertex; \n"
+	const char* textVertShaderSrc = 
+		"#version 440 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"layout (location = 1) in vec2 texCoords; \n"
 		"out vec2 TexCoords; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
-		"gl_Position = projection * vec4(vertex.xy,0.0, 1.0f); \n"
-		"TexCoords = vertex.zw; \n"
+		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
+		"TexCoords = texCoords; \n"
 		"}\n";
 
 	const char* textFragShaderSrc = "#version 440 core \n"
 		"in vec2 TexCoords; \n"
-		"out vec4 color; \n"
 		"uniform sampler2D text; \n"
 		"uniform vec3 textColor; \n"
+		"out vec4 color; \n"
 		"void main(){ \n"
 		"vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r); \n"
 		"color = vec4(textColor, 1.0) * sampled; \n"

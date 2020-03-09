@@ -49,9 +49,9 @@ void ComponentText::Draw()
 void ComponentText::PrintImage(std::string text, float x, float y, float scale, float3 color)
 {
 	// Options
-	/*glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//// --- Update transform and rotation to face camera ---
 	//float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
@@ -143,21 +143,16 @@ void ComponentText::Print(std::string text, float x, float y, float scale, float
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//// --- Update transform and rotation to face camera ---
-	//float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
-	//float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
-
 	// --- Frame image with camera ---
 	float4x4 transform = float4x4::identity;
-	//transform.FromTRS(float3(0, 0, 10),Quat::identity,float3(size2D, 1));
 
 	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	glUseProgram(App->renderer3D->textShader->ID);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
@@ -170,7 +165,7 @@ void ComponentText::Print(std::string text, float x, float y, float scale, float
 		0.0f, 0.0f, 0.0f, -1.0f,
 		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	/////////////////////////////////////////
@@ -181,8 +176,8 @@ void ComponentText::Print(std::string text, float x, float y, float scale, float
 	//GLint loc = glGetUniformLocation(App->renderer3D->textShader->ID, "projection");
 	//glUniformMatrix4fv(loc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
 
-	//loc = glGetUniformLocation(App->renderer3D->textShader->ID, "textColor");
-	//glUniform3f(loc , color.x, color.y, color.z);
+	
+	glUniform3f( glGetUniformLocation(App->renderer3D->textShader->ID, "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(App->ui_system->VAO);
@@ -199,14 +194,15 @@ void ComponentText::Print(std::string text, float x, float y, float scale, float
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
 		// Update VBO for each character
-		GLfloat vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0, 0.0 },
-			{ xpos,     ypos,       0.0, 1.0 },
-			{ xpos + w, ypos,       1.0, 1.0 },
-
-			{ xpos,     ypos + h,   0.0, 0.0 },
-			{ xpos + w, ypos,       1.0, 1.0 },
-			{ xpos + w, ypos + h,   1.0, 0.0 }
+		// x,y,z ,tex.x, tex.y
+		GLfloat vertices[6][5] = {
+			{ xpos,     ypos + h,   0.0, 0.0, 0.0 },
+			{ xpos,     ypos,       0.0, 0.0, 1.0 },
+			{ xpos + w, ypos,       0.0, 1.0, 1.0 },
+									 
+			{ xpos,     ypos + h,   0.0, 0.0, 0.0 },
+			{ xpos + w, ypos,       0.0, 1.0, 1.0 },
+			{ xpos + w, ypos + h,   0.0, 1.0, 0.0 }
 		};
 		// Render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, ch.TextureID);

@@ -41,8 +41,8 @@ public:
 public:
 	bool visible = true;
 
-	float2 size2D = { 10,10 };
-	float2 position2D = { 0,0 };
+	float2 size2D = { 0.5f,0 };
+	float2 position2D = { -50,0 };
 	float rotation2D = 0.0f;
 
 	Color color = White;
