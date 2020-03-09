@@ -31,7 +31,7 @@ public:
 	void Move(float2 pos) { position2D = pos; }
 	void Rotate(float rot) { rotation2D = rot; }
 
-	void Print(std::string text, float x, float y, float scale, float3 color);
+	void Print(std::string text, float x, float y, float scale, Color color);
 
 	// --- Save & Load ---
 	json Save() const override;

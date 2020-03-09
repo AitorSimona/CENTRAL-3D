@@ -43,100 +43,10 @@ void ComponentText::LoadFont(const char* path, int size)
 void ComponentText::Draw()
 {
 	glColor4f(color.r, color.g, color.b, color.a);
-	Print(text, position2D.x, position2D.y, size2D.x, { 1.0f,1.0f,1.0f });
-	//glfreetype::print(camera, font, position2D.x, position2D.y, text);
-}
-void ComponentText::PrintImage(std::string text, float x, float y, float scale, float3 color)
-{
-	// Options
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//// --- Update transform and rotation to face camera ---
-	//float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
-	//float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
-
-	// --- Frame image with camera ---
-	float4x4 transform = float4x4::identity;
-	//transform.FromTRS(float3(0, 0, 10),Quat::identity,float3(size2D, 1));
-
-	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->defaultShader->ID);
-
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
-
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
-
-	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
-	float4x4 proj_RH(
-		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-		0.0f, f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
-
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-
-	/////////////////////////////////////////
-	// Activate corresponding render state	
-	//glUseProgram(App->renderer3D->textShader->ID);
-	//
-	////float4x4 projection = glOrtho(0.0f, static_cast<GLfloat>(WIDTH), 0.0f, static_cast<GLfloat>(HEIGHT))
-	//GLint loc = glGetUniformLocation(App->renderer3D->textShader->ID, "projection");
-	//glUniformMatrix4fv(loc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
-
-	//loc = glGetUniformLocation(App->renderer3D->textShader->ID, "textColor");
-	//glUniform3f(loc , color.x, color.y, color.z);
-	glActiveTexture(GL_TEXTURE0);
-
-	glBindVertexArray(App->ui_system->VAO);
-
-	// Iterate through all characters
-	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
-	{
-		ModuleUI::Character ch = App->ui_system->characters[*c];
-
-		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-		GLfloat w = ch.Size.x * scale;
-		GLfloat h = ch.Size.y * scale;
-		// Update VBO for each character
-		GLfloat vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0, 0.0 },
-			{ xpos,     ypos,       0.0, 1.0 },
-			{ xpos + w, ypos,       1.0, 1.0 },
-
-			{ xpos,     ypos + h,   0.0, 0.0 },
-			{ xpos + w, ypos,       1.0, 1.0 },
-			{ xpos + w, ypos + h,   1.0, 0.0 }
-		};
-		// Render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		// Update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, App->ui_system->VBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // Be sure to use glBufferSubData and not glBufferData
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		// Render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	Print(text, position2D.x, position2D.y, size2D.x, color);
 }
 
-void ComponentText::Print(std::string text, float x, float y, float scale, float3 color)
+void ComponentText::Print(std::string text, float x, float y, float scale, Color color)
 {
 	// Options
 	glDisable(GL_CULL_FACE);
@@ -177,7 +87,7 @@ void ComponentText::Print(std::string text, float x, float y, float scale, float
 	//glUniformMatrix4fv(loc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
 
 	
-	glUniform3f( glGetUniformLocation(App->renderer3D->textShader->ID, "textColor"), color.x, color.y, color.z);
+	glUniform3f( glGetUniformLocation(App->renderer3D->textShader->ID, "textColor"), color.r, color.g, color.b);
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(App->ui_system->VAO);
