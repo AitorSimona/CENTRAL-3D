@@ -244,6 +244,8 @@ update_status ModuleEditorUI::Update(float dt) {
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
 
+
+	EngineApp->gui->isUsingGuizmo = ImGuizmo::IsUsing();
 	return UPDATE_CONTINUE;
 }
 
