@@ -218,7 +218,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 
 		.addFunction("UseGravity", &Scripting::UseGravity)
 		.addFunction("SetKinematic", &Scripting::SetKinematic)
-		
+
 		//Sound Functions
 		.addFunction("PlayAttackSound", &Scripting::PlayAttackSound)
 		.addFunction("PlayStepSound", &Scripting::PlayStepSound)
@@ -230,6 +230,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("PlayAnimation", &Scripting::StartAnimation)
 		.addFunction("SetAnimationSpeed", &Scripting::SetAnimSpeed)
 		.addFunction("SetCurrentAnimationSpeed", &Scripting::SetCurrentAnimSpeed)
+
+		//Current Camera Functions
+		.addFunction("GetPositionInFrustum", &Scripting::GetPosInFrustum)
 
 		.endClass()
 		.endNamespace();

@@ -145,6 +145,9 @@ public:
 	void SetAnimSpeed(const char* name, float speed);
 	void SetCurrentAnimSpeed(float speed);
 
+	//Current Camera
+	bool GetPosInFrustum(float x, float y, float z);
+
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll
 	//float GetEulerY(bool local) const;	// Pitch

@@ -14,6 +14,9 @@
 #include "ComponentAudioSource.h"
 #include "ComponentAnimation.h"
 
+#include "ModuleRenderer3D.h"
+#include "ComponentCamera.h"
+
 #include "../Game/Assets/Sounds/Wwise_IDs.h"
 #include "ComponentAudioSource.h"
 #include "ModuleAudio.h"
@@ -1122,6 +1125,19 @@ void Scripting::SetAnimSpeed(const char* name, float speed)
 		anim->SetAnimationSpeed(name, speed);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+// CAMERAS -----------------------------------------------------------
+bool Scripting::GetPosInFrustum(float x, float y, float z)
+{
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	if (cam)
+		return cam->frustum.Contains({ x, y, z });
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
+
+	return false;
 }
 
 // ------------------------------------------------------------------- //
