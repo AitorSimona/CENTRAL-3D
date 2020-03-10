@@ -1103,6 +1103,27 @@ void Scripting::StartAnimation(const char* name, float speed)
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
+void Scripting::SetCurrentAnimSpeed(float speed)
+{
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+
+	if (anim)
+		anim->SetCurrentAnimationSpeed(speed);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+
+void Scripting::SetAnimSpeed(const char* name, float speed)
+{
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+
+	if (anim)
+		anim->SetAnimationSpeed(name, speed);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
 // ------------------------------------------------------------------- //
 
 

@@ -138,12 +138,12 @@ public:
 	void StopAttackSound();
 	void StopStepSound();
 
-
-
 	void SetVolume(float volume);
 
 	//Animations
 	void StartAnimation(const char* name, float speed);
+	void SetAnimSpeed(const char* name, float speed);
+	void SetCurrentAnimSpeed(float speed);
 
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll
