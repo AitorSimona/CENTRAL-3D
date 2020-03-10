@@ -253,8 +253,6 @@ void ModuleSceneManager::Draw()
 }
 
 void ModuleSceneManager::DrawScene() {
-	if (display_tree)
-		RecursiveDrawQuadtree(tree.root);
 
 	if (display_tree)
 		RecursiveDrawQuadtree(tree.root);
@@ -339,8 +337,9 @@ void ModuleSceneManager::RedoOctree()
 
 }
 
-void ModuleSceneManager::SetStatic(GameObject * go)
+void ModuleSceneManager::SetStatic(GameObject * go, bool setChildren)
 {
+	go->Static = !go->Static;
 	if (go->Static)
 	{
 		// --- Insert go into octree and remove it from currentscene's static go map ---
@@ -349,6 +348,23 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 
 		// --- Erase go from currentscene's no static map ---
 		currentScene->NoStaticGameObjects.erase(go->GetUID());
+
+		//If recursive, set the chilidren to static
+		if (setChildren)
+		{
+			std::vector<GameObject*> children;
+			go->GetAllChilds(children);
+			
+			//start the loop from 1, because the GO in the index 0 is the parent GO
+			for (int i = 1; i < children.size(); ++i)
+			{
+				children[i]->Static = !children[i]->Static;
+				tree.Insert(children[i]);
+				currentScene->StaticGameObjects[children[i]->GetUID()] = children[i];
+
+				currentScene->NoStaticGameObjects.erase(children[i]->GetUID());
+			}
+		}
 	}
 	else
 	{
@@ -358,6 +374,23 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 		// --- Remove go from octree and currentscene's static go map ---
 		tree.Erase(go);
 		currentScene->StaticGameObjects.erase(go->GetUID());
+
+		//If recursive, set the children to non-static
+		if (setChildren)
+		{
+			std::vector<GameObject*> children;
+			go->GetAllChilds(children);
+
+			//start the loop from 1, because the GO in the index 0 is the parent GO
+			for (int i = 1; i < children.size(); ++i)
+			{
+				children[i]->Static = !children[i]->Static;
+				currentScene->NoStaticGameObjects[children[i]->GetUID()] = children[i];
+
+				tree.Erase(children[i]);
+				currentScene->StaticGameObjects.erase(children[i]->GetUID());
+			}
+		}
 	}
 }
 

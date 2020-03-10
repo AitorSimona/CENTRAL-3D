@@ -56,7 +56,7 @@ public:
 	void DrawGrid(bool drawAxis, float size);
 	void Draw();
 	void RedoOctree();
-	void SetStatic(GameObject* go);
+	void SetStatic(GameObject* go, bool setChildren);
 	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
 	void SelectFromRay(LineSegment& ray);
 
@@ -108,7 +108,7 @@ public:
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	bool display_tree = false;
+	bool display_tree = true;
 	bool display_boundingboxes = false;
 	bool display_grid = true;
 	ResourceScene* currentScene = nullptr;
