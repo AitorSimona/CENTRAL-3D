@@ -473,6 +473,7 @@ void ComponentAnimation::BlendAnimations(float blend_time)
 		blending = false;
 		curr_blend_time = 0;
 		playing_animation = next_animation;
+		time = 0;
 	}
 
 }
