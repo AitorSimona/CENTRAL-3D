@@ -7,6 +7,7 @@
 #include "ModuleGui.h"
 #include "Component.h"
 #include "ComponentCanvas.h"
+#include "ComponentButton.h"
 
 #include "mmgr/mmgr.h"
 
@@ -33,21 +34,15 @@ bool ModuleUI::Start()
 
 update_status ModuleUI::PreUpdate(float dt)
 {
-	//for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
-	//{
-	//	if (obj->HasComponent(Component::ComponentType::UI_Element)) //if has ui component
-	//	{
-	//		UI_Element* element = (UI_Element*)obj->GetComponent(Component::ComponentType::UI_Element); //single component (change when able to have multiple components of same type)
-	//		element->UpdateCollider(); //update colliders
-	//		element->UpdateState(); //update state
-
-	//		if (element->GetState() == DRAGGING)
-	//		{
-	//			element->position2D.x = App->input->GetMouseX();
-	//			element->position2D.y = App->input->GetMouseY();
-	//		}
-	//	}
-	//}
+	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
+	{
+		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
+		{
+			ComponentButton* element = (ComponentButton*)obj->HasComponent(Component::ComponentType::Button); //single component (change when able to have multiple components of same type)
+			element->UpdateCollider(); //update colliders
+			element->UpdateState(); //update state
+		}
+	}
 	return UPDATE_CONTINUE;
 }
 

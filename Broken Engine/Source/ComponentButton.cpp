@@ -32,6 +32,9 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 	interactable = true;
 	draggable = false;
 
+	collider = { 0,0,0,0 };
+	color = idle_color;
+
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 
@@ -88,6 +91,8 @@ void ComponentButton::Draw()
 
 
 	// --- Draw plane with given texture ---
+	glColor4f(color.r, color.g, color.b, color.a); // change color (depending on state)
+
 	glBindVertexArray(App->scene_manager->plane->VAO);
 
 	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
@@ -105,11 +110,11 @@ void ComponentButton::Draw()
 	//glColorColorF(text_color);
 	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
 
-	// --- Update color depending on state ---
-	//if (state == IDLE) ChangeColor(idle_color);
-	//if (state == HOVERED) ChangeColor(hovered_color);
-	//if (state == SELECTED || state == DRAGGING) ChangeColor(selected_color);
-	//if (state == LOCKED) ChangeColor(locked_color);
+	 //--- Update color depending on state ---
+	if (state == IDLE) ChangeColorTo(idle_color);
+	if (state == HOVERED) ChangeColorTo(hovered_color);
+	if (state == SELECTED || state == DRAGGING) ChangeColorTo(selected_color);
+	if (state == LOCKED) ChangeColorTo(locked_color);
 }
 
 json ComponentButton::Save() const
@@ -278,4 +283,49 @@ void ComponentButton::CreateInspectorNode()
 	if (ImGui::Button("Delete")) {
 		GO->RemoveComponent(Component::ComponentType::Button);
 	}
+}
+
+void ComponentButton::UpdateState()
+{
+	if (interactable == true && visible == true)
+	{
+		if (state != DRAGGING)
+		{
+			if (App->ui_system->CheckMousePos(this, collider)) //check if hovering
+			{
+				ChangeStateTo(HOVERED);
+				if (App->ui_system->CheckClick(this, draggable)) //if hovering check if click
+				{
+					if (draggable == true && (App->ui_system->drag_start.x != App->ui_system->mouse_pos.x || App->ui_system->drag_start.y != App->ui_system->mouse_pos.y)) //if draggable and mouse moves
+					{
+						ChangeStateTo(DRAGGING);
+						position2D.x = App->input->GetMouseX();
+						position2D.y = App->input->GetMouseY();
+					}
+					else
+					{
+						//if (state != SELECTED) //On click action
+						//	OnClick();
+
+						ChangeStateTo(SELECTED);
+					}
+				}
+			}
+			else
+				ChangeStateTo(IDLE); //if stop hovering
+		}
+		else
+		{
+			if (!App->ui_system->CheckClick(this, draggable)) //if stop clicking
+				ChangeStateTo(IDLE);
+		}
+	}
+}
+
+void ComponentButton::UpdateCollider()
+{
+	collider.x = position2D.x - size2D.x;
+	collider.y = position2D.y - size2D.y;
+	collider.w = size2D.x * 2;
+	collider.h = size2D.y * 2;
 }
