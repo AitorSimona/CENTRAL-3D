@@ -47,7 +47,7 @@ void ComponentCollider::Draw()
 			{
 				physx::PxSphereGeometry pxsphere = holder.sphere();
 
-				// --- Rebuild capsule ---
+				// --- Rebuild sphere ---
 				App->scene_manager->CreateSphere(1, 25, 25, mesh);
 				mesh->LoadToMemory();
 			}
@@ -66,7 +66,7 @@ void ComponentCollider::Draw()
 				physx::PxCapsuleGeometry capsule = holder.capsule();
 
 				// --- Rebuild capsule ---
-				App->scene_manager->CreateCapsule(1, 1, mesh);
+				App->scene_manager->CreateCapsule(radius, height, mesh);
 				mesh->LoadToMemory();
 			}
 			break;
