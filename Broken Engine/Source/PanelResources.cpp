@@ -75,6 +75,30 @@ bool PanelResources::Draw()
 
 			ImGui::Separator();
 		}
+		if (ImGui::CollapsingHeader("Animations"))
+		{
+			for (std::map<uint, Broken::ResourceAnimation*>::const_iterator it = EngineApp->resources->animations.begin(); it != EngineApp->resources->animations.end(); ++it)
+			{
+				if ((*it).second)
+				{
+					DrawResourceNode((*it).second, instances_color);
+				}
+			}
+
+			ImGui::Separator();
+		}
+		if (ImGui::CollapsingHeader("Bones"))
+		{
+			for (std::map<uint, Broken::ResourceBone*>::const_iterator it = EngineApp->resources->bones.begin(); it != EngineApp->resources->bones.end(); ++it)
+			{
+				if ((*it).second)
+				{
+					DrawResourceNode((*it).second, instances_color);
+				}
+			}
+
+			ImGui::Separator();
+		}
 		if (ImGui::CollapsingHeader("Shaders"))
 		{
 			for (std::map<uint, Broken::ResourceShader*>::const_iterator it = EngineApp->resources->shaders.begin(); it != EngineApp->resources->shaders.end(); ++it)
