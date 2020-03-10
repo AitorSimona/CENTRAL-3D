@@ -276,6 +276,6 @@ void ComponentButton::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Button);
+		GO->RemoveComponent(this);
 	}
 }

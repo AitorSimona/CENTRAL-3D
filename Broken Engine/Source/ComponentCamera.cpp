@@ -150,6 +150,10 @@ void ComponentCamera::Load(json& node)
 
 void ComponentCamera::CreateInspectorNode() {
 	if (ImGui::TreeNode("Camera")) {
+
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		if (ImGui::Checkbox("Active Camera", &active_camera))
 			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
 
@@ -253,4 +257,7 @@ void ComponentCamera::Update()
 			GO->GetComponent<ComponentAudioListener>()->Disable();
 		}
 	}
+
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
 }

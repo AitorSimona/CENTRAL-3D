@@ -86,11 +86,15 @@ void ComponentAnimation::Update()
 		if(animations.size()>0)
 			playing_animation = GetDefaultAnimation();
 	}
+
+	if(to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
 Animation* ComponentAnimation::CreateAnimation(std::string name, uint start, uint end, bool loop, bool Default)
 {
 	Animation* anim = new Animation(name, start, end, loop, Default);
+	anim->speed = res_anim->ticksPerSecond;
 	animations.push_back(anim);
 
 	return anim;
@@ -222,12 +226,13 @@ void ComponentAnimation::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Animation"))
 	{
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
 
 		if (res_anim)
 		{
 			ImGui::Text("Animation name: %s", res_anim->name.c_str());
 			ImGui::PushItemWidth(50); ImGui::InputFloat("Blend Duration", &blend_time_value);
-			ImGui::PushItemWidth(50); ImGui::InputFloat("Speed ", &res_anim->ticksPerSecond);
 			ImGui::Checkbox("Draw Bones", &draw_bones);
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);

@@ -155,6 +155,6 @@ void ComponentText::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Text);
+		GO->RemoveComponent(this);
 	}
 }
