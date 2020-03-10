@@ -142,10 +142,10 @@ json ComponentCamera::Save() const {
 
 void ComponentCamera::Load(json& node)
 {
+	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
 	SetFOV(node["FOV"].is_null() ? 60.0f : node["FOV"].get<float>());
 	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
 	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
-	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
 }
 
 void ComponentCamera::CreateInspectorNode() {
