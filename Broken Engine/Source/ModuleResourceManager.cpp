@@ -229,11 +229,12 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		break;
 
 	case Resource::ResourceType::SCRIPT:
-		resource = ImportScript(IData); //MYTODO: D�dac I assume I must create a new Importer to handle scripts importing
+		resource = ImportScript(IData); //MYTODO: Dídac I assume I must create a new Importer to handle scripts importing
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
 		break;
+
 	default:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported file type on: %s", IData.path);
 		break;
@@ -464,7 +465,7 @@ Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
 		std::string new_path = IData.path;
 
 		if (IData.dropped)
-			new_path = DuplicateIntoGivenFolder(IData.path, App->resources->getCurrentDirectory()->GetResourceFile());
+			new_path = DuplicateIntoGivenFolder(IData.path, getCurrentDirectory()->GetResourceFile());
 
 		IData.path = new_path.c_str();
 		script = IScr->Import(IData);

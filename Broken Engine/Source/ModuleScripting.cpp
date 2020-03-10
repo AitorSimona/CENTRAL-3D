@@ -56,21 +56,22 @@ bool ModuleScripting::DoHotReloading() {
 			recompiled_instances.push_back(recompiled_instance);
 		}
 		CleanUpInstances();
-		//Close the virtual machine & Destroy it
+		// Close the virtual machine & Destroy it
 		lua_close(L);
 
-		//Create the new Virtual Machine
+		// Create the new Virtual Machine
 		L = luaL_newstate();
 		luaL_openlibs(L);
 
-		//Acquire All scripts to be compiled       (we will compile even scripts which are currently not attached to any gameobject)
-		//to check if it still compiles after the change done in a given script which is unknown to us
+		// Acquire All scripts to be compiled (we will compile even scripts which are currently not attached to any gameobject)
+		// to check if it still compiles after the change done in a given script which is unknown to us
 		std::string extension = "lua";
 		std::vector<std::string> files;
 		//App->resources->GetAllFilesWithExtension(extension,files,App->resources->assets_dir); // Here we have to iterate all script resources from that list so we can get the files to recompile
 
 		bool can_instantiate_scripts = true;
-		//Compile all the scripts of the Engine
+
+		// Compile all the scripts of the Engine
 		for (int i = 0; i < files.size(); ++i) {
 			if (JustCompile(files[i]) == false) {
 				can_instantiate_scripts = false;
@@ -81,7 +82,7 @@ bool ModuleScripting::DoHotReloading() {
 		}
 
 		if (can_instantiate_scripts == true) {
-			//If everything compiled just fine, give the recompiled instances the new version of the script
+			// If everything compiled just fine, give the recompiled instances the new version of the script
 			for (std::vector<ScriptInstance*>::iterator it = recompiled_instances.begin(); it != recompiled_instances.end(); ++it)
 				CompileScriptTableClass((*it));
 
@@ -149,7 +150,7 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 	return ret;
 }
 
-void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
+void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 {
 	//MYTODO: Didac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
@@ -236,7 +237,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 	Scripting Scripting;
 
 	if (L != nullptr) {
-		//Compile the file and run it, we're gonna optimize this to just compile the function the script contains to library later.
+		// Compile the file and run it, we're gonna optimize this to just compile the function the script contains to library later.
 		int compiled = luaL_dofile(L, script->my_component->script->absolute_path.c_str());
 
 		if (compiled == LUA_OK) {
@@ -267,21 +268,20 @@ void ModuleScripting::SendScriptToModule(ComponentScript* script_component) {
 	s_instance->my_component = script_component;
 
 	class_instances.push_back(s_instance);
-	JustCompile(script_component->script->absolute_path);
+	JustCompile(script_component->script->absolute_path);	
 	CompileScriptTableClass(s_instance); //Compile so we can give the instance its table/class reference
 }
 
 //FILL the ScriptVars of the component associated with this script
 void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 	for (luabridge::Iterator iterator(script->my_table_class); !iterator.isNil(); ++iterator) {
-		//Declare necessary vars for intialization & get variable name
+		// Declare necessary vars for intialization & get variable name
 		VarType variable_type = VarType::NONE;
 		std::string str = (*iterator).first.tostring();
 		ScriptVar variable;
 		std::string var_value;
 
-		// first == .key () and second == .value() in LUA
-		//Fill values
+		// Fill values --> first == .key () and second == .value() in Lua
 		if ((*iterator).second.isNumber()) {
 			variable_type = VarType::DOUBLE;
 			var_value = (*iterator).second.tostring();
@@ -303,8 +303,7 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 			}
 			variable = ScriptVar(val);
 		}
-		else if ((*iterator).second.isFunction())
-			continue;
+		else continue;
 
 		//ASSIGN name to variable and push it if compatible
 		variable.name = str;
@@ -372,7 +371,7 @@ bool ModuleScripting::CheckEverythingCompiles()
 
 
 bool ModuleScripting::Init(json& file) {
-	//Create the Virtual Machine
+	// Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);
 
@@ -390,7 +389,7 @@ bool ModuleScripting::CleanUp() {
 }
 
 update_status ModuleScripting::Update(float realDT) {
-	//If a script was changed during runtime, hot reload
+	// If a script was changed during runtime, hot reload
 	if (App->GetAppState() == AppState::EDITOR && hot_reloading_waiting) // Ask Aitor if this is correct (condition should return true only when no gameplay is being played)
 		DoHotReloading();
 
@@ -409,9 +408,7 @@ update_status ModuleScripting::Update(float realDT) {
 	// 1. You can use the "IsWhatever" functions of App to check the current game state.
 	// 2. "App->IsGameFirstFrame()" marks the first frame a GameUpdate() will happen, if you want to do anything right before the game plays in preparation
 	// 3. Referring to your previous code, you expected DoHotReloading() to NOT run if the game is playing, I put the condition accordingly "!IsGamePlaying()"
-
-
-
+	   
 	//TEST FUNCTION DEFINETIVELY SHOULD NOT BE HERE
 	//MYTODO: Didac PLEAse didac look into this why did you do this?
 	/*if (App->scene_intro->selected_go != nullptr && App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
@@ -463,6 +460,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 						else
 						{
 							current_script->my_table_class["Update"]();	// Update is done on every iteration of the script as long as it remains active
+							FillScriptInstanceComponentVars(current_script); // Show variables at runtime
 						}
 					}
 				}
