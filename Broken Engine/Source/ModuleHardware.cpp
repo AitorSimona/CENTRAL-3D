@@ -1,27 +1,27 @@
-#include "Globals.h"
 #include <codecvt> //To convert wstring to string (For GPU info)
 
 #include "ModuleHardware.h"
 #include "gpudetect/DeviceId.h"
 
 #include "SDL/include/SDL.h"
+#pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #include "OpenGL.h"
+#include "psapi.h"
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
 static sMStats m_MemoryInfo_StatsFromMMRG;
-void RecalculateMemStatisticsFromMMGR()
-{
+void RecalculateMemStatisticsFromMMGR() {
 	m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
 }
 
-ModuleHardware::ModuleHardware(bool start_enabled) : Module(start_enabled)
-{
+ModuleHardware::ModuleHardware(bool start_enabled) : Module(start_enabled) {
 	// --- Retrieve SDL Version ---
 	SDL_version version;
 	SDL_GetVersion(&version);
 	sprintf_s(info.sdl_version, 25, "%i.%i.%i", version.major, version.minor, version.patch);
-	
+
 	// --- Retrieve CPU and Memory Information ---
 	info.ram_gb = (float)SDL_GetSystemRAM() / (1024.f);
 	info.cpu_count = SDL_GetCPUCount();
@@ -44,17 +44,15 @@ ModuleHardware::ModuleHardware(bool start_enabled) : Module(start_enabled)
 }
 
 // Destructor
-ModuleHardware::~ModuleHardware()
-{}
+ModuleHardware::~ModuleHardware() {
+}
 
-bool ModuleHardware::Start()
-{
+bool ModuleHardware::Start() {
 	info.GPU_Information.DetectSystemProperties();
 	return true;
 }
 
-const hw_info & ModuleHardware::GetInfo() const
-{
+const hw_info& ModuleHardware::GetInfo() const {
 	// --- Retrieve GPU Information ---
 	const GLubyte* GPUvendor = glGetString(GL_VENDOR);
 	const GLubyte* GPU = glGetString(GL_RENDERER);
@@ -85,17 +83,23 @@ const hw_info & ModuleHardware::GetInfo() const
 //-------------------------------------------------------------------//
 //-------------------------- SOFTWARE INFO --------------------------//
 //-------------------------------------------------------------------//
-void SoftwareInfo::DetectSystemProperties()
-{
+void SoftwareInfo::DetectSystemProperties() {
 	mSoftware_CppVersion = ExtractCppVersion(__cplusplus);
 	mSoftware_LANGCppVersion = ExtractCppVersion(_MSVC_LANG);
 	mSoftware_WindowsVersion = ExtractWindowsVersion();
 	mSoftware_SDLVersion = ExtractSDLVersion();
 }
 
+const std::string SoftwareInfo::GetOGLVersion() const {
+	return (const char*)glGetString(GL_VERSION);
+}
 
-const std::string SoftwareInfo::ExtractCppVersion(long int cppValue)
-{
+const std::string SoftwareInfo::GetOGLShadingVersion() const {
+	return (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+}
+
+
+const std::string SoftwareInfo::ExtractCppVersion(long int cppValue) {
 	std::string tmp_cppVersion = "NULL: return value does not match with any C++ version!";
 	switch (cppValue) {
 
@@ -122,46 +126,48 @@ const std::string SoftwareInfo::ExtractCppVersion(long int cppValue)
 
 const std::string SoftwareInfo::ExtractWindowsVersion()
 {
-	OSVERSIONINFOEX OS;
-	ZeroMemory(&OS, sizeof(OSVERSIONINFOEX));
-	OS.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	GetVersionEx(&(OSVERSIONINFO&)OS);
+	return ("WINDOWS VERSION RETRIEVAL NOT AVAILABLE");
 
-	std::string ret = "Windows ";
 
-	if (OS.dwMajorVersion == 10)
-		ret += "10";
-	else if (OS.dwMajorVersion == 6) {
-
-		if (OS.dwMinorVersion == 3)
-			ret += "8.1";
-		else if (OS.dwMinorVersion == 2)
-			ret += "8";
-		else if (OS.dwMinorVersion == 1)
-			ret += "7";
-		else
-			ret += "Vista";
-	}
-	else if (OS.dwMajorVersion == 5) {
-
-		if (OS.dwMinorVersion == 2)
-			ret += "XP SP2";
-		else if (OS.dwMinorVersion == 1)
-			ret += "XP";
-		else if (OS.dwMinorVersion == 0)
-			ret += "2000";
-	}
-	else if (OS.dwMajorVersion == 4 || OS.dwMajorVersion == 3)
-		ret += "WinNT";
-	else
-		ret = "WINDOWS VERSION NOT FOUND";
-
-	return ret;
+//	OSVERSIONINFOEX OS;
+//	ZeroMemory(&OS, sizeof(OSVERSIONINFOEX));
+//	OS.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+////	GetVersionEx(&(OSVERSIONINFO&)OS);
+//
+//	std::string ret = "Windows ";
+//
+//	if (OS.dwMajorVersion == 10)
+//		ret += "10";
+//	else if (OS.dwMajorVersion == 6) {
+//
+//		if (OS.dwMinorVersion == 3)
+//			ret += "8.1";
+//		else if (OS.dwMinorVersion == 2)
+//			ret += "8";
+//		else if (OS.dwMinorVersion == 1)
+//			ret += "7";
+//		else
+//			ret += "Vista";
+//	}
+//	else if (OS.dwMajorVersion == 5) {
+//
+//		if (OS.dwMinorVersion == 2)
+//			ret += "XP SP2";
+//		else if (OS.dwMinorVersion == 1)
+//			ret += "XP";
+//		else if (OS.dwMinorVersion == 0)
+//			ret += "2000";
+//	}
+//	else if (OS.dwMajorVersion == 4 || OS.dwMajorVersion == 3)
+//		ret += "WinNT";
+//	else
+//		ret = "WINDOWS VERSION NOT FOUND";
+//
+//	return ret;
 }
 
 
-const std::string SoftwareInfo::ExtractSDLVersion()
-{
+const std::string SoftwareInfo::ExtractSDLVersion() {
 	SDL_version linked;
 	SDL_version compiled;
 
@@ -178,8 +184,7 @@ const std::string SoftwareInfo::ExtractSDLVersion()
 }
 
 
-const std::string SoftwareInfo::GetCppCompilerVersion() const
-{
+const std::string SoftwareInfo::GetCppCompilerVersion() const {
 	return (mSoftware_LANGCppVersion + " (" + std::to_string(_MSVC_LANG) + ")");
 }
 
@@ -187,15 +192,13 @@ const std::string SoftwareInfo::GetCppCompilerVersion() const
 //-------------------------------------------------------------------//
 //--------------------------- MEMORY INFO ---------------------------//
 //-------------------------------------------------------------------//
-void MemoryHardware::DetectSystemProperties()
-{
+void MemoryHardware::DetectSystemProperties() {
 	ExtractMemoryInfo();
 	RecalculateMemStatisticsFromMMGR();
 }
 
 
-void MemoryHardware::ExtractMemoryInfo() const
-{
+void MemoryHardware::ExtractMemoryInfo() const {
 	MEMORYSTATUSEX tmpMemoryInfo;
 	tmpMemoryInfo.dwLength = sizeof(MEMORYSTATUSEX);
 	GlobalMemoryStatusEx(&tmpMemoryInfo);
@@ -209,8 +212,7 @@ void MemoryHardware::ExtractMemoryInfo() const
 }
 
 
-void MemoryHardware::RecalculateRAMParameters()
-{
+void MemoryHardware::RecalculateRAMParameters() {
 	DetectSystemProperties();
 	RecalculateMemStatisticsFromMMGR();
 }
@@ -232,23 +234,20 @@ const uint MemoryHardware::GetMemStatsFromMMGR_PeakAllocUnitCount()			const { re
 //-------------------------------------------------------------------//
 //--------------------------- CPU INFO ------------------------------//
 //-------------------------------------------------------------------//
-void ProcessorHardware::DetectSystemProperties()
-{
+void ProcessorHardware::DetectSystemProperties() {
 	GetCPUSystemInfo();
 	CheckForCPUInstructionsSet();
 }
 
 
-void ProcessorHardware::GetCPUSystemInfo()
-{
+void ProcessorHardware::GetCPUSystemInfo() {
 	GetSystemInfo(&m_CpuSysInfo);
 	m_CpuArchitecture = ExtractCPUArchitecture(m_CpuSysInfo);
 	getCPUInfo(&m_CPUBrand, &m_CPUVendor);
 }
 
 
-const std::string ProcessorHardware::ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo)
-{
+const std::string ProcessorHardware::ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo) {
 	std::string ret = "Unknown Architecture";
 
 	switch (SystemInfo.wProcessorArchitecture) {
@@ -280,8 +279,7 @@ const std::string ProcessorHardware::ExtractCPUArchitecture(SYSTEM_INFO& SystemI
 }
 
 
-void ProcessorHardware::CheckForCPUInstructionsSet()
-{
+void ProcessorHardware::CheckForCPUInstructionsSet() {
 	if ((bool)SDL_Has3DNow() == true)
 		m_CPUInstructionSet.Available_3DNow = true;
 	if ((bool)SDL_HasRDTSC() == true)
@@ -307,8 +305,7 @@ void ProcessorHardware::CheckForCPUInstructionsSet()
 }
 
 
-const std::string ProcessorHardware::GetCPUInstructionSet() const
-{
+const std::string ProcessorHardware::GetCPUInstructionSet() const {
 	std::string ret = "";
 	InstructionsSet is = m_CPUInstructionSet;
 
@@ -353,16 +350,14 @@ const std::string ProcessorHardware::GetCPUInstructionSet() const
 //-------------------------------------------------------------------//
 //---------------------------- GPU INFO -----------------------------//
 //-------------------------------------------------------------------//
-void GPUHardware::DetectSystemProperties()
-{
+void GPUHardware::DetectSystemProperties() {
 	GetGPUTotalVRAM();
 	GetGPUCurrentVRAM();
 	GPUDetect_ExtractGPUInfo(); //MEMORY LEAK HERE!
 }
 
 
-const GLint GPUHardware::GetGPUTotalVRAM()
-{
+const GLint GPUHardware::GetGPUTotalVRAM() {
 	GLint tmp_GPUTotalVRAM = 0;
 	glGetIntegerv(0x9048, &tmp_GPUTotalVRAM);
 
@@ -371,8 +366,7 @@ const GLint GPUHardware::GetGPUTotalVRAM()
 }
 
 
-const GLint GPUHardware::GetGPUCurrentVRAM()
-{
+const GLint GPUHardware::GetGPUCurrentVRAM() {
 	GLint tmp_GPUCurrentVRAM = 0;
 	glGetIntegerv(0x9049, &tmp_GPUCurrentVRAM);
 
@@ -381,25 +375,23 @@ const GLint GPUHardware::GetGPUCurrentVRAM()
 }
 
 
-void GPUHardware::GPUDetect_ExtractGPUInfo() const
-{
+void GPUHardware::GPUDetect_ExtractGPUInfo() const {
 	GPUPrimaryInfo_IntelGPUDetect tmp;
 	std::wstring tmp_GPUBrand_WString;
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
-	if (getGraphicsDeviceInfo(&tmp.m_GPUVendor, &tmp.m_GPUID, &tmp_GPUBrand_WString, &tmp.mPI_GPUDet_TotalVRAM_Bytes, &tmp.mPI_GPUDet_VRAMUsage_Bytes, &tmp.mPI_GPUDet_CurrentVRAM_Bytes, &tmp.mPI_GPUDet_VRAMReserved_Bytes))
-	{
+	if (getGraphicsDeviceInfo(&tmp.m_GPUVendor, &tmp.m_GPUID, &tmp_GPUBrand_WString, &tmp.mPI_GPUDet_TotalVRAM_Bytes, &tmp.mPI_GPUDet_VRAMUsage_Bytes, &tmp.mPI_GPUDet_CurrentVRAM_Bytes, &tmp.mPI_GPUDet_VRAMReserved_Bytes)) {
 		//Converting the WSTRING variable into a std::string
 		tmp.m_GPUBrand = converter.to_bytes(tmp_GPUBrand_WString);
-	
+
 		//If you prefer that in a char[] variable type, use (being GPUStr a char[50] for instance):
 		//sprintf_s(GPUStr, std::size(GPUStr), "%S", tmp_GPUBrand_WString.c_str());
-	
+
 		tmp.mPI_GPUDet_TotalVRAM_MB = tmp.mPI_GPUDet_TotalVRAM_Bytes / BTOGB;
 		tmp.mPI_GPUDet_VRAMUsage_MB = tmp.mPI_GPUDet_VRAMUsage_Bytes / BTOGB;
 		tmp.mPI_GPUDet_CurrentVRAM_MB = tmp.mPI_GPUDet_CurrentVRAM_Bytes / BTOGB;
 		tmp.mPI_GPUDet_VRAMReserved_MB = tmp.mPI_GPUDet_VRAMReserved_Bytes / BTOGB;
-	
+
 		m_PI_GPUDet_GPUInfo = tmp;
 	}
 }

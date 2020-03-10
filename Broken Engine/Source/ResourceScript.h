@@ -3,10 +3,10 @@
 
 #include "Resource.h"
 
-class ResourceScript : public Resource
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceScript : public Resource {
 public:
-	ResourceScript(uint uid, std::string source_file);
+	ResourceScript(uint uid, const char* source_file);
 	~ResourceScript();
 
 public:
@@ -20,5 +20,6 @@ public:
 	std::string script_name;
 
 };
+BE_END_NAMESPACE
 #endif // !__RESOURCESCRIPT_H__
 

@@ -4,10 +4,10 @@
 #include "Component.h"
 #include "ResourceMesh.h"
 
+BE_BEGIN_NAMESPACE
 class ComponentBone;
 
-class ComponentMesh : public Component
-{
+class BROKEN_API ComponentMesh : public Component {
 public:
 
 	ComponentMesh(GameObject* ContainerGO);
@@ -32,6 +32,6 @@ public:
 
 	std::vector<ComponentBone*> bones;
 };
-
+BE_END_NAMESPACE
 #endif
 

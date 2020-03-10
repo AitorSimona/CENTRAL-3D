@@ -2,12 +2,16 @@
 #define __COMPONENT_ANIMATION_H__
 
 #include "Component.h"
-#include "ResourceAnimation.h"
+#include "Math.h"
+
+BE_BEGIN_NAMESPACE
 
 class ComponentMesh;
 class ComponentBone;
+class ResourceAnimation;
+class Channel;
 
-struct Animation
+struct BROKEN_API Animation
 {
 	Animation(std::string name, uint start, uint end, bool loop, bool Default) : name(name), start(start), end(end), loop(loop), Default(Default) {};
 
@@ -20,7 +24,7 @@ struct Animation
 };
 
 
-class ComponentAnimation : public Component
+class BROKEN_API ComponentAnimation : public Component
 {
 	struct Link //Stores a bone(gameobject) with his corresponding channel of the animation
 	{
@@ -99,4 +103,6 @@ private:
 
 
 };
+
+BE_END_NAMESPACE
 #endif // !__COMPONENT_ANIMATION_H__

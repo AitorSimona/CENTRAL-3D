@@ -3,10 +3,12 @@
 
 #include "Component.h"
 #include "ScriptVar.h"
+
+BE_BEGIN_NAMESPACE
+
 class ResourceScript;
 
-class ComponentScript : public Component
-{
+class BROKEN_API ComponentScript : public Component {
 public:
 	ComponentScript(GameObject* ContainerGO);
 	~ComponentScript();
@@ -19,10 +21,9 @@ public:
 
 	void AssignScript(ResourceScript* script_resource);
 
-	//This function returns the index inside the vector of scriptvars of Script variable using its name as reference
-	//Returns -1 if the ScriptVar was not found in the vector
+	// This function returns the index inside the vector of scriptvars of Script variable using its name as reference
+	// Returns -1 if the ScriptVar was not found in the vector
 	int ScriptVarAlreadyInComponent(std::string name);
-
 
 	//Correct SAve & Load from Central 3D
 	json Save() const override;
@@ -36,5 +37,5 @@ public:
 	std::vector<ScriptVar> script_variables;
 };
 
-
+BE_END_NAMESPACE
 #endif // !__COMPONENTSCRIPT_H__

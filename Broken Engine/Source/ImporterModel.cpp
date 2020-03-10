@@ -23,21 +23,20 @@
 #include "ResourceModel.h"
 #include "ResourceMeta.h"
 #include "ResourceMaterial.h"
+#include "ResourceAnimation.h"
+
 
 #include "mmgr/mmgr.h"
 
-
-ImporterModel::ImporterModel() : Importer(Importer::ImporterType::Model)
-{
+using namespace Broken;
+ImporterModel::ImporterModel() : Importer(Importer::ImporterType::Model) {
 }
 
-ImporterModel::~ImporterModel()
-{
+ImporterModel::~ImporterModel() {
 }
 
 // --- Import external file ---
-Resource* ImporterModel::Import(ImportData& IData) const
-{
+Resource* ImporterModel::Import(ImportData& IData) const {
 	ImportModelData MData = (ImportModelData&)IData;
 	ResourceModel* model = nullptr;
 	const aiScene* scene = nullptr;
@@ -48,14 +47,11 @@ Resource* ImporterModel::Import(ImportData& IData) const
 
 	GameObject* rootnode = nullptr;
 
-	if (scene)
-	{
-		if (MData.model_overwrite)
-		{
+	if (scene) {
+		if (MData.model_overwrite) {
 			model = MData.model_overwrite;
 		}
-		else
-		{
+		else {
 			uint UID = App->GetRandom().Int();
 			model = (ResourceModel*)App->resources->CreateResource(Resource::ResourceType::MODEL, MData.path);
 		}
@@ -97,12 +93,10 @@ Resource* ImporterModel::Import(ImportData& IData) const
 
 		LoadBones(model_gos, mesh_collector, bones);
 
-		for (uint i = 0; i < model_meshes.size(); ++i)
-		{
+		for (uint i = 0; i < model_meshes.size(); ++i) {
 			model->AddResource(model_meshes[i]);
 		}
-		for (uint j = 0; j < model_mats.size(); ++j)
-		{
+		for (uint j = 0; j < model_mats.size(); ++j) {
 			model->AddResource(model_mats[j]);
 		}
 		for (uint j = 0; j < anims.size(); ++j)
@@ -130,8 +124,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		aiReleaseImport(scene);
 
 		// --- Create meta ---
-		if (MData.model_overwrite == nullptr)
-		{
+		if (MData.model_overwrite == nullptr) {
 			ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
 			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, IData.path, model->GetUID());
@@ -146,18 +139,15 @@ Resource* ImporterModel::Import(ImportData& IData) const
 	return model;
 }
 
-void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const
-{
+void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const {
 	ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
 
-	for (uint i = 0; i < scene->mNumMeshes; ++i)
-	{
+	for (uint i = 0; i < scene->mNumMeshes; ++i) {
 		ImportMeshData MData(source_file);
 		MData.mesh = scene->mMeshes[i];
 
 		// --- Else, Import mesh data (fill new_mesh) ---
-		if (IMesh)
-		{
+		if (IMesh) {
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
 			scene_meshes[i]->SetName(scene->mMeshes[i]->mName.C_Str());
 		}
@@ -165,10 +155,8 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 	}
 }
 
-void ImporterModel::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const
-{
-	for (std::map<uint, ResourceMesh*>::iterator it = scene_meshes->begin(); it != scene_meshes->end();)
-	{
+void ImporterModel::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const {
+	for (std::map<uint, ResourceMesh*>::iterator it = scene_meshes->begin(); it != scene_meshes->end();) {
 		it->second->FreeMemory();
 		it = scene_meshes->erase(it);
 	}
@@ -205,12 +193,10 @@ void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 
 		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
 
-		if (App->fs->Exists(material_destination.c_str()))
-		{
+		if (App->fs->Exists(material_destination.c_str())) {
 			scene_mats[i] = (ResourceMaterial*)IMat->Load(material_destination.c_str());
 		}
-		else
-		{
+		else {
 			// --- Import material data ---
 			if (IMat)
 				scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
@@ -389,8 +375,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	int i = 0;
 
 	// --- Iterate and load meshes ---
-	for (int j = 0; j < node->mNumMeshes; ++j)
-	{
+	for (int j = 0; j < node->mNumMeshes; ++j) {
 		// --- Create Game Object per mesh ---
 		GameObject* new_object = nullptr;
 
@@ -398,9 +383,9 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		{
 			node_name = scene->mMeshes[node->mMeshes[j]]->mName.C_Str();
 			if (node_name == "")
-				node_name = nodeGo->GetName() + "dummy";
+				node_name = std::string(nodeGo->GetName()) + "dummy";
 			if (j > 0)
-				node_name = nodeGo->GetName() + "_submesh";
+				node_name = std::string(nodeGo->GetName()) + "_submesh";
 			new_object = App->scene_manager->CreateEmptyGameObject();
 			nodeGo->AddChildGO(new_object);
 			new_object->SetName(node_name.c_str());
@@ -428,7 +413,6 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 		if (mesh)
 		{
-
 			// --- Create new Component Mesh to store current scene mesh data ---
 			ComponentMesh* new_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 
@@ -438,7 +422,6 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 			// --- Create Default components ---
 			if (new_mesh)
 			{
-
 				// --- Create new Component Renderer to draw mesh ---
 				ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 				Renderer->material->Release();
@@ -458,8 +441,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 
 
 // --- Load file from library ---
-Resource* ImporterModel::Load(const char* path) const
-{
+Resource* ImporterModel::Load(const char* path) const {
 	ResourceModel* resource = nullptr;
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
@@ -468,8 +450,7 @@ Resource* ImporterModel::Load(const char* path) const
 	resource = App->resources->models.find(meta->GetUID()) != App->resources->models.end() ? App->resources->models.find(meta->GetUID())->second : (ResourceModel*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MODEL, meta->GetOriginalFile(), meta->GetUID());
 
 	// --- A folder has been renamed ---
-	if (!App->fs->Exists(resource->GetOriginalFile()))
-	{
+	if (!App->fs->Exists(resource->GetOriginalFile())) {
 		resource->SetOriginalFile(path);
 		meta->SetOriginalFile(path);
 		App->resources->AddResourceToFolder(resource);
@@ -477,41 +458,34 @@ Resource* ImporterModel::Load(const char* path) const
 
 	json file;
 
-	if(App->fs->Exists(resource->GetResourceFile()))
+	if (App->fs->Exists(resource->GetResourceFile()))
 		file = App->GetJLoader()->Load(resource->GetResourceFile());
-	else
-	{
+	else {
 		// --- Library has been deleted, rebuild ---
 		ImportModelData MData(path);
 		MData.model_overwrite = resource;
 		MData.library_deleted = true;
 		Import(MData);
 	}
-	
 
-	if (!file.is_null())
-	{
+
+	if (!file.is_null()) {
 		// --- Iterate main nodes ---
-		for (json::iterator it = file.begin(); it != file.end(); ++it)
-		{
+		for (json::iterator it = file.begin(); it != file.end(); ++it) {
 			// --- Iterate components ---
 			json components = file[it.key()]["Components"];
 
-			for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
-			{
+			for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) {
 				// --- Iterate and load resources ---
 				json _resources = components[it2.key()]["Resources"];
 
-				if (!_resources.is_null())
-				{
-					for (json::iterator it3 = _resources.begin(); it3 != _resources.end(); ++it3)
-					{
+				if (!_resources.is_null()) {
+					for (json::iterator it3 = _resources.begin(); it3 != _resources.end(); ++it3) {
 						std::string value = _resources[it3.key()];
 						Importer::ImportData IData(value.c_str());
 						Resource* to_Add = App->resources->ImportAssets(IData);
 
-						if (to_Add)
-						{
+						if (to_Add) {
 							// --- Give mesh a name ---
 							if (to_Add->GetType() == Resource::ResourceType::MESH)
 								to_Add->SetName(it.key().c_str());
@@ -529,18 +503,15 @@ Resource* ImporterModel::Load(const char* path) const
 	return resource;
 }
 
-void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const
-{
-	if (model_path)
-	{
+void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const {
+	if (model_path) {
 		// --- Load Scene/model file ---
 		json file = App->GetJLoader()->Load(model_path);
-	
+
 		// --- Delete buffer data ---
-		if (!file.is_null())
-		{
+		if (!file.is_null()) {
 			std::vector<GameObject*> objects;
-	
+
 			// --- Iterate main nodes ---
 			for (json::iterator it = file.begin(); it != file.end(); ++it)
 			{
@@ -555,42 +526,38 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 	
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
-	
-	
-				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
-				{
+
+
+				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) {
 					// --- Determine ComponentType ---
 					std::string type_string = it2.key();
 					uint type_uint = std::stoi(type_string);
 					Component::ComponentType type = (Component::ComponentType)type_uint;
-	
+
 					Component* component = nullptr;
-	
+
 					// --- Create/Retrieve Component ---
 					component = go->AddComponent(type);
-	
+
 					// --- Load Component Data ---
 					if (component)
 						component->Load(components[type_string]);
-	
+
 				}
-	
+
 				objects.push_back(go);
 			}
-	
+
 
 			// --- Parent Game Objects / Build Hierarchy ---
-			for (uint i = 0; i < objects.size(); ++i)
-			{
+			for (uint i = 0; i < objects.size(); ++i) {
 				std::string parent_uid_string = file[objects[i]->GetName()]["Parent"];
 				uint parent_uid = std::stoi(parent_uid_string);
-			
-				for (uint j = 0; j < objects.size(); ++j)
-				{
-					if (parent_uid == objects[j]->GetUID())
-					{
+
+				for (uint j = 0; j < objects.size(); ++j) {
+					if (parent_uid == objects[j]->GetUID()) {
 						objects[j]->AddChildGO(objects[i]);
-					break;
+						break;
 					}
 				}
 			}
@@ -602,8 +569,7 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			}
 
 			// --- Add pointer to model ---
-			if (objects[0])
-			{
+			if (objects[0]) {
 				objects[0]->model = model;
 				model->AddUser(objects[0]);
 			}
@@ -611,22 +577,19 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 	}
 }
 
-void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_gos, std::string& model_name) const
-{
+void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_gos, const std::string& model_name) const {
 	// --- Save Model to file ---
 
 	json file;
 
-	for (int i = 0; i < model_gos.size(); ++i)
-	{
+	for (int i = 0; i < model_gos.size(); ++i) {
 		// --- Create GO Structure ---
 		file[model_gos[i]->GetName()];
 		file[model_gos[i]->GetName()]["UID"] = std::to_string(model_gos[i]->GetUID());
 		file[model_gos[i]->GetName()]["Parent"] = std::to_string(model_gos[i]->parent->GetUID());
 		file[model_gos[i]->GetName()]["Components"];
 
-		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j)
-		{
+		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j) {
 			// --- Save Components to file ---
 			file[model_gos[i]->GetName()]["Components"][std::to_string((uint)model_gos[i]->GetComponents()[j]->GetType())] = model_gos[i]->GetComponents()[j]->Save();
 		}
@@ -635,7 +598,7 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();
@@ -643,6 +606,5 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 
 	App->fs->Save(model->GetResourceFile(), buffer, size);
 }
-
 
 

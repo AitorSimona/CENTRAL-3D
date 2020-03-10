@@ -10,16 +10,14 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterTexture::ImporterTexture() : Importer(Importer::ImporterType::Texture)
-{
+using namespace Broken;
+ImporterTexture::ImporterTexture() : Importer(Importer::ImporterType::Texture) {
 }
 
-ImporterTexture::~ImporterTexture()
-{
+ImporterTexture::~ImporterTexture() {
 }
 
-Resource* ImporterTexture::Import(ImportData& IData) const
-{
+Resource* ImporterTexture::Import(ImportData& IData) const {
 	if (!App->fs->Exists(IData.path))
 		return nullptr;
 
@@ -39,8 +37,7 @@ Resource* ImporterTexture::Import(ImportData& IData) const
 	return texture;
 }
 
-Resource* ImporterTexture::Load(const char* path) const
-{
+Resource* ImporterTexture::Load(const char* path) const {
 	ResourceTexture* texture = nullptr;
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
@@ -49,8 +46,7 @@ Resource* ImporterTexture::Load(const char* path) const
 	texture = App->resources->textures.find(meta->GetUID()) != App->resources->textures.end() ? App->resources->textures.find(meta->GetUID())->second : (ResourceTexture*)App->resources->CreateResourceGivenUID(Resource::ResourceType::TEXTURE, path, meta->GetUID());
 
 	// --- A folder has been renamed ---
-	if (!App->fs->Exists(texture->GetOriginalFile()))
-	{
+	if (!App->fs->Exists(texture->GetOriginalFile())) {
 		texture->SetOriginalFile(path);
 		meta->SetOriginalFile(path);
 		App->resources->AddResourceToFolder(texture);
@@ -59,7 +55,6 @@ Resource* ImporterTexture::Load(const char* path) const
 	return texture;
 }
 
-void ImporterTexture::Save(ResourceTexture* texture) const
-{
+void ImporterTexture::Save(ResourceTexture* texture) const {
 	// Nothing to save ? (being saved by ModuleTextures)
 }

@@ -8,8 +8,8 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file)
-{
+using namespace Broken;
+ResourceTexture::ResourceTexture(uint UID, const char* source_file) : Resource(Resource::ResourceType::TEXTURE, UID, source_file) {
 	extension = ".dds";
 	resource_file = TEXTURES_FOLDER + std::to_string(UID) + extension;
 	buffer_id = App->textures->GetDefaultTextureID();
@@ -19,13 +19,11 @@ ResourceTexture::ResourceTexture(uint UID, std::string source_file) : Resource(R
 	LoadToMemory();
 }
 
-ResourceTexture::~ResourceTexture()
-{
+ResourceTexture::~ResourceTexture() {
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-bool ResourceTexture::LoadInMemory()
-{
+bool ResourceTexture::LoadInMemory() {
 	if (App->resources->IsFileImported(original_file.c_str()) && App->fs->Exists(resource_file.c_str()))
 		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, -1));
 	else if (original_file != "DefaultTexture")
@@ -34,23 +32,19 @@ bool ResourceTexture::LoadInMemory()
 	return true;
 }
 
-void ResourceTexture::FreeMemory()
-{
+void ResourceTexture::FreeMemory() {
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-void ResourceTexture::SetTextureID(uint ID)
-{
+void ResourceTexture::SetTextureID(uint ID) {
 	buffer_id = previewTexID = ID;
 }
 
-uint ResourceTexture::GetTexID()
-{
+uint ResourceTexture::GetTexID() {
 	return buffer_id;
 }
 
-void ResourceTexture::OnOverwrite()
-{
+void ResourceTexture::OnOverwrite() {
 	NotifyUsers(ResourceNotificationType::Overwrite);
 
 	FreeMemory();
@@ -59,8 +53,7 @@ void ResourceTexture::OnOverwrite()
 	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
 }
 
-void ResourceTexture::OnDelete()
-{
+void ResourceTexture::OnDelete() {
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();

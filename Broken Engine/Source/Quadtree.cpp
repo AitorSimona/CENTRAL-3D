@@ -1,4 +1,4 @@
-#include "Globals.h"
+
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "QuadTree.h"
@@ -17,38 +17,32 @@
 
 // --- Max items before subdividing ---
 #define QUADTREE_MAX_ITEMS 3
-#define QUADTREE_MIN_SIZE 3.0f 
+#define QUADTREE_MIN_SIZE 3.0f
 
+using namespace Broken;
 
-QuadtreeNode::QuadtreeNode(const AABB& box) : box(box)
-{
+QuadtreeNode::QuadtreeNode(const AABB& box) : box(box) {
 	parent = childs[NET] = childs[SET] = childs[SWT] = childs[NWT] = childs[NEB] = childs[SEB] = childs[SWB] = childs[NWB] = nullptr;
 }
 
 
-QuadtreeNode::~QuadtreeNode()
-{
-	for (int i = 0; i < 8; ++i)
-	{
-		if (childs[i] != nullptr) 
+QuadtreeNode::~QuadtreeNode() {
+	for (int i = 0; i < 8; ++i) {
+		if (childs[i] != nullptr)
 			delete(childs[i]);
 	}
 }
 
-bool QuadtreeNode::IsLeaf() const
-{
+bool QuadtreeNode::IsLeaf() const {
 	return childs[0] == nullptr;
 }
 
-void QuadtreeNode::Insert(GameObject* go)
-{
+void QuadtreeNode::Insert(GameObject* go) {
 	if (IsLeaf() == true &&
 		(objects.size() < QUADTREE_MAX_ITEMS ||
 		(box.HalfSize().LengthSq() <= QUADTREE_MIN_SIZE * QUADTREE_MIN_SIZE)))
 		objects.push_back(go);
-	
-	else
-	{
+	else {
 		if (IsLeaf() == true)
 			CreateChilds();
 
@@ -57,14 +51,12 @@ void QuadtreeNode::Insert(GameObject* go)
 	}
 }
 
-void QuadtreeNode::Erase(GameObject * go)
-{
+void QuadtreeNode::Erase(GameObject* go) {
 	std::list<GameObject*>::iterator it = std::find(objects.begin(), objects.end(), go);
 	if (it != objects.end())
 		objects.erase(it);
 
-	if (IsLeaf() == false)
-	{
+	if (IsLeaf() == false) {
 		for (int i = 0; i < 8; ++i)
 			childs[i]->Erase(go);
 	}
@@ -79,8 +71,7 @@ void QuadtreeNode::Erase(GameObject * go)
 MinPoint
 */
 
-void QuadtreeNode::CreateChilds()
-{
+void QuadtreeNode::CreateChilds() {
 	// NorthEast - TOP
 	childs[NET] = new QuadtreeNode(box);
 	childs[NET]->CreateNode(NET);
@@ -116,8 +107,7 @@ void QuadtreeNode::CreateChilds()
 
 }
 
-void QuadtreeNode::CreateNode(uint index)
-{
+void QuadtreeNode::CreateNode(uint index) {
 	//Index positions from top view
 	//0 1
 	//2 3
@@ -135,11 +125,9 @@ void QuadtreeNode::CreateNode(uint index)
 	box = AABB(minPoint, maxPoint);
 }
 
-void QuadtreeNode::RedistributeChilds()
-{
+void QuadtreeNode::RedistributeChilds() {
 	// --- Redistribute all objects ---
-	for (std::list<GameObject*>::iterator it = objects.begin(); it != objects.end();)
-	{
+	for (std::list<GameObject*>::iterator it = objects.begin(); it != objects.end();) {
 		GameObject* go = *it;
 
 		AABB new_box(go->GetOBB().MinimalEnclosingAABB());
@@ -152,13 +140,10 @@ void QuadtreeNode::RedistributeChilds()
 		if (intersects[0] && intersects[1] && intersects[2] && intersects[3]
 			&& intersects[4] && intersects[5] && intersects[6] && intersects[7])
 			++it; // if it hits all childs, better to just keep it here
-		else
-		{
+		else {
 			it = objects.erase(it);
-			for (int i = 0; i < 8; ++i)
-			{
-				if (intersects[i])
-				{
+			for (int i = 0; i < 8; ++i) {
+				if (intersects[i]) {
 					childs[i]->Insert(go);
 					break;
 				}
@@ -167,8 +152,7 @@ void QuadtreeNode::RedistributeChilds()
 	}
 }
 
-void QuadtreeNode::CollectObjects(std::vector<GameObject*>& objects) const
-{
+void QuadtreeNode::CollectObjects(std::vector<GameObject*>& objects) const {
 	for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it)
 		objects.push_back(*it);
 
@@ -176,10 +160,8 @@ void QuadtreeNode::CollectObjects(std::vector<GameObject*>& objects) const
 		if (childs[i] != nullptr) childs[i]->CollectObjects(objects);
 }
 
-void QuadtreeNode::CollectObjects(std::map<float, GameObject*>& objects, const float3& origin) const
-{
-	for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it)
-	{
+void QuadtreeNode::CollectObjects(std::map<float, GameObject*>& objects, const float3& origin) const {
+	for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it) {
 		ComponentTransform* transform = (*it)->GetComponent<ComponentTransform>();
 
 		float dist = origin.DistanceSq(transform->GetGlobalPosition());
@@ -190,8 +172,7 @@ void QuadtreeNode::CollectObjects(std::map<float, GameObject*>& objects, const f
 		if (childs[i] != nullptr) childs[i]->CollectObjects(objects, origin);
 }
 
-void QuadtreeNode::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const
-{
+void QuadtreeNode::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const {
 	nodes.push_back(this);
 
 	for (int i = 0; i < 8; ++i)
@@ -201,32 +182,27 @@ void QuadtreeNode::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const
 
 // ---------------------------------------------------------------------
 
-Quadtree::Quadtree()
-{}
+Quadtree::Quadtree() {
+}
 
-Quadtree::~Quadtree()
-{
+Quadtree::~Quadtree() {
 	Clear();
 }
 
 
-void Quadtree::SetBoundaries(const AABB& box)
-{
+void Quadtree::SetBoundaries(const AABB& box) {
 	Clear();
 	root = new QuadtreeNode(box);
 }
 
-void Quadtree::Insert(GameObject* go)
-{
-	if (root != nullptr)
-	{
+void Quadtree::Insert(GameObject* go) {
+	if (root != nullptr) {
 		if (go->GetOBB().MinimalEnclosingAABB().Intersects(root->box))
 			root->Insert(go);
 	}
 }
 
-void Quadtree::Erase(GameObject * go)
-{
+void Quadtree::Erase(GameObject* go) {
 	if (root != nullptr)
 		root->Erase(go);
 }
@@ -237,20 +213,17 @@ void Quadtree::Clear()
 	delete root;
 }
 
-void Quadtree::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const
-{
+void Quadtree::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const {
 	if (root != nullptr)
 		root->CollectBoxes(nodes);
 }
 
-void Quadtree::CollectObjects(std::vector<GameObject*>& objects) const
-{
+void Quadtree::CollectObjects(std::vector<GameObject*>& objects) const {
 	if (root != nullptr)
 		root->CollectObjects(objects);
 }
 
-void Quadtree::CollectObjects(std::map<float, GameObject*>& objects, const float3& origin) const
-{
+void Quadtree::CollectObjects(std::map<float, GameObject*>& objects, const float3& origin) const {
 	if (root != nullptr)
 		root->CollectObjects(objects, origin);
 }

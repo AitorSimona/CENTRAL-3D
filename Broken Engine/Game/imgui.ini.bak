@@ -54,10 +54,9 @@ Collapsed=0
 DockId=0x00000004,0
 
 [Window][Settings]
-Pos=810,360
-Size=341,287
+Pos=573,238
+Size=597,360
 Collapsed=0
-DockId=0x00000014,0
 
 [Window][Style Editor]
 Pos=410,74
@@ -169,13 +168,13 @@ Collapsed=0
 Pos=903,20
 Size=248,627
 Collapsed=0
-DockId=0x00000017,1
+DockId=0x00000017,2
 
 [Window][Physics]
 Pos=903,20
 Size=248,627
 Collapsed=0
-DockId=0x00000017,2
+DockId=0x00000017,1
 
 [Window][Build]
 Pos=328,131

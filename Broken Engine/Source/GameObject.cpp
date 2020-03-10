@@ -13,24 +13,22 @@
 #include "ModuleSceneManager.h"
 #include "ComponentAudioListener.h"
 #include "ComponentAudioSource.h"
-
 #include "ComponentCanvas.h"
 #include "ComponentText.h"
 #include "ComponentImage.h"
-//#include "Button.h"
-//#include "CheckBox.h"
-//#include "InputText.h"
-//#include "ProgressBar.h"
-
-#include "Math.h"
+#include "ComponentButton.h"
+//#include "ComponentCheckBox.h"
+//#include "ComponentInputText.h"
+//#include "ComponentProgressBar.h"
 
 #include "ResourceModel.h"
 #include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
 
-GameObject::GameObject(const char* name)
-{
+using namespace Broken;
+
+GameObject::GameObject(const char* name) {
 	UID = App->GetRandom().Int();
 	this->name = name;
 	// --- Add transform ---
@@ -55,10 +53,9 @@ GameObject::~GameObject()
 {
 	// --- Destroy all components and game object ---
 
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-	{
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
 		if (*it)
-			delete *it;
+			delete* it;
 
 	}
 	components.clear();
@@ -173,12 +170,9 @@ void GameObject::TransformGlobal(GameObject* GO)
 void GameObject::RemoveChildGO(GameObject* GO)
 {
 	// --- Remove given child from list ---
-	if (childs.size() > 0)
-	{
-		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
-		{
-			if ((*go)->GetUID() == GO->GetUID())
-			{
+	if (childs.size() > 0) {
+		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
+			if ((*go)->GetUID() == GO->GetUID()) {
 				childs.erase(go);
 				break;
 			}
@@ -189,8 +183,7 @@ void GameObject::RemoveChildGO(GameObject* GO)
 void GameObject::AddChildGO(GameObject* GO)
 {
 	// --- Add a child GO to a Game Object this ---
-	if (!FindChildGO(GO))
-	{
+	if (!FindChildGO(GO)) {
 		if (GO->parent)
 			GO->parent->RemoveChildGO(GO);
 
@@ -208,12 +201,10 @@ bool GameObject::FindChildGO(GameObject* GO)
 	// --- Look for given GO in child list and return true if found ---
 	bool ret = false;
 
-	if (childs.size() > 0)
-	{
+	if (childs.size() > 0) {
 		std::vector<GameObject*>::iterator go = childs.begin();
 
-		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
-		{
+		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
 			if ((*go)->GetUID() == GO->GetUID())
 				ret = true;
 		}
@@ -252,9 +243,16 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 19, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
-	// --- Check if there is already a component of the type given ---
+	// --- Check if there is already a component of the type given --- & if it can be repeated
+	bool repeatable_component = false;
+	std::vector<int>::iterator it = App->scene_manager->repeatable_components.begin();
+	for (; it != App->scene_manager->repeatable_components.end(); ++it)
+	{
+		if ((int)type == (*it))
+			repeatable_component = true;
+	}
 
-	if (HasComponent(type) == nullptr)
+	if (HasComponent(type) == nullptr || repeatable_component == true)
 	{
 		switch (type)
 		{
@@ -293,15 +291,15 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 			component = new ComponentAnimation(this);
 			break;
 
-		case Component::ComponentType::ComponentCanvas:
+		case Component::ComponentType::Canvas:
 			component = new ComponentCanvas(this);
 			break;
 
-		case Component::ComponentType::ComponentText:
+		case Component::ComponentType::Text:
 			component = new ComponentText(this);
 			break;
 
-		case Component::ComponentType::ComponentImage:
+		case Component::ComponentType::Image:
 			component = new ComponentImage(this);
 			break;
 
@@ -309,20 +307,20 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 			component = new ComponentScript(this);
 			break;
 
-		//case Component::ComponentType::Button:
-		//	component = new Button(this);
-		//	break;
+		case Component::ComponentType::Button:
+			component = new ComponentButton(this);
+			break;
 
 		//case Component::ComponentType::CheckBox:
-		//	component = new CheckBox(this);
+		//	component = new ComponentCheckBox(this);
 		//	break;
 
 		//case Component::ComponentType::InputText:
-		//	component = new InputText(this);
+		//	component = new ComponentInputText(this);
 		//	break;
 
 		//case Component::ComponentType::ProgressBar:
-		//	component = new ProgressBar(this);
+		//	component = new ComponentProgressBar(this);
 		//	break;
 		}
 
@@ -353,8 +351,7 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 		}
 
 	}
-	else
-	{
+	else {
 		// --- If we find a component of the same type, tell the user and return such component ---
 		ENGINE_CONSOLE_LOG("![Warning]: The current Game Object already has a component of the type given");
 		component = HasComponent(type);
@@ -363,8 +360,7 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 	return component;
 }
 
-void GameObject::RemoveComponent(Component::ComponentType type)
-{
+void GameObject::RemoveComponent(Component::ComponentType type) {
 	// ---Remove component of type given from game object ---
 
 	for (uint i = 0; i < components.size(); ++i)
@@ -381,8 +377,7 @@ void GameObject::RemoveComponent(Component::ComponentType type)
 	}
 }
 
-Component* GameObject::HasComponent(Component::ComponentType type) const
-{
+Component* GameObject::HasComponent(Component::ComponentType type) const {
 	// --- Search for given type of component ---
 	Component* component = nullptr;
 
@@ -398,13 +393,11 @@ Component* GameObject::HasComponent(Component::ComponentType type) const
 	return component;
 }
 
-std::vector<Component*>& GameObject::GetComponents()
-{
+std::vector<Component*>& GameObject::GetComponents() {
 	return components;
 }
 
-void GameObject::Enable()
-{
+void GameObject::Enable() {
 	active = true;
 
 	for (int i = 0; i < components.size(); ++i)
@@ -415,8 +408,7 @@ void GameObject::Enable()
 
 }
 
-void GameObject::Disable()
-{
+void GameObject::Disable() {
 	active = false;
 
 	for (int i = 0; i < components.size(); ++i)
@@ -450,9 +442,9 @@ void GameObject::SetUID(uint uid)
 	}
 }
 
-std::string GameObject::GetName() const
+const char* GameObject::GetName() const
 {
-	return name;
+	return name.c_str();
 }
 
 const AABB& GameObject::GetAABB()
@@ -471,24 +463,20 @@ bool& GameObject::GetActive()
 	return active;
 }
 
-bool GameObject::IsEnabled() const
-{
+bool GameObject::IsEnabled() const {
 	return active;
 }
 
-void GameObject::SetName(const char* name)
-{
+void GameObject::SetName(const char* name) {
 	if (name && name != "root")
 		this->name = name;
 }
 
-void GameObject::UpdateAABB()
-{
+void GameObject::UpdateAABB() {
 	ComponentMesh* mesh = GetComponent<ComponentMesh>();
 	ComponentTransform* transform = GetComponent<ComponentTransform>();
 
-	if (mesh)
-	{
+	if (mesh) {
 		obb = mesh->GetAABB();
 		obb.Transform(transform->GetGlobalTransform());
 		aabb.SetNegativeInfinity();
@@ -502,10 +490,8 @@ void GameObject::UpdateAABB()
 	}
 }
 
-void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType type)
-{
-	for (uint i = 0; i < components.size(); ++i)
-	{
+void GameObject::ONResourceEvent(uint uid, Resource::ResourceNotificationType type) {
+	for (uint i = 0; i < components.size(); ++i) {
 		components[i]->ONResourceEvent(uid, type);
 	}
 

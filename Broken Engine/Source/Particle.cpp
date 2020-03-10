@@ -12,6 +12,8 @@
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
+
 Particle::Particle()
 {
 	position = { 0.0f,0.0f,0.0f };

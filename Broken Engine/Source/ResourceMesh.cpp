@@ -4,50 +4,46 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 
+
 #include "ImporterMesh.h"
 
 #include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 
-ResourceMesh::ResourceMesh(uint UID, std::string source_file) : Resource(Resource::ResourceType::MESH, UID, source_file)
-{
+using namespace Broken;
+ResourceMesh::ResourceMesh(uint UID, const char* source_file) : Resource(Resource::ResourceType::MESH, UID, source_file) {
 	extension = ".mesh";
 	resource_file = MESHES_FOLDER + std::to_string(UID) + extension;
 
 	previewTexID = App->gui->defaultfileTexID;
 }
 
-ResourceMesh::~ResourceMesh()
-{
+ResourceMesh::~ResourceMesh() {
 }
 
-void ResourceMesh::CreateAABB()
-{
+void ResourceMesh::CreateAABB() {
 	aabb.SetNegativeInfinity();
 
-	for (uint i = 0; i < VerticesSize; ++i)
-	{
+	for (uint i = 0; i < VerticesSize; ++i) {
 		aabb.Enclose(float3(vertices[i].position));
 	}
 }
 
-bool ResourceMesh::LoadInMemory()
-{
+bool ResourceMesh::LoadInMemory() {
 	bool ret = true;
 
-	if (App->fs->Exists(resource_file.c_str()))
-	{
+	if (App->fs->Exists(resource_file.c_str())) {
 		// --- Load mesh data ---
 		char* buffer = nullptr;
-			App->fs->Load(resource_file.c_str(), &buffer);
-			char* cursor = buffer;
+		App->fs->Load(resource_file.c_str(), &buffer);
+		char* cursor = buffer;
 
-			// amount of indices / vertices / normals / texture_coords
-			uint ranges[3];
-			uint bytes = sizeof(ranges);
-			memcpy(ranges, cursor, bytes);
-			bytes += ranges[0];
+		// amount of indices / vertices / normals / texture_coords
+		uint ranges[3];
+		uint bytes = sizeof(ranges);
+		memcpy(ranges, cursor, bytes);
+		bytes += ranges[0];
 
 		IndicesSize = ranges[1];
 		VerticesSize = ranges[2];
@@ -87,8 +83,7 @@ bool ResourceMesh::LoadInMemory()
 
 		// --- Fill Vertex array ---
 
-		for (uint i = 0; i < VerticesSize; ++i)
-		{
+		for (uint i = 0; i < VerticesSize; ++i) {
 			// --- Vertices ---
 			vertices[i].position[0] = Vertices[i * 3];
 			vertices[i].position[1] = Vertices[(i * 3) + 1];
@@ -111,8 +106,7 @@ bool ResourceMesh::LoadInMemory()
 		}
 
 		// --- Delete buffer data ---
-		if (buffer)
-		{
+		if (buffer) {
 			delete[] buffer;
 			buffer = nullptr;
 			cursor = nullptr;
@@ -132,22 +126,19 @@ bool ResourceMesh::LoadInMemory()
 	return ret;
 }
 
-void ResourceMesh::FreeMemory()
-{
+void ResourceMesh::FreeMemory() {
 
 	glDeleteBuffers(1, (GLuint*)&VBO);
 
 	glDeleteBuffers(1, (GLuint*)&EBO);
 	glDeleteVertexArrays(1, (GLuint*)&VAO);
 
-	if (vertices)
-	{
+	if (vertices) {
 		delete[] vertices;
 		vertices = nullptr;
 	}
 
-	if (Indices)
-	{
+	if (Indices) {
 		delete[] Indices;
 		Indices = nullptr;
 	}
@@ -157,10 +148,8 @@ void ResourceMesh::FreeMemory()
 	VAO = 0;
 }
 
-void ResourceMesh::CreateVBO()
-{
-	if (vertices != nullptr)
-	{
+void ResourceMesh::CreateVBO() {
+	if (vertices != nullptr) {
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * VerticesSize, vertices, GL_STATIC_DRAW);
@@ -170,10 +159,8 @@ void ResourceMesh::CreateVBO()
 		ENGINE_CONSOLE_LOG("|[error]: Could not create VBO, null vertices");
 }
 
-void ResourceMesh::CreateEBO()
-{
-	if (Indices != nullptr)
-	{
+void ResourceMesh::CreateEBO() {
+	if (Indices != nullptr) {
 		glGenBuffers(1, &EBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW);
@@ -183,9 +170,8 @@ void ResourceMesh::CreateEBO()
 		ENGINE_CONSOLE_LOG("|[error]: Could not create EBO, null indices");
 }
 
-void ResourceMesh::CreateVAO()
-{
-    // --- Create a Vertex Array Object ---
+void ResourceMesh::CreateVAO() {
+	// --- Create a Vertex Array Object ---
 	glGenVertexArrays(1, &VAO);
 	// --- Bind it ---
 	glBindVertexArray(VAO);
@@ -216,15 +202,13 @@ void ResourceMesh::CreateVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ResourceMesh::OnOverwrite()
-{
+void ResourceMesh::OnOverwrite() {
 	// Since mesh is not a standalone resource (which means it is always owned by a model) the model is in charge
 	// of overwriting it (see ResourceModel OnOverwrite for details)
 	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
-void ResourceMesh::OnDelete()
-{
+void ResourceMesh::OnDelete() {
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
@@ -236,8 +220,7 @@ void ResourceMesh::OnDelete()
 	App->resources->ONResourceDestroyed(this);
 }
 
-void ResourceMesh::Repath()
-{
+void ResourceMesh::Repath() {
 	ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
 	IMesh->Save(this);
 }

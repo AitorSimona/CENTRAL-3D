@@ -1,20 +1,19 @@
 #include "PanelHierarchy.h"
 #include "Imgui/imgui.h"
 
-#include "Application.h"
-#include "ModuleSceneManager.h"
-#include "ModuleInput.h"
-#include "ImporterScene.h"
-#include "ModuleGui.h"
-#include "ModuleFileSystem.h"
+#include "EngineApplication.h"
+//#include "ModuleSceneManager.h"
+//#include "ModuleInput.h"
+//#include "ImporterScene.h"
+//#include "ModuleFileSystem.h"
 
-#include "GameObject.h"
+//#include "GameObject.h"
 #include "PanelProject.h"
-#include "ResourceScene.h"
 
-#include "mmgr/mmgr.h"
+//
+//#include "mmgr/mmgr.h"
 
-PanelHierarchy::PanelHierarchy(char * name) : Panel(name)
+PanelHierarchy::PanelHierarchy(char * name) : Broken::Panel(name)
 {
 }
 
@@ -24,24 +23,25 @@ PanelHierarchy::~PanelHierarchy()
 
 bool PanelHierarchy::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_MenuBar;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 		ImGui::BeginMenuBar();
-		ImGui::Image((ImTextureID)App->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((ImTextureID)EngineApp->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::SameLine();
-		ImGui::Text(App->scene_manager->currentScene->GetName());
+		ImGui::Text(EngineApp->scene_manager->currentScene->GetName());
 		ImGui::EndMenuBar();
 
-		DrawRecursive(App->scene_manager->GetRootGO());
+		DrawRecursive(EngineApp->scene_manager->GetRootGO());
+
+		// Deselect the current GameObject when clicking in an empty space of the hierarchy
+		if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
+			EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 	}
-
-	// Deselect the current GameObject when clicking in an empty space of the hierarchy
-	if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
-		App->scene_manager->SetSelectedGameObject(nullptr);
-
 	ImGui::End();
 
 	// --- Manage Drag & Drop ---
@@ -56,29 +56,29 @@ bool PanelHierarchy::Draw()
 	}
 	if (to_destroy)
 	{
-		App->scene_manager->DestroyGameObject(to_destroy);
+		EngineApp->scene_manager->DestroyGameObject(to_destroy);
 		to_destroy = nullptr;
-		App->scene_manager->SetSelectedGameObject(nullptr);
+		EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 	}
 
 	return true;
 }
 
-void PanelHierarchy::DrawRecursive(GameObject * Go)
+void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 {
 	// --- Set node flags ---
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 	ImGuiTreeNodeFlags node_flags = base_flags;
 
-	if (Go == App->scene_manager->GetSelectedGameObject())
+	if (Go == EngineApp->scene_manager->GetSelectedGameObject())
 		node_flags |= ImGuiTreeNodeFlags_Selected;
 
 	// --- Avoid displaying root ---
-	if (Go->GetName().c_str() == App->scene_manager->GetRootGO()->GetName())
+	if (Go->GetName() == EngineApp->scene_manager->GetRootGO()->GetName())
 	{
 		if (Go->childs.size() > 0)
 		{
-			for (std::vector<GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
+			for (std::vector<Broken::GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
 			{
 				DrawRecursive(*it);
 			}
@@ -96,10 +96,10 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 		if(!Go->GetActive())
 		ImGui::PushStyleColor(ImGuiCol(), ImVec4(0.5, 0.5, 0.5, 1));
 
-		ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((ImTextureID)EngineApp->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::SameLine();
 
-		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName().c_str());
+		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName());
 
 		if (!Go->GetActive())
 		ImGui::PopStyleColor();
@@ -107,7 +107,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			ImGui::SetDragDropPayload("GO", Go, sizeof(GameObject));        // Set payload to carry the index of our item (could be anything)
+			ImGui::SetDragDropPayload("GO", Go, sizeof(Broken::GameObject));        // Set payload to carry the index of our item (could be anything)
 			dragged = Go;
 			ImGui::EndDragDropSource();
 		}
@@ -125,15 +125,15 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 		}
 
 		// --- Set Game Object to be destroyed ---
-		if (ImGui::IsWindowFocused() && Go == App->scene_manager->GetSelectedGameObject() && App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
+		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		{
-			ENGINE_CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
+			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
 			to_destroy = Go;
 		}
 
 		// --- If node is clicked set Go as selected ---
 		if (ImGui::IsItemClicked())
-			App->scene_manager->SetSelectedGameObject(Go);
+			EngineApp->scene_manager->SetSelectedGameObject(Go);
 
 
 		// --- Display children only if current node is open ---
@@ -142,7 +142,7 @@ void PanelHierarchy::DrawRecursive(GameObject * Go)
 			// --- Check for children and draw them the same way ---
 			if (Go->childs.size() > 0)
 			{
-				for (std::vector<GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
+				for (std::vector<Broken::GameObject*>::iterator it = Go->childs.begin(); it != Go->childs.end(); ++it)
 				{
 					DrawRecursive(*it);
 				}

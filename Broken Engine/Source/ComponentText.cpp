@@ -3,15 +3,19 @@
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
+#include "ComponentCanvas.h"
+#include "ResourceTexture.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentText)
+using namespace Broken;
+
+ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Text)
 {
 	visible = true;
 
-	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::ComponentCanvas);
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	//texture = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 	canvas->AddElement(this);
 
@@ -151,6 +155,6 @@ void ComponentText::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::ComponentText);
+		GO->RemoveComponent(Component::ComponentType::Text);
 	}
 }

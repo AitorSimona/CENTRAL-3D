@@ -11,42 +11,36 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene)
-{
+using namespace Broken;
+ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene) {
 
 }
 
-ImporterScene::~ImporterScene()
-{
+ImporterScene::~ImporterScene() {
 
 }
 
 // MYTODO: Give some use to return type (bool) in all functions (if load fails log...)
 
-Resource* ImporterScene::Import(ImportData& IData) const
-{
+Resource* ImporterScene::Import(ImportData& IData) const {
 	// --- Meta was deleted, just trigger a load with a new uid ---
 	Resource* scene = Load(IData.path);
 
 	return scene;
 }
 
-Resource* ImporterScene::Load(const char * path) const
-{
+Resource* ImporterScene::Load(const char* path) const {
 	ResourceScene* scene = nullptr;
 
 	// --- Load Scene file ---
-	if (path)
-	{
+	if (path) {
 		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
-		if (meta)
-		{
+		if (meta) {
 			scene = App->resources->scenes.find(meta->GetUID()) != App->resources->scenes.end() ? App->resources->scenes.find(meta->GetUID())->second : (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, meta->GetOriginalFile(), meta->GetUID());
 		}
-		else
-		{
+		else {
 			scene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, path);
 		}
 
@@ -100,7 +94,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();

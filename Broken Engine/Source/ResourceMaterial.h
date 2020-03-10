@@ -2,16 +2,14 @@
 #define __RESOURCE_MATERIAL_H__
 
 #include "Resource.h"
-#include "Globals.h"
 
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
 
-
-class ResourceMaterial : public Resource
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceMaterial : public Resource {
 public:
-	ResourceMaterial(uint UID, std::string source_file);
+	ResourceMaterial(uint UID, const char* source_file);
 	~ResourceMaterial();
 
 	bool LoadInMemory() override;
@@ -29,5 +27,5 @@ private:
 	void OnDelete() override;
 	void Repath() override;
 };
-
+BE_END_NAMESPACE
 #endif //__RESOURCE_MATERIAL_H__

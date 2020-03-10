@@ -22,6 +22,7 @@
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
 #pragma warning( disable : 4530 ) // Warning that exceptions are disabled
 
+#define NOMINMAX
 #include <windows.h>
 #include <string>
 

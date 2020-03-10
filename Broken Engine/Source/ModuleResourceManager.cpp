@@ -5,6 +5,7 @@
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
 
+
 #include "Importers.h"
 #include "Resources.h"
 
@@ -16,6 +17,7 @@
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
 // --- Get Assimp LOGS and print them to console ---
 void MyAssimpCallback(const char* msg, char* userData)
 {
@@ -30,7 +32,7 @@ ModuleResourceManager::~ModuleResourceManager()
 {
 }
 
-bool ModuleResourceManager::Init(json file)
+bool ModuleResourceManager::Init(json& file)
 {
 
 	// --- Stream LOG messages to MyAssimpCallback, that sends them to console ---
@@ -77,6 +79,7 @@ bool ModuleResourceManager::Start()
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
+	currentDirectory = AssetsFolder;
 
 	// --- Manage changes ---
 	HandleFsChanges();
@@ -111,7 +114,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 
 	std::string dir((directory) ? directory : "");
 
-	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+	App->fs->DiscoverFilesAndDirectories(dir.c_str(), files, dirs);
 
 	// --- Import folder ---
 	Importer::ImportData IData(dir.c_str());
@@ -121,8 +124,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 	if (parent)
 		parent->AddChild(folder);
 
-	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
-	{
+	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it) {
 		SearchAssets(folder,(dir + (*it) + "/").c_str(), filters);
 	}
 
@@ -157,7 +159,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 		if (pass_filter)
 		{
 			std::string path = directory;
-			path.append((*it).data());
+			path.append(*it);
 			Importer::ImportData IData2(path.c_str());
 			Resource* resource = ImportAssets(IData2);
 		}
@@ -274,7 +276,7 @@ Resource* ModuleResourceManager::ImportFolder(Importer::ImportData& IData)
 			new_path = IData.path = new_path.append("/").c_str();
 
 			if (IData.dropped)
-				new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+				new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
 
 			IData.path = new_path.c_str();
 			folder = IFolder->Import(IData);
@@ -322,7 +324,7 @@ Resource* ModuleResourceManager::ImportModel(Importer::ImportData& IData)
 			std::string new_path = IData.path;
 
 			if(IData.dropped)
-				new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+				new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
 
 			IData.path = new_path.c_str();
 			ImportModelData MData(IData.path);
@@ -415,14 +417,13 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 	if (IsFileImported(IData.path))
 		texture = ITex->Load(IData.path);
 
-
 	// --- Else call relevant importer ---
 	else
 	{
 		std::string new_path = IData.path;
 
 		if (IData.dropped)
-			new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+			new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
 
 		IData.path = new_path.c_str();
 		texture = ITex->Import(IData);
@@ -457,10 +458,17 @@ Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
 	// --- If the resource is already in library, load from there ---
 	if (IsFileImported(IData.path))
 		script = IScr->Load(IData.path);
-	// --- Else call relevant importer ---
-	else
-		script = IScr->Import(IData);
 
+	// --- Else call relevant importer ---
+	else {
+		std::string new_path = IData.path;
+
+		if (IData.dropped)
+			new_path = DuplicateIntoGivenFolder(IData.path, App->resources->getCurrentDirectory()->GetResourceFile());
+
+		IData.path = new_path.c_str();
+		script = IScr->Import(IData);
+	}
 
 	return script;
 }
@@ -518,7 +526,7 @@ void ModuleResourceManager::HandleFsChanges()
 		// --- Meta's associated file has been deleted, print warning and eliminate lib files ---
 		if (!App->fs->Exists((*meta).second->GetOriginalFile()))
 		{
-			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: '%s' cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
+			ENGINE_CONSOLE_LOG("![Warning]: A meta data file (.meta) exists but its asset: cannot be found. When moving or deleting files outside the engine, please ensure that the corresponding .meta file is moved or deleted along with it.");
 
 			// --- Eliminate all lib files ---
 			Resource* resource = GetResource((*meta).second->GetUID(), false);
@@ -654,13 +662,12 @@ void ModuleResourceManager::RetrieveFilesAndDirectories(const char* directory, s
 
 	std::string dir((directory) ? directory : "");
 
-	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
+	App->fs->DiscoverFilesAndDirectories(dir.c_str(), files, dirs);
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
-		RetrieveFilesAndDirectories((dir + (*it) + "/").c_str(), ret);
+		RetrieveFilesAndDirectories((dir + *it + "/").c_str(), ret);
 	}
-
 	// --- Now iterate all of its engine-supported files ---
 	std::sort(files.begin(), files.end());
 
@@ -739,7 +746,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	return resource;
 }
 
-Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, std::string source_file)
+Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, const char* source_file)
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
@@ -817,7 +824,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 	return resource;
 }
 
-Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID)
+Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType type, const char* source_file, uint UID)
 {
 	Resource* resource = nullptr;
 
@@ -956,16 +963,17 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 
 		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
 		{
+			std::string dirPath = resource->GetOriginalFile();
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
-			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+			directory = App->fs->GetDirectoryFromPath(dirPath);
 
 			if(!directory.empty())
-			directory.pop_back();
+				directory.pop_back();
 
 			original_file = (*it).second->GetOriginalFile();
 
 			if(!original_file.empty())
-			original_file.pop_back();
+				original_file.pop_back();
 
 
 
@@ -1000,7 +1008,8 @@ void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
 		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
 		{
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
-			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+			std::string path = resource->GetOriginalFile();
+			directory = App->fs->GetDirectoryFromPath(path);
 			directory.pop_back();
 			original_file = (*it).second->GetOriginalFile();
 			original_file.pop_back();
@@ -1032,10 +1041,10 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 	return ret;
 }
 
-std::string ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
+std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 {
-	std::string unique_name;
 	uint instance = 0;
+	std::string unique_name;
 
 	switch (type)
 	{
@@ -1109,7 +1118,8 @@ std::string ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 
 	}
 
-	return unique_name;
+	return std::make_shared<std::string>(unique_name);
+
 }
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
@@ -1202,6 +1212,14 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		break;
 	}
 
+}
+
+void ModuleResourceManager::setCurrentDirectory(ResourceFolder* dir) {
+	currentDirectory = dir;
+}
+
+ResourceFolder* ModuleResourceManager::getCurrentDirectory() const {
+	return currentDirectory;
 }
 
 // ----------------------------------------------------
@@ -1338,3 +1356,4 @@ bool ModuleResourceManager::CleanUp()
 
 	return true;
 }
+

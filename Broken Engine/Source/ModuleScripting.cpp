@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "GameObject.h"
-#include "Globals.h"
+#include "Application.h"
 //#include "ModuleScene.h"
 #include "ModuleInput.h"
 #include "ModuleCamera3D.h"
@@ -30,23 +30,21 @@
 #include "ScriptData.h"
 #include "mmgr/mmgr.h"
 
-ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled)
-{
+
+using namespace Broken;
+ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 }
 
-ModuleScripting::~ModuleScripting()
-{
+ModuleScripting::~ModuleScripting() {
 }
 
-bool ModuleScripting::DoHotReloading()
-{
+bool ModuleScripting::DoHotReloading() {
 	bool ret = true;
 
 	if (App->GetAppState() == AppState::EDITOR) // 	Ask Aitor, only return true when no gameplay is happening	App->scene_intro->playing == false
 	{
 		//We do the necessary Hot Reloading
-		for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
-		{
+		for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it) {
 			//Remove the references to the data inside the virtual machine
 			(*it)->my_table_class = 0;
 
@@ -73,10 +71,8 @@ bool ModuleScripting::DoHotReloading()
 
 		bool can_instantiate_scripts = true;
 		//Compile all the scripts of the Engine
-		for (int i = 0; i < files.size(); ++i)
-		{
-			if (JustCompile(files[i]) == false)
-			{
+		for (int i = 0; i < files.size(); ++i) {
+			if (JustCompile(files[i]) == false) {
 				can_instantiate_scripts = false;
 				ret = false;
 				ENGINE_CONSOLE_LOG("[Warning] Fix all compiler Errors!");
@@ -84,8 +80,7 @@ bool ModuleScripting::DoHotReloading()
 			}
 		}
 
-		if (can_instantiate_scripts == true)
-		{
+		if (can_instantiate_scripts == true) {
 			//If everything compiled just fine, give the recompiled instances the new version of the script
 			for (std::vector<ScriptInstance*>::iterator it = recompiled_instances.begin(); it != recompiled_instances.end(); ++it)
 				CompileScriptTableClass((*it));
@@ -98,8 +93,7 @@ bool ModuleScripting::DoHotReloading()
 
 		hot_reloading_waiting = false;
 	}
-	else
-	{
+	else {
 		hot_reloading_waiting = true;
 	}
 
@@ -110,8 +104,7 @@ bool ModuleScripting::DoHotReloading()
 }
 
 //This function just compiles a script and checks if it compiled or it prompts the error to console
-bool ModuleScripting::JustCompile(std::string absolute_path)
-{
+bool ModuleScripting::JustCompile(std::string absolute_path) {
 	bool ret = false;
 
 	//MYTODO: D�dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
@@ -142,14 +135,12 @@ bool ModuleScripting::JustCompile(std::string absolute_path)
 	//std::string absolute_path = App->fs->GetBasePath() + relative_path;
 	int compiled = luaL_dofile(L, absolute_path.c_str());
 
-	if (compiled == LUA_OK)
-	{
+	if (compiled == LUA_OK) {
 		//We don't need to do nothing here, LOG something at most
 		ENGINE_CONSOLE_LOG("Compiled %s successfully!", absolute_path.c_str());
 		ret = true;
 	}
-	else
-	{
+	else {
 		std::string error = lua_tostring(L, -1);
 		ENGINE_CONSOLE_LOG("%s", error.data());
 		cannot_start = true;
@@ -160,7 +151,7 @@ bool ModuleScripting::JustCompile(std::string absolute_path)
 
 void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 {
-	//MYTODO: D�dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
+	//MYTODO: Didac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
@@ -244,21 +235,18 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 
 	Scripting Scripting;
 
-	if (L != nullptr)
-	{
+	if (L != nullptr) {
 		//Compile the file and run it, we're gonna optimize this to just compile the function the script contains to library later.
 		int compiled = luaL_dofile(L, script->my_component->script->absolute_path.c_str());
 
-		if (compiled == LUA_OK)
-		{
+		if (compiled == LUA_OK) {
 			//Get the function to instantiate the lua table (used as a class as known in C++)
 			std::string get_function = "GetTable" + script->my_component->script->script_name;
 			//get_function = App->SubtractString(get_function,".",false,true,false); //Line of reference delete if code compiles
-			App->fs->SplitFilePath(get_function.data(),nullptr, &get_function,nullptr);
+			App->fs->SplitFilePath(get_function.data(), nullptr, &get_function, nullptr);
 			luabridge::LuaRef ScriptGetTable = luabridge::getGlobal(L, get_function.c_str());
 
-			if (!ScriptGetTable.isNil())
-			{
+			if (!ScriptGetTable.isNil()) {
 				luabridge::LuaRef table(ScriptGetTable());
 
 				script->my_table_class = table;
@@ -266,8 +254,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 			}
 
 		}
-		else
-		{
+		else {
 			std::string error = lua_tostring(L, -1);
 			ENGINE_CONSOLE_LOG("%s", error.data());
 			cannot_start = true;
@@ -275,8 +262,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 	}
 }
 
-void ModuleScripting::SendScriptToModule(ComponentScript * script_component)
-{
+void ModuleScripting::SendScriptToModule(ComponentScript* script_component) {
 	ScriptInstance* s_instance = new ScriptInstance;
 	s_instance->my_component = script_component;
 
@@ -285,33 +271,9 @@ void ModuleScripting::SendScriptToModule(ComponentScript * script_component)
 	CompileScriptTableClass(s_instance); //Compile so we can give the instance its table/class reference
 }
 
-ScriptFile* ModuleScripting::AddScriptFile(ComponentScript* script_component, std::string full_file_path)
-{
-	ScriptFile* ret = nullptr;
-	std::string filename;
-	App->fs->SplitFilePath(full_file_path.data(),nullptr,&filename,nullptr);
-	for (std::vector<ScriptFile*>::iterator it = script_files.begin(); it != script_files.end(); ++it)
-	{
-		//If this file is already in our list of files
-		Resource* res = (Resource*)script_component->script;
-		if ((*it)->resource_uid == res->GetUID())
-		{
-			return (*it);
-		}
-	}
-
-	ScriptFile* new_file = new ScriptFile;
-	script_files.push_back(new_file);
-	ret = new_file;
-
-	return ret;
-}
-
 //FILL the ScriptVars of the component associated with this script
-void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance * script)
-{
-	for (luabridge::Iterator iterator(script->my_table_class); !iterator.isNil(); ++iterator)
-	{
+void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
+	for (luabridge::Iterator iterator(script->my_table_class); !iterator.isNil(); ++iterator) {
 		//Declare necessary vars for intialization & get variable name
 		VarType variable_type = VarType::NONE;
 		std::string str = (*iterator).first.tostring();
@@ -320,27 +282,23 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance * script)
 
 		// first == .key () and second == .value() in LUA
 		//Fill values
-		if ((*iterator).second.isNumber())
-		{
+		if ((*iterator).second.isNumber()) {
 			variable_type = VarType::DOUBLE;
 			var_value = (*iterator).second.tostring();
 			double val = std::stod(var_value);
 			variable = ScriptVar(val);
 		}
-		else if ((*iterator).second.isString())
-		{
+		else if ((*iterator).second.isString()) {
 			variable_type = VarType::STRING;
 			var_value = (*iterator).second.tostring();
 			variable = ScriptVar(var_value.data());
 		}
-		else if ((*iterator).second.isBool())
-		{
+		else if ((*iterator).second.isBool()) {
 			variable_type = VarType::BOOLEAN;
 			var_value = (*iterator).second.tostring();
 			bool val = false;
 			std::string tru = "true";
-			if (!var_value.compare(tru))
-			{
+			if (!var_value.compare(tru)) {
 				val = true;
 			}
 			variable = ScriptVar(val);
@@ -350,14 +308,12 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance * script)
 
 		//ASSIGN name to variable and push it if compatible
 		variable.name = str;
-		if (variable_type != VarType::NONE)
-		{
+		if (variable_type != VarType::NONE) {
 			int variable_index = script->my_component->ScriptVarAlreadyInComponent(variable.name);
 			if (variable_index > -1)  //If the var was already on the component (hot reloading cases)
 			{
 				//Check that the variable is still of the same type before changing any value
-				if (variable.type == script->my_component->script_variables[variable_index].type)
-				{
+				if (variable.type == script->my_component->script_variables[variable_index].type) {
 					script->my_component->script_variables[variable_index].editor_value = variable.editor_value;
 				}
 				else   // The variable changed of type
@@ -365,20 +321,16 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance * script)
 					script->my_component->script_variables[variable_index] = variable;
 				}
 			}
-			else
-			{
+			else {
 				script->my_component->script_variables.push_back(variable);
 			}
 		}
 	}
 }
 
-void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript * script_component)
-{
-	for (int i = 0; i < class_instances.size(); ++i)
-	{
-		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component)
-		{
+void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript* script_component) {
+	for (int i = 0; i < class_instances.size(); ++i) {
+		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component) {
 			//delete class_instances[i];
 			class_instances.erase(class_instances.begin() + i);
 		}
@@ -419,8 +371,7 @@ bool ModuleScripting::CheckEverythingCompiles()
 }
 
 
-bool ModuleScripting::Init(json file)
-{
+bool ModuleScripting::Init(json& file) {
 	//Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);
@@ -428,22 +379,19 @@ bool ModuleScripting::Init(json file)
 	return true;
 }
 
-bool ModuleScripting::Start()
-{
+bool ModuleScripting::Start() {
 	return true;
 }
 
-bool ModuleScripting::CleanUp()
-{
+bool ModuleScripting::CleanUp() {
 	CleanUpInstances();
 
 	return true;
 }
 
-update_status ModuleScripting::Update(float realDT)
-{
+update_status ModuleScripting::Update(float realDT) {
 	//If a script was changed during runtime, hot reload
-	if(App->GetAppState() == AppState::EDITOR && hot_reloading_waiting) // Ask Aitor if this is correct (condition should return true only when no gameplay is being played)
+	if (App->GetAppState() == AppState::EDITOR && hot_reloading_waiting) // Ask Aitor if this is correct (condition should return true only when no gameplay is being played)
 		DoHotReloading();
 
 	if(App->GetAppState() != AppState::PLAY)
@@ -465,7 +413,7 @@ update_status ModuleScripting::Update(float realDT)
 
 
 	//TEST FUNCTION DEFINETIVELY SHOULD NOT BE HERE
-	//MYTODO: D�dac PLEAse didac look into this why did you do this?
+	//MYTODO: Didac PLEAse didac look into this why did you do this?
 	/*if (App->scene_intro->selected_go != nullptr && App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 		GameObject* returned = GOFunctions::InstantiateGameObject(App->scene_intro->selected_go);*/
 	return UPDATE_CONTINUE;
@@ -473,13 +421,10 @@ update_status ModuleScripting::Update(float realDT)
 
 update_status ModuleScripting::GameUpdate(float gameDT)
 {
-	Scripting Scripting;
-
-	if (cannot_start == false &&  App->GetAppState() ==AppState::PLAY)
+	if (cannot_start == false && App->GetAppState() == AppState::PLAY)
 	{
 		const uint origSize = class_instances.size();	// This avoids messing the iteration with newly Instantiated scripts
-		for (uint i = 0; i < origSize; ++i)
-		{
+		for (uint i = 0; i < origSize; ++i) {
 			current_script = class_instances[i];
 			if (current_script->script_is_null == false)
 			{
@@ -487,7 +432,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 					if ((*it).changed_value) {
 						switch ((*it).type) {
 						case VarType::DOUBLE:
-							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double_number;
+							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double;
 							break;
 						case VarType::STRING:
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_string;
@@ -534,20 +479,19 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 }
 
 
-void ModuleScripting::CleanUpInstances()
-{
-	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
-	{
-		if((*it) != nullptr)
-		delete (*it);
+void ModuleScripting::CleanUpInstances() {
+	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it) {
+		if ((*it) != nullptr)
+			delete (*it);
 	}
 
 	class_instances.clear();
 }
 
 
-void ModuleScripting::Stop()
-{
+bool ModuleScripting::Stop() {
 	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
 		(*it)->awoken = (*it)->started = false;
+
+	return true;
 }

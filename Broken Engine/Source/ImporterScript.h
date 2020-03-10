@@ -3,10 +3,10 @@
 
 #include "Importer.h"
 
+BE_BEGIN_NAMESPACE
 class ResourceScript;
 
-class ImporterScript : public Importer
-{
+class BROKEN_API ImporterScript : public Importer {
 public:
 	ImporterScript();
 	~ImporterScript();
@@ -18,6 +18,5 @@ public:
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Script; };
 };
-
-
+BE_END_NAMESPACE
 #endif // !__IMPORTERSCRIPT_H__

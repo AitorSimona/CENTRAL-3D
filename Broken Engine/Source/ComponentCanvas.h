@@ -1,10 +1,15 @@
+#ifndef __CANVAS_H__
+#define __CANVAS_H__
 #pragma once
+
 #include "Component.h"
 #include "Color.h"
 #include "Math.h"
 #include <vector>
 
-class ComponentCanvas : public Component
+BE_BEGIN_NAMESPACE
+
+class BROKEN_API ComponentCanvas : public Component
 {
 public:
 	enum State
@@ -66,4 +71,8 @@ private:
 	//ResourceTexture* texture = nullptr;
 	std::vector<Component*> elements;
 };
+
+BE_END_NAMESPACE
+
+#endif
 

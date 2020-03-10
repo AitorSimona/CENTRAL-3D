@@ -7,9 +7,12 @@
 #include "ImporterAnimation.h"
 
 #include "mmgr/mmgr.h"
+#include "Math.h"
 
 
-ResourceAnimation::ResourceAnimation(uint UID, std::string source_file) : Resource(Resource::ResourceType::ANIMATION, UID, source_file)
+using namespace Broken;
+
+ResourceAnimation::ResourceAnimation(uint UID, const char* source_file) : Resource(Resource::ResourceType::ANIMATION, UID, source_file)
 {
 	extension = ".anim";
 	resource_file = ANIMATIONS_FOLDER + std::to_string(UID) + extension;

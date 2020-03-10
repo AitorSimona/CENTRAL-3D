@@ -10,7 +10,6 @@
 #include "Wwise/AK/Tools/Common/AkPlatformFuncs.h"
 
 // Input libraries
-#define _DEBUG
 #ifndef _DEBUG  
 #define AK_OPTIMIZED
 #pragma comment( lib, "Wwise/Release(StaticCRT)/lib/AkSoundEngine.lib")

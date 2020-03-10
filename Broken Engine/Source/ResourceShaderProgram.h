@@ -3,10 +3,10 @@
 
 #include "Resource.h"
 
-class ResourceShaderProgram : public Resource
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceShaderProgram : public Resource {
 public:
-	ResourceShaderProgram(uint UID, std::string source_file);
+	ResourceShaderProgram(uint UID, const char* source_file);
 	~ResourceShaderProgram();
 
 	bool LoadInMemory() override;
@@ -16,5 +16,5 @@ private:
 	void OnOverwrite() override;
 	void OnDelete() override;
 };
-
+BE_END_NAMESPACE
 #endif //__RESOURCE_SHADER_PROGRAM_H__

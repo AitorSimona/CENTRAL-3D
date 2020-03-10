@@ -8,9 +8,8 @@
 
 #include "Imgui/imgui.h"
 
-
-ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Camera)
-{
+using namespace Broken;
+ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Camera) {
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetPos(float3::zero);
 	frustum.SetFront(float3::unitZ);
@@ -21,63 +20,52 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 	SetAspectRatio(1.0f);
 }
 
-ComponentCamera::~ComponentCamera()
-{
+ComponentCamera::~ComponentCamera() {
 }
 
-float ComponentCamera::GetNearPlane() const
-{
+float ComponentCamera::GetNearPlane() const {
 	return frustum.NearPlaneDistance();
 }
 
-float ComponentCamera::GetFarPlane() const
-{
+float ComponentCamera::GetFarPlane() const {
 	return frustum.FarPlaneDistance();
 }
 
-float ComponentCamera::GetFOV() const
-{
+float ComponentCamera::GetFOV() const {
 	return frustum.VerticalFov() * RADTODEG;
 }
 
-float ComponentCamera::GetAspectRatio() const
-{
+float ComponentCamera::GetAspectRatio() const {
 	return frustum.AspectRatio();
 }
 
-float4x4 ComponentCamera::GetOpenGLViewMatrix()
-{
+float4x4 ComponentCamera::GetOpenGLViewMatrix() {
 	math::float4x4 matrix = frustum.ViewMatrix();
 	return matrix.Transposed();
 }
 
-float4x4 ComponentCamera::GetOpenGLProjectionMatrix()
-{
+float4x4 ComponentCamera::GetOpenGLProjectionMatrix() {
 	math::float4x4 matrix = frustum.ProjectionMatrix();
 	return matrix.Transposed();
 }
 
-void ComponentCamera::SetNearPlane(float distance)
-{
+void ComponentCamera::SetNearPlane(float distance) {
 	if (distance > 0 && distance < frustum.FarPlaneDistance())
 		frustum.SetViewPlaneDistances(distance, frustum.FarPlaneDistance());
 }
 
-void ComponentCamera::SetFarPlane(float distance)
-{
+void ComponentCamera::SetFarPlane(float distance) {
 	if (distance > 0 && distance > frustum.NearPlaneDistance())
 		frustum.SetViewPlaneDistances(frustum.NearPlaneDistance(), distance);
 
 }
 
-void ComponentCamera::SetFOV(float fov)
-{
+void ComponentCamera::SetFOV(float fov) {
 	float aspect_ratio = frustum.AspectRatio();
 	frustum.SetVerticalFovAndAspectRatio(fov * DEGTORAD, frustum.AspectRatio());
 }
 
-void ComponentCamera::SetAspectRatio(float ar)
-{
+void ComponentCamera::SetAspectRatio(float ar) {
 	// When resizing window, adjusting aspect ratio to less than 1.0f and rotating editor camera made mathgeo crash
 	if (ar < 1.0f)
 		ar = 1.0f;
@@ -86,8 +74,7 @@ void ComponentCamera::SetAspectRatio(float ar)
 }
 
 
-void ComponentCamera::Look(const float3 & position)
-{
+void ComponentCamera::Look(const float3& position) {
 	float3 vector = position - frustum.Pos();
 
 	float3x3 matrix = float3x3::LookAt(frustum.Front(), vector.Normalized(), frustum.Up(), float3::unitY);
@@ -96,8 +83,7 @@ void ComponentCamera::Look(const float3 & position)
 	frustum.SetUp(matrix.MulDir(frustum.Up()).Normalized());
 }
 
-void ComponentCamera::OnUpdateTransform(const float4x4 & global)
-{
+void ComponentCamera::OnUpdateTransform(const float4x4& global) {
 	frustum.SetFront(global.WorldZ());
 	frustum.SetUp(global.WorldY());
 
@@ -109,8 +95,7 @@ void ComponentCamera::OnUpdateTransform(const float4x4 & global)
 	frustum.SetPos(position);
 }
 
-bool ComponentCamera::ContainsAABB(const AABB & ref)
-{
+bool ComponentCamera::ContainsAABB(const AABB& ref) {
 	float3 vCorner[8];
 	int iTotalIn = 0;
 	Plane Planes[8];
@@ -132,7 +117,7 @@ bool ComponentCamera::ContainsAABB(const AABB & ref)
 			}
 		}
 		// were all the points outside of plane p?
-		if(iInCount == 0)
+		if (iInCount == 0)
 			return false;
 		// check if they were all on the right side of the plane
 		iTotalIn += iPtIn;
@@ -144,8 +129,7 @@ bool ComponentCamera::ContainsAABB(const AABB & ref)
 	return true;
 }
 
-json ComponentCamera::Save() const
-{
+json ComponentCamera::Save() const {
 	json node;
 
 	node["FOV"] = GetFOV();
@@ -164,10 +148,8 @@ void ComponentCamera::Load(json& node)
 	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
 }
 
-void ComponentCamera::CreateInspectorNode()
-{
-	if (ImGui::TreeNode("Camera"))
-	{
+void ComponentCamera::CreateInspectorNode() {
+	if (ImGui::TreeNode("Camera")) {
 		if (ImGui::Checkbox("Active Camera", &active_camera))
 			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
 
@@ -200,7 +182,7 @@ void ComponentCamera::CreateInspectorNode()
 		ImGui::DragFloat("##NearPlane", &nearPlane, 0.005f, 0.01f, farPlane - 0.01f);
 
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);		
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 		ImGui::DragFloat("##FarPlane", &farPlane, 0.005f, nearPlane + 0.01f, 10000.0f);
 
 
@@ -210,8 +192,7 @@ void ComponentCamera::CreateInspectorNode()
 			SetFarPlane(farPlane);
 
 		ImGui::SameLine();
-		if (ImGui::Button("DefPlanes", { 75.0f, 15.0f }))
-		{
+		if (ImGui::Button("DefPlanes", { 75.0f, 15.0f })) {
 			App->camera->m_CustomDefaultCameraValues.y = nearPlane;
 			App->camera->m_CustomDefaultCameraValues.z = farPlane;
 		}
@@ -222,7 +203,7 @@ void ComponentCamera::CreateInspectorNode()
 		ImGui::Text("Aspect Ratio");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);		
+		ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);
 
 		if (aspectRatio != GetAspectRatio())
 			SetAspectRatio(aspectRatio);
@@ -244,8 +225,7 @@ void ComponentCamera::CreateInspectorNode()
 }
 
 
-void ComponentCamera::SetCameraValues(float4 val)
-{
+void ComponentCamera::SetCameraValues(float4 val) {
 	SetAspectRatio(val.w);
 	SetFOV(val.x);
 	SetNearPlane(val.y);

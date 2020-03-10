@@ -1,24 +1,28 @@
-#pragma once
+#ifndef __BE_MODULECAMERA3D_H__
+#define __BE_MODULECAMERA3D_H__
+
 #include "Module.h"
-#include "Globals.h"
 #include "Math.h"
+#include "BrokenCore.h"
+
+
+BE_BEGIN_NAMESPACE
 
 class GameObject;
 class ComponentCamera;
 class ComponentAudioListener;
 
-class ModuleCamera3D : public Module
-{
+class BROKEN_API ModuleCamera3D : public Module {
 public:
 
 	ModuleCamera3D(bool start_enabled = true);
 	~ModuleCamera3D();
 
-	bool Init(json config) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status Update(float dt) override;
 	void UpdateCamera();
-	
+
 	bool CleanUp() override;
 
 	void LoadStatus(const json& file) override;
@@ -61,3 +65,6 @@ private:
 
 	float4 m_CameraDefaultValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
 };
+
+BE_END_NAMESPACE
+#endif

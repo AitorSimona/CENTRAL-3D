@@ -2,14 +2,14 @@
 #define __RESOURCE_BONE_H__
 
 #include "Resource.h"
-#include "Globals.h"
 #include "Math.h"
 
-class ResourceBone : public Resource
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceBone : public Resource
 {
 public:
 
-	ResourceBone(uint UID, std::string source_file);
+	ResourceBone(uint UID, const char* source_file);
 	~ResourceBone();
 
 	bool LoadInMemory() override;
@@ -31,4 +31,5 @@ private:
 	void Repath() override;
 };
 
+BE_END_NAMESPACE
 #endif //__RESOURCE_BONE_H__

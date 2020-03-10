@@ -1,12 +1,8 @@
 #include "PanelAbout.h"
-#include "Application.h"
-#include "ModuleGui.h"
+#include "EngineApplication.h"
 #include "Imgui/imgui.h"
 
-#include "mmgr/mmgr.h"
-
-
-PanelAbout::PanelAbout(char * name) : Panel(name)
+PanelAbout::PanelAbout(char * name) : Broken::Panel(name)
 {
 }
 
@@ -16,6 +12,8 @@ PanelAbout::~PanelAbout()
 
 bool PanelAbout::Draw() 
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
 
@@ -23,15 +21,15 @@ bool PanelAbout::Draw()
 	{
 		// --- Introduction ---
 		ImGui::Separator();
-		ImGui::Text(App->GetAppName());
+		ImGui::Text(EngineApp->GetAppName());
 		ImGui::SameLine();
 		ImGui::Text("Version 0.0");
 		ImGui::SameLine();
-		if (ImGui::Button("GitHub")) { App->gui->RequestBrowser("https://github.com/Broken-Gem-Studio/Broken-Engine"); }
+		if (ImGui::Button("GitHub")) { EngineApp->gui->RequestBrowser("https://github.com/Broken-Gem-Studio/Broken-Engine"); }
 		ImGui::Text("A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 3 subject");
 		ImGui::Text("By: ");
 		ImGui::SameLine();
-		if (ImGui::Button("Broken Gem Studio")) { App->gui->RequestBrowser("https://github.com/Broken-Gem-Studio"); }
+		if (ImGui::Button("Broken Gem Studio")) { EngineApp->gui->RequestBrowser("https://github.com/Broken-Gem-Studio"); }
 
 		ImGui::Spacing();
 		ImGui::Separator();
@@ -53,9 +51,11 @@ bool PanelAbout::Draw()
 		ImGui::TextWrapped("- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.");
 		ImGui::TextWrapped("- Neither the name of NVIDIA CORPORATION nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.");
 		ImGui::TextWrapped("THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.");
+		
 	}
-
 	ImGui::End();
+
+
 
 	return true;
 }

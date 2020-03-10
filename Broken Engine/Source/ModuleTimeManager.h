@@ -4,11 +4,11 @@
 #include "Module.h"
 #include "Timer.h"
 #include "PerfTimer.h"
+#include "BrokenCore.h"
 
 
-
-class ModuleTimeManager : public Module
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ModuleTimeManager : public Module {
 public:
 
 	ModuleTimeManager(bool start_enabled = true);
@@ -46,5 +46,5 @@ private:
 	uint				capped_ms;
 	uint				last_frame_ms;
 };
-
+BE_END_NAMESPACE
 #endif

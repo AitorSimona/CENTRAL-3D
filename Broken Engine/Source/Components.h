@@ -8,5 +8,13 @@
 #include "ComponentAnimation.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCamera.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
+#include "ComponentCollider.h"
+#include "ComponentDynamicRigidBody.h"
+#include "ComponentParticleEmitter.h"
+#include "ComponentCanvas.h"
+#include "ComponentImage.h"
+#include "ComponentText.h"
 
 #endif // __COMPONENTS_H__

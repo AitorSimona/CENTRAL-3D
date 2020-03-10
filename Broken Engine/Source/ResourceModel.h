@@ -4,12 +4,10 @@
 #include "Resource.h"
 #include <vector>
 
-class Resource;
-
-class ResourceModel : public Resource
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceModel : public Resource {
 public:
-	ResourceModel(uint UID, std::string source_file);
+	ResourceModel(uint UID, const char* source_file);
 	~ResourceModel();
 
 	bool LoadInMemory() override;
@@ -26,5 +24,5 @@ private:
 	void OnOverwrite() override;
 	void OnDelete() override;
 };
-
+BE_END_NAMESPACE
 #endif //__RESOURCE_MODEL_H__

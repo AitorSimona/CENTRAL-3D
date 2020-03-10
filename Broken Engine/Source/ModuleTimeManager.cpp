@@ -7,10 +7,11 @@
 
 #include "ResourceScene.h"
 
+
 #include "mmgr/mmgr.h"
 
-ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled)
-{
+using namespace Broken;
+ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing Time Manager");
 
 	name = "TimeManager";
@@ -26,8 +27,7 @@ ModuleTimeManager::ModuleTimeManager(bool start_enabled) : Module(start_enabled)
 
 ModuleTimeManager::~ModuleTimeManager() {}
 
-void ModuleTimeManager::PrepareUpdate()
-{
+void ModuleTimeManager::PrepareUpdate() {
 	game_dt = realtime_dt = (float)Gametime_clock.Read() / 1000.0f;
 	Gametime_clock.Start();
 
@@ -53,16 +53,16 @@ void ModuleTimeManager::PrepareUpdate()
 			gametime_passed += game_dt;
 			break;
 
-		case AppState::TO_PAUSE:
-			App->GetAppState() = AppState::PAUSE;
-			ENGINE_CONSOLE_LOG("APP STATE PAUSE");
+	case AppState::TO_PAUSE:
+		App->GetAppState() = AppState::PAUSE;
+		ENGINE_CONSOLE_LOG("APP STATE PAUSE");
 
-			break;
+		break;
 
-		case AppState::PAUSE:
-			time -= realtime_dt;
-			game_dt = 0.0f;
-			break;
+	case AppState::PAUSE:
+		time -= realtime_dt;
+		game_dt = 0.0f;
+		break;
 
 		case AppState::TO_EDITOR:
 			App->physics->DeleteActors();
@@ -95,14 +95,12 @@ void ModuleTimeManager::PrepareUpdate()
 	}
 }
 
-void ModuleTimeManager::FinishUpdate()
-{
+void ModuleTimeManager::FinishUpdate() {
 	// --- Recap on framecount and fps ---
 	++frame_count;
 	++fps_counter;
 
-	if (fps_timer.Read() >= 1000)
-	{
+	if (fps_timer.Read() >= 1000) {
 		last_fps = fps_counter;
 		fps_counter = 0;
 		fps_timer.Start();
@@ -118,16 +116,14 @@ void ModuleTimeManager::FinishUpdate()
 	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
 }
 
-uint ModuleTimeManager::GetMaxFramerate() const
-{
+uint ModuleTimeManager::GetMaxFramerate() const {
 	if (capped_ms > 0)
 		return (uint)((1.0f / (float)capped_ms) * 1000.0f);
 	else
 		return 0;
 }
 
-float ModuleTimeManager::GetTimeScale() const
-{
+float ModuleTimeManager::GetTimeScale() const {
 	return Time_scale;
 }
 
@@ -144,17 +140,14 @@ void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)
 		capped_ms = 0;
 }
 
-void ModuleTimeManager::SetTimeScale(float scale)
-{
+void ModuleTimeManager::SetTimeScale(float scale) {
 	Time_scale = scale;
 }
 
-float ModuleTimeManager::GetGameDt() const
-{
+float ModuleTimeManager::GetGameDt() const {
 	return game_dt;
 }
 
-float ModuleTimeManager::GetRealTimeDt() const
-{
+float ModuleTimeManager::GetRealTimeDt() const {
 	return realtime_dt;
 }

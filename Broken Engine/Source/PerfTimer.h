@@ -2,9 +2,10 @@
 #define __PERF_TIMER_H__
 
 #include "SDL/include/SDL_timer.h"
+#include "BrokenCore.h"
 
-class PerfTimer
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API PerfTimer {
 public:
 
 	PerfTimer();
@@ -19,5 +20,5 @@ private:
 	Uint64 started_at;
 	static Uint64 frequency;
 };
-
+BE_END_NAMESPACE
 #endif

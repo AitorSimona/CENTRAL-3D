@@ -10,7 +10,8 @@
 
 #define BANKNAME_INIT "Assets/Sounds/Init.bnk"
 
-using namespace AK;
+//using namespace AK;
+using namespace Broken;
 
 CAkDefaultIOHookBlocking g_lowLevelIO;
 
@@ -18,7 +19,7 @@ ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled) {}
 
 ModuleAudio::~ModuleAudio() {}
 
-bool ModuleAudio::Init(json file)
+bool ModuleAudio::Init(json& file)
 {
 	InitWwise();
 
@@ -34,7 +35,7 @@ bool ModuleAudio::Start()
 
 update_status ModuleAudio::PostUpdate(float dt)
 {
-	SoundEngine::RenderAudio();
+	AK::SoundEngine::RenderAudio();
 
 	return UPDATE_CONTINUE;
 }
@@ -55,31 +56,31 @@ void ModuleAudio::InitWwise()
 
 	// Streaming.
 	AkStreamMgrSettings stmSettings;
-	StreamMgr::GetDefaultSettings(stmSettings);
+	AK::StreamMgr::GetDefaultSettings(stmSettings);
 
 	// Device Settings
 	AkDeviceSettings deviceSettings;
-	StreamMgr::GetDefaultDeviceSettings(deviceSettings);
+	AK::StreamMgr::GetDefaultDeviceSettings(deviceSettings);
 
 	// Sound Engine
 	AkInitSettings l_InitSettings;
 	AkPlatformInitSettings l_platInitSetings;
-	SoundEngine::GetDefaultInitSettings(l_InitSettings);
-	SoundEngine::GetDefaultPlatformInitSettings(l_platInitSetings);
+	AK::SoundEngine::GetDefaultInitSettings(l_InitSettings);
+	AK::SoundEngine::GetDefaultPlatformInitSettings(l_platInitSetings);
 
 	// Music Engine
 	AkMusicSettings musicInit;
-	MusicEngine::GetDefaultInitSettings(musicInit);
+	AK::MusicEngine::GetDefaultInitSettings(musicInit);
 
 	// Create and initialise an instance of our memory manager.
-	if (MemoryMgr::Init(&memSettings) != AK_Success)
+	if (AK::MemoryMgr::Init(&memSettings) != AK_Success)
 	{
 		assert(!"Could not create the memory manager.");
 		return;
 	}
 
 	// Create and initialise an instance of the default stream manager.
-	if (!StreamMgr::Create(stmSettings))
+	if (!AK::StreamMgr::Create(stmSettings))
 	{
 		assert(!"Could not create the Stream Manager");
 		return;
@@ -93,14 +94,14 @@ void ModuleAudio::InitWwise()
 	}
 
 	// Initialize sound engine.
-	if (SoundEngine::Init(&l_InitSettings, &l_platInitSetings) != AK_Success)
+	if (AK::SoundEngine::Init(&l_InitSettings, &l_platInitSetings) != AK_Success)
 	{
 		assert(!"Cannot initialize sound engine");
 		return;
 	}
 
 	// Initialize music engine.
-	if (MusicEngine::Init(&musicInit) != AK_Success)
+	if (AK::MusicEngine::Init(&musicInit) != AK_Success)
 	{
 		assert(!"Cannot initialize music engine");
 		return;
@@ -109,8 +110,8 @@ void ModuleAudio::InitWwise()
 #ifndef AK_OPTIMIZED
 	// Initialize communication.
 	AkCommSettings settingsComm;
-	Comm::GetDefaultInitSettings(settingsComm);
-	if (Comm::Init(settingsComm) != AK_Success)
+	AK::Comm::GetDefaultInitSettings(settingsComm);
+	if (AK::Comm::Init(settingsComm) != AK_Success)
 	{
 		assert(!"Cannot initialize music communication");
 		return;
@@ -119,8 +120,8 @@ void ModuleAudio::InitWwise()
 
 	AkBankID bankID;
 	AKRESULT retValue;
-	retValue = SoundEngine::LoadBank(BANKNAME_INIT, AK_DEFAULT_POOL_ID, bankID);
-	assert(retValue == AK_Success);
+	retValue = AK::SoundEngine::LoadBank(BANKNAME_INIT, AK_DEFAULT_POOL_ID, bankID);
+	//assert(retValue == AK_Success);
 }
 
 void ModuleAudio::TerminateWwise()
@@ -129,22 +130,22 @@ void ModuleAudio::TerminateWwise()
 
 #ifndef AK_OPTIMIZED
 	// Terminate Communication Services
-	Comm::Term();
+	AK::Comm::Term();
 #endif // AK_OPTIMIZED
 
 	// Terminate Music Engine
-	MusicEngine::Term();
+	AK::MusicEngine::Term();
 
 	// Terminate Sound Engine
-	SoundEngine::Term();
+	AK::SoundEngine::Term();
 
 	// Terminate Streaming Manager
 	g_lowLevelIO.Term();
-	if (IAkStreamMgr::Get())
-		IAkStreamMgr::Get()->Destroy();
+	if (AK::IAkStreamMgr::Get())
+		AK::IAkStreamMgr::Get()->Destroy();
 
 	// Terminate Memory Manager
-	MemoryMgr::Term();
+	AK::MemoryMgr::Term();
 }
 
 void ModuleAudio::LoadSoundBank(const char* path)
@@ -156,7 +157,7 @@ void ModuleAudio::LoadSoundBank(const char* path)
 	AkBankID bankID;
 
 	if(App->fs->Exists(fullPath.c_str()))
-	SoundEngine::LoadBank(fullPath.c_str(), AK_DEFAULT_POOL_ID, bankID);
+	AK::SoundEngine::LoadBank(fullPath.c_str(), AK_DEFAULT_POOL_ID, bankID);
 }
 
 void ModuleAudio::Tests(AkGameObjectID id)
@@ -171,7 +172,7 @@ void ModuleAudio::Tests(AkGameObjectID id)
 	reverb.auxBusID = AK::AUX_BUSSES::REVERB;
 	reverb.fControlValue = 1.0f;
 
-	SoundEngine::SetGameObjectAuxSendValues(id, NULL, 0);
+	AK::SoundEngine::SetGameObjectAuxSendValues(id, NULL, 0);
 }
 
 WwiseGameObject::WwiseGameObject(uint64 id, const char* name)
@@ -179,12 +180,12 @@ WwiseGameObject::WwiseGameObject(uint64 id, const char* name)
 	this->id = id;
 	this->name = name;
 
-	SoundEngine::RegisterGameObj(this->id, this->name);
+	AK::SoundEngine::RegisterGameObj(this->id, this->name);
 }
 
 WwiseGameObject::~WwiseGameObject()
 {
-	SoundEngine::UnregisterGameObj(id);
+	AK::SoundEngine::UnregisterGameObj(id);
 }
 
 void WwiseGameObject::SetPosition(float posX, float posY, float posZ, float frontX, float frontY, float frontZ, float topX, float topY, float topZ)
@@ -203,32 +204,32 @@ void WwiseGameObject::SetPosition(float posX, float posY, float posZ, float fron
 
 	AkSoundPosition soundPosition;
 	soundPosition.Set(position, orientationFront, orientationTop);
-	SoundEngine::SetPosition(id, soundPosition);
+	AK::SoundEngine::SetPosition(id, soundPosition);
 }
 
 void WwiseGameObject::PlayEvent(uint id)
 {
-	SoundEngine::PostEvent(id, this->id);
+	AK::SoundEngine::PostEvent(id, this->id);
 }
 
 void WwiseGameObject::PauseEvent(uint id)
 {
-	SoundEngine::ExecuteActionOnEvent(id, AK::SoundEngine::AkActionOnEventType::AkActionOnEventType_Pause, this->id);
+	AK::SoundEngine::ExecuteActionOnEvent(id, AK::SoundEngine::AkActionOnEventType::AkActionOnEventType_Pause, this->id);
 }
 
 void WwiseGameObject::ResumeEvent(uint id)
 {
-	SoundEngine::ExecuteActionOnEvent(id, AK::SoundEngine::AkActionOnEventType::AkActionOnEventType_Resume, this->id);
+	AK::SoundEngine::ExecuteActionOnEvent(id, AK::SoundEngine::AkActionOnEventType::AkActionOnEventType_Resume, this->id);
 }
 
 void WwiseGameObject::StopEvent(uint id)
 {
-	SoundEngine::ExecuteActionOnEvent(id, AK::SoundEngine::AkActionOnEventType::AkActionOnEventType_Stop, this->id);
+	AK::SoundEngine::ExecuteActionOnEvent(id, AK::SoundEngine::AkActionOnEventType::AkActionOnEventType_Stop, this->id);
 }
 
 void WwiseGameObject::SetVolume(uint id, float volume)
 {
-	SoundEngine::SetGameObjectOutputBusVolume(this->id, AK_INVALID_GAME_OBJECT, volume);
+	AK::SoundEngine::SetGameObjectOutputBusVolume(this->id, AK_INVALID_GAME_OBJECT, volume);
 	this->volume = volume;
 }
 
@@ -245,7 +246,7 @@ WwiseGameObject* WwiseGameObject::CreateAudioListener(uint id, const char* name,
 	WwiseGameObject* go = new WwiseGameObject(id, name);
 
 	AkGameObjectID listenerID = go->GetID();
-	SoundEngine::SetDefaultListeners(&listenerID, 1);
+	AK::SoundEngine::SetDefaultListeners(&listenerID, 1);
 	go->SetPosition(position.x, position.y, position.z);
 	App->audio->currentListenerID = listenerID;
 	return go;
@@ -255,11 +256,11 @@ void WwiseGameObject::SetAuxSends()
 {
 	AkAuxSendValue reverb[1];
 	reverb[0].listenerID = AK_INVALID_GAME_OBJECT;
-	reverb[0].auxBusID = AUX_BUSSES::REVERB;
+	reverb[0].auxBusID = AK::AUX_BUSSES::REVERB;
 	reverb[0].fControlValue = 1.0f;
 
 	AKRESULT ret;
-	ret = SoundEngine::SetGameObjectAuxSendValues(id, reverb, 1);
+	ret = AK::SoundEngine::SetGameObjectAuxSendValues(id, reverb, 1);
 	assert(ret == AK_Success);
 }
 

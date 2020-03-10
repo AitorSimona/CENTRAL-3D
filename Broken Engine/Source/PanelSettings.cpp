@@ -1,14 +1,7 @@
 #include <vector>
 #include "PanelSettings.h"
-#include "Application.h"
+#include "EngineApplication.h"
 #include "ModuleGui.h"
-#include "ModuleHardware.h"
-#include "ModuleWindow.h"
-#include "ModuleInput.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleTimeManager.h"
-#include "ModuleCamera3D.h"
-#include "ComponentCamera.h"
 
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
@@ -17,8 +10,10 @@
 
 #include "mmgr/mmgr.h"
 
+#pragma comment (lib, "Assimp/libx86/assimp.lib")
 
-PanelSettings::PanelSettings(char * name): Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
+
+PanelSettings::PanelSettings(char * name): Broken::Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
 {
 
 }
@@ -30,6 +25,8 @@ PanelSettings::~PanelSettings()
 
 bool PanelSettings::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
 
@@ -84,6 +81,7 @@ bool PanelSettings::Draw()
 	ImGui::End();
 
 
+
 	return true;
 }
 
@@ -91,31 +89,31 @@ inline void PanelSettings::ApplicationNode() const
 {
 	// --- Application name ---
 	static char appName[100];
-	if (App->GetAppName() != nullptr)
-	   strcpy_s(appName, 100, App->GetAppName());
+	if (EngineApp->GetAppName() != nullptr)
+	   strcpy_s(appName, 100, EngineApp->GetAppName());
 	if (ImGui::InputText("App Name", appName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-		App->SetAppName(appName);
+		EngineApp->SetAppName(appName);
 	
 	ImGui::Separator();
 
 	// --- Organization name ---
 	static char orgName[100];
-	if (App->GetOrganizationName() != nullptr)
-		strcpy_s(orgName, 100, App->GetOrganizationName());
+	if (EngineApp->GetOrganizationName() != nullptr)
+		strcpy_s(orgName, 100, EngineApp->GetOrganizationName());
 	if (ImGui::InputText("Organization Name", orgName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-		App->SetOrganizationName(orgName);
+		EngineApp->SetOrganizationName(orgName);
 
 	ImGui::Separator();
 	// --- Cap frames ---
-	int maxFramerate = App->time->GetMaxFramerate();
-	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, App->window->GetDisplayRefreshRate()))
-		App->time->SetMaxFramerate(maxFramerate);
+	int maxFramerate = EngineApp->time->GetMaxFramerate();
+	if (ImGui::SliderInt("Max FPS", &maxFramerate, 0, EngineApp->window->GetDisplayRefreshRate()))
+		EngineApp->time->SetMaxFramerate(maxFramerate);
 
 	ImGui::Separator();
 
 	ImGui::Text("Limit Framerate:");
 	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255,255,0,255), "%i", App->time->GetMaxFramerate());
+	ImGui::TextColored(ImVec4(255,255,0,255), "%i", EngineApp->time->GetMaxFramerate());
 
 	// --- Framerate && Ms ---
 	char title[25];
@@ -159,53 +157,53 @@ inline void PanelSettings::WindowNode() const
 {
 	ImGui::Separator();
 	// --- Brightness ---
-	float brightness = App->window->GetWinBrightness();
+	float brightness = EngineApp->window->GetWinBrightness();
 	if (ImGui::SliderFloat("Window Brightness", &brightness, 0.0f, 1.0f))
-		App->window->SetWinBrightness(brightness);
+		EngineApp->window->SetWinBrightness(brightness);
 
 	// --- Window ReSize ---
 	uint width, height, min_width, min_height, max_width, max_height;
-	App->window->GetWinMaxMinSize(min_width, min_height, max_width, max_height);
-	width = App->window->GetWindowWidth();
-	height = App->window->GetWindowHeight();
+	EngineApp->window->GetWinMaxMinSize(min_width, min_height, max_width, max_height);
+	width = EngineApp->window->GetWindowWidth();
+	height = EngineApp->window->GetWindowHeight();
 
 	if (ImGui::SliderInt("Width", (int*)&width, min_width, max_width))
-		App->window->SetWindowWidth(width);
+		EngineApp->window->SetWindowWidth(width);
 	if (ImGui::SliderInt("Height", (int*)&height, min_height, max_height))
-		App->window->SetWindowHeight(height);
+		EngineApp->window->SetWindowHeight(height);
 
 	ImGui::Separator();
 
 	// --- Refresh Rate Indicator ---
 	ImGui::Text("Refresh Rate:");
 	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%u", App->window->GetDisplayRefreshRate());
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%u", EngineApp->window->GetDisplayRefreshRate());
 
 
 	// --- Window Flags ---
-	bool fullscreen = App->window->IsFullscreen();
-	bool fullscreen_desktop = App->window->IsFullscreenDesktop();
-	bool resizable = App->window->IsResizable();
-	bool borderless = App->window->IsBorderless();
+	bool fullscreen = EngineApp->window->IsFullscreen();
+	bool fullscreen_desktop = EngineApp->window->IsFullscreenDesktop();
+	bool resizable = EngineApp->window->IsResizable();
+	bool borderless = EngineApp->window->IsBorderless();
 
 	if (ImGui::Checkbox("Fullscreen", &fullscreen))
-		App->window->SetFullscreen(fullscreen);
+		EngineApp->window->SetFullscreen(fullscreen);
 
 		ImGui::SameLine();
 
 	if (ImGui::Checkbox("Resizable", &resizable))
-		App->window->SetResizable(resizable);
+		EngineApp->window->SetResizable(resizable);
 
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Restart to apply"); // Cannot Change Resizable flag at runtime
 
 	if (ImGui::Checkbox("Borderless", &borderless))
-		App->window->SetBorderless(borderless);
+		EngineApp->window->SetBorderless(borderless);
 
 		ImGui::SameLine();
 
 	if (ImGui::Checkbox("FullScreen Desktop", &fullscreen_desktop))
-		App->window->SetFullscreenDesktop(fullscreen_desktop);
+		EngineApp->window->SetFullscreenDesktop(fullscreen_desktop);
 }
 
 inline void PanelSettings::InputNode() const
@@ -213,21 +211,21 @@ inline void PanelSettings::InputNode() const
 	ImGui::Separator();
 	// --- Mouse position
 	int mouse_x, mouse_y;
-	mouse_x = App->input->GetMouseX();
-	mouse_y = App->input->GetMouseY();
+	mouse_x = EngineApp->input->GetMouseX();
+	mouse_y = EngineApp->input->GetMouseY();
 	ImGui::Text("Mouse Position:");
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i,%i", mouse_x, mouse_y);
 
 	// --- Mouse Motion ---
-	mouse_x = App->input->GetMouseXMotion();
-	mouse_y = App->input->GetMouseYMotion();
+	mouse_x = EngineApp->input->GetMouseXMotion();
+	mouse_y = EngineApp->input->GetMouseYMotion();
 	ImGui::Text("Mouse Motion:");
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i,%i", mouse_x, mouse_y);
 
 	// --- Mouse Wheel acc ---
-	int wheel = App->input->GetMouseWheel();
+	int wheel = EngineApp->input->GetMouseWheel();
 	ImGui::Text("Mouse Wheel:");
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", wheel);
@@ -238,26 +236,26 @@ inline void PanelSettings::InputNode() const
 inline void PanelSettings::RendererNode() const
 {
 	// --- VSync ---
-	bool vsync = App->renderer3D->GetVSync();
+	bool vsync = EngineApp->renderer3D->GetVSync();
 	if (ImGui::Checkbox("VSync", &vsync))
 	{
-		App->renderer3D->SetVSync(vsync);
+		EngineApp->renderer3D->SetVSync(vsync);
 	}
-	if (ImGui::Checkbox("DEPTH", &App->renderer3D->depth))
+	if (ImGui::Checkbox("DEPTH", &EngineApp->renderer3D->depth))
 	{ }
 
-	if (ImGui::Checkbox("FACE CULLING", &App->renderer3D->cull_face))
+	if (ImGui::Checkbox("FACE CULLING", &EngineApp->renderer3D->cull_face))
 	{ }
 
 }
 
 inline void PanelSettings::EngineCameraNode() const
 {
-	ComponentCamera* cam = App->camera->camera;
+	Broken::ComponentCamera* cam = EngineApp->camera->camera;
 
 	// --- Camera Speed ---
-	float camSpeed = App->camera->m_CameraSpeed;
-	float camScroll = App->camera->m_ScrollSpeed;
+	float camSpeed = EngineApp->camera->m_CameraSpeed;
+	float camScroll = EngineApp->camera->m_ScrollSpeed;
 
 	ImGui::Text("Camera Speed");
 	ImGui::SameLine();
@@ -269,10 +267,10 @@ inline void PanelSettings::EngineCameraNode() const
 	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 	ImGui::DragFloat("##CamScroll", &camScroll, 0.05f, 1.0f, 10.0f);
 
-	if (camSpeed != App->camera->m_CameraSpeed)
-		App->camera->m_CameraSpeed = camSpeed;
-	if (camScroll != App->camera->m_ScrollSpeed)
-		App->camera->m_ScrollSpeed = camScroll;
+	if (camSpeed != EngineApp->camera->m_CameraSpeed)
+		EngineApp->camera->m_CameraSpeed = camSpeed;
+	if (camScroll != EngineApp->camera->m_ScrollSpeed)
+		EngineApp->camera->m_ScrollSpeed = camScroll;
 
 	// --- Camera FOV ---
 	ImGui::Text("FOV");
@@ -283,11 +281,11 @@ inline void PanelSettings::EngineCameraNode() const
 	ImGui::DragFloat("##FOV", &fov, 0.005f, 0.005f, 179.0f);
 
 	if (fov != cam->GetFOV())
-		App->camera->camera->SetFOV(fov);
+		EngineApp->camera->camera->SetFOV(fov);
 
 	ImGui::SameLine();
 	if (ImGui::Button("DefFOV", { 50.0f, 15.0f }))
-		App->camera->m_CustomDefaultCameraValues.x = fov;
+		EngineApp->camera->m_CustomDefaultCameraValues.x = fov;
 
 	// --- Camera Planes ---
 	float nearPlane = cam->GetNearPlane();
@@ -305,15 +303,15 @@ inline void PanelSettings::EngineCameraNode() const
 
 
 	if (nearPlane != cam->GetNearPlane())
-		App->camera->camera->SetNearPlane(nearPlane);
+		EngineApp->camera->camera->SetNearPlane(nearPlane);
 	if (farPlane != cam->GetFarPlane())
-		App->camera->camera->SetFarPlane(farPlane);
+		EngineApp->camera->camera->SetFarPlane(farPlane);
 
 	ImGui::SameLine();
 	if (ImGui::Button("DefPlanes", { 75.0f, 15.0f }))
 	{
-		App->camera->m_CustomDefaultCameraValues.y = nearPlane;
-		App->camera->m_CustomDefaultCameraValues.z = farPlane;
+		EngineApp->camera->m_CustomDefaultCameraValues.y = nearPlane;
+		EngineApp->camera->m_CustomDefaultCameraValues.z = farPlane;
 	}
 
 	// --- Camera Aspect Ratio ---
@@ -325,26 +323,26 @@ inline void PanelSettings::EngineCameraNode() const
 	ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);
 
 	if (aspectRatio != cam->GetAspectRatio())
-		App->camera->camera->SetAspectRatio(aspectRatio);
+		EngineApp->camera->camera->SetAspectRatio(aspectRatio);
 
 	ImGui::SameLine();
 	if (ImGui::Button("DefAR", { 50.0f, 15.0f }))
-		App->camera->m_CustomDefaultCameraValues.w = aspectRatio;
+		EngineApp->camera->m_CustomDefaultCameraValues.w = aspectRatio;
 
 	// --- Set Values to Default ---
 	if (ImGui::Button("Custom Default Values", { 150.0f, 25.0f }))
 	{
-		App->camera->camera->SetCameraValues(App->camera->m_CustomDefaultCameraValues);
-		App->camera->m_CameraSpeed = 10.0f;
-		App->camera->m_ScrollSpeed = 3.0f;
+		EngineApp->camera->camera->SetCameraValues(EngineApp->camera->m_CustomDefaultCameraValues);
+		EngineApp->camera->m_CameraSpeed = 10.0f;
+		EngineApp->camera->m_ScrollSpeed = 3.0f;
 	}
 
 	ImGui::SameLine();
 	if (ImGui::Button("Default Values", { 150.0f, 25.0f }))
 	{
-		App->camera->camera->SetCameraValues(App->camera->GetCameraDefaultValues());
-		App->camera->m_CameraSpeed = 10.0f;
-		App->camera->m_ScrollSpeed = 3.0f;
+		EngineApp->camera->camera->SetCameraValues(EngineApp->camera->GetCameraDefaultValues());
+		EngineApp->camera->m_CameraSpeed = 10.0f;
+		EngineApp->camera->m_ScrollSpeed = 3.0f;
 	}
 }
 
@@ -352,7 +350,7 @@ inline void PanelSettings::SoftwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);	
-	SoftwareInfo swInfo = App->hardware->GetSwInfo();
+	Broken::SoftwareInfo swInfo = EngineApp->hardware->GetSwInfo();
 
 	// --- INFO
 	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate().c_str());
@@ -362,8 +360,8 @@ inline void PanelSettings::SoftwareNode() const
 	ImGui::Separator();
 	ImGui::Text("Windows OS: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetWindowsVersion().c_str());
 	ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetSDLVersion().c_str());
-	ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (const char*)(swInfo.GetOGLVersion()));
-	ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (const char*)(swInfo.GetOGLShadingVersion()));
+	ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLVersion().c_str());
+	ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLShadingVersion().c_str());
 
 	ImGui::Separator();
 	ImGui::Text("C++ Minimum Version Supported by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCppVersionImplementedByCompiler().c_str());
@@ -381,7 +379,7 @@ inline void PanelSettings::RAMMemoryNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	MemoryHardware HardwareInfo = App->hardware->GetMemInfo();
+	Broken::MemoryHardware HardwareInfo = EngineApp->hardware->GetMemInfo();
 
 	// --- INFO
 	ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", ((std::to_string(HardwareInfo.GetRAMSizeFromSDL()) + " GB").c_str()));
@@ -414,8 +412,8 @@ inline void PanelSettings::HardwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	ProcessorHardware CPUData = App->hardware->GetProcessorInfo();
-	GPUHardware GPUData = App->hardware->GetGraphicsCardInfo();
+	Broken::ProcessorHardware CPUData = EngineApp->hardware->GetProcessorInfo();
+	Broken::GPUHardware GPUData = EngineApp->hardware->GetGraphicsCardInfo();
 
 	// --- INFO
 	ImGui::Text("PROCESSOR INFORMATION (CPU)");
@@ -437,11 +435,11 @@ inline void PanelSettings::HardwareNode() const
 	ImGui::Text("GRAPHICS CARD INFORMATION (GPU)");
 	ImGui::Separator();
 
-	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(GPUData.GetGPUBenchmark()));
+	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUBenchmark().c_str());
 	ImGui::Text("GPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUInfo_GPUDet().m_GPUBrand.c_str());
-	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(GPUData.GetGPUModel()));
+	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUModel().c_str());
 	ImGui::Text("GPU Driver"); ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", App->hardware->GetInfo().gpu_driver.data());
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", EngineApp->hardware->GetInfo().gpu_driver.data());
 	ImGui::Text("GPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(GPUData.GetGPUInfo_GPUDet().m_GPUVendor).c_str());
 	ImGui::SameLine(); ImGui::Text("   GPU ID: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(GPUData.GetGPUInfo_GPUDet().m_GPUID).c_str());
 
@@ -449,24 +447,24 @@ inline void PanelSettings::HardwareNode() const
 	ImGui::Text("GPU VRAM"); ImGui::SameLine(); ImGui::Separator();
 
 	ImGui::Text("Total VRAM: ");	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", (std::to_string(App->hardware->GetInfo().vram_mb_budget) + " GB").c_str());
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", (std::to_string(EngineApp->hardware->GetInfo().vram_mb_budget) + " GB").c_str());
 	ImGui::Text("VRAM Without System Usage: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB) + " GB").c_str());
 	ImGui::Text("VRAM Available"); ImGui::SameLine();
-	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", (std::to_string(App->hardware->GetInfo().vram_mb_available) + " GB").c_str());
+	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", (std::to_string(EngineApp->hardware->GetInfo().vram_mb_available) + " GB").c_str());
 	ImGui::Text("Actual/Real VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB) + " GB").c_str());
 	ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " GB").c_str());
 	ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(GPUData.GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " GB").c_str());
 
 
 	if (ImGui::Button("Recalculate Parameters"))
-		App->hardware->RecalculateParameters();
+		EngineApp->hardware->RecalculateParameters();
 
 	ImGui::PopStyleVar();
 }
 
 //inline void PanelSettings::HardwareNode() const
 //{
-//	hw_info hardware_info = App->hardware->GetInfo();
+//	hw_info hardware_info = EngineApp->hardware->GetInfo();
 //
 //	// --- CPU ---
 //	ImGui::Separator();
@@ -534,38 +532,38 @@ inline void PanelSettings::LibrariesNode() const
 
 	SDL_version version;
 	SDL_GetVersion(&version);
-	if (ImGui::Button("SDL")) { App->gui->RequestBrowser("https://www.libsdl.org/"); }
+	if (ImGui::Button("SDL")) { EngineApp->gui->RequestBrowser("https://www.libsdl.org/"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i.%i.%i", version.major, version.minor, version.patch);
 
-	if (ImGui::Button("Assimp")) { App->gui->RequestBrowser("http://www.assimp.org/"); }
+	if (ImGui::Button("Assimp")) { EngineApp->gui->RequestBrowser("http://www.assimp.org/"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i.%i", aiGetVersionMajor(), aiGetVersionMinor());
 
-	if (ImGui::Button("OpenGL")) { App->gui->RequestBrowser("https://www.opengl.org/"); }
+	if (ImGui::Button("OpenGL")) { EngineApp->gui->RequestBrowser("https://www.opengl.org/"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glGetString(GL_VERSION));
 
-	if (ImGui::Button("Glad")) { App->gui->RequestBrowser("https://github.com/Dav1dde/glad"); }
+	if (ImGui::Button("Glad")) { EngineApp->gui->RequestBrowser("https://github.com/Dav1dde/glad"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "0.1.33");
 
-	if (ImGui::Button("ImGui")) { App->gui->RequestBrowser("https://github.com/ocornut/imgui"); }
+	if (ImGui::Button("ImGui")) { EngineApp->gui->RequestBrowser("https://github.com/ocornut/imgui"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", ImGui::GetVersion());
 
-	if (ImGui::Button("ImGuizmo")) { App->gui->RequestBrowser("https://github.com/CedricGuillemet/ImGuizmo"); }
+	if (ImGui::Button("ImGuizmo")) { EngineApp->gui->RequestBrowser("https://github.com/CedricGuillemet/ImGuizmo"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "1.0");
 
-	if (ImGui::Button("MathGeoLib")) { App->gui->RequestBrowser("https://github.com/juj/MathGeoLib"); }
+	if (ImGui::Button("MathGeoLib")) { EngineApp->gui->RequestBrowser("https://github.com/juj/MathGeoLib"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "1.5");
 
-	if (ImGui::Button("JSON For Modern C++")) { App->gui->RequestBrowser("https://github.com/nlohmann/json"); }
+	if (ImGui::Button("JSON For Modern C++")) { EngineApp->gui->RequestBrowser("https://github.com/nlohmann/json"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "3.7.0");
 
-	if (ImGui::Button("DevIL")) { App->gui->RequestBrowser("http://openil.sourceforge.net/"); }
+	if (ImGui::Button("DevIL")) { EngineApp->gui->RequestBrowser("http://openil.sourceforge.net/"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", IL_VERSION);
 
-	if (ImGui::Button("Par shapes")) { App->gui->RequestBrowser("https://github.com/prideout/par/blob/master/par_shapes.h"); }
+	if (ImGui::Button("Par shapes")) { EngineApp->gui->RequestBrowser("https://github.com/prideout/par/blob/master/par_shapes.h"); }
 
-	if (ImGui::Button("MMGR")) { App->gui->RequestBrowser("http://www.paulnettle.com/"); }
+	if (ImGui::Button("MMGR")) { EngineApp->gui->RequestBrowser("http://www.paulnettle.com/"); }
 
-	if (ImGui::Button("PhysX")) { App->gui->RequestBrowser("https://github.com/NVIDIAGameWorks/PhysX-3.4/releases/tag/v3.4.2-bsd"); }
+	if (ImGui::Button("PhysX")) { EngineApp->gui->RequestBrowser("https://github.com/NVIDIAGameWorks/PhysX-3.4/releases/tag/v3.4.2-bsd"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "3.4.2");
 
 }

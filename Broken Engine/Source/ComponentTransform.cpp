@@ -6,28 +6,24 @@
 
 #include "mmgr/mmgr.h"
 
-// MYTODO: Explain math behind transform ops
+// MYTODO: Explain math behind transform ops 
+using namespace Broken;
 
-ComponentTransform::ComponentTransform(GameObject * ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform)
-{
+ComponentTransform::ComponentTransform(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform) {
 }
 
-ComponentTransform::~ComponentTransform()
-{
+ComponentTransform::~ComponentTransform() {
 }
 
-float3 ComponentTransform::GetPosition() const
-{
+float3 ComponentTransform::GetPosition() const {
 	return position;
 }
 
-float3 ComponentTransform::GetScale() const
-{
+float3 ComponentTransform::GetScale() const {
 	return scale;
 }
 
-float3 ComponentTransform::GetRotation() const
-{
+float3 ComponentTransform::GetRotation() const {
 	return rotation_euler;
 }
 
@@ -41,13 +37,11 @@ float4x4 ComponentTransform::GetLocalTransform() const
 	return Local_transform;
 }
 
-float4x4 ComponentTransform::GetGlobalTransform() const
-{
+float4x4 ComponentTransform::GetGlobalTransform() const {
 	return Global_transform;
 }
 
-float3 ComponentTransform::GetGlobalPosition() const
-{
+float3 ComponentTransform::GetGlobalPosition() const {
 	float4x4 global_transform = GetGlobalTransform();
 	return global_transform.TranslatePart();
 }
@@ -64,8 +58,7 @@ void ComponentTransform::SetPosition(float x, float y, float z)
 	UpdateLocalTransform();
 }
 
-void ComponentTransform::SetRotation(float3 euler_angles)
-{
+void ComponentTransform::SetRotation(float3 euler_angles) {
 	// --- Compute desired rotation in radians ---
 	float3 difference = (euler_angles - rotation_euler) * DEGTORAD;
 	Quat quatrot = Quat::FromEulerXYZ(difference.x, difference.y, difference.z);
@@ -107,44 +100,40 @@ void ComponentTransform::Scale(float x, float y, float z)
 	}
 }
 
-void ComponentTransform::SetGlobalTransform(float4x4 new_transform)
-{
+void ComponentTransform::SetGlobalTransform(float4x4 new_transform) {
 	float4x4 localTransform = GO->parent->GetComponent<ComponentTransform>()->GetGlobalTransform().Inverted() * new_transform;
 	Local_transform = localTransform;
 	Global_transform = new_transform;
 	update_transform = true;
 }
 
-void ComponentTransform::UpdateLocalTransform()
-{
+void ComponentTransform::UpdateLocalTransform() {
 	Local_transform = float4x4::FromTRS(position, rotation, scale);
 	update_transform = true;
 }
 
-void ComponentTransform::OnUpdateTransform(const float4x4 & ParentGlobal)
-{
+void ComponentTransform::OnUpdateTransform(const float4x4& ParentGlobal) {
 	Global_transform = ParentGlobal * Local_transform;
 	UpdateTRS();
 
 	update_transform = false;
 }
 
-json ComponentTransform::Save() const
-{
+json ComponentTransform::Save() const {
 	json node;
 
-  	node["positionx"] = std::to_string(position.x);
-  	node["positiony"] = std::to_string(position.y);
-  	node["positionz"] = std::to_string(position.z);
+	node["positionx"] = std::to_string(position.x);
+	node["positiony"] = std::to_string(position.y);
+	node["positionz"] = std::to_string(position.z);
 
   	node["rotationx"] = std::to_string(rotation.x);
   	node["rotationy"] = std::to_string(rotation.y);
   	node["rotationz"] = std::to_string(rotation.z);
 	node["rotationw"] = std::to_string(rotation.w);
 
-  	node["scalex"] = std::to_string(scale.x);
-  	node["scaley"] = std::to_string(scale.y);
-  	node["scalez"] = std::to_string(scale.z);
+	node["scalex"] = std::to_string(scale.x);
+	node["scaley"] = std::to_string(scale.y);
+	node["scalez"] = std::to_string(scale.z);
 
 	return node;
 }
@@ -260,8 +249,7 @@ void ComponentTransform::CreateInspectorNode()
 	if (ImGui::DragFloat("##SZ", &scale.z, scale_dragSpeed)) updateValues = true;
 
 	// --- Transform Set ---
-	if (!GO->Static)
-	{
+	if (!GO->Static) {
 		if (!GetPosition().Equals(position))
 			SetPosition(position);
 		if (!GetScale().Equals(scale))
@@ -272,8 +260,7 @@ void ComponentTransform::CreateInspectorNode()
 
 }
 
-void ComponentTransform::UpdateTRS()
-{
+void ComponentTransform::UpdateTRS() {
 	Local_transform.Decompose(position, rotation, scale);
-	rotation_euler = rotation.ToEulerXYZ()*RADTODEG;
+	rotation_euler = rotation.ToEulerXYZ() * RADTODEG;
 }

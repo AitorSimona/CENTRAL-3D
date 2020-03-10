@@ -2,21 +2,20 @@
 #define __MODULE_EVENT_MANAGER_H__
 
 #include "Module.h"
-#include "Globals.h"
+#include "BrokenCore.h"
 
 #define MAX_EVENTS 1000
 #define EVENT_TYPES 7
 
-typedef void (*Function)(const Event & e);
+typedef void (*Function)(const Broken::Event& e);
 
+BE_BEGIN_NAMESPACE
 
 class GameObject;
 class Resource;
 
-struct Event
-{
-	enum class EventType
-	{
+struct BROKEN_API Event {
+	enum class EventType {
 		GameObject_destroyed,
 		GameObject_selected,
 		Resource_selected,
@@ -24,10 +23,9 @@ struct Event
 		Window_resize,
 		File_dropped,
 		invalid
-	} type = EventType::invalid;	
+	} type = EventType::invalid;
 
-	union
-	{
+	union {
 		GameObject* go = nullptr;
 		Resource* resource;
 		uint uid; // For overwrite case
@@ -37,20 +35,18 @@ struct Event
 	Event() {}
 };
 
-struct Listeners
-{
+struct BROKEN_API Listeners {
 	std::vector<Function> listeners;
 };
 
-class ModuleEventManager : public Module
-{
+class BROKEN_API ModuleEventManager : public Module {
 public:
 
 	// --- Basic ---
 	ModuleEventManager(bool start_enabled = true);
 	~ModuleEventManager();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
 	bool CleanUp() override;
@@ -67,4 +63,5 @@ private:
 	uint tail;
 };
 
+BE_END_NAMESPACE
 #endif

@@ -2,8 +2,10 @@
 #define _RNGEN_H_
 
 #include <random>
+#include "BrokenCore.h"
 
-class RNGen
+BE_BEGIN_NAMESPACE
+class BROKEN_API RNGen
 {
 
 public:
@@ -36,4 +38,5 @@ private:
 
 };
 
+BE_END_NAMESPACE
 #endif

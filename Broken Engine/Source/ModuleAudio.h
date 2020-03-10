@@ -5,7 +5,8 @@
 #include "Math.h"
 #include "Wwise/AK/SoundEngine/Common/AkTypes.h"
 
-class WwiseGameObject
+BE_BEGIN_NAMESPACE
+class BROKEN_API WwiseGameObject
 {
 public:
 
@@ -38,13 +39,13 @@ private:
 	AkVector orientationTop = { 0,0,0 };
 };
 
-class ModuleAudio : public Module
+class BROKEN_API ModuleAudio : public Module
 {
 public:
 	ModuleAudio(bool start_enabled = true);
 	virtual ~ModuleAudio();
 
-	bool Init(json file);
+	bool Init(json& file);
 	bool Start();
 	update_status PostUpdate(float dt);
 	bool CleanUp();
@@ -60,5 +61,5 @@ public:
 	AkGameObjectID currentListenerID = 0;
 	//unsigned long g_envMAP[255];
 };
-
+BE_END_NAMESPACE
 #endif __ModuleAudio__H__

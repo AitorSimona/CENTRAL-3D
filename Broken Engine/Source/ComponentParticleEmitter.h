@@ -6,10 +6,11 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
+BE_BEGIN_NAMESPACE
+
 class Particle;
 
-
-class ComponentParticleEmitter : public Component
+class BROKEN_API ComponentParticleEmitter : public Component
 {
 	friend class ModuleParticles;
 public:
@@ -36,7 +37,6 @@ private:
 	double GetRandomValue(double min, double max); //MUST EREASE IN THE FUTURE
 
 private:
-
 	physx::PxParticleSystem* particleSystem = nullptr;
 
 	std::vector<Particle*> particles;
@@ -62,5 +62,6 @@ private:
 
 	float spawnClock=0.0f;
 };
+BE_END_NAMESPACE
 
 #endif //__COMPONENT_PARTICLE_EMITTER__

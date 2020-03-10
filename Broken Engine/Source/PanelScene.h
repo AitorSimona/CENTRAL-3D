@@ -1,10 +1,10 @@
 #ifndef __PANEL_SCENE_H__
 #define __PANEL_SCENE_H__
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 
-class PanelScene : public Panel
+class PanelScene : public Broken::Panel
 {
 public:
 
@@ -20,8 +20,6 @@ public:
 	ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 	ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
 
-	bool SceneHovered = false;
-
 	float width = 0.0f;
 	float height = 0.0f;
 
@@ -29,6 +27,11 @@ public:
 	float posY = 0.0f;
 
 	float CurrentSpeedScrollLabel = 1.0f;
+
+private:
+	//Internal stuff for overlay
+	char* overlay;
+	bool overlay_open = true;
 };
 
 #endif

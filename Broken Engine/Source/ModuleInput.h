@@ -1,6 +1,8 @@
-#pragma once
+#ifndef __BE_MODULE_INPUT_H__
+#define __BE_MODULE_INPUT_H__
+
 #include "Module.h"
-#include "Globals.h"
+
 
 #define MAX_MOUSE_BUTTONS 5
 #define NUM_GAMEPAD_BUTTONS 15
@@ -12,8 +14,9 @@ struct _SDL_GameController;
 struct _SDL_Haptic;
 struct SDL_GameControllerButtonBind;
 
-enum KEY_STATE
-{
+BE_BEGIN_NAMESPACE
+
+enum BROKEN_API KEY_STATE {
 	KEY_IDLE = 0,
 	KEY_DOWN,
 	KEY_REPEAT,
@@ -21,8 +24,7 @@ enum KEY_STATE
 };
 
 // Gamepad input state (just for better legibility)
-enum GP_BUTTON_STATE
-{
+enum BROKEN_API GP_BUTTON_STATE {
 	BUTTON_IDLE = 0,
 	BUTTON_DOWN,
 	BUTTON_REPEAT,
@@ -30,16 +32,14 @@ enum GP_BUTTON_STATE
 };
 
 
-enum class BUTTON_BIND
-{
+enum class BROKEN_API BUTTON_BIND {
 	BASIC_ATTACK = 0,
 	SPECIAL_ATTACK,
 	SUPER_ATTACK,
 	SHIELD,
 	MAX_BUTTON_BIND
 };
-enum class GP_AXIS_STATE
-{
+enum class BROKEN_API GP_AXIS_STATE {
 	AXIS_IDLE = 0,
 	AXIS_POSITIVE_DOWN,
 	AXIS_POSITIVE_REPEAT,
@@ -49,16 +49,14 @@ enum class GP_AXIS_STATE
 	AXIS_NEGATIVE_RELEASE
 };
 
-enum class PLAYER
-{
+enum class BROKEN_API PLAYER {
 	P1 = 0,
 	P2,
 	P3,
 	P4
 };
 
-struct Gamepad
-{
+struct BROKEN_API Gamepad {
 	// Id's
 	_SDL_GameController* id_ptr = nullptr; //SDL_GameController of the Gamepad
 	_SDL_Haptic* haptic_ptr = nullptr;
@@ -78,49 +76,41 @@ struct Gamepad
 	int last_axis_pressed = -1;
 };
 
-class ModuleInput : public Module
-{
+class BROKEN_API ModuleInput : public Module {
 public:
-	
+
 	ModuleInput(bool start_enabled = true);
 	~ModuleInput();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	update_status PreUpdate(float dt) override;
 	bool CleanUp() override;
 
-	KEY_STATE GetKey(int id) const
-	{
+	KEY_STATE GetKey(int id) const {
 		return keyboard[id];
 	}
 
-	KEY_STATE GetMouseButton(int id) const
-	{
+	KEY_STATE GetMouseButton(int id) const {
 		return mouse_buttons[id];
 	}
 
-	int GetMouseX() const
-	{
+	int GetMouseX() const {
 		return mouse_x;
 	}
 
-	int GetMouseY() const
-	{
+	int GetMouseY() const {
 		return mouse_y;
 	}
 
-	int GetMouseWheel() const
-	{
+	int GetMouseWheel() const {
 		return mouse_wheel;
 	}
 
-	int GetMouseXMotion() const
-	{
+	int GetMouseXMotion() const {
 		return mouse_x_motion;
 	}
 
-	int GetMouseYMotion() const
-	{
+	int GetMouseYMotion() const {
 		return mouse_y_motion;
 	}
 
@@ -188,10 +178,12 @@ private:
 	int mouse_x_motion;
 	int mouse_y_motion;
 	//int mouse_z_motion;
-
 	float axis_threshold = 0.8f;
 
 	//Gamepads Data
 	Gamepad controllers[MAX_GAMEPADS] = { nullptr };
 	uint index_addition_controllers = 0;
 };
+
+BE_END_NAMESPACE
+#endif

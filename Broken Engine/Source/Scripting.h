@@ -2,10 +2,12 @@
 #define __SCRIPTING_H__
 #include "ModuleInput.h"
 
+#include "BrokenCore.h"
+
 class lua_State;
 
-class Scripting
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API Scripting {
 public:
 	Scripting();
 	~Scripting();
@@ -166,4 +168,5 @@ public:
 	//void LookAt(float posX, float posY, float posZ, bool local);
 	//void LookTo(float dirX, float dirY, float dirZ, bool local);
 };
+BE_END_NAMESPACE
 #endif // !__SCRIPTING_H__

@@ -1,11 +1,11 @@
 #ifndef __TIMER_H__
 #define __TIMER_H__
 
-#include "Globals.h"
 #include "SDL\include\SDL.h"
+#include "BrokenCore.h"
 
-class Timer
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API Timer {
 public:
 
 	// Constructor
@@ -22,5 +22,5 @@ private:
 	Uint32	started_at;
 	Uint32	stopped_at;
 };
-
+BE_END_NAMESPACE
 #endif //__TIMER_H__

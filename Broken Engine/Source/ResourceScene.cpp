@@ -11,9 +11,8 @@
 
 #include "mmgr/mmgr.h"
 
-
-ResourceScene::ResourceScene(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file)
-{
+using namespace Broken;
+ResourceScene::ResourceScene(uint UID, const char* source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file) {
 	extension = ".scene";
 	resource_file = source_file;
 	original_file = resource_file;
@@ -28,8 +27,7 @@ ResourceScene::~ResourceScene()
 	StaticGameObjects.clear();
 }
 
-bool ResourceScene::LoadInMemory()
-{
+bool ResourceScene::LoadInMemory() {
 	// --- Load scene game objects ---
 
 	if (NoStaticGameObjects.size() == 0 && App->fs->Exists(resource_file.c_str()))
@@ -38,8 +36,7 @@ bool ResourceScene::LoadInMemory()
 		json file = App->GetJLoader()->Load(resource_file.c_str());
 
 		// --- Delete buffer data ---
-		if (!file.is_null())
-		{
+		if (!file.is_null()) {
 			std::vector<GameObject*> objects;
 
 			// --- Iterate main nodes ---
@@ -58,8 +55,7 @@ bool ResourceScene::LoadInMemory()
 				json components = file[it.key()]["Components"];
 				
 
-				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
-				{
+				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) {
 					// --- Determine ComponentType ---
 					std::string type_string = it2.key();
 					uint type_uint = std::stoi(type_string);
@@ -93,10 +89,8 @@ bool ResourceScene::LoadInMemory()
 				std::string parent_uid_string = file[std::to_string(objects[i]->GetUID())]["Parent"];
 				uint parent_uid = std::stoi(parent_uid_string);
 
-				for (uint j = 0; j < objects.size(); ++j)
-				{
-					if (parent_uid == objects[j]->GetUID())
-					{
+				for (uint j = 0; j < objects.size(); ++j) {
+					if (parent_uid == objects[j]->GetUID()) {
 						objects[j]->AddChildGO(objects[i]);
 						break;
 					}
@@ -108,8 +102,7 @@ bool ResourceScene::LoadInMemory()
 	return true;
 }
 
-void ResourceScene::FreeMemory()
-{
+void ResourceScene::FreeMemory() {
 	// --- Delete all scene game objects ---
 	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
 	{
@@ -191,8 +184,7 @@ GameObject* ResourceScene::GetGOWithUID(uint UID)
 	return ret_go;
 }
 
-void ResourceScene::OnOverwrite()
-{
+void ResourceScene::OnOverwrite() {
 	// No reason to overwrite scene
 }
 
@@ -211,6 +203,5 @@ void ResourceScene::OnDelete()
 		App->resources->RemoveResourceFromFolder(this);
 		App->resources->ONResourceDestroyed(this);
 	}
-
 }
 

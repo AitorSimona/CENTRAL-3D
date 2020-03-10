@@ -6,12 +6,14 @@
 #include <map>
 
 struct aiBone;
+
+BE_BEGIN_NAMESPACE
 class ResourceBone;
 class Resource;
 class GameObject;
 
 
-struct ImportBoneData : public Importer::ImportData
+struct BROKEN_API ImportBoneData : public Importer::ImportData
 {
 	ImportBoneData(const char* path) : Importer::ImportData(path) {};
 
@@ -19,7 +21,7 @@ struct ImportBoneData : public Importer::ImportData
 	uint mesh_UID = 0;
 };
 
-class ImporterBone : public Importer
+class BROKEN_API ImporterBone : public Importer
 {
 
 public:
@@ -35,4 +37,5 @@ public:
 
 };
 
+BE_END_NAMESPACE
 #endif

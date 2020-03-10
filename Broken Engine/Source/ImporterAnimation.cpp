@@ -11,6 +11,9 @@
 
 #include "mmgr/mmgr.h"
 
+
+using namespace Broken;
+
 ImporterAnimation::ImporterAnimation() : Importer(Importer::ImporterType::Animation)
 {
 }
@@ -234,7 +237,7 @@ Resource* ImporterAnimation::Load(const char* path) const
 			uid = uid.substr(0, uid.find_last_of("."));
 
 
-			anim = App->resources->animations.find(std::stoi(uid)) != App->resources->animations.end() ? App->resources->animations.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::ANIMATION, std::string(source_file), std::stoi(uid));
+			anim = App->resources->animations.find(std::stoi(uid)) != App->resources->animations.end() ? App->resources->animations.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::ANIMATION, source_file.c_str(), std::stoi(uid));
 
 			delete[] buffer;
 			buffer = nullptr;

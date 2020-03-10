@@ -28,47 +28,43 @@
 
 #include "mmgr/mmgr.h"
 
-ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO): Component(ContainerGO, Component::ComponentType::MeshRenderer)
-{
+
+using namespace Broken;
+ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::MeshRenderer) {
 	material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 }
 
-ComponentMeshRenderer::~ComponentMeshRenderer()
-{
-	if (material && material->IsInMemory())
-	{
+ComponentMeshRenderer::~ComponentMeshRenderer() {
+	if (material && material->IsInMemory()) {
 		material->Release();
 		material->RemoveUser(GO);
 	}
 }
 
-void ComponentMeshRenderer::Draw(bool outline) const
-{
-	ComponentMesh * mesh = this->GO->GetComponent<ComponentMesh>();
+void ComponentMeshRenderer::Draw(bool outline) const {
+	ComponentMesh* mesh = this->GO->GetComponent<ComponentMesh>();
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 	ComponentCamera* camera = GO->GetComponent<ComponentCamera>();
 
 	uint shader = App->renderer3D->defaultShader->ID;
 
-	if(material)
-	shader = material->shader->ID;
+	if (material)
+		shader = material->shader->ID;
 
 	float4x4 model = transform->GetGlobalTransform();
 
-	if (outline)
-	{
+	if (outline) {
 		shader = App->renderer3D->OutlineShader->ID;
 		// --- Draw selected, pass scaled-up matrix to shader ---
 		float3 scale = float3(1.05f, 1.05f, 1.05f);
-		
+
 		model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
 	}
 
 	//mat->resource_material->UpdateUniforms();
 
 	// --- Display Z buffer ---
-	if (App->renderer3D->zdrawer)
-	{
+	if (App->renderer3D->zdrawer) {
 		shader = App->renderer3D->ZDrawerShader->ID;
 	}
 
@@ -77,7 +73,7 @@ void ComponentMeshRenderer::Draw(bool outline) const
 	// --- Set uniforms ---
 	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr());
-	
+
 	GLint viewLoc = glGetUniformLocation(shader, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
@@ -87,15 +83,14 @@ void ComponentMeshRenderer::Draw(bool outline) const
 	float farp = App->renderer3D->active_camera->GetFarPlane();
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 	// --- Give ZDrawer near and far camera frustum planes pos ---
-	if (App->renderer3D->zdrawer)
-	{
+	if (App->renderer3D->zdrawer) {
 		int nearfarLoc = glGetUniformLocation(shader, "nearfar");
 		glUniform2f(nearfarLoc, nearp, farp);
 	}
 
 	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
-	 float4x4 proj_RH(
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
@@ -117,26 +112,21 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
-	#ifndef BE_GAME_BUILD
 	// --- Draw Frustum ---
-	if (camera)
+	if (camera && App->scene_manager->display_grid)
 		ModuleSceneManager::DrawWire(camera->frustum, White, App->scene_manager->GetPointLineVAO());
-	#endif
 
-	if(App->scene_manager->display_boundingboxes)
-	ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
+	if (App->scene_manager->display_boundingboxes)
+		ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 }
 
-void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
-{
-	if (mesh.vertices && mesh.Indices)
-	{
+void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const {
+	if (mesh.vertices && mesh.Indices) {
 		glBindVertexArray(mesh.VAO);
 
 		if (this->checkers)
 			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-		else
-		{
+		else {
 			if (material->resource_diffuse)
 				glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
 			else
@@ -150,7 +140,6 @@ void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const
 		glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 	}
 }
-
 
 void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
 {
@@ -168,7 +157,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
@@ -187,8 +176,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		// --- Draw Vertex Normals ---
 		float3* vertices = new float3[mesh.IndicesSize * 2];
 
-		for (uint i = 0; i < mesh.IndicesSize; ++i)
-		{
+		for (uint i = 0; i < mesh.IndicesSize; ++i) {
 			// --- Normals ---
 			vertices[i * 2] = float3(mesh.vertices[mesh.Indices[i]].position[0], mesh.vertices[mesh.Indices[i]].position[1], mesh.vertices[mesh.Indices[i]].position[2]);
 			vertices[(i * 2) + 1] = float3(mesh.vertices[mesh.Indices[i]].position[0] + mesh.vertices[mesh.Indices[i]].normal[0] * NORMAL_LENGTH, mesh.vertices[mesh.Indices[i]].position[1] + mesh.vertices[mesh.Indices[i]].normal[1] * NORMAL_LENGTH, mesh.vertices[mesh.Indices[i]].position[2] + mesh.vertices[mesh.Indices[i]].normal[2] * NORMAL_LENGTH);
@@ -201,7 +189,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*mesh.IndicesSize*2, vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize * 2, vertices, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 		glEnableVertexAttribArray(0);
@@ -219,7 +207,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glDeleteBuffers(1, &VBO);
 		delete[] vertices;
 	}
-	
+
 	// --- Draw Face Normals 
 
 	if (draw_facenormals)
@@ -227,10 +215,9 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glUniform3f(vertexColorLocation, 0, 255, 255);
 		Triangle face;
 		float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
-		
+
 		// --- Compute face normals ---
-		for (uint j = 0; j < mesh.IndicesSize / 3; ++j)
-		{
+		for (uint j = 0; j < mesh.IndicesSize / 3; ++j) {
 			face.a = float3(mesh.vertices[mesh.Indices[j * 3]].position);
 			face.b = float3(mesh.vertices[mesh.Indices[(j * 3) + 1]].position);
 			face.c = float3(mesh.vertices[mesh.Indices[(j * 3) + 2]].position);
@@ -252,7 +239,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 		glEnableVertexAttribArray(0);
@@ -279,8 +266,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-json ComponentMeshRenderer::Save() const
-{
+json ComponentMeshRenderer::Save() const {
 	json node;
 	node["Resources"]["ResourceMaterial"];
 
@@ -388,14 +374,13 @@ void ComponentMeshRenderer::Load(json& node)
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-	if(IMeta)
-	{
+	if (IMeta) {
 		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat_path.c_str());
 
 		if (material)
 			material->Release();
 
-		if(meta)
+		if (meta)
 			material = (ResourceMaterial*)App->resources->GetResource(meta->GetUID());
 
 		// --- We want to be notified of any resource event ---
@@ -404,12 +389,10 @@ void ComponentMeshRenderer::Load(json& node)
 	}
 }
 
-void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
-{
+void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotificationType type) {
 	// --- Always check if your resources are already invalidated, since go sends events from all of its components resources ---
 
-	switch (type)
-	{
+	switch (type) {
 	case Resource::ResourceNotificationType::Overwrite:
 		if (material && UID == material->GetUID())
 			material = (ResourceMaterial*)App->resources->GetResource(UID);
@@ -425,13 +408,11 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 	}
 }
 
-void ComponentMeshRenderer::CreateInspectorNode()
-{
+void ComponentMeshRenderer::CreateInspectorNode() {
 	ImGui::Checkbox("##RenActive", &GetActive());
 	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Mesh Renderer"))
-	{
+	if (ImGui::TreeNode("Mesh Renderer")) {
 
 		ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
 		ImGui::SameLine();
@@ -452,23 +433,19 @@ void ComponentMeshRenderer::CreateInspectorNode()
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
-		
-		if (ImGui::TreeNode(material->GetName()))
-		{
+
+		if (ImGui::TreeNode(material->GetName())) {
 			static ImGuiComboFlags flags = 0;
 
 			ImGui::Text("Shader");
 			ImGui::SameLine();
 
 			const char* item_current = material->shader->name.c_str();
-			if (ImGui::BeginCombo("##Shader", item_current, flags))
-			{
-				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
-				{
+			if (ImGui::BeginCombo("##Shader", item_current, flags)) {
+				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it) {
 					bool is_selected = (item_current == it->second->name);
 
-					if (ImGui::Selectable(it->second->name.c_str(), is_selected))
-					{
+					if (ImGui::Selectable(it->second->name.c_str(), is_selected)) {
 						item_current = it->second->name.c_str();
 						material->shader = it->second;
 						material->shader->GetAllUniforms(material->uniforms);
@@ -486,8 +463,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 			//ImGui::Text(Path.data());
 
-			if (material->resource_diffuse)
-			{
+			if (material->resource_diffuse) {
 				// --- Print Texture Width and Height ---
 				ImGui::Text(std::to_string(material->resource_diffuse->Texture_width).c_str());
 				ImGui::SameLine();
@@ -505,17 +481,14 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::ImageButton((void*)(uint)material->resource_diffuse->GetPreviewTexID(), ImVec2(20, 20));
 			else
 				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-	
+
 			// --- Handle drag & drop ---
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-				{
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) {
 					uint UID = *(const uint*)payload->Data;
 					Resource* resource = App->resources->GetResource(UID, false);
 
-					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
-					{
+					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE) {
 						if (material->resource_diffuse)
 							material->resource_diffuse->Release();
 

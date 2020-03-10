@@ -5,13 +5,13 @@
 #include <vector>
 #include <string>
 
+BE_BEGIN_NAMESPACE
 class GameObject;
 class Resource;
 class ResourceScene;
 
-class ImporterScene : public Importer
-{
-	
+class BROKEN_API ImporterScene : public Importer {
+
 public:
 	ImporterScene();
 	virtual ~ImporterScene();
@@ -23,5 +23,5 @@ public:
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Scene; };
 
 };
-
+BE_END_NAMESPACE
 #endif

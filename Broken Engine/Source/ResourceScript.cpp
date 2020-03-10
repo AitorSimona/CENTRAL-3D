@@ -4,24 +4,21 @@
 #include "ModuleResourceManager.h"
 #include "ModuleScripting.h"
 
-ResourceScript::ResourceScript(uint UID, std::string source_file) : Resource(Resource::ResourceType::SCRIPT, UID, source_file)
-{
+using namespace Broken;
+ResourceScript::ResourceScript(uint UID, const char* source_file) : Resource(Resource::ResourceType::SCRIPT, UID, source_file) {
 	extension = ".lua";
 	resource_file = source_file;
 }
 
-ResourceScript::~ResourceScript()
-{
+ResourceScript::~ResourceScript() {
 }
 
-bool ResourceScript::LoadInMemory()
-{
+bool ResourceScript::LoadInMemory() {
 	//Script doesn't generate any additional memory than the resource cretion itself
 	return true;
 }
 
-void ResourceScript::OnOverwrite()
-{
+void ResourceScript::OnOverwrite() {
 
 	App->scripting->NotifyHotReloading();
 	// Here we have to manage hot Reloading
@@ -39,6 +36,6 @@ void ResourceScript::OnDelete()
 	App->resources->ONResourceDestroyed(this);
 }
 
-void ResourceScript::FreeMemory()
-{
+void ResourceScript::FreeMemory() {
 }
+

@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "Imgui/imgui.h"
 #include "Application.h"
 #include "ModuleCamera3D.h"
@@ -17,30 +16,30 @@
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 
+
 #include "mmgr/mmgr.h"
 
-ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
-{
+using namespace Broken;
+
+ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled) {
 	camera = new ComponentCamera(nullptr);
 }
 
-ModuleCamera3D::~ModuleCamera3D()
-{}
+ModuleCamera3D::~ModuleCamera3D() {
+}
 
-bool ModuleCamera3D::Init(json config)
-{
+bool ModuleCamera3D::Init(json& file) {
 	App->renderer3D->SetActiveCamera(camera);
 	App->renderer3D->SetCullingCamera(camera);
 	return true;
 }
 
 // -----------------------------------------------------------------
-bool ModuleCamera3D::Start()
-{
+bool ModuleCamera3D::Start() {
 	ENGINE_CONSOLE_LOG("Setting up the camera");
 
 	bool ret = true;
-	camera->frustum.SetPos(float3(0.0f, 25.0f,-50.0f));
+	camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
 	camera->SetFOV(60.0f);
 	reference = camera->frustum.Pos();
 	camera->Look({ 0.0f, 0.0f, 0.0f });
@@ -50,8 +49,7 @@ bool ModuleCamera3D::Start()
 }
 
 // -----------------------------------------------------------------
-bool ModuleCamera3D::CleanUp()
-{
+bool ModuleCamera3D::CleanUp() {
 	ENGINE_CONSOLE_LOG("Cleaning camera");
 
 	delete camera;
@@ -73,10 +71,9 @@ void ModuleCamera3D::LoadStatus(const json& file)
 }
 
 // -----------------------------------------------------------------
-update_status ModuleCamera3D::Update(float dt)
+update_status ModuleCamera3D::Update(float dt) 
 {
-	if (App->GetAppState() == AppState::EDITOR && App->gui->hoveringScene)
-	{
+	if (App->GetAppState() == AppState::EDITOR && App->gui->isSceneHovered) {
 		m_CameraSpeedDeltaTime = m_CameraSpeed * dt;
 		m_ScrollSpeedDeltaTime = m_ScrollSpeed * dt;
 		m_FinalSpeed = m_CameraSpeedDeltaTime * m_SpeedMultiplicator;
@@ -88,15 +85,13 @@ update_status ModuleCamera3D::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleCamera3D::UpdateCamera()
-{
-	if (App->GetAppState() == AppState::EDITOR && App->gui->hoveringScene)
+void ModuleCamera3D::UpdateCamera() {
+	if (App->GetAppState() == AppState::EDITOR && App->gui->isSceneHovered) 
 	{
 		float3 newPos(0, 0, 0);
 
 		// --- Move ---
-		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
-		{
+		if (/*!App->gui->IsMouseCaptured() && */App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += camera->frustum.Front() * m_FinalSpeed;
 			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= camera->frustum.Front() * m_FinalSpeed;
 
@@ -128,20 +123,18 @@ void ModuleCamera3D::UpdateCamera()
 			CameraLookAround(m_CameraSpeedDeltaTime, reference);
 
 		// --- Frame object ---
-		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-		{
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
 			if (GameObject* GO = App->scene_manager->GetSelectedGameObject())
 				FrameObject(GO);
 			else
 				FrameObject(float3(0.0f));
 		}
-		
 
 		//App->scene_manager->CreateGrid(camera->frustum.Pos().Length()); // rip adaptive grid
 	}
 
 	// --- Mouse picking ---
-	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && App->gui->hoveringScene)
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && App->gui->isSceneHovered)
 	{
 		float mouse_x = App->input->GetMouseX();
 		float mouse_y = App->input->GetMouseY();
@@ -150,8 +143,7 @@ void ModuleCamera3D::UpdateCamera()
 	}
 }
 
-void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
-{
+void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y) {
 	// MYTODO: Make this easy to understand / explain
 	// Scene window relative coords
 	float normalized_x = (mouse_x - App->gui->sceneX) / App->gui->sceneWidth * (float)App->window->GetWindowWidth();
@@ -171,10 +163,8 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 		App->scene_manager->SelectFromRay(ray);
 }
 
-void ModuleCamera3D::FrameObject(GameObject* GO)
-{
-	if (GO)
-	{
+void ModuleCamera3D::FrameObject(GameObject* GO) {
+	if (GO) {
 		ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 		ComponentMesh* mesh = GO->GetComponent<ComponentMesh>();
 
@@ -191,14 +181,13 @@ void ModuleCamera3D::FrameObject(GameObject* GO)
 
 			float3 Movement = camera->frustum.Front() * (10.0f * mesh->GetAABB().HalfDiagonal().Length());
 
-			if(Movement.IsFinite())
-			camera->frustum.SetPos(reference - Movement);
-		}		
+			if (Movement.IsFinite())
+				camera->frustum.SetPos(reference - Movement);
+		}
 	}
 }
 
-void ModuleCamera3D::FrameObject(float3 posToLook)
-{
+void ModuleCamera3D::FrameObject(float3 posToLook) {
 	reference = posToLook;
 	float3 Movement = camera->frustum.Front() * 30.0f;
 
@@ -214,27 +203,24 @@ void ModuleCamera3D::CameraPan(float speed)
 	if (factor < 0.5f)
 		factor = 0.5f;
 
-	if (dx != 0)
-	{
-		camera->frustum.SetPos(camera->frustum.Pos() + (speed * camera->frustum.WorldRight() * dx*factor));
-		reference += speed * camera->frustum.WorldRight() * dx*factor;
+	if (dx != 0) {
+		camera->frustum.SetPos(camera->frustum.Pos() + (speed * camera->frustum.WorldRight() * dx * factor));
+		reference += speed * camera->frustum.WorldRight() * dx * factor;
 	}
 
-	if (dy != 0)
-	{
-		camera->frustum.SetPos(camera->frustum.Pos() + speed * camera->frustum.Up() * dy*factor);
-		reference += speed * camera->frustum.Up() * dy*factor;
+	if (dy != 0) {
+		camera->frustum.SetPos(camera->frustum.Pos() + speed * camera->frustum.Up() * dy * factor);
+		reference += speed * camera->frustum.Up() * dy * factor;
 	}
 }
 
-void ModuleCamera3D::CameraZoom(float speed)
-{
+void ModuleCamera3D::CameraZoom(float speed) {
 	float factor = abs(camera->frustum.Pos().y);
 	if (factor < 1.0f)
 		factor = 1.0f;
 
 	int mouse_wheel = App->input->GetMouseWheel();
-	float3 Movement = camera->frustum.Front() * mouse_wheel*speed*factor;
+	float3 Movement = camera->frustum.Front() * mouse_wheel * speed * factor;
 	camera->frustum.SetPos(camera->frustum.Pos() + Movement);
 }
 

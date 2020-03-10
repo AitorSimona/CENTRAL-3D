@@ -1,14 +1,14 @@
 #ifndef __JSONLoader_H__
 #define __JSONLoader_H__
 
-#include "Globals.h"
+#include "BrokenCore.h"
 #include "json/json.hpp"
 
+BE_BEGIN_NAMESPACE
 // for convenience
 using json = nlohmann::json;
 
-class JSONLoader
-{
+class BROKEN_API JSONLoader {
 public:
 
 	JSONLoader() {}
@@ -16,9 +16,9 @@ public:
 
 	json Load(const char* File) const;
 
-	bool Save(const char* File, json jsonfile);
+	bool Save(const char* File, const json& jsonfile);
 
-	std::string Serialize(json jsonfile);
+	void Serialize(const json& jsonfile, std::string& jsonserialized);
 };
-
+BE_END_NAMESPACE
 #endif

@@ -12,45 +12,38 @@
 
 #include "mmgr/mmgr.h"
 
-ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file)
-{
+using namespace Broken;
+ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file) {
 	extension = ".mat";
 	resource_file = source_file;
 	shader = App->renderer3D->defaultShader;
 	previewTexID = App->gui->materialTexID;
 }
 
-ResourceMaterial::~ResourceMaterial()
-{
+ResourceMaterial::~ResourceMaterial() {
 
 }
 
-bool ResourceMaterial::LoadInMemory()
-{
+bool ResourceMaterial::LoadInMemory() {
 	shader->GetAllUniforms(uniforms);
 
 	return true;
 }
 
-void ResourceMaterial::FreeMemory()
-{
-	for (uint i = 0; i < uniforms.size(); ++i)
-	{
+void ResourceMaterial::FreeMemory() {
+	for (uint i = 0; i < uniforms.size(); ++i) {
 		delete uniforms[i];
 	}
 
 	uniforms.clear();
 }
 
-void ResourceMaterial::UpdateUniforms()
-{
+void ResourceMaterial::UpdateUniforms() {
 	glUseProgram(shader->ID);
 
-	for (uint i = 0; i < uniforms.size(); ++i)
-	{
+	for (uint i = 0; i < uniforms.size(); ++i) {
 
-		switch (uniforms[i]->type)
-		{
+		switch (uniforms[i]->type) {
 		case GL_INT:
 			glUniform1i(uniforms[i]->location, uniforms[i]->value.intU);
 			break;
@@ -88,13 +81,11 @@ void ResourceMaterial::UpdateUniforms()
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-void ResourceMaterial::OnOverwrite()
-{
+void ResourceMaterial::OnOverwrite() {
 	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
-void ResourceMaterial::OnDelete()
-{
+void ResourceMaterial::OnDelete() {
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
@@ -109,7 +100,6 @@ void ResourceMaterial::OnDelete()
 	App->resources->ONResourceDestroyed(this);
 }
 
-void ResourceMaterial::Repath()
-{
+void ResourceMaterial::Repath() {
 	resource_file = original_file + extension;
 }

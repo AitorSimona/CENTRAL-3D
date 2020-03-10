@@ -1,23 +1,26 @@
 #ifndef MODULETHREADING_H
 #define MODULETHREADING_H
-
-#include "Module.h"
+#include <thread>
 #include <mutex>
 #include <queue>
 #include <functional>
 #include <vector>
-#include <thread>
 #include <condition_variable>
 #include <atomic>
 
-#define ADDTASK(object, function, ...) ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
+#include "Module.h"
 
-class ModuleThreading : public Module {
+
+#define ADDTASK(object, function, ...) Broken::ModuleThreading::AddTask(std::bind(&function, object, __VA_ARGS__))
+
+BE_BEGIN_NAMESPACE
+
+class BROKEN_API ModuleThreading : public Module {
 public:
 	ModuleThreading(bool start_enabled = true);
 	~ModuleThreading();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status Update(float dt) override;
 	update_status PostUpdate(float dt) override;
@@ -46,5 +49,5 @@ private:
 	std::atomic<bool> stopPool{ false };
 	bool poolTerminated = false;
 };
-
+BE_END_NAMESPACE
 #endif

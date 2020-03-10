@@ -2,15 +2,13 @@
 #define __PANELBUILD_H__
 #pragma once
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 #include <string>
 #include <vector>
-#include "Globals.h"
-#include "JSONLoader.h"
 
-class GameObject;
+class Broken::GameObject;
 
-class PanelBuild : public Panel {
+class PanelBuild : public Broken::Panel {
 public:
 	PanelBuild(char* name);
 	~PanelBuild();
@@ -22,12 +20,12 @@ public:
 private:
 	void findCameras();
 	void makeBuild();
-	void copyAllFolderMT(const char* path);
+	void copyAllFolderMT(std::shared_ptr<std::string> path, std::shared_ptr<std::string> build);
 
 private:
-	std::vector<GameObject*> cameras;
+	std::vector<Broken::GameObject*> cameras;
 	std::string buildName;
-	GameObject* selectedCamera;
+	Broken::GameObject* selectedCamera;
 	std::string scenePath;
 	//std::string cameraName;
 

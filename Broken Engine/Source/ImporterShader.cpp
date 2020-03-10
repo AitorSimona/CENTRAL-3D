@@ -7,16 +7,14 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader)
-{
+using namespace Broken;
+ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader) {
 }
 
-ImporterShader::~ImporterShader()
-{
+ImporterShader::~ImporterShader() {
 }
 
-Resource* ImporterShader::Import(ImportData& IData) const
-{
+Resource* ImporterShader::Import(ImportData& IData) const {
 
 	bool ret = true;
 
@@ -105,13 +103,11 @@ Resource* ImporterShader::Import(ImportData& IData) const
 	return nullptr;
 }
 
-void ImporterShader::Save(ResourceShader * shader, const char * path) const
-{
+void ImporterShader::Save(ResourceShader* shader, const char* path) const {
 	//// --- Save Shaders to lib --- 
 	//shader->Save();
 }
 
-Resource* ImporterShader::Load(const char * path) const 
-{
+Resource* ImporterShader::Load(const char* path) const {
 	return nullptr;
 }

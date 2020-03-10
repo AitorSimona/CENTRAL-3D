@@ -2,11 +2,12 @@
 #define __RESOURCE_ANIMATION__
 
 #include "Resource.h"
-#include "Globals.h"
 #include <map>
-#include "MathGeoLib/include/MathGeoLib.h"
+#include <string>
+#include "Math.h"
 
-struct Channel
+BE_BEGIN_NAMESPACE
+struct BROKEN_API Channel
 {
 	std::string name;
 
@@ -29,11 +30,11 @@ struct Channel
 	std::map<double, float3>::iterator NextScale(double current);
 };
 
-class ResourceAnimation : public Resource
+class BROKEN_API ResourceAnimation : public Resource
 {
 public:
 
-	ResourceAnimation(uint UID, std::string source_file);
+	ResourceAnimation(uint UID, const char* source_file);
 	~ResourceAnimation();
 
 	bool LoadInMemory() override;
@@ -55,4 +56,5 @@ private:
 	void Repath() override;
 };
 
+BE_END_NAMESPACE
 #endif // __RESOURCE_ANIMATION__

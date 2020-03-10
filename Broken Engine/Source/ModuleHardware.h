@@ -3,15 +3,18 @@
 
 #include "Module.h"
 #include <string>
+#define NOMINMAX
+#include <windows.h>
 #include "psapi.h"
+
 
 #define BTOGB (1073741824.0f)
 #define KBTOMB 1024.0f //To GB: (1048576.0f)
 #define BTOMB (1048576.0f)
 
+BE_BEGIN_NAMESPACE
 //-------------------------- SOFTWARE INFO --------------------------//
-class SoftwareInfo
-{
+class BROKEN_API SoftwareInfo {
 private:
 
 	//Don't use this, they are just class variables, use the getters instead
@@ -36,8 +39,8 @@ public:
 	const std::string OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
 
 	const std::string GetSDLVersion()		const { return mSoftware_SDLVersion; }
-	const auto GetOGLVersion()				const { return glGetString(GL_VERSION); }
-	const auto GetOGLShadingVersion()		const { return glGetString(GL_SHADING_LANGUAGE_VERSION); }
+	const std::string GetOGLVersion()				const;
+	const std::string GetOGLShadingVersion()		const;
 
 	///__cplusplus returning values:
 	///199711L (C++98 or C++03)
@@ -58,8 +61,7 @@ public:
 
 
 //--------------------------- MEMORY INFO ---------------------------//
-class MemoryHardware
-{
+class BROKEN_API MemoryHardware {
 private:
 
 	mutable MEMORYSTATUSEX m_MemoryInfo;
@@ -114,8 +116,7 @@ public:
 
 
 //---------------------------- CPU INFO -----------------------------//
-class ProcessorHardware
-{
+class BROKEN_API ProcessorHardware {
 private:
 
 	SYSTEM_INFO m_CpuSysInfo;
@@ -124,8 +125,7 @@ private:
 
 	std::string m_CpuArchitecture;
 
-	struct InstructionsSet
-	{
+	struct InstructionsSet {
 		bool Available_3DNow = false;
 		bool RDTSC_Available = false;
 		bool AltiVec_Available = false;
@@ -167,12 +167,10 @@ public:
 
 
 //---------------------------- GPU INFO -----------------------------//
-class GPUHardware
-{
+class BROKEN_API GPUHardware {
 private:
 
-	struct GPUPrimaryInfo_IntelGPUDetect
-	{
+	struct GPUPrimaryInfo_IntelGPUDetect {
 		std::string m_GPUBrand;
 		uint m_GPUID = 0;
 		uint m_GPUVendor = 0;
@@ -208,8 +206,8 @@ public:
 	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 	void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
 
-	const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
-	const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
+	const std::string GetGPUBenchmark()	const { return (const char*)glGetString(GL_VENDOR); }
+	const std::string GetGPUModel()		const { return (const char*)glGetString(GL_RENDERER); }
 
 	const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 	const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
@@ -220,8 +218,7 @@ public:
 
 
 //-------------------------------------------------------------------//
-struct hw_info
-{
+struct BROKEN_API hw_info {
 	SoftwareInfo Software_Information;
 	MemoryHardware Memory_Information;
 	ProcessorHardware CPU_Information;
@@ -251,8 +248,7 @@ struct hw_info
 	float vram_mb_reserved = 0.f;
 };
 
-class ModuleHardware : public Module
-{
+class BROKEN_API ModuleHardware : public Module {
 public:
 
 	ModuleHardware(bool start_enabled = true);
@@ -273,4 +269,5 @@ private:
 	mutable hw_info info;
 };
 
+BE_END_NAMESPACE
 #endif // __MODULEHARDWARE_H__

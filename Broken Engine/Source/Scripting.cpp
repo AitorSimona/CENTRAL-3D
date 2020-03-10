@@ -1,5 +1,4 @@
 #include "Scripting.h"
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"
@@ -25,29 +24,24 @@
 
 // ENGINE TRANSLATOR
 // General
-
-Scripting::Scripting()
-{
+using namespace Broken;
+Scripting::Scripting() {
 }
 
-Scripting::~Scripting()
-{
+Scripting::~Scripting() {
 }
 
 
 //Function that Lua will be able to call as LOG
-void Scripting::LogFromLua(const char* string)
-{
+void Scripting::LogFromLua(const char* string) {
 	ENGINE_CONSOLE_LOG("[Script]: %s", string);
 }
 
-float Scripting::GetRealDT() const
-{
+float Scripting::GetRealDT() const {
 	return App->time->GetRealTimeDt();
 }
 
-float Scripting::GetDT() const
-{
+float Scripting::GetDT() const {
 	return App->time->GetGameDt();
 }
 
@@ -57,8 +51,7 @@ float Scripting::GameTime()
 }
 
 // Input
-int Scripting::GetKey(const char* key) const
-{
+int Scripting::GetKey(const char* key) const {
 	SDL_Scancode code = SDL_GetScancodeFromName(key);
 	if (code != SDL_SCANCODE_UNKNOWN)
 		return code;
@@ -68,8 +61,7 @@ int Scripting::GetKey(const char* key) const
 	}
 }
 
-int Scripting::GetKeyState(const char* key) const
-{
+int Scripting::GetKeyState(const char* key) const {
 	SDL_Scancode code = SDL_GetScancodeFromName(key);
 	if (code != SDL_SCANCODE_UNKNOWN)
 		return App->input->GetKey(code);
@@ -79,28 +71,23 @@ int Scripting::GetKeyState(const char* key) const
 	}
 }
 
-bool Scripting::IsKeyDown(const char* key) const
-{
+bool Scripting::IsKeyDown(const char* key) const {
 	return GetKeyState(key) == KEY_DOWN;
 }
 
-bool Scripting::IsKeyUp(const char* key) const
-{
+bool Scripting::IsKeyUp(const char* key) const {
 	return GetKeyState(key) == KEY_UP;
 }
 
-bool Scripting::IsKeyRepeat(const char* key) const
-{
+bool Scripting::IsKeyRepeat(const char* key) const {
 	return GetKeyState(key) == KEY_REPEAT;
 }
 
-bool Scripting::IsKeyIdle(const char* key) const
-{
+bool Scripting::IsKeyIdle(const char* key) const {
 	return GetKeyState(key) == KEY_IDLE;
 }
 
-int Scripting::GetMouseButton(const char* button) const
-{
+int Scripting::GetMouseButton(const char* button) const {
 	if (!std::strcmp("Left", button))
 		return SDL_BUTTON_LEFT;
 	else if (!std::strcmp("Middle", button))
@@ -117,8 +104,7 @@ int Scripting::GetMouseButton(const char* button) const
 	}
 }
 
-int Scripting::GetMouseButtonState(const char* button) const
-{
+int Scripting::GetMouseButtonState(const char* button) const {
 	if (!strcmp("Left", button))
 		return App->input->GetMouseButton(SDL_BUTTON_LEFT);
 	else if (!std::strcmp("Middle", button))
@@ -135,23 +121,19 @@ int Scripting::GetMouseButtonState(const char* button) const
 	}
 }
 
-bool Scripting::IsMouseButtonDown(const char* button) const
-{
+bool Scripting::IsMouseButtonDown(const char* button) const {
 	return GetMouseButtonState(button) == KEY_DOWN;
 }
 
-bool Scripting::IsMouseButtonUp(const char* button) const
-{
+bool Scripting::IsMouseButtonUp(const char* button) const {
 	return GetMouseButtonState(button) == KEY_UP;
 }
 
-bool Scripting::IsMouseButtonRepeat(const char* button) const
-{
+bool Scripting::IsMouseButtonRepeat(const char* button) const {
 	return GetMouseButtonState(button) == KEY_REPEAT;
 }
 
-bool Scripting::IsMouseButtonIdle(const char* button) const
-{
+bool Scripting::IsMouseButtonIdle(const char* button) const {
 	return GetMouseButtonState(button) == KEY_IDLE;
 }
 
@@ -736,10 +718,10 @@ void Scripting::RotateObject(float x, float y, float z)
 		if (!rb->rigidBody)
 			return;
 
-		PxTransform globalPos = rb->rigidBody->getGlobalPose();
+		physx::PxTransform globalPos = rb->rigidBody->getGlobalPose();
 		Quat quaternion = Quat::FromEulerXYZ(DEGTORAD * x, DEGTORAD * y, DEGTORAD * z);
-		PxQuat quat = PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-		globalPos = PxTransform(globalPos.p, quat);
+		physx::PxQuat quat = physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+		globalPos = physx::PxTransform(globalPos.p, quat);
 
 		collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
 
@@ -798,9 +780,9 @@ void Scripting::LookAt(float spotX, float spotY, float spotZ, bool local)
 			if (!rb->rigidBody)
 				return;
 
-			PxTransform globalPos = rb->rigidBody->getGlobalPose();
-			PxQuat quat = PxQuat(rot.x, rot.y, rot.z, rot.w);
-			globalPos = PxTransform(globalPos.p, quat);
+			physx::PxTransform globalPos = rb->rigidBody->getGlobalPose();
+			physx::PxQuat quat = physx::PxQuat(rot.x, rot.y, rot.z, rot.w);
+			globalPos = physx::PxTransform(globalPos.p, quat);
 
 			collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
 		}
@@ -971,7 +953,7 @@ void Scripting::AddForce(float forceX, float forceY, float forceZ, int ForceMode
 	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
 
 	if (body && coll)
-		return body->AddForce({forceX, forceY, forceZ}, (PxForceMode::Enum)ForceMode);
+		return body->AddForce({forceX, forceY, forceZ}, (physx::PxForceMode::Enum)ForceMode);
 	else
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
@@ -982,7 +964,7 @@ void Scripting::AddTorque(float forceX, float forceY, float forceZ, int ForceMod
 	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
 
 	if (body && coll)
-		return body->AddTorque({ forceX, forceY, forceZ }, (PxForceMode::Enum)ForceMode);
+		return body->AddTorque({ forceX, forceY, forceZ }, (physx::PxForceMode::Enum)ForceMode);
 	else
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
@@ -1283,3 +1265,4 @@ void Scripting::StartAnimation(const char* name, float speed)
 //
 //	trs->needsUpdateGlobal = true;
 //}
+

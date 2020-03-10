@@ -1,12 +1,11 @@
 #ifndef __PANEL_RESOURCES_H__
 #define __PANEL_RESOURCES_H__
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 
-class Resource;
 struct ImVec4;
 
-class PanelResources : public Panel
+class PanelResources : public Broken::Panel
 {
 public:
 
@@ -16,7 +15,7 @@ public:
 	bool Draw();
 
 private:
-	void DrawResourceNode(Resource* resource, ImVec4& color);
+	void DrawResourceNode(Broken::Resource* resource, ImVec4& color);
 };
 
 #endif

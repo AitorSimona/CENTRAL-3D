@@ -5,16 +5,17 @@
 #include <vector>
 #include "Math.h"
 
+BE_BEGIN_NAMESPACE
+
 class ComponentCanvas;
 class Component;
-
-class ModuleUI : public Module
+class BROKEN_API ModuleUI : public Module
 {
 public:
 	ModuleUI(bool start_enabled = true);
 	~ModuleUI();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
@@ -36,5 +37,6 @@ public:
 	float2 mouse_pos = float2::zero;
 };
 
+BE_END_NAMESPACE
 #endif
 

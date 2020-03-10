@@ -4,9 +4,11 @@
 #include "Component.h"
 #include "Wwise/AK/SoundEngine/Common/AkTypes.h"
 
+
+BE_BEGIN_NAMESPACE
 class WwiseGameObject;
 
-class ComponentAudioSource : public Component
+class BROKEN_API ComponentAudioSource : public Component
 {
 public:
 	ComponentAudioSource(GameObject* ContainerGO);
@@ -41,4 +43,5 @@ public:
 	bool isPlaying = false;
 };
 
+BE_END_NAMESPACE
 #endif __COMPONENTAUDIOSOURCE__H__

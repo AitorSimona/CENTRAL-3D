@@ -16,15 +16,15 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterMaterial::ImporterMaterial() : Importer(Importer::ImporterType::Material)
-{
+using namespace Broken;
+ImporterMaterial::ImporterMaterial() : Importer(Importer::ImporterType::Material) {
 }
 
-ImporterMaterial::~ImporterMaterial()
-{
+ImporterMaterial::~ImporterMaterial() {
 }
 
 // --- Create Material from Scene and path to file ---
+
 Resource* ImporterMaterial::Import(ImportData& IData) const
 {
 	ImportMaterialData* MatData = (ImportMaterialData*)&IData;
@@ -39,7 +39,7 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 
 	// --- Get material's name ---
 	MatData->mat->Get(AI_MATKEY_NAME, material_name);
-	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat"));
+	ResourceMaterial* resource_mat = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat").c_str());
 
 	//// --- Get number of Diffuse textures ---
 	//uint num_diffuse = MatData->mat->GetTextureCount(aiTextureType_DIFFUSE);
@@ -93,15 +93,13 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 	return resource_mat;
 }
 
-Resource* ImporterMaterial::Load(const char * path) const
-{
+Resource* ImporterMaterial::Load(const char* path) const {
 	ResourceMaterial* mat = nullptr;
 	ResourceTexture* diffuse = nullptr;
 
 	json file = App->GetJLoader()->Load(path);
 
-	if (!file.is_null() && !file["ResourceDiffuse"].is_null())
-	{
+	if (!file.is_null() && !file["ResourceDiffuse"].is_null()) {
 		std::string texture_path = file["ResourceDiffuse"];
 		Importer::ImportData IData(texture_path.c_str());
 		diffuse = (ResourceTexture*)App->resources->ImportAssets(IData);
@@ -114,15 +112,13 @@ Resource* ImporterMaterial::Load(const char * path) const
 	mat = App->resources->materials.find(meta->GetUID()) != App->resources->materials.end() ? App->resources->materials.find(meta->GetUID())->second : (ResourceMaterial*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MATERIAL, meta->GetOriginalFile(), meta->GetUID());
 
 	// --- A folder has been renamed ---
-	if (!App->fs->Exists(mat->GetOriginalFile()))
-	{
+	if (!App->fs->Exists(mat->GetOriginalFile())) {
 		mat->SetOriginalFile(path);
 		meta->SetOriginalFile(path);
 		App->resources->AddResourceToFolder(mat);
 	}
 
-	if (diffuse)
-	{
+	if (diffuse) {
 		mat->resource_diffuse = diffuse;
 		//mat->resource_diffuse->SetParent(mat);
 	}
@@ -130,8 +126,7 @@ Resource* ImporterMaterial::Load(const char * path) const
 	return mat;
 }
 
-void ImporterMaterial::Save(ResourceMaterial* mat) const
-{
+void ImporterMaterial::Save(ResourceMaterial* mat) const {
 	json file;
 
 	file[mat->GetName()];
@@ -142,7 +137,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();

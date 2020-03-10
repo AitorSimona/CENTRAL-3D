@@ -6,18 +6,15 @@
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
-#include "mmgr/mmgr.h"
-
-ImporterScript::ImporterScript() : Importer(ImporterType::Script)
+using namespace Broken;
+ImporterScript::ImporterScript() : Importer(ImporterType::Script) 
 {
 }
 
-ImporterScript::~ImporterScript()
-{
+ImporterScript::~ImporterScript() {
 }
 
-Resource* ImporterScript::Import(ImportData& IData) const
-{
+Resource* ImporterScript::Import(ImportData& IData) const {
 	ResourceScript* resource_script = (ResourceScript*)App->resources->CreateResource(Resource::ResourceType::SCRIPT, IData.path);
 
 
@@ -35,21 +32,22 @@ Resource* ImporterScript::Import(ImportData& IData) const
 	if (d_pos != 4294967295)  // If we are in DEBUG
 	{
 		abs_path = abs_path.substr(0,d_pos);
+		abs_path += "Game/";
 	}
-
-	if (r_pos != 4294967295) // If we are in RELEASE
+	else if (r_pos != 4294967295) // If we are in RELEASE
 	{
 		abs_path = abs_path.substr(0,r_pos);
+		abs_path += "Game/";
 	}
 
-	abs_path += "Game/";
+	
 	abs_path += IData.path;
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();
 
 	//Get Script name
 	std::string file;
-	App->fs->SplitFilePath(IData.path,nullptr,&file ,nullptr);
+	App->fs->SplitFilePath(IData.path, nullptr, &file, nullptr);
 	App->fs->RemoveFileExtension(file);
 	resource_script->script_name = file;
 
@@ -64,8 +62,7 @@ Resource* ImporterScript::Import(ImportData& IData) const
 	return (Resource*)resource_script;
 }
 
-Resource* ImporterScript::Load(const char* path) const
-{
+Resource* ImporterScript::Load(const char* path) const {
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
@@ -88,19 +85,21 @@ Resource* ImporterScript::Load(const char* path) const
 	if (d_pos != 4294967295)  // If we are in DEBUG
 	{
 		abs_path = abs_path.substr(0, d_pos);
+		abs_path += "Game/";
 	}
 
 	if (r_pos != 4294967295) // If we are in RELEASE
 	{
 		abs_path = abs_path.substr(0, r_pos);
+		abs_path += "Game/";
 	}
 
-	if (g_pos != 4294967295) // If we are in a EXE final build
-	{
-		abs_path = abs_path.substr(0, g_pos);
-	}
+	//if (g_pos != 4294967295) // If we are in a EXE final build
+	//{
+	//	abs_path = abs_path.substr(0, g_pos);
+	//}
 
-	abs_path += "Game/";
+	
 	abs_path += path;
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();

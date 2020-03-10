@@ -1,11 +1,10 @@
 #ifndef __PANEL_PHYSICS_H__
 #define __PANEL_PHYSICS_H__
 
-#include "Panel.h"
-
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "BrokenEngine.h"
 
-class PanelPhysics : public Panel
+class PanelPhysics : public Broken::Panel
 {
 public:
 

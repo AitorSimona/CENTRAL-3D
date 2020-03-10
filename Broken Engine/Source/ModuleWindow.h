@@ -1,13 +1,13 @@
-#ifndef __ModuleWindow_H__
-#define __ModuleWindow_H__
+#ifndef __MODULEWINDOW_H__
+#define __MODULEWINDOW_H__
 
 #include "Module.h"
 #include "SDL/include/SDL.h"
+#include "BrokenCore.h"
 
-class Application;
 
-class ModuleWindow : public Module
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ModuleWindow : public Module {
 public:
 
 	ModuleWindow(bool start_enabled = true);
@@ -15,7 +15,7 @@ public:
 	// Destructor
 	virtual ~ModuleWindow();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	bool CleanUp() override;
 
@@ -31,12 +31,13 @@ public:
 	void SetTitle(const char* title);
 	void SetWindowWidth(uint width);
 	void SetWindowHeight(uint height);
+	void SetMouseFocus(bool focus);
 
 	// --- Only App should access this, through SetAppName ---
 	void SetWinTitle(const char* name);
 
 	// --- Getters ---
-	void GetWinMaxMinSize(uint & min_width, uint & min_height, uint & max_width, uint & max_height) const;
+	void GetWinMaxMinSize(uint& min_width, uint& min_height, uint& max_width, uint& max_height) const;
 	uint GetWindowWidth() const;
 	uint GetWindowHeight() const;
 	float GetWinBrightness() const;
@@ -46,10 +47,11 @@ public:
 	bool IsResizable() const;
 	bool IsBorderless() const;
 	bool IsFullscreenDesktop() const;
+	bool isMouseFocused() const;
 
 	// --- Save/Load ----
-	void SaveStatus(json &file) const override;
-	void LoadStatus(const json & file) override;
+	void SaveStatus(json& file) const override;
+	void LoadStatus(const json& file) override;
 
 public:
 	//The window we'll be rendering to
@@ -72,6 +74,7 @@ private:
 	bool resizable = true;
 	bool borderless = false;
 	bool fullscreen_desktop = false;
+	bool mouse_focus = false;
 };
-
-#endif // __ModuleWindow_H__
+BE_END_NAMESPACE
+#endif // __MODULEWINDOW_H__

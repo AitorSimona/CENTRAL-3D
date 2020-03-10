@@ -3,12 +3,12 @@
 
 #include "Importer.h"
 
+BE_BEGIN_NAMESPACE
 class ResourceShader;
 class Resource;
 
 
-class ImporterShader : public Importer
-{
+class BROKEN_API ImporterShader : public Importer {
 
 public:
 	ImporterShader();
@@ -21,5 +21,6 @@ public:
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Shader; };
 };
+BE_END_NAMESPACE
 
 #endif

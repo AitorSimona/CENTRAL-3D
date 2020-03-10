@@ -1,11 +1,16 @@
+#ifndef __COMPONENTIMAGE_H__
+#define __COMPONENTIMAGE_H__
 #pragma once
-#include "Component.h"
-#include "ComponentCanvas.h"
 
+#include "Component.h"
+#include "Math.h"
+
+BE_BEGIN_NAMESPACE
+
+class ComponentCanvas;
 class ResourceTexture;
 
-
-class ComponentImage : public Component
+class BROKEN_API ComponentImage : public Component
 {
 public:
 	ComponentImage(GameObject* gameObject);
@@ -35,3 +40,5 @@ public:
 	ResourceTexture* texture = nullptr;
 };
 
+BE_END_NAMESPACE
+#endif

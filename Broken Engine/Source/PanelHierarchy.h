@@ -1,11 +1,9 @@
 #ifndef __PANEL_HIERARCHY_H__
 #define __PANEL_HIERARCHY_H__
 
-#include "Panel.h"
+#include "BrokenEngine.h"
 
-class GameObject;
-
-class PanelHierarchy : public Panel
+class PanelHierarchy : public Broken::Panel
 {
 public:
 
@@ -15,12 +13,12 @@ public:
 	bool Draw();
 
 private:
-	void DrawRecursive(GameObject* Go);
+	void DrawRecursive(Broken::GameObject* Go);
 
-	GameObject* to_destroy = nullptr;
+	Broken::GameObject* to_destroy = nullptr;
 	bool end_drag = false;
-	GameObject* target = nullptr;
-	GameObject* dragged = nullptr;
+	Broken::GameObject* target = nullptr;
+	Broken::GameObject* dragged = nullptr;
 };
 
 #endif

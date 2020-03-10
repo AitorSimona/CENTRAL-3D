@@ -1,42 +1,42 @@
 #include "PanelProject.h"
-#include "Application.h"
-#include "ModuleFileSystem.h"
-#include "ModuleResourceManager.h"
-#include "ModuleEventManager.h"
-#include "ModuleGui.h"
-#include "ModuleSceneManager.h"
+#include "EngineApplication.h"
+#include "ModuleEditorUI.h"
+//#include "ModuleFileSystem.h"
+//#include "ModuleResourceManager.h"
+//#include "ModuleEventManager.h"
+//#include "ModuleGui.h"
 
-#include "Resources.h"
-#include "Importers.h"
-
-#include "mmgr/mmgr.h"
+//#include "ResourceFolder.h"
+//#include "ResourceModel.h"
+#include <memory>
+#include "mmgr/nommgr.h"
 
 // --- Event Manager Callbacks ---
-void PanelProject::ONGameObjectSelected(const Event& e)
+void PanelProject::ONGameObjectSelected(const Broken::Event& e)
 {
-	App->gui->panelProject->SetSelected(nullptr);
+	EngineApp->editorui->panelProject->SetSelected(nullptr);
 }
 
-void PanelProject::ONResourceDestroyed(const Event& e)
+void PanelProject::ONResourceDestroyed(const Broken::Event& e)
 {
-	if (e.uid == App->gui->panelProject->selected_uid)
-		App->gui->panelProject->SetSelected(nullptr);
+	if (e.uid == EngineApp->editorui->panelProject->selected_uid)
+		EngineApp->editorui->panelProject->SetSelected(nullptr);
 }
 
 // -------------------------------
 
-PanelProject::PanelProject(char * name) : Panel(name)
+PanelProject::PanelProject(char * name) : Broken::Panel(name)
 {
 	// --- Add Event Listeners ---
-	App->event_manager->AddListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
-	App->event_manager->AddListener(Event::EventType::Resource_destroyed, ONResourceDestroyed);
+	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_selected, ONGameObjectSelected);
+	EngineApp->event_manager->AddListener(Broken::Event::EventType::Resource_destroyed, ONResourceDestroyed);
 
 }
 
 PanelProject::~PanelProject()
 {
-	App->event_manager->RemoveListener(Event::EventType::GameObject_selected, ONGameObjectSelected);
-	App->event_manager->RemoveListener(Event::EventType::Resource_destroyed, ONResourceDestroyed);
+	EngineApp->event_manager->RemoveListener(Broken::Event::EventType::GameObject_selected, ONGameObjectSelected);
+	EngineApp->event_manager->RemoveListener(Broken::Event::EventType::Resource_destroyed, ONResourceDestroyed);
 }
 
 
@@ -44,6 +44,8 @@ PanelProject::~PanelProject()
 
 bool PanelProject::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags projectFlags = 0;
 	projectFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_MenuBar;
 
@@ -52,63 +54,62 @@ bool PanelProject::Draw()
 	// --- Draw project panel, Unity style ---
 	if (ImGui::Begin(name, &enabled, projectFlags))
 	{
-		static std::vector<std::string> filters;
 
 		CreateResourceHandlingPopup();
 
-		ImGui::BeginMenuBar();
-		ImGui::EndMenuBar();
+		if (ImGui::BeginMenuBar())
+			ImGui::EndMenuBar();
 
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + 38));
 
 		// --- Draw Directories Tree ---
-		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x*0.1,ImGui::GetWindowSize().y));
-
-		RecursiveDirectoryDraw(ASSETS_FOLDER, filters);
-
+		if (ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x * 0.1, ImGui::GetWindowSize().y)))
+			RecursiveDirectoryDraw(EngineApp->resources->GetAssetsFolder());
 		ImGui::EndChild();
 
 		// --- Draw Explorer ---
 		ImGui::SameLine();
 
-		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x*0.9f, ImGui::GetWindowSize().y), true, projectFlags);
+		if (ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowSize().y), true, projectFlags)) {
 
-		if(currentDirectory == nullptr)
-			currentDirectory = App->resources->GetAssetsFolder();
+			if (currentDirectory == nullptr)
+				currentDirectory = EngineApp->resources->GetAssetsFolder();
 
-		DrawFolder(currentDirectory);
+			DrawFolder(EngineApp->resources->getCurrentDirectory());
 
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
+			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
 
 
-		// --- Item resizer and selected resource path display ---
-		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
-		ImGui::BeginMenuBar();
+			// --- Item resizer and selected resource path display ---
+			if (ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
+			{
+				if (ImGui::BeginMenuBar()) {
 
-		if (selected)
-			ImGui::Text(selected->GetName());
+					if (selected)
+						ImGui::Text(selected->GetName());
 
-		ImGui::Spacing();
+					ImGui::Spacing();
 
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
+					ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
 
-		int imageSize_modifier = imageSize_px;
-		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x * 0.1f);
-		if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64))
-		{
-			imageSize_px = imageSize_modifier;
+					int imageSize_modifier = imageSize_px;
+					ImGui::SetNextItemWidth(ImGui::GetWindowSize().x * 0.1f);
+					if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64)) {
+						imageSize_px = imageSize_modifier;
+					}
+
+					ImGui::EndMenuBar();
+				}
+			}
+			ImGui::EndChild();
 		}
-
-		ImGui::EndMenuBar();
-		ImGui::EndChild();
-
-
 		ImGui::EndChild();
 	}
+	ImGui::End();
 
 	ImGui::PopStyleVar();
 
-	ImGui::End();
+
 
 
 	return true;
@@ -116,6 +117,7 @@ bool PanelProject::Draw()
 
 void PanelProject::CreateResourceHandlingPopup()
 {
+	//ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
 	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
 		ImGui::OpenPopup("Resources");
@@ -130,79 +132,83 @@ void PanelProject::CreateResourceHandlingPopup()
 		{
 			if (ImGui::MenuItem("Folder"))
 			{
-				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::FOLDER);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(Broken::Resource::ResourceType::FOLDER));
 
-				Resource* new_folder = App->resources->CreateResource(Resource::ResourceType::FOLDER, std::string(currentDirectory->GetResourceFile()).append(resource_name));
-				ImporterFolder* IFolder = App->resources->GetImporter<ImporterFolder>();
+				Broken::Resource* new_folder = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::FOLDER, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
+				Broken::ImporterFolder* IFolder = EngineApp->resources->GetImporter<Broken::ImporterFolder>();
 
-				App->resources->AddResourceToFolder(new_folder);
+				EngineApp->resources->AddResourceToFolder(new_folder);
 
 				resource_name.pop_back();
 				// --- Create meta ---
-				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, std::string(currentDirectory->GetResourceFile()).append(resource_name), new_folder->GetUID());
+				Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
+				Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str(), new_folder->GetUID());
 
 				if (meta)
 					IMeta->Save(meta);
 
-				IFolder->Save((ResourceFolder*)new_folder);
+				IFolder->Save((Broken::ResourceFolder*)new_folder);
 			}
 
 			if (ImGui::MenuItem("Material"))
 			{
-				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::MATERIAL);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(Broken::Resource::ResourceType::MATERIAL));
 
-				Resource* new_material = App->resources->CreateResource(Resource::ResourceType::MATERIAL, std::string(currentDirectory->GetResourceFile()).append(resource_name));
-				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+				Broken::Resource* new_material = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::MATERIAL, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
+				Broken::ImporterMaterial* IMat = EngineApp->resources->GetImporter<Broken::ImporterMaterial>();
 
-				App->resources->AddResourceToFolder(new_material);
+				EngineApp->resources->AddResourceToFolder(new_material);
 
 				// --- Create meta ---
-				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_material->GetResourceFile(), new_material->GetUID());
+				Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
+				Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, new_material->GetResourceFile(), new_material->GetUID());
 
 				if (meta)
 					IMeta->Save(meta);
 
-				IMat->Save((ResourceMaterial*)new_material);
+				IMat->Save((Broken::ResourceMaterial*)new_material);
 			}
 
 			if (ImGui::MenuItem("Script"))
 			{
-				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::SCRIPT);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(Broken::Resource::ResourceType::SCRIPT));
 
-				Resource* new_script = App->resources->CreateResource(Resource::ResourceType::SCRIPT, std::string(currentDirectory->GetResourceFile()).append(resource_name));
-				ImporterScript* IScript = App->resources->GetImporter<ImporterScript>();
+				Broken::Resource* new_script = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::SCRIPT, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
+				Broken::ImporterScript* IScript = EngineApp->resources->GetImporter<Broken::ImporterScript>();
 
-				App->resources->AddResourceToFolder(new_script);
+				EngineApp->resources->AddResourceToFolder(new_script);
 
 				// --- Create meta ---
-				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_script->GetResourceFile(), new_script->GetUID());
+				Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
+				Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, new_script->GetResourceFile(), new_script->GetUID());
 
 				if (meta)
 					IMeta->Save(meta);
 
-				IScript->Save((ResourceScript*)new_script);
+				IScript->Save((Broken::ResourceScript*)new_script);
 			}
 
 			if (ImGui::MenuItem("Scene"))
 			{
-				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::SCENE);
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(Broken::Resource::ResourceType::SCENE));
 
-				Resource* new_scene = App->resources->CreateResource(Resource::ResourceType::SCENE, std::string(currentDirectory->GetResourceFile()).append(resource_name));
-				ImporterScene* IScene = App->resources->GetImporter<ImporterScene>();
+				Broken::Resource* new_scene = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::SCENE, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
+				Broken::ImporterScene* IScene = EngineApp->resources->GetImporter<Broken::ImporterScene>();
 
-				App->resources->AddResourceToFolder(new_scene);
+				EngineApp->resources->AddResourceToFolder(new_scene);
 
 				// --- Create meta ---
-				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_scene->GetResourceFile(), new_scene->GetUID());
+				Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
+				Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, new_scene->GetResourceFile(), new_scene->GetUID());
 
 				if (meta)
 					IMeta->Save(meta);
 
-				IScene->SaveSceneToFile((ResourceScene*)new_scene);
+				IScene->SaveSceneToFile((Broken::ResourceScene*)new_scene);
 			}
 
 			//if (ImGui::BeginMenu("More.."))
@@ -223,43 +229,45 @@ void PanelProject::CreateResourceHandlingPopup()
 	}
 }
 
-void PanelProject::SetSelected(Resource* new_selected)
+void PanelProject::SetSelected(Broken::Resource* new_selected)
 {
 	selected = new_selected;
 
 	if (selected)
 	{
 		selected_uid = new_selected->GetUID();
-		Event e(Event::EventType::Resource_selected);
+		Broken::Event e(Broken::Event::EventType::Resource_selected);
 		e.resource = selected;
-		App->event_manager->PushEvent(e);
+		EngineApp->event_manager->PushEvent(e);
 	}
 	else
 		selected_uid = 0;
 }
 
-const Resource* PanelProject::GetcurrentDirectory() const
-{
-	return currentDirectory;
-}
+//const Broken::Resource* PanelProject::GetcurrentDirectory() const
+//{
+//	return currentDirectory;
+//}
 
 
-void PanelProject::DrawFolder(ResourceFolder* folder)
+void PanelProject::DrawFolder(Broken::ResourceFolder* folder)
 {
 	// --- Draw menuBar / path to current folder ---
 	ImGui::BeginMenuBar();
 
-	ResourceFolder* curr = folder;
+	Broken::ResourceFolder* curr = folder;
 
-	if (currentDirectory == App->resources->GetAssetsFolder())
-		ImGui::TextColored(ImVec4(0, 120, 255, 255), App->resources->GetAssetsFolder()->GetName());
+	if (EngineApp->resources->getCurrentDirectory() == EngineApp->resources->GetAssetsFolder())
+		ImGui::TextColored(ImVec4(0, 120, 255, 255), EngineApp->resources->GetAssetsFolder()->GetName());
 	else
-	ImGui::Text(App->resources->GetAssetsFolder()->GetName());
+	ImGui::Text(EngineApp->resources->GetAssetsFolder()->GetName());
 
-	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-		currentDirectory = App->resources->GetAssetsFolder();
+	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+		currentDirectory = EngineApp->resources->GetAssetsFolder();
+		EngineApp->resources->setCurrentDirectory(EngineApp->resources->GetAssetsFolder());
+	}
 
-	std::vector<ResourceFolder*> folders_path;
+	std::vector<Broken::ResourceFolder*> folders_path;
 
 	while (curr->GetParent())
 	{
@@ -267,15 +275,17 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		curr = curr->GetParent();
 	}
 
-	for (std::vector<ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
+	for (std::vector<Broken::ResourceFolder*>::const_reverse_iterator it = folders_path.rbegin(); it != folders_path.rend(); ++it)
 	{
-		if (currentDirectory == *it)
+		if (EngineApp->resources->getCurrentDirectory() == *it)
 			ImGui::TextColored(ImVec4(0, 120, 255, 255),(*it)->GetName());
 		else
-		ImGui::Text((*it)->GetName());
+			ImGui::Text((*it)->GetName());
 
-		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
 			currentDirectory = *it;
+			EngineApp->resources->setCurrentDirectory(*it);
+		}
 
 		ImGui::SameLine();
 	}
@@ -289,8 +299,8 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 
 	if (folder)
 	{
-		const std::vector<Resource*>* resources = &folder->GetResources();
-		const std::vector<ResourceFolder*>* directories = &folder->GetChilds();
+		const std::vector<Broken::Resource*>* resources = &folder->GetResources();
+		const std::vector<Broken::ResourceFolder*>* directories = &folder->GetChilds();
 		uint i = 0;
 		uint row = 0;
 		maxColumns = ImGui::GetWindowSize().x / (imageSize_px + item_spacingX_px + 1);
@@ -299,7 +309,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		ImVec2 vec = ImGui::GetCursorPos();
 
 		// --- Draw sub-folders ---
-		for (std::vector<ResourceFolder*>::const_iterator it = directories->begin(); it != directories->end(); ++it)
+		for (std::vector<Broken::ResourceFolder*>::const_iterator it = directories->begin(); it != directories->end(); ++it)
 		{
 			if (!*it)
 				continue;
@@ -335,8 +345,10 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			if (ImGui::IsItemClicked())
 				SetSelected(*it);
 
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
 				currentDirectory = *it;
+				EngineApp->resources->setCurrentDirectory(*it);
+			}
 
 			ImGui::SetCursorPosX(vec.x + (i - row * maxColumns) * (imageSize_px + item_spacingX_px) + item_spacingX_px + ((imageSize_px - ImGui::CalcTextSize(item_name.c_str(), nullptr).x)/2));
 			ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + imageSize_px);
@@ -355,7 +367,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 		}
 
 		// --- Draw the rest of files ---
-		for (std::vector<Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
+		for (std::vector<Broken::Resource*>::const_iterator it = resources->begin(); it != resources->end(); ++it)
 		{
 			if (!*it)
 				continue;
@@ -366,14 +378,14 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 			DrawFile(*it, i, row, vec, color);
 
 			// --- Draw model childs ---
-			if ((*it)->GetType() == Resource::ResourceType::MODEL)
+			if ((*it)->GetType() == Broken::Resource::ResourceType::MODEL)
 			{
 				uint arrowSize = imageSize_px / 4;
 
 				ImGui::SetCursorPosX(vec.x + ((i + 1) - row * maxColumns) * (imageSize_px + item_spacingX_px));
 				ImGui::SetCursorPosY(vec.y + row * (imageSize_px + item_spacingY_px) + item_spacingY_px + arrowSize*1.5);
 
-				ResourceModel* model = (ResourceModel*)*it;
+				Broken::ResourceModel* model = (Broken::ResourceModel*)*it;
 
 				ImVec2 uvx = { 0,1 };
 				ImVec2 uvy = { 1,0 };
@@ -387,16 +399,16 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 				// --- Force new uid so imgui does not block all buttons after the first one ---
 				ImGui::PushID((*it)->GetUID() + i);
 
-				if (ImGui::ImageButton((ImTextureID)App->gui->playbuttonTexID, ImVec2(arrowSize, arrowSize), uvx, uvy, 0))
+				if (ImGui::ImageButton((ImTextureID)EngineApp->gui->playbuttonTexID, ImVec2(arrowSize, arrowSize), uvx, uvy, 0))
 					model->openInProject = !model->openInProject;
 
 				ImGui::PopID();
 
 				if (model->openInProject)
 				{
-					std::vector<Resource*>* model_resources = model->GetResources();
+					std::vector<Broken::Resource*>* model_resources = model->GetResources();
 
-					for (std::vector<Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
+					for (std::vector<Broken::Resource*>::const_iterator res = model_resources->begin(); res != model_resources->end(); ++res)
 					{
 						if (maxColumns != 0 && (i + 1) % maxColumns == 0)
 							row++;
@@ -419,7 +431,7 @@ void PanelProject::DrawFolder(ResourceFolder* folder)
 	ImGui::PopStyleVar();
 }
 
-void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child)
+void PanelProject::DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child)
 {
 	ImGui::PushID(resource->GetUID());
 
@@ -472,9 +484,12 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 	// --- IF resource is a scene, load it on double click! ---
 	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 	{
-		if (resource->GetType() == Resource::ResourceType::SCENE)
-			App->scene_manager->SetActiveScene((ResourceScene*)resource);
+		if (resource->GetType() == Broken::Resource::ResourceType::SCENE)
+			EngineApp->scene_manager->SetActiveScene((Broken::ResourceScene*)resource);
 	}
+
+	//if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete), false))
+	//	EngineApp->resources->ONResourceDestroyed
 
 	ImGui::PopStyleVar();
 
@@ -505,22 +520,17 @@ void PanelProject::LimitText(std::string& text)
 }
 
 // MYTODO: To be substituted (folders/files are already loaded)
-void PanelProject::RecursiveDirectoryDraw(const char * directory, std::vector<std::string>& filters)
+void PanelProject::RecursiveDirectoryDraw(Broken::ResourceFolder* directory)
 {
-	std::vector<std::string> files;
-	std::vector<std::string> dirs;
-
-	std::string dir((directory) ? directory : "");
-	dir += "/";
-
-	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
-
-	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
-	{
-		if (ImGui::TreeNodeEx((dir + (*it)).c_str(), 0, "%s/", (*it).c_str()))
-		{
-			RecursiveDirectoryDraw((dir + (*it)).c_str(), filters);
+	std::vector<Broken::ResourceFolder*> childs = directory->GetChilds();
+	for (std::vector<Broken::ResourceFolder*>::iterator it = childs.begin(); it != childs.end(); ++it) {
+		std::string dir_name = directory->GetName();
+		std::string child_name = (*it)->GetName();
+		if (ImGui::TreeNodeEx((dir_name + child_name).c_str(), 0, "%s/", child_name.c_str())) {
+			RecursiveDirectoryDraw(*it);
 			ImGui::TreePop();
 		}
 	}
 }
+
+

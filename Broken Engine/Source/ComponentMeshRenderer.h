@@ -6,12 +6,13 @@
 // Specifying normal vectors length (used when drawing normals)
 #define NORMAL_LENGTH 0.5
 
+BE_BEGIN_NAMESPACE
+
 class ResourceMesh;
 class ComponentTransform;
 class ResourceMaterial;
 
-class ComponentMeshRenderer : public Component
-{
+class BROKEN_API ComponentMeshRenderer : public Component {
 public:
 
 	ComponentMeshRenderer(GameObject* ContainerGO);
@@ -39,4 +40,5 @@ public:
 	ResourceMaterial* material = nullptr;
 };
 
+BE_END_NAMESPACE
 #endif

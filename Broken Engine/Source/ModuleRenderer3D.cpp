@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleWindow.h"
@@ -8,6 +7,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
 #include "ModuleParticles.h"
+
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
@@ -27,19 +27,17 @@
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
 #include "mmgr/mmgr.h"
-
-ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
-{
+using namespace Broken;
+ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled) {
 
 }
 
 // Destructor
-ModuleRenderer3D::~ModuleRenderer3D()
-{}
+ModuleRenderer3D::~ModuleRenderer3D() {
+}
 
 // Called before render is available
-bool ModuleRenderer3D::Init(json file)
-{
+bool ModuleRenderer3D::Init(json& file) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Creating 3D Renderer context");
 
 	bool ret = true;
@@ -47,16 +45,14 @@ bool ModuleRenderer3D::Init(json file)
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 
-	if(context == NULL)
-	{
+	if (context == NULL) {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
-	if(ret == true)
-	{
+	if (ret == true) {
 		//Use Vsync
-		if(vsync && SDL_GL_SetSwapInterval(1) < 0)
+		if (vsync && SDL_GL_SetSwapInterval(1) < 0)
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		// Initialize glad
@@ -118,8 +114,7 @@ bool ModuleRenderer3D::Init(json file)
 }
 
 // PreUpdate: clear buffer
-update_status ModuleRenderer3D::PreUpdate(float dt)
-{
+update_status ModuleRenderer3D::PreUpdate(float dt) {
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -143,8 +138,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 }
 
 // PostUpdate present buffer to screen
-update_status ModuleRenderer3D::PostUpdate(float dt)
-{
+update_status ModuleRenderer3D::PostUpdate(float dt) {
 	// --- Set Shader Matrices ---
 	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
@@ -152,7 +146,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix (just different standard)
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
@@ -167,9 +161,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 
 	// --- Bind fbo ---
-    #ifndef BE_GAME_BUILD
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	#endif
+    if (renderfbo)
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
 	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
 	glDepthFunc(GL_GREATER);
 
@@ -192,14 +186,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glDepthFunc(GL_LESS);
 
 	// --- Unbind fbo ---
-	#ifndef BE_GAME_BUILD
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	#endif
+	if (renderfbo)
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// --- Draw ui and swap buffers ---
-	#ifndef BE_GAME_BUILD
 	App->gui->Draw();
-	#endif
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context);
@@ -209,8 +200,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 }
 
 // Called before quitting
-bool ModuleRenderer3D::CleanUp()
-{
+bool ModuleRenderer3D::CleanUp() {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
 
 	delete defaultShader;
@@ -226,41 +216,39 @@ bool ModuleRenderer3D::CleanUp()
 	return true;
 }
 
-void ModuleRenderer3D::UpdateGLCapabilities() const
-{
+void ModuleRenderer3D::UpdateGLCapabilities() const {
 	// --- Enable/Disable OpenGL Capabilities ---
 
-		if (!depth)
-			glDisable(GL_DEPTH_TEST);
-		else
-			glEnable(GL_DEPTH_TEST);
+	if (!depth)
+		glDisable(GL_DEPTH_TEST);
+	else
+		glEnable(GL_DEPTH_TEST);
 
-		if (!cull_face)
-			glDisable(GL_CULL_FACE);
-		else
-			glEnable(GL_CULL_FACE);
+	if (!cull_face)
+		glDisable(GL_CULL_FACE);
+	else
+		glEnable(GL_CULL_FACE);
 
-		if (!lighting)
-			glDisable(GL_LIGHTING);
-		else
-			glEnable(GL_LIGHTING);
+	if (!lighting)
+		glDisable(GL_LIGHTING);
+	else
+		glEnable(GL_LIGHTING);
 
-		if (!color_material)
-			glDisable(GL_COLOR_MATERIAL);
-		else
-			glEnable(GL_COLOR_MATERIAL);
+	if (!color_material)
+		glDisable(GL_COLOR_MATERIAL);
+	else
+		glEnable(GL_COLOR_MATERIAL);
 
 }
 
 
-void ModuleRenderer3D::OnResize(int width, int height)
-{
+void ModuleRenderer3D::OnResize(int width, int height) {
 	// --- Called by UpdateWindowSize() in Window module this when resizing windows to prevent rendering issues ---
 
 	// --- Resetting View matrices ---
 	glViewport(0, 0, width, height);
 
-	if(width > height)
+	if (width > height)
 		active_camera->SetAspectRatio(width / height);
 	else
 		active_camera->SetAspectRatio(height / width);
@@ -269,8 +257,7 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	CreateFramebuffer();
 }
 
-uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void * data) const
-{
+uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* data) const {
 	uint ID = 0;
 
 	glGenBuffers(1, (GLuint*)&ID); // create buffer
@@ -281,8 +268,7 @@ uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void *
 	return ID;
 }
 
-void ModuleRenderer3D::CreateFramebuffer()
-{
+void ModuleRenderer3D::CreateFramebuffer() {
 	// --- Create a texture to use it as render target ---
 	glGenTextures(1, &rendertexture);
 	glBindTexture(GL_TEXTURE_2D, rendertexture);
@@ -304,25 +290,22 @@ void ModuleRenderer3D::CreateFramebuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-bool ModuleRenderer3D::SetVSync(bool vsync)
+bool ModuleRenderer3D::SetVSync(bool _vsync)
 {
 	bool ret = true;
 
-	this->vsync = vsync;
+	vsync = _vsync;
 
-	if (this->vsync)
-	{
+	if (vsync) {
 
-		if (SDL_GL_SetSwapInterval(1) == -1)
-		{
+		if (SDL_GL_SetSwapInterval(1) == -1) {
 			ret = false;
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 	else {
 
-		if (SDL_GL_SetSwapInterval(0) == -1)
-		{
+		if (SDL_GL_SetSwapInterval(0) == -1) {
 			ret = false;
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
 		}
@@ -331,44 +314,35 @@ bool ModuleRenderer3D::SetVSync(bool vsync)
 	return ret;
 }
 
-void ModuleRenderer3D::SetActiveCamera(ComponentCamera * camera)
-{
-	if (this->active_camera)
-	{
+void ModuleRenderer3D::SetActiveCamera(ComponentCamera* camera) {
+	if (this->active_camera) {
 		this->active_camera->active_camera = false;
 	}
 	// if camera is not nullptr, then we set it as active camera, else we set editor camera as active camera
 	this->active_camera = camera ? camera : App->camera->camera;
-	if (camera)
-	{
+	if (camera) {
 		camera->active_camera = true;
 	}
 }
 
-void ModuleRenderer3D::SetCullingCamera(ComponentCamera * camera)
-{
-	if (culling_camera)
-	{
+void ModuleRenderer3D::SetCullingCamera(ComponentCamera* camera) {
+	if (culling_camera) {
 		culling_camera->culling = false;
 	}
 	// if camera is not nullptr, then we set it as culling camera, else we set editor camera as culling camera
 	this->culling_camera = camera ? camera : App->camera->camera;
-	if (camera)
-	{
+	if (camera) {
 		camera->culling = true;
 	}
 }
 
-bool ModuleRenderer3D::GetVSync() const
-{
+bool ModuleRenderer3D::GetVSync() const {
 	return vsync;
 }
 
-void ModuleRenderer3D::HandleObjectOutlining()
-{
+void ModuleRenderer3D::HandleObjectOutlining() {
 	// --- Selected Object Outlining ---
-	if (App->scene_manager->GetSelectedGameObject() != nullptr)
-	{
+	if (App->scene_manager->GetSelectedGameObject() != nullptr) {
 		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
 		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
 		// differences, making it look like borders ---
@@ -395,8 +369,7 @@ void ModuleRenderer3D::HandleObjectOutlining()
 	}
 }
 
-void ModuleRenderer3D::CreateDefaultShaders()
-{
+void ModuleRenderer3D::CreateDefaultShaders() {
 	// --- Creating outline drawing shaders ---
 	const char* OutlineVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
@@ -511,3 +484,4 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader->name = "Standard";
 	defaultShader->use();
 }
+

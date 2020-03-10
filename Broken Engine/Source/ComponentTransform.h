@@ -1,11 +1,12 @@
 #ifndef __COMPONENT_TRANSFORM_H__
 #define __COMPONENT_TRANSFORM_H__
 
-#include "Component.h"
 #include "Math.h"
+#include "Component.h"
 
-class ComponentTransform : public Component
-{
+BE_BEGIN_NAMESPACE
+
+class BROKEN_API ComponentTransform : public Component {
 public:
 
 	ComponentTransform(GameObject* ContainerGO);
@@ -57,4 +58,5 @@ public:
 	float3 scale = float3::one;
 };
 
+BE_END_NAMESPACE
 #endif

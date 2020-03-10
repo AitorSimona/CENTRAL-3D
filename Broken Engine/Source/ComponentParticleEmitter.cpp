@@ -17,6 +17,9 @@
 
 #include "mmgr/mmgr.h"
 
+
+using namespace Broken;
+
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
 	Enable();
@@ -54,7 +57,7 @@ void ComponentParticleEmitter::Enable()
 	if (particleSystem)
 		App->physics->mScene->addActor(*particleSystem);
 
-	indexPool = PxParticleExt::createIndexPool(maxParticles);
+	indexPool = physx::PxParticleExt::createIndexPool(maxParticles);
 
 	particleSystem->setExternalAcceleration(externalAcceleration);
 }
@@ -86,7 +89,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			creationData.numParticles = 1;
 			physx::PxU32 index[1];
 
-			const physx::PxStrideIterator<PxU32> indexBuffer(index);
+			const physx::PxStrideIterator<physx::PxU32> indexBuffer(index);
 
 			indexPool->allocateIndices(1, indexBuffer);
 
@@ -103,8 +106,8 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 
 			creationData.indexBuffer = indexBuffer;
-			creationData.positionBuffer = physx::PxStrideIterator<const PxVec3>(positionBuffer);
-			creationData.velocityBuffer = physx::PxStrideIterator<const PxVec3>(velocityBuffer);
+			creationData.positionBuffer = physx::PxStrideIterator<const physx::PxVec3>(positionBuffer);
+			creationData.velocityBuffer = physx::PxStrideIterator<const physx::PxVec3>(velocityBuffer);
 
 			bool succes = particleSystem->createParticles(creationData);
 
@@ -121,7 +124,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 	std::vector<physx::PxU32> indicesToErease;
 	uint particlesToRelease = 0;
 	
-	// access particle data from PxParticleReadData
+	// access particle data from physx::PxParticleReadData
 	if (rd)
 	{
 		physx::PxStrideIterator<const physx::PxParticleFlags> flagsIt(rd->flagsBuffer);

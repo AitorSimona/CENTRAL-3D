@@ -7,23 +7,23 @@
 #include "Color.h"
 #include "Quadtree.h"
 
-class GameObject;
 struct aiScene;
-struct ImportMaterialData;
 struct par_shapes_mesh_s;
+
+BE_BEGIN_NAMESPACE
+class GameObject;
+struct ImportMaterialData;
 class ResourceMesh;
 class ResourceScene;
 struct Event;
 
-class ModuleSceneManager : public Module
-{
-	friend class ModuleResourceManager;
+class BROKEN_API ModuleSceneManager : public Module {
 public:
 
 	ModuleSceneManager(bool start_enabled = true);
 	~ModuleSceneManager();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	//void ONEvent(const Event& event) const override;
 	update_status PreUpdate(float dt) override;
@@ -57,19 +57,18 @@ public:
 	void Draw();
 	void RedoOctree();
 	void SetStatic(GameObject* go);
-	void RecursiveDrawQuadtree(QuadtreeNode * node) const;
+	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
 	void SelectFromRay(LineSegment& ray);
 
 	// --- Save/Load ----
 	void SaveStatus(json &file) const override;
-	void LoadStatus(const json & file) override;
+	void LoadGame(const json & file);
 	void SaveScene(ResourceScene* scene);
 	void SetActiveScene(ResourceScene* scene);
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
-	static void DrawWire(const Box& box, Color color, uint VAO)
-	{
+	static void DrawWire(const Box& box, Color color, uint VAO) {
 		float3 corners[8];
 		box.GetCornerPoints(corners);
 		DrawWireFromVertices(corners, color, VAO);
@@ -96,7 +95,6 @@ private:
 	static void ONGameObjectDestroyed(const Event& e);
 
 private:
-
 	GameObject* CreateRootGameObject();
 	void DrawScene();
 
@@ -105,11 +103,14 @@ private:
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 
 public:
+	//Components helper, check AddComponent function
+	std::vector<int> repeatable_components;
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	bool display_tree = false;
 	bool display_boundingboxes = false;
+	bool display_grid = true;
 	ResourceScene* currentScene = nullptr;
 
 	ResourceMesh* plane = nullptr;
@@ -135,4 +136,5 @@ private:
 	GameObject* music = nullptr;
 };
 
+BE_END_NAMESPACE
 #endif

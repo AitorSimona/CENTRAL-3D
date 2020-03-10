@@ -2,11 +2,11 @@
 #include <fstream>
 #include <iomanip>
 
+
 #include "mmgr/mmgr.h"
 
-
-json JSONLoader::Load(const char * File) const 
-{
+using namespace Broken;
+json JSONLoader::Load(const char* File) const {
 
 	// MYTODO: Use PhysFS and check if file exists!
 
@@ -15,34 +15,28 @@ json JSONLoader::Load(const char * File) const
 	// --- Create JSON object ---
 	json jsonfile;
 
-	if (File == nullptr)
-	{
+	if (File == nullptr) {
 		ret = false;
 		ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Load : %c was nullptr", File);
 	}
 
-	else
-	{
-		
+	else {
+
 		// --- Load File ---
 		std::ifstream ifs;
 		ifs.open(File);
 
-		if (!ifs.is_open())
-		{
+		if (!ifs.is_open()) {
 			ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Load could not open File: %c", File);
 			ret = false;
 		}
 
-		else
-		{
+		else {
 			// --- Parse File, put data in jsonfile ---
-			try
-			{
+			try {
 				jsonfile = json::parse(ifs);
 			}
-			catch (json::parse_error& e)
-			{
+			catch (json::parse_error & e) {
 				ENGINE_CONSOLE_LOG("|[error]: Parse Error in loading file: %c", e.what());
 			}
 
@@ -51,12 +45,11 @@ json JSONLoader::Load(const char * File) const
 		}
 
 	}
-	
+
 	return jsonfile;
 }
 
-bool JSONLoader::Save(const char * File, json jsonfile) 
-{
+bool JSONLoader::Save(const char* File, const json& jsonfile) {
 	// --- Save to File, overwrite if exists ---
 	// Note setw, used to prettify JSON file (adding newlines and spaces)
 
@@ -65,24 +58,18 @@ bool JSONLoader::Save(const char * File, json jsonfile)
 	std::ofstream file;
 	file.open(File);
 
-	if (!file.is_open())
-	{
+	if (!file.is_open()) {
 		ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %c", File);
 		ret = false;
 	}
-	else
-	{
+	else {
 		file << std::setw(4) << jsonfile << std::endl;
 		file.close();
 	}
-	
+
 	return ret;
 }
 
-std::string JSONLoader::Serialize(json jsonfile)
-{
-	std::string data;
-	data = jsonfile.dump(4);
-
-	return data;
+void JSONLoader::Serialize(const json& jsonfile, std::string& jsonserialized) {
+	jsonserialized = jsonfile.dump(4);
 }

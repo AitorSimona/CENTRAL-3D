@@ -4,12 +4,12 @@
 #include "Resource.h"
 #include <unordered_map>
 
+BE_BEGIN_NAMESPACE
 class GameObject;
 
-class ResourceScene : public Resource
-{
+class BROKEN_API ResourceScene : public Resource {
 public:
-	ResourceScene(uint UID, std::string source_file);
+	ResourceScene(uint UID, const char* source_file);
 	~ResourceScene();
 
 	bool LoadInMemory() override;
@@ -27,5 +27,5 @@ private:
 	void OnOverwrite() override;
 	void OnDelete() override;
 };
-
+BE_END_NAMESPACE
 #endif //__RESOURCE_SCENE_H__

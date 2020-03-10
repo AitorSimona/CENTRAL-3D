@@ -1,14 +1,12 @@
 #include "PanelPhysics.h"
-#include "Application.h"
-#include "ModuleGui.h"
+#include "EngineApplication.h"
 #include "Imgui/imgui.h"
-#include "ModulePhysics.h"
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 #include "mmgr/mmgr.h"
 
-PanelPhysics::PanelPhysics(char* name) : Panel(name)
+PanelPhysics::PanelPhysics(char* name) : Broken::Panel(name)
 {
 }
 
@@ -18,10 +16,12 @@ PanelPhysics::~PanelPhysics()
 
 bool PanelPhysics::Draw()
 {
-	gravity = App->physics->mScene->getGravity();
-	staticFriction = App->physics->mMaterial->getStaticFriction();
-	dynamicFriction = App->physics->mMaterial->getDynamicFriction();
-	restitution = App->physics->mMaterial->getRestitution();
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
+	gravity = EngineApp->physics->mScene->getGravity();
+	staticFriction = EngineApp->physics->mMaterial->getStaticFriction();
+	dynamicFriction = EngineApp->physics->mMaterial->getDynamicFriction();
+	restitution = EngineApp->physics->mMaterial->getRestitution();
 
 	tmpGravity = gravity;
 	tmpStaticFriction = staticFriction;
@@ -75,24 +75,25 @@ bool PanelPhysics::Draw()
 
 		//CreateLayerFilterGrid();
 	}
+	ImGui::End();
 
 	if (tmpGravity != gravity) {
-		App->physics->mScene->setGravity(tmpGravity);
+		EngineApp->physics->mScene->setGravity(tmpGravity);
 	}
 
 	if (tmpStaticFriction != staticFriction) {
-		App->physics->mMaterial->setStaticFriction(tmpStaticFriction);
+		EngineApp->physics->mMaterial->setStaticFriction(tmpStaticFriction);
 	}
 
 	if (tmpDynamicFriction != dynamicFriction) {
-		App->physics->mMaterial->setDynamicFriction(tmpDynamicFriction);
+		EngineApp->physics->mMaterial->setDynamicFriction(tmpDynamicFriction);
 	}
 
 	if (tmpRestitution != restitution) {
-		App->physics->mMaterial->setRestitution(tmpRestitution);
+		EngineApp->physics->mMaterial->setRestitution(tmpRestitution);
 	}
 
-	ImGui::End();
+
 
 
 	return true;

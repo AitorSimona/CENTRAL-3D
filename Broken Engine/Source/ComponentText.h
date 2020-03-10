@@ -1,14 +1,19 @@
+#ifndef __COMPONENTTEXT_H__
+#define __COMPONENTTEXT_H__
 #pragma once
+
 #include "Component.h"
-#include "ComponentCanvas.h"
-#include "ResourceTexture.h"
 //#include "TextRenderer.hpp"
 #include "Color.h"
+#include "Math.h"
 
 #define DEFAULT_FONT_SIZE 25
 #define MAX_TEXT_SIZE 256
+BE_BEGIN_NAMESPACE
+class ResourceTexture;
+class ComponentCanvas;
 
-class ComponentText : public Component
+class BROKEN_API ComponentText : public Component
 {
 public:
 	ComponentText(GameObject* gameObject);
@@ -48,3 +53,5 @@ public:
 	char buffer[MAX_TEXT_SIZE] = "Text";
 };
 
+BE_END_NAMESPACE
+#endif

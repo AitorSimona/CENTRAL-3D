@@ -1,10 +1,9 @@
-#include "Globals.h"
 #include "PanelConsole.h"
-#include "Application.h"
+#include "EngineApplication.h"
 
 #include "mmgr/mmgr.h"
 
-PanelConsole::PanelConsole(char * name) : Panel(name)
+PanelConsole::PanelConsole(char * name) : Broken::Panel(name)
 {
 }
 
@@ -15,6 +14,7 @@ PanelConsole::~PanelConsole()
 
 bool PanelConsole::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
 	ImGuiWindowFlags consoleFlags = 0;
 	consoleFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
@@ -42,9 +42,9 @@ bool PanelConsole::Draw()
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 1)); // Tighten spacing
 
-			for (uint i = 0; i < App->GetLogs().size(); ++i)
+			for (uint i = 0; i < EngineApp->GetLogs().size(); ++i)
 			{
-				const char* item = App->GetLogs().at(i).data();
+				const char* item = EngineApp->GetLogs().at(i).data();
 
 				// --- Display error messages in red color ---
 				if(item[1] == *error_key)
@@ -67,22 +67,20 @@ bool PanelConsole::Draw()
 			}
 
 			ImGui::PopStyleVar();
-
 		}
+		ImGui::EndChild();
 
 		if(ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
 		ImGui::SetScrollHereY(1.0f);
-
-		ImGui::EndChild();
-
+		
 	}
-
 	ImGui::End();
+
 
 	return true;
 }
 
 void PanelConsole::Clear()
 {
-	App->ClearLogsFromConsole();
+	EngineApp->ClearLogsFromConsole();
 }

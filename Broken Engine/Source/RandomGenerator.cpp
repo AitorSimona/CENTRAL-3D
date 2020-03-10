@@ -1,5 +1,7 @@
 #include "RandomGenerator.h"
 
+using namespace Broken;
+
 RNGen::RNGen()
 {
 	m_RNEngine = std::default_random_engine(m_RandomDevice());

@@ -5,6 +5,7 @@
 #include "ModuleResourceManager.h"
 #include "ResourceTexture.h"
 
+
 #include "DevIL/include/il.h"
 #include "DevIL/include/ilu.h"
 #include "DevIL/include/ilut.h"
@@ -16,28 +17,25 @@
 #include "mmgr/mmgr.h"
 
 
-
-ModuleTextures::ModuleTextures(bool start_enabled) : Module(start_enabled)
-{
+using namespace Broken;
+ModuleTextures::ModuleTextures(bool start_enabled) : Module(start_enabled) {
 	name = "Textures";
 }
 
 ModuleTextures::~ModuleTextures() {}
 
-bool ModuleTextures::Init(json file)
-{
+bool ModuleTextures::Init(json& file) {
 	bool ret = true;
 
 	// Check versions
 	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION ||
 		iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION ||
-		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)
-	{
+		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION) {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: DevIL version is different. Exiting...");
 		ret = false;
 	}
 
-	ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing DevIL Version: %i",IL_VERSION);
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Initializing DevIL Version: %i", IL_VERSION);
 	// --- Initializing DevIL
 
 	// Initialize IL
@@ -54,8 +52,7 @@ bool ModuleTextures::Init(json file)
 	return ret;
 }
 
-bool ModuleTextures::Start()
-{
+bool ModuleTextures::Start() {
 	// --- Load Checkers Texture ---
 	CheckerTexID = LoadCheckImage();
 	DefaultTexture = LoadDefaultTexture();
@@ -63,14 +60,12 @@ bool ModuleTextures::Start()
 	return true;
 }
 
-bool ModuleTextures::CleanUp()
-{
+bool ModuleTextures::CleanUp() {
 
 	return true;
 }
 
-uint ModuleTextures::LoadCheckImage() const
-{
+uint ModuleTextures::LoadCheckImage() const {
 	// --- Creating pixel data for checkers texture ---
 
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
@@ -89,8 +84,7 @@ uint ModuleTextures::LoadCheckImage() const
 	return CreateTextureFromPixels(GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT, GL_RGBA, checkImage, true);
 }
 
-uint ModuleTextures::LoadDefaultTexture() const
-{
+uint ModuleTextures::LoadDefaultTexture() const {
 	// --- Creating pixel data ---
 
 	GLubyte default_tex[1][1][4];
@@ -105,46 +99,40 @@ uint ModuleTextures::LoadDefaultTexture() const
 	return CreateTextureFromPixels(GL_RGBA, 1, 1, GL_RGBA, default_tex, true);
 }
 
-uint ModuleTextures::GetCheckerTextureID() const
-{
+uint ModuleTextures::GetCheckerTextureID() const {
 	return CheckerTexID;
 }
 
-uint ModuleTextures::GetDefaultTextureID() const
-{
+uint ModuleTextures::GetDefaultTextureID() const {
 	return DefaultTexture;
 }
 
-void ModuleTextures::SetTextureParameters(bool CheckersTexture) const
-{
+void ModuleTextures::SetTextureParameters(bool CheckersTexture) const {
 	// --- Set texture clamping method ---
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	// --- Set texture interpolation method ---
-	if (CheckersTexture)
-	{
+	if (CheckersTexture) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
-	else
-	{
+	else {
 		// --- Mipmap for the highest visual quality when resizing ---
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	
+
 		// --- Enabling anisotropic filtering for highest quality at oblique angles---
-		#ifdef  GL_EXT_texture_filter_anisotropic
-			GLfloat largest_supported_anisotropy;
-			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest_supported_anisotropy);
-		#endif
+#ifdef  GL_EXT_texture_filter_anisotropic
+		GLfloat largest_supported_anisotropy;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest_supported_anisotropy);
+#endif
 	}
 }
 
-uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture) const
-{
+uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture) const {
 	uint TextureID = 0;
 
 	// --- Generate the texture ID ---
@@ -153,11 +141,10 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 
 	SetTextureParameters(CheckersTexture);
-	
+
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
 
-	if (!CheckersTexture)
-	{
+	if (!CheckersTexture) {
 		// --- Generate Mipmap of the recently created texture (Note that we are using it in texture size reduction only)---
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
@@ -172,8 +159,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
-void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, std::string& path) const
-{
+void ModuleTextures::CreateTextureFromImage(uint& TextureID, uint& width, uint& height, std::string& path) const {
 	// --- Attention!! If the image is flipped, we flip it back --- 
 	ILinfo imageInfo;
 	iluGetImageInfo(&imageInfo);
@@ -185,18 +171,16 @@ void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &
 		iluFlipImage();
 
 	// --- Convert the image into a suitable format to work with ---
-	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
-	{
+	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
 		// --- Create the texture ---
 		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
 
-		if (path != "")
-		{
+		if (path != "") {
 			iluFlipImage();
 
 			// --- Save to Lib ---
 			ILuint size;
-			ILubyte *data;
+			ILubyte* data;
 			ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
 			size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
 
@@ -215,15 +199,13 @@ void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &
 		ENGINE_CONSOLE_LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
 }
 
-uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &height, int UID) const
-{
+uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& height, int UID) const {
 	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromImage ---
 
 	uint TextureID = 0;
 
-	if (path == nullptr)
-	{
-		ENGINE_CONSOLE_LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr",path);
+	if (path == nullptr) {
+		ENGINE_CONSOLE_LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr", path);
 		return TextureID;
 	}
 
@@ -237,8 +219,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 	std::string lib_path = "";
 
 	// --- Build path to library if asked ---
-	if (UID >= 0)
-	{
+	if (UID >= 0) {
 		lib_path = TEXTURES_FOLDER;
 		lib_path.append(std::to_string(UID));
 		lib_path.append(".dds");
@@ -246,7 +227,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint &width, uint &
 
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path))
-		CreateTextureFromImage(TextureID, width,height, lib_path);
+		CreateTextureFromImage(TextureID, width, height, lib_path);
 	else
 		ENGINE_CONSOLE_LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
 

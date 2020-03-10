@@ -17,7 +17,7 @@
 #include "ComponentBone.h"
 #include "ModuleUI.h"
 
-#include "ModuleGui.h"
+//#include "ModuleGui.h"
 
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
@@ -35,31 +35,27 @@
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
 // --- Event Manager Callbacks ---
 
-void ModuleSceneManager::ONResourceSelected(const Event& e)
-{
+void ModuleSceneManager::ONResourceSelected(const Event& e) {
 	if (App->scene_manager->SelectedGameObject)
 		App->scene_manager->SetSelectedGameObject(nullptr);
 }
 
-void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
-{
+void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) {
 }
 
 // -------------------------------
 
-ModuleSceneManager::ModuleSceneManager(bool start_enabled)
-{
+ModuleSceneManager::ModuleSceneManager(bool start_enabled) {
 }
 
-ModuleSceneManager::~ModuleSceneManager()
-{
+ModuleSceneManager::~ModuleSceneManager() {
 }
 
 
-bool ModuleSceneManager::Init(json file)
-{
+bool ModuleSceneManager::Init(json& file) {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
@@ -68,11 +64,14 @@ bool ModuleSceneManager::Init(json file)
 	App->event_manager->AddListener(Event::EventType::GameObject_destroyed, ONGameObjectDestroyed);
 	App->event_manager->AddListener(Event::EventType::Resource_selected, ONResourceSelected);
 
+	//Add pushbacks for componnets that can be repeated inside a gameobject
+	repeatable_components.push_back((int)Component::ComponentType::Script);
+	repeatable_components.push_back((int)Component::ComponentType::AudioSource);
+
 	return true;
 }
 
-bool ModuleSceneManager::Start()
-{
+bool ModuleSceneManager::Start() {
 	// --- Create primitives ---
 	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
 	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
@@ -105,30 +104,28 @@ bool ModuleSceneManager::Start()
 	// --- Create temporal scene for play/stop ---
 	temporalScene = (Resource*)new ResourceScene(App->GetRandom().Int(), "Temp/TemporalScene.scene");
 
-	#ifdef BE_GAME_BUILD
-	//App->GetAppState() = AppState::TO_PLAY;
-	LoadStatus(App->GetConfigFile());
-	#endif
+	//if (App->isGame)
+	//	LoadStatus(App->GetConfigFile());
 
 	return true;
 }
 
-update_status ModuleSceneManager::PreUpdate(float dt)
-{
+update_status ModuleSceneManager::PreUpdate(float dt) {
 
 
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleSceneManager::Update(float dt)
-{
+update_status ModuleSceneManager::Update(float dt) {
 	root->Update(dt);
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleSceneManager::CleanUp()
-{
+bool ModuleSceneManager::CleanUp() {
 	root->RecursiveDelete();
+
+	if (temporalScene != nullptr)
+		delete temporalScene;
 
 	delete root;
 	root = nullptr;
@@ -140,8 +137,7 @@ bool ModuleSceneManager::CleanUp()
 	return true;
 }
 
-void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
-{
+void ModuleSceneManager::DrawGrid(bool drawAxis, float size) {
 	// -------------------------------------------------------------------------------------------------------
 	// -------------------------------------------------------------------------------------------------------
 	//									BY NOW, DONE IN DIRECT MODE
@@ -158,8 +154,7 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 	float colorIntensity = 0.65f;
 
 	//Axis draw
-	if (drawAxis)
-	{
+	if (drawAxis) {
 		glLineWidth(3.0f);
 		glBegin(GL_LINES);
 
@@ -189,8 +184,7 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 	glBegin(GL_LINES);
 
 	float d = size;
-	for (float i = -d; i <= d; i += 1.0f)
-	{
+	for (float i = -d; i <= d; i += 1.0f) {
 		//if ((int)i % 3 == 0)
 		//	continue;
 
@@ -242,29 +236,25 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
 
 void ModuleSceneManager::Draw()
 {
-	#ifndef BE_GAME_BUILD
 	// --- Draw Grid ---
-	DrawGrid(true, 75.0f);
+	if (display_grid)
+		DrawGrid(true, 75.0f);
 
 	// --- Activate wireframe mode ---
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	#endif
 	// --- Draw Game Object Meshes ---
 	DrawScene();
 
-	#ifndef BE_GAME_BUILD
 	// --- DeActivate wireframe mode ---
 	if (App->renderer3D->wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	#endif BE_GAME_BUILD
 }
 
-void ModuleSceneManager::DrawScene()
-{
-
-	RecursiveDrawQuadtree(tree.root);
+void ModuleSceneManager::DrawScene() {
+	if (display_tree)
+		RecursiveDrawQuadtree(tree.root);
 
 	if (display_tree)
 		RecursiveDrawQuadtree(tree.root);
@@ -326,13 +316,11 @@ void ModuleSceneManager::DrawScene()
 
 }
 
-GameObject * ModuleSceneManager::GetRootGO() const
-{
+GameObject* ModuleSceneManager::GetRootGO() const {
 	return root;
 }
 
-uint ModuleSceneManager::GetPointLineVAO() const
-{
+uint ModuleSceneManager::GetPointLineVAO() const {
 	return PointLineVAO;
 }
 
@@ -373,12 +361,9 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 	}
 }
 
-void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
-{
-	if (!node->IsLeaf())
-	{
-		for (uint i = 0; i < 8; ++i)
-		{
+void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const {
+	if (!node->IsLeaf()) {
+		for (uint i = 0; i < 8; ++i) {
 			RecursiveDrawQuadtree(node->childs[i]);
 		}
 	}
@@ -387,10 +372,8 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 		DrawWire(node->box, Red, GetPointLineVAO());
 }
 
-void ModuleSceneManager::SelectFromRay(LineSegment & ray)
-{
+void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
-
 	if (currentScene)
 	{
 		// --- Gather static gos ---
@@ -447,16 +430,16 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 	}
 }
 
-void ModuleSceneManager::SaveStatus(json & file) const
-{
+void ModuleSceneManager::SaveStatus(json& file) const {
 }
 
-void ModuleSceneManager::LoadStatus(const json & file)
+
+void ModuleSceneManager::LoadGame(const json & file)
 {
-#ifdef BE_GAME_BUILD
+	int bar = 1;
 	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
-		
-		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, file["SceneManager"]["MainScene"]);
+		std::string sceneName = file["SceneManager"]["MainScene"];
+		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, sceneName.c_str());
 		if (scene != nullptr) {
 			SetActiveScene(scene);
 			scene->LoadToMemory();
@@ -481,7 +464,6 @@ void ModuleSceneManager::LoadStatus(const json & file)
 	else {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
 	}
-#endif
 }
 
 void ModuleSceneManager::SaveScene(ResourceScene* scene)
@@ -553,21 +535,19 @@ GameObject* ModuleSceneManager::GetSelectedGameObject() const
 }
 
 
-void ModuleSceneManager::SetSelectedGameObject(GameObject* go)
-{
+void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
 	SelectedGameObject = go;
 
 	// MYTODO: Temporal adjustment for GameObject deselection
 	//if (SelectedGameObject)
 	//{
-		Event e(Event::EventType::GameObject_selected);
-		e.go = go;
-		App->event_manager->PushEvent(e);
+	Event e(Event::EventType::GameObject_selected);
+	e.go = go;
+	App->event_manager->PushEvent(e);
 	//}
 }
 
-GameObject * ModuleSceneManager::CreateEmptyGameObject()
-{
+GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
 	Name.append("(");
@@ -620,8 +600,7 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 	return new_object;
 }
 
-void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new_mesh) const
-{
+void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const {
 	// --- Obtain data from par shapes mesh and load it into mesh ---
 
 	new_mesh->IndicesSize = mesh->ntriangles * 3;
@@ -629,8 +608,7 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 
 	new_mesh->vertices = new Vertex[new_mesh->VerticesSize];
 
-	for (uint i = 0; i < new_mesh->VerticesSize; ++i)
-	{
+	for (uint i = 0; i < new_mesh->VerticesSize; ++i) {
 		// --- Vertices ---
 		new_mesh->vertices[i].position[0] = mesh->points[3 * i];
 		new_mesh->vertices[i].position[1] = mesh->points[(3 * i) + 1];
@@ -650,16 +628,14 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 
 	// --- Indices ---
 	new_mesh->Indices = new uint[new_mesh->IndicesSize];
-	for (uint i = 0; i < new_mesh->IndicesSize; ++i)
-	{
+	for (uint i = 0; i < new_mesh->IndicesSize; ++i) {
 		new_mesh->Indices[i] = mesh->triangles[i];
 	}
 
 	par_shapes_free_mesh(mesh);
 }
 
-void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color color, uint VAO)
-{
+void ModuleSceneManager::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
 	float3 vertices[24] =
 	{
 		//Between-planes right
@@ -705,7 +681,7 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
@@ -752,8 +728,7 @@ void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color colo
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
-{
+void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh) {
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube
 	// does not have uvs / normals
 
@@ -766,10 +741,10 @@ void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, Resou
 
 	par_shapes_translate(mesh, -0.5f, -0.5f, 0.5f);
 
-	par_shapes_rotate(top, -float(PAR_PI*0.5), (float*)&float3::unitX);
+	par_shapes_rotate(top, -float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(top, -0.5f, 0.5f, 0.5f);
 
-	par_shapes_rotate(bottom, float(PAR_PI*0.5), (float*)&float3::unitX);
+	par_shapes_rotate(bottom, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(bottom, -0.5f, -0.5f, -0.5f);
 
 	par_shapes_rotate(back, float(PAR_PI), (float*)&float3::unitX);
@@ -787,20 +762,17 @@ void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, Resou
 	par_shapes_merge_and_free(mesh, left);
 	par_shapes_merge_and_free(mesh, right);
 
-	if (mesh)
-	{
+	if (mesh) {
 		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
 		LoadParMesh(mesh, rmesh);
 	}
 }
 
-void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh)
-{
+void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh) {
 	// --- Create par shapes sphere ---
-	par_shapes_mesh * mesh = par_shapes_create_parametric_sphere(slices, slacks);
+	par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
-	if (mesh)
-	{
+	if (mesh) {
 		par_shapes_scale(mesh, Radius / 2, Radius / 2, Radius / 2);
 		LoadParMesh(mesh, rmesh);
 	}
@@ -886,7 +858,7 @@ void ModuleSceneManager::CreateGrid(float target_distance)
 {
 	// --- Fill vertex data ---
 
-	float distance = target_distance/4;
+	float distance = target_distance / 4;
 
 	if (distance < 1)
 		distance = 1;
@@ -896,12 +868,11 @@ void ModuleSceneManager::CreateGrid(float target_distance)
 	uint i = 0;
 	int lines = -10;
 
-	for (i = 0; i < 20; i++)
-	{
-		vertices[4 * i] = float3 (lines*-distance, 0.0f, 10*-distance);
-		vertices[4 * i + 1] = float3(lines*-distance, 0.0f, 10*distance);
-		vertices[4 * i + 2] = float3(10*-distance, 0.0f, lines*distance);
-		vertices[4 * i + 3] = float3(10*distance, 0.0f, lines*distance);
+	for (i = 0; i < 20; i++) {
+		vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
+		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
+		vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
+		vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
 
 		lines++;
 	}
@@ -957,7 +928,6 @@ GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 
 	ComponentMesh* comp_mesh = (ComponentMesh*)new_object->AddComponent(Component::ComponentType::Mesh);
 	comp_mesh->resource_mesh = (ResourceMesh*)App->resources->GetResource(PrimitiveMeshID);
-
 	ComponentMeshRenderer* MeshRenderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 	MeshRenderer->material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 

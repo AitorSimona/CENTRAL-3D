@@ -3,10 +3,10 @@
 
 #include "Resource.h"
 
-class ResourceTexture : public Resource
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ResourceTexture : public Resource {
 public:
-	ResourceTexture(uint UID, std::string source_file);
+	ResourceTexture(uint UID, const char* source_file);
 	~ResourceTexture();
 
 	bool LoadInMemory() override;
@@ -26,4 +26,5 @@ private:
 	void OnOverwrite() override;
 	void OnDelete() override;
 };
+BE_END_NAMESPACE
 #endif //__RESOURCE_TEXTURE_H__

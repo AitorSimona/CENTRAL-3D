@@ -1,14 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29806.167
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Broken Engine", "Source\Broken_Engine.vcxproj", "{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Broken Engine", "Source\Broken Engine.vcxproj", "{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}"
 	ProjectSection(ProjectDependencies) = postProject
-		{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0} = {5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}
+		{F201F70E-F1F1-4572-97C1-781DAB3AB933} = {F201F70E-F1F1-4572-97C1-781DAB3AB933}
+		{A251AA97-8926-46C7-A62B-83A59F47BB5E} = {A251AA97-8926-46C7-A62B-83A59F47BB5E}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BEG", "Source\BrokenGame.vcxproj", "{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BrokenCore", "Source\Broken Core.vcxproj", "{A251AA97-8926-46C7-A62B-83A59F47BB5E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BEG", "Source\BEG.vcxproj", "{F201F70E-F1F1-4572-97C1-781DAB3AB933}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,15 +23,19 @@ Global
 		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Debug|x86.Build.0 = Debug|Win32
 		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Release|x86.ActiveCfg = Release|Win32
 		{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}.Release|x86.Build.0 = Release|Win32
-		{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}.Debug|x86.ActiveCfg = Debug|Win32
-		{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}.Debug|x86.Build.0 = Debug|Win32
-		{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}.Release|x86.ActiveCfg = Release|Win32
-		{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}.Release|x86.Build.0 = Release|Win32
+		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Debug|x86.ActiveCfg = Debug|Win32
+		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Debug|x86.Build.0 = Debug|Win32
+		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Release|x86.ActiveCfg = Release|Win32
+		{A251AA97-8926-46C7-A62B-83A59F47BB5E}.Release|x86.Build.0 = Release|Win32
+		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Debug|x86.ActiveCfg = Debug|Win32
+		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Debug|x86.Build.0 = Debug|Win32
+		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Release|x86.ActiveCfg = Release|Win32
+		{F201F70E-F1F1-4572-97C1-781DAB3AB933}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {30E892AB-C703-406A-B3F9-9D18167DB71B}
+		SolutionGuid = {D48E97FB-0F7F-438C-9D34-2A7F2AA4B3D8}
 	EndGlobalSection
 EndGlobal

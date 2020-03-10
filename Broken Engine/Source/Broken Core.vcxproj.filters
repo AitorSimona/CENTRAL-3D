@@ -1,0 +1,1067 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{8d15e252-e369-45fa-8541-a1a165e37546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine">
+      <UniqueIdentifier>{9c01cf10-6208-4a5d-bbd1-0267ebb5c781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Modules">
+      <UniqueIdentifier>{33c94d86-641a-45f9-92af-2dbefaa69cb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party">
+      <UniqueIdentifier>{9204fc88-92ec-46d3-a5a2-1e5e4c46c5a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\Imgui">
+      <UniqueIdentifier>{91019c33-dc35-4fd8-9923-ce5f77ebd109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\Imgui\ImGuizmo">
+      <UniqueIdentifier>{a872ca9e-9122-4298-9879-1edbc94eb0d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\MathGeoLib">
+      <UniqueIdentifier>{0202d1d9-d50c-4c76-90df-e311557a6cde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm">
+      <UniqueIdentifier>{0ec6b719-8d5b-46c5-b6ca-df170bc6d366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm\Random">
+      <UniqueIdentifier>{fda0a2ad-2479-4a99-91c1-150f7b41fe1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry">
+      <UniqueIdentifier>{1bd6eea7-b6e8-4e81-8415-52093695b55c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\MathGeoLib\Math">
+      <UniqueIdentifier>{9d22e61e-524b-485d-b629-19403a5ced16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\MathGeoLib\Time">
+      <UniqueIdentifier>{14396a7f-f5f2-46bc-bea5-851112a98965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\json">
+      <UniqueIdentifier>{29648ab7-893e-4b96-b8a8-d119e79f2552}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\mmgr">
+      <UniqueIdentifier>{9a41bf32-4bb7-4570-9624-5c6c8be9efe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\par shapes">
+      <UniqueIdentifier>{c32e7c64-1872-4e52-9080-e3a1b70fb54f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\glad">
+      <UniqueIdentifier>{14fc4199-c65b-4f03-8a11-67e7ba5fd432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Game Objects">
+      <UniqueIdentifier>{6844c084-026a-4823-8506-921be1d2668f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Game Objects\Components">
+      <UniqueIdentifier>{792f24be-b1aa-4859-90d0-7d7566bc38c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Modules\Scripting Functions">
+      <UniqueIdentifier>{801e833e-dfd6-4ac8-b369-47c05fbe845c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Tools">
+      <UniqueIdentifier>{baefe1ea-2154-468f-a8e9-9d0e3fb7bc3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Tools\Helpers">
+      <UniqueIdentifier>{41c9dcf7-420a-4eb6-8727-26b36c38ff1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Tools\DeviceID">
+      <UniqueIdentifier>{26a9c118-6baa-4653-94d7-22afa3ef6781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Resources">
+      <UniqueIdentifier>{db18a50c-310a-4198-849f-5dc9921d6efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Resources\Importers">
+      <UniqueIdentifier>{1c77c2a2-adb9-4074-8316-b1fec6636f31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Containers">
+      <UniqueIdentifier>{4b2dc7ac-838e-4aeb-829d-44efe88d224d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Panel">
+      <UniqueIdentifier>{25379e3c-ec2a-453d-8182-58090e8b1519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\Game Objects\Components\UI">
+      <UniqueIdentifier>{8e36da21-d6c3-45eb-9c4a-0a53c18dfd0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\Wwise">
+      <UniqueIdentifier>{66a1222c-d715-4978-80b8-e9d7167be77e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BrokenCore.h">
+      <Filter>Sources\BrokenEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Errors.h">
+      <Filter>Sources\BrokenEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="BrokenEngine.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Module.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\SystemInfo.h">
+      <Filter>Sources\BrokenEngine\3rd Party</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imconfig.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_impl_opengl3.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_impl_sdl.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_internal.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_rectpack.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_textedit.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_truetype.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\ImGuizmo\ImGuizmo.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\MathBuildConfig.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\MathGeoLib.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\MathGeoLibFwd.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Algorithm\GJK2D.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Algorithm\SAT.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Algorithm\Random\LCG.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\AABB.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\AABB2D.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Capsule.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Circle.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Circle2D.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Frustum.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\GeometryAll.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\GeomType.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\HitInfo.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\KDTree.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Line.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\LineSegment.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\LineSegment2D.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\OBB.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\OBB2D.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\PBVolume.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Plane.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Polygon.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Polygon2DRef.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Polyhedron.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\QuadTree.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Ray.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Sphere.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Triangle.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\Triangle2D.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Geometry\TriangleMesh.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\assume.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\BitOps.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\Callstack.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\FixedPoint.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float2.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float3.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float3x3.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float3x4.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float4.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float4d.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float4x4.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float4x4_neon.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float4x4_sse.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float4_neon.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\float4_sse.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\FloatCmp.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\grisu3.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\InclWindows.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MathAll.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MathConstants.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MathFunc.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MathLog.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MathNamespace.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MathTypes.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MatrixProxy.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MiniFloat.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\MultiLineMacro.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\myassert.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\Polynomial.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\Quat.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\quat_simd.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\Rect.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\Reinterpret.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\simd.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\SSEMath.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\sse_mathfun.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\Swap.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\TransformOps.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Math\vec2d.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib\include\Time\Clock.h">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json.hpp">
+      <Filter>Sources\BrokenEngine\3rd Party\json</Filter>
+    </ClInclude>
+    <ClInclude Include="mmgr\mmgr.h">
+      <Filter>Sources\BrokenEngine\3rd Party\mmgr</Filter>
+    </ClInclude>
+    <ClInclude Include="mmgr\nommgr.h">
+      <Filter>Sources\BrokenEngine\3rd Party\mmgr</Filter>
+    </ClInclude>
+    <ClInclude Include="par\par_shapes.h">
+      <Filter>Sources\BrokenEngine\3rd Party\par shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="glad\include\glad\glad.h">
+      <Filter>Sources\BrokenEngine\3rd Party\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="glad\include\KHR\khrplatform.h">
+      <Filter>Sources\BrokenEngine\3rd Party\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Sources\BrokenEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTimeManager.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleWindow.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleCamera3D.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleEventManager.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleFileSystem.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleHardware.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleInput.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRenderer3D.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleResourceManager.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleSceneManager.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleScripting.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTextures.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleThreading.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Sources\BrokenEngine\Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentCamera.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMeshRenderer.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentScript.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentTransform.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMesh.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaIncludes.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Importers.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="PerfTimer.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptData.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptVar.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\DeviceId.h">
+      <Filter>Sources\BrokenEngine\Tools\DeviceID</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\dxgi1_4.h">
+      <Filter>Sources\BrokenEngine\Tools\DeviceID</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFolder.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMaterial.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMesh.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMeta.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceModel.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceScene.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceScript.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceShader.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceShaderObject.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceShaderProgram.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceTexture.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Importer.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterFolder.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterMaterial.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterMesh.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterMeta.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterModel.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterScene.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterScript.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterShader.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterTexture.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="JSONLoader.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Sources\BrokenEngine\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadtree.h">
+      <Filter>Sources\BrokenEngine\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel.h">
+      <Filter>Sources\BrokenEngine\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleGui.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="BrokenEngineMain.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLog.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleAudio.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleUI.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAnimation.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAudioListener.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentAudioSource.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentBone.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentCollider.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentDynamicRigidBody.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentParticleEmitter.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterAnimation.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterBone.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAnimation.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceBone.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleParticles.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulePhysics.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentText.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentImage.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentCanvas.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\IO\Common\AkFileLocationBase.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\IO\Common\AkFilePackage.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\IO\Common\AkFilePackageLUT.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="wwise.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise\SDK\include\AkDefaultIOHookBlocking.h">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomGenerator.h">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentButton.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_demo.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_draw.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_impl_opengl3.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_impl_sdl.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_widgets.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Imgui\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Algorithm\GJK.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Algorithm\GJK2D.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Algorithm\SAT.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Algorithm\Random\LCG.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Algorithm\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\AABB.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Capsule.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Circle.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Circle2D.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Frustum.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Line.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\LineSegment.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\LineSegment2D.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\OBB.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\PBVolume.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Plane.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Polygon.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Polyhedron.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Ray.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Sphere.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Triangle.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\Triangle2D.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Geometry\TriangleMesh.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\BitOps.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\Callstack.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\float2.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\float3.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\float3x3.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\float3x4.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\float4.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\float4d.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\float4x4.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\grisu3.c">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\grisu3_cpp.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\MathFunc.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\MathLog.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\MathOps.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\MiniFloat.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\Polynomial.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\Quat.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\SSEMath.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Math\TransformOps.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\include\Time\Clock.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="mmgr\mmgr.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\mmgr</Filter>
+    </ClCompile>
+    <ClCompile Include="glad\src\glad.c">
+      <Filter>Sources\BrokenEngine\3rd Party\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Sources\BrokenEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTimeManager.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleWindow.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleCamera3D.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEventManager.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleFileSystem.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleHardware.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleInput.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleRenderer3D.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleResourceManager.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleSceneManager.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleScripting.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTextures.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleThreading.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCamera.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMeshRenderer.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentScript.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentTransform.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMesh.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="PerfTimer.cpp">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptVar.cpp">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="gpudetect\DeviceId.cpp">
+      <Filter>Sources\BrokenEngine\Tools\DeviceID</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFolder.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMaterial.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMesh.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMeta.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceModel.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceScene.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceScript.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceShader.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceShaderObject.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceShaderProgram.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceTexture.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Importer.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterFolder.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterMaterial.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterMesh.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterMeta.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterModel.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterScene.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterScript.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterShader.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterTexture.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="JSONLoader.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Sources\BrokenEngine\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Quadtree.cpp">
+      <Filter>Sources\BrokenEngine\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel.cpp">
+      <Filter>Sources\BrokenEngine\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleGui.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLog.cpp">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="BrokenCore.cpp">
+      <Filter>Sources\BrokenEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleAudio.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleUI.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAnimation.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAudioListener.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentAudioSource.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentBone.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCollider.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentDynamicRigidBody.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentParticleEmitter.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterAnimation.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterBone.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAnimation.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceBone.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleParticles.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModulePhysics.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentText.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentImage.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCanvas.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFilePackage.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\IO\Common\AkFilePackageLUT.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="wwise.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\Wwise</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomGenerator.cpp">
+      <Filter>Sources\BrokenEngine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentButton.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MathGeoLib\include\Geometry\KDTree.inl">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </None>
+    <None Include="MathGeoLib\include\Geometry\QuadTree.inl">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </None>
+    <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_AVX.inl">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </None>
+    <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </None>
+    <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Geometry</Filter>
+    </None>
+    <None Include="MathGeoLib\include\Math\float2.inl">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </None>
+    <None Include="MathGeoLib\include\Math\Matrix.inl">
+      <Filter>Sources\BrokenEngine\3rd Party\MathGeoLib\Math</Filter>
+    </None>
+  </ItemGroup>
+</Project>

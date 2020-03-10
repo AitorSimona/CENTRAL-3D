@@ -3,10 +3,10 @@
 
 #include "Importer.h"
 
+BE_BEGIN_NAMESPACE
 class ResourceMeta;
 
-class ImporterMeta : public Importer
-{
+class BROKEN_API ImporterMeta : public Importer {
 
 public:
 	ImporterMeta();
@@ -19,5 +19,5 @@ public:
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Meta; };
 };
-
+BE_END_NAMESPACE
 #endif

@@ -2,47 +2,54 @@
 #define __MODULE_GUI_H__
 
 #include "Module.h"
+#include "Panel.h"
+#include "BrokenCore.h"
 
 #include <vector>
+struct ImGuiContext;
+//
+//class PanelSettings;
+//class PanelAbout;
+//class PanelConsole;
+//class PanelInspector;
+//class PanelHierarchy;
+//class PanelScene;
+//class PanelToolbar;
+//class PanelProject;
+//class PanelShaderEditor;
+//class PanelResources;
 
+typedef void* (*be_imguialloc)(size_t sz, void* user_data);
+typedef void (*be_imguifree)(void* ptr, void* user_data);
+
+BE_BEGIN_NAMESPACE
 class Panel;
-class PanelSettings;
-class PanelAbout;
-class PanelConsole;
-class PanelInspector;
-class PanelHierarchy;
-class PanelScene;
-class PanelToolbar;
-class PanelProject;
-class PanelShaderEditor;
-class PanelResources;
-class PanelPhysics;
-class PanelBuild;
-class PanelGame;
 
-class ModuleGui : public Module
+class BROKEN_API ModuleGui : public Module
 {
 public:
 
 	ModuleGui(bool start_enabled = true);
 	~ModuleGui();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
-	update_status Update(float dt) override;
 	update_status PostUpdate(float dt) override;
+	bool Stop() override;
 	bool CleanUp() override;
 
 	void Draw() const;
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
+	void AddPanel(Panel* npanel);
+
+	ImGuiContext* getImgUICtx() const;
 
 
 	void LogFPS(float fps, float ms);
 
 	void SaveStatus(json &file) const override;
-
 	void LoadStatus(const json & file) override;
 
 	void HandleInput(SDL_Event* event) const;
@@ -52,9 +59,12 @@ public:
 
 	void CreateIcons();
 
+	be_imguialloc GetImGuiAlloc() const;
+	be_imguifree GetImGuiFree() const;
+
 public:
 
-	PanelSettings*		panelSettings = nullptr;
+	/*PanelSettings*	panelSettings = nullptr;
 	PanelAbout*			panelAbout = nullptr;
 	PanelConsole*		panelConsole = nullptr;
 	PanelInspector*		panelInspector = nullptr;
@@ -64,15 +74,10 @@ public:
 	PanelToolbar*       panelToolbar = nullptr;
 	PanelProject*		panelProject = nullptr;
 	PanelShaderEditor*  panelShaderEditor = nullptr;
-	PanelResources*		panelResources = nullptr;
-	PanelPhysics*		panelPhysics = nullptr;
-	PanelGame*			panelGame = nullptr;
-
-	float sceneWidth = 0.0f;
-	float sceneHeight = 0.0f;
-	float sceneX = 0.0f;
-	float sceneY = 0.0f;
-	bool hoveringScene = false;
+	PanelResources*		panelResources = nullptr;*/
+	//PanelResources*		panelResources = nullptr;
+	//PanelPhysics*		panelPhysics = nullptr;
+	//PanelGame*			panelGame = nullptr;
 	
 	uint materialTexID = 0;
 	uint folderTexID = 0;
@@ -81,13 +86,24 @@ public:
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
 
+	bool isSceneHovered = false;
+
+	//Scene position and size
+	float sceneX = 0;
+	float sceneY = 0;
+	float sceneWidth = 0;
+	float sceneHeight = 0;
+
+	bool isUsingGuizmo = false;
+
 private:
-	bool show_demo_window = false;
 
 	bool capture_keyboard = false;
 	bool capture_mouse = false;
+	ImGuiContext* ctx = nullptr;
 
 	std::vector<Panel*> panels;
 };
 
+BE_END_NAMESPACE
 #endif

@@ -14,22 +14,23 @@
 #include "Component.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
+#include "ComponentCanvas.h"
 //#include "ModuleWindow.h"
 
 #include "ResourceShader.h"
 #include "ResourceTexture.h"
-
-#include "Math.h"
 #include "ResourceMesh.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ComponentImage)
+using namespace Broken;
+
+ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
 {
 	visible = true;
 
-	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::ComponentCanvas);
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas->AddElement(this);
 }
@@ -77,7 +78,7 @@ void ComponentImage::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x, position2D.y, nearp, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -162,10 +163,10 @@ void ComponentImage::CreateInspectorNode()
 		ImGui::Text("Position:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imageposition", &position2D.x, 0.01f);
+		ImGui::DragFloat("x##imageposition", &position2D.x);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imageposition", &position2D.y, 0.01f);
+		ImGui::DragFloat("y##imageposition", &position2D.y);
 
 		// Rotation
 		ImGui::Text("Rotation:");
@@ -212,6 +213,6 @@ void ComponentImage::CreateInspectorNode()
 
 	ImGui::SameLine();
 	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::ComponentImage);
+		GO->RemoveComponent(Component::ComponentType::Image);
 	}
 }

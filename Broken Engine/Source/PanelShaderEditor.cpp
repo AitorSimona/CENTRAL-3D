@@ -1,16 +1,9 @@
 #include "PanelShaderEditor.h"
 
-#include "OpenGL.h"
+//#include "OpenGL.h"
 #include "Imgui/imgui.h"
 
-#include "Application.h"
-#include "ModuleResourceManager.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleSceneManager.h"
-
-#include "GameObject.h"
-#include "ResourceShader.h"
-#include "ResourceMaterial.h"
+#include "EngineApplication.h"
 
 #include "mmgr/mmgr.h"
 
@@ -36,7 +29,7 @@ bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags)
 	return ImGui::InputTextMultiline(label, (char*)str->c_str(), str->capacity() + 1, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), flags, InputTextCallback, (void*)str);
 }
 
-PanelShaderEditor::PanelShaderEditor(char * name) : Panel(name)
+PanelShaderEditor::PanelShaderEditor(char * name) : Broken::Panel(name)
 {
 }
 
@@ -47,13 +40,15 @@ PanelShaderEditor::~PanelShaderEditor()
 
 bool PanelShaderEditor::Draw()
 {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar;
 
 	static ImGuiInputTextFlags textflags = ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackResize;
 
 	if(currentShader == nullptr)
-		currentShader = App->renderer3D->defaultShader;
+		currentShader = EngineApp->renderer3D->defaultShader;
 
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
@@ -63,7 +58,7 @@ bool PanelShaderEditor::Draw()
 		ImGui::Text("Shader");
 		ImGui::SameLine();
 
-		//std::map<std::string, ResourceShader*>* shaders = App->resources->GetShaders();
+		//std::map<std::string, ResourceShader*>* shaders = EngineApp->resources->GetShaders();
 
 		//const char* item_current = currentShader->name.data();
 		//if (ImGui::BeginCombo("##Shader", item_current, flags))
@@ -93,8 +88,8 @@ bool PanelShaderEditor::Draw()
 		//	{
 		//		(*shaders).erase(currentShader->name);
 		//		currentShader->name = shadername;
-		//		App->resources->AddShader(currentShader);
-		//		App->scene_manager->SaveScene();
+		//		EngineApp->resources->AddShader(currentShader);
+		//		EngineApp->scene_manager->SaveScene();
 		//	}
 		//}
 
@@ -115,9 +110,9 @@ bool PanelShaderEditor::Draw()
 		//{
 		//	currentShader->ReloadAndCompileShader();
 
-		//	if (App->scene_manager->GetSelectedGameObject())
+		//	if (EngineApp->scene_manager->GetSelectedGameObject())
 		//	{
-		//		ComponentMaterial* material = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
+		//		ComponentMaterial* material = EngineApp->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMaterial>(Component::ComponentType::Material);
 
 		//		// --- Display uniforms ---
 		//		if(material)
@@ -130,9 +125,9 @@ bool PanelShaderEditor::Draw()
 
 		//if (ImGui::Button("New"))
 		//{
-		//	ResourceShader* new_shader = (ResourceShader*)App->resources->CreateResource(Resource::ResourceType::SHADER);
+		//	ResourceShader* new_shader = (ResourceShader*)EngineApp->resources->CreateResource(Resource::ResourceType::SHADER);
 		//	new_shader->name = "Shader " + std::to_string(shaders->size() + 1);
-		//	App->resources->AddShader(new_shader);
+		//	EngineApp->resources->AddShader(new_shader);
 		//	currentShader = new_shader;
 		//}
 
@@ -140,18 +135,19 @@ bool PanelShaderEditor::Draw()
 
 		//if (ImGui::Button("Save All"))
 		//{
-		//	App->resources->SaveAllShaders();
+		//	EngineApp->resources->SaveAllShaders();
 		//}
 
 		ImGui::Separator();
 	}
-
 	ImGui::End();
+
+
 
 	return true;
 }
 
-void PanelShaderEditor::DisplayAndUpdateUniforms(ResourceMaterial* resource_mat)
+void PanelShaderEditor::DisplayAndUpdateUniforms(Broken::ResourceMaterial* resource_mat)
 {
 	// Note this is being done before any render happens
 
@@ -249,7 +245,7 @@ void PanelShaderEditor::DisplayAndUpdateUniforms(ResourceMaterial* resource_mat)
 		}
 	}
 
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	glUseProgram(EngineApp->renderer3D->defaultShader->ID);
 }
 
 

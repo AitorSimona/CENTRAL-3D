@@ -7,17 +7,17 @@
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
 #include "ModuleRenderer3D.h"
-
+#include "ModuleGui.h"
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
 #include "OpenGL.h"
 
 #include "Imgui/imgui.h"
-#include "ImGUi/ImGuizmo/ImGuizmo.h"
 
 #include "mmgr/mmgr.h"
 
-using namespace physx;
+//using namespace physx;
+using namespace Broken;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {
@@ -34,8 +34,8 @@ void ComponentCollider::Draw()
 	if (shape)
 	{
 		// --- Get shape's dimensions ---
-		PxGeometryHolder holder = shape->getGeometry();
-		PxGeometryType::Enum type = holder.getType();
+		physx::PxGeometryHolder holder = shape->getGeometry();
+		physx::PxGeometryType::Enum type = holder.getType();
 
 		if (!mesh->IsInMemory())
 		{
@@ -44,7 +44,7 @@ void ComponentCollider::Draw()
 			{
 			case physx::PxGeometryType::eSPHERE:
 			{
-				PxSphereGeometry pxsphere = holder.sphere();
+				physx::PxSphereGeometry pxsphere = holder.sphere();
 
 				// --- Rebuild capsule ---
 				App->scene_manager->CreateSphere(1, 25, 25, mesh);
@@ -53,7 +53,7 @@ void ComponentCollider::Draw()
 			break;
 			case physx::PxGeometryType::ePLANE:
 			{
-				PxPlaneGeometry pxplane = holder.plane();
+				physx::PxPlaneGeometry pxplane = holder.plane();
 
 				// --- Rebuild plane ---
 				App->scene_manager->CreatePlane(1, 1, 1, mesh);
@@ -62,7 +62,7 @@ void ComponentCollider::Draw()
 			break;
 			case physx::PxGeometryType::eCAPSULE:
 			{
-				PxCapsuleGeometry capsule = holder.capsule();
+				physx::PxCapsuleGeometry capsule = holder.capsule();
 
 				// --- Rebuild capsule ---
 				App->scene_manager->CreateCapsule(1, 1, mesh);
@@ -71,7 +71,7 @@ void ComponentCollider::Draw()
 			break;
 			case physx::PxGeometryType::eBOX:
 			{
-				PxCapsuleGeometry capsule = holder.capsule();
+				physx::PxCapsuleGeometry capsule = holder.capsule();
 
 				// --- Rebuild box ---
 				App->scene_manager->CreateCube(1, 1, 1, mesh);
@@ -168,16 +168,18 @@ void ComponentCollider::UpdateLocalMatrix() {
 		tmpScale = scale;
 	}
 
-	PxVec3 posi(pos.x, pos.y, pos.z);
-	PxQuat quati(rot.x, rot.y, rot.z, rot.w);
-	PxTransform transform(posi, quati);
+	physx::PxVec3 posi(pos.x, pos.y, pos.z);
+	physx::PxQuat quati(rot.x, rot.y, rot.z, rot.w);
+	physx::PxTransform transform(posi, quati);
+	
 
 	if (!dynamicRB)
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (ImGuizmo::IsUsing() || cTransform->updateValues) { //ON EDITOR
-			dynamicRB->rigidBody->setGlobalPose(transform);
+		if (!App->isGame) {
+			if (App->gui->isUsingGuizmo || cTransform->updateValues) //ON EDITOR
+				dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else {
 			if (dynamicRB->rigidBody != nullptr) //ON GAME
@@ -188,14 +190,13 @@ void ComponentCollider::UpdateLocalMatrix() {
 	}
 }
 
-void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {	
-	
-	PxTransform transform;
+void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB, ComponentTransform* cTransform, physx::PxTransform* globalPos) {
+	physx::PxTransform transform;
 	if (!RB)
 		return;
 
 	if (globalPos) {
-		transform = PxTransform(globalPos->p, globalPos->q);
+		transform = physx::PxTransform(globalPos->p, globalPos->q);
 		RB->rigidBody->setGlobalPose(transform);
 	}
 
@@ -217,9 +218,9 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 		Quat rot;
 		globalMatrix.Decompose(pos, rot, scale);
 
-		PxVec3 posi(pos.x, pos.y, pos.z);
-		PxQuat quati(rot.x, rot.y, rot.z, rot.w);
-		PxTransform transform(posi, quati);
+		physx::PxVec3 posi(pos.x, pos.y, pos.z);
+		physx::PxQuat quati(rot.x, rot.y, rot.z, rot.w);
+		physx::PxTransform transform(posi, quati);
 
 		RB->rigidBody->setGlobalPose(transform);
 
@@ -459,7 +460,7 @@ void ComponentCollider::CreateInspectorNode()
 
 			switch (shape->getGeometryType())
 			{
-				case PxGeometryType::eSPHERE:
+				case physx::PxGeometryType::eSPHERE:
 				{
 					float prevRadius = radius;
 					
@@ -478,7 +479,7 @@ void ComponentCollider::CreateInspectorNode()
 					break;
 				}
 
-				case PxGeometryType::eBOX:
+				case physx::PxGeometryType::eBOX:
 				{
 					float3 prevScale = colliderSize;
 					ImGui::Text("Size");
@@ -510,7 +511,7 @@ void ComponentCollider::CreateInspectorNode()
 					break;
 				}
 
-				case PxGeometryType::eCAPSULE:
+				case physx::PxGeometryType::eCAPSULE:
 				{
 					float prevRadius = radius;
 					float prevheight = height;
@@ -550,13 +551,13 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 		{
 			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
-				App->physics->mScene->removeActor(*(PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+				App->physics->mScene->removeActor(*(physx::PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
 			if (createAgain && rigidStatic)
-				App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
+				App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 		}
 
 		else
-			App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
+			App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 
 
 		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
@@ -570,7 +571,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		return;
 	}
 
-	PxTransform localTransform(PxVec3(centerPosition.x, centerPosition.y, centerPosition.z));
+	physx::PxTransform localTransform(physx::PxVec3(centerPosition.x, centerPosition.y, centerPosition.z));
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 	float3 tScale = transform->GetScale();
 
@@ -583,7 +584,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		
 			float3 center;
 
-			PxBoxGeometry boxGeometry;
+			physx::PxBoxGeometry boxGeometry;
 			Quat q = transform->rotation;
 			Quat qInverse = q;
 			if (!firstCreation)
@@ -603,12 +604,12 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 			}
 
-			boxGeometry = PxBoxGeometry(PxVec3(originalSize.x * scale.x * colliderSize.x * 0.5, originalSize.y * scale.y * colliderSize.y * 0.5, originalSize.z * scale.z * colliderSize.z * 0.5));
+			boxGeometry = physx::PxBoxGeometry(physx::PxVec3(originalSize.x * scale.x * colliderSize.x * 0.5, originalSize.y * scale.y * colliderSize.y * 0.5, originalSize.z * scale.z * colliderSize.z * 0.5));
 			
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
 			
-			PxTransform position(PxVec3(center.x, center.y, center.z));
+			physx::PxTransform position(physx::PxVec3(center.x, center.y, center.z));
 			
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
@@ -639,7 +640,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::SPHERE: {
-			PxSphereGeometry SphereGeometry(radius);
+			physx::PxSphereGeometry SphereGeometry(radius);
 			shape = App->physics->mPhysics->createShape(SphereGeometry, *App->physics->mMaterial);
 			shape->setGeometry(SphereGeometry);
 
@@ -653,7 +654,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::PLANE: {
-			PxBoxGeometry planeGeometry(PxVec3(colliderSize.x, 0.0001f, colliderSize.z));
+			physx::PxBoxGeometry planeGeometry(physx::PxVec3(colliderSize.x, 0.0001f, colliderSize.z));
 			shape = App->physics->mPhysics->createShape(planeGeometry, *App->physics->mMaterial);
 			shape->setGeometry(planeGeometry);
 
@@ -667,7 +668,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::CAPSULE: {
-			PxCapsuleGeometry CapsuleGeometry(radius, height);
+			physx::PxCapsuleGeometry CapsuleGeometry(radius, height);
 			shape = App->physics->mPhysics->createShape(CapsuleGeometry, *App->physics->mMaterial);
 			shape->setGeometry(CapsuleGeometry);
 
@@ -699,18 +700,18 @@ void ComponentCollider::Delete()
 	if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 	{
 		if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
-			App->physics->mScene->removeActor(*(PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+			App->physics->mScene->removeActor(*(physx::PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
 		if (rigidStatic)
-			App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
+			App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 	}
 
 	else
-		App->physics->mScene->removeActor(*(PxActor*)rigidStatic);
+		App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 }
 
 
 template <class Geometry>
-bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, PxTransform transform) const
+bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const
 {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 	

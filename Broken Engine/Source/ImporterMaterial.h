@@ -4,18 +4,18 @@
 #include "Importer.h"
 
 struct aiMaterial;
+
+BE_BEGIN_NAMESPACE
 class ResourceMaterial;
 class Resource;
 
-struct ImportMaterialData : public Importer::ImportData
-{
+struct BROKEN_API ImportMaterialData : public Importer::ImportData {
 	ImportMaterialData(const char* path) : Importer::ImportData(path) {};
 
 	const aiMaterial* mat = nullptr;
 };
 
-class ImporterMaterial : public Importer
-{
+class BROKEN_API ImporterMaterial : public Importer {
 
 public:
 	ImporterMaterial();
@@ -28,5 +28,5 @@ public:
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Material; };
 };
-
+BE_END_NAMESPACE
 #endif

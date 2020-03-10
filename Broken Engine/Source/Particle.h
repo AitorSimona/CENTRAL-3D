@@ -1,15 +1,11 @@
 #ifndef __PARTICLE_H__
 #define __PARTICLE_H__
 
-#include "PhysX_3.4/Include/PxPhysicsAPI.h"
-
-#include "Globals.h" 
-
 #include "Math.h"
+#include "BrokenCore.h"
 
-using namespace physx;
-
-class Particle {
+BE_BEGIN_NAMESPACE
+class BROKEN_API Particle {
 public:
 	Particle();
 	~Particle();
@@ -25,4 +21,5 @@ public:
 	float diameter=1;
 };
 
+BE_END_NAMESPACE
 #endif // __PARTICLE_H__

@@ -12,6 +12,7 @@
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
 
 ImporterBone::ImporterBone() : Importer(Importer::ImporterType::Bone)
 {
@@ -141,7 +142,7 @@ Resource* ImporterBone::Load(const char* path) const
 			App->fs->SplitFilePath(path, nullptr, &uid);
 			uid = uid.substr(0, uid.find_last_of("."));
 
-			bone = App->resources->bones.find(std::stoi(uid)) != App->resources->bones.end() ? App->resources->bones.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::BONE, std::string(source_file), std::stoi(uid));
+			bone = App->resources->bones.find(std::stoi(uid)) != App->resources->bones.end() ? App->resources->bones.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::BONE, source_file.c_str(), std::stoi(uid));
 
 			delete[] buffer;
 			buffer = nullptr;

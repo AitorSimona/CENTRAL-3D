@@ -7,11 +7,14 @@
 #include "ModuleFileSystem.h"
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"
+#include "ResourceAnimation.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
+
+using namespace Broken;
 
 ComponentAnimation::ComponentAnimation(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Animation)
 {
@@ -183,8 +186,8 @@ void ComponentAnimation::Load(json& node)
 		std::string name = node["Animations"][iterator]["Name"].is_null() ? "" : node["Animations"][iterator]["Name"];
 		std::string start = node["Animations"][iterator]["Start"].is_null() ? "" : node["Animations"][iterator]["Start"];
 		std::string end = node["Animations"][iterator]["End"].is_null() ? "" : node["Animations"][iterator]["End"];
-		bool loop = node["Animations"][iterator]["Loop"].is_null() ? false : node["Animations"][iterator]["Loop"];
-		bool Default = node["Animations"][iterator]["Default"].is_null() ? false : node["Animations"][iterator]["Default"];
+		bool loop = node["Animations"][iterator]["Loop"].is_null() ? false : (bool) node["Animations"][iterator]["Loop"];
+		bool Default = node["Animations"][iterator]["Default"].is_null() ? false : (bool) node["Animations"][iterator]["Default"];
 
 		CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
 		
@@ -276,7 +279,7 @@ void ComponentAnimation::DoLink()
 			for (int j = 0; j < childs.size(); j++)
 			{
 				// We link them if the GO is a bone and their names are equal
-				if (childs[j]->GetComponent<ComponentBone>() && childs[j]->GetName().compare(res_anim->channels[i].name) == 0)
+				if (childs[j]->GetComponent<ComponentBone>() && std::string(childs[j]->GetName()).compare(res_anim->channels[i].name) == 0)
 				{
 					Link lk = Link(childs[j], &res_anim->channels[i]);
 					links.push_back(lk);
@@ -470,6 +473,7 @@ void ComponentAnimation::BlendAnimations(float blend_time)
 		blending = false;
 		curr_blend_time = 0;
 		playing_animation = next_animation;
+		time = 0;
 	}
 
 }

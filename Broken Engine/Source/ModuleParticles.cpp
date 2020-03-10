@@ -5,13 +5,14 @@
 
 #include "ComponentParticleEmitter.h"
 
-#include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
-#include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
-
-#include "PhysX_3.4/Include/PxPhysicsAPI.h"
+//MYTODO: Sergi: why would these be needed here?
+//#include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
+//#include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
+//#include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
 
 ModuleParticles::ModuleParticles(bool start_enabled)
 {
@@ -21,7 +22,7 @@ ModuleParticles::ModuleParticles(bool start_enabled)
 ModuleParticles::~ModuleParticles()
 {}
 
-bool ModuleParticles::Init(json config)
+bool ModuleParticles::Init(json& config)
 {
 	return true;
 }

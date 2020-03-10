@@ -11,16 +11,15 @@
 
 #include "mmgr/mmgr.h"
 
-ImporterMesh::ImporterMesh() : Importer(Importer::ImporterType::Mesh)
-{
+
+using namespace Broken;
+ImporterMesh::ImporterMesh() : Importer(Importer::ImporterType::Mesh) {
 }
 
-ImporterMesh::~ImporterMesh()
-{
+ImporterMesh::~ImporterMesh() {
 }
 
-Resource* ImporterMesh::Import(ImportData& IData) const
-{
+Resource* ImporterMesh::Import(ImportData& IData) const {
 	ImportMeshData data = (ImportMeshData&)IData;
 
 	ResourceMesh* resource_mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, IData.path);
@@ -31,24 +30,21 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 	resource_mesh->IndicesSize = data.mesh->mNumFaces * 3;
 	resource_mesh->Indices = new uint[resource_mesh->IndicesSize];
 
-	for (uint i = 0; i < data.mesh->mNumVertices; ++i)
-	{
+	for (uint i = 0; i < data.mesh->mNumVertices; ++i) {
 		// --- Vertices ---
 		resource_mesh->vertices[i].position[0] = data.mesh->mVertices[i].x;
 		resource_mesh->vertices[i].position[1] = data.mesh->mVertices[i].y;
 		resource_mesh->vertices[i].position[2] = data.mesh->mVertices[i].z;
 
 		// --- Normals ---
-		if (data.mesh->HasNormals())
-		{
+		if (data.mesh->HasNormals()) {
 			resource_mesh->vertices[i].normal[0] = data.mesh->mNormals[i].x;
 			resource_mesh->vertices[i].normal[1] = data.mesh->mNormals[i].y;
 			resource_mesh->vertices[i].normal[2] = data.mesh->mNormals[i].z;
 		}
 
 		// --- Colors ---
-		if (data.mesh->HasVertexColors(0))
-		{
+		if (data.mesh->HasVertexColors(0)) {
 			resource_mesh->vertices[i].color[0] = data.mesh->mColors[0][i].r;
 			resource_mesh->vertices[i].color[1] = data.mesh->mColors[0][i].g;
 			resource_mesh->vertices[i].color[2] = data.mesh->mColors[0][i].b;
@@ -56,21 +52,18 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 		}
 
 		// --- Texture Coordinates ---
-		if (data.mesh->HasTextureCoords(0))
-		{
+		if (data.mesh->HasTextureCoords(0)) {
 			resource_mesh->vertices[i].texCoord[0] = data.mesh->mTextureCoords[0][i].x;
 			resource_mesh->vertices[i].texCoord[1] = data.mesh->mTextureCoords[0][i].y;
 		}
 	}
 
 	// --- Indices ---
-	for (unsigned j = 0; j < data.mesh->mNumFaces; ++j)
-	{
+	for (unsigned j = 0; j < data.mesh->mNumFaces; ++j) {
 		const aiFace& face = data.mesh->mFaces[j];
 
 		// Only triangles
-		if (face.mNumIndices > 3)
-		{
+		if (face.mNumIndices > 3) {
 			ENGINE_CONSOLE_LOG("|[error]: Importer Mesh found a quad in %s, ignoring it. ", data.mesh->mName);
 			continue;
 		}
@@ -88,28 +81,26 @@ Resource* ImporterMesh::Import(ImportData& IData) const
 	return resource_mesh;
 }
 
-void ImporterMesh::Save(ResourceMesh * mesh) const
-{
+void ImporterMesh::Save(ResourceMesh* mesh) const {
 	uint sourcefilename_length = std::string(mesh->GetOriginalFile()).size();
 
 	// amount of indices / vertices / normals / texture_coords / AABB
-	uint ranges[3] = { sourcefilename_length, mesh->IndicesSize, mesh->VerticesSize};
+	uint ranges[3] = { sourcefilename_length, mesh->IndicesSize, mesh->VerticesSize };
 
-	uint size =  sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) * mesh->IndicesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(unsigned char) * 4 * mesh->VerticesSize + sizeof(float) * 2 * mesh->VerticesSize;
+	uint size = sizeof(ranges) + sizeof(const char) * sourcefilename_length + sizeof(uint) * mesh->IndicesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(float) * 3 * mesh->VerticesSize + sizeof(unsigned char) * 4 * mesh->VerticesSize + sizeof(float) * 2 * mesh->VerticesSize;
 
 	char* data = new char[size]; // Allocate
-	float* Vertices = new float[mesh->VerticesSize*3];
-	float* Normals = new float[mesh->VerticesSize*3];
-	unsigned char* Colors = new unsigned char[mesh->VerticesSize*4];
-	float* TexCoords = new float[mesh->VerticesSize*2];
+	float* Vertices = new float[mesh->VerticesSize * 3];
+	float* Normals = new float[mesh->VerticesSize * 3];
+	unsigned char* Colors = new unsigned char[mesh->VerticesSize * 4];
+	float* TexCoords = new float[mesh->VerticesSize * 2];
 	char* cursor = data;
 
 	// --- Fill temporal arrays ---
 
-	for (uint i = 0; i < mesh->VerticesSize; ++i)
-	{
+	for (uint i = 0; i < mesh->VerticesSize; ++i) {
 		// --- Vertices ---
-		Vertices[i * 3] =	mesh->vertices[i].position[0];
+		Vertices[i * 3] = mesh->vertices[i].position[0];
 		Vertices[(i * 3) + 1] = mesh->vertices[i].position[1];
 		Vertices[(i * 3) + 2] = mesh->vertices[i].position[2];
 
@@ -142,14 +133,14 @@ void ImporterMesh::Save(ResourceMesh * mesh) const
 	memcpy(cursor, mesh->GetOriginalFile(), bytes);
 
 	// --- Store Indices ---
-	cursor += bytes; 
+	cursor += bytes;
 	bytes = sizeof(uint) * mesh->IndicesSize;
 	memcpy(cursor, mesh->Indices, bytes);
 
 	// --- Store Vertices ---
-	cursor += bytes; 
+	cursor += bytes;
 	bytes = sizeof(float) * mesh->VerticesSize * 3;
-	memcpy(cursor,Vertices, bytes);
+	memcpy(cursor, Vertices, bytes);
 
 	// --- Store Normals ---
 	cursor += bytes;
@@ -165,12 +156,11 @@ void ImporterMesh::Save(ResourceMesh * mesh) const
 	cursor += bytes;
 	bytes = sizeof(float) * mesh->VerticesSize * 2;
 	memcpy(cursor, TexCoords, bytes);
-	
+
 	App->fs->Save(mesh->GetResourceFile(), data, size);
 
 	// --- Delete buffer data ---
-	if (data)
-	{
+	if (data) {
 		delete[] data;
 		data = nullptr;
 		cursor = nullptr;
@@ -182,17 +172,14 @@ void ImporterMesh::Save(ResourceMesh * mesh) const
 	delete[] TexCoords;
 }
 
-Resource* ImporterMesh::Load(const char * path) const
-{
+Resource* ImporterMesh::Load(const char* path) const {
 	Resource* mesh = nullptr;
 	char* buffer = nullptr;
 
-	if (App->fs->Exists(path))
-	{
+	if (App->fs->Exists(path)) {
 		App->fs->Load(path, &buffer);
 
-		if (buffer)
-		{
+		if (buffer) {
 			// --- Read ranges first ---
 			char* cursor = buffer;
 			uint ranges[3];
@@ -212,11 +199,11 @@ Resource* ImporterMesh::Load(const char * path) const
 			uid = uid.substr(0, uid.find_last_of("."));
 
 
-			mesh = App->resources->meshes.find(std::stoi(uid)) != App->resources->meshes.end() ? App->resources->meshes.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, std::string(source_file), std::stoi(uid));
+			mesh = App->resources->meshes.find(std::stoi(uid)) != App->resources->meshes.end() ? App->resources->meshes.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, source_file.c_str(), std::stoi(uid));
 
 			delete[] buffer;
 			buffer = nullptr;
-            cursor = nullptr;
+			cursor = nullptr;
 		}
 
 	}

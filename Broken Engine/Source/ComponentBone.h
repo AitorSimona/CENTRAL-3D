@@ -5,9 +5,10 @@
 #include "ResourceBone.h"
 //#include "Math.h"
 
+BE_BEGIN_NAMESPACE
 class GameObject;
 
-class ComponentBone : public Component
+class BROKEN_API ComponentBone : public Component
 {
 public:
 	ComponentBone(GameObject* gameObject = nullptr);
@@ -32,4 +33,5 @@ public:
 	ResourceBone* res_bone = nullptr;
 };
 
+BE_END_NAMESPACE
 #endif // !__COMPONENT_BONE_H__

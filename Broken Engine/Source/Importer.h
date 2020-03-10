@@ -1,15 +1,14 @@
 #ifndef __IMPORTER_H__
 #define __IMPORTER_H__
 
-#include "Globals.h"
+#include "BrokenCore.h"
 
+BE_BEGIN_NAMESPACE
 class Resource;
 
-class Importer
-{
+class BROKEN_API Importer {
 public:
-	enum class ImporterType
-	{
+	enum class ImporterType {
 		Folder,
 		Scene,
 		Model,
@@ -25,10 +24,8 @@ public:
 		Unknown
 	};
 
-	struct ImportData
-	{
-		ImportData(const char* path)
-		{
+	struct ImportData {
+		ImportData(const char* path) {
 			this->path = path;
 		}
 
@@ -41,12 +38,12 @@ public:
 	virtual ~Importer();
 
 	virtual Resource* Import(ImportData& IData) const = 0;
-	virtual Resource* Load(const char* path) const = 0;	
+	virtual Resource* Load(const char* path) const = 0;
 
 	ImporterType GetType() const;
 
 private:
 	ImporterType type = ImporterType::Unknown;
 };
-
+BE_END_NAMESPACE
 #endif

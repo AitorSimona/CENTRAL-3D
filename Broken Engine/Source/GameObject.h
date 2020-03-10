@@ -1,23 +1,25 @@
-#ifndef __GAME_OBJECT_H__
-#define __GAME_OBJECT_H__
+#ifndef __BE_GAMEOBJECT_H__
+#define __BE_GAMEOBJECT_H__
 
-#include "Globals.h"
-#include "Component.h"
 #include "Math.h"
+#include "BrokenCore.h"
+#include "Component.h"
 #include <vector>
+#include <string>
 #include "Resource.h"
+
+BE_BEGIN_NAMESPACE
 
 class ResourceModel;
 
-class GameObject
-{
+class BROKEN_API GameObject {
 
 public:
 
 	GameObject(const char* name);
 	GameObject(const char* name, uint UID);
 	virtual ~GameObject();
-	void Enable();
+	void Enable();	
 	void Disable();
 	void Update(float dt);
 	void PostUpdate();
@@ -25,25 +27,22 @@ public:
 	// --- Getters ---
 	uint			GetUID();
 	void			SetUID(uint uid);
-	std::string		GetName() const;
+	const char*		GetName() const;
 	const AABB&	    GetAABB();
 	const OBB&      GetOBB() const;
 
-	bool&			GetActive();
+	bool& GetActive();
 	bool			IsEnabled() const;
 
 	// --- Components ---
 
 	template<typename TComponent>
-	TComponent*	GetComponent()
-	{
+	TComponent* GetComponent() {
 
 		for (uint i = 0; i < components.size(); ++i)
 		{
 			if (components[i] && components[i]->GetType() == TComponent::GetType())
-			{
 				return ((TComponent*)(components[i]));
-			}
 		}
 
 		return nullptr;
@@ -87,5 +86,7 @@ private:
 	AABB						aabb;
 	OBB							obb;
 };
+
+BE_END_NAMESPACE
 
 #endif

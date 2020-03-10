@@ -8,6 +8,9 @@
 #include "ModuleSceneManager.h"
 #include "Imgui/imgui.h"
 
+
+using namespace Broken;
+
 ComponentAudioListener::ComponentAudioListener(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::AudioListener)
 {
 
@@ -16,7 +19,7 @@ ComponentAudioListener::ComponentAudioListener(GameObject* ContainerGO) : Compon
 	position.y = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().y;
 	position.z = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().z;
 
-	wwiseGO = wwiseGO->CreateAudioListener(ContainerGO->GetUID(), ContainerGO->GetName().c_str(), position);
+	wwiseGO = wwiseGO->CreateAudioListener(ContainerGO->GetUID(), ContainerGO->GetName(), position);
 }
 
 ComponentAudioListener::~ComponentAudioListener() {}

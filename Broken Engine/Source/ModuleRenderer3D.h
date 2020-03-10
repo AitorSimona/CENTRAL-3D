@@ -1,21 +1,22 @@
-#pragma once
+#ifndef __BE_MODULERENDERER_H__
+#define __BE_MODULERENDERER_H__
+
 #include "Module.h"
-#include "Globals.h"
 #include "Light.h"
 #include "JSONLoader.h"
 
 #define MAX_LIGHTS 8
 
+BE_BEGIN_NAMESPACE
 class ComponentCamera;
 class ResourceShader;
 
-class ModuleRenderer3D : public Module
-{
+class BROKEN_API ModuleRenderer3D : public Module {
 public:
 	ModuleRenderer3D(bool start_enabled = true);
 	~ModuleRenderer3D();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
@@ -28,7 +29,7 @@ public:
 	void CreateFramebuffer();
 
 	// --- Setters ---
-	bool SetVSync(bool vsync);
+	bool SetVSync(bool _vsync);
 	void SetActiveCamera(ComponentCamera* camera);
 	void SetCullingCamera(ComponentCamera* camera);
 
@@ -65,4 +66,7 @@ public:
 	bool color_material = true;
 	bool wireframe = false;
 	bool zdrawer = false;
+	bool renderfbo = true;
 };
+BE_END_NAMESPACE
+#endif

@@ -6,11 +6,9 @@
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
-
 #include "PhysX_3.4/Include/pvd/PxPvd.h"
 #include "PhysX_3.4/Include/pvd/PxPvdSceneClient.h"
 #include "PhysX_3.4/Include/pvd/PxPvdTransport.h"
-
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 #ifndef _DEBUG
@@ -36,6 +34,8 @@
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
+
 ModulePhysics::ModulePhysics(bool start_enabled)
 {
 }
@@ -44,10 +44,10 @@ ModulePhysics::~ModulePhysics()
 {
 }
 
-bool ModulePhysics::Init(json config)
+bool ModulePhysics::Init(json& config)
 {
-	static PxDefaultErrorCallback gDefaultErrorCallback;
-	static PxDefaultAllocator gDefaultAllocatorCallback;
+	static physx::PxDefaultErrorCallback gDefaultErrorCallback;
+	static physx::PxDefaultAllocator gDefaultAllocatorCallback;
 
 	mFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
 	if (!mFoundation)
@@ -67,7 +67,7 @@ bool ModulePhysics::Init(json config)
 	//---------------------------------------------------------------------------------------
 
 	mPhysics = PxCreateBasePhysics(PX_PHYSICS_VERSION, *mFoundation,
-		PxTolerancesScale(), recordMemoryAllocations,mPvd);
+		physx::PxTolerancesScale(), recordMemoryAllocations,mPvd);
 	if (!mPhysics) {
 		ENGINE_CONSOLE_LOG("PxCreateBasePhysics failed!");
 		return false;
@@ -75,26 +75,26 @@ bool ModulePhysics::Init(json config)
 
 	PxRegisterParticles(*mPhysics);
 
-	PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
-	sceneDesc.gravity = PxVec3(0.0f, -9.8f, 0.0f);
-	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(1);
-	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
+	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
+	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
+	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	mScene = mPhysics->createScene(sceneDesc);
 
 	// This will enable basic visualization of PhysX objects like - actors collision shapes and their axes.
 		//The function PxScene::getRenderBuffer() is used to render any active visualization for scene.
-	mScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0);	//Global visualization scale which gets multiplied with the individual scales
-	mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
-	mScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
+	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0);	//Global visualization scale which gets multiplied with the individual scales
+	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
+	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
 	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0.0f);
 
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();
 	if (pvdClient) {
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+		pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+		pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+		pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 	//-------------------------------------
 	//BoxCollider(0, 10, 0);
@@ -129,17 +129,17 @@ bool ModulePhysics::CleanUp()
 // Creating static plane
 void ModulePhysics::PlaneCollider(float posX, float posY, float posZ)
 {
-	PxTransform position = PxTransform(PxVec3(posX, posY, posZ), PxQuat(PxHalfPi, PxVec3(0.0f, 0, 0.0f)));
+	physx::PxTransform position = physx::PxTransform(physx::PxVec3(posX, posY, posZ), physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0.0f, 0, 0.0f)));
 	plane = mPhysics->createRigidStatic(position);
-	plane = PxCreatePlane(*mPhysics, PxPlane(PxVec3(0, 1, 0), 0), *mMaterial);
+	plane = PxCreatePlane(*mPhysics, physx::PxPlane(physx::PxVec3(0, 1, 0), 0), *mMaterial);
 	mScene->addActor(*plane);
 }
 
 void ModulePhysics::BoxCollider(float posX, float posY, float posZ)
 {
-	PxRigidDynamic* box;
-	PxTransform position(PxVec3(posX, posY, posZ));
-	PxBoxGeometry geometry(PxVec3(0.5f, 0.5f, 0.5f));
+	physx::PxRigidDynamic* box;
+	physx::PxTransform position(physx::PxVec3(posX, posY, posZ));
+	physx::PxBoxGeometry geometry(physx::PxVec3(0.5f, 0.5f, 0.5f));
 
 	box = PxCreateDynamic(*mPhysics, position, geometry, *mMaterial, 1.0f);
 	mScene->addActor(*box);

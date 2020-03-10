@@ -1,17 +1,13 @@
 #ifndef __PANEL_PROJECT_H__
 #define __PANEL_PROJECT_H__
 
-#include "Panel.h"
-#include "Globals.h"
+#include "BrokenEngine.h"
 #include <string>
 #include <vector>
 #include "Imgui/imgui.h"
 
-class ResourceFolder;
-class Resource;
-struct Event;
 
-class PanelProject : public Panel
+class PanelProject : public Broken::Panel
 {
 public:
 
@@ -19,12 +15,12 @@ public:
 	~PanelProject();
 
 	bool Draw();
-	void SetSelected(Resource* new_selected);
-	const Resource* GetcurrentDirectory() const;
+	void SetSelected(Broken::Resource* new_selected);
+	//const Broken::Resource* GetcurrentDirectory() const;
 
 private:
-	static void ONGameObjectSelected(const Event& e);
-	static void ONResourceDestroyed(const Event& e);
+	static void ONGameObjectSelected(const Broken::Event& e);
+	static void ONResourceDestroyed(const Broken::Event& e);
 	void CreateResourceHandlingPopup();
 
 private:
@@ -34,15 +30,15 @@ private:
 	uint item_spacingY_px = 15;
 	uint maxColumns = 10;
 
-	Resource* selected = nullptr;
+	Broken::Resource* selected = nullptr;
 	uint selected_uid = 0;
-	ResourceFolder* currentDirectory = nullptr;
+	Broken::ResourceFolder* currentDirectory = nullptr;
 
-	void DrawFolder(ResourceFolder* folder);
-	void DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);
+	void DrawFolder(Broken::ResourceFolder* folder);
+	void DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);
 	void LimitText( std::string& text);
 
-	void RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters);
+	void RecursiveDirectoryDraw(Broken::ResourceFolder* directory);
 };
 
 #endif

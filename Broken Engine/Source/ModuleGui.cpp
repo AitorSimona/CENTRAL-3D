@@ -1,5 +1,4 @@
 #include "Application.h"
-#include "Globals.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
@@ -7,20 +6,16 @@
 #include "ModuleTextures.h"
 #include "ModuleInput.h"
 #include "GameObject.h"
-#include "ComponentCamera.h"
-#include "ComponentTransform.h"
 
 #include "ResourceScene.h"
-
-#include "Panels.h"
-
-#include "ComponentCanvas.h"
-#include "ComponentImage.h"
-#include "ComponentText.h"
+#include "Panel.h"
 //#include "Button.h"
 //#include "CheckBox.h"
 //#include "InputText.h"
 //#include "ProgressBar.h"
+#define NOMINMAX
+#include <Windows.h>
+#include <functional>
 
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -29,11 +24,22 @@
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 #include "ModuleFileSystem.h"
 
+#pragma comment( lib, "SDL/libx86/SDL2.lib" )
+
 #include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 
 
+void* ImGuiCustomAllocator(size_t sz, void* user_data) {
+	return malloc(sz);
+}
+
+void ImGuiCustomDeallocator(void* ptr, void* user_data) {
+	free(ptr);
+}
+
+using namespace Broken;
 
 ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 {
@@ -43,14 +49,14 @@ ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 ModuleGui::~ModuleGui()
 {}
 
-bool ModuleGui::Init(json file)
+bool ModuleGui::Init(json& file)
 {
 	if (!App->fs->Exists("imgui.ini"))
 		App->fs->Copy("imgui.ini.bak", "imgui.ini");
 
 	// --- Create UI Panels ---
-	#ifndef BE_GAME_BUILD
-	panelSettings = new PanelSettings("Settings");
+
+	/*panelSettings = new PanelSettings("Settings");
 	panels.push_back(panelSettings);
 
 	panelAbout = new PanelAbout("About");
@@ -78,19 +84,18 @@ bool ModuleGui::Init(json file)
 	panels.push_back(panelShaderEditor);
 
 	panelResources = new PanelResources("Resources");
-	panels.push_back(panelResources);
+	panels.push_back(panelResources);*/
 
-	panelPhysics = new PanelPhysics("Physics");
-	panels.push_back(panelPhysics);
+	//LoadStatus(file);
+	//panelPhysics = new PanelPhysics("Physics");
+	//panels.push_back(panelPhysics);
 
-	panelBuild = new PanelBuild("Build");
-	panels.push_back(panelBuild);
+	//panelBuild = new PanelBuild("Build");
+	//panels.push_back(panelBuild);
 
-	LoadStatus(file);
-	#else
-	panelGame = new PanelGame("Game");
-	panels.push_back(panelGame);
-	#endif
+	//LoadStatus(file);
+	//panelGame = new PanelGame("Game");
+	//panels.push_back(panelGame);
 
 	return true;
 }
@@ -99,12 +104,16 @@ bool ModuleGui::Start()
 {
 	bool ret = true;
 
+	// --- Set scene width/height to default
+	sceneWidth = App->window->GetWindowWidth();
+	sceneHeight = App->window->GetWindowHeight();
+
 	// --- Initialize ImGui ---
-
 	IMGUI_CHECKVERSION();
-	ImGuiContext * context = ImGui::CreateContext();
+	ImGui::SetAllocatorFunctions(&ImGuiCustomAllocator, &ImGuiCustomDeallocator);
+	ctx = ImGui::CreateContext();
 
-	if (context)
+	if (ctx)
 	{
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("Successfully created ImGui context");
 
@@ -151,281 +160,31 @@ update_status ModuleGui::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleGui::Update(float dt)
-{
-	// --- Create Main Menu Bar ---
-	#ifndef BE_GAME_BUILD
-
-
-	if (ImGui::BeginMainMenuBar())
-	{
-		
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Quit"))
-				{
-					return UPDATE_STOP;
-				}
-
-				if (ImGui::MenuItem("Save Scene"))
-				{
-					App->scene_manager->SaveScene(App->scene_manager->currentScene);
-				}
-
-				if (ImGui::MenuItem("Load Scene"))
-				{
-					//App->scene_manager->SetActiveScene();
-				}
-
-				if (ImGui::MenuItem("Build Game")) {
-					panelBuild->SetOnOff(true);
-				}
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Edit"))
-			{
-				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-				ImGui::Separator();
-				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("GameObject"))
-			{
-				if (ImGui::BeginMenu("3D Object"))
-				{
-					if (ImGui::MenuItem("Empty Game Object"))
-					{
-						GameObject* go = App->scene_manager->CreateEmptyGameObject();
-						//App->scene_manager->currentScene->NoStaticGameObjects[go->GetUID()] = go;
-					}
-
-
-					if (ImGui::MenuItem("Plane"))
-					{
-						GameObject* obj = App->scene_manager->LoadPlane();
-						obj->GetComponent<ComponentTransform>()->SetRotation({ -90, 0, 0});
-						obj->GetComponent<ComponentTransform>()->Scale(10, 10, 10);
-					}
-
-					if (ImGui::MenuItem("Cube"))
-						App->scene_manager->LoadCube();
-
-					if (ImGui::MenuItem("Cylinder"))
-						App->scene_manager->LoadCylinder()->GetComponent<ComponentTransform>()->SetRotation({ -90, 0, 0 });
-
-					if (ImGui::MenuItem("Capsule"))
-						App->scene_manager->LoadCapsule();
-
-					if (ImGui::MenuItem("Sphere"))
-						App->scene_manager->LoadSphere();
-
-					if (ImGui::MenuItem("Camera"))
-					{
-						GameObject* cam = App->scene_manager->CreateEmptyGameObject();
-						//App->scene_manager->currentScene->NoStaticGameObjects[cam->GetUID()] = cam;
-
-						ComponentCamera* camera = (ComponentCamera*)cam->AddComponent(Component::ComponentType::Camera);
-						cam->AddComponent(Component::ComponentType::MeshRenderer);
-						camera->SetFarPlane(10);
-					}
-
-					if (ImGui::MenuItem("Redo Octree"))
-						App->scene_manager->RedoOctree();
-
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("UI Elements"))
-				{
-					if (ImGui::MenuItem("Canvas"))
-					{
-						GameObject* canvas_go = App->scene_manager->CreateEmptyGameObject();
-						ComponentCanvas* camera = (ComponentCanvas*)canvas_go->AddComponent(Component::ComponentType::ComponentCanvas);
-					}
-					if (ImGui::MenuItem("Image"))
-					{
-						GameObject* image_go = App->scene_manager->CreateEmptyGameObject();
-						ComponentImage* image = (ComponentImage*)image_go->AddComponent(Component::ComponentType::ComponentImage);
-					}
-					if (ImGui::MenuItem("Text"))
-					{
-						GameObject* text_go = App->scene_manager->CreateEmptyGameObject();
-						ComponentText* text = (ComponentText*)text_go->AddComponent(Component::ComponentType::ComponentText);
-					}
-					if (ImGui::MenuItem("Button", false, false, false))
-					{
-					}
-					if (ImGui::MenuItem("Checkbox", false, false, false))
-					{
-					}
-					if (ImGui::MenuItem("Input Text", false, false, false))
-					{
-					}
-					if (ImGui::MenuItem("Progress Bar", false, false, false))
-					{
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Window"))
-			{
-				if (ImGui::MenuItem("Project"))
-				{
-					panelProject->OnOff();
-				}
-
-				if (ImGui::MenuItem("Settings"))
-				{
-					panelSettings->OnOff();
-				}
-
-				if (ImGui::MenuItem("Inspector"))
-				{
-					panelInspector->OnOff();
-				}
-
-				if (ImGui::MenuItem("Hierarchy"))
-				{
-					panelHierarchy->OnOff();
-				}
-
-				if (ImGui::MenuItem("Scene"))
-				{
-					panelScene->OnOff();
-				}
-
-				if (ImGui::MenuItem("Toolbar"))
-				{
-					panelToolbar->OnOff();
-				}
-
-				if (ImGui::MenuItem("ShaderEditor"))
-				{
-					panelShaderEditor->OnOff();
-				}
-
-				if (ImGui::MenuItem("Resources"))
-				{
-					panelResources->OnOff();
-				}
-
-				if (ImGui::MenuItem("Physics"))
-				{
-					panelPhysics->OnOff();
-				}
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Help"))
-			{
-				if (ImGui::MenuItem("ImGui Demo"))
-				{
-					show_demo_window = !show_demo_window;
-				}
-
-				if (ImGui::MenuItem("Documentation"))
-				{
-					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/wiki");
-				}
-
-				if (ImGui::MenuItem("Download latest"))
-				{
-					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/releases");
-				}
-
-				if (ImGui::MenuItem("Report a bug"))
-				{
-					RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D/issues");
-				}
-
-				if (ImGui::MenuItem("About"))
-				{
-					panelAbout->OnOff();
-				}
-
-				ImGui::EndMenu();
-			}
-
-
-			ImGui::EndMainMenuBar();
-	}
-
-	//if (!ImGui::IsPopupOpen("Save?") && ONdefaultSceneSave)
-	//	ImGui::OpenPopup("Save?");
-
-	//if (ImGui::BeginPopupModal("Save?"))
-	//{
-	//	ImGui::Text("Save change to the following items?");
-	//	ImGui::SetNextItemWidth(-1.0f);
-	//	/*if (ImGui::ListBoxHeader("##", close_queue_unsaved_documents, 6))
-	//	{
-	//		for (int n = 0; n < close_queue.Size; n++)
-	//			if (close_queue[n]->Dirty)
-	//				ImGui::Text("%s", close_queue[n]->Name);
-	//		ImGui::ListBoxFooter();
-	//	}
-
-	//	if (ImGui::Button("Yes", ImVec2(80, 0)))
-	//	{
-	//		for (int n = 0; n < close_queue.Size; n++)
-	//		{
-	//			if (close_queue[n]->Dirty)
-	//				close_queue[n]->DoSave();
-	//			close_queue[n]->DoForceClose();
-	//		}
-	//		close_queue.clear();
-	//		ImGui::CloseCurrentPopup();
-	//	}
-	//	ImGui::SameLine();
-	//	if (ImGui::Button("No", ImVec2(80, 0)))
-	//	{
-	//		for (int n = 0; n < close_queue.Size; n++)
-	//			close_queue[n]->DoForceClose();
-	//		close_queue.clear();
-	//		ImGui::CloseCurrentPopup();
-	//	}
-	//	ImGui::SameLine();
-	//	if (ImGui::Button("Cancel", ImVec2(80, 0)))
-	//	{
-	//		close_queue.clear();
-	//		ImGui::CloseCurrentPopup();
-	//	}*/
-	//	ImGui::EndPopup();
-	//}
-
-
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
-
-	#endif
-
-	return UPDATE_CONTINUE;
-}
 
 update_status ModuleGui::PostUpdate(float dt)
 {
 	// --- Iterate panels and draw ---
-	for (uint i = 0; i < panels.size(); ++i) {
-		if (panels[i]->IsEnabled())
-			panels[i]->Draw();
-	}
+	//for (uint i = 0; i < panels.size(); ++i) {
+	//	if (panels[i]->IsEnabled())
+	//		panels[i]->Draw();
+	//}
 
 	// End dock space
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		ImGui::End();
 
-	#ifdef BE_GAME_BUILD
-	ImGui::EndFrame();
-	#endif
-
 	return UPDATE_CONTINUE;
+}
+
+bool ModuleGui::Stop() {
+
+	// --- ShutDown ImGui ---
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext(ctx);
+
+	return true;
 }
 
 bool ModuleGui::CleanUp()
@@ -439,17 +198,15 @@ bool ModuleGui::CleanUp()
 		panels[i] = nullptr;
 	}
 
-	panelSettings = nullptr;
-	panelAbout = nullptr;
-	panelConsole = nullptr;
-	panelHierarchy = nullptr;
-	panelInspector = nullptr;
-	panelScene = nullptr;
-	panelToolbar = nullptr;
-	panelProject = nullptr;
-	panelShaderEditor = nullptr;
-	panelPhysics = nullptr;
-	panelBuild = nullptr;
+	//panelSettings = nullptr;
+	//panelAbout = nullptr;
+	//panelConsole = nullptr;
+	//panelHierarchy = nullptr;
+	//panelInspector = nullptr;
+	//panelScene = nullptr;
+	//panelToolbar = nullptr;
+	//panelProject = nullptr;
+	//panelShaderEditor = nullptr;
 
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &materialTexID);
@@ -459,24 +216,23 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
 
-	// --- ShutDown ImGui ---
-
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-
 	return ret;
 }
 
 void ModuleGui::Draw() const
 {
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	if (this->isEnabled()) {
+		if (!App->isGame) {
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
+			if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
+		}
+		else
+			ImGui::EndFrame();
 	}
 
 }
@@ -513,11 +269,18 @@ void ModuleGui::RequestBrowser(const char * url) const
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
 
+void ModuleGui::AddPanel(Panel* npanel) {
+	panels.push_back(npanel);
+}
+
+ImGuiContext* ModuleGui::getImgUICtx() const {
+	return ctx;
+}
 
 void ModuleGui::LogFPS(float fps, float ms)
 {
-	if (panelSettings != nullptr)
-		panelSettings->AddFPS(fps, ms);
+	/*if (panelSettings != nullptr)
+		panelSettings->AddFPS(fps, ms);*/
 }
 
 void ModuleGui::SaveStatus(json &file) const  
@@ -537,8 +300,10 @@ void ModuleGui::LoadStatus(const json & file)
 	
 	for (uint i = 0; i < panels.size(); ++i)
 	{
-		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end())
+		
+		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end()) {
 			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
+		}
 		else
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
 	}
@@ -571,5 +336,13 @@ void ModuleGui::CreateIcons()
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
+}
+
+be_imguialloc ModuleGui::GetImGuiAlloc() const {
+	return &ImGuiCustomAllocator;
+}
+
+be_imguifree ModuleGui::GetImGuiFree() const {
+	return &ImGuiCustomDeallocator;
 }
 

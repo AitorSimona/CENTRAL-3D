@@ -1,11 +1,12 @@
 #ifndef __COMPONENT_CAMERA_H__
 #define __COMPONENT_CAMERA_H__
 
-#include "Component.h"
 #include "Math.h"
+#include "Component.h"
+
  
-class ComponentCamera : public Component
-{
+BE_BEGIN_NAMESPACE
+class BROKEN_API ComponentCamera : public Component {
 public:
 
 	ComponentCamera(GameObject* ContainerGO);
@@ -34,7 +35,7 @@ public:
 	void Look(const float3& position);
 	void OnUpdateTransform(const float4x4& global);
 
-	bool ContainsAABB(const AABB & ref);
+	bool ContainsAABB(const AABB& ref);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Camera; };
 
@@ -51,4 +52,5 @@ public:
 
 };
 
+BE_END_NAMESPACE
 #endif

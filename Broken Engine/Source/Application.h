@@ -1,7 +1,7 @@
-#ifndef __APPLICATION_H_
-#define __APPLICATION_H_
+#ifndef __APPLICATION_H__
+#define __APPLICATION_H__
 
-#include "Globals.h"
+#include "BrokenCore.h"
 #include <list>
 #include <string>
 #include <vector>
@@ -13,8 +13,8 @@
 
 #define MAX_CONSOLE_LOGS 1000
 
-enum AppState
-{
+BE_BEGIN_NAMESPACE
+enum AppState {
 	PLAY = 0,
 	TO_PLAY,
 
@@ -47,17 +47,15 @@ class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
 
-
-class Application
-{
+class BROKEN_API Application {
 public:
 
 	// --- Getters ---
-	const char * GetAppName() const;
+	const char* GetAppName() const;
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
-	json GetDefaultGameConfig() const;
-	json GetConfigFile() const;
+	void GetDefaultGameConfig(json& config) const;
+	json& GetConfigFile();
 	std::vector<std::string>& GetLogs();
 	LCG& GetRandom();
 	JSONLoader* GetJLoader();
@@ -104,6 +102,7 @@ private:
 	std::string			appName;
 	std::string			orgName;
 	std::string			configpath;
+	json				tempjson;
 
 	LCG*				RandomNumber = nullptr;
 
@@ -116,22 +115,27 @@ private:
 public:
 
 	Application();
-	~Application();
+	virtual ~Application();
 
 	bool Init();
 	update_status Update();
 	bool CleanUp();
 
 
-private:
-
+protected:
 	void AddModule(Module* mod);
+	void SetConfigPath(const char* path);
+
+private:
 	void PrepareUpdate();
 	void FinishUpdate();
 	void SaveAllStatus();
-	void LoadAllStatus(json & file);
+	void LoadAllStatus(json& file);
 };
 
-extern Application* App;
+extern BROKEN_API Application* App;
+Application* CreateApplication();
+BE_END_NAMESPACE
+
 
 #endif

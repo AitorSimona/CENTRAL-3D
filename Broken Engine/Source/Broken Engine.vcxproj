@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5D41F5C6-AD64-484B-82CF-6B0EAB78D8F0}</ProjectGuid>
+    <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
-    <ProjectName>BEG</ProjectName>
+    <ProjectName>Broken Engine</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -41,13 +41,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)</OutDir>
-    <IntDir>$(Configuration)\Game\</IntDir>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)</OutDir>
-    <IntDir>$(Configuration)\Game\</IntDir>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -56,19 +53,12 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>BE_GAME_BUILD;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
-    <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Game\$(ProjectName).exe" "$(SolutionDir)$(Configuration)\$(ProjectName).exe"</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copying exe into game folder</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -79,7 +69,7 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>BE_GAME_BUILD;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -88,45 +78,11 @@
       <SubSystem>Windows</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
-    <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)$(Configuration)\$(ProjectName).exe" "$(SolutionDir)Game\$(ProjectName).exe"</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copying exe into game folder</Message>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>
-      </Message>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="ComponentCanvas.h" />
-    <ClInclude Include="Color.h" />
-    <ClInclude Include="ComponentAnimation.h" />
-    <ClInclude Include="ComponentBone.h" />
-    <ClInclude Include="ComponentAudioListener.h" />
-    <ClInclude Include="ComponentAudioSource.h" />
-    <ClInclude Include="ComponentCamera.h" />
-    <ClInclude Include="ComponentCollider.h" />
-    <ClInclude Include="ComponentDynamicRigidBody.h" />
-    <ClInclude Include="ComponentMeshRenderer.h" />
-    <ClInclude Include="ComponentParticleEmitter.h" />
-    <ClInclude Include="Components.h" />
-    <ClInclude Include="ComponentScript.h" />
-    <ClInclude Include="ComponentTransform.h" />
-    <ClInclude Include="Errors.h" />
-    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="EngineApplication.h" />
     <ClInclude Include="glad\include\glad\glad.h" />
     <ClInclude Include="glad\include\KHR\khrplatform.h" />
-    <ClInclude Include="Globals.h" />
-    <ClInclude Include="gpudetect\DeviceId.h" />
-    <ClInclude Include="gpudetect\dxgi1_4.h" />
-    <ClInclude Include="ComponentImage.h" />
     <ClInclude Include="Imgui\imconfig.h" />
     <ClInclude Include="Imgui\imgui.h" />
     <ClInclude Include="Imgui\ImGuizmo\ImGuizmo.h" />
@@ -136,20 +92,7 @@
     <ClInclude Include="Imgui\imstb_rectpack.h" />
     <ClInclude Include="Imgui\imstb_textedit.h" />
     <ClInclude Include="Imgui\imstb_truetype.h" />
-    <ClInclude Include="Importer.h" />
-    <ClInclude Include="ImporterAnimation.h" />
-    <ClInclude Include="ImporterBone.h" />
-    <ClInclude Include="ImporterFolder.h" />
-    <ClInclude Include="ImporterMaterial.h" />
-    <ClInclude Include="ImporterMesh.h" />
-    <ClInclude Include="ImporterMeta.h" />
-    <ClInclude Include="ImporterModel.h" />
-    <ClInclude Include="Importers.h" />
-    <ClInclude Include="ImporterScene.h" />
-    <ClInclude Include="ImporterScript.h" />
-    <ClInclude Include="ImporterShader.h" />
-    <ClInclude Include="ImporterTexture.h" />
-    <ClInclude Include="LuaIncludes.h" />
+    <ClInclude Include="json\json.hpp" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK2D.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\Random\LCG.h" />
@@ -222,100 +165,29 @@
     <ClInclude Include="MathGeoLib\include\Math\Swap.h" />
     <ClInclude Include="MathGeoLib\include\Math\TransformOps.h" />
     <ClInclude Include="MathGeoLib\include\Math\vec2d.h" />
-    <ClInclude Include="MathGeoLib\include\SystemInfo.h" />
     <ClInclude Include="MathGeoLib\include\Time\Clock.h" />
-    <ClInclude Include="ModuleAudio.h" />
-    <ClInclude Include="ModuleEventManager.h" />
-    <ClInclude Include="ModuleParticles.h" />
-    <ClInclude Include="ModulePhysics.h" />
-    <ClInclude Include="ModuleResourceManager.h" />
-    <ClInclude Include="ModuleSceneManager.h" />
-    <ClInclude Include="ModuleScripting.h" />
-    <ClInclude Include="ModuleTextures.h" />
-    <ClInclude Include="Component.h" />
-    <ClInclude Include="ModuleFileSystem.h" />
-    <ClInclude Include="ModuleThreading.h" />
-    <ClInclude Include="ModuleTimeManager.h" />
+    <ClInclude Include="mmgr\mmgr.h" />
+    <ClInclude Include="mmgr\nommgr.h" />
+    <ClInclude Include="ModuleEditorUI.h" />
+    <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="PanelAbout.h" />
     <ClInclude Include="PanelBuild.h" />
-    <ClInclude Include="PanelGame.h" />
-    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="PanelConsole.h" />
+    <ClInclude Include="PanelHierarchy.h" />
+    <ClInclude Include="PanelInspector.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
     <ClInclude Include="PanelResources.h" />
     <ClInclude Include="Panels.h" />
-    <ClInclude Include="PanelShaderEditor.h" />
-    <ClInclude Include="PanelToolbar.h" />
-    <ClInclude Include="PanelHierarchy.h" />
-    <ClInclude Include="PanelInspector.h" />
-    <ClInclude Include="JSONLoader.h" />
-    <ClInclude Include="json\json.hpp" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="Math.h" />
-    <ClInclude Include="mmgr\mmgr.h" />
-    <ClInclude Include="mmgr\nommgr.h" />
-    <ClInclude Include="ModuleCamera3D.h" />
-    <ClInclude Include="ModuleGui.h" />
-    <ClInclude Include="ModuleHardware.h" />
-    <ClInclude Include="ModuleRenderer3D.h" />
-    <ClInclude Include="Module.h" />
-    <ClInclude Include="ModuleInput.h" />
-    <ClInclude Include="ModuleWindow.h" />
-    <ClInclude Include="OpenGL.h" />
-    <ClInclude Include="Panel.h" />
-    <ClInclude Include="PanelAbout.h" />
-    <ClInclude Include="PanelConsole.h" />
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PanelSettings.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="par\par_shapes.h" />
-    <ClInclude Include="PerfTimer.h" />
-    <ClInclude Include="ComponentMesh.h" />
-    <ClInclude Include="Quadtree.h" />
-    <ClInclude Include="RandomGenerator.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceAnimation.h" />
-    <ClInclude Include="ResourceBone.h" />
-    <ClInclude Include="ResourceFolder.h" />
-    <ClInclude Include="ResourceMaterial.h" />
-    <ClInclude Include="ResourceMesh.h" />
-    <ClInclude Include="ResourceMeta.h" />
-    <ClInclude Include="ResourceModel.h" />
-    <ClInclude Include="Resources.h" />
-    <ClInclude Include="ResourceScene.h" />
-    <ClInclude Include="ResourceScript.h" />
-    <ClInclude Include="ResourceShader.h" />
-    <ClInclude Include="ResourceShaderObject.h" />
-    <ClInclude Include="ResourceShaderProgram.h" />
-    <ClInclude Include="ResourceTexture.h" />
-    <ClInclude Include="ComponentText.h" />
-    <ClInclude Include="ScriptData.h" />
-    <ClInclude Include="Scripting.h" />
-    <ClInclude Include="ScriptingMath.h" />
-    <ClInclude Include="ScriptVar.h" />
+    <ClInclude Include="PanelShaderEditor.h" />
+    <ClInclude Include="PanelToolbar.h" />
     <ClInclude Include="VSresource.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="wwise.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="ComponentCanvas.cpp" />
-    <ClCompile Include="Color.cpp" />
-    <ClCompile Include="ComponentAnimation.cpp" />
-    <ClCompile Include="ComponentBone.cpp" />
-    <ClCompile Include="ComponentAudioListener.cpp" />
-    <ClCompile Include="ComponentAudioSource.cpp" />
-    <ClCompile Include="ComponentCamera.cpp" />
-    <ClCompile Include="ComponentCollider.cpp" />
-    <ClCompile Include="ComponentDynamicRigidBody.cpp" />
-    <ClCompile Include="ComponentMeshRenderer.cpp" />
-    <ClCompile Include="ComponentParticleEmitter.cpp" />
-    <ClCompile Include="ComponentScript.cpp" />
-    <ClCompile Include="ComponentTransform.cpp" />
-    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="EngineApplication.cpp" />
     <ClCompile Include="glad\src\glad.c" />
-    <ClCompile Include="Globals.cpp" />
-    <ClCompile Include="gpudetect\DeviceId.cpp" />
-    <ClCompile Include="ComponentImage.cpp" />
     <ClCompile Include="Imgui\imgui.cpp" />
     <ClCompile Include="Imgui\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="Imgui\imgui_demo.cpp" />
@@ -323,18 +195,6 @@
     <ClCompile Include="Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Importer.cpp" />
-    <ClCompile Include="ImporterAnimation.cpp" />
-    <ClCompile Include="ImporterBone.cpp" />
-    <ClCompile Include="ImporterFolder.cpp" />
-    <ClCompile Include="ImporterMaterial.cpp" />
-    <ClCompile Include="ImporterMesh.cpp" />
-    <ClCompile Include="ImporterMeta.cpp" />
-    <ClCompile Include="ImporterModel.cpp" />
-    <ClCompile Include="ImporterScene.cpp" />
-    <ClCompile Include="ImporterScript.cpp" />
-    <ClCompile Include="ImporterShader.cpp" />
-    <ClCompile Include="ImporterTexture.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK2D.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\Random\LCG.cpp" />
@@ -376,74 +236,21 @@
     <ClCompile Include="MathGeoLib\include\Math\Quat.cpp" />
     <ClCompile Include="MathGeoLib\include\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\include\Math\TransformOps.cpp" />
-    <ClCompile Include="MathGeoLib\include\SystemInfo.cpp" />
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
-    <ClCompile Include="ModuleAudio.cpp" />
-    <ClCompile Include="ModuleEventManager.cpp" />
-    <ClCompile Include="ModuleParticles.cpp" />
-    <ClCompile Include="ModulePhysics.cpp" />
-    <ClCompile Include="ModuleResourceManager.cpp" />
-    <ClCompile Include="ModuleSceneManager.cpp" />
-    <ClCompile Include="ModuleScripting.cpp" />
-    <ClCompile Include="ModuleTextures.cpp" />
-    <ClCompile Include="Component.cpp" />
-    <ClCompile Include="JSONLoader.cpp" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
-    <ClCompile Include="ModuleCamera3D.cpp" />
-    <ClCompile Include="ModuleFileSystem.cpp" />
-    <ClCompile Include="ModuleGui.cpp" />
-    <ClCompile Include="ModuleHardware.cpp" />
-    <ClCompile Include="ModuleInput.cpp" />
-    <ClCompile Include="ModuleRenderer3D.cpp" />
-    <ClCompile Include="ModuleThreading.cpp" />
-    <ClCompile Include="ModuleTimeManager.cpp" />
-    <ClCompile Include="ModuleUI.cpp" />
-    <ClCompile Include="ModuleWindow.cpp" />
-    <ClCompile Include="Panel.cpp" />
+    <ClCompile Include="ModuleEditorUI.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelBuild.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
-    <ClCompile Include="PanelGame.cpp" />
+    <ClCompile Include="PanelHierarchy.cpp" />
+    <ClCompile Include="PanelInspector.cpp" />
     <ClCompile Include="PanelPhysics.cpp" />
     <ClCompile Include="PanelProject.cpp" />
     <ClCompile Include="PanelResources.cpp" />
-    <ClCompile Include="PanelShaderEditor.cpp" />
-    <ClCompile Include="PanelToolbar.cpp" />
-    <ClCompile Include="PanelHierarchy.cpp" />
-    <ClCompile Include="PanelInspector.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PanelSettings.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="PerfTimer.cpp" />
-    <ClCompile Include="ComponentMesh.cpp" />
-    <ClCompile Include="Quadtree.cpp" />
-    <ClCompile Include="RandomGenerator.cpp" />
-    <ClCompile Include="Resource.cpp" />
-    <ClCompile Include="ResourceAnimation.cpp" />
-    <ClCompile Include="ResourceBone.cpp" />
-    <ClCompile Include="ResourceFolder.cpp" />
-    <ClCompile Include="ResourceMaterial.cpp" />
-    <ClCompile Include="ResourceMesh.cpp" />
-    <ClCompile Include="ResourceMeta.cpp" />
-    <ClCompile Include="ResourceModel.cpp" />
-    <ClCompile Include="ResourceScene.cpp" />
-    <ClCompile Include="ResourceScript.cpp" />
-    <ClCompile Include="ResourceShader.cpp" />
-    <ClCompile Include="ResourceShaderObject.cpp" />
-    <ClCompile Include="ResourceShaderProgram.cpp" />
-    <ClCompile Include="ResourceTexture.cpp" />
-    <ClCompile Include="ComponentText.cpp" />
-    <ClCompile Include="Scripting.cpp" />
-    <ClCompile Include="ScriptingMath.cpp" />
-    <ClCompile Include="ScriptVar.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="wwise.cpp" />
-    <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp" />
-    <ClCompile Include="Wwise\IO\Common\AkFilePackage.cpp" />
-    <ClCompile Include="Wwise\IO\Common\AkFilePackageLUT.cpp" />
-    <ClCompile Include="Wwise\SDK\include\AkDefaultIOHookBlocking.cpp" />
+    <ClCompile Include="PanelShaderEditor.cpp" />
+    <ClCompile Include="PanelToolbar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Broken Engine.rc" />
@@ -459,6 +266,11 @@
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="MathGeoLib\include\Math\float2.inl" />
     <None Include="MathGeoLib\include\Math\Matrix.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Broken Core.vcxproj">
+      <Project>{a251aa97-8926-46c7-a62b-83a59f47bb5e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

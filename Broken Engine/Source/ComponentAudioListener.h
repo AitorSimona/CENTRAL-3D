@@ -2,12 +2,13 @@
 #define __ComponentAudioListener__H__
 
 #include "Component.h"
-#include "ModuleAudio.h"
 #include "Wwise/AK/SoundEngine/Common/AkTypes.h"
+
+BE_BEGIN_NAMESPACE
 
 class WwiseGameObject;
 
-class ComponentAudioListener : public Component
+class BROKEN_API ComponentAudioListener : public Component
 {
 public:
 	ComponentAudioListener(GameObject* ContainerGO);
@@ -27,4 +28,5 @@ private:
 	AkGameObjectID id = 0;
 };
 
+BE_END_NAMESPACE
 #endif __ComponentAudioListener__H__

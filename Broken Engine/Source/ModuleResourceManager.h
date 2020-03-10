@@ -5,11 +5,16 @@
 #include "Resource.h"
 #include "Importer.h"
 
+class PanelBuild;
+class PanelResources;
+
+BE_BEGIN_NAMESPACE
+
 class ResourceFolder;
 class ResourceFolder;
 class ResourceScene;
 class ResourceModel;
-class ResourceMaterial; 
+class ResourceMaterial;
 class ResourceShader;
 class ResourceMesh;
 class ResourceBone;
@@ -19,8 +24,7 @@ class ResourceShaderObject;
 class ResourceMeta;
 class ResourceScript;
 
-class ModuleResourceManager : public Module
-{
+class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterTexture;
 	friend class ImporterModel;
 	friend class ImporterMeta;
@@ -40,7 +44,7 @@ public:
 	ModuleResourceManager(bool start_enabled = true);
 	~ModuleResourceManager();
 
-	bool Init(json file) override;
+	bool Init(json& file) override;
 	bool Start() override;
 	//void ONEvent(const Event& event) const override;
 	update_status Update(float dt) override;
@@ -68,16 +72,13 @@ public:
 	Resource* ImportMeta(Importer::ImportData& IData);
 
 	void HandleFsChanges();
-	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string,std::vector<std::string>> & ret);
+	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret);
 
 	// For consistency, use this only on resource manager/importers 
 	template<typename TImporter>
-	TImporter* GetImporter()
-	{
-		for (uint i = 0; i < importers.size(); ++i)
-		{
-			if (importers[i]->GetType() == TImporter::GetType())
-			{
+	TImporter* GetImporter() {
+		for (uint i = 0; i < importers.size(); ++i) {
+			if (importers[i]->GetType() == TImporter::GetType()) {
 				return ((TImporter*)(importers[i]));
 			}
 		}
@@ -89,13 +90,17 @@ public:
 	Resource* GetResource(uint UID, bool loadinmemory = true);
 	void AddResourceToFolder(Resource* resource);
 	void RemoveResourceFromFolder(Resource* resource);
-	Resource* CreateResource(Resource::ResourceType type, std::string source_file);
-	Resource* CreateResourceGivenUID(Resource::ResourceType type, std::string source_file, uint UID);
+	Resource* CreateResource(Resource::ResourceType type, const char* source_file);
+	Resource* CreateResourceGivenUID(Resource::ResourceType type, const char* source_file, uint UID);
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
-	std::string GetNewUniqueName(Resource::ResourceType type);
 	bool IsFileImported(const char* file);
+	std::shared_ptr<std::string> GetNewUniqueName(Resource::ResourceType type);
 
 	void ONResourceDestroyed(Resource* resource);
+
+	//MYTODO For editor panel to set currentDirectory
+	void setCurrentDirectory(ResourceFolder* dir);
+	ResourceFolder* getCurrentDirectory() const;
 
 	// --- Getters ---
 	ResourceFolder* GetAssetsFolder();
@@ -113,6 +118,7 @@ private:
 	ResourceFolder* AssetsFolder = nullptr;
 	ResourceMaterial* DefaultMaterial = nullptr;
 
+	//MYTODO Temporary public for resource panel
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;
 	std::map<uint, ResourceScene*> scenes;
@@ -126,6 +132,12 @@ private:
 	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
-};
 
+	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
+	ResourceFolder* currentDirectory;
+
+
+
+};
+BE_END_NAMESPACE
 #endif

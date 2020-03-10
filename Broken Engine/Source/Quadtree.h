@@ -9,11 +9,13 @@
 #include <list>
 #include <map>
 
+#include "BrokenCore.h"
+
+BE_BEGIN_NAMESPACE
 class GameObject;
 
 // Tree node -------------------------------------------------------
-class QuadtreeNode
-{
+class BROKEN_API QuadtreeNode {
 public:
 
 	QuadtreeNode(const AABB& box);
@@ -25,7 +27,7 @@ public:
 	void Erase(GameObject* go);
 	void CreateChilds();
 	void CreateNode(uint index);
-	
+
 	void RedistributeChilds();
 	void CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const;
 	void CollectObjects(std::vector<GameObject*>& objects) const;
@@ -44,8 +46,7 @@ public:
 };
 
 // Tree class -------------------------------------------------------
-class Quadtree
-{
+class Quadtree {
 public:
 	Quadtree();
 	virtual ~Quadtree();
@@ -67,27 +68,22 @@ public:
 
 // Intersection methods could use a different number of primitives, so we use a template
 template<typename TYPE>
-inline void Quadtree::CollectIntersections(std::map<float, GameObject*>& objects, const TYPE & primitive) const
-{
+inline void Quadtree::CollectIntersections(std::map<float, GameObject*>& objects, const TYPE& primitive) const {
 	if (root != nullptr)
 		root->CollectIntersections(objects, primitive);
 }
 
 template<typename TYPE>
-inline void Quadtree::CollectIntersections(std::vector<GameObject*>& objects, const TYPE & primitive) const
-{
+inline void Quadtree::CollectIntersections(std::vector<GameObject*>& objects, const TYPE& primitive) const {
 	if (root != nullptr)
 		root->CollectIntersections(objects, primitive);
 }
 
 template<typename TYPE>
-inline void QuadtreeNode::CollectIntersections(std::map<float, GameObject*>& objects, const TYPE & primitive) const
-{
-	if (primitive.Intersects(box))
-	{
+inline void QuadtreeNode::CollectIntersections(std::map<float, GameObject*>& objects, const TYPE& primitive) const {
+	if (primitive.Intersects(box)) {
 		float hit_near, hit_far;
-		for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it)
-		{
+		for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it) {
 			if (primitive.Intersects((*it)->GetOBB(), hit_near, hit_far))
 				objects[hit_near] = *it;
 		}
@@ -98,12 +94,9 @@ inline void QuadtreeNode::CollectIntersections(std::map<float, GameObject*>& obj
 }
 
 template<typename TYPE>
-inline void QuadtreeNode::CollectIntersections(std::vector<GameObject*>& objects, const TYPE & primitive) const
-{
-	if (primitive.Intersects(box))
-	{
-		for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it)
-		{
+inline void QuadtreeNode::CollectIntersections(std::vector<GameObject*>& objects, const TYPE& primitive) const {
+	if (primitive.Intersects(box)) {
+		for (std::list<GameObject*>::const_iterator it = this->objects.begin(); it != this->objects.end(); ++it) {
 			if (primitive.Intersects((*it)->GetOBB()))
 				objects.push_back(*it);
 		}
@@ -113,4 +106,5 @@ inline void QuadtreeNode::CollectIntersections(std::vector<GameObject*>& objects
 	}
 }
 
+BE_END_NAMESPACE
 #endif // __QUADTREE_H__

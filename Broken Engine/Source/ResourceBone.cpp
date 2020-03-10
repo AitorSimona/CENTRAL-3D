@@ -8,8 +8,9 @@
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
 
-ResourceBone::ResourceBone(uint UID, std::string source_file) : Resource(Resource::ResourceType::BONE, UID, source_file)
+ResourceBone::ResourceBone(uint UID, const char* source_file) : Resource(Resource::ResourceType::BONE, UID, source_file)
 {
 	extension = ".bone";
 	resource_file = BONES_FOLDER + std::to_string(UID) + extension;

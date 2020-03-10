@@ -5,6 +5,8 @@
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
+
 ComponentAudioSource::ComponentAudioSource( GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::AudioSource)
 {
 
@@ -13,7 +15,7 @@ ComponentAudioSource::ComponentAudioSource( GameObject* ContainerGO) : Component
 	position.y = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().y;
 	position.z = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().z;
 
-	wwiseGO = wwiseGO->CreateAudioSource(ContainerGO->GetUID(), ContainerGO->GetName().c_str(), position);
+	wwiseGO = wwiseGO->CreateAudioSource(ContainerGO->GetUID(), ContainerGO->GetName(), position);
 }
 
 ComponentAudioSource::~ComponentAudioSource() {

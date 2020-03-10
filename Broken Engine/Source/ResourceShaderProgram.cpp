@@ -7,9 +7,8 @@
 
 #include "mmgr/mmgr.h"
 
-
-ResourceShaderProgram::ResourceShaderProgram(uint UID, std::string source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file)
-{
+using namespace Broken;
+ResourceShaderProgram::ResourceShaderProgram(uint UID, const char* source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file) {
 	// MYTODO: Should go to library folder?
 	extension = ".shader";
 	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
@@ -18,28 +17,24 @@ ResourceShaderProgram::ResourceShaderProgram(uint UID, std::string source_file) 
 
 }
 
-ResourceShaderProgram::~ResourceShaderProgram()
-{
+ResourceShaderProgram::~ResourceShaderProgram() {
 }
 
-bool ResourceShaderProgram::LoadInMemory()
-{
+bool ResourceShaderProgram::LoadInMemory() {
 	return true;
 
 }
 
-void ResourceShaderProgram::FreeMemory()
-{
+void ResourceShaderProgram::FreeMemory() {
 }
 
-void ResourceShaderProgram::OnOverwrite()
-{
+void ResourceShaderProgram::OnOverwrite() {
 }
 
-void ResourceShaderProgram::OnDelete()
-{
+void ResourceShaderProgram::OnDelete() {
 	App->fs->Remove(resource_file.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
 }
+

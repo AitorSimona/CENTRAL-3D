@@ -4,10 +4,9 @@
 #include "Resource.h"
 #include "Math.h"
 
-union data
-{
-	data()
-	{
+BE_BEGIN_NAMESPACE
+union BROKEN_API data {
+	data() {
 		intU = 0;
 		floatU = 0;
 		vec2U = { 0,0 };
@@ -22,8 +21,7 @@ union data
 	float4 vec4U;
 };
 
-struct Uniform
-{
+struct BROKEN_API Uniform {
 	Uniform() {};
 
 	std::string name;
@@ -33,10 +31,9 @@ struct Uniform
 	data value;
 };
 
-class ResourceShader : public Resource
-{
+class BROKEN_API ResourceShader : public Resource {
 public:
-	ResourceShader(uint UID, std::string source_file);
+	ResourceShader(uint UID, const char* source_file);
 
 
 	// constructor reads and builds the shader
@@ -55,9 +52,9 @@ public:
 	// use/activate the shader
 	void use();
 	// utility uniform functions
-	void setBool(const std::string &name, bool value) const;
-	void setInt(const std::string &name, int value) const;
-	void setFloat(const std::string &name, float value) const;
+	void setBool(const std::string& name, bool value) const;
+	void setInt(const std::string& name, int value) const;
+	void setFloat(const std::string& name, float value) const;
 
 public:
 	// the program ID
@@ -69,8 +66,8 @@ public:
 private:
 	unsigned int vertex, fragment = 0;
 
-	bool CreateVertexShader(unsigned int& vertex, const char * vShaderCode);
-	bool CreateFragmentShader(unsigned int& fragment, const char * fShaderCode);
+	bool CreateVertexShader(unsigned int& vertex, const char* vShaderCode);
+	bool CreateFragmentShader(unsigned int& fragment, const char* fShaderCode);
 	bool CreateShaderProgram(unsigned int vertex, unsigned int fragment);
 	bool CreateShaderProgram();
 	void SaveShader();
@@ -82,4 +79,5 @@ private:
 	void OnOverwrite() override;
 	void OnDelete() override;
 };
+BE_END_NAMESPACE
 #endif //__RESOURCE_SHADER_H__

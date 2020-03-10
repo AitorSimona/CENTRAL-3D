@@ -1,10 +1,12 @@
+#ifndef __BE_LIGHT_H__
+#define __BE_LIGHT_H__
 
-#pragma once
 #include "Color.h"
 #include "Math.h"
+#include "BrokenCore.h"
 
-struct Light
-{
+BE_BEGIN_NAMESPACE
+struct BROKEN_API Light {
 	Light();
 
 	void Init();
@@ -19,3 +21,6 @@ struct Light
 	int ref;
 	bool on;
 };
+BE_END_NAMESPACE
+
+#endif

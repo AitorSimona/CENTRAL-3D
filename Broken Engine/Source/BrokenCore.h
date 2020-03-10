@@ -1,13 +1,24 @@
-#pragma once
+#ifndef __BE_BROKENCORE_H__
+#define __BE_BROKENCORE_H__
 
 // Warning disabled ---
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
 #pragma warning( disable : 4530 )
 
 #include "glad/include/glad/glad.h"
-#include <windows.h>
+//#include <windows.h>
 #include "Errors.h"
 #include <stdio.h>
+
+//Import/export define
+#ifdef BE_BUILD_DLL
+	#define BROKEN_API __declspec(dllexport)
+#else
+	#define BROKEN_API __declspec(dllimport)
+#endif
+
+#define BE_BEGIN_NAMESPACE namespace Broken {
+#define BE_END_NAMESPACE }
 
 //Just in case -- Null redefinition
 #ifdef NULL
@@ -16,22 +27,24 @@
 #define NULL 0
 #define NULLRECT {0,0,0,0}
 
-
 // LOGGING -----------------------------------------------------------------------
 // Visual Studio Console will log both system & engine consoles!!!!!!!!!!!
 /// Print only in Engine Console
-#define ENGINE_CONSOLE_LOG(format, ...) EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define ENGINE_CONSOLE_LOG(format, ...) Broken::EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// Print only in System Console
-#define SYSTEM_CONSOLE_LOG(format, ...) SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define SYSTEM_CONSOLE_LOG(format, ...) Broken::SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// Print in both Consoles
-#define ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
+#define ENGINE_AND_SYSTEM_CONSOLE_LOG(format, ...) Broken::EngineConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__); Broken::SystemConsoleLog(__FILE__, __LINE__, format, __VA_ARGS__)
 /// First info at Compilation
-#define COMPILATIONLOGINFO LogCompilationFirstMessage()
+#define COMPILATIONLOGINFO Broken::LogCompilationFirstMessage()
 
+BE_BEGIN_NAMESPACE
 /// Log functions
+
 void LogCompilationFirstMessage();
 void EngineConsoleLog(const char file[], int line, const char* format, ...);
 void SystemConsoleLog(const char file[], int line, const char* format, ...);
+BE_END_NAMESPACE
 // -------------------------------------------------------------------------------
 
 
@@ -147,3 +160,4 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096
 // -------------------------------------------------------------------------------
+#endif

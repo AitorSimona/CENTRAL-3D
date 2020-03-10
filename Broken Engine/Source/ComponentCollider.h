@@ -6,6 +6,8 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
+BE_BEGIN_NAMESPACE
+
 class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
@@ -74,4 +76,5 @@ private:
 	bool toPlay = false;
 };
 
+BE_END_NAMESPACE
 #endif __COMPONENT_COLLIDER_H__

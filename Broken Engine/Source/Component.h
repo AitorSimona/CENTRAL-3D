@@ -1,29 +1,28 @@
 #ifndef __COMPONENT_H__
 #define __COMPONENT_H__
 
-#include "Globals.h"
+#include "BrokenCore.h"
 #include "JSONLoader.h"
 #include "Resource.h"
 
+BE_BEGIN_NAMESPACE
 class GameObject;
 
-class Component
-{
+class BROKEN_API Component {
 public:
-	enum class ComponentType
-	{
+	enum class ComponentType {
 		Transform,
 		Mesh,
 		MeshRenderer,
 		Camera,
-		ComponentCanvas,
-		ComponentImage,
-		ComponentText,
+		Canvas,
+		Image,
+		Text,
 		Button,
 		CheckBox,
 		InputText,
-		Script,
 		ProgressBar,
+		Script,
 		Bone,
 		Animation,
 		DynamicRigidBody,
@@ -36,7 +35,7 @@ public:
 
 public:
 
-	Component(GameObject* ContainerGO,Component::ComponentType type);
+	Component(GameObject* ContainerGO, Component::ComponentType type);
 	virtual ~Component();
 	virtual void Enable();
 	virtual void Disable();
@@ -64,4 +63,5 @@ protected:
 	ComponentType type = ComponentType::Unknown;
 };
 
+BE_END_NAMESPACE
 #endif

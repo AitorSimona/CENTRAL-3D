@@ -3,8 +3,10 @@
 #pragma once
 
 
-#include "Panel.h"
-class PanelGame : public Panel {
+#include "BrokenEngine.h"
+
+
+class PanelGame : public Broken::Panel {
 public:
 	PanelGame(char* name);
 	~PanelGame();

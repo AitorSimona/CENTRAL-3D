@@ -2,22 +2,20 @@
 #define __RESOURCE_MESH__
 
 #include "Resource.h"
-#include "Globals.h"
 #include "MathGeoLib/include/Geometry/AABB.h"
 
-struct Vertex
-{
+BE_BEGIN_NAMESPACE
+struct BROKEN_API Vertex {
 	float position[3];
 	float normal[3];
 	unsigned char color[4];
 	float texCoord[2];
 };
 
-class ResourceMesh : public Resource
-{
+class BROKEN_API ResourceMesh : public Resource {
 public:
 
-	ResourceMesh(uint UID, std::string source_file);
+	ResourceMesh(uint UID, const char* source_file);
 	~ResourceMesh();
 
 	void CreateAABB();
@@ -27,9 +25,9 @@ public:
 
 
 private:
-	void CreateVBO(); 
-	void CreateEBO(); 
-	void CreateVAO(); 
+	void CreateVBO();
+	void CreateEBO();
+	void CreateVAO();
 
 public:
 	AABB aabb;
@@ -51,6 +49,6 @@ private:
 	void OnDelete() override;
 	void Repath() override;
 };
-
+BE_END_NAMESPACE
 #endif // __RESOURCE_MESH__
 

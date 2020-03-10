@@ -1,59 +1,51 @@
 #include "ModuleThreading.h"
-#include "Globals.h"
+#include "mmgr/nommgr.h"
 
-//#include "mmgr/mmgr.h"
 
-ModuleThreading::ModuleThreading(bool start_enabled) : Module(start_enabled)
-{
+using namespace Broken;
+ModuleThreading::ModuleThreading(bool start_enabled) : Module(start_enabled) {
 }
 
-ModuleThreading::~ModuleThreading()
-{
+ModuleThreading::~ModuleThreading() {
 }
 
-bool ModuleThreading::Init(json file)
-{
+bool ModuleThreading::Init(json& file) {
 	concurrentThreads = std::thread::hardware_concurrency();
 	return true;
 }
 
-bool ModuleThreading::Start()
-{
+bool ModuleThreading::Start() {
 	for (int i = 0; i < concurrentThreads; i++) {
 		threadStatus.push_back(false);
 		threadVector.push_back(std::thread(&ModuleThreading::ProcessTasks, this, i, std::ref(stopPool)));
 	}
 
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Created %d threads.", concurrentThreads - 1);
-	
+
 	poolTerminated = false;
 	stopPool = false;
 
 	return true;
 }
 
-update_status ModuleThreading::Update(float dt)
-{
+update_status ModuleThreading::Update(float dt) {
 	FinishProcessing();
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleThreading::PostUpdate(float dt) 
-{
+update_status ModuleThreading::PostUpdate(float dt) {
 	FinishProcessing();
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleThreading::CleanUp()
-{
+bool ModuleThreading::CleanUp() {
 	if (!poolTerminated)
 		ShutdownPool();
 
 	return true;
 }
 
-void ModuleThreading::AddTask(std::function<void()> newTask)
-{
+void ModuleThreading::AddTask(std::function<void()> newTask) {
 	{
 		std::lock_guard<std::mutex> lk(tQueueMutex);
 		tasksQueue.push(newTask);
@@ -61,8 +53,7 @@ void ModuleThreading::AddTask(std::function<void()> newTask)
 	condition.notify_one(); //Waking up a thread to process the new task
 }
 
-void ModuleThreading::ShutdownPool()
-{
+void ModuleThreading::ShutdownPool() {
 	{
 		std::lock_guard<std::mutex> lk(threadPoolMutex);
 		stopPool = true;
@@ -80,10 +71,8 @@ void ModuleThreading::ShutdownPool()
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Thread pool has been shutdown, all %d threads are joined.", concurrentThreads);
 }
 
-void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop)
-{
-	while (true)
-	{
+void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop) {
+	while (true) {
 		{
 			std::lock_guard<std::mutex> lk(threadPoolMutex);
 			threadStatus[threadID] = false;
@@ -112,8 +101,7 @@ void ModuleThreading::ProcessTasks(int threadID, std::atomic<bool>& stop)
 	}
 }
 
-void ModuleThreading::FinishProcessing() 
-{
+void ModuleThreading::FinishProcessing() {
 	bool processing = true;
 	while (processing) {
 		tQueueMutex.lock();

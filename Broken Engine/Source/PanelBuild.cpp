@@ -1,18 +1,10 @@
 #include "PanelBuild.h"
 //#include "JSONLoader.h"
-#include "Application.h"
-#include "ModuleFileSystem.h"
-#include "Globals.h"
-#include "ModuleThreading.h"
-#include "ModuleSceneManager.h"
-#include "ModuleResourceManager.h"
-#include "GameObject.h"
+#include "EngineApplication.h"
 #include <queue>
-#include "Component.h"
 #include "Imgui/imgui.h"
-#include "ResourceScene.h"
 
-PanelBuild::PanelBuild(char* name) : Panel(name){
+PanelBuild::PanelBuild(char* name) : Broken::Panel(name){
 	buildName = "Broken Engine Game";
 	enabled = false;
 }
@@ -21,6 +13,8 @@ PanelBuild::~PanelBuild() {
 }
 
 bool PanelBuild::Draw() {
+	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
+
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoDocking;
 
@@ -34,15 +28,15 @@ bool PanelBuild::Draw() {
 		ImGui::Separator();
 		ImGui::Text("Main scene:");
 		ImGui::Text("Currently multiple scenes are not supported, main scene is scene.");
-		scenePath = App->scene_manager->currentScene->GetResourceFile();
-		//ResourceScene* selected_scene = App->resources->scenes[0];
+		scenePath = EngineApp->scene_manager->currentScene->GetResourceFile();
+		//ResourceScene* selected_scene = EngineApp->resources->scenes[0];
 		//static ImGuiComboFlags flags = 0;
 		//if (ImGui::BeginCombo("##Scenes Combo", "Main Scene", flags)) // The second parameter is the label previewed before opening the combo.
 		//{
-		//	for (int n = 0; n < App->resources->scenes.size(); n++) {
-		//		bool is_selected = (selected_scene == App->resources->scenes[n]);
-		//		if (ImGui::Selectable(App->resources->scenes[n]->GetName(), is_selected)) {
-		//			selected_scene = App->resources->scenes[n];
+		//	for (int n = 0; n < EngineApp->resources->scenes.size(); n++) {
+		//		bool is_selected = (selected_scene == EngineApp->resources->scenes[n]);
+		//		if (ImGui::Selectable(EngineApp->resources->scenes[n]->GetName(), is_selected)) {
+		//			selected_scene = EngineApp->resources->scenes[n];
 		//			sceneUID = selected_scene->GetUID();
 		//			//MYTODO: scene should have its main camera saved we should set it here once it has it
 		//		}
@@ -55,11 +49,11 @@ bool PanelBuild::Draw() {
 		ImGui::Text("Main camera:");
 		if (cameras.size() > 0) {
 			static ImGuiComboFlags flags = 0;
-			if (ImGui::BeginCombo("##Scenes Combo", selectedCamera->GetName().c_str(), flags)) // The second parameter is the label previewed before opening the combo.
+			if (ImGui::BeginCombo("##Scenes Combo", selectedCamera->GetName(), flags)) // The second parameter is the label previewed before opening the combo.
 			{
 				for (int n = 0; n < cameras.size(); n++) {
 					bool is_selected = (selectedCamera == cameras[n]);
-					if (ImGui::Selectable(cameras[n]->GetName().c_str(), is_selected)) {
+					if (ImGui::Selectable(cameras[n]->GetName(), is_selected)) {
 						selectedCamera = cameras[n];
 						//cameraName = selectedCamera->GetName();
 						//MYTODO: scene should have its main camera saved we should set it here once it has it
@@ -71,16 +65,14 @@ bool PanelBuild::Draw() {
 			}
 			ImGui::Separator();
 			if (ImGui::Button("Build the game!")) {
-				App->scene_manager->SaveScene(App->scene_manager->currentScene);
+				EngineApp->scene_manager->SaveScene(EngineApp->scene_manager->currentScene);
 				makeBuild();
 			}
 		}
 		else
 			ImGui::Text("You have no cameras in the scene.");
-
-
-		ImGui::End();
 	}
+	ImGui::End();
 
 
 
@@ -90,7 +82,7 @@ bool PanelBuild::Draw() {
 inline void PanelBuild::OnOff() {
 	if (!enabled) {
 		enabled = true;
-		//App->scene_manager->SaveScene(App->scene_manager->currentScene);
+		//EngineApp->scene_manager->SaveScene(EngineApp->scene_manager->currentScene);
 		findCameras();
 		if (cameras.size() > 0)
 			selectedCamera = cameras[0];
@@ -103,7 +95,7 @@ inline void PanelBuild::OnOff() {
 
 inline void PanelBuild::SetOnOff(bool set) {
 	if (set) {
-		//App->scene_manager->SaveScene(App->scene_manager->currentScene);
+		//EngineApp->scene_manager->SaveScene(EngineApp->scene_manager->currentScene);
 		findCameras();
 		if (cameras.size() > 0)
 			selectedCamera = cameras[0];
@@ -116,14 +108,14 @@ inline void PanelBuild::SetOnOff(bool set) {
 //MYTODO: this should not be needed, when scene saves its own main camera
 void PanelBuild::findCameras() {
 	cameras.clear();
-	std::queue<GameObject*> GOqueue;
-	GOqueue.push(App->scene_manager->GetRootGO());
+	std::queue<Broken::GameObject*> GOqueue;
+	GOqueue.push(EngineApp->scene_manager->GetRootGO());
 
 	while (!GOqueue.empty()) {
-		GameObject* current = GOqueue.front();
+		Broken::GameObject* current = GOqueue.front();
 		GOqueue.pop();
 
-		Component* cameraComponent = current->HasComponent(Component::ComponentType::Camera);
+		Broken::Component* cameraComponent = current->HasComponent(Broken::Component::ComponentType::Camera);
 		if (cameraComponent != nullptr)
 			cameras.push_back(current);
 
@@ -137,58 +129,61 @@ void PanelBuild::makeBuild() {
 
 
 	// Create build folders
-	App->fs->CreateDirectoryA(buildName.c_str());
+	EngineApp->fs->CreateDirectoryA(buildName.c_str());
 
 	//We copy the executable
-	App->fs->Copy(GAME_EXE, (buildName + "/" + buildName + ".exe").c_str());
+	EngineApp->fs->Copy(GAME_EXE, (buildName + "/" + buildName + ".exe").c_str());
 
-	std::vector<std::string> files;
-	std::vector<std::string> dirs;
-	App->fs->DiscoverFiles("", files, dirs);
+	const std::vector<std::string>* files = EngineApp->fs->ExDiscoverFiles("");
 
 	//We copy all dlls and .ini
-	for (int i = 0; i < files.size(); ++i) {
-		std::string extension = (files[i].substr(files[i].find_last_of(".") + 1));
-		App->fs->NormalizePath(extension);
+	for (std::vector<std::string>::const_iterator it = (*files).begin(); it != (*files).end(); ++it) {
+		std::string extension = ((*it).substr((*it).find_last_of(".") + 1));
+		EngineApp->fs->NormalizePath(extension);
 
 		if (extension == "dll" || extension == "ini" || extension == "meta")
-			App->fs->Copy(files[i].c_str(), (buildName + "/" + files[i]).c_str());
+			EngineApp->fs->Copy((*it).c_str(), (buildName + "/" + *it).c_str());
 	}
+
+	EngineApp->fs->DeleteArray(files);
+
 	static const char* directories[] = { ASSETS_FOLDER, SETTINGS_FOLDER, LIBRARY_FOLDER, TEXTURES_FOLDER, MESHES_FOLDER, SCENES_FOLDER,
 		MODELS_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER, SHADERS_ASSETS_FOLDER, SOUNDS_FOLDER, ANIMATIONS_FOLDER, BONES_FOLDER};
 
+	std::shared_ptr<std::string> build = std::make_shared<std::string>(buildName);
 	for (int i = 0; i < IM_ARRAYSIZE(directories); ++i) {
-		App->fs->CreateDirectoryA((buildName + "/" + directories[i]).c_str());
-		App->threading->ADDTASK(this, PanelBuild::copyAllFolderMT, directories[i]);
+		std::shared_ptr<std::string> dir = std::make_shared<std::string>(directories[i]);
+		EngineApp->fs->CreateDirectoryA((buildName + "/" + directories[i]).c_str());
+		EngineApp->threading->ADDTASK(this, PanelBuild::copyAllFolderMT, dir, build);
 	}
 
 	//We wait for the module threading to finish tasks
-	App->threading->FinishProcessing();
+	EngineApp->threading->FinishProcessing();
 
 	std::string settingspath = buildName + "/Settings/GameConfig.json";
 	//We write our settings to gameSettings.
-	json gameSettings = App->GetDefaultGameConfig();
+	Broken::json& gameSettings = EngineApp->GetConfigFile();
+	EngineApp->GetDefaultGameConfig(gameSettings);
 	gameSettings["Application"]["Title"] = buildName;
 	gameSettings["SceneManager"]["MainScene"] = scenePath;
 	gameSettings["Camera3D"]["MainCamera"] = selectedCamera->GetName();
 
-	App->GetJLoader()->Save(settingspath.c_str(), gameSettings);
+	EngineApp->GetJLoader()->Save(settingspath.c_str(), gameSettings);
 
 	SetOnOff(false);
 }
 
-void PanelBuild::copyAllFolderMT(const char* path) {
-	std::string _path = path;
-	//App->fs->CreateDirectoryA((buildName + "/" + _path).c_str());
-	std::vector<std::string> files;
-	std::vector<std::string> dirs;
-	App->fs->DiscoverFiles(path, files, dirs);
+void PanelBuild::copyAllFolderMT(std::shared_ptr<std::string> path, std::shared_ptr<std::string> build) {
+	const std::vector<std::string>* files = EngineApp->fs->ExDiscoverFiles((*path).c_str());
 
-	//// We recursively process another folder in another task
-	//for (int i = 0; i < dirs.size(); ++i)
-	//	App->threading->ADDTASK(this, PanelBuild::copyAllFolderMT, (_path + "/" + dirs[i]).c_str());
+	std::string curr_path;
+	std::string new_path;
 
-	for (int i = 0; i < files.size(); ++i) {
-		App->fs->Copy((_path + files[i]).c_str(), (buildName + "/" + _path + "/" + files[i]).c_str());
+	for (std::vector<std::string>::const_iterator it = (*files).begin(); it != (*files).end(); ++it) {
+		curr_path = *path + *it;
+		new_path = *build + "/" + *path + *it;
+		EngineApp->fs->Copy(curr_path.c_str(), new_path.c_str());
 	}
+
+	EngineApp->fs->DeleteArray(files);
 }

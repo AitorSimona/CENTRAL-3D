@@ -1,4 +1,4 @@
-#include "Globals.h"
+#include "BrokenCore.h"
 #include "Application.h"
 #include "ModuleUI.h"
 #include "ModuleInput.h"
@@ -10,6 +10,8 @@
 
 #include "mmgr/mmgr.h"
 
+using namespace Broken;
+
 ModuleUI::ModuleUI(bool start_enabled) : Module(start_enabled)
 {
 	name = "UI_System";
@@ -19,7 +21,7 @@ ModuleUI::~ModuleUI()
 {
 }
 
-bool ModuleUI::Init(json file)
+bool ModuleUI::Init(json& file)
 {
 	return true;
 }
@@ -61,10 +63,9 @@ bool ModuleUI::CleanUp()
 
 void ModuleUI::Draw() const
 {
-	//// change camera to ortographic
+	// change camera to ortographic
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//glPushMatrix();
 
 	glOrtho(0, App->gui->sceneHeight, 0, App->gui->sceneWidth, -1, 1);
 
@@ -88,7 +89,6 @@ void ModuleUI::Draw() const
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	//glPopMatrix();
 }
 
 void ModuleUI::RemoveCanvas(ComponentCanvas* c)

@@ -3,11 +3,11 @@
 
 #include "Importer.h"
 
+BE_BEGIN_NAMESPACE
 class Resource;
 class ResourceTexture;
 
-class ImporterTexture : public Importer
-{
+class BROKEN_API ImporterTexture : public Importer {
 
 public:
 	ImporterTexture();
@@ -20,5 +20,5 @@ public:
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Texture; };
 };
-
+BE_END_NAMESPACE
 #endif

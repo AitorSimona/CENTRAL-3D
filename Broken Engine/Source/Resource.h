@@ -3,22 +3,21 @@
 
 #include <string>
 #include <vector>
-#include "Globals.h"
+#include "BrokenCore.h"
 
+BE_BEGIN_NAMESPACE
 class GameObject;
 
-class Resource 
-{
+class BROKEN_API Resource {
 public:
-	enum class ResourceType
-	{
+	enum class ResourceType {
 		FOLDER,
 		SCENE,
 		MODEL,
 		MATERIAL,
 		SHADER,
 		MESH,
-		BONE, 
+		BONE,
 		ANIMATION,
 		TEXTURE,
 		SHADER_OBJECT,
@@ -26,15 +25,14 @@ public:
 		META,
 		UNKNOWN,
 	};
-	enum class ResourceNotificationType
-	{
+	enum class ResourceNotificationType {
 		Overwrite,
 		Deletion
 	};
 
 
 	Resource(ResourceType type);
-	Resource(ResourceType type, uint UID, std::string source_file);
+	Resource(ResourceType type, uint UID, const char* source_file);
 	virtual ~Resource();
 
 	// --- Getters ---
@@ -84,5 +82,7 @@ protected:
 	std::string name = "";
 	std::string extension = "";
 };
+
+BE_END_NAMESPACE
 
 #endif // !__RESOURCE_H__
