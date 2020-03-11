@@ -314,15 +314,19 @@ bool ModuleRenderer3D::SetVSync(bool _vsync)
 	return ret;
 }
 
-void ModuleRenderer3D::SetActiveCamera(ComponentCamera* camera) {
-	if (this->active_camera) {
+void ModuleRenderer3D::SetActiveCamera(ComponentCamera* camera)
+{
+	if (this->active_camera)
 		this->active_camera->active_camera = false;
-	}
+
 	// if camera is not nullptr, then we set it as active camera, else we set editor camera as active camera
-	this->active_camera = camera ? camera : App->camera->camera;
-	if (camera) {
+	if (camera != nullptr)
+	{
+		this->active_camera = camera;
 		camera->active_camera = true;
 	}
+	else
+		this->active_camera = App->camera->camera;
 }
 
 void ModuleRenderer3D::SetCullingCamera(ComponentCamera* camera) {

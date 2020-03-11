@@ -41,6 +41,8 @@ public:
 
 	Animation* GetDefaultAnimation() const;
 	void PlayAnimation(const char* name, float speed = 30);
+	void SetAnimationSpeed(const char* name, float speed);
+	void SetCurrentAnimationSpeed(float speed);
 
 	// --- Save & Load ---
 	json Save() const override;
