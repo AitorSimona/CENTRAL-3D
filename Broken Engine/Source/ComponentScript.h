@@ -14,7 +14,6 @@ public:
 	~ComponentScript();
 
 public:
-	void Update() override;
 	void Enable() override;
 	void Disable() override;
 	void CreateInspectorNode() override;

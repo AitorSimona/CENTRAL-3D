@@ -30,10 +30,6 @@ void ComponentAudioSource::CreateInspectorNode()
 {
 	if (ImGui::CollapsingHeader("Audio Source", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
 		if (id != 0)
 		{
 			std::string state = "Pause";
@@ -99,9 +95,6 @@ void ComponentAudioSource::Update()
 	position.z = GO->GetComponent<ComponentTransform>()->GetPosition().x;
 
 	wwiseGO->SetPosition(position.x, position.y, position.z);
-
-	if (to_delete)
-		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
 void ComponentAudioSource::Load(json& node)

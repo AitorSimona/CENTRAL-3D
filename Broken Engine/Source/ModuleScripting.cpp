@@ -179,13 +179,11 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
 		.addFunction("ShakeController", &Scripting::ShakeController)
 		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
-
 		//Transform Functions
 		.addFunction("GetPosition", &Scripting::GetPosition)
 		.addFunction("GetPositionX", &Scripting::GetPositionX)
 		.addFunction("GetPositionY", &Scripting::GetPositionY)
 		.addFunction("GetPositionZ", &Scripting::GetPositionZ)
-
 		//GetGameObject & move an external Gameobject
 		.addFunction("FindGameObject", &Scripting::FindGameObject)
 		//.addFunction("GetGameObjectPos", &Scripting::GetGameObjectPos)
@@ -200,12 +198,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		.addFunction("RotateObject", &Scripting::RotateObject)
 		.addFunction("SetObjectRotation", &Scripting::SetObjectRotation)
 
-		//SYSTEMS FUNCTIONS -----------------------------------------------------------------------
-		//Particles Functions
+		//Systems Functions
 		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
 
-		//Physics Functions
 		.addFunction("GetAngularVelocity", &Scripting::GetAngularVelocity)
 		.addFunction("SetAngularVelocity", &Scripting::SetAngularVelocity)
 		.addFunction("GetLinearVelocity", &Scripting::GetLinearVelocity)
@@ -219,25 +215,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 
 		.addFunction("UseGravity", &Scripting::UseGravity)
 		.addFunction("SetKinematic", &Scripting::SetKinematic)
-
-		//Sound Functions
+		
 		.addFunction("PlayAttackSound", &Scripting::PlayAttackSound)
 		.addFunction("PlayStepSound", &Scripting::PlayStepSound)
 		.addFunction("StopAttackSound", &Scripting::StopAttackSound)
 		.addFunction("StopStepSound", &Scripting::StopStepSound)
 		.addFunction("SetVolume", &Scripting::SetVolume)
 
-		//Animations Functions
 		.addFunction("PlayAnimation", &Scripting::StartAnimation)
-		.addFunction("SetAnimationSpeed", &Scripting::SetAnimSpeed)
-		.addFunction("SetCurrentAnimationSpeed", &Scripting::SetCurrentAnimSpeed)
-
-		//Current Camera Functions
-		.addFunction("GetPositionInFrustum", &Scripting::GetPosInFrustum)
-
-		//Maths
-		.addFunction("CompareFloats", &Scripting::FloatNumsAreEqual)
-		.addFunction("CompareDoubles", &Scripting::DoubleNumsAreEqual)
 
 		.endClass()
 		.endNamespace();

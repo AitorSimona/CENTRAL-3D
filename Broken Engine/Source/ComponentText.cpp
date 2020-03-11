@@ -32,12 +32,6 @@ ComponentText::~ComponentText()
 	//font.clean();
 }
 
-void ComponentText::Update()
-{
-	if (to_delete)
-		this->GetContainerGameObject()->RemoveComponent(this);
-}
-
 void ComponentText::LoadFont(const char* path, int size)
 {
 	//font.init(path, size /* size */);
@@ -66,9 +60,6 @@ void ComponentText::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Text"))
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 		ImGui::Checkbox("Visible", &visible);
 		ImGui::Separator();
@@ -160,4 +151,10 @@ void ComponentText::CreateInspectorNode()
 		ImGui::TreePop();
 	}
 
+	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
+
+	ImGui::SameLine();
+	if (ImGui::Button("Delete")) {
+		GO->RemoveComponent(Component::ComponentType::Text);
+	}
 }

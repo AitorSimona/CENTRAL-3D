@@ -360,15 +360,18 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 	return component;
 }
 
-void GameObject::RemoveComponent(Component* comp) {
-	// ---Remove component specified component of game object ---
+void GameObject::RemoveComponent(Component::ComponentType type) {
+	// ---Remove component of type given from game object ---
 
-	for (auto it = components.begin(); it != components.end(); ++it)
+	for (uint i = 0; i < components.size(); ++i)
 	{
-		if ((*it) && (*it) == comp)
+		if (components[i] && components[i]->GetType() == type)
 		{
-			delete (*it);
+			std::vector<Component*>::iterator it = components.begin();
+			it += i;
+
 			components.erase(it);
+
 			break;
 		}
 	}

@@ -47,12 +47,6 @@ ComponentButton::~ComponentButton()
 	texture->Release();
 }
 
-void ComponentButton::Update()
-{
-	if (to_delete)
-		this->GetContainerGameObject()->RemoveComponent(this);
-}
-
 void ComponentButton::Draw()
 {
 	// --- Update transform and rotation to face camera ---
@@ -135,9 +129,6 @@ void ComponentButton::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Button"))
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 		ImGui::Checkbox("Visible", &visible);
 
@@ -281,4 +272,10 @@ void ComponentButton::CreateInspectorNode()
 		ImGui::TreePop();
 	}
 
+	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
+
+	ImGui::SameLine();
+	if (ImGui::Button("Delete")) {
+		GO->RemoveComponent(Component::ComponentType::Button);
+	}
 }

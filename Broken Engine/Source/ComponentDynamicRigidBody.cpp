@@ -37,12 +37,6 @@ ComponentDynamicRigidBody::~ComponentDynamicRigidBody()
 
 }
 
-void ComponentDynamicRigidBody::Update()
-{
-	if (to_delete)
-		this->GetContainerGameObject()->RemoveComponent(this);
-}
-
 json ComponentDynamicRigidBody::Save() const
 {
 	json node;
@@ -128,9 +122,6 @@ void ComponentDynamicRigidBody::Load(json& node)
 void ComponentDynamicRigidBody::CreateInspectorNode()
 {
 	ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
-
-	if (ImGui::Button("Delete component"))
-		to_delete = true;
 
 	ImGui::Text("Mass:"); ImGui::SameLine(); 
 	if (ImGui::DragFloat("##M", &mass,1.0f, 0.0f, 100000.0f)) 

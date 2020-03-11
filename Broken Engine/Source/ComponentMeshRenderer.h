@@ -18,8 +18,6 @@ public:
 	ComponentMeshRenderer(GameObject* ContainerGO);
 	virtual ~ComponentMeshRenderer();
 
-	void Update() override;
-
 	void Draw(bool outline = false) const;
 
 	// --- Save & Load ---

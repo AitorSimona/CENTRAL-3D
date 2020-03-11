@@ -29,8 +29,6 @@ public:
 	ComponentCollider(GameObject* ContainerGO);
 	virtual ~ComponentCollider();
 
-	void Update() override;
-
 	void Draw();
 
 	void UpdateLocalMatrix();

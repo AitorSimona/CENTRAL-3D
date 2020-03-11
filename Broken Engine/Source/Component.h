@@ -58,9 +58,8 @@ public:
 protected:
 
 	bool active = false;
-	bool to_delete = false;
-
 	GameObject* GO = nullptr;
+
 	ComponentType type = ComponentType::Unknown;
 };
 

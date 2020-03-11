@@ -26,8 +26,6 @@ public:
 	ComponentCanvas(GameObject* gameObject);
 	virtual ~ComponentCanvas();
 
-	void Update() override;
-
 	void Draw() const;
 	void AddElement(Component* element) { elements.push_back(element); }
 

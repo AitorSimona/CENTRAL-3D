@@ -86,15 +86,11 @@ void ComponentAnimation::Update()
 		if(animations.size()>0)
 			playing_animation = GetDefaultAnimation();
 	}
-
-	if(to_delete)
-		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
 Animation* ComponentAnimation::CreateAnimation(std::string name, uint start, uint end, bool loop, bool Default)
 {
 	Animation* anim = new Animation(name, start, end, loop, Default);
-	anim->speed = res_anim->ticksPerSecond;
 	animations.push_back(anim);
 
 	return anim;
@@ -131,28 +127,6 @@ void ComponentAnimation::PlayAnimation(const char* name, float speed)
 			time = 0;
 		}
 	}
-}
-
-void ComponentAnimation::SetAnimationSpeed(const char* name, float speed)
-{
-	for (int i = 0; i < animations.size(); ++i)
-	{
-		if (animations[i] == nullptr)
-		{
-			ENGINE_AND_SYSTEM_CONSOLE_LOG("No animations at index %i", i);
-			break;
-		}
-		else if (animations[i]->name.compare(name) == 0)
-			animations[i]->speed = speed;
-	}
-}
-
-void ComponentAnimation::SetCurrentAnimationSpeed(float speed)
-{
-	if(playing_animation)
-		playing_animation->speed = speed;
-	else
-		ENGINE_AND_SYSTEM_CONSOLE_LOG("Current Animation is nullptr!");
 }
 
 json ComponentAnimation::Save() const
@@ -248,13 +222,12 @@ void ComponentAnimation::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Animation"))
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
 
 		if (res_anim)
 		{
 			ImGui::Text("Animation name: %s", res_anim->name.c_str());
 			ImGui::PushItemWidth(50); ImGui::InputFloat("Blend Duration", &blend_time_value);
+			ImGui::PushItemWidth(50); ImGui::InputFloat("Speed ", &res_anim->ticksPerSecond);
 			ImGui::Checkbox("Draw Bones", &draw_bones);
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);

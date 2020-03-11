@@ -30,12 +30,6 @@ ComponentBone::~ComponentBone()
 	}
 }
 
-void ComponentBone::Update()
-{
-	if (to_delete)
-		this->GetContainerGameObject()->RemoveComponent(this);
-}
-
 void ComponentBone::DebugDrawBones()
 {
 
@@ -141,11 +135,11 @@ void ComponentBone::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Bone"))
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
+		ImGui::Text("Im a component bone :D");
+		
 		if (res_bone)
 		{
+			ImGui::Text("ResourceBone linked");
 			ImGui::Text("Name: %s", res_bone->GetName());
 		}
 			
