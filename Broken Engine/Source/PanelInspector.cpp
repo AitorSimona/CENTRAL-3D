@@ -160,23 +160,6 @@ bool PanelInspector::Draw()
 		}
 
 		item_current = items[0];
-		// MYTODO: move this to the component itself
-
-		// --- Material ---
-		//if (Selected->GetComponent<ComponentMaterial>())
-		//{
-		//	CreateMaterialNode(*Selected);
-		//	ImGui::Separator();
-		//}
-
-		// --- Camera ---
-		//if (Selected->GetComponent<ComponentCamera>())
-		//{
-		//	CreateCameraNode(*Selected);
-		//	ImGui::Separator();
-		//}
-
-
 
 		if (Startup)
 			Startup = false;
@@ -198,7 +181,6 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 		else
 			Selected.Disable();
 	}
-
 	ImGui::SameLine();
 
 	// --- Game Object Name Setter ---
@@ -207,12 +189,13 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 	if (ImGui::InputText("", GOName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 		Selected.SetName(GOName);
 
-	bool objectStatic= Selected.Static;
+	static bool objectStatic = Selected.Static;
+	bool checkboxBool = Selected.Static;
 
 	ImGui::SameLine();
 
-	if (ImGui::Checkbox("Static", &objectStatic)) {
-		
+	if (ImGui::Checkbox("Static", &checkboxBool)) {
+		objectStatic = checkboxBool;
 		if (!Selected.childs.empty())
 			ImGui::OpenPopup("Static gameObject");
 		else
