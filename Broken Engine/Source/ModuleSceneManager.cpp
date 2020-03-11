@@ -337,9 +337,9 @@ void ModuleSceneManager::RedoOctree()
 
 }
 
-void ModuleSceneManager::SetStatic(GameObject * go, bool setChildren)
+void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChildren)
 {
-	go->Static = !go->Static;
+	go->Static = setStatic;
 	if (go->Static)
 	{
 		// --- Insert go into octree and remove it from currentscene's static go map ---
@@ -358,7 +358,7 @@ void ModuleSceneManager::SetStatic(GameObject * go, bool setChildren)
 			//start the loop from 1, because the GO in the index 0 is the parent GO
 			for (int i = 1; i < children.size(); ++i)
 			{
-				children[i]->Static = !children[i]->Static;
+				children[i]->Static = setStatic;
 				tree.Insert(children[i]);
 				currentScene->StaticGameObjects[children[i]->GetUID()] = children[i];
 
@@ -384,7 +384,7 @@ void ModuleSceneManager::SetStatic(GameObject * go, bool setChildren)
 			//start the loop from 1, because the GO in the index 0 is the parent GO
 			for (int i = 1; i < children.size(); ++i)
 			{
-				children[i]->Static = !children[i]->Static;
+				children[i]->Static = setStatic;
 				currentScene->NoStaticGameObjects[children[i]->GetUID()] = children[i];
 
 				tree.Erase(children[i]);

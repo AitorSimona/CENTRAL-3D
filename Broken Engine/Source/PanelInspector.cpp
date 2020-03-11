@@ -207,16 +207,16 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 	if (ImGui::InputText("", GOName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 		Selected.SetName(GOName);
 
-	bool objectEmpty = Selected.Static;
+	bool objectStatic= Selected.Static;
 
 	ImGui::SameLine();
 
-	if (ImGui::Checkbox("Static", &objectEmpty)) {
+	if (ImGui::Checkbox("Static", &objectStatic)) {
 		
 		if (!Selected.childs.empty())
 			ImGui::OpenPopup("Static gameObject");
 		else
-			EngineApp->scene_manager->SetStatic(&Selected, false);
+			EngineApp->scene_manager->SetStatic(&Selected, objectStatic,  false);
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(400,75));
@@ -234,13 +234,13 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 			
 			ImGui::Indent(130);
 			if (ImGui::Button("Yes")) {
-				EngineApp->scene_manager->SetStatic(&Selected, true);
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
 
 			if (ImGui::Button("No")) {
-				EngineApp->scene_manager->SetStatic(&Selected, false);
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, false);
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -257,13 +257,13 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 			ImGui::Indent(130); 
 			
 			if (ImGui::Button("Yes")) {
-				EngineApp->scene_manager->SetStatic(&Selected, true);
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
 
 			if (ImGui::Button("No")) {
-				EngineApp->scene_manager->SetStatic(&Selected, false);
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, false);
 				ImGui::CloseCurrentPopup();
 			}
 		}

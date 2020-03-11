@@ -9,7 +9,7 @@
         "Console": false,
         "Hierarchy": true,
         "Inspector": true,
-        "Physics": true,
+        "Physics": false,
         "Project": true,
         "Resources": true,
         "Scene": true,
