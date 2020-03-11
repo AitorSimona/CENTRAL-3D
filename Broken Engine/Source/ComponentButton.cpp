@@ -70,6 +70,12 @@ void ComponentButton::Draw()
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
+	// color tint
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, -1);
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
@@ -89,14 +95,13 @@ void ComponentButton::Draw()
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
+	glUniform1i(TextureLocation, 0); //reset texture location
 
 	// --- Draw plane with given texture ---
-	glColor4f(color.r, color.g, color.b, color.a); // change color (depending on state)
-
 	glBindVertexArray(App->scene_manager->plane->VAO);
 
 	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
-
+	 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
