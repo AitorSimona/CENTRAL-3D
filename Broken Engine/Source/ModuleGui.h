@@ -94,6 +94,8 @@ public:
 	float sceneWidth = 0;
 	float sceneHeight = 0;
 
+	bool isUsingGuizmo = false;
+
 private:
 
 	bool capture_keyboard = false;
