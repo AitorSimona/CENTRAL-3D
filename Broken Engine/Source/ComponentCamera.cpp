@@ -236,21 +236,14 @@ void ComponentCamera::Update()
 {
 	if (active_camera)
 	{
-	/*	if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
-		{*/
+		if (GO->HasComponent(Component::ComponentType::AudioListener) == nullptr)
 			GO->AddComponent(Component::ComponentType::AudioListener);
-			GO->GetComponent<ComponentAudioListener>()->Enable();
-		//}
-		//else
-		//{
-			//GO->GetComponent<ComponentAudioListener>()->Enable();
-		/*}*/
+		
+		GO->GetComponent<ComponentAudioListener>()->Enable();
 	}
 	else
 	{
 		if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
-		{
 			GO->GetComponent<ComponentAudioListener>()->Disable();
-		}
 	}
 }
