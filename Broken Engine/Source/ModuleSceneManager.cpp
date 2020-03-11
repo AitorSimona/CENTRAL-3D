@@ -49,6 +49,7 @@ void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) {
 // -------------------------------
 
 ModuleSceneManager::ModuleSceneManager(bool start_enabled) {
+	name = "Scene Manager";
 }
 
 ModuleSceneManager::~ModuleSceneManager() {

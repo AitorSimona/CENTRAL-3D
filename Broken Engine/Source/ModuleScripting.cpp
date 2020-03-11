@@ -33,6 +33,7 @@
 
 using namespace Broken;
 ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
+	name = "Scripting";
 }
 
 ModuleScripting::~ModuleScripting() {

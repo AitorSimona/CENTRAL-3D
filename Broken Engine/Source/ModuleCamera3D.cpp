@@ -23,6 +23,7 @@ using namespace Broken;
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled) {
 	camera = new ComponentCamera(nullptr);
+	name = "Camera3D";
 }
 
 ModuleCamera3D::~ModuleCamera3D() {
