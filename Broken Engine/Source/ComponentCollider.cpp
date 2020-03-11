@@ -177,15 +177,12 @@ void ComponentCollider::UpdateLocalMatrix() {
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (!App->isGame) {
-			if ((App->gui->isUsingGuizmo || cTransform->updateValues) && dynamicRB->rigidBody != nullptr) //ON EDITOR
+		if ((App->gui->isUsingGuizmo && !App->isGame) || cTransform->updateValues){ //ON EDITOR
 				dynamicRB->rigidBody->setGlobalPose(transform);
 		}
-		else {
-			if (dynamicRB->rigidBody != nullptr) //ON GAME
-			{
-				UpdateTransformByRigidBody(dynamicRB, cTransform);
-			}
+		else if (dynamicRB->rigidBody != nullptr) //ON GAME
+		{
+			UpdateTransformByRigidBody(dynamicRB, cTransform);
 		}
 	}
 }
@@ -489,8 +486,10 @@ void ComponentCollider::CreateInspectorNode()
 					colliderSize.y = radius;
 					colliderSize.z = radius;
 
-					if (prevRadius != radius || editCollider)
-						CreateCollider(COLLIDER_TYPE::SPHERE, true);
+					if (prevRadius != radius || editCollider) {
+						editCollider = true;
+						colliderType = (int)COLLIDER_TYPE::SPHERE;
+					}
 								
 					break;
 				}
@@ -521,8 +520,10 @@ void ComponentCollider::CreateInspectorNode()
 
 					ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
 
-					if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider)
-						CreateCollider(COLLIDER_TYPE::BOX, true);
+					if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
+						editCollider = true;
+						colliderType = (int)COLLIDER_TYPE::BOX;
+					}
 
 					break;
 				}
@@ -546,8 +547,10 @@ void ComponentCollider::CreateInspectorNode()
 					colliderSize.y = height;
 					colliderSize.z = radius;
 
-					if (prevRadius != radius || prevheight != height || editCollider)
-						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
+					if (prevRadius != radius || prevheight != height || editCollider) {
+						editCollider = true;
+						colliderType = (int)COLLIDER_TYPE::CAPSULE;
+					}
 
 					break;
 				}
@@ -558,6 +561,12 @@ void ComponentCollider::CreateInspectorNode()
 		ImGui::TreePop();
 	}
 
+}
+
+void ComponentCollider::Update()
+{
+	if (editCollider)
+		CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
 }
 
 void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain) {
