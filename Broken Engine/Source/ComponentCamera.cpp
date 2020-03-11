@@ -148,10 +148,12 @@ void ComponentCamera::Load(json& node)
 	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
 }
 
-void ComponentCamera::CreateInspectorNode()
-{
-	if (ImGui::TreeNode("Camera"))
-	{
+void ComponentCamera::CreateInspectorNode() {
+	if (ImGui::TreeNode("Camera")) {
+
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		if (ImGui::Checkbox("Active Camera", &active_camera))
 			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(App->camera->camera);
 
@@ -248,4 +250,7 @@ void ComponentCamera::Update()
 		if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
 			GO->GetComponent<ComponentAudioListener>()->Disable();
 	}
+
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
 }

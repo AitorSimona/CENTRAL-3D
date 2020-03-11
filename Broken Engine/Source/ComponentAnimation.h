@@ -70,7 +70,6 @@ public:
 
 	std::vector<Animation*> animations;
 
-	Animation* prev_anim = nullptr;
 	Animation* playing_animation = nullptr;;
 
 	ResourceAnimation* res_anim = nullptr;
