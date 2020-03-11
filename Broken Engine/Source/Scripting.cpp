@@ -1128,26 +1128,26 @@ void Scripting::SetAnimSpeed(const char* name, float speed)
 }
 
 // CAMERAS -----------------------------------------------------------
-bool Scripting::GetPosInFrustum(float x, float y, float z)
+int Scripting::GetPosInFrustum(float x, float y, float z)
 {
 	ComponentCamera* cam = App->renderer3D->active_camera;
 
 	if (cam)
-		return cam->frustum.Contains({ x, y, z });
+		return (int)cam->frustum.Contains({ x, y, z });
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
 
-	return false;
+	return 0;
 }
 
 // MATHS -------------------------------------------------------------
 //Maths
-bool Scripting::FloatNumsAreEqual(float a, float b)
+int Scripting::FloatNumsAreEqual(float a, float b)
 {
 	return (fabs(a - b) < std::numeric_limits<float>::epsilon());
 }
 
-bool Scripting::DoubleNumsAreEqual(double a, double b)
+int Scripting::DoubleNumsAreEqual(double a, double b)
 {
 	return (fabs(a - b) < std::numeric_limits<double>::epsilon());
 }

@@ -146,11 +146,11 @@ public:
 	void SetCurrentAnimSpeed(float speed);
 
 	//Current Camera
-	bool GetPosInFrustum(float x, float y, float z);
+	int GetPosInFrustum(float x, float y, float z);
 
 	//Maths
-	bool FloatNumsAreEqual(float a, float b);
-	bool DoubleNumsAreEqual(double a, double b);
+	int FloatNumsAreEqual(float a, float b);
+	int DoubleNumsAreEqual(double a, double b);
 
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll
