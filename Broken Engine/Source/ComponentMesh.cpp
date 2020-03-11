@@ -32,6 +32,12 @@ ComponentMesh::~ComponentMesh() {
 	
 }
 
+void ComponentMesh::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
 const AABB& ComponentMesh::GetAABB() const {
 	if (resource_mesh)
 		return resource_mesh->aabb;
@@ -89,6 +95,10 @@ void ComponentMesh::CreateInspectorNode() {
 	ImGui::SameLine();
 
 	if (resource_mesh && ImGui::TreeNode("Mesh")) {
+
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		std::string Triangle_count = "Triangles   ";
 		Triangle_count.append(std::to_string(resource_mesh->IndicesSize / 3));
 		ImGui::Text(Triangle_count.data());
@@ -101,11 +111,7 @@ void ComponentMesh::CreateInspectorNode() {
 	}
 
 	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
-
-	ImGui::SameLine();
-	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Mesh);
-	}
+	
 }
 
 void ComponentMesh::AddBone(ComponentBone* bone)

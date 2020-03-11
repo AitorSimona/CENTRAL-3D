@@ -61,7 +61,6 @@ public:
 	void SelectFromRay(LineSegment& ray);
 
 	// --- Save/Load ----
-	void SaveStatus(json &file) const override;
 	void LoadGame(const json & file);
 	void SaveScene(ResourceScene* scene);
 	void SetActiveScene(ResourceScene* scene);

@@ -53,7 +53,10 @@ public:
 		return true;
 	}
 
-	virtual void SaveStatus(json& file) const {}
+	virtual const json& SaveStatus() const {
+		static json m_config;
+		return m_config;
+	}
 
 	virtual void LoadStatus(const json& file) {}
 
@@ -64,6 +67,11 @@ public:
 	virtual bool isEnabled() const 
 	{
 		return enabled;
+	}
+
+	const char* GetName() const 
+	{
+		return name.c_str();
 	}
 
 protected:

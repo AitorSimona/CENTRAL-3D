@@ -47,6 +47,12 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 	}
 }
 
+void ComponentParticleEmitter::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
 void ComponentParticleEmitter::Enable()
 {
 	active = true;
@@ -284,6 +290,9 @@ void ComponentParticleEmitter::CreateInspectorNode()
 		else
 			Disable();
 	}
+
+	if (ImGui::Button("Delete component"))
+		to_delete = true;
 
 	//Emitter size
 	ImGui::Text("Emitter size");

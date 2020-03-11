@@ -48,8 +48,6 @@ public:
 
 
 	void LogFPS(float fps, float ms);
-
-	void SaveStatus(json &file) const override;
 	void LoadStatus(const json & file) override;
 
 	void HandleInput(SDL_Event* event) const;

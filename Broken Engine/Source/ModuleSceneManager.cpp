@@ -49,6 +49,7 @@ void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) {
 // -------------------------------
 
 ModuleSceneManager::ModuleSceneManager(bool start_enabled) {
+	name = "Scene Manager";
 }
 
 ModuleSceneManager::~ModuleSceneManager() {
@@ -463,26 +464,31 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
 	}
 }
 
-void ModuleSceneManager::SaveStatus(json& file) const {
-}
-
 
 void ModuleSceneManager::LoadGame(const json & file)
 {
 	int bar = 1;
-	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end()) {
+	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end())
+	{
 		std::string sceneName = file["SceneManager"]["MainScene"];
 		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, sceneName.c_str());
-		if (scene != nullptr) {
+		
+		if (scene != nullptr)
+		{
 			SetActiveScene(scene);
 			scene->LoadToMemory();
-			if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end()) {
+
+			if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end())
+			{
 				GameObject* camera;
 				std::string cameraName = file["Camera3D"]["MainCamera"];
 				camera = scene->GetGOWithName(cameraName.c_str());
-				if (camera != nullptr) {
+
+				if (camera != nullptr)
+				{
 					ComponentCamera* camera_component = camera->GetComponent<ComponentCamera>();
-					if (camera_component != nullptr) {
+					if (camera_component != nullptr)
+					{
 						App->renderer3D->SetActiveCamera(camera_component);
 						App->renderer3D->SetCullingCamera(camera_component);
 						/*	App->renderer3D->active_camera = camera->GetComponent<ComponentCamera>();
@@ -494,9 +500,8 @@ void ModuleSceneManager::LoadGame(const json & file)
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main camera for game.", );
 		}
 	}
-	else {
+	else 
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
-	}
 }
 
 void ModuleSceneManager::SaveScene(ResourceScene* scene)
@@ -863,13 +868,14 @@ void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh*
 	par_shapes_mesh* top_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* bot_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* cylinder = par_shapes_create_cylinder(25,25);
-	par_shapes_scale(top_sphere, radius / 2, radius / 2, radius / 2);
-	par_shapes_scale(bot_sphere, radius / 2, radius / 2, radius / 2);
-	par_shapes_scale(cylinder, radius / 2, height/2, radius / 2);
+	par_shapes_scale(top_sphere, 0.5f, 0.5f, 0.5f);
+	par_shapes_scale(bot_sphere, 0.5f, 0.5f, 0.5f);
+	par_shapes_scale(cylinder, radius / 2, radius/2, height / 2);
 
 	// --- Rotate and translate hemispheres ---
 	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(top_sphere, 0, 0, height / 2);
+	//par_shapes_translate(bot_sphere, 0, 0, -height / 2);
 	par_shapes_rotate(bot_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_rotate(bot_sphere, float(PAR_PI), (float*)&float3::unitX);
 
