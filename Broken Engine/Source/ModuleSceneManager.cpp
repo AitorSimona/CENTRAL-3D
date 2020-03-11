@@ -49,6 +49,7 @@ void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) {
 // -------------------------------
 
 ModuleSceneManager::ModuleSceneManager(bool start_enabled) {
+	name = "Scene Manager";
 }
 
 ModuleSceneManager::~ModuleSceneManager() {
@@ -428,9 +429,6 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
 		//if (toSelect)
 		SetSelectedGameObject(toSelect);
 	}
-}
-
-void ModuleSceneManager::SaveStatus(json& file) const {
 }
 
 
