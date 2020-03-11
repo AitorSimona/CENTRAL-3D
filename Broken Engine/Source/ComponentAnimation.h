@@ -41,6 +41,8 @@ public:
 
 	Animation* GetDefaultAnimation() const;
 	void PlayAnimation(const char* name, float speed = 30);
+	void SetAnimationSpeed(const char* name, float speed);
+	void SetCurrentAnimationSpeed(float speed);
 
 	// --- Save & Load ---
 	json Save() const override;
@@ -70,7 +72,6 @@ public:
 
 	std::vector<Animation*> animations;
 
-	Animation* prev_anim = nullptr;
 	Animation* playing_animation = nullptr;;
 
 	ResourceAnimation* res_anim = nullptr;
