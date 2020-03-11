@@ -111,7 +111,22 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Debug")
 		.beginClass <Scripting>("Scripting")
-		.addConstructor<void(*) (void)>()
+		.addConstructor<void(*) (void)>()/*
+		.addFunction("LOG", &Scripting::LogFromLua)
+		.addFunction("GetKey", &Scripting::GetKey)
+		.addFunction("KeyState", &Scripting::GetKeyState)
+		.addFunction("KeyDown", &Scripting::IsKeyDown)
+		.addFunction("KeyUp", &Scripting::IsKeyUp)
+		.addFunction("KeyRepeat", &Scripting::IsKeyRepeat)
+		.addFunction("KeyIdle", &Scripting::IsKeyIdle)
+		.addFunction("GetMouseButton", &Scripting::GetMouseButton)
+		.addFunction("MouseButtonState", &Scripting::GetMouseButtonState)
+		.addFunction("MouseButtonDown", &Scripting::IsMouseButtonDown)
+		.addFunction("MouseButtonUp", &Scripting::IsMouseButtonUp)
+		.addFunction("MouseButtonRepeat", &Scripting::IsMouseButtonRepeat)
+		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
+		.addFunction("Translate", &Scripting::Translate)
+		.addFunction("dt", &Scripting::GetDT)*/
 		.endClass()
 		.endNamespace();
 
@@ -269,7 +284,7 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 	
 	// Reset the type of all the variables
 	for (int i = 0; i < script->my_component->script_variables.size(); ++i)
-		script->my_component->script_variables.clear();
+		script->my_component->script_variables[i].type = VarType::NONE;
 
 	for (luabridge::Iterator iterator(script->my_table_class); !iterator.isNil(); ++iterator) {
 		// Declare necessary vars for intialization & get variable name
@@ -314,7 +329,7 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 				if (variable.type == script->my_component->script_variables[variable_index].type) {
 					script->my_component->script_variables[variable_index].editor_value = variable.editor_value;
 				}
-				// In case the variable changed its type
+				// The variable changed its type
 				else   
 				{
 					script->my_component->script_variables[variable_index] = variable;
@@ -324,6 +339,14 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 				script->my_component->script_variables.push_back(variable);
 			}
 		} 
+	}
+
+	// Erase from memory variables deleted in hot reloading (those that are still type NONE)
+	for (int i = 0; i < script->my_component->script_variables.size(); ++i) {
+		if (script->my_component->script_variables[i].type == VarType::NONE) {
+			std::vector<ScriptVar>::iterator var_it = std::find(script->my_component->script_variables.begin(), script->my_component->script_variables.end(), script->my_component->script_variables[i]);
+			script->my_component->script_variables.erase(var_it);
+		}
 	}
 }
 
