@@ -31,6 +31,9 @@ ComponentCollider::~ComponentCollider()
 
 void ComponentCollider::Update()
 {
+	if (editCollider)
+		CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
+
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
@@ -573,11 +576,6 @@ void ComponentCollider::CreateInspectorNode()
 
 }
 
-void ComponentCollider::Update()
-{
-	if (editCollider)
-		CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
-}
 
 void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain) {
 	if (shape != nullptr && (lastIndex != (int)type || createAgain)) {

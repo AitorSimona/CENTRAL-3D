@@ -42,7 +42,6 @@ public:
 	json Save() const override;
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
-	void Update() override;
 
 	void CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain = false);
 
