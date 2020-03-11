@@ -3,18 +3,18 @@
 #include "ModuleFileSystem.h"
 #include "GameObject.h"
 #include "Application.h"
-//#include "ModuleScene.h"
 #include "ModuleInput.h"
 #include "ModuleCamera3D.h"
 #include "Resource.h"
+#include "ModuleSceneManager.h"
+#include "ResourceScene.h"
+
 #include "ResourceScript.h"
 #include "ComponentScript.h"
-#include "Scripting.h"
-#include "ResourceScene.h"
-#include "ModuleSceneManager.h"
-//#include "ComponentTransform.h"
-//#include "ModuleResources.h"
-//#include "ModuleEditor.h"
+#include "ScriptingDebug.h"
+#include "ScriptingElements.h"
+#include "ScriptingInputs.h"
+#include "ScriptingSystems.h"
 #include "ScriptVar.h"
 #include <iterator>
 
@@ -30,14 +30,12 @@
 #include "ScriptData.h"
 #include "mmgr/mmgr.h"
 
-
 using namespace Broken;
 ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 	name = "Scripting";
 }
 
-ModuleScripting::~ModuleScripting() {
-}
+ModuleScripting::~ModuleScripting() {}
 
 bool ModuleScripting::DoHotReloading() {
 	bool ret = true;
@@ -109,28 +107,25 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 
 	//MYTODO: D�dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
-		.beginNamespace("Debug")
-		.beginClass <Scripting>("Scripting")
-		.addConstructor<void(*) (void)>()/*
-		.addFunction("LOG", &Scripting::LogFromLua)
-		.addFunction("GetKey", &Scripting::GetKey)
-		.addFunction("KeyState", &Scripting::GetKeyState)
-		.addFunction("KeyDown", &Scripting::IsKeyDown)
-		.addFunction("KeyUp", &Scripting::IsKeyUp)
-		.addFunction("KeyRepeat", &Scripting::IsKeyRepeat)
-		.addFunction("KeyIdle", &Scripting::IsKeyIdle)
-		.addFunction("GetMouseButton", &Scripting::GetMouseButton)
-		.addFunction("MouseButtonState", &Scripting::GetMouseButtonState)
-		.addFunction("MouseButtonDown", &Scripting::IsMouseButtonDown)
-		.addFunction("MouseButtonUp", &Scripting::IsMouseButtonUp)
-		.addFunction("MouseButtonRepeat", &Scripting::IsMouseButtonRepeat)
-		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
-		.addFunction("Translate", &Scripting::Translate)
-		.addFunction("dt", &Scripting::GetDT)*/
+		.beginNamespace("Scripting")
+
+		.beginClass <ScriptingDebug>("Debug")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingElements>("Elements")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingSystems>("Systems")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingInputs>("Inputs")
+		.addConstructor<void(*) (void)>()
 		.endClass()
 		.endNamespace();
 
-	Scripting Scripting;
 	int compiled = luaL_dofile(L, absolute_path.c_str());
 
 	if (compiled == LUA_OK) {
@@ -151,98 +146,134 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 {
 	//MYTODO: Didac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
-		.beginNamespace("Debug")
-		.beginClass <Scripting>("Scripting")
+		.beginNamespace("Scripting")
+
+		// ----------------------------------------------------------------------------------
+		// SCRIPTING DEBUG 
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingDebug>("Debug")
 		.addConstructor<void(*) (void)>()
-		.addFunction("LOG", &Scripting::LogFromLua)
-		.addFunction("GetKey", &Scripting::GetKey)
-		.addFunction("KeyState", &Scripting::GetKeyState)
-		.addFunction("KeyDown", &Scripting::IsKeyDown)
-		.addFunction("KeyUp", &Scripting::IsKeyUp)
-		.addFunction("KeyRepeat", &Scripting::IsKeyRepeat)
-		.addFunction("KeyIdle", &Scripting::IsKeyIdle)
-		.addFunction("GetMouseButton", &Scripting::GetMouseButton)
-		.addFunction("MouseButtonState", &Scripting::GetMouseButtonState)
-		.addFunction("MouseButtonDown", &Scripting::IsMouseButtonDown)
-		.addFunction("MouseButtonUp", &Scripting::IsMouseButtonUp)
-		.addFunction("MouseButtonRepeat", &Scripting::IsMouseButtonRepeat)
-		.addFunction("MouseButtonIdle", &Scripting::IsMouseButtonIdle)
-		.addFunction("dt", &Scripting::GetDT)
-		.addFunction("GameTime", &Scripting::GameTime)
-		.addFunction("IsGamepadButton", &Scripting::IsGamepadButton)
-		.addFunction("IsJoystickAxis", &Scripting::IsJoystickAxis)
-		.addFunction("IsTriggerState", &Scripting::IsTriggerState)
-		.addFunction("GetAxisValue", &Scripting::GetAxisRealValue)
-		.addFunction("GetAxisValue", &Scripting::GetAxisValue)
-		.addFunction("ShakeController", &Scripting::ShakeController)
-		.addFunction("StopControllerShake", &Scripting::StopControllerShake)
+		.addFunction("LOG", &ScriptingDebug::LogFromLua)
+		.addFunction("RealDT", &ScriptingDebug::GetRealDT)
+		.addFunction("DT", &ScriptingDebug::GetDT)
+		.addFunction("GameTime", &ScriptingDebug::GameTime)
 
-		//Transform Functions
-		.addFunction("GetPosition", &Scripting::GetPosition)
-		.addFunction("GetPositionX", &Scripting::GetPositionX)
-		.addFunction("GetPositionY", &Scripting::GetPositionY)
-		.addFunction("GetPositionZ", &Scripting::GetPositionZ)
+		// Maths
+		.addFunction("CompareFloats", &ScriptingDebug::FloatNumsAreEqual)
+		.addFunction("CompareDoubles", &ScriptingDebug::DoubleNumsAreEqual)
+		.endClass()
+		
+		// ----------------------------------------------------------------------------------
+		// SCRIPTING ELEMENTS 
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingElements>("Elements")
+		.addConstructor<void(*) (void)>()
 
-		//GetGameObject & move an external Gameobject
-		.addFunction("FindGameObject", &Scripting::FindGameObject)
-		//.addFunction("GetGameObjectPos", &Scripting::GetGameObjectPos)
-		.addFunction("TranslateGameObject", &Scripting::TranslateGameObject)
-		.addFunction("GetGameObjectPosX", &Scripting::GetGameObjectPosX)
-		.addFunction("GetGameObjectPosY", &Scripting::GetGameObjectPosY)
-		.addFunction("GetGameObjectPosZ", &Scripting::GetGameObjectPosZ)
+		// GameObject-related functions
+		.addFunction("FindGameObject", &ScriptingElements::FindGameObject)
+		.addFunction("GetGameObjectPos", &ScriptingElements::GetGameObjectPos)
+		.addFunction("GetGameObjectPosX", &ScriptingElements::GetGameObjectPosX)
+		.addFunction("GetGameObjectPosY", &ScriptingElements::GetGameObjectPosY)
+		.addFunction("GetGameObjectPosZ", &ScriptingElements::GetGameObjectPosZ)
+		.addFunction("TranslateGameObject", &ScriptingElements::TranslateGameObject)
 
-		.addFunction("Translate", &Scripting::Translate)
-		.addFunction("SetPosition", &Scripting::SetPosition)
+		// Position
+		.addFunction("GetPosition", &ScriptingElements::GetPosition)
+		.addFunction("GetPositionX", &ScriptingElements::GetPositionX)
+		.addFunction("GetPositionY", &ScriptingElements::GetPositionY)
+		.addFunction("GetPositionZ", &ScriptingElements::GetPositionZ)
 
-		.addFunction("RotateObject", &Scripting::RotateObject)
-		.addFunction("SetObjectRotation", &Scripting::SetObjectRotation)
+		.addFunction("Translate", &ScriptingElements::Translate)
+		.addFunction("SetPosition", &ScriptingElements::SetPosition)
+
+		// Rotation
+		.addFunction("RotateObject", &ScriptingElements::RotateObject)
+		.addFunction("SetObjectRotation", &ScriptingElements::SetObjectRotation)
+		.addFunction("LookAt", &ScriptingElements::LookAt)
+
+		.addFunction("GetRotation", &ScriptingElements::GetRotation)
+		.addFunction("GetRotationX", &ScriptingElements::GetRotationX)
+		.addFunction("GetRotationY", &ScriptingElements::GetRotationY)
+		.addFunction("GetRotationZ", &ScriptingElements::GetRotationZ)
+
+		// Current Camera Functions
+		.addFunction("GetPositionInFrustum", &ScriptingElements::GetPosInFrustum)
+		.endClass()
+		
+		// ----------------------------------------------------------------------------------
+		// SCRIPTING SYSTEMS 
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingSystems>("Systems")
+		.addConstructor<void(*) (void)>()
+
+		// Physics 
+		.addFunction("GetMass", &ScriptingSystems::GetMass)
+		.addFunction("SetMass", &ScriptingSystems::SetMass)
+
+		.addFunction("GetAngularVelocity", &ScriptingSystems::GetAngularVelocity)
+		.addFunction("SetAngularVelocity", &ScriptingSystems::SetAngularVelocity)
+		.addFunction("GetLinearVelocity", &ScriptingSystems::GetLinearVelocity)
+		.addFunction("SetLinearVelocity", &ScriptingSystems::SetLinearVelocity)
+
+		.addFunction("AddTorque", &ScriptingSystems::AddTorque)
+		.addFunction("AddForce", &ScriptingSystems::AddForce)
+
+		.addFunction("UseGravity", &ScriptingSystems::UseGravity)
+		.addFunction("SetKinematic", &ScriptingSystems::SetKinematic)
+
+		// Particles 
+		.addFunction("ActivateParticlesEmission", &ScriptingSystems::ActivateParticlesEmission)
+		.addFunction("DeactivateParticlesEmission", &ScriptingSystems::DeactivateParticlesEmission)
+
+		// Audio
+		.addFunction("PlayAttackSound", &ScriptingSystems::PlayAttackSound)
+		.addFunction("PlayStepSound", &ScriptingSystems::PlayStepSound)
+		.addFunction("StopAttackSound", &ScriptingSystems::StopAttackSound)
+		.addFunction("StopStepSound", &ScriptingSystems::StopStepSound)
+		.addFunction("SetVolume", &ScriptingSystems::SetVolume)
+
+		// Animations
+		.addFunction("PlayAnimation", &ScriptingSystems::StartAnimation)
+		.addFunction("SetAnimationSpeed", &ScriptingSystems::SetAnimSpeed)
+		.addFunction("SetCurrentAnimationSpeed", &ScriptingSystems::SetCurrentAnimSpeed)
+		.endClass()
 
 		// ----------------------------------------------------------------------------------
-		// SYSTEMS' FUNCTIONS 
+		// SCRIPTING INPUTS 
 		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingInputs>("Systems")
+		.addConstructor<void(*) (void)>()
+		.addFunction("GetKey", &ScriptingInputs::GetKey)
+		.addFunction("KeyState", &ScriptingInputs::GetKeyState)
 
-		//Particles Functions
-		.addFunction("ActivateParticlesEmission", &Scripting::ActivateParticlesEmission)
-		.addFunction("DeactivateParticlesEmission", &Scripting::DeactivateParticlesEmission)
+		.addFunction("KeyDown", &ScriptingInputs::IsKeyDown)
+		.addFunction("KeyUp", &ScriptingInputs::IsKeyUp)
+		.addFunction("KeyRepeat", &ScriptingInputs::IsKeyRepeat)
+		.addFunction("KeyIdle", &ScriptingInputs::IsKeyIdle)
 
-		//Physics Functions
-		.addFunction("GetAngularVelocity", &Scripting::GetAngularVelocity)
-		.addFunction("SetAngularVelocity", &Scripting::SetAngularVelocity)
-		.addFunction("GetLinearVelocity", &Scripting::GetLinearVelocity)
-		.addFunction("SetLinearVelocity", &Scripting::SetLinearVelocity)
-		.addFunction("GetMass", &Scripting::GetMass)
-		.addFunction("SetMass", &Scripting::SetMass)
+		.addFunction("GetMouseButton", &ScriptingInputs::GetMouseButton)
+		.addFunction("MouseButtonState", &ScriptingInputs::GetMouseButtonState)
 
-		.addFunction("LookAt", &Scripting::LookAt)
-		.addFunction("AddTorque", &Scripting::AddTorque)
-		.addFunction("AddForce", &Scripting::AddForce)
+		.addFunction("MouseButtonDown", &ScriptingInputs::IsMouseButtonDown)
+		.addFunction("MouseButtonUp", &ScriptingInputs::IsMouseButtonUp)
+		.addFunction("MouseButtonRepeat", &ScriptingInputs::IsMouseButtonRepeat)
+		.addFunction("MouseButtonIdle", &ScriptingInputs::IsMouseButtonIdle)
 
-		.addFunction("UseGravity", &Scripting::UseGravity)
-		.addFunction("SetKinematic", &Scripting::SetKinematic)
+		.addFunction("IsGamepadButton", &ScriptingInputs::IsGamepadButton)
+		.addFunction("GetControllerButton", &ScriptingInputs::GetControllerButtonFromString)
+		.addFunction("GetGamepadButtonState", &ScriptingInputs::GetGamepadButtonState)
 
-		//Sound Functions
-		.addFunction("PlayAttackSound", &Scripting::PlayAttackSound)
-		.addFunction("PlayStepSound", &Scripting::PlayStepSound)
-		.addFunction("StopAttackSound", &Scripting::StopAttackSound)
-		.addFunction("StopStepSound", &Scripting::StopStepSound)
-		.addFunction("SetVolume", &Scripting::SetVolume)
+		.addFunction("IsJoystickAxis", &ScriptingInputs::IsJoystickAxis)
+		.addFunction("IsTriggerState", &ScriptingInputs::IsTriggerState)
+		.addFunction("GetControllerAxis", &ScriptingInputs::GetControllerAxisFromString)
+		.addFunction("GetAxisState", &ScriptingInputs::GetAxisStateFromString)
 
-		//Animations Functions
-		.addFunction("PlayAnimation", &Scripting::StartAnimation)
-		.addFunction("SetAnimationSpeed", &Scripting::SetAnimSpeed)
-		.addFunction("SetCurrentAnimationSpeed", &Scripting::SetCurrentAnimSpeed)
-
-		//Current Camera Functions
-		.addFunction("GetPositionInFrustum", &Scripting::GetPosInFrustum)
-
-		//Maths
-		.addFunction("CompareFloats", &Scripting::FloatNumsAreEqual)
-		.addFunction("CompareDoubles", &Scripting::DoubleNumsAreEqual)
-
+		.addFunction("GetAxisValue", &ScriptingInputs::GetAxisRealValue)
+		.addFunction("GetAxisValue", &ScriptingInputs::GetAxisValue)
+		.addFunction("ShakeController", &ScriptingInputs::ShakeController)
+		.addFunction("StopControllerShake", &ScriptingInputs::StopControllerShake)		
 		.endClass()
 		.endNamespace();
-
-	Scripting Scripting;
 
 	if (L != nullptr) {
 		// Compile the file and run it, we're gonna optimize this to just compile the function the script contains to library later.
@@ -260,7 +291,6 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 				script->my_table_class = table;
 				FillScriptInstanceComponentVars(script);
 			}
-
 		}
 		else {
 			std::string error = lua_tostring(L, -1);
