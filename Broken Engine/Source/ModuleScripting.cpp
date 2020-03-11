@@ -234,6 +234,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance * script)
 		//Current Camera Functions
 		.addFunction("GetPositionInFrustum", &Scripting::GetPosInFrustum)
 
+		//Maths
+		.addFunction("CompareFloats", &Scripting::FloatNumsAreEqual)
+		.addFunction("CompareDoubles", &Scripting::DoubleNumsAreEqual)
+
 		.endClass()
 		.endNamespace();
 

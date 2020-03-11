@@ -148,6 +148,10 @@ public:
 	//Current Camera
 	bool GetPosInFrustum(float x, float y, float z);
 
+	//Maths
+	bool FloatNumsAreEqual(float a, float b);
+	bool DoubleNumsAreEqual(double a, double b);
+
 	//// Rotation
 	//float GetEulerX(bool local) const;	// Roll
 	//float GetEulerY(bool local) const;	// Pitch

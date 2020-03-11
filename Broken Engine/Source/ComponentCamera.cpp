@@ -148,13 +148,15 @@ void ComponentCamera::Load(json& node)
 	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
 }
 
-void ComponentCamera::CreateInspectorNode() {
-	if (ImGui::TreeNode("Camera")) {
+void ComponentCamera::CreateInspectorNode()
+{
+	if (ImGui::TreeNode("Camera"))
+	{
 		if (ImGui::Checkbox("Active Camera", &active_camera))
-			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
+			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(App->camera->camera);
 
 		if (ImGui::Checkbox("Culling Camera", &culling))
-			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
+			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(App->camera->camera);
 
 		// --- Camera FOV ---
 		ImGui::Text("FOV");

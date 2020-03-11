@@ -1140,6 +1140,18 @@ bool Scripting::GetPosInFrustum(float x, float y, float z)
 	return false;
 }
 
+// MATHS -------------------------------------------------------------
+//Maths
+bool Scripting::FloatNumsAreEqual(float a, float b)
+{
+	return (fabs(a - b) < std::numeric_limits<float>::epsilon());
+}
+
+bool Scripting::DoubleNumsAreEqual(double a, double b)
+{
+	return (fabs(a - b) < std::numeric_limits<double>::epsilon());
+}
+
 // ------------------------------------------------------------------- //
 
 
