@@ -14,6 +14,7 @@ public:
 	ComponentBone(GameObject* gameObject = nullptr);
 	virtual ~ComponentBone();
 
+	void Update() override;
 	void DebugDrawBones();
 
 	float4x4 GetBoneTransform() const;

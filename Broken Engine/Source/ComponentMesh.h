@@ -12,6 +12,9 @@ public:
 
 	ComponentMesh(GameObject* ContainerGO);
 	virtual ~ComponentMesh();
+
+	void Update() override;
+
 	const AABB& GetAABB() const;
 
 	// --- Save & Load ---
