@@ -62,6 +62,7 @@ public:
 	float3 originalSize = float3::one;
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
+	int colliderType = 0;
 
 private:
 	physx::PxShape* shape = nullptr;
@@ -70,10 +71,10 @@ private:
 	float4x4 globalMatrix = float4x4::identity;
 	float radius = 1.0f, height = 1.0f;
 	int lastIndex = -1;
-	int colliderType = 0;
 	float3 tmpScale = float3::one;
 	bool firstCreation = false;
 	bool toPlay = false;
+	bool isTrigger = false;
 };
 
 BE_END_NAMESPACE
