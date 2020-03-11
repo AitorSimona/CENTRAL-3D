@@ -56,6 +56,7 @@ public:
 	void DrawGrid(bool drawAxis, float size);
 	void Draw();
 	void RedoOctree();
+	void RedoOctree(AABB aabb);
 	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
 	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
 	void SelectFromRay(LineSegment& ray);

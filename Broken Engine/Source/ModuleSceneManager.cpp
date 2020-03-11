@@ -328,7 +328,22 @@ void ModuleSceneManager::RedoOctree()
 	std::vector<GameObject*> NoStaticGameObjects;
 	tree.CollectObjects(NoStaticGameObjects);
 
-	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
+	tree.SetBoundaries(AABB(tree.root->box));
+
+	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
+	{
+		//tree.Erase(scene_gos[i]);
+		tree.Insert(NoStaticGameObjects[i]);
+	}
+
+}
+
+void ModuleSceneManager::RedoOctree(AABB aabb)
+{
+	std::vector<GameObject*> NoStaticGameObjects;
+	tree.CollectObjects(NoStaticGameObjects);
+
+	tree.SetBoundaries(aabb);
 
 	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
 	{

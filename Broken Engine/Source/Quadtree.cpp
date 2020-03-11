@@ -3,6 +3,9 @@
 #include "ComponentTransform.h"
 #include "QuadTree.h"
 
+#include "Application.h"
+#include "ModuleSceneManager.h"
+
 #include "mmgr/mmgr.h"
 
 // --- All child indexes ---
@@ -199,6 +202,11 @@ void Quadtree::Insert(GameObject* go) {
 	if (root != nullptr) {
 		if (go->GetOBB().MinimalEnclosingAABB().Intersects(root->box))
 			root->Insert(go);
+		else {
+			root->box.Enclose(go->GetOBB().MinimalEnclosingAABB());
+			root->Insert(go);
+			App->scene_manager->RedoOctree(root->box);
+		}
 	}
 }
 
