@@ -38,6 +38,7 @@ using namespace Broken;
 
 ModulePhysics::ModulePhysics(bool start_enabled)
 {
+	name = "Physics";
 }
 
 ModulePhysics::~ModulePhysics()

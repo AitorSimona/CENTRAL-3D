@@ -31,7 +31,7 @@ public:
 	bool CleanUp() override;
 
 
-	void SaveStatus(Broken::json& file) const override;
+	const Broken::json& SaveStatus() const override;
 	void LoadStatus(const Broken::json& file) override;
 
 public:
