@@ -49,7 +49,7 @@ public:
 	}
 
 	Component*		AddComponent(Component::ComponentType type, int index = -1);
-	void			RemoveComponent(Component::ComponentType type);
+	void			RemoveComponent(Component* comp);
 	Component*		HasComponent(Component::ComponentType type) const;
 	std::vector<Component*>& GetComponents();
 

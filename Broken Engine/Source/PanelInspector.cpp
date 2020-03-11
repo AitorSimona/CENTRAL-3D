@@ -57,6 +57,9 @@ bool PanelInspector::Draw()
 
 		for (std::vector<Broken::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
 		{
+			if ((*it) == nullptr)
+				continue;
+
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
 

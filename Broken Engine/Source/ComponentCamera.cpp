@@ -136,6 +136,7 @@ json ComponentCamera::Save() const {
 	node["NEARPLANE"] = GetNearPlane();
 	node["FARPLANE"] = GetFarPlane();
 	node["ASPECTRATIO"] = GetAspectRatio();
+	node["ACTIVECAM"] = active_camera;
 
 	return node;
 }
@@ -146,15 +147,24 @@ void ComponentCamera::Load(json& node)
 	SetFOV(node["FOV"].is_null() ? 60.0f : node["FOV"].get<float>());
 	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
 	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
+	active_camera = node["ACTIVECAM"].is_null() ? false : node["ACTIVECAM"].get<bool>();
+
+	if (active_camera)
+		App->renderer3D->SetActiveCamera(this);
+
 }
 
 void ComponentCamera::CreateInspectorNode() {
 	if (ImGui::TreeNode("Camera")) {
+
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		if (ImGui::Checkbox("Active Camera", &active_camera))
-			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
+			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(App->camera->camera);
 
 		if (ImGui::Checkbox("Culling Camera", &culling))
-			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
+			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(App->camera->camera);
 
 		// --- Camera FOV ---
 		ImGui::Text("FOV");
@@ -236,21 +246,17 @@ void ComponentCamera::Update()
 {
 	if (active_camera)
 	{
-	/*	if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
-		{*/
+		if (GO->HasComponent(Component::ComponentType::AudioListener) == nullptr)
 			GO->AddComponent(Component::ComponentType::AudioListener);
-			GO->GetComponent<ComponentAudioListener>()->Enable();
-		//}
-		//else
-		//{
-			//GO->GetComponent<ComponentAudioListener>()->Enable();
-		/*}*/
+		
+		GO->GetComponent<ComponentAudioListener>()->Enable();
 	}
 	else
 	{
 		if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
-		{
 			GO->GetComponent<ComponentAudioListener>()->Disable();
-		}
 	}
+
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
 }
