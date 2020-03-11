@@ -173,12 +173,12 @@ void ComponentCollider::UpdateLocalMatrix() {
 	physx::PxTransform transform(posi, quati);
 	
 
-	if (!dynamicRB)
+	if (dynamicRB == nullptr)
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
 		if (!App->isGame) {
-			if (App->gui->isUsingGuizmo || cTransform->updateValues) //ON EDITOR
+			if ((App->gui->isUsingGuizmo || cTransform->updateValues) && dynamicRB->rigidBody != nullptr) //ON EDITOR
 				dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else {
