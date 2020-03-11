@@ -251,6 +251,13 @@ void ComponentAnimation::CreateInspectorNode()
 				ImGui::PushItemWidth(100); ImGui::InputFloat(Speed.append(" Speed").c_str(), &animations[i]->speed, 1, 0);
 				std::string Loop = animations[i]->name;
 				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
+
+				std::string name = animations[i]->name;
+				std::string Save = "Save ";
+				std::string button1 = Save.append(name);
+
+				if (ImGui::Button(button1.c_str()))
+					anim_info.push_back(animations[i]);
 				
 				std::string name = animations[i]->name;
 				std::string Delete = "Delete ";
@@ -513,5 +520,18 @@ bool ComponentAnimation::HasSkeleton(std::vector<GameObject*> collector) const
 			return true;
 
 		return false;
+}
+
+void ComponentAnimation::CopyAnimInfo(std::vector<Animation*> original, std::vector<Animation*> destination)
+{
+	// -- Name, start/end frame, speed, loop
+	for (int i = 0; i < original.size(); i++)
+	{
+		original[i]->name = destination[i]->name;
+		original[i]->start = destination[i]->start;
+		original[i]->end = destination[i]->end;
+		original[i]->speed = destination[i]->speed;
+
+	}
 }
 
