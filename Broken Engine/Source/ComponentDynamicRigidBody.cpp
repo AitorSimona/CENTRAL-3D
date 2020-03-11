@@ -13,12 +13,6 @@ using namespace Broken;
 
 ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::DynamicRigidBody)
 {
-	if (GO->GetComponent<ComponentCollider>() == nullptr)
-	{
-		GO->AddComponent(Component::ComponentType::Collider);
-		initialCollider = true;
-	}
-
 	if (rigidBody != nullptr) 
 	{
 		SetMass(mass);
@@ -203,13 +197,13 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		FreezeRotation_Z(freezeRotation_Z);
 	}
 
-	if (GO->GetComponent<ComponentCollider>() != nullptr && initialCollider)
-	{
-		ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
-		collider->CreateCollider(ComponentCollider::COLLIDER_TYPE::BOX);
-		collider->colliderType = 1;
-		initialCollider = false;
-	}
+	//if (GO->GetComponent<ComponentCollider>() != nullptr)
+	//{
+	//	ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
+	//	collider->CreateCollider(ComponentCollider::COLLIDER_TYPE::BOX);
+	//	collider->colliderType = 1;
+	//	//initialCollider = false;
+	//}
 
 	StaticToDynamicRigidBody();
 }
