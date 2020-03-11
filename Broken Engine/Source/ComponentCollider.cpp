@@ -432,6 +432,22 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (shape)
 		{
+			ImGui::Text("Is Trigger");
+			ImGui::SameLine();
+			if (ImGui::Checkbox("##T", &isTrigger))
+			{
+				if (isTrigger)
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
+				}
+				else
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, true);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, false);
+				}
+			}
+
 			float3* position = &centerPosition;
 			
 			ImGui::Text("Center");
