@@ -15,7 +15,9 @@ using namespace Broken;
 
 CAkDefaultIOHookBlocking g_lowLevelIO;
 
-ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled) {}
+ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled) {
+	name = "Audio";
+}
 
 ModuleAudio::~ModuleAudio() {}
 

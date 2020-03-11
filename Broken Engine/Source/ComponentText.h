@@ -20,6 +20,8 @@ public:
 	ComponentText(GameObject* gameObject);
 	virtual ~ComponentText();
 
+	void Update() override;
+
 	void LoadFont(const char* path, int size);
 
 	void Draw();

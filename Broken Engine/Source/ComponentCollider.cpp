@@ -7,13 +7,12 @@
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
 #include "ModuleRenderer3D.h"
-
+#include "ModuleGui.h"
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
 #include "OpenGL.h"
 
 #include "Imgui/imgui.h"
-#include "ImGUi/ImGuizmo/ImGuizmo.h"
 
 #include "mmgr/mmgr.h"
 
@@ -28,6 +27,12 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 ComponentCollider::~ComponentCollider()
 {
 	mesh->Release();
+}
+
+void ComponentCollider::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
 void ComponentCollider::Draw() 
@@ -47,7 +52,7 @@ void ComponentCollider::Draw()
 			{
 				physx::PxSphereGeometry pxsphere = holder.sphere();
 
-				// --- Rebuild capsule ---
+				// --- Rebuild sphere ---
 				App->scene_manager->CreateSphere(1, 25, 25, mesh);
 				mesh->LoadToMemory();
 			}
@@ -66,7 +71,7 @@ void ComponentCollider::Draw()
 				physx::PxCapsuleGeometry capsule = holder.capsule();
 
 				// --- Rebuild capsule ---
-				App->scene_manager->CreateCapsule(1, 1, mesh);
+				App->scene_manager->CreateCapsule(radius, height, mesh);
 				mesh->LoadToMemory();
 			}
 			break;
@@ -172,13 +177,15 @@ void ComponentCollider::UpdateLocalMatrix() {
 	physx::PxVec3 posi(pos.x, pos.y, pos.z);
 	physx::PxQuat quati(rot.x, rot.y, rot.z, rot.w);
 	physx::PxTransform transform(posi, quati);
+	
 
-	if (!dynamicRB)
+	if (dynamicRB == nullptr)
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (ImGuizmo::IsUsing() || cTransform->updateValues) { //ON EDITOR
-			dynamicRB->rigidBody->setGlobalPose(transform);
+		if (!App->isGame) {
+			if ((App->gui->isUsingGuizmo || cTransform->updateValues) && dynamicRB->rigidBody != nullptr) //ON EDITOR
+				dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else {
 			if (dynamicRB->rigidBody != nullptr) //ON GAME
@@ -408,6 +415,10 @@ void ComponentCollider::CreateInspectorNode()
 {
 	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0");
 
 		switch (colliderType)
@@ -432,6 +443,22 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (shape)
 		{
+			ImGui::Text("Is Trigger");
+			ImGui::SameLine();
+			if (ImGui::Checkbox("##T", &isTrigger))
+			{
+				if (isTrigger)
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
+				}
+				else
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, true);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, false);
+				}
+			}
+
 			float3* position = &centerPosition;
 			
 			ImGui::Text("Center");

@@ -283,18 +283,6 @@ void ModuleGui::LogFPS(float fps, float ms)
 		panelSettings->AddFPS(fps, ms);*/
 }
 
-void ModuleGui::SaveStatus(json &file) const  
-{
-	//MYTODO: Added exception for Build because Build should never be enabled at start
-	//maybe we should call SaveStatus on every panel
-	for (uint i = 0; i < panels.size(); ++i) {
-		if (panels[i]->GetName() == "Build")
-			file["GUI"][panels[i]->GetName()] = false;
-		else
-			file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
-	}
-};
-
 void ModuleGui::LoadStatus(const json & file) 
 {
 	

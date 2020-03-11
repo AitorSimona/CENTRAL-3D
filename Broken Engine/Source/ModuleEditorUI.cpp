@@ -244,6 +244,8 @@ update_status ModuleEditorUI::Update(float dt) {
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
 
+
+	EngineApp->gui->isUsingGuizmo = ImGuizmo::IsUsing();
 	return UPDATE_CONTINUE;
 }
 
@@ -276,23 +278,25 @@ bool ModuleEditorUI::CleanUp() {
 	return true;
 }
 
-void ModuleEditorUI::SaveStatus(Broken::json& file) const {
+const Broken::json& ModuleEditorUI::SaveStatus() const {
 	//MYTODO: Added exception for Build because Build should never be enabled at start
 	//maybe we should call SaveStatus on every panel
+	static Broken::json config;
 	for (uint i = 0; i < panels.size(); ++i) {
 		if (panels[i]->GetName() == "Build")
-			file["GUI"][panels[i]->GetName()] = false;
+			config[panels[i]->GetName()] = false;
 		else
-			file["GUI"][panels[i]->GetName()] = panels[i]->IsEnabled();
-	}
+			config[panels[i]->GetName()] = panels[i]->IsEnabled();
+	} 
+	return config;
 };
 
 void ModuleEditorUI::LoadStatus(const Broken::json& file) {
 
 	for (uint i = 0; i < panels.size(); ++i) {
 
-		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end()) {
-			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
+		if (file[name].find(panels[i]->GetName()) != file[name].end()) {
+			panels[i]->SetOnOff(file[name][panels[i]->GetName()]);
 		}
 		else
 			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());

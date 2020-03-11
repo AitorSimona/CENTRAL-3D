@@ -16,7 +16,7 @@ using namespace Broken;
 
 ModuleParticles::ModuleParticles(bool start_enabled)
 {
-	name = "Particles module";
+	name = "Particles";
 }
 
 ModuleParticles::~ModuleParticles()

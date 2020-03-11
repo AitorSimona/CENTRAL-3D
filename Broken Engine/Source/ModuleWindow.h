@@ -50,7 +50,7 @@ public:
 	bool isMouseFocused() const;
 
 	// --- Save/Load ----
-	void SaveStatus(json& file) const override;
+	const json& SaveStatus() const override;
 	void LoadStatus(const json& file) override;
 
 public:
