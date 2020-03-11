@@ -7,13 +7,12 @@
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
 #include "ModuleRenderer3D.h"
-
+#include "ModuleGui.h"
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
 #include "OpenGL.h"
 
 #include "Imgui/imgui.h"
-#include "ImGUi/ImGuizmo/ImGuizmo.h"
 
 #include "mmgr/mmgr.h"
 
@@ -172,13 +171,15 @@ void ComponentCollider::UpdateLocalMatrix() {
 	physx::PxVec3 posi(pos.x, pos.y, pos.z);
 	physx::PxQuat quati(rot.x, rot.y, rot.z, rot.w);
 	physx::PxTransform transform(posi, quati);
+	
 
-	if (!dynamicRB)
+	if (dynamicRB == nullptr)
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (ImGuizmo::IsUsing() || cTransform->updateValues) { //ON EDITOR
-			dynamicRB->rigidBody->setGlobalPose(transform);
+		if (!App->isGame) {
+			if ((App->gui->isUsingGuizmo || cTransform->updateValues) && dynamicRB->rigidBody != nullptr) //ON EDITOR
+				dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else {
 			if (dynamicRB->rigidBody != nullptr) //ON GAME
