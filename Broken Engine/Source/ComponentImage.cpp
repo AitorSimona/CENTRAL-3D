@@ -44,6 +44,12 @@ ComponentImage::~ComponentImage()
 	}
 }
 
+void ComponentImage::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
 void ComponentImage::Draw()
 {
 	// --- Update transform and rotation to face camera ---
@@ -146,6 +152,9 @@ void ComponentImage::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Image"))
 	{
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 		ImGui::Checkbox("Visible", &visible);
 		ImGui::Separator();
@@ -209,10 +218,5 @@ void ComponentImage::CreateInspectorNode()
 		ImGui::TreePop();
 	}
 
-	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
-
-	ImGui::SameLine();
-	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(this);
-	}
+	
 }

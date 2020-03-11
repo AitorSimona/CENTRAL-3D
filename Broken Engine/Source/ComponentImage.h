@@ -16,6 +16,8 @@ public:
 	ComponentImage(GameObject* gameObject);
 	virtual ~ComponentImage();
 
+	void Update() override;
+
 	void Draw();
 
 	// UI Functions

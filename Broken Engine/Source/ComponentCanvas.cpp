@@ -32,6 +32,12 @@ ComponentCanvas::~ComponentCanvas()
 	App->ui_system->RemoveCanvas(this);
 }
 
+void ComponentCanvas::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
 void ComponentCanvas::Draw() const
 {
 	//draw canvas texture
@@ -112,6 +118,9 @@ void ComponentCanvas::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Canvas"))
 	{
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 		ImGui::Checkbox("Visible", &visible);
 
@@ -152,12 +161,6 @@ void ComponentCanvas::CreateInspectorNode()
 		ImGui::TreePop();
 	}
 
-	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
-
-	ImGui::SameLine();
-	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(this);
-	}
 }
 
 void ComponentCanvas::UpdatePosition()
