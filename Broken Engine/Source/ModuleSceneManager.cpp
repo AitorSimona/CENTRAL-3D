@@ -430,9 +430,6 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
 	}
 }
 
-void ModuleSceneManager::SaveStatus(json& file) const {
-}
-
 
 void ModuleSceneManager::LoadGame(const json & file)
 {
