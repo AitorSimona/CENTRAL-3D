@@ -129,6 +129,28 @@ void ComponentAnimation::PlayAnimation(const char* name, float speed)
 	}
 }
 
+void ComponentAnimation::SetAnimationSpeed(const char* name, float speed)
+{
+	for (int i = 0; i < animations.size(); ++i)
+	{
+		if (animations[i] == nullptr)
+		{
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("No animations at index %i", i);
+			break;
+		}
+		else if (animations[i]->name.compare(name) == 0)
+			animations[i]->speed = speed;
+	}
+}
+
+void ComponentAnimation::SetCurrentAnimationSpeed(float speed)
+{
+	if(playing_animation)
+		playing_animation->speed = speed;
+	else
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("Current Animation is nullptr!");
+}
+
 json ComponentAnimation::Save() const
 {
 	json node;

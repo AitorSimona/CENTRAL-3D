@@ -142,19 +142,21 @@ json ComponentCamera::Save() const {
 
 void ComponentCamera::Load(json& node)
 {
+	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
 	SetFOV(node["FOV"].is_null() ? 60.0f : node["FOV"].get<float>());
 	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
 	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
-	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
 }
 
-void ComponentCamera::CreateInspectorNode() {
-	if (ImGui::TreeNode("Camera")) {
+void ComponentCamera::CreateInspectorNode()
+{
+	if (ImGui::TreeNode("Camera"))
+	{
 		if (ImGui::Checkbox("Active Camera", &active_camera))
-			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
+			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(App->camera->camera);
 
 		if (ImGui::Checkbox("Culling Camera", &culling))
-			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
+			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(App->camera->camera);
 
 		// --- Camera FOV ---
 		ImGui::Text("FOV");
@@ -236,21 +238,14 @@ void ComponentCamera::Update()
 {
 	if (active_camera)
 	{
-	/*	if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
-		{*/
+		if (GO->HasComponent(Component::ComponentType::AudioListener) == nullptr)
 			GO->AddComponent(Component::ComponentType::AudioListener);
-			GO->GetComponent<ComponentAudioListener>()->Enable();
-		//}
-		//else
-		//{
-			//GO->GetComponent<ComponentAudioListener>()->Enable();
-		/*}*/
+		
+		GO->GetComponent<ComponentAudioListener>()->Enable();
 	}
 	else
 	{
 		if (GO->HasComponent(Component::ComponentType::AudioListener) != nullptr)
-		{
 			GO->GetComponent<ComponentAudioListener>()->Disable();
-		}
 	}
 }

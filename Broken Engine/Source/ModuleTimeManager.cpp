@@ -66,7 +66,7 @@ void ModuleTimeManager::PrepareUpdate() {
 
 		case AppState::TO_EDITOR:
 			App->physics->DeleteActors();
-			App->GetAppState() = AppState::EDITOR;
+
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
 
 			// --- Clear temporal scene, eliminate temporal files/directory ---
@@ -77,7 +77,6 @@ void ModuleTimeManager::PrepareUpdate() {
 			App->fs->Remove("Temp/");
 
 			App->GetAppState() = AppState::EDITOR;
-
 
 			ENGINE_CONSOLE_LOG("APP STATE EDITOR");
 			break;

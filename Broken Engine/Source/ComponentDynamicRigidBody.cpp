@@ -13,9 +13,14 @@ using namespace Broken;
 
 ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::DynamicRigidBody)
 {
-	/*if (!(rigidBody = ContainerGO->GetComponent<ComponentDynamicRigidBody>()->rigidBody))
-		rigidBody = physx::PxCreateDynamic(*App->physics->mPhysics, PxTransform(), PxBoxGeometry(), *App->physics->mMaterial, 0.0f);*/
-	if (rigidBody != nullptr) {
+	if (GO->GetComponent<ComponentCollider>() == nullptr)
+	{
+		GO->AddComponent(Component::ComponentType::Collider);
+		initialCollider = true;
+	}
+
+	if (rigidBody != nullptr) 
+	{
 		SetMass(mass);
 		SetDensity(density);
 		UseGravity(use_gravity);
@@ -196,6 +201,14 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		FreezeRotation_X(freezeRotation_X);
 		FreezeRotation_Y(freezeRotation_Y);
 		FreezeRotation_Z(freezeRotation_Z);
+	}
+
+	if (GO->GetComponent<ComponentCollider>() != nullptr && initialCollider)
+	{
+		ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
+		collider->CreateCollider(ComponentCollider::COLLIDER_TYPE::BOX);
+		collider->colliderType = 1;
+		initialCollider = false;
 	}
 
 	StaticToDynamicRigidBody();

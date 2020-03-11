@@ -3,7 +3,7 @@
         "Organization": "CITM - UPC",
         "Title": "Broken Engine"
     },
-    "GUI": {
+    "EditorUI": {
         "About": false,
         "Build": false,
         "Console": true,
@@ -17,16 +17,12 @@
         "ShaderEditor": false,
         "Toolbar": true
     },
-    "Input": null,
-    "Renderer3D": {
-        "VSync": true
-    },
     "Window": {
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 720,
+        "height": 810,
         "resizable": true,
-        "width": 1024
+        "width": 1440
     }
 }
