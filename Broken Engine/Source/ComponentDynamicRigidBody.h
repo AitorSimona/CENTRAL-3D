@@ -69,6 +69,7 @@ public:
 	float angular_damping = 0.f;
 	bool freezePosition_X = false, freezePosition_Y = false, freezePosition_Z = false;
 	bool freezeRotation_X = false, freezeRotation_Y = false, freezeRotation_Z = false;
+	bool initialCollider = false;
 
 };
 

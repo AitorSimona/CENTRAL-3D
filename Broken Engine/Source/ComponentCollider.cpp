@@ -52,7 +52,7 @@ void ComponentCollider::Draw()
 			{
 				physx::PxSphereGeometry pxsphere = holder.sphere();
 
-				// --- Rebuild capsule ---
+				// --- Rebuild sphere ---
 				App->scene_manager->CreateSphere(1, 25, 25, mesh);
 				mesh->LoadToMemory();
 			}
@@ -71,7 +71,7 @@ void ComponentCollider::Draw()
 				physx::PxCapsuleGeometry capsule = holder.capsule();
 
 				// --- Rebuild capsule ---
-				App->scene_manager->CreateCapsule(1, 1, mesh);
+				App->scene_manager->CreateCapsule(radius, height, mesh);
 				mesh->LoadToMemory();
 			}
 			break;
@@ -443,6 +443,22 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (shape)
 		{
+			ImGui::Text("Is Trigger");
+			ImGui::SameLine();
+			if (ImGui::Checkbox("##T", &isTrigger))
+			{
+				if (isTrigger)
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
+				}
+				else
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, true);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, false);
+				}
+			}
+
 			float3* position = &centerPosition;
 			
 			ImGui::Text("Center");
