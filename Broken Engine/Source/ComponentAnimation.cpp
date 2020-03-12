@@ -89,8 +89,9 @@ void ComponentAnimation::Update()
 
 	if (to_copy)
 	{
-		CopyAnimInfo(animations, anim_info);
-		ENGINE_AND_SYSTEM_CONSOLE_LOG("Animation info size: %d", anim_info.size());
+		// -- New Copy function goes here, or in the button itself
+
+		//ENGINE_AND_SYSTEM_CONSOLE_LOG("Animation info size: %d", anim_info.size());
 		to_copy = false;
 	}
 
@@ -555,12 +556,4 @@ bool ComponentAnimation::HasSkeleton(std::vector<GameObject*> collector) const
 		return false;
 }
 
-void ComponentAnimation::CopyAnimInfo(std::vector<Animation*> original, std::vector<Animation*> destination)
-{
-	// -- Name, start/end frame, speed, loop
-	for (int i = 0; i < original.size(); i++)
-	{
-		destination.push_back(original[i]);
-	}
-}
 

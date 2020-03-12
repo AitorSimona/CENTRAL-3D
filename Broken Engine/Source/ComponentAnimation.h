@@ -66,7 +66,6 @@ private:
 
 	bool HasSkeleton(std::vector<GameObject*> GO) const;
 
-	void CopyAnimInfo(std::vector<Animation*> original, std::vector<Animation*> destination);
 
 public:
 
@@ -104,7 +103,6 @@ private:
 	float3* start_scale = nullptr;
 	Animation* next_animation = nullptr;
 
-	std::vector<Animation*> anim_info;
 	bool to_copy = false;
 };
 
