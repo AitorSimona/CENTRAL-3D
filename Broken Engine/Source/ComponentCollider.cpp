@@ -29,6 +29,12 @@ ComponentCollider::~ComponentCollider()
 	mesh->Release();
 }
 
+void ComponentCollider::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
 void ComponentCollider::Draw() 
 {
 	if (shape)
@@ -409,6 +415,10 @@ void ComponentCollider::CreateInspectorNode()
 {
 	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0");
 
 		switch (colliderType)

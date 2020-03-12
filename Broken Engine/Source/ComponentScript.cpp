@@ -4,6 +4,7 @@
 #include "ModuleScripting.h"
 #include "ModuleFileSystem.h"
 #include "ResourceScript.h"
+#include "GameObject.h"
 #include "Imgui/imgui.h"
 #include "ModuleGui.h"
 #include "ImporterMeta.h"
@@ -28,6 +29,13 @@ ComponentScript::~ComponentScript()
 	}
 }
 
+
+void ComponentScript::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
 void ComponentScript::Enable() {
 	active = true;
 }
@@ -44,6 +52,9 @@ void ComponentScript::CreateInspectorNode() {
 
 	if (ImGui::TreeNodeEx(name.data(), base_flags))
 	{
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		if (this->script != nullptr)
 		{
 			if (ImGui::Button("Open Script File")) {

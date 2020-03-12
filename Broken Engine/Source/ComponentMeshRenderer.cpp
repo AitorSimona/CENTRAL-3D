@@ -41,6 +41,12 @@ ComponentMeshRenderer::~ComponentMeshRenderer() {
 	}
 }
 
+void ComponentMeshRenderer::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
 void ComponentMeshRenderer::Draw(bool outline) const {
 	ComponentMesh* mesh = this->GO->GetComponent<ComponentMesh>();
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
@@ -413,6 +419,9 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 	ImGui::SameLine();
 
 	if (ImGui::TreeNode("Mesh Renderer")) {
+
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
 
 		ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
 		ImGui::SameLine();
