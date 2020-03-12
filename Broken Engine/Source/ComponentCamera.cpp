@@ -20,7 +20,10 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 	SetAspectRatio(1.0f);
 }
 
-ComponentCamera::~ComponentCamera() {
+ComponentCamera::~ComponentCamera() 
+{
+	if(active_camera)
+	App->renderer3D->SetActiveCamera(nullptr);
 }
 
 float ComponentCamera::GetNearPlane() const {
