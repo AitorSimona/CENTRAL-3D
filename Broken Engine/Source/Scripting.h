@@ -146,7 +146,7 @@ public:
 	void SetCurrentAnimSpeed(float speed);
 
 	//Current Camera
-	int GetPosInFrustum(float x, float y, float z);
+	int GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2);
 
 	//Maths
 	int FloatNumsAreEqual(float a, float b);

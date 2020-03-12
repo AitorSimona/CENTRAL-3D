@@ -64,7 +64,7 @@ void ComponentCamera::SetFarPlane(float distance) {
 }
 
 void ComponentCamera::SetFOV(float fov) {
-	float aspect_ratio = frustum.AspectRatio();
+	//float aspect_ratio = frustum.AspectRatio();
 	frustum.SetVerticalFovAndAspectRatio(fov * DEGTORAD, frustum.AspectRatio());
 }
 
