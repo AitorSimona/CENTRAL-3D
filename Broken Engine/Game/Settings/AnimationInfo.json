@@ -1,0 +1,20 @@
+{
+    "Hey im an animation": {
+        "end_frame": "2",
+        "loop": "1",
+        "name": "Hey im an animation",
+        "start_frame": "1"
+    },
+    "Idle": {
+        "end_frame": "330",
+        "loop": "0",
+        "name": "Idle",
+        "start_frame": "2"
+    },
+    "test": {
+        "end_frame": "7",
+        "loop": "0",
+        "name": "test",
+        "start_frame": "2"
+    }
+}

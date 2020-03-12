@@ -92,6 +92,8 @@ void ComponentAnimation::Update()
 		// -- New Copy function goes here, or in the button itself
 
 		//ENGINE_AND_SYSTEM_CONSOLE_LOG("Animation info size: %d", anim_info.size());
+		AnimationSave();
+
 		to_copy = false;
 	}
 
@@ -556,4 +558,43 @@ bool ComponentAnimation::HasSkeleton(std::vector<GameObject*> collector) const
 		return false;
 }
 
+void ComponentAnimation::AnimationSave()
+{
+	json node;
 
+	for (int i = 0; i < animations.size(); ++i)
+	{
+		node[animations[i]->name]["name"] = animations[i]->name;
+		node[animations[i]->name]["start_frame"] = std::to_string(animations[i]->start);
+		node[animations[i]->name]["end_frame"] = std::to_string(animations[i]->end);
+		node[animations[i]->name]["loop"] = std::to_string(animations[i]->loop);
+	}
+
+	// --- Serialize JSON to string ---
+	std::string data;
+	App->GetJLoader()->Serialize(node, data);
+
+	// --- Finally Save to file ---
+	char* buffer = (char*)data.data();
+	uint size = data.length();
+
+	App->fs->Save(animation_path.c_str(), buffer, size);
+
+}
+
+void ComponentAnimation::AnimationLoad(json& node)
+{
+	//json file = App->GetJLoader()->Load(animation_path.c_str());
+
+	//for (json::iterator it = file.begin(); it != file.end(); ++it)
+	//{
+	//	std::string name = file[it.key()]["name"];
+
+	//	std::string start_frm = file[it.key()]["start_frame"];
+	//	std::string end_frm = file[it.key()]["end_frame"];
+	//	std::string is_loop = file[it.key()]["loop"];
+
+	//	//CreateAnimation here with parameters from above
+	//}
+	
+}
