@@ -19,10 +19,10 @@ ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : 
 		SetDensity(density);
 		UseGravity(use_gravity);
 		SetKinematic(is_kinematic);
-		/*SetLinearVelocity(linear_vel);
+		SetLinearVelocity(linear_vel);
 		SetAngularVelocity(angular_vel);
 		SetLinearDamping(linear_damping);
-		SetAngularDamping(angular_damping);*/
+		SetAngularDamping(angular_damping);
 		FeezePosition_X(freezePosition_X);
 		FeezePosition_Y(freezePosition_Y);
 		FeezePosition_Z(freezePosition_Z);
@@ -39,6 +39,9 @@ ComponentDynamicRigidBody::~ComponentDynamicRigidBody()
 
 void ComponentDynamicRigidBody::Update()
 {
+	setRBValues();
+
+
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
@@ -122,6 +125,8 @@ void ComponentDynamicRigidBody::Load(json& node)
 	linear_damping = std::stoi(linear_damping_);
 
 	angular_damping = std::stoi(angular_damping_);
+
+	setRBValues();
 
 }
 
@@ -223,5 +228,27 @@ void ComponentDynamicRigidBody::StaticToDynamicRigidBody()
 	if (collider != nullptr && rigidBody == nullptr)
 	{
 		collider->CreateCollider(collider->type, true);
+	}
+}
+
+void ComponentDynamicRigidBody::setRBValues() {
+	if (rigidBody != nullptr)
+	{
+		linear_vel = GetLinearVelocity();
+
+		SetMass(mass);
+		SetDensity(density);
+		UseGravity(use_gravity);
+		SetKinematic(is_kinematic);
+		SetLinearVelocity(linear_vel);
+		SetAngularVelocity(angular_vel);
+		SetLinearDamping(linear_damping);
+		SetAngularDamping(angular_damping);
+		FeezePosition_X(freezePosition_X);
+		FeezePosition_Y(freezePosition_Y);
+		FeezePosition_Z(freezePosition_Z);
+		FreezeRotation_X(freezeRotation_X);
+		FreezeRotation_Y(freezeRotation_Y);
+		FreezeRotation_Z(freezeRotation_Z);
 	}
 }

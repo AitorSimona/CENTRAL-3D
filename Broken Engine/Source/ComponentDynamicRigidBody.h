@@ -55,11 +55,13 @@ public:
 private:
 	void StaticToDynamicRigidBody();
 
+	void setRBValues();
+
 public:
 	physx::PxRigidDynamic* rigidBody = nullptr;
 
 public:
-	float mass = 0.f;
+	float mass = 10.f;
 	float density = 1.f;
 	bool use_gravity = true;
 	bool is_kinematic = false;;
@@ -68,7 +70,8 @@ public:
 	float linear_damping = 0.f;
 	float angular_damping = 0.f;
 	bool freezePosition_X = false, freezePosition_Y = false, freezePosition_Z = false;
-	bool freezeRotation_X = false, freezeRotation_Y = false, freezeRotation_Z = false;
+	bool freezeRotation_X = true, freezeRotation_Y = false, freezeRotation_Z = true;
+	bool toPlay = false;
 };
 
 BE_END_NAMESPACE
