@@ -68,7 +68,7 @@ private:
 
 	// --- Animation Save & Load ---
 	void AnimationSave();
-	void AnimationLoad(json& node);
+	void AnimationLoad();
 	std::string	animation_path = "/Settings/AnimationInfo.json";
 
 public:
