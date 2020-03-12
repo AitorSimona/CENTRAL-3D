@@ -172,7 +172,12 @@ void ComponentCollider::UpdateLocalMatrix() {
 	Quat rot;
 	globalMatrix.Decompose(pos, rot, scale);
 
-	if (!scale.Equals(tmpScale)) {
+	float threshold = 0.1f;
+
+	if (math::Abs(scale.x - tmpScale.x) > threshold
+		|| math::Abs(scale.y - tmpScale.y) > threshold
+		|| math::Abs(scale.z - tmpScale.z) > threshold) 
+	{
 		editCollider = true;
 		tmpScale = scale;
 	}
@@ -750,7 +755,13 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 	
 	if (dynamicRB != nullptr)
 	{
+		float3 position, scale = float3::zero;
+		Quat rot = Quat::identity;
+
+		globalMatrix.Decompose(position, rot, scale);
+
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
+		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
 		App->physics->mScene->addActor(*dynamicRB->rigidBody);
 
 		return true;
