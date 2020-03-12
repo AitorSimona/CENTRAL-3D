@@ -87,6 +87,13 @@ void ComponentAnimation::Update()
 			playing_animation = GetDefaultAnimation();
 	}
 
+	if (to_copy)
+	{
+		CopyAnimInfo(animations, anim_info);
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("Animation info size: %d", anim_info.size());
+		to_copy = false;
+	}
+
 	if(to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
@@ -259,6 +266,12 @@ void ComponentAnimation::CreateInspectorNode()
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);
 
+			
+			std::string Save = "Save Animations";
+
+			if (ImGui::Button(Save.c_str()))
+				to_copy = true;
+
 			for (int i = 0; i < animations.size(); i++)
 			{
 				ImGui::Separator();
@@ -279,16 +292,9 @@ void ComponentAnimation::CreateInspectorNode()
 				std::string Loop = animations[i]->name;
 				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
 
-				std::string name = animations[i]->name;
-				std::string Save = "Save ";
-				std::string button1 = Save.append(name);
-
-				if (ImGui::Button(button1.c_str()))
-					anim_info.push_back(animations[i]);
-				
-				std::string name = animations[i]->name;
+				std::string name1 = animations[i]->name;
 				std::string Delete = "Delete ";
-				std::string button = Delete.append(name);
+				std::string button = Delete.append(name1);
 				if (ImGui::Button(button.c_str()))
 				{
 					delete animations[i];
@@ -554,11 +560,7 @@ void ComponentAnimation::CopyAnimInfo(std::vector<Animation*> original, std::vec
 	// -- Name, start/end frame, speed, loop
 	for (int i = 0; i < original.size(); i++)
 	{
-		original[i]->name = destination[i]->name;
-		original[i]->start = destination[i]->start;
-		original[i]->end = destination[i]->end;
-		original[i]->speed = destination[i]->speed;
-
+		destination.push_back(original[i]);
 	}
 }
 

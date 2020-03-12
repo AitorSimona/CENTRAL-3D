@@ -105,7 +105,7 @@ private:
 	Animation* next_animation = nullptr;
 
 	std::vector<Animation*> anim_info;
-
+	bool to_copy = false;
 };
 
 BE_END_NAMESPACE
