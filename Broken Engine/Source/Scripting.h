@@ -28,7 +28,6 @@
 //bool IsStatic() const;
 //void DestroySelf() const;
 
-
 //// Rotation
 //float GetEulerX(bool local) const;	// Roll
 //float GetEulerY(bool local) const;	// Pitch
