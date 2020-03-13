@@ -230,11 +230,11 @@ update_status Application::Update()
 
 	item = list_modules.begin();
 
-	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
-	{
-		ret = (*item)->isEnabled() ? (*item)->GameUpdate(time->GetGameDt()) : UPDATE_CONTINUE;
-		item++;
-	}
+	//while (item != list_modules.end() && ret == UPDATE_CONTINUE)
+	//{
+	//	ret = (*item)->isEnabled() ? (*item)->GameUpdate(time->GetGameDt()) : UPDATE_CONTINUE;
+	//	item++;
+	//}
 
 	item = list_modules.begin();
 

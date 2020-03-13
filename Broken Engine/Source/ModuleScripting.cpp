@@ -244,7 +244,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// ----------------------------------------------------------------------------------
 		// SCRIPTING INPUTS 
 		// ----------------------------------------------------------------------------------
-		.beginClass <ScriptingInputs>("Systems")
+		.beginClass <ScriptingInputs>("Inputs")
 		.addConstructor<void(*) (void)>()
 		.addFunction("GetKey", &ScriptingInputs::GetKey)
 		.addFunction("KeyState", &ScriptingInputs::GetKeyState)
@@ -271,7 +271,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetControllerAxis", &ScriptingInputs::GetControllerAxisFromString)
 		.addFunction("GetAxisState", &ScriptingInputs::GetAxisStateFromString)
 
-		.addFunction("GetAxisValue", &ScriptingInputs::GetAxisRealValue)
+		.addFunction("GetAxisRealValue", &ScriptingInputs::GetAxisRealValue)
 		.addFunction("GetAxisValue", &ScriptingInputs::GetAxisValue)
 		.addFunction("ShakeController", &ScriptingInputs::ShakeController)
 		.addFunction("StopControllerShake", &ScriptingInputs::StopControllerShake)		

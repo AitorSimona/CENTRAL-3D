@@ -11,6 +11,8 @@ namespace physx
 	class PxScene;
 	class PxMaterial;
 	class PxRigidStatic;
+
+	const float fixed_dt = (1.0f/60.0f);
 }
 
 BE_BEGIN_NAMESPACE
@@ -24,6 +26,7 @@ public:
 
 	bool Init(json& config) override;
 	update_status Update(float dt) override;
+	void FixedUpdate();
 
 	bool CleanUp() override;
 
@@ -44,6 +47,10 @@ public:
 	physx::PxMaterial* mMaterial = nullptr;
 
 	physx::PxRigidStatic* plane = nullptr;
+
+private:
+
+	float physAccumulatedTime = 0.0f;
 };
 
 BE_END_NAMESPACE
