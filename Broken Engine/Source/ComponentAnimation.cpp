@@ -92,7 +92,7 @@ void ComponentAnimation::Update()
 		// -- New Copy function goes here, or in the button itself
 
 		//ENGINE_AND_SYSTEM_CONSOLE_LOG("Animation info size: %d", anim_info.size());
-		AnimationSave();
+		
 
 		to_copy = false;
 	}
@@ -268,17 +268,19 @@ void ComponentAnimation::CreateInspectorNode()
 			ImGui::Checkbox("Draw Bones", &draw_bones);
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);
+			ImGui::SameLine();
+			ImGui::Text("Save/Load");
+			ImGui::SameLine();
+			if (ImGui::BeginCombo(" ", "Anims", ImGuiComboFlags_NoPreview))
+			{
+				if(ImGui::Button("Save animation info"))
+					AnimationSave();
 
-			
-			std::string Save = "Save Animations";
+				if(ImGui::Button("Load animation info"))
+					AnimationLoad();
 
-			if (ImGui::Button(Save.c_str()))
-				to_copy = true;
-
-			std::string Load = "Load Saved Animations";
-
-			if (ImGui::Button(Load.c_str()))
-				AnimationLoad();
+				ImGui::EndCombo();
+			}
 
 			for (int i = 0; i < animations.size(); i++)
 			{
