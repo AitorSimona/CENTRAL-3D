@@ -359,22 +359,22 @@ inline void PanelSettings::SoftwareNode() const
 	Broken::SoftwareInfo swInfo = EngineApp->hardware->GetSwInfo();
 
 	// --- INFO
-	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate().c_str());
-	ImGui::SameLine(); ImGui::Text("and Time: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationTime().c_str());
-	ImGui::Text("%s", swInfo.MultithreadedSpecified().c_str());
+	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate());
+	ImGui::SameLine(); ImGui::Text("and Time: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationTime());
+	ImGui::Text("Multithreaded specified: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.MultithreadedSpecified());
 
 	ImGui::Separator();
-	ImGui::Text("Windows OS: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetWindowsVersion().c_str());
-	ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetSDLVersion().c_str());
-	ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLVersion().c_str());
-	ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLShadingVersion().c_str());
+	ImGui::Text("Windows OS: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetWindowsVersion());
+	ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetSDLVersion());
+	ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLVersion());
+	ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLShadingVersion());
 
 	ImGui::Separator();
-	ImGui::Text("C++ Minimum Version Supported by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCppVersionImplementedByCompiler().c_str());
-	ImGui::SameLine(); ImGui::Text(" ("); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCPPNumericalVersion().c_str()); ImGui::SameLine(); ImGui::Text(")");
+	ImGui::Text("C++ Minimum Version Supported by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCppVersionImplementedByCompiler());
+	ImGui::SameLine(); ImGui::Text(" ("); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCPPNumericalVersion()); ImGui::SameLine(); ImGui::Text(")");
 
-	ImGui::Text("C++ Used Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (swInfo.GetCppCompilerVersion()).c_str());
-	ImGui::Text("Visual Studio Compiler Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetVSCompilerVersion().c_str());
+	ImGui::Text("C++ Used Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (swInfo.GetCppCompilerVersion()));
+	ImGui::Text("Visual Studio Compiler Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetVSCompilerVersion());
 	// ---
 
 	ImGui::PopStyleVar();

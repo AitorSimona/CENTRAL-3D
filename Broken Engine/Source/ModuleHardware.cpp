@@ -93,11 +93,11 @@ void SoftwareInfo::DetectSystemProperties() {
 	mSoftware_SDLVersion = ExtractSDLVersion();
 }
 
-const std::string SoftwareInfo::GetOGLVersion() const {
+const char* SoftwareInfo::GetOGLVersion() const {
 	return (const char*)glGetString(GL_VERSION);
 }
 
-const std::string SoftwareInfo::GetOGLShadingVersion() const {
+const char* SoftwareInfo::GetOGLShadingVersion() const {
 	return (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
@@ -187,8 +187,25 @@ const std::string SoftwareInfo::ExtractSDLVersion() {
 }
 
 
-const std::string SoftwareInfo::GetCppCompilerVersion() const {
-	return (mSoftware_LANGCppVersion + " (" + std::to_string(_MSVC_LANG) + ")");
+const char* SoftwareInfo::GetCPPNumericalVersion() const {
+	mCppNumericalVersion = std::to_string(__cplusplus);
+	return mCppNumericalVersion.c_str();
+}
+
+const char* SoftwareInfo::GetCppCompilerVersion() const {
+	mCppCompilerVersion = (mSoftware_LANGCppVersion + " (" + std::to_string(_MSVC_LANG) + ")");
+	return mCppCompilerVersion.c_str();
+}
+
+const char* SoftwareInfo::GetVSCompilerVersion() const {
+	mVsCompilerVersion = std::to_string(_MSC_VER);
+
+	return mVsCompilerVersion.c_str();
+}
+
+const char* SoftwareInfo::MultithreadedSpecified() const {
+	mMultithreadedSpecified = std::string(_MT ? "Yes" : "No");
+	return mMultithreadedSpecified.c_str();
 }
 
 

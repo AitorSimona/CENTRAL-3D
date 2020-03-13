@@ -22,6 +22,10 @@ private:
 	mutable std::string mSoftware_LANGCppVersion;
 	mutable std::string mSoftware_WindowsVersion;
 	mutable std::string mSoftware_SDLVersion;
+	mutable std::string mCppCompilerVersion;
+	mutable std::string mMultithreadedSpecified;
+	mutable std::string mCppNumericalVersion;
+	mutable std::string mVsCompilerVersion;
 
 private:
 
@@ -35,28 +39,28 @@ public:
 	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 	//Methods to return the different values for software versions... Ready to print -- Use them :)
-	const std::string GetWindowsVersion()	const { return mSoftware_WindowsVersion; }
-	const std::string OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
+	const char* GetWindowsVersion()	const { return mSoftware_WindowsVersion.c_str(); }
+	const char* OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
 
-	const std::string GetSDLVersion()		const { return mSoftware_SDLVersion; }
-	const std::string GetOGLVersion()				const;
-	const std::string GetOGLShadingVersion()		const;
+	const char* GetSDLVersion()		const { return mSoftware_SDLVersion.c_str(); }
+	const char* GetOGLVersion()				const;
+	const char* GetOGLShadingVersion()		const;
 
 	///__cplusplus returning values:
 	///199711L (C++98 or C++03)
 	///201103L (C++11)
 	///201402L (C++14)
 	///201703L (C++17)
-	const std::string GetCppVersionImplementedByCompiler()	const { return mSoftware_CppVersion; }
-	const std::string GetCPPNumericalVersion()				const { return std::to_string(__cplusplus); }
-	const std::string GetCppCompilerVersion()				const;
+	const char* GetCppVersionImplementedByCompiler()	const { return mSoftware_CppVersion.c_str(); }
+	const char* GetCPPNumericalVersion()				const;
+	const char* GetCppCompilerVersion()				const;
 
 
-	const std::string GetVSCompilerVersion()				const { return (std::to_string(_MSC_VER)); }
-	const std::string MultithreadedSpecified()				const { return ("Multithreaded Specified: " + std::string(_MT ? "YES" : "NO")); }
+	const char* GetVSCompilerVersion()				const;
+	const char* MultithreadedSpecified()				const;
 
-	const std::string GetCompilationDate()					const { return __DATE__; }
-	const std::string GetCompilationTime()					const { return __TIME__; }
+	const char* GetCompilationDate()					const { return __DATE__; }
+	const char* GetCompilationTime()					const { return __TIME__; }
 };
 
 
