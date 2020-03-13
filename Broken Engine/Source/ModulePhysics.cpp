@@ -4,6 +4,9 @@
 #include "ComponentCollider.h"
 #include "GameObject.h"
 
+#include "ModuleTimeManager.h"
+#include "ModuleScripting.h"
+
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
 #include "PhysX_3.4/Include/pvd/PxPvd.h"
@@ -78,6 +81,7 @@ bool ModulePhysics::Init(json& config)
 
 	physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
+	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2; 
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	mScene = mPhysics->createScene(sceneDesc);
@@ -88,7 +92,7 @@ bool ModulePhysics::Init(json& config)
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
-	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0.0f);
+	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0);
 
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();
@@ -106,10 +110,32 @@ bool ModulePhysics::Init(json& config)
 
 update_status ModulePhysics::Update(float dt)
 {
+	//if (App->GetAppState() == AppState::PLAY)
+	//	SimulatePhysics(dt);
+
 	if (App->GetAppState() == AppState::PLAY)
-		SimulatePhysics(dt);
+	{
+		// --- Step physics simulation ---
+		physAccumulatedTime += App->time->GetRealTimeDt();
+
+		// --- If enough time has elapsed, update ---
+		if (physAccumulatedTime >= physx::fixed_dt)
+		{
+			physAccumulatedTime -= physx::fixed_dt;
+
+		    FixedUpdate();
+
+			mScene->simulate(physx::fixed_dt);
+			mScene->fetchResults(true);
+		}
+	}
 
 	return update_status::UPDATE_CONTINUE;
+}
+
+void ModulePhysics::FixedUpdate()
+{
+	App->scripting->GameUpdate(physx::fixed_dt);
 }
 
 bool ModulePhysics::CleanUp()

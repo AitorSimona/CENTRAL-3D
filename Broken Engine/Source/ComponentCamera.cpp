@@ -20,7 +20,10 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 	SetAspectRatio(1.0f);
 }
 
-ComponentCamera::~ComponentCamera() {
+ComponentCamera::~ComponentCamera() 
+{
+	if(active_camera)
+	App->renderer3D->SetActiveCamera(nullptr);
 }
 
 float ComponentCamera::GetNearPlane() const {
@@ -61,7 +64,7 @@ void ComponentCamera::SetFarPlane(float distance) {
 }
 
 void ComponentCamera::SetFOV(float fov) {
-	float aspect_ratio = frustum.AspectRatio();
+	//float aspect_ratio = frustum.AspectRatio();
 	frustum.SetVerticalFovAndAspectRatio(fov * DEGTORAD, frustum.AspectRatio());
 }
 
