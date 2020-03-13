@@ -418,32 +418,32 @@ inline void PanelSettings::HardwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	Broken::ProcessorHardware CPUData = EngineApp->hardware->GetProcessorInfo();
-	Broken::GPUHardware GPUData = EngineApp->hardware->GetGraphicsCardInfo();
+	const Broken::ProcessorHardware& CPUData = EngineApp->hardware->GetProcessorInfo();
+	const Broken::GPUHardware& GPUData = EngineApp->hardware->GetGraphicsCardInfo();
 
 	// --- INFO
 	ImGui::Text("PROCESSOR INFORMATION (CPU)");
 	ImGui::Separator();
 
-	ImGui::Text("CPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUBrand().c_str()));
-	ImGui::Text("CPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUVendor().c_str()));
-	ImGui::Text("CPU Arhitecture: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUArchitecture().c_str()));
+	ImGui::Text("CPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUBrand()));
+	ImGui::Text("CPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUVendor()));
+	ImGui::Text("CPU Arhitecture: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUArchitecture()));
 	ImGui::SameLine(); ImGui::Text("    CPU Cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(CPUData.GetCPUCores()).c_str());
-	ImGui::SameLine(); ImGui::Text("    CPU Processors: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetNumberOfProcessors().c_str());
+	ImGui::SameLine(); ImGui::Text("    CPU Processors: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(CPUData.GetNumberOfProcessors()).c_str());
 	ImGui::Text("");
-	ImGui::Text("CPU Revision: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetProcessorRevision().c_str());
+	ImGui::Text("CPU Revision: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(CPUData.GetProcessorRevision()).c_str());
 	ImGui::Text("CPU Line L1 Cache Size: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(CPUData.GetCPUCacheLine1Size()) + " Bytes").c_str());
 	ImGui::Text("");
-	ImGui::Text("CPU Instructions Set: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetCPUInstructionSet().c_str());
+	ImGui::Text("CPU Instructions Set: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetCPUInstructionSet());
 	// ---
 
 	ImGui::Separator();
 	ImGui::Text("GRAPHICS CARD INFORMATION (GPU)");
 	ImGui::Separator();
 
-	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUBenchmark().c_str());
+	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUBenchmark());
 	ImGui::Text("GPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUInfo_GPUDet().m_GPUBrand.c_str());
-	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUModel().c_str());
+	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUModel());
 	ImGui::Text("GPU Driver"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", EngineApp->hardware->GetInfo().gpu_driver.data());
 	ImGui::Text("GPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(GPUData.GetGPUInfo_GPUDet().m_GPUVendor).c_str());

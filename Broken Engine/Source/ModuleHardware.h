@@ -124,6 +124,7 @@ private:
 	std::string m_CPUVendor;
 
 	std::string m_CpuArchitecture;
+	std::string m_InstructionsSet;
 
 	struct InstructionsSet {
 		bool Available_3DNow = false;
@@ -154,15 +155,15 @@ public:
 	const uint GetCPUCores()						const { return SDL_GetCPUCount(); }
 	const uint GetCPUCacheLine1Size()				const { return SDL_GetCPUCacheLineSize(); } //In bytes
 
-	const std::string GetCPUArchitecture()			const { return m_CpuArchitecture; }
-	const std::string GetNumberOfProcessors()		const { return std::to_string(m_CpuSysInfo.dwNumberOfProcessors); }
-	const std::string GetProcessorRevision()		const { return std::to_string(m_CpuSysInfo.wProcessorRevision); }
+	const char* GetCPUArchitecture()			const { return m_CpuArchitecture.c_str(); }
+	const DWORD GetNumberOfProcessors()		const { return m_CpuSysInfo.dwNumberOfProcessors; }
+	const WORD GetProcessorRevision()		const { return m_CpuSysInfo.wProcessorRevision; }
 
-	const InstructionsSet GetCPUInstructionsSet()	const { return m_CPUInstructionSet; }
-	const std::string GetCPUInstructionSet()		const;
+	const InstructionsSet& GetCPUInstructionsSet()	const { return m_CPUInstructionSet; }
+	const char* GetCPUInstructionSet()		const;
 
-	const std::string GetCPUBrand()					const { return m_CPUBrand; }
-	const std::string GetCPUVendor()				const { return m_CPUVendor; }
+	const char* GetCPUBrand()					const { return m_CPUBrand.c_str(); }
+	const char* GetCPUVendor()				const { return m_CPUVendor.c_str(); }
 };
 
 
@@ -206,13 +207,13 @@ public:
 	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 	void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
 
-	const std::string GetGPUBenchmark()	const { return (const char*)glGetString(GL_VENDOR); }
-	const std::string GetGPUModel()		const { return (const char*)glGetString(GL_RENDERER); }
+	const char* GetGPUBenchmark()	const { return (const char*)glGetString(GL_VENDOR); }
+	const char* GetGPUModel()		const { return (const char*)glGetString(GL_RENDERER); }
 
 	const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 	const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 
-	const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
+	const GPUPrimaryInfo_IntelGPUDetect& GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
 };
 
 
@@ -257,10 +258,10 @@ public:
 	bool Start();
 
 	const hw_info& GetInfo() const;
-	const SoftwareInfo GetSwInfo() const { return info.Software_Information; }
-	const MemoryHardware GetMemInfo() const { return info.Memory_Information; }
-	const ProcessorHardware GetProcessorInfo() const { return info.CPU_Information; }
-	const GPUHardware GetGraphicsCardInfo() const { return info.GPU_Information; }
+	const SoftwareInfo& GetSwInfo() const { return info.Software_Information; }
+	const MemoryHardware& GetMemInfo() const { return info.Memory_Information; }
+	const ProcessorHardware& GetProcessorInfo() const { return info.CPU_Information; }
+	const GPUHardware& GetGraphicsCardInfo() const { return info.GPU_Information; }
 
 	void RecalculateParameters() { info.Memory_Information.RecalculateRAMParameters(); info.GPU_Information.RecalculateGPUParameters(); }
 
