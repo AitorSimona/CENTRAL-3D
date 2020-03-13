@@ -25,6 +25,12 @@ PanelSettings::~PanelSettings()
 
 bool PanelSettings::Draw()
 {
+	//We get the info for the last frame
+	float fps = EngineApp->time->GetFPS();
+	float last_frame_ms = EngineApp->time->GetLastFrameMs();
+	if (fps != -1)
+		AddFPS(fps, last_frame_ms);
+
 	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
 	ImGuiWindowFlags settingsFlags = 0;
@@ -568,7 +574,7 @@ inline void PanelSettings::LibrariesNode() const
 
 }
 
-void PanelSettings::AddFPS(float fps, float ms)
+void PanelSettings::AddFPS(const float& fps, const float& ms)
 {
 	static uint counter = 0;
 

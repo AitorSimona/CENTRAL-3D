@@ -277,12 +277,6 @@ ImGuiContext* ModuleGui::getImgUICtx() const {
 	return ctx;
 }
 
-void ModuleGui::LogFPS(float fps, float ms)
-{
-	/*if (panelSettings != nullptr)
-		panelSettings->AddFPS(fps, ms);*/
-}
-
 void ModuleGui::LoadStatus(const json & file) 
 {
 	
