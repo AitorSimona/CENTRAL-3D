@@ -41,6 +41,7 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 	}
 
 	if (particleSystem && App->physics->mScene) {
+		particleSystem->releaseParticles();
 		App->physics->mScene->removeActor(*particleSystem);
 		indexPool->release();
 		particles.clear();
@@ -70,11 +71,8 @@ void ComponentParticleEmitter::Enable()
 
 void ComponentParticleEmitter::Disable()
 {
-	particleSystem->releaseParticles();
 	
 	App->physics->mScene->removeActor(*particleSystem);
-	
-	indexPool->release();
 
 	active = false;
 }
