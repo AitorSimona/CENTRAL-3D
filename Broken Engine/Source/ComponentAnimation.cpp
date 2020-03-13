@@ -273,11 +273,20 @@ void ComponentAnimation::CreateInspectorNode()
 			ImGui::SameLine();
 			if (ImGui::BeginCombo(" ", "Anims", ImGuiComboFlags_NoPreview))
 			{
-				if(ImGui::Button("Save animation info"))
+				if(ImGui::Button("Save animation info  "))
 					AnimationSave();
 
-				if(ImGui::Button("Load animation info"))
-					AnimationLoad();
+				if (animations.size() > 0)
+				{
+					if (ImGui::Button("Delete animation info"))
+						AnimationLoad();
+				}
+				else
+				{
+					if (ImGui::Button("Load animation info  "))
+						AnimationLoad();
+				}
+				
 
 				ImGui::EndCombo();
 			}
@@ -591,19 +600,24 @@ void ComponentAnimation::AnimationSave()
 
 void ComponentAnimation::AnimationLoad()
 {
-	std::string tmp = "Settings/AnimationInfo.json";
-	json file = App->GetJLoader()->Load(tmp.c_str());
-
-	if (!file.is_null())
+	if (animations.size() > 0)
+		animations.clear();
+	else
 	{
-		for (json::iterator it = file.begin(); it != file.end(); ++it)
-		{
-			std::string name = file[it.key().c_str()]["name"];
-			std::string start_frm = file[it.key().c_str()]["start_frame"];
-			std::string end_frm = file[it.key().c_str()]["end_frame"];
-			std::string is_loop = file[it.key().c_str()]["loop"];
+		std::string tmp = "Settings/AnimationInfo.json";
+		json file = App->GetJLoader()->Load(tmp.c_str());
 
-			CreateAnimation(name, std::stoi(start_frm), std::stoi(end_frm), std::stoi(is_loop));
+		if (!file.is_null())
+		{
+			for (json::iterator it = file.begin(); it != file.end(); ++it)
+			{
+				std::string name = file[it.key().c_str()]["name"];
+				std::string start_frm = file[it.key().c_str()]["start_frame"];
+				std::string end_frm = file[it.key().c_str()]["end_frame"];
+				std::string is_loop = file[it.key().c_str()]["loop"];
+
+				CreateAnimation(name, std::stoi(start_frm), std::stoi(end_frm), std::stoi(is_loop));
+			}
 		}
 	}
 	
