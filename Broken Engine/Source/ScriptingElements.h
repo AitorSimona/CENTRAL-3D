@@ -6,6 +6,11 @@
 
 class lua_State;
 
+namespace luabridge
+{
+	class LuaRef;
+}
+
 BE_BEGIN_NAMESPACE
 class BROKEN_API ScriptingElements {
 public:
@@ -43,6 +48,9 @@ public:
 
 	// Current Camera
 	int GetPosInFrustum(float x, float y, float z);
+
+	//Get a script file
+	luabridge::LuaRef GetScript(lua_State* L);
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGELEMENTS_H__

@@ -22,6 +22,7 @@
 #include "ModuleAudio.h"
 
 #include "ScriptData.h"
+#include "LuaIncludes.h"
 
 using namespace Broken;
 ScriptingElements::ScriptingElements() {}
@@ -399,4 +400,10 @@ int ScriptingElements::GetPosInFrustum(float x, float y, float z)
 		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
 
 	return 0;
+}
+
+luabridge::LuaRef ScriptingElements::GetScript(lua_State* L)
+{
+	luabridge::LuaRef ret(L);
+	return ret;
 }
