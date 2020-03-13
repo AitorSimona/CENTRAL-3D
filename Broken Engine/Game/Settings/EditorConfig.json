@@ -6,7 +6,7 @@
     "EditorUI": {
         "About": false,
         "Build": false,
-        "Console": false,
+        "Console": true,
         "Hierarchy": true,
         "Inspector": true,
         "Physics": true,
