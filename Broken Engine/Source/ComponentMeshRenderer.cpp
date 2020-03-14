@@ -46,8 +46,13 @@ void ComponentMeshRenderer::Update()
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
 
-	if (unuse_material)
+	if (unuse_material && material && material->IsInMemory())
+	{
+		material->Release();
+		material->RemoveUser(GO);
 		material = nullptr;
+	}
+		
 }
 
 void ComponentMeshRenderer::Draw(bool outline) const {
@@ -542,6 +547,7 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 				if (resource && resource->GetType() == Resource::ResourceType::MATERIAL) {
 					
 					material = (ResourceMaterial*)App->resources->GetResource(UID);
+					unuse_material = false;
 
 				}
 			}
