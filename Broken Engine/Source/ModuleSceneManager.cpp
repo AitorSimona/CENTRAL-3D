@@ -482,16 +482,20 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
 
 void ModuleSceneManager::LoadGame(const json & file)
 {
-	int bar = 1;
 	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end())
 	{
 		std::string sceneName = file["SceneManager"]["MainScene"];
-		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, sceneName.c_str());
+
+		ResourceScene* scene = nullptr;
+		for (std::map<uint, Broken::ResourceScene*>::const_iterator it = App->resources->scenes.begin(); it != App->resources->scenes.end() && scene == nullptr; ++it) {
+			if ((*it).second->GetName() == sceneName)
+				scene = (*it).second;
+
+		}
 		
 		if (scene != nullptr)
 		{
 			SetActiveScene(scene);
-			scene->LoadToMemory();
 
 			if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end())
 			{

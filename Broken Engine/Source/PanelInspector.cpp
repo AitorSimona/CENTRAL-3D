@@ -63,7 +63,9 @@ bool PanelInspector::Draw()
 			if (Startup)
 				ImGui::SetNextItemOpen(true);
 
-			(*it)->CreateInspectorNode();
+			if (*it)
+				(*it)->CreateInspectorNode();
+			
 			ImGui::NewLine();
 			ImGui::Separator();
 		}
