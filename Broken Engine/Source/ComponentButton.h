@@ -29,7 +29,7 @@ public:
 	void ChangeStateTo(State new_state) { state = new_state; }
 	void ChangeColorTo(Color new_color) { color = new_color; }
 	void UpdateCollider();
-	//void OnClick();
+	void OnClick();
 
 
 	// UI Functions

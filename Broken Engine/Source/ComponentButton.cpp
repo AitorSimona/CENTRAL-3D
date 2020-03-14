@@ -153,10 +153,10 @@ void ComponentButton::CreateInspectorNode()
 		ImGui::Text("Size:    ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##buttonsize", &size2D.x);
+		ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##buttonsize", &size2D.y);
+		ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f);
 
 		// Position
 		ImGui::Text("Position:");
@@ -309,8 +309,8 @@ void ComponentButton::UpdateState()
 					}
 					else
 					{
-						//if (state != SELECTED) //On click action
-						//	OnClick();
+						if (state != SELECTED) //On click action
+							OnClick();
 
 						ChangeStateTo(SELECTED);
 					}
@@ -329,8 +329,13 @@ void ComponentButton::UpdateState()
 
 void ComponentButton::UpdateCollider()
 {
-	collider.x = position2D.x - size2D.x;
-	collider.y = position2D.y - size2D.y;
-	collider.w = size2D.x * 2;
-	collider.h = size2D.y * 2;
+	collider.x = position2D.x - size2D.x; //global pos x
+	collider.y = position2D.y - size2D.y; //global pos y
+	collider.w = size2D.x * 2; //real width
+	collider.h = size2D.y * 2; //real height
+}
+
+void ComponentButton::OnClick()
+{
+
 }
