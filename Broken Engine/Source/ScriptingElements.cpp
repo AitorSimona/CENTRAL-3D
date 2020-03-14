@@ -399,7 +399,9 @@ int ScriptingElements::GetPosInFrustum(float x, float y, float z, float fovratio
 	if (cam)
 	{
 		// --- Create subdivisions of the frustum ---
-		Frustum sub1, sub2 = cam->frustum;
+		Frustum sub1 = cam->frustum;
+		Frustum sub2 = cam->frustum;
+
 		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio1, cam->frustum.AspectRatio());
 		sub2.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio2, cam->frustum.AspectRatio());
 
