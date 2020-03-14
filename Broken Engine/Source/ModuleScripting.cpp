@@ -199,7 +199,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// Current Camera Functions
 		.addFunction("GetPositionInFrustum", &ScriptingElements::GetPosInFrustum)
 
-		//GetScript functions
+		// GetScript functions
 		.addFunction("GetScriptTest",&ScriptingElements::GetScript)
 		.endClass()
 		
