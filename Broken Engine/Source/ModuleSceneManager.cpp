@@ -325,30 +325,30 @@ uint ModuleSceneManager::GetPointLineVAO() const {
 
 void ModuleSceneManager::RedoOctree()
 {
-	std::vector<GameObject*> NoStaticGameObjects;
-	tree.CollectObjects(NoStaticGameObjects);
+	std::vector<GameObject*> staticGameObjects;
+	tree.CollectObjects(staticGameObjects);
 
 	tree.SetBoundaries(AABB(tree.root->box));
 
-	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
+	for (uint i = 0; i < staticGameObjects.size(); ++i)
 	{
 		//tree.Erase(scene_gos[i]);
-		tree.Insert(NoStaticGameObjects[i]);
+		tree.Insert(staticGameObjects[i]);
 	}
 
 }
 
 void ModuleSceneManager::RedoOctree(AABB aabb)
 {
-	std::vector<GameObject*> NoStaticGameObjects;
-	tree.CollectObjects(NoStaticGameObjects);
+	std::vector<GameObject*> staticGameObjects;
+	tree.CollectObjects(staticGameObjects);
 
 	tree.SetBoundaries(aabb);
 
-	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
+	for (uint i = 0; i < staticGameObjects.size(); ++i)
 	{
 		//tree.Erase(scene_gos[i]);
-		tree.Insert(NoStaticGameObjects[i]);
+		tree.Insert(staticGameObjects[i]);
 	}
 
 }

@@ -126,6 +126,10 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			creationData.velocityBuffer = physx::PxStrideIterator<const physx::PxVec3>(velocityBuffer);
 
 			bool succes = particleSystem->createParticles(creationData);
+
+			delete[] index;
+			delete[] positionBuffer;
+			delete[] velocityBuffer;
 		}
 	}
 

@@ -31,8 +31,9 @@ QuadtreeNode::QuadtreeNode(const AABB& box) : box(box) {
 
 QuadtreeNode::~QuadtreeNode() {
 	for (int i = 0; i < 8; ++i) {
-		if (childs[i] != nullptr)
+		if (childs[i] != nullptr) {
 			delete(childs[i]);
+		}
 	}
 }
 
@@ -162,7 +163,8 @@ void QuadtreeNode::CollectObjects(std::vector<GameObject*>& objects) const {
 		objects.push_back(*it);
 
 	for (int i = 0; i < 8; ++i)
-		if (childs[i] != nullptr) childs[i]->CollectObjects(objects);
+		if (childs[i] != nullptr) 
+			childs[i]->CollectObjects(objects);
 }
 
 void QuadtreeNode::CollectObjects(std::map<float, GameObject*>& objects, const float3& origin) const {
@@ -220,7 +222,7 @@ void Quadtree::Erase(GameObject* go) {
 void Quadtree::Clear()
 {
 	if(root)
-	delete root;
+		delete root;
 }
 
 void Quadtree::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const {
