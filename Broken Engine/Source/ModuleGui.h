@@ -48,8 +48,6 @@ public:
 
 
 	void LogFPS(float fps, float ms);
-
-	void SaveStatus(json &file) const override;
 	void LoadStatus(const json & file) override;
 
 	void HandleInput(SDL_Event* event) const;
@@ -93,6 +91,8 @@ public:
 	float sceneY = 0;
 	float sceneWidth = 0;
 	float sceneHeight = 0;
+
+	bool isUsingGuizmo = false;
 
 private:
 

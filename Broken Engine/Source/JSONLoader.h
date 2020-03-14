@@ -19,6 +19,8 @@ public:
 	bool Save(const char* File, const json& jsonfile);
 
 	void Serialize(const json& jsonfile, std::string& jsonserialized);
+
+	
 };
 BE_END_NAMESPACE
 #endif

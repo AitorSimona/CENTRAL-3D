@@ -15,7 +15,7 @@ using namespace Broken;
 
 ModuleUI::ModuleUI(bool start_enabled) : Module(start_enabled)
 {
-	name = "UI_System";
+	name = "UI System";
 }
 
 ModuleUI::~ModuleUI()

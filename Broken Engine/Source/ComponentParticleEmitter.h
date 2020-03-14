@@ -18,6 +18,8 @@ public:
 	ComponentParticleEmitter(GameObject* ContainerGO);
 	~ComponentParticleEmitter();
 
+	void Update() override;
+
 	void Enable() override;
 	void Disable() override;
 

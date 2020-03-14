@@ -26,6 +26,7 @@ void MyAssimpCallback(const char* msg, char* userData)
 
 ModuleResourceManager::ModuleResourceManager(bool start_enabled)
 {
+	name = "Resource Manager";
 }
 
 ModuleResourceManager::~ModuleResourceManager()

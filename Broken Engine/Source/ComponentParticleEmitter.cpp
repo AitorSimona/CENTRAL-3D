@@ -41,10 +41,17 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 	}
 
 	if (particleSystem && App->physics->mScene) {
+		particleSystem->releaseParticles();
 		App->physics->mScene->removeActor(*particleSystem);
 		indexPool->release();
 		particles.clear();
 	}
+}
+
+void ComponentParticleEmitter::Update()
+{
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
 void ComponentParticleEmitter::Enable()
@@ -64,11 +71,8 @@ void ComponentParticleEmitter::Enable()
 
 void ComponentParticleEmitter::Disable()
 {
-	particleSystem->releaseParticles();
 	
 	App->physics->mScene->removeActor(*particleSystem);
-	
-	indexPool->release();
 
 	active = false;
 }
@@ -78,32 +82,44 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 	//Create particle if emision rate allows it
 	if (SDL_GetTicks() - spawnClock > emisionRate)
 	{
+		uint newParticlesAmount = (SDL_GetTicks() - spawnClock )/ emisionRate;
+
 		if (validParticles < maxParticles)
 		{
-			validParticles++;
+			if (newParticlesAmount > maxParticles - validParticles)
+				newParticlesAmount = maxParticles - validParticles;
+
+			validParticles += newParticlesAmount;
 			spawnClock = SDL_GetTicks();
 
 			physx::PxParticleCreationData creationData;
 
 			//Create 1 particle each time
-			creationData.numParticles = 1;
-			physx::PxU32 index[1];
+			creationData.numParticles = newParticlesAmount;
+			physx::PxU32* index = new physx::PxU32[newParticlesAmount];
 
 			const physx::PxStrideIterator<physx::PxU32> indexBuffer(index);
 
-			indexPool->allocateIndices(1, indexBuffer);
+			indexPool->allocateIndices(newParticlesAmount, indexBuffer);
 
 			float3 globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
 
-			physx::PxVec3 positionBuffer[] ={ physx::PxVec3(	globalPosition.x + GetRandomValue(-size.x,size.x),
-												globalPosition.y + GetRandomValue(-size.y,size.y),
-												globalPosition.z + GetRandomValue(-size.z,size.z))};
+			physx::PxVec3* positionBuffer = new physx::PxVec3[newParticlesAmount];
+			physx::PxVec3* velocityBuffer = new physx::PxVec3[newParticlesAmount];
 
-			physx::PxVec3 velocityBuffer[] = { physx::PxVec3(	particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x,velocityRandomFactor.x) ,
-												particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
-												particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
+			for (int i = 0; i < newParticlesAmount; ++i) {
+			velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
+											particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
+											particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
 
+			positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
+											globalPosition.y + GetRandomValue(-size.y,size.y),
+											globalPosition.z + GetRandomValue(-size.z,size.z)) };
 
+			particles[index[i]]->lifeTime = particlesLifeTime;
+			particles[index[i]]->spawnTime = SDL_GetTicks();
+
+			}
 
 			creationData.indexBuffer = indexBuffer;
 			creationData.positionBuffer = physx::PxStrideIterator<const physx::PxVec3>(positionBuffer);
@@ -111,8 +127,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 			bool succes = particleSystem->createParticles(creationData);
 
-			particles[index[0]]->lifeTime = particlesLifeTime;
-			particles[index[0]]->spawnTime = SDL_GetTicks();
+			
 		}
 	}
 
@@ -284,6 +299,9 @@ void ComponentParticleEmitter::CreateInspectorNode()
 		else
 			Disable();
 	}
+
+	if (ImGui::Button("Delete component"))
+		to_delete = true;
 
 	//Emitter size
 	ImGui::Text("Emitter size");

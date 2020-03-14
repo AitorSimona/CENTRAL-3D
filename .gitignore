@@ -347,8 +347,13 @@ Broken Engine/Game/Assets/*/*
 !Broken Engine/Game/Assets/Sounds/WWise_IDs.h
 !Broken Engine/Game/Assets/Sounds/Init.*
 
-
-
-
 # Imgui Ini File
 Broken Engine/Game/imgui.ini
+
+# Engine temp files
+Broken Engine/Game/Temp/
+
+# Engine dlls and exes
+Broken Engine/Game/BrokenCore_DEBUG.dll
+Broken Engine/Game/BrokenCore.dll
+Broken Engine/Game/BEG.exe

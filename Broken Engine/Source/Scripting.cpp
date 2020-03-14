@@ -14,6 +14,9 @@
 #include "ComponentAudioSource.h"
 #include "ComponentAnimation.h"
 
+#include "ModuleRenderer3D.h"
+#include "ComponentCamera.h"
+
 #include "../Game/Assets/Sounds/Wwise_IDs.h"
 #include "ComponentAudioSource.h"
 #include "ModuleAudio.h"
@@ -1101,6 +1104,75 @@ void Scripting::StartAnimation(const char* name, float speed)
 		anim->PlayAnimation(name, speed);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+void Scripting::SetCurrentAnimSpeed(float speed)
+{
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+
+	if (anim)
+		anim->SetCurrentAnimationSpeed(speed);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+
+void Scripting::SetAnimSpeed(const char* name, float speed)
+{
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+
+	if (anim)
+		anim->SetAnimationSpeed(name, speed);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+// CAMERAS -----------------------------------------------------------
+int Scripting::GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2)
+{
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	int camlevel = 0;
+
+	if (cam)
+	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1, sub2 = cam->frustum;
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio1, cam->frustum.AspectRatio());
+		sub2.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio2, cam->frustum.AspectRatio());
+
+		// --- Check in which subdivision we are ---
+		if ((int)cam->frustum.Contains({ x, y, z }) == true)
+		{
+			camlevel = 1;
+
+			if ((int)sub1.Contains({ x, y, z }) == true)
+			{
+				camlevel = 2;
+
+				if ((int)sub2.Contains({ x, y, z }) == true)
+				{
+					camlevel = 3;
+				}
+			}
+		}
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
+
+	return camlevel;
+}
+
+// MATHS -------------------------------------------------------------
+//Maths
+int Scripting::FloatNumsAreEqual(float a, float b)
+{
+	return (fabs(a - b) < std::numeric_limits<float>::epsilon());
+}
+
+int Scripting::DoubleNumsAreEqual(double a, double b)
+{
+	return (fabs(a - b) < std::numeric_limits<double>::epsilon());
 }
 
 // ------------------------------------------------------------------- //

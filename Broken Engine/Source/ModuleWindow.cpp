@@ -10,6 +10,7 @@
 using namespace Broken;
 
 ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled) {
+	name = "Window";
 	window = NULL;
 	screen_surface = NULL;
 }
@@ -172,7 +173,18 @@ void ModuleWindow::GetWinMaxMinSize(uint& min_width, uint& min_height, uint& max
 	}
 }
 
-void ModuleWindow::SaveStatus(json& file) const {
+const json& ModuleWindow::SaveStatus() const{
+	
+	static json m_config;
+
+	m_config["borderless"] = borderless;
+	m_config["fullscreen"] = fullscreen;
+	m_config["fullscreenDesktop"] = fullscreen_desktop;
+	m_config["resizable"] = resizable;
+	m_config["height"] = screen_height;
+	m_config["width"] = screen_width;
+	
+	return m_config;
 
 }
 

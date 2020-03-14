@@ -22,6 +22,8 @@ public:
 	ComponentButton(GameObject* gameObject);
 	virtual ~ComponentButton();
 
+	void Update() override;
+
 	void Draw();
 
 	State GetState() { return state; }

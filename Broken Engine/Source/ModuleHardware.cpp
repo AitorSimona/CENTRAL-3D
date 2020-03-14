@@ -16,7 +16,10 @@ void RecalculateMemStatisticsFromMMGR() {
 	m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
 }
 
-ModuleHardware::ModuleHardware(bool start_enabled) : Module(start_enabled) {
+ModuleHardware::ModuleHardware(bool start_enabled) : Module(start_enabled) 
+{
+	name = "Hardware";
+
 	// --- Retrieve SDL Version ---
 	SDL_version version;
 	SDL_GetVersion(&version);

@@ -7,13 +7,12 @@
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
 #include "ModuleRenderer3D.h"
-
+#include "ModuleGui.h"
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
 #include "OpenGL.h"
 
 #include "Imgui/imgui.h"
-#include "ImGUi/ImGuizmo/ImGuizmo.h"
 
 #include "mmgr/mmgr.h"
 
@@ -28,6 +27,15 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 ComponentCollider::~ComponentCollider()
 {
 	mesh->Release();
+}
+
+void ComponentCollider::Update()
+{
+	if (editCollider)
+		CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
+
+	if (to_delete)
+		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
 void ComponentCollider::Draw() 
@@ -47,7 +55,7 @@ void ComponentCollider::Draw()
 			{
 				physx::PxSphereGeometry pxsphere = holder.sphere();
 
-				// --- Rebuild capsule ---
+				// --- Rebuild sphere ---
 				App->scene_manager->CreateSphere(1, 25, 25, mesh);
 				mesh->LoadToMemory();
 			}
@@ -66,7 +74,7 @@ void ComponentCollider::Draw()
 				physx::PxCapsuleGeometry capsule = holder.capsule();
 
 				// --- Rebuild capsule ---
-				App->scene_manager->CreateCapsule(1, 1, mesh);
+				App->scene_manager->CreateCapsule(radius, height, mesh);
 				mesh->LoadToMemory();
 			}
 			break;
@@ -164,7 +172,12 @@ void ComponentCollider::UpdateLocalMatrix() {
 	Quat rot;
 	globalMatrix.Decompose(pos, rot, scale);
 
-	if (!scale.Equals(tmpScale)) {
+	float threshold = 0.1f;
+
+	if (math::Abs(scale.x - tmpScale.x) > threshold
+		|| math::Abs(scale.y - tmpScale.y) > threshold
+		|| math::Abs(scale.z - tmpScale.z) > threshold) 
+	{
 		editCollider = true;
 		tmpScale = scale;
 	}
@@ -172,19 +185,18 @@ void ComponentCollider::UpdateLocalMatrix() {
 	physx::PxVec3 posi(pos.x, pos.y, pos.z);
 	physx::PxQuat quati(rot.x, rot.y, rot.z, rot.w);
 	physx::PxTransform transform(posi, quati);
+	
 
-	if (!dynamicRB)
+	if (dynamicRB == nullptr)
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
 	else
 	{
-		if (ImGuizmo::IsUsing() || cTransform->updateValues) { //ON EDITOR
-			dynamicRB->rigidBody->setGlobalPose(transform);
+		if ((App->gui->isUsingGuizmo && !App->isGame) || cTransform->updateValues){ //ON EDITOR
+				dynamicRB->rigidBody->setGlobalPose(transform);
 		}
-		else {
-			if (dynamicRB->rigidBody != nullptr) //ON GAME
-			{
-				UpdateTransformByRigidBody(dynamicRB, cTransform);
-			}
+		else if (dynamicRB->rigidBody != nullptr) //ON GAME
+		{
+			UpdateTransformByRigidBody(dynamicRB, cTransform);
 		}
 	}
 }
@@ -408,6 +420,10 @@ void ComponentCollider::CreateInspectorNode()
 {
 	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0");
 
 		switch (colliderType)
@@ -432,6 +448,22 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (shape)
 		{
+			ImGui::Text("Is Trigger");
+			ImGui::SameLine();
+			if (ImGui::Checkbox("##T", &isTrigger))
+			{
+				if (isTrigger)
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
+				}
+				else
+				{
+					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, true);
+					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, false);
+				}
+			}
+
 			float3* position = &centerPosition;
 			
 			ImGui::Text("Center");
@@ -472,8 +504,10 @@ void ComponentCollider::CreateInspectorNode()
 					colliderSize.y = radius;
 					colliderSize.z = radius;
 
-					if (prevRadius != radius || editCollider)
-						CreateCollider(COLLIDER_TYPE::SPHERE, true);
+					if (prevRadius != radius || editCollider) {
+						editCollider = true;
+						colliderType = (int)COLLIDER_TYPE::SPHERE;
+					}
 								
 					break;
 				}
@@ -504,8 +538,10 @@ void ComponentCollider::CreateInspectorNode()
 
 					ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
 
-					if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider)
-						CreateCollider(COLLIDER_TYPE::BOX, true);
+					if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
+						editCollider = true;
+						colliderType = (int)COLLIDER_TYPE::BOX;
+					}
 
 					break;
 				}
@@ -529,8 +565,10 @@ void ComponentCollider::CreateInspectorNode()
 					colliderSize.y = height;
 					colliderSize.z = radius;
 
-					if (prevRadius != radius || prevheight != height || editCollider)
-						CreateCollider(COLLIDER_TYPE::CAPSULE, true);
+					if (prevRadius != radius || prevheight != height || editCollider) {
+						editCollider = true;
+						colliderType = (int)COLLIDER_TYPE::CAPSULE;
+					}
 
 					break;
 				}
@@ -542,6 +580,7 @@ void ComponentCollider::CreateInspectorNode()
 	}
 
 }
+
 
 void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain) {
 	if (shape != nullptr && (lastIndex != (int)type || createAgain)) {
@@ -716,7 +755,13 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 	
 	if (dynamicRB != nullptr)
 	{
+		float3 position, scale = float3::zero;
+		Quat rot = Quat::identity;
+
+		globalMatrix.Decompose(position, rot, scale);
+
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
+		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
 		App->physics->mScene->addActor(*dynamicRB->rigidBody);
 
 		return true;

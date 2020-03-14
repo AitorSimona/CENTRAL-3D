@@ -104,8 +104,6 @@ Application::~Application() {
 bool Application::Init() {
 	bool ret = true;
 	COMPILATIONLOGINFO;
-	EngineConsoleLog(__FILE__, __LINE__, "Test"); 
-	SystemConsoleLog(__FILE__, __LINE__, "Test");
 
 	// --- Load App data from JSON files ---
 	json config = JLoader.Load(configpath.c_str());
@@ -133,7 +131,7 @@ bool Application::Init() {
 
 
 	// After all Init calls we call Start() in all modules
-	//ENGINE_AND_SYSTEM_CONSOLE_LOG("Broken Engine Start --------------");
+	ENGINE_AND_SYSTEM_CONSOLE_LOG("Broken Engine Start --------------");
 	item = list_modules.begin();
 
 	while(item != list_modules.end() && ret == true)
@@ -163,7 +161,7 @@ void Application::FinishUpdate() {
 
 void Application::SaveAllStatus() {
 	// --- Create Config with default values ---
-	json config = GetDefaultConfig();
+	json config;
 
 	std::string tmp = appName;
 	config["Application"]["Title"] = tmp;
@@ -172,12 +170,13 @@ void Application::SaveAllStatus() {
 
 	// --- Call Save of all modules ---
 
-	std::list<Module*>::const_iterator item = list_modules.begin();
-
-	while (item != list_modules.end())
-	{
-		if ((*item)->isEnabled()) (*item)->SaveStatus(config);
-		item++;
+	json node;
+	for (std::list<Module*>::const_iterator item = list_modules.begin(); item != list_modules.end(); ++item) {
+		if ((*item)->isEnabled()) {
+			node = (*item)->SaveStatus();
+			if (node.begin() != node.end()) 
+				config[(*item)->GetName()] = node;
+		}
 	}
 
 	JLoader.Save(configpath.data(), config);
@@ -231,11 +230,11 @@ update_status Application::Update()
 
 	item = list_modules.begin();
 
-	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
-	{
-		ret = (*item)->isEnabled() ? (*item)->GameUpdate(time->GetGameDt()) : UPDATE_CONTINUE;
-		item++;
-	}
+	//while (item != list_modules.end() && ret == UPDATE_CONTINUE)
+	//{
+	//	ret = (*item)->isEnabled() ? (*item)->GameUpdate(time->GetGameDt()) : UPDATE_CONTINUE;
+	//	item++;
+	//}
 
 	item = list_modules.begin();
 
@@ -320,9 +319,6 @@ json Application::GetDefaultConfig() const {
 		{"Application", {
 
 		}},
-		{"GUI", {
-
-		}},
 		{"Window", {
 			{"width", 1024},
 			{"height", 720},
@@ -330,10 +326,6 @@ json Application::GetDefaultConfig() const {
 			{"resizable", true},
 			{"borderless", false},
 			{"fullscreenDesktop", false}
-		}},
-
-		{"Input", {
-
 		}},
 
 		{"Renderer3D", {
