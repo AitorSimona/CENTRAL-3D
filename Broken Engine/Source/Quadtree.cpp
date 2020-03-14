@@ -137,12 +137,14 @@ void QuadtreeNode::RedistributeChilds() {
 
 		// --- Distribute this new gameobject onto the childs ---
 		bool intersects[8];
-		for (int i = 0; i < 8; ++i)
+		uint intersections = 0;
+		for (int i = 0; i < 8; ++i) {
 			intersects[i] = childs[i]->box.Intersects(new_box);
-
-		if (intersects[0] && intersects[1] && intersects[2] && intersects[3]
-			&& intersects[4] && intersects[5] && intersects[6] && intersects[7])
-			++it; // if it hits all childs, better to just keep it here
+			if (intersects[i])
+				intersections++;
+		}
+		if (intersections > 1)
+			++it; // if it more than one child, better to just keep it here
 		else {
 			it = objects.erase(it);
 			for (int i = 0; i < 8; ++i) {
