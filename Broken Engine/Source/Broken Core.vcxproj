@@ -256,6 +256,7 @@
     <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceAnimation.h" />
+    <ClInclude Include="ResourceAnimator.h" />
     <ClInclude Include="ResourceBone.h" />
     <ClInclude Include="ResourceFolder.h" />
     <ClInclude Include="ResourceMaterial.h" />
@@ -394,6 +395,7 @@
     <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
+    <ClCompile Include="ResourceAnimator.cpp" />
     <ClCompile Include="ResourceBone.cpp" />
     <ClCompile Include="ResourceFolder.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />

@@ -1,10 +1,4 @@
 {
-    "Hey im an animation": {
-        "end_frame": "2",
-        "loop": "1",
-        "name": "Hey im an animation",
-        "start_frame": "1"
-    },
     "Idle": {
         "end_frame": "330",
         "loop": "0",
@@ -16,5 +10,11 @@
         "loop": "0",
         "name": "test",
         "start_frame": "2"
+    },
+    "test1": {
+        "end_frame": "5",
+        "loop": "1",
+        "name": "test1",
+        "start_frame": "5"
     }
 }

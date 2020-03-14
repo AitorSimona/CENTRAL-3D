@@ -291,6 +291,18 @@ void ComponentAnimation::CreateInspectorNode()
 				ImGui::EndCombo();
 			}
 
+			// --- Handle drag & drop ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
 			for (int i = 0; i < animations.size(); i++)
 			{
 				ImGui::Separator();

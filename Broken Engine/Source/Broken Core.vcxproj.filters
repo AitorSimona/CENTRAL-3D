@@ -636,6 +636,9 @@
     <ClInclude Include="ComponentButton.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceAnimator.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1039,6 +1042,9 @@
     </ClCompile>
     <ClCompile Include="ComponentButton.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAnimator.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
