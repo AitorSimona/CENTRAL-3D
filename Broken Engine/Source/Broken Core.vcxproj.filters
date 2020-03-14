@@ -432,9 +432,6 @@
     <ClInclude Include="LuaIncludes.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
-    <ClInclude Include="Scripting.h">
-      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
-    </ClInclude>
     <ClInclude Include="Importers.h">
       <Filter>Sources\BrokenEngine\Tools</Filter>
     </ClInclude>
@@ -638,6 +635,21 @@
     </ClInclude>
     <ClInclude Include="ResourceAnimator.h">
       <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingInputs.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingDebug.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingSystems.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingElements.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -860,9 +872,6 @@
     <ClCompile Include="ComponentMesh.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Scripting.cpp">
-      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
-    </ClCompile>
     <ClCompile Include="PerfTimer.cpp">
       <Filter>Sources\BrokenEngine\Tools</Filter>
     </ClCompile>
@@ -1045,6 +1054,21 @@
     </ClCompile>
     <ClCompile Include="ResourceAnimator.cpp">
       <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingInputs.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingDebug.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingSystems.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingElements.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

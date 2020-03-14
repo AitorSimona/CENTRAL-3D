@@ -17,11 +17,10 @@ ImporterScript::~ImporterScript() {
 Resource* ImporterScript::Import(ImportData& IData) const {
 	ResourceScript* resource_script = (ResourceScript*)App->resources->CreateResource(Resource::ResourceType::SCRIPT, IData.path);
 
-
-	//Pass the relative path
+	// Pass the relative path
 	resource_script->relative_path = IData.path;
 
-	//Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
+	// Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
 	std::string abs_path = App->fs->GetBasePath();
 
 	std::size_t d_pos = 0;
@@ -39,13 +38,12 @@ Resource* ImporterScript::Import(ImportData& IData) const {
 		abs_path = abs_path.substr(0,r_pos);
 		abs_path += "Game/";
 	}
-
 	
 	abs_path += IData.path;
 	App->fs->NormalizePath(abs_path);
 	resource_script->absolute_path = abs_path.c_str();
 
-	//Get Script name
+	// Get Script name
 	std::string file;
 	App->fs->SplitFilePath(IData.path, nullptr, &file, nullptr);
 	App->fs->RemoveFileExtension(file);
@@ -53,7 +51,6 @@ Resource* ImporterScript::Import(ImportData& IData) const {
 
 	// --- Create Meta ---
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-
 	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_script->GetOriginalFile(), resource_script->GetUID());
 
 	if (meta)
@@ -98,7 +95,6 @@ Resource* ImporterScript::Load(const char* path) const {
 	//{
 	//	abs_path = abs_path.substr(0, g_pos);
 	//}
-
 	
 	abs_path += path;
 	App->fs->NormalizePath(abs_path);

@@ -272,6 +272,10 @@
     <ClInclude Include="ResourceTexture.h" />
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
+    <ClInclude Include="ScriptingDebug.h" />
+    <ClInclude Include="ScriptingElements.h" />
+    <ClInclude Include="ScriptingInputs.h" />
+    <ClInclude Include="ScriptingSystems.h" />
     <ClInclude Include="ScriptVar.h" />
     <ClInclude Include="ComponentText.h" />
     <ClInclude Include="Timer.h" />
@@ -409,6 +413,10 @@
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Scripting.cpp" />
+    <ClCompile Include="ScriptingDebug.cpp" />
+    <ClCompile Include="ScriptingElements.cpp" />
+    <ClCompile Include="ScriptingInputs.cpp" />
+    <ClCompile Include="ScriptingSystems.cpp" />
     <ClCompile Include="ScriptVar.cpp" />
     <ClCompile Include="ComponentText.cpp" />
     <ClCompile Include="Timer.cpp" />
