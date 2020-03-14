@@ -34,6 +34,7 @@ private:
 	// --- Draw Functiions accessed by main Draw ---
 	void DrawMesh(ResourceMesh& mesh) const;
 	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
+	bool unuse_material = false;
 
 public:
 	bool draw_vertexnormals = false;
