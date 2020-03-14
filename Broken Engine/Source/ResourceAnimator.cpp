@@ -34,11 +34,7 @@ bool ResourceAnimator::LoadInMemory()
 
 void ResourceAnimator::FreeMemory() 
 {
-	for (uint i = 0; i < uniforms.size(); ++i) {
-		delete uniforms[i];
-	}
 
-	uniforms.clear();
 }
 
 void ResourceAnimator::OnOverwrite()
