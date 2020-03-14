@@ -13,6 +13,7 @@ struct ScriptInstance;
 
 enum _AppState;
 class BROKEN_API ModuleScripting : public Module {
+	friend class ScriptingElements;
 public:
 	ModuleScripting(bool start_enabled = true);
 	~ModuleScripting();
@@ -51,6 +52,7 @@ private:
 	_AppState previous_AppState = (_AppState)2; // we use the EDITOR value of the script (can't include application.h because it would slow down compilation time)
 
 	void CleanUpInstances();
+	ScriptInstance* GetScriptInstanceFromComponent(ComponentScript* component_script);
 
 	std::vector<ScriptInstance*> recompiled_instances;
 	std::vector<ScriptInstance*> class_instances;

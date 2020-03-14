@@ -402,8 +402,18 @@ int ScriptingElements::GetPosInFrustum(float x, float y, float z)
 	return 0;
 }
 
-luabridge::LuaRef ScriptingElements::GetScript(lua_State* L)
+luabridge::LuaRef ScriptingElements::GetScript(uint go_UID, lua_State* L)
 {
-	luabridge::LuaRef ret(L);
+	luabridge::LuaRef ret = 0;
+
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UID);
+
+	if (go != nullptr)
+	{
+		ComponentScript* component_script = go->GetComponent<ComponentScript>();
+		ScriptInstance* script = App->scripting->GetScriptInstanceFromComponent(component_script);
+
+		ret = script->my_table_class;
+	}
 	return ret;
 }

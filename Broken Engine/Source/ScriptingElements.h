@@ -50,7 +50,7 @@ public:
 	int GetPosInFrustum(float x, float y, float z);
 
 	//Get a script file
-	luabridge::LuaRef GetScript(lua_State* L);
+	luabridge::LuaRef GetScript(uint go_UID, lua_State* L);
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGELEMENTS_H__

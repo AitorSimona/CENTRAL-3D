@@ -200,7 +200,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetPositionInFrustum", &ScriptingElements::GetPosInFrustum)
 
 		//GetScript functions
-		.addFunction("GetScriptTest",&ScriptingElements::GetScript)
+		.addFunction("GetScript",&ScriptingElements::GetScript)
 		.endClass()
 		
 		// ----------------------------------------------------------------------------------
@@ -539,6 +539,23 @@ void ModuleScripting::CleanUpInstances() {
 	}
 
 	class_instances.clear();
+}
+
+//Return a pointer to a Script instance that is attached to the component script
+ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript* component_script)
+{
+	ScriptInstance* ret = nullptr;
+
+	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
+	{
+		if ((*it)->my_component == component_script)
+		{
+			ret = (*it);
+			break;
+		}
+	}
+
+	return ret;
 }
 
 bool ModuleScripting::Stop() {
