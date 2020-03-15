@@ -494,7 +494,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_boolean;
 							break;
 						}
-						(*it).changed_value = false;
+						//(*it).changed_value = false;
 					}
 
 				if (current_script->awoken == false)
