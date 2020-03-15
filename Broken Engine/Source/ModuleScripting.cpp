@@ -481,14 +481,17 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 			current_script = class_instances[i];
 			if (current_script->script_is_null == false)
 			{
+				std::string aux_str = "null";
 				for (std::vector<ScriptVar>::iterator it = current_script->my_component->script_variables.begin(); it != current_script->my_component->script_variables.end(); ++it)
+				{
 					if ((*it).changed_value) {
 						switch ((*it).type) {
 						case VarType::DOUBLE:
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double;
 							break;
 						case VarType::STRING:
-							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_string;
+							aux_str = (*it).editor_value.as_string;
+							current_script->my_table_class[(*it).name.c_str()] = aux_str.c_str();
 							break;
 						case VarType::BOOLEAN:
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_boolean;
@@ -496,6 +499,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 						}
 						//(*it).changed_value = false;
 					}
+				}
 
 				if (current_script->awoken == false)
 				{
