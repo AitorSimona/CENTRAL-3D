@@ -177,6 +177,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetGameObjectPosZ", &ScriptingElements::GetGameObjectPosZ)
 		.addFunction("TranslateGameObject", &ScriptingElements::TranslateGameObject)
 
+		.addFunction("GetComponent", &ScriptingElements::GetComponentFromGO)
+
 		// Position
 		.addFunction("GetPosition", &ScriptingElements::GetPosition)
 		.addFunction("GetPositionX", &ScriptingElements::GetPositionX)
@@ -199,8 +201,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// Current Camera Functions
 		.addFunction("GetPositionInFrustum", &ScriptingElements::GetPosInFrustum)
 
-		//GetScript functions
-		.addFunction("GetScript",&ScriptingElements::GetScript)
+		// GetScript functions
+		.addFunction("GetScript", &ScriptingElements::GetScript)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -494,7 +496,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_boolean;
 							break;
 						}
-						//(*it).changed_value = false;
+						(*it).changed_value = false;
 					}
 
 				if (current_script->awoken == false)
