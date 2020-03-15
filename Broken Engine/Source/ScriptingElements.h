@@ -27,6 +27,8 @@ public:
 	float GetGameObjectPosZ(uint gameobject_UID);
 	void TranslateGameObject(uint gameobject_UID, float x, float y, float z);
 
+	uint GetComponentFromGO(const char* component_type, const char* go_name = "NO_NAME");
+
 	// Position
 	float GetPositionX() const;
 	float GetPositionY() const;

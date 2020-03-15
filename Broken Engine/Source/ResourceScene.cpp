@@ -52,8 +52,7 @@ bool ResourceScene::LoadInMemory() {
 				go->SetName(name.c_str());
 
 				// --- Iterate components ---
-				json components = file[it.key()]["Components"];
-				
+				json components = file[it.key()]["Components"];				
 
 				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) {
 					// --- Determine ComponentType ---
@@ -74,9 +73,16 @@ bool ResourceScene::LoadInMemory() {
 					component = go->AddComponent(type, c_index);
 
 					// --- Load Component Data ---
-					if (component)
+					if (component) 
+					{
 						component->Load(components[type_string]);
 
+						// --- UID ---
+						json c_UID = components[it2.key()]["UID"];
+
+						if (!c_UID.is_null())
+							component->SetUID(c_UID.get<uint>());
+					}
 				}
 
 				objects.push_back(go);
