@@ -21,7 +21,20 @@ ImporterAnimator::~ImporterAnimator()
 
 Resource* ImporterAnimator::Import(ImportData& IData) const
 {
-	Resource* animator = Load(IData.path);
+	if (!App->fs->Exists(IData.path))
+		return nullptr;
+
+	ResourceAnimator* animator = (ResourceAnimator*)App->resources->CreateResource(Resource::ResourceType::ANIMATOR, IData.path);;
+
+	// --- Create Meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, animator->GetOriginalFile(), animator->GetUID());
+
+	if (meta)
+		IMeta->Save(meta);
+
+	//Save(animator);
 
 	return animator;
 }
@@ -37,17 +50,17 @@ Resource* ImporterAnimator::Load(const char* path) const
 {
 	ResourceAnimator* animator = nullptr;
 
-	// --- Load Scene file ---
-	if (path) 
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+
+	animator = App->resources->anim_info.find(meta->GetUID()) != App->resources->anim_info.end() ? App->resources->anim_info.find(meta->GetUID())->second : (ResourceAnimator*)App->resources->CreateResourceGivenUID(Resource::ResourceType::ANIMATOR, path, meta->GetUID());
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(animator->GetOriginalFile())) 
 	{
-		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
-
-		if (meta) 
-			animator = App->resources->anim_info.find(meta->GetUID()) != App->resources->anim_info.end() ? App->resources->anim_info.find(meta->GetUID())->second : (ResourceAnimator*)App->resources->CreateResourceGivenUID(Resource::ResourceType::ANIMATOR, meta->GetOriginalFile(), meta->GetUID());
-		else 
-			animator = (ResourceAnimator*)App->resources->CreateResource(Resource::ResourceType::ANIMATOR, path);
-
+		animator->SetOriginalFile(path);
+		meta->SetOriginalFile(path);
+		App->resources->AddResourceToFolder(animator);
 	}
 
 	return animator;

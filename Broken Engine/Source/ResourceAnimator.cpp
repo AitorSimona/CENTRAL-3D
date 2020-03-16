@@ -17,7 +17,8 @@ using namespace Broken;
 ResourceAnimator::ResourceAnimator(uint UID, const char* source_file) : Resource(Resource::ResourceType::ANIMATOR, UID, source_file)
 {
 	extension = ".animator";
-	resource_file = ANIMATOR_FOLDER + std::to_string(UID) + extension;
+	std::string file = source_file;
+	resource_file = file;
 
 	previewTexID = App->gui->defaultfileTexID;
 }
@@ -52,6 +53,12 @@ bool ResourceAnimator::LoadInMemory()
 
 void ResourceAnimator::FreeMemory() 
 {
+	for (auto it = animations.begin(); it != animations.end(); ++it)
+	{
+		delete* it;
+	}
+
+	animations.clear();
 
 }
 

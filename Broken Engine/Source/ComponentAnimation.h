@@ -9,6 +9,7 @@ BE_BEGIN_NAMESPACE
 class ComponentMesh;
 class ComponentBone;
 class ResourceAnimation;
+class ResourceAnimator;
 class Channel;
 
 struct BROKEN_API Animation
@@ -78,6 +79,7 @@ public:
 	Animation* playing_animation = nullptr;;
 
 	ResourceAnimation* res_anim = nullptr;
+	ResourceAnimator* res_animator = nullptr;
 	float blend_time_value = 0.3f;
 
 	bool draw_bones = false;

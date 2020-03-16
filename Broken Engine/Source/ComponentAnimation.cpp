@@ -8,6 +8,7 @@
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"
 #include "ResourceAnimation.h"
+#include "ResourceAnimator.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
@@ -271,25 +272,16 @@ void ComponentAnimation::CreateInspectorNode()
 			ImGui::SameLine();
 			ImGui::Text("Save/Load");
 			ImGui::SameLine();
-			if (ImGui::BeginCombo(" ", "Anims", ImGuiComboFlags_NoPreview))
-			{
-				//if(ImGui::Button("Save animation info  "))
-					//AnimationSave();
 
-				//if (animations.size() > 0)
-				//{
-				//	if (ImGui::Button("Delete animation info"))
-				//		//AnimationLoad();
-				//}
-				//else
-				//{
-				//	if (ImGui::Button("Load animation info  "))
-				//		//AnimationLoad();
-				//}
-				
+			//if (ImGui::BeginCombo("##Animation combo", "Anims", ImGuiComboFlags_NoPreview))
+			//{
+			//	/*if (ImGui::Button("Save animation info  "))
+			//		int a = 1;*/
 
-				ImGui::EndCombo();
-			}
+			//	ImGui::EndCombo();
+			//}
+
+			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
 
 			// --- Handle drag & drop ---
 			if (ImGui::BeginDragDropTarget())
@@ -297,7 +289,43 @@ void ComponentAnimation::CreateInspectorNode()
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 				{
 					uint UID = *(const uint*)payload->Data;
-					
+					Resource* resource = App->resources->GetResource(UID, false);
+
+					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR) 
+					{
+						for (auto it = animations.begin(); it != animations.end(); ++it)
+						{
+							if (res_animator)
+							{
+								bool found = false;
+								for (auto iterator = res_animator->animations.begin(); iterator != res_animator->animations.end(); ++iterator)
+								{
+									
+									if ((*it) == (*iterator))
+									{
+										found = true;
+									}
+								}
+								if(!found)
+									delete (*it);
+
+							}
+							else
+								delete (*it);
+						}
+
+						if (res_animator)
+							res_animator->Release();
+
+						animations.clear();
+
+						res_animator = (ResourceAnimator*)App->resources->GetResource(UID);
+
+						for (auto it = res_animator->animations.begin(); it != res_animator->animations.end(); ++it)
+						{
+							animations.push_back(*it);
+						}
+					}
 				}
 
 				ImGui::EndDragDropTarget();
