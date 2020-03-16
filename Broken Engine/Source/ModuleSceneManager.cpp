@@ -35,6 +35,8 @@
 
 #include "mmgr/mmgr.h"
 
+#define TREE_UPDATE_PERIOD 1000
+
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
@@ -108,17 +110,27 @@ bool ModuleSceneManager::Start() {
 	//if (App->isGame)
 	//	LoadStatus(App->GetConfigFile());
 
+	treeUpdateTimer = SDL_GetTicks();
+
 	return true;
 }
 
 update_status ModuleSceneManager::PreUpdate(float dt) {
 
-
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleSceneManager::Update(float dt) {
+	
 	root->Update(dt);
+
+	if (update_tree)
+		if ((SDL_GetTicks() - treeUpdateTimer) > TREE_UPDATE_PERIOD) {
+			treeUpdateTimer = SDL_GetTicks();
+			RedoOctree();
+			update_tree = false;
+		}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -350,7 +362,6 @@ void ModuleSceneManager::RedoOctree(AABB aabb)
 		//tree.Erase(scene_gos[i]);
 		tree.Insert(staticGameObjects[i]);
 	}
-
 }
 
 void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChildren)

@@ -111,6 +111,8 @@ public:
 	bool display_tree = true;
 	bool display_boundingboxes = false;
 	bool display_grid = true;
+	bool update_tree=false;
+	uint treeUpdateTimer = 0;
 	ResourceScene* currentScene = nullptr;
 
 	ResourceMesh* plane = nullptr;
