@@ -331,12 +331,15 @@ void ComponentAnimation::DoBoneLink()
 	{
 		// -- Uncomment when Comp/Res Bone is done
 
-		uint tmp_id = bones[i]->res_bone->meshID;
-		//They have to have the same ID (Mesh/Bone), that's how they are linked
-		std::map<uint, ComponentMesh*>::iterator it = meshes.find(tmp_id);
-		if (it != meshes.end())
+		if (bones[i]->res_bone)
 		{
-			it->second->AddBone(bones[i]);
+			uint tmp_id = bones[i]->res_bone->meshID;
+			//They have to have the same ID (Mesh/Bone), that's how they are linked
+			std::map<uint, ComponentMesh*>::iterator it = meshes.find(tmp_id);
+			if (it != meshes.end())
+			{
+				it->second->AddBone(bones[i]);
+			}
 		}
 	}
 
@@ -523,8 +526,12 @@ void ComponentAnimation::UpdateMesh(GameObject* go)
 void ComponentAnimation::GetAllBones(GameObject* go, std::map<uint, ComponentMesh*>& meshes, std::vector<ComponentBone*>& bones)
 {
 	ComponentMesh* mesh = go->GetComponent<ComponentMesh>();
+
 	if (mesh != nullptr)
+	{
+		if(mesh->resource_mesh)
 		meshes[mesh->resource_mesh->GetUID()] = mesh;
+	}
 
 	ComponentBone* bone = go->GetComponent<ComponentBone>();
 	if (bone != nullptr)

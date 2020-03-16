@@ -60,3 +60,7 @@ void ScriptVar::ChangeEditorValue(double value)
 	else
 		ENGINE_CONSOLE_LOG("Tried to give a double float value to a var with different type!");
 }
+
+bool ScriptVar::operator == (const ScriptVar &comp) const {
+	return (comp.type == type && comp.name == name);
+}
