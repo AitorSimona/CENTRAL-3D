@@ -29,7 +29,6 @@ Resource* ImporterBone::Import(ImportData& IData) const
 	ResourceBone* resource_bone = (ResourceBone*)App->resources->CreateResource(Resource::ResourceType::BONE, IData.path);
 
 
-	//TODO: get the correct id
 	resource_bone->meshID = data.mesh_UID;
 	resource_bone->NumWeights = data.bone->mNumWeights;
 	resource_bone->matrix = float4x4(data.bone->mOffsetMatrix.a1, data.bone->mOffsetMatrix.a2, data.bone->mOffsetMatrix.a3, data.bone->mOffsetMatrix.a4,

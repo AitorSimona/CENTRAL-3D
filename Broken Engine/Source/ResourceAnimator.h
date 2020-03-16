@@ -4,6 +4,9 @@
 #include "Resource.h"
 
 BE_BEGIN_NAMESPACE
+
+struct Animation;
+
 class BROKEN_API ResourceAnimator : public Resource {
 public:
 	ResourceAnimator(uint UID, const char* source_file);
@@ -13,6 +16,7 @@ public:
 	void FreeMemory() override;
 	
 public:
+	std::vector<Animation*> animations;
 
 private:
 	void OnOverwrite() override;

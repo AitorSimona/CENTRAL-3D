@@ -12,24 +12,28 @@
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene) {
+ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene) 
+{
 
 }
 
-ImporterScene::~ImporterScene() {
+ImporterScene::~ImporterScene() 
+{
 
 }
 
 // MYTODO: Give some use to return type (bool) in all functions (if load fails log...)
 
-Resource* ImporterScene::Import(ImportData& IData) const {
+Resource* ImporterScene::Import(ImportData& IData) const 
+{
 	// --- Meta was deleted, just trigger a load with a new uid ---
 	Resource* scene = Load(IData.path);
 
 	return scene;
 }
 
-Resource* ImporterScene::Load(const char* path) const {
+Resource* ImporterScene::Load(const char* path) const 
+{
 	ResourceScene* scene = nullptr;
 
 	// --- Load Scene file ---
@@ -43,7 +47,6 @@ Resource* ImporterScene::Load(const char* path) const {
 		else {
 			scene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, path);
 		}
-
 
 	}
 

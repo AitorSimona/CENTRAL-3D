@@ -273,19 +273,19 @@ void ComponentAnimation::CreateInspectorNode()
 			ImGui::SameLine();
 			if (ImGui::BeginCombo(" ", "Anims", ImGuiComboFlags_NoPreview))
 			{
-				if(ImGui::Button("Save animation info  "))
-					AnimationSave();
+				//if(ImGui::Button("Save animation info  "))
+					//AnimationSave();
 
-				if (animations.size() > 0)
-				{
-					if (ImGui::Button("Delete animation info"))
-						AnimationLoad();
-				}
-				else
-				{
-					if (ImGui::Button("Load animation info  "))
-						AnimationLoad();
-				}
+				//if (animations.size() > 0)
+				//{
+				//	if (ImGui::Button("Delete animation info"))
+				//		//AnimationLoad();
+				//}
+				//else
+				//{
+				//	if (ImGui::Button("Load animation info  "))
+				//		//AnimationLoad();
+				//}
 				
 
 				ImGui::EndCombo();
@@ -585,52 +585,54 @@ bool ComponentAnimation::HasSkeleton(std::vector<GameObject*> collector) const
 
 		return false;
 }
-
-void ComponentAnimation::AnimationSave()
-{
-	json node;
-
-	for (int i = 0; i < animations.size(); ++i)
-	{
-		node[animations[i]->name]["name"] = animations[i]->name;
-		node[animations[i]->name]["start_frame"] = std::to_string(animations[i]->start);
-		node[animations[i]->name]["end_frame"] = std::to_string(animations[i]->end);
-		node[animations[i]->name]["loop"] = std::to_string(animations[i]->loop);
-	}
-
-	// --- Serialize JSON to string ---
-	std::string data;
-	App->GetJLoader()->Serialize(node, data);
-
-	// --- Finally Save to file ---
-	char* buffer = (char*)data.data();
-	uint size = data.length();
-
-	App->fs->Save(animation_path.c_str(), buffer, size);
-
-}
-
-void ComponentAnimation::AnimationLoad()
-{
-	if (animations.size() > 0)
-		animations.clear();
-	else
-	{
-		std::string tmp = "Settings/AnimationInfo.json";
-		json file = App->GetJLoader()->Load(tmp.c_str());
-
-		if (!file.is_null())
-		{
-			for (json::iterator it = file.begin(); it != file.end(); ++it)
-			{
-				std::string name = file[it.key().c_str()]["name"];
-				std::string start_frm = file[it.key().c_str()]["start_frame"];
-				std::string end_frm = file[it.key().c_str()]["end_frame"];
-				std::string is_loop = file[it.key().c_str()]["loop"];
-
-				CreateAnimation(name, std::stoi(start_frm), std::stoi(end_frm), std::stoi(is_loop));
-			}
-		}
-	}
-	
-}
+//
+//void ComponentAnimation::AnimationSave()
+//{
+//	json node;
+//
+//	for (int i = 0; i < animations.size(); ++i)
+//	{
+//		node[animations[i]->name]["name"] = animations[i]->name;
+//		node[animations[i]->name]["start_frame"] = std::to_string(animations[i]->start);
+//		node[animations[i]->name]["end_frame"] = std::to_string(animations[i]->end);
+//		node[animations[i]->name]["loop"] = std::to_string(animations[i]->loop);
+//		node[animations[i]->name]["speed"] = std::to_string(animations[i]->speed);
+//	}
+//
+//	// --- Serialize JSON to string ---
+//	std::string data;
+//	App->GetJLoader()->Serialize(node, data);
+//
+//	// --- Finally Save to file ---
+//	char* buffer = (char*)data.data();
+//	uint size = data.length();
+//
+//	App->fs->Save(animation_path.c_str(), buffer, size);
+//
+//}
+//
+//void ComponentAnimation::AnimationLoad()
+//{
+//	if (animations.size() > 0)
+//		animations.clear();
+//	else
+//	{
+//		std::string tmp = "Settings/AnimationInfo.animator";
+//		json file = App->GetJLoader()->Load(tmp.c_str());
+//
+//		if (!file.is_null())
+//		{
+//			for (json::iterator it = file.begin(); it != file.end(); ++it)
+//			{
+//				std::string name = file[it.key().c_str()]["name"];
+//				std::string start_frm = file[it.key().c_str()]["start_frame"];
+//				std::string end_frm = file[it.key().c_str()]["end_frame"];
+//				std::string is_loop = file[it.key().c_str()]["loop"];
+//				std::string speed = file[it.key().c_str()]["speed"];
+//
+//				CreateAnimation(name, std::stoi(start_frm), std::stoi(end_frm), std::stoi(is_loop));
+//			}
+//		}
+//	}
+//	
+//}

@@ -10,6 +10,7 @@
 #include "ImporterMesh.h"
 #include "ImporterBone.h"
 #include "ImporterAnimation.h"
+#include "ImporterAnimator.h"
 #include "ImporterTexture.h"
 #include "ImporterScript.h"
 #include "ImporterMeta.h"
