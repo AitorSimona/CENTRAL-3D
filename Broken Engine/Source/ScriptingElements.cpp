@@ -390,16 +390,41 @@ float ScriptingElements::GetRotationZ() const
 }
 
 // CAMERAS -----------------------------------------------------------
-int ScriptingElements::GetPosInFrustum(float x, float y, float z)
+int ScriptingElements::GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2)
 {
 	ComponentCamera* cam = App->renderer3D->active_camera;
 
+	int camlevel = 0;
+
 	if (cam)
-		return (int)cam->frustum.Contains({ x, y, z });
+	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		Frustum sub2 = cam->frustum;
+
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio1, cam->frustum.AspectRatio());
+		sub2.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio2, cam->frustum.AspectRatio());
+
+		// --- Check in which subdivision we are ---
+		if ((int)cam->frustum.Contains({ x, y, z }) == true)
+		{
+			camlevel = 1;
+
+			if ((int)sub1.Contains({ x, y, z }) == true)
+			{
+				camlevel = 2;
+
+				if ((int)sub2.Contains({ x, y, z }) == true)
+				{
+					camlevel = 3;
+				}
+			}
+		}
+	}
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
 
-	return 0;
+	return camlevel;
 }
 
 luabridge::LuaRef ScriptingElements::GetScript(lua_State* L)

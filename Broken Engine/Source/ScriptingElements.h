@@ -47,7 +47,7 @@ public:
 	float GetRotationZ() const;
 
 	// Current Camera
-	int GetPosInFrustum(float x, float y, float z);
+	int GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2);
 
 	//Get a script file
 	luabridge::LuaRef GetScript(lua_State* L);
