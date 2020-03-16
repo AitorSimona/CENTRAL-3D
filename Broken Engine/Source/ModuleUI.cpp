@@ -42,10 +42,6 @@ bool ModuleUI::Start()
 	// Init of all chars of the font to the map of character textures
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
-	// try to remove when working
-	/*glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
 
 	// Load first 128 characters of ASCII set
 	for (GLubyte c = 0; c < 128; c++)

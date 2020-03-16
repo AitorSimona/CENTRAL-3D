@@ -54,13 +54,25 @@ void ComponentText::Draw()
 
 void ComponentText::Print(std::string text, float x, float y, float scale, Color color)
 {
+	// --- Update transform and rotation to face camera ---
+	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
+
+	// --- Frame image with camera ---
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+		float3(size2D, 1));
+
+	float3 Movement = App->renderer3D->active_camera->frustum.Front();
+	float3 camera_pos = frustum_pos;
+
+	if (Movement.IsFinite())
+		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
+
 	// Options
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// --- Frame image with camera ---
-	float4x4 transform = float4x4::identity;
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->textShader->ID);
@@ -136,6 +148,9 @@ void ComponentText::Print(std::string text, float x, float y, float scale, Color
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
+
+	// --- Set camera back to original position ---
+	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
 json ComponentText::Save() const
 {

@@ -8,7 +8,7 @@
 #include <string>
 #include "Math.h"
 
-#define DEFAULT_FONT_SIZE 25
+#define DEFAULT_FONT_SIZE 12
 #define MAX_TEXT_SIZE 256
 BE_BEGIN_NAMESPACE
 class ResourceTexture;
@@ -26,8 +26,6 @@ public:
 
 	void Draw();
 
-	void PrintImage(std::string text, float x, float y, float scale, float3 color);
-
 	// UI Functions
 	void Scale(float2 size) { size2D = size; }
 	void Move(float2 pos) { position2D = pos; }
@@ -43,8 +41,8 @@ public:
 public:
 	bool visible = true;
 
-	float2 size2D = { 0.5f,0 };
-	float2 position2D = { -50,0 };
+	float2 size2D = { 0.02f,0.02f };
+	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 
 	Color color = White;
