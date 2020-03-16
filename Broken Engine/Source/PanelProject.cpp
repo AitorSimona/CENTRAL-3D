@@ -482,13 +482,16 @@ void PanelProject::DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2
 		selected = resource;
 		wasclicked = true;
 	}
-	// --- IF resource is a scene, load it on double click! ---
+
+	// --- Handle resource double click ---
 	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 	{
+		// If it is a scene, load it
 		if (resource->GetType() == Broken::Resource::ResourceType::SCENE)
 			EngineApp->scene_manager->SetActiveScene((Broken::ResourceScene*)resource);
+		// Open resources and files with default program
 		else {
-			// Construct absolute path (Lua virtual machine needs to have the absolute path of the script in order to compile it)
+			// Construct absolute path for ShellExecute function
 			std::string abs_path = EngineApp->fs->GetBasePath();
 
 			std::size_t d_pos = 0;

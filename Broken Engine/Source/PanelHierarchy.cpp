@@ -32,15 +32,17 @@ bool PanelHierarchy::Draw()
 			EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 
 		// Allow creating GameObjects and UI Elements from the hierarchy
-		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
-			
-			if (ImGui::BeginPopup("Create new element"));
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN
+			&& ImGui::GetMousePos().x < ImGui::GetWindowWidth() + ImGui::GetWindowPos().x && ImGui::GetMousePos().x > ImGui::GetWindowPos().x
+			&& ImGui::GetMousePos().y < ImGui::GetWindowHeight() + ImGui::GetWindowPos().y && ImGui::GetMousePos().y > ImGui::GetWindowPos().y)
+			ImGui::OpenPopup("Create new element");
 
+		if (ImGui::BeginPopup("Create new element")) {
 			if (ImGui::BeginMenu("3D Object")) {
 				if (ImGui::MenuItem("Empty Game Object")) {
 					Broken::GameObject* go = EngineApp->scene_manager->CreateEmptyGameObject();
 				}
-				
+
 				if (ImGui::MenuItem("Plane")) {
 					Broken::GameObject* obj = EngineApp->scene_manager->LoadPlane();
 					obj->GetComponent<Broken::ComponentTransform>()->SetRotation({ -90, 0, 0 });
@@ -66,13 +68,10 @@ bool PanelHierarchy::Draw()
 					cam->AddComponent(Broken::Component::ComponentType::MeshRenderer);
 					camera->SetFarPlane(10);
 				}
-
-				if (ImGui::MenuItem("Redo Octree"))
-					EngineApp->scene_manager->RedoOctree();
-
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("UI Elements")) {
+
+			if (ImGui::BeginMenu("UI Element")) {
 				if (ImGui::MenuItem("Canvas")) {
 					Broken::GameObject* canvas_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentCanvas* camera = (Broken::ComponentCanvas*)canvas_go->AddComponent(Broken::Component::ComponentType::Canvas);
@@ -97,8 +96,8 @@ bool PanelHierarchy::Draw()
 				}
 				ImGui::EndMenu();
 			}
-			ImGui::EndMenu();
-		}
+			ImGui::EndPopup();
+		}			
 	}
 	ImGui::End();
 
