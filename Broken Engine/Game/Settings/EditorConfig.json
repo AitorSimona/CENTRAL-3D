@@ -6,7 +6,7 @@
     "EditorUI": {
         "About": false,
         "Build": false,
-        "Console": false,
+        "Console": true,
         "Hierarchy": true,
         "Inspector": true,
         "Physics": true,
@@ -21,8 +21,8 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 810,
+        "height": 1080,
         "resizable": true,
-        "width": 1440
+        "width": 1920
     }
 }
