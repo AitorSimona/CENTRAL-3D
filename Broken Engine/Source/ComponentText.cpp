@@ -48,12 +48,6 @@ void ComponentText::LoadFont(const char* path, int size)
 
 void ComponentText::Draw()
 {
-	glColor4f(color.r, color.g, color.b, color.a);
-	Print(text, position2D.x, position2D.y, size2D.x, color);
-}
-
-void ComponentText::Print(std::string text, float x, float y, float scale, Color color)
-{
 	// --- Update transform and rotation to face camera ---
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
 	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
@@ -96,19 +90,13 @@ void ComponentText::Print(std::string text, float x, float y, float scale, Color
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	/////////////////////////////////////////
-	// Activate corresponding render state	
-	//glUseProgram(App->renderer3D->textShader->ID);
-	//
-	////float4x4 projection = glOrtho(0.0f, static_cast<GLfloat>(WIDTH), 0.0f, static_cast<GLfloat>(HEIGHT))
-	//GLint loc = glGetUniformLocation(App->renderer3D->textShader->ID, "projection");
-	//glUniformMatrix4fv(loc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr());
-
-	
-	glUniform3f( glGetUniformLocation(App->renderer3D->textShader->ID, "textColor"), color.r, color.g, color.b);
+	glUniform3f(glGetUniformLocation(App->renderer3D->textShader->ID, "textColor"), color.r, color.g, color.b);
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(App->ui_system->VAO);
+
+	float x = position2D.x;
+	float y = position2D.y;
 
 	// Iterate through all characters
 	std::string::const_iterator c;
@@ -116,18 +104,19 @@ void ComponentText::Print(std::string text, float x, float y, float scale, Color
 	{
 		ModuleUI::Character ch = App->ui_system->characters[*c];
 
-		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+		GLfloat xpos = x + ch.Bearing.x * size2D.x;
+		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * size2D.y;
 
-		GLfloat w = ch.Size.x * scale;
-		GLfloat h = ch.Size.y * scale;
+		GLfloat w = ch.Size.x * size2D.x;
+		GLfloat h = ch.Size.y * size2D.y;
+
 		// Update VBO for each character
 		// x,y,z ,tex.x, tex.y
 		GLfloat vertices[6][5] = {
 			{ xpos,     ypos + h,   0.0, 0.0, 0.0 },
 			{ xpos,     ypos,       0.0, 0.0, 1.0 },
 			{ xpos + w, ypos,       0.0, 1.0, 1.0 },
-									 
+
 			{ xpos,     ypos + h,   0.0, 0.0, 0.0 },
 			{ xpos + w, ypos,       0.0, 1.0, 1.0 },
 			{ xpos + w, ypos + h,   0.0, 1.0, 0.0 }
@@ -142,7 +131,7 @@ void ComponentText::Print(std::string text, float x, float y, float scale, Color
 		// Render quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+		x += (ch.Advance >> 6) * size2D.x; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -152,6 +141,11 @@ void ComponentText::Print(std::string text, float x, float y, float scale, Color
 	// --- Set camera back to original position ---
 	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
+
+//void ComponentText::Print(std::string text, float x, float y, float scale, Color color)
+//{
+//	
+//}
 json ComponentText::Save() const
 {
 	json node;
@@ -187,31 +181,31 @@ void ComponentText::CreateInspectorNode()
 			ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
 
 
-		ImGui::Text(text);
+		ImGui::Text(text.c_str());
 
-		if (ImGui::InputTextWithHint("TextChange", text, buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+		if (ImGui::InputTextWithHint("TextChange", text.c_str(), buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 		{
-			strcpy_s(text, buffer);
-
+			//strcpy_s(text, buffer);
+			text = buffer;
 		}
 
 		// Size
 		ImGui::Text("Size:    ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##textsize", &size2D.x);
+		ImGui::DragFloat("x##textsize", &size2D.x, 0.01f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##textsize", &size2D.y);
+		ImGui::DragFloat("y##textsize", &size2D.y, 0.01f);
 
 		// Position
 		ImGui::Text("Position:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##textposition", &position2D.x);
+		ImGui::DragFloat("x##textposition", &position2D.x, 0.1f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##textposition", &position2D.y);
+		ImGui::DragFloat("y##textposition", &position2D.y, 0.1f);
 
 		// Rotation
 		ImGui::Text("Rotation:");

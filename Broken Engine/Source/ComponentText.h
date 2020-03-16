@@ -31,7 +31,6 @@ public:
 	void Move(float2 pos) { position2D = pos; }
 	void Rotate(float rot) { rotation2D = rot; }
 
-	void Print(std::string text, float x, float y, float scale, Color color);
 
 	// --- Save & Load ---
 	json Save() const override;
@@ -50,11 +49,11 @@ public:
 public:
 	ComponentCanvas* canvas = nullptr;
 	ResourceTexture* texture = nullptr;
-	//glfreetype::font_data font;
 
 	float font_size = DEFAULT_FONT_SIZE;
 
-	char text[MAX_TEXT_SIZE] = "SampleText";
+	std::string text = "SampleText";
+	//std::string buffer = "SampleText";
 	char buffer[MAX_TEXT_SIZE] = "SampleText";
 };
 
