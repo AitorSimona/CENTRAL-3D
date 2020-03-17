@@ -9,6 +9,7 @@
 #include "ModuleInput.h"
 #include "ResourceAnimation.h"
 #include "ResourceAnimator.h"
+#include "ImporterAnimator.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
@@ -26,7 +27,12 @@ ComponentAnimation::~ComponentAnimation()
 {
 	for (int i = 0; i < animations.size(); i++)
 	{
-		delete animations[i];
+		if (animations[i])
+		{
+			delete animations[i];
+			animations[i] = nullptr;
+		}
+		
 	}
 
 	animations.clear();
@@ -46,6 +52,12 @@ ComponentAnimation::~ComponentAnimation()
 	{
 		res_anim->Release();
 		res_anim->RemoveUser(GO);
+	}
+
+	if (res_animator && res_animator->IsInMemory())
+	{
+		res_animator->Release();
+		res_animator->RemoveUser(GO);
 	}
 
 }
@@ -238,13 +250,17 @@ void ComponentAnimation::ONResourceEvent(uint UID, Resource::ResourceNotificatio
 	switch (type)
 	{
 	case Resource::ResourceNotificationType::Overwrite:
-		if (res_anim && UID == res_anim->GetUID())
-			res_anim = (ResourceAnimation*)App->resources->GetResource(UID);
+		if (res_animator && UID == res_animator->GetUID())
+			LoadAnimator(false);
+			//res_anim = (ResourceAnimation*)App->resources->GetResource(UID);
 		break;
 
 	case Resource::ResourceNotificationType::Deletion:
 		if (res_anim && UID == res_anim->GetUID())
 			res_anim = nullptr;
+
+		if (res_animator && UID == res_animator->GetUID())
+			res_animator = nullptr;
 		break;
 
 	default:
@@ -269,18 +285,29 @@ void ComponentAnimation::CreateInspectorNode()
 			ImGui::Checkbox("Draw Bones", &draw_bones);
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);
+			
+			if (res_animator)
+			{
+				if (ImGui::Button("Save animation info"))
+				{
+					
+					res_animator->FreeMemory();
+
+					for (auto iterator = animations.begin(); iterator != animations.end(); ++iterator)
+					{
+						Animation* anim = new Animation((*iterator)->name, (*iterator)->start, (*iterator)->end, (*iterator)->loop, (*iterator)->Default);
+						res_animator->animations.push_back(anim);
+					}
+						
+					ImporterAnimator* IAnim = App->resources->GetImporter<ImporterAnimator>();
+					IAnim->Save(res_animator);
+				}
+			}
+			else
+				ImGui::Text("No Animator applied");
+		
+
 			ImGui::SameLine();
-			ImGui::Text("Save/Load");
-			ImGui::SameLine();
-
-			//if (ImGui::BeginCombo("##Animation combo", "Anims", ImGuiComboFlags_NoPreview))
-			//{
-			//	/*if (ImGui::Button("Save animation info  "))
-			//		int a = 1;*/
-
-			//	ImGui::EndCombo();
-			//}
-
 			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
 
 			// --- Handle drag & drop ---
@@ -293,38 +320,7 @@ void ComponentAnimation::CreateInspectorNode()
 
 					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR) 
 					{
-						for (auto it = animations.begin(); it != animations.end(); ++it)
-						{
-							if (res_animator)
-							{
-								bool found = false;
-								for (auto iterator = res_animator->animations.begin(); iterator != res_animator->animations.end(); ++iterator)
-								{
-									
-									if ((*it) == (*iterator))
-									{
-										found = true;
-									}
-								}
-								if(!found)
-									delete (*it);
-
-							}
-							else
-								delete (*it);
-						}
-
-						if (res_animator)
-							res_animator->Release();
-
-						animations.clear();
-
-						res_animator = (ResourceAnimator*)App->resources->GetResource(UID);
-
-						for (auto it = res_animator->animations.begin(); it != res_animator->animations.end(); ++it)
-						{
-							animations.push_back(*it);
-						}
+						LoadAnimator(true, UID);
 					}
 				}
 
@@ -613,54 +609,54 @@ bool ComponentAnimation::HasSkeleton(std::vector<GameObject*> collector) const
 
 		return false;
 }
-//
-//void ComponentAnimation::AnimationSave()
-//{
-//	json node;
-//
-//	for (int i = 0; i < animations.size(); ++i)
-//	{
-//		node[animations[i]->name]["name"] = animations[i]->name;
-//		node[animations[i]->name]["start_frame"] = std::to_string(animations[i]->start);
-//		node[animations[i]->name]["end_frame"] = std::to_string(animations[i]->end);
-//		node[animations[i]->name]["loop"] = std::to_string(animations[i]->loop);
-//		node[animations[i]->name]["speed"] = std::to_string(animations[i]->speed);
-//	}
-//
-//	// --- Serialize JSON to string ---
-//	std::string data;
-//	App->GetJLoader()->Serialize(node, data);
-//
-//	// --- Finally Save to file ---
-//	char* buffer = (char*)data.data();
-//	uint size = data.length();
-//
-//	App->fs->Save(animation_path.c_str(), buffer, size);
-//
-//}
-//
-//void ComponentAnimation::AnimationLoad()
-//{
-//	if (animations.size() > 0)
-//		animations.clear();
-//	else
-//	{
-//		std::string tmp = "Settings/AnimationInfo.animator";
-//		json file = App->GetJLoader()->Load(tmp.c_str());
-//
-//		if (!file.is_null())
-//		{
-//			for (json::iterator it = file.begin(); it != file.end(); ++it)
-//			{
-//				std::string name = file[it.key().c_str()]["name"];
-//				std::string start_frm = file[it.key().c_str()]["start_frame"];
-//				std::string end_frm = file[it.key().c_str()]["end_frame"];
-//				std::string is_loop = file[it.key().c_str()]["loop"];
-//				std::string speed = file[it.key().c_str()]["speed"];
-//
-//				CreateAnimation(name, std::stoi(start_frm), std::stoi(end_frm), std::stoi(is_loop));
-//			}
-//		}
-//	}
-//	
-//}
+
+void ComponentAnimation::LoadAnimator(bool drop, uint UID)
+{
+	for (auto it = animations.begin(); it != animations.end(); ++it)
+	{
+		if (res_animator)
+		{
+			bool found = false;
+			for (auto iterator = res_animator->animations.begin(); iterator != res_animator->animations.end(); ++iterator)
+			{
+
+				if ((*it) == (*iterator))
+				{
+					found = true;
+				}
+			}
+
+			if (!found)
+			{
+				delete (*it);
+				(*it) = nullptr;
+			}
+
+		}
+		else
+		{
+			delete (*it);
+			(*it) = nullptr;
+		}
+	}
+
+	if (drop && res_animator)
+	{
+		res_animator->Release();
+		res_animator->RemoveUser(GO);
+	}
+
+	animations.clear();
+
+	if (drop)
+	{
+		res_animator = (ResourceAnimator*)App->resources->GetResource(UID);
+		res_animator->AddUser(GO);
+	}
+	
+
+	for (auto it = res_animator->animations.begin(); it != res_animator->animations.end(); ++it)
+	{
+		CreateAnimation((*it)->name, (*it)->start, (*it)->end, (*it)->loop, (*it)->Default);
+	}
+}

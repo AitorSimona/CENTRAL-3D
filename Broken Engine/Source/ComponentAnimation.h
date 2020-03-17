@@ -67,10 +67,7 @@ private:
 
 	bool HasSkeleton(std::vector<GameObject*> GO) const;
 
-	//// --- Animation Save & Load ---
-	//void AnimationSave();
-	//void AnimationLoad();
-	//std::string	animation_path = "/Settings/AnimationInfo.animator";
+	void LoadAnimator(bool drop, uint UID = 0);
 
 public:
 

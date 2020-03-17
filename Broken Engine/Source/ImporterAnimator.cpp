@@ -3,6 +3,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 
+#include "ComponentAnimation.h"
 #include "ResourceAnimator.h"
 #include "ResourceMeta.h"
 #include "ImporterMeta.h"
@@ -42,26 +43,27 @@ Resource* ImporterAnimator::Import(ImportData& IData) const
 
 void ImporterAnimator::Save(ResourceAnimator* animator) const
 {
-	//json node;
+	json node;
 
-	//for (int i = 0; i < animations.size(); ++i)
-	//{
-	//	node[animations[i]->name]["name"] = animations[i]->name;
-	//	node[animations[i]->name]["start_frame"] = std::to_string(animations[i]->start);
-	//	node[animations[i]->name]["end_frame"] = std::to_string(animations[i]->end);
-	//	node[animations[i]->name]["loop"] = std::to_string(animations[i]->loop);
-	//	node[animations[i]->name]["speed"] = std::to_string(animations[i]->speed);
-	//}
+	for (int i = 0; i < animator->animations.size(); ++i)
+	{
+		node[animator->animations[i]->name]["name"] = animator->animations[i]->name;
+		node[animator->animations[i]->name]["start_frame"] = std::to_string(animator->animations[i]->start);
+		node[animator->animations[i]->name]["end_frame"] = std::to_string(animator->animations[i]->end);
+		node[animator->animations[i]->name]["loop"] = animator->animations[i]->loop;
+		node[animator->animations[i]->name]["default"] = animator->animations[i]->Default;
+		//node[animator->animations[i]->name]["speed"] = animator->animations[i]->speed;
+	}
 
-	//// --- Serialize JSON to string ---
-	//std::string data;
-	//App->GetJLoader()->Serialize(node, data);
+	// --- Serialize JSON to string ---
+	std::string data;
+	App->GetJLoader()->Serialize(node, data);
 
-	//// --- Finally Save to file ---
-	//char* buffer = (char*)data.data();
-	//uint size = data.length();
+	// --- Finally Save to file ---
+	char* buffer = (char*)data.data();
+	uint size = data.length();
 
-	//App->fs->Save(animation_path.c_str(), buffer, size);
+	App->fs->Save(animator->GetResourceFile(), buffer, size);
 }
 
 

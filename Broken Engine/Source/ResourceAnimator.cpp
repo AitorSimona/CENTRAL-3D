@@ -23,7 +23,8 @@ ResourceAnimator::ResourceAnimator(uint UID, const char* source_file) : Resource
 	previewTexID = App->gui->animatorTexID;
 }
 
-ResourceAnimator::~ResourceAnimator() {
+ResourceAnimator::~ResourceAnimator() 
+{
 
 }
 
@@ -53,17 +54,23 @@ bool ResourceAnimator::LoadInMemory()
 
 void ResourceAnimator::FreeMemory() 
 {
-	for (auto it = animations.begin(); it != animations.end(); ++it)
+	for (int i = 0; i < animations.size(); i++)
 	{
-		delete* it;
+		if (animations[i])
+		{
+			delete animations[i];
+			animations[i] = nullptr;
+		}
+
 	}
 
 	animations.clear();
-
 }
 
 void ResourceAnimator::OnOverwrite()
 {
+	FreeMemory();
+	LoadInMemory();
 	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
