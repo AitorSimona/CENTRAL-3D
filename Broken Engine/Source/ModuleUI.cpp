@@ -1,10 +1,11 @@
 #include "BrokenCore.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "ModuleUI.h"
 #include "ModuleInput.h"
 #include "ModuleSceneManager.h"
-#include "GameObject.h"
 #include "ModuleGui.h"
+
 #include "Component.h"
 #include "ComponentCanvas.h"
 #include "ComponentButton.h"
@@ -105,11 +106,8 @@ void ModuleUI::Clear()
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)
 {
-	mouse_pos.x = App->input->GetMouseX();
-	mouse_pos.y = App->input->GetMouseY();
-
-	//mouse_pos.x -= App->editor->tab_viewport->pos_x + 7;
-	//mouse_pos.y = math::Abs(mouse_pos.y - (App->editor->tab_viewport->pos_y + 26 + App->editor->tab_viewport->height));// -mouse_pos.y + App->editor->focused_panel->pos_x;
+	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX + 7;
+	mouse_pos.y = math::Abs(App->input->GetMouseY() - (App->gui->sceneY + 26 + App->gui->sceneHeight));
 
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
 	if (SDL_HasIntersection(&MouseCollider, &collider))

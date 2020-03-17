@@ -9,6 +9,8 @@
 
 BE_BEGIN_NAMESPACE
 
+class ResourceTexture;
+
 class BROKEN_API ComponentCanvas : public Component
 {
 public:
@@ -70,7 +72,7 @@ protected:
 	SDL_Rect collider = { 0,0,0,0 };
 
 private:
-	//ResourceTexture* texture = nullptr;
+	ResourceTexture* texture = nullptr;
 	std::vector<Component*> elements;
 };
 

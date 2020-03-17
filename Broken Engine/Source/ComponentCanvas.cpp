@@ -1,8 +1,11 @@
 #include "ComponentCanvas.h"
-#include "Application.h"
 #include "GameObject.h"
+#include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
+#include "ModuleTextures.h"
+#include "PanelScene.h"
+#include "ModuleRenderer3D.h"
 
 #include "ComponentText.h"
 #include "ComponentImage.h"
@@ -22,7 +25,7 @@ ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject,
 	interactable = false;
 	draggable = false;
 
-	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "Canvas Texture");
+	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "Canvas Texture");
 
 	App->ui_system->AddCanvas(this);
 }
@@ -40,7 +43,66 @@ void ComponentCanvas::Update()
 
 void ComponentCanvas::Draw() const
 {
-	//draw canvas texture
+	// Draw canvas texture
+		// --- Update transform and rotation to face camera ---
+	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
+
+	// --- Frame image with camera ---
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+		float3(size2D * 0.01f, 1));
+
+	float3 Movement = App->renderer3D->active_camera->frustum.Front();
+	float3 camera_pos = frustum_pos;
+
+	if (Movement.IsFinite())
+		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
+
+	// --- Set Uniforms ---
+	glUseProgram(App->renderer3D->defaultShader->ID);
+
+	// color tint
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, -1);
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
+
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+	glUniform1i(TextureLocation, 0); //reset texture location
+
+	// --- Draw plane with given texture ---
+	glBindVertexArray(App->scene_manager->plane->VAO);
+
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
+	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+
+	// --- Set camera back to original position ---
+	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
+
 
 	// Draw elements inside canvas
 	for (int i = 0; i < elements.size(); i++)
