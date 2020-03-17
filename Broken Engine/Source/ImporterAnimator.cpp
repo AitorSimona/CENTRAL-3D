@@ -42,7 +42,26 @@ Resource* ImporterAnimator::Import(ImportData& IData) const
 
 void ImporterAnimator::Save(ResourceAnimator* animator) const
 {
-	
+	//json node;
+
+	//for (int i = 0; i < animations.size(); ++i)
+	//{
+	//	node[animations[i]->name]["name"] = animations[i]->name;
+	//	node[animations[i]->name]["start_frame"] = std::to_string(animations[i]->start);
+	//	node[animations[i]->name]["end_frame"] = std::to_string(animations[i]->end);
+	//	node[animations[i]->name]["loop"] = std::to_string(animations[i]->loop);
+	//	node[animations[i]->name]["speed"] = std::to_string(animations[i]->speed);
+	//}
+
+	//// --- Serialize JSON to string ---
+	//std::string data;
+	//App->GetJLoader()->Serialize(node, data);
+
+	//// --- Finally Save to file ---
+	//char* buffer = (char*)data.data();
+	//uint size = data.length();
+
+	//App->fs->Save(animation_path.c_str(), buffer, size);
 }
 
 

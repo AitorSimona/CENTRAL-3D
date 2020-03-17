@@ -20,7 +20,7 @@ ResourceAnimator::ResourceAnimator(uint UID, const char* source_file) : Resource
 	std::string file = source_file;
 	resource_file = file;
 
-	previewTexID = App->gui->defaultfileTexID;
+	previewTexID = App->gui->animatorTexID;
 }
 
 ResourceAnimator::~ResourceAnimator() {

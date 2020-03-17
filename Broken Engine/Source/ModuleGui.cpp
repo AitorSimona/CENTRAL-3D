@@ -215,6 +215,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &prefabTexID);
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
+	glDeleteTextures(1, &animatorTexID);
 
 	return ret;
 }
@@ -322,6 +323,7 @@ void ModuleGui::CreateIcons()
 	prefabTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Prefab.png", width, height, -1);
 	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
+	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
 }
