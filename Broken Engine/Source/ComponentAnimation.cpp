@@ -337,7 +337,7 @@ void ComponentAnimation::CreateInspectorNode()
 				// --- Game Object Name Setter ---
 				char Anim_name[100] = "";
 				strcpy_s(Anim_name, 100, animations[i]->name.c_str());
-				std::string str = "Aniamtion";
+				std::string str = "Animation ";
 				ImGui::PushItemWidth(200); if (ImGui::InputText(str.append(std::to_string(i + 1)).c_str(), Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 					animations[i]->name = Anim_name;
 
