@@ -5,20 +5,11 @@
 #include "ModuleScripting.h"
 #include "ModuleSceneManager.h"
 #include "ResourceScene.h"
-#include "ComponentTransform.h"
 #include "GameObject.h"
-
-#include "ComponentParticleEmitter.h"
-#include "ComponentDynamicRigidBody.h"
-#include "ComponentCollider.h"
-#include "ComponentAudioSource.h"
-#include "ComponentAnimation.h"
-
+#include "Components.h"
 #include "ModuleRenderer3D.h"
-#include "ComponentCamera.h"
 
 #include "../Game/Assets/Sounds/Wwise_IDs.h"
-#include "ComponentAudioSource.h"
 #include "ModuleAudio.h"
 
 #include "ScriptData.h"
@@ -154,6 +145,55 @@ void ScriptingElements::TranslateGameObject(uint gameobject_UID, float x, float 
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+}
+
+uint ScriptingElements::GetComponentFromGO(const char* component_name, const char* go_name)
+{
+	uint ret = 0;
+	GameObject* go = nullptr;
+
+	if (go_name == "NO_NAME")
+		go = App->scripting->current_script->my_component->GetContainerGameObject();
+	else
+		go = App->scene_manager->currentScene->GetGOWithName(go_name);		
+
+	if (go != nullptr)
+	{
+		Component* comp = nullptr;
+		std::string name = component_name;
+
+		if (name.compare("Animation") == 0)
+			comp = (Component*)go->GetComponent<ComponentAnimation>();
+		else if (name.compare("Audio") == 0)
+			comp = (Component*)go->GetComponent<ComponentAudioSource>();
+		else if (name.compare("Bone") == 0)
+			comp = (Component*)go->GetComponent<ComponentBone>();
+		else if (name.compare("Camera") == 0)
+			comp = (Component*)go->GetComponent<ComponentCamera>();
+		else if (name.compare("Collider") == 0)
+			comp = (Component*)go->GetComponent<ComponentCollider>();
+		else if (name.compare("Rigidbody") == 0)
+			comp = (Component*)go->GetComponent<ComponentDynamicRigidBody>();
+		else if (name.compare("Mesh") == 0)
+			comp = (Component*)go->GetComponent<ComponentMesh>();
+		else if (name.compare("Emitter") == 0)
+			comp = (Component*)go->GetComponent<ComponentParticleEmitter>();
+
+		if (comp != nullptr)
+		{
+			ret = comp->GetUID();
+		}
+		else
+		{
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Component %s was not found inside Gameobject %s! 0 will be returned", component_name, go_name);
+		}
+	}
+	else
+	{
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject %s was not found! 0 will be returned", go_name);
+	}
+	
+	return ret;
 }
 
 float ScriptingElements::GetPositionX() const
@@ -390,20 +430,55 @@ float ScriptingElements::GetRotationZ() const
 }
 
 // CAMERAS -----------------------------------------------------------
-int ScriptingElements::GetPosInFrustum(float x, float y, float z)
+int ScriptingElements::GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2)
 {
 	ComponentCamera* cam = App->renderer3D->active_camera;
 
+	int camlevel = 0;
+
 	if (cam)
-		return (int)cam->frustum.Contains({ x, y, z });
+	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		Frustum sub2 = cam->frustum;
+
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio1, cam->frustum.AspectRatio());
+		sub2.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio2, cam->frustum.AspectRatio());
+
+		// --- Check in which subdivision we are ---
+		if ((int)cam->frustum.Contains({ x, y, z }) == true)
+		{
+			camlevel = 1;
+
+			if ((int)sub1.Contains({ x, y, z }) == true)
+			{
+				camlevel = 2;
+
+				if ((int)sub2.Contains({ x, y, z }) == true)
+				{
+					camlevel = 3;
+				}
+			}
+		}
+	}
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
 
-	return 0;
+	return camlevel;
 }
 
-luabridge::LuaRef ScriptingElements::GetScript(lua_State* L)
+luabridge::LuaRef ScriptingElements::GetScript(uint go_UID, lua_State* L)
 {
-	luabridge::LuaRef ret(L);
+	luabridge::LuaRef ret = 0;
+
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UID);
+
+	if (go != nullptr)
+	{
+		ComponentScript* component_script = go->GetComponent<ComponentScript>();
+		ScriptInstance* script = App->scripting->GetScriptInstanceFromComponent(component_script);
+
+		ret = script->my_table_class;
+	}
 	return ret;
 }

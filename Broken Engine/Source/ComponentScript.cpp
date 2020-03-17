@@ -227,6 +227,8 @@ void ComponentScript::Load(json& node)
 		json js2 = node["Script variables"][name]["Type"];
 		std::string type = js2.get<std::string>();
 
+		script_variables[i].changed_value = true; // We make sure the value will be changed in the script when we press PLAY
+
 		if (type.compare("Boolean") == 0) {
 			script_variables[i].type = VarType::BOOLEAN;
 			script_variables[i].editor_value.as_boolean = node["Script variables"][name]["Value"];
