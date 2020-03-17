@@ -11,7 +11,6 @@ class PanelResources;
 BE_BEGIN_NAMESPACE
 
 class ResourceFolder;
-class ResourceFolder;
 class ResourceScene;
 class ResourceModel;
 class ResourceMaterial;
@@ -23,6 +22,7 @@ class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
 class ResourceScript;
+class ResourceFont;
 
 class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterTexture;
@@ -35,6 +35,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterScene;
 	friend class ImporterFolder;
 	friend class ImporterScript;
+	friend class ImporterFont;
 	friend class PanelResources;
 	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
@@ -71,6 +72,8 @@ public:
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
+	//
+	Resource* ImportFont(Importer::ImportData& IData);
 
 	void HandleFsChanges();
 	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret);
@@ -133,6 +136,7 @@ private:
 	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
+	std::map<uint, ResourceFont*> fonts;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;

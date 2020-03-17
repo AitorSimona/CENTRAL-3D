@@ -10,8 +10,11 @@
 
 #define DEFAULT_FONT_SIZE 12
 #define MAX_TEXT_SIZE 256
+
 BE_BEGIN_NAMESPACE
+
 class ResourceTexture;
+class ResourceFont;
 class ComponentCanvas;
 
 class BROKEN_API ComponentText : public Component
@@ -21,8 +24,6 @@ public:
 	virtual ~ComponentText();
 
 	void Update() override;
-
-	void LoadFont(const char* path, int size);
 
 	void Draw();
 
@@ -50,7 +51,7 @@ public:
 	ComponentCanvas* canvas = nullptr;
 	ResourceTexture* texture = nullptr;
 
-	float font_size = DEFAULT_FONT_SIZE;
+	ResourceFont* font = nullptr;
 
 	std::string text = "SampleText";
 	//std::string buffer = "SampleText";

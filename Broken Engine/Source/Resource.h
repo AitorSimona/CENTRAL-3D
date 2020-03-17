@@ -23,6 +23,7 @@ public:
 		SHADER_OBJECT,
 		SCRIPT,
 		META,
+		FONT,
 		UNKNOWN,
 	};
 	enum class ResourceNotificationType {

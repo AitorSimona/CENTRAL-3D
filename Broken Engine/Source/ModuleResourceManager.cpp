@@ -53,6 +53,7 @@ bool ModuleResourceManager::Init(json& file)
 	importers.push_back(new ImporterTexture());
 	importers.push_back(new ImporterScript);
 	importers.push_back(new ImporterMeta());
+	importers.push_back(new ImporterFont());
 
 	return true;
 }
@@ -77,6 +78,8 @@ bool ModuleResourceManager::Start()
 	filters.push_back("png");
 	filters.push_back("lua");
 	filters.push_back("scene");
+	filters.push_back("ttf");
+	filters.push_back("otf");
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -172,7 +175,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Import Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -227,6 +230,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::META:
 		resource = ImportMeta(IData);
+		break;
+
+	case Resource::ResourceType::FONT:
+		resource = ImportFont(IData);
 		break;
 
 	case Resource::ResourceType::SCRIPT:
@@ -492,6 +499,22 @@ Resource* ModuleResourceManager::ImportMeta(Importer::ImportData& IData)
 
 
 	return resource;
+}
+
+Resource* ModuleResourceManager::ImportFont(Importer::ImportData& IData)
+{
+	Resource* font = nullptr;
+
+	ImporterFont* IFont = GetImporter<ImporterFont>();
+
+	if (IsFileImported(IData.path))
+		font = IFont->Load(IData.path);
+	else 
+	{
+		font = IFont->Import(IData);
+	}
+
+	return font;
 }
 
 void ModuleResourceManager::HandleFsChanges()
@@ -814,6 +837,10 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, co
 		scripts[resource->GetUID()] = (ResourceScript*)resource;
 		break;
 
+	case Resource::ResourceType::FONT:
+		resource = (Resource*)new ResourceFont(App->GetRandom().Int(), source_file);
+		fonts[resource->GetUID()] = (ResourceFont*)resource;
+		break;
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
@@ -901,6 +928,10 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		scripts[resource->GetUID()] = (ResourceScript*)resource;
 		break;
 
+	case Resource::ResourceType::FONT:
+		resource = (Resource*)new ResourceFont(UID, source_file);
+		fonts[resource->GetUID()] = (ResourceFont*)resource;
+		break;
 
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
@@ -937,6 +968,7 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "vertex" || extension == "fragment" ? Resource::ResourceType::SHADER_OBJECT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "lua" ? Resource::ResourceType::SCRIPT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "ttf" || extension == "otf" ? Resource::ResourceType::FONT : type) : type;
 
 	return type;
 }

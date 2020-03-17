@@ -15,5 +15,6 @@
 #include "ResourceShader.h"
 #include "ResourceScript.h"
 #include "ResourceMeta.h"
+#include "ResourceFont.h"
 
 #endif // __RESOURCES_H__

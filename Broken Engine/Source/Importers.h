@@ -13,5 +13,6 @@
 #include "ImporterTexture.h"
 #include "ImporterScript.h"
 #include "ImporterMeta.h"
+#include "ImporterFont.h"
 
 #endif // __IMPORTERS_H__

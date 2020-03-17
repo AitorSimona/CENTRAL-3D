@@ -8,6 +8,7 @@
 #include "ModuleRenderer3D.h"
 #include "ResourceShader.h"
 #include "ComponentCamera.h"
+#include "ResourceFont.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
@@ -39,11 +40,6 @@ void ComponentText::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
-}
-
-void ComponentText::LoadFont(const char* path, int size)
-{
-	//font.init(path, size /* size */);
 }
 
 void ComponentText::Draw()
@@ -93,7 +89,7 @@ void ComponentText::Draw()
 	glUniform3f(glGetUniformLocation(App->renderer3D->textShader->ID, "textColor"), color.r, color.g, color.b);
 	glActiveTexture(GL_TEXTURE0);
 
-	glBindVertexArray(App->ui_system->VAO);
+	glBindVertexArray(font->VAO);
 
 	float x = position2D.x;
 	float y = position2D.y;
@@ -102,7 +98,7 @@ void ComponentText::Draw()
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++)
 	{
-		ModuleUI::Character ch = App->ui_system->characters[*c];
+		ResourceFont::Character ch = font->characters[*c];
 
 		GLfloat xpos = x + ch.Bearing.x * size2D.x;
 		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * size2D.y;
@@ -124,7 +120,7 @@ void ComponentText::Draw()
 		// Render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 		// Update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, App->ui_system->VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, font->VBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // Be sure to use glBufferSubData and not glBufferData
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -172,11 +168,11 @@ void ComponentText::CreateInspectorNode()
 
 		ImGui::ColorEdit3("Color", (float*)&color);
 
-		if (ImGui::DragFloat("Font size", &font_size, 1.0f, 0.0f, 100.0f, "%.2f")) {
+		//if (ImGui::DragFloat("Font size", &font->font_size, 1.0f, 0.0f, 100.0f, "%.2f")) {
 
-			//font.clean();
-			//font.init(font.path, font_size);
-		}
+		//	//font.clean();
+		//	//font.init(font.path, font_size);
+		//}
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
 
