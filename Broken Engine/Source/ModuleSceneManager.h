@@ -108,7 +108,7 @@ public:
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	bool display_tree = true;
+	bool display_tree = false;
 	bool display_boundingboxes = false;
 	bool display_grid = true;
 	bool update_tree=false;

@@ -385,11 +385,14 @@ void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChild
 			//start the loop from 1, because the GO in the index 0 is the parent GO
 			for (int i = 1; i < children.size(); ++i)
 			{
-				children[i]->Static = setStatic;
-				tree.Insert(children[i]);
-				currentScene->StaticGameObjects[children[i]->GetUID()] = children[i];
+				if (!children[i]->Static) {
+					children[i]->Static = setStatic;
 
-				currentScene->NoStaticGameObjects.erase(children[i]->GetUID());
+					tree.Insert(children[i]);
+					currentScene->StaticGameObjects[children[i]->GetUID()] = children[i];
+
+					currentScene->NoStaticGameObjects.erase(children[i]->GetUID());
+				}
 			}
 		}
 	}
@@ -401,6 +404,8 @@ void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChild
 		// --- Remove go from octree and currentscene's static go map ---
 		tree.Erase(go);
 		currentScene->StaticGameObjects.erase(go->GetUID());
+
+		update_tree = true;
 
 		//If recursive, set the children to non-static
 		if (setChildren)
