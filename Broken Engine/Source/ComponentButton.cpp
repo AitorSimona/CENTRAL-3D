@@ -131,11 +131,57 @@ void ComponentButton::Draw()
 json ComponentButton::Save() const
 {
 	json node;
+
+	node["Resources"]["ResourceTexture"];
+
+	if (texture)
+		node["Resources"]["ResourceTexture"] = std::string(texture->GetResourceFile());
+
+	node["position2Dx"] = std::to_string(position2D.x);
+	node["position2Dy"] = std::to_string(position2D.y);
+
+	node["size2Dx"] = std::to_string(size2D.x);
+	node["size2Dy"] = std::to_string(size2D.y);
+
+	node["colliderX"] = std::to_string(collider.x);
+	node["colliderY"] = std::to_string(collider.y);
+	node["colliderW"] = std::to_string(collider.w);
+	node["colliderH"] = std::to_string(collider.h);
+
+	node["State"] = std::to_string(state);
+
 	return node;
 }
 
 void ComponentButton::Load(json& node)
 {
+	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
+	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	path = path.substr(0, path.find_last_of("."));
+
+	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
+
+	if (texture)
+		texture->AddUser(GO);
+
+	std::string position2Dx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
+	std::string position2Dy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
+
+	std::string size2Dx = node["size2Dx"].is_null() ? "0" : node["size2Dx"];
+	std::string size2Dy = node["size2Dy"].is_null() ? "0" : node["size2Dy"];
+
+	std::string colliderX = node["colliderX"].is_null() ? "0" : node["colliderX"];
+	std::string colliderY = node["colliderY"].is_null() ? "0" : node["colliderY"];
+	std::string colliderW = node["colliderW"].is_null() ? "0" : node["colliderW"];
+	std::string colliderH = node["colliderH"].is_null() ? "0" : node["colliderH"];
+
+	std::string state_str = node["State"].is_null() ? "0" : node["State"];
+
+	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
+	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
+	float4 collider_bfr = float4(std::stof(colliderX), std::stof(colliderY), std::stof(colliderW), std::stof(colliderH));
+	collider = { collider_bfr.x, collider_bfr.y, collider_bfr.z, collider_bfr.w };
+	state = State(std::stoi(state_str));
 }
 
 void ComponentButton::CreateInspectorNode()
