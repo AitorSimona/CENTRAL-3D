@@ -45,7 +45,8 @@ public:
 	GameObject* GetContainerGameObject() const;
 	bool& GetActive();
 	bool IsEnabled() const;
-
+	uint GetUID() const { return UID; };
+	void SetUID(uint new_UID) { UID = new_UID; };
 
 	virtual void Update() {};
 
@@ -62,6 +63,7 @@ protected:
 
 	GameObject* GO = nullptr;
 	ComponentType type = ComponentType::Unknown;
+	uint UID = 0;
 };
 
 BE_END_NAMESPACE
