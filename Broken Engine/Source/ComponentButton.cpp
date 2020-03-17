@@ -47,13 +47,18 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 ComponentButton::~ComponentButton()
 {
 	if (texture)
-	texture->Release();
+	{
+		texture->Release();
+		texture->RemoveUser(GO);
+	}
 }
 
 void ComponentButton::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
+
+	script = (ComponentScript*)GO->HasComponent(Component::ComponentType::Script); //get script component
 }
 
 void ComponentButton::Draw()
@@ -307,14 +312,6 @@ void ComponentButton::CreateInspectorNode()
 		//ImGui::SetNextItemWidth(60);
 		//ImGui::DragFloat("y##buttontextposition", &text_pos.y);
 
-
-		// Action
-		ImGui::Separator();
-		if (ImGui::Button("Action"))
-		{
-			//drag and drop script
-		}
-
 		ImGui::Separator();
 		ImGui::Separator();
 		ImGui::TreePop();
@@ -360,13 +357,16 @@ void ComponentButton::UpdateState()
 
 void ComponentButton::UpdateCollider()
 {
-	collider.x = position2D.x - size2D.x; //global pos x
-	collider.y = position2D.y - size2D.y; //global pos y
+	collider.x = canvas->position2D.x + position2D.x; //global pos x
+	collider.y = canvas->position2D.y + position2D.y; //global pos y
 	collider.w = size2D.x * 2; //real width
 	collider.h = size2D.y * 2; //real height
 }
 
 void ComponentButton::OnClick()
 {
+	if (script == nullptr)
+		return;
 
+	script->Enable();
 }

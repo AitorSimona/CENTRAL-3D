@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "ComponentCanvas.h"
+#include "ComponentScript.h"
 
 BE_BEGIN_NAMESPACE
 
@@ -58,6 +59,7 @@ public:
 public:
 	ComponentCanvas* canvas = nullptr;
 	ResourceTexture* texture = nullptr;
+	ComponentScript* script = nullptr;
 
 private:
 	SDL_Rect collider;
