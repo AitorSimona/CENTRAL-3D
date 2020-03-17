@@ -106,8 +106,8 @@ void ModuleUI::Clear()
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)
 {
-	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX + 7;
-	mouse_pos.y = math::Abs(App->input->GetMouseY() - (App->gui->sceneY + 26 + App->gui->sceneHeight));
+	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX;
+	mouse_pos.y = math::Abs(App->input->GetMouseY() - App->gui->sceneY);
 
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
 	if (SDL_HasIntersection(&MouseCollider, &collider))
