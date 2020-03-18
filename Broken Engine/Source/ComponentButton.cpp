@@ -64,16 +64,15 @@ void ComponentButton::Update()
 void ComponentButton::Draw()
 {
 	// --- Update transform and rotation to face camera ---
-	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
-	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
 
 	// --- Frame image with camera ---
-	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+	float4x4 transform = transform.FromTRS(App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1),
 		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
-		float3(size2D, 1));
+		float3(size2D, 1.0f));
 
 	float3 Movement = App->renderer3D->active_camera->frustum.Front();
-	float3 camera_pos = frustum_pos;
+	float3 camera_pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 center = App->renderer3D->active_camera->frustum.NearPlanePos(-1, 1);
 
 	if (Movement.IsFinite())
 		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
@@ -357,10 +356,10 @@ void ComponentButton::UpdateState()
 
 void ComponentButton::UpdateCollider()
 {
-	collider.x = canvas->position2D.x + position2D.x; //global pos x
-	collider.y = canvas->position2D.y + position2D.y; //global pos y
-	collider.w = size2D.x * 2; //real width
-	collider.h = size2D.y * 2; //real height
+	collider.x = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).x + position2D.x; //global pos x
+	collider.y = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).y + position2D.y; //global pos y
+	collider.w = size2D.x; //real width
+	collider.h = size2D.y; //real height
 }
 
 void ComponentButton::OnClick()

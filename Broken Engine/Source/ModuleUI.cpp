@@ -106,6 +106,9 @@ void ModuleUI::Clear()
 
 bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)
 {
+	//if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
+	//	int i = 0;
+
 	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX;
 	mouse_pos.y = math::Abs(App->input->GetMouseY() - App->gui->sceneY);
 
