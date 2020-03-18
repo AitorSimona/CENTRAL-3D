@@ -165,23 +165,6 @@ bool PanelInspector::Draw()
 		}
 
 		item_current = items[0];
-		// MYTODO: move this to the component itself
-
-		// --- Material ---
-		//if (Selected->GetComponent<ComponentMaterial>())
-		//{
-		//	CreateMaterialNode(*Selected);
-		//	ImGui::Separator();
-		//}
-
-		// --- Camera ---
-		//if (Selected->GetComponent<ComponentCamera>())
-		//{
-		//	CreateCameraNode(*Selected);
-		//	ImGui::Separator();
-		//}
-
-
 
 		if (Startup)
 			Startup = false;
@@ -203,7 +186,6 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 		else
 			Selected.Disable();
 	}
-
 	ImGui::SameLine();
 
 	// --- Game Object Name Setter ---
@@ -212,10 +194,69 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 	if (ImGui::InputText("", GOName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 		Selected.SetName(GOName);
 
+	static bool objectStatic = Selected.Static;
+	bool checkboxBool = Selected.Static;
+
 	ImGui::SameLine();
 
-	if(ImGui::Checkbox("Static", &Selected.Static))
-	EngineApp->scene_manager->SetStatic(&Selected);
+	if (ImGui::Checkbox("Static", &checkboxBool)) {
+		objectStatic = checkboxBool;
+		if (!Selected.childs.empty())
+			ImGui::OpenPopup("Static gameObject");
+		else
+			EngineApp->scene_manager->SetStatic(&Selected, objectStatic,  false);
+	}
 
+	ImGui::SetNextWindowSize(ImVec2(400,75));
+	if (ImGui::BeginPopup("Static gameObject", ImGuiWindowFlags_NoScrollbar))
+	{
+		if (Selected.Static) {
+			ImGui::Indent(30);
+			ImGui::Text("You are about to make this object non-static.");
+			ImGui::Spacing();
+			
+			ImGui::Unindent(10);
+			ImGui::Text("Do you want its children to be non-static aswell?");
+			
+			ImGui::Spacing();
+			
+			ImGui::Indent(130);
+			if (ImGui::Button("Yes")) {
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("No")) {
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, false);
+				ImGui::CloseCurrentPopup();
+			}
+		}
+		else {
+			ImGui::Indent(30);
+			ImGui::Text("You are about to make this object static.");
+			ImGui::Spacing();
+
+			ImGui::Unindent(10);
+			ImGui::Text("Do you want its children to be static aswell?");
+
+			ImGui::Spacing();
+
+			ImGui::Indent(130); 
+			
+			if (ImGui::Button("Yes")) {
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("No")) {
+				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, false);
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		ImGui::EndPopup();
+	}
 	ImGui::EndChild();
 }

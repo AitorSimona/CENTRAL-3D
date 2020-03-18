@@ -56,7 +56,8 @@ public:
 	void DrawGrid(bool drawAxis, float size);
 	void Draw();
 	void RedoOctree();
-	void SetStatic(GameObject* go);
+	void RedoOctree(AABB aabb);
+	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
 	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
 	void SelectFromRay(LineSegment& ray);
 
@@ -86,7 +87,9 @@ public:
 	const ResourceMesh* GetCapsuleMesh() const { return capsule; }
 	const ResourceMesh* GetPlaneMesh() const { return plane; }
 	const ResourceMesh* GetCylinderMesh() const { return cylinder; }
+
 private:
+
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);
 	static void ONGameObjectDestroyed(const Event& e);
@@ -105,9 +108,11 @@ public:
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	bool display_tree = false;
+	bool display_tree = true;
 	bool display_boundingboxes = false;
 	bool display_grid = true;
+	bool update_tree=false;
+	uint treeUpdateTimer = 0;
 	ResourceScene* currentScene = nullptr;
 
 	ResourceMesh* plane = nullptr;
