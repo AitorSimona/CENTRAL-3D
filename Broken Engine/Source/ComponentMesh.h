@@ -6,6 +6,7 @@
 
 BE_BEGIN_NAMESPACE
 class ComponentBone;
+class math::AABB;
 
 class BROKEN_API ComponentMesh : public Component {
 public:

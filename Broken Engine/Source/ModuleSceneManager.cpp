@@ -275,24 +275,33 @@ void ModuleSceneManager::DrawScene() {
 	{
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetUID() != root->GetUID() && App->renderer3D->culling_camera->frustum.Intersects((*it).second->GetAABB()) )
+			if ((*it).second->GetUID() != root->GetUID())
 			{
-				// --- Search for Renderer Component ---
-				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
+				const AABB aabb = (*it).second->GetAABB();
 
-				if (SelectedGameObject == (*it).second)
+				// Careful! Some aabbs have NaN values inside, which triggers an assert in geolib's Intersects function
+
+				// MYTODO: Check why some aabbs have NaN values, found one with lots of them
+
+				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
-					glStencilFunc(GL_ALWAYS, 1, 0xFF);
-					glStencilMask(0xFF);
-				}
+					// --- Search for Renderer Component ---
+					ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
 
-				// --- If Found, draw the mesh ---
-				if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
-					MeshRenderer->Draw();
+						if (SelectedGameObject == (*it).second)
+						{
+							glStencilFunc(GL_ALWAYS, 1, 0xFF);
+								glStencilMask(0xFF);
+						}
 
-				if (SelectedGameObject == (*it).second)
-				{
-					glStencilMask(0x00);
+					// --- If Found, draw the mesh ---
+					if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
+						MeshRenderer->Draw();
+
+					if (SelectedGameObject == (*it).second)
+					{
+						glStencilMask(0x00);
+					}
 				}
 			}
 		}
