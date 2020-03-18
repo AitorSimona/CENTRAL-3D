@@ -136,12 +136,12 @@ private:
 	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
-	std::map<uint, ResourceFont*> fonts;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;
 
-
+public:
+	std::map<uint, ResourceFont*> fonts;
 
 };
 BE_END_NAMESPACE

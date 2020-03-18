@@ -6,7 +6,7 @@
 
 #include "mmgr/mmgr.h"
 
-#define FONT_SIZE_DEFAULT 12
+#define FONT_SIZE_DEFAULT 32
 
 using namespace Broken;
 
@@ -26,6 +26,8 @@ Resource* ImporterFont::Import(ImportData& IData) const
 	ResourceFont* font = (ResourceFont*)App->resources->CreateResource(Resource::ResourceType::FONT, IData.path);
 
 	std::string folder = FONTS_FOLDER;
+
+	FT_Face face;
 
 	if (FT_New_Face(ft, IData.path, 0, &face))
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;

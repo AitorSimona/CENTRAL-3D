@@ -26,7 +26,7 @@ ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Com
 	//LoadFont("Assets/Fonts/Dukas.ttf", font_size);
 	//font.path = "Assets/Fonts/Dukas.ttf";
 	//canvas->AddElement(this);
-
+	font = (*App->resources->fonts.begin()).second;
 	position2D.y = 0;
 }
 

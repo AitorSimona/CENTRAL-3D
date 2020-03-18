@@ -25,7 +25,6 @@ public:
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Font; };
 
 	FT_Library ft;
-	FT_Face face;
 };
 
 
