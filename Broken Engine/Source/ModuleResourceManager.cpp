@@ -1377,6 +1377,15 @@ bool ModuleResourceManager::CleanUp()
 
 	metas.clear();
 
+	for (std::map<uint, ResourceFont*>::iterator it = fonts.begin(); it != fonts.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = fonts.erase(it);
+	}
+
+	fonts.clear();
+
 	// --- Delete importers ---
 	for (uint i = 0; i < importers.size(); ++i)
 	{

@@ -3,6 +3,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ResourceFont.h"
+#include "ImporterMeta.h"
 
 #include "mmgr/mmgr.h"
 
@@ -25,7 +26,13 @@ Resource* ImporterFont::Import(ImportData& IData) const
 {
 	ResourceFont* font = (ResourceFont*)App->resources->CreateResource(Resource::ResourceType::FONT, IData.path);
 
-	std::string folder = FONTS_FOLDER;
+	// --- Create Meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, font->GetOriginalFile(), font->GetUID());
+
+	if (meta)
+		IMeta->Save(meta);
 
 	FT_Face face;
 
