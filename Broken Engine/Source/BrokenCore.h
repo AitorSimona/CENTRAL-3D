@@ -149,6 +149,7 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define MESHES_FOLDER "Library/Meshes/"
 #define BONES_FOLDER "Library/Bones/"
 #define ANIMATIONS_FOLDER "Library/Animations/"
+#define ANIMATOR_FOLDER "Library/Animator/"
 #define SCENES_FOLDER "Assets/Scenes/"
 #define MODELS_FOLDER "Library/Models/"
 #define SHADERS_FOLDER "Library/Shaders/"

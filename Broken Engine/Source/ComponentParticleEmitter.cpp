@@ -23,11 +23,11 @@ using namespace Broken;
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
 	Enable();
-	
+
 	App->particles->AddEmitter(this);
-	
+
 	particles.resize(maxParticles);
-	
+
 	for (int i= 0; i < maxParticles; ++i)
 		particles[i] = new Particle();
 }
@@ -71,7 +71,7 @@ void ComponentParticleEmitter::Enable()
 
 void ComponentParticleEmitter::Disable()
 {
-	
+
 	App->physics->mScene->removeActor(*particleSystem);
 
 	active = false;
@@ -118,7 +118,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 			particles[index[i]]->lifeTime = particlesLifeTime;
 			particles[index[i]]->spawnTime = SDL_GetTicks();
-
+			particles[index[i]]->color = particlesColor/255.0f;
 			}
 
 			creationData.indexBuffer = indexBuffer;
@@ -127,7 +127,9 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 			bool succes = particleSystem->createParticles(creationData);
 
-			
+			delete[] index;
+			delete[] positionBuffer;
+			delete[] velocityBuffer;
 		}
 	}
 
@@ -137,7 +139,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 	std::vector<physx::PxU32> indicesToErease;
 	uint particlesToRelease = 0;
-	
+
 	// access particle data from physx::PxParticleReadData
 	if (rd)
 	{
@@ -159,7 +161,6 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 				float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
 				particles[i]->position =newPosition;
 				particles[i]->diameter = particlesSize;
-				particles[i]->color = particlesColor;
 			}
 		}
 		// return ownership of the buffers back to the SDK
@@ -438,8 +439,8 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
 		colorChanged = true;
 
-	if (colorChanged)
-		ChangeParticlesColor(particlesColor);
+	/*if (colorChanged)
+		ChangeParticlesColor(particlesColor);*/
 }
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE

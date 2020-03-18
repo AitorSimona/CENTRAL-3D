@@ -10,6 +10,7 @@
 #include "ResourceMesh.h"
 #include "ResourceBone.h"
 #include "ResourceAnimation.h"
+#include "ResourceAnimator.h"
 #include "ResourceTexture.h"
 #include "ResourceShaderObject.h"
 #include "ResourceShader.h"

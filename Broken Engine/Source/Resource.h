@@ -19,6 +19,7 @@ public:
 		MESH,
 		BONE,
 		ANIMATION,
+		ANIMATOR,
 		TEXTURE,
 		SHADER_OBJECT,
 		SCRIPT,

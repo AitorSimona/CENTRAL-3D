@@ -1,5 +1,6 @@
 #include "Component.h"
 #include "GameObject.h"
+#include "Application.h"
 
 #include "mmgr/mmgr.h"
 
@@ -7,6 +8,7 @@ using namespace Broken;
 Component::Component(GameObject* ContainerGO, Component::ComponentType type) {
 	GO = ContainerGO;
 	this->type = type;
+	UID = App->GetRandom().Int();
 	Enable();
 }
 

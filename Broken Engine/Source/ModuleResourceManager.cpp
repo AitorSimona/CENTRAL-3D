@@ -50,6 +50,7 @@ bool ModuleResourceManager::Init(json& file)
 	importers.push_back(new ImporterMesh());
 	importers.push_back(new ImporterBone());
 	importers.push_back(new ImporterAnimation());
+	importers.push_back(new ImporterAnimator());
 	importers.push_back(new ImporterTexture());
 	importers.push_back(new ImporterScript);
 	importers.push_back(new ImporterMeta());
@@ -80,6 +81,7 @@ bool ModuleResourceManager::Start()
 	filters.push_back("scene");
 	filters.push_back("ttf");
 	filters.push_back("otf");
+	filters.push_back("animator");
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -175,7 +177,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Import Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -222,6 +224,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::ANIMATION:
 		resource = ImportAnimation(IData);
+		break;
+
+	case Resource::ResourceType::ANIMATOR:
+		resource = ImportAnimator(IData);
 		break;
 
 	case Resource::ResourceType::SHADER_OBJECT:
@@ -415,6 +421,34 @@ Resource* ModuleResourceManager::ImportAnimation(Importer::ImportData& IData)
 	}
 
 	return anim;
+}
+
+Resource* ModuleResourceManager::ImportAnimator(Importer::ImportData& IData)
+{
+	Resource* animator = nullptr;
+	ImporterAnimator* IAnim = GetImporter<ImporterAnimator>();
+
+	// --- Load the animator directly from the lib (only declaration)---
+	if (IData.path && IAnim)
+	{
+		// --- If the resource is already in library, load from there ---
+		if (IsFileImported(IData.path))
+			animator = IAnim->Load(IData.path);
+
+		// --- Else call relevant importer ---
+		else
+		{
+			std::string new_path = IData.path;
+
+			if (IData.dropped)
+				new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
+
+			IData.path = new_path.c_str();
+			animator = IAnim->Import(IData);
+		}
+	}
+
+	return animator;
 }
 
 Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
@@ -746,7 +780,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Get Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -758,6 +792,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
 	resource = resource ? resource : (bones.find(UID) == bones.end() ? resource : (*bones.find(UID)).second);
 	resource = resource ? resource : (animations.find(UID) == animations.end() ? resource : (*animations.find(UID)).second);
+	resource = resource ? resource : (anim_info.find(UID) == anim_info.end() ? resource : (*anim_info.find(UID)).second);
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
@@ -776,7 +811,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, co
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -822,6 +857,11 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, co
 		animations[resource->GetUID()] = (ResourceAnimation*)resource;
 		break;
 
+	case Resource::ResourceType::ANIMATOR:
+		resource = (Resource*)new ResourceAnimator(App->GetRandom().Int(), source_file);
+		anim_info[resource->GetUID()] = (ResourceAnimator*)resource;
+		break;
+
 	case Resource::ResourceType::TEXTURE:
 		resource = (Resource*)new ResourceTexture(App->GetRandom().Int(), source_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
@@ -859,7 +899,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -902,6 +942,11 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 	case Resource::ResourceType::ANIMATION:
 		resource = (Resource*)new ResourceAnimation(UID, source_file);
 		animations[resource->GetUID()] = (ResourceAnimation*)resource;
+		break;
+
+	case Resource::ResourceType::ANIMATOR:
+		resource = (Resource*)new ResourceAnimator(UID, source_file);
+		anim_info[resource->GetUID()] = (ResourceAnimator*)resource;
 		break;
 
 	case Resource::ResourceType::TEXTURE:
@@ -950,7 +995,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -967,6 +1012,7 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mesh"  ? Resource::ResourceType::MESH : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "bone" ? Resource::ResourceType::BONE : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "anim" ? Resource::ResourceType::ANIMATION : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "animator" ? Resource::ResourceType::ANIMATOR : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "vertex" || extension == "fragment" ? Resource::ResourceType::SHADER_OBJECT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "lua" ? Resource::ResourceType::SCRIPT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
@@ -1215,6 +1261,10 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		animations.erase(resource->GetUID());
 		break;
 
+	case Resource::ResourceType::ANIMATOR:
+		anim_info.erase(resource->GetUID());
+		break;
+
 	case Resource::ResourceType::TEXTURE:
 		textures.erase(resource->GetUID());
 
@@ -1346,6 +1396,15 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	animations.clear();
+
+	for (std::map<uint, ResourceAnimator*>::iterator it = anim_info.begin(); it != anim_info.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = anim_info.erase(it);
+	}
+
+	anim_info.clear();
 
 	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end();)
 	{

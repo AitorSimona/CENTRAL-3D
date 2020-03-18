@@ -32,6 +32,7 @@ public:
 	/*void Save(json &file);
 	void Load(json &file);*/
 
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Script; };
 public:
 	ResourceScript* script = nullptr;
 	std::string script_name;
