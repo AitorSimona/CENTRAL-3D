@@ -118,13 +118,16 @@ void Resource::ClearUsers() {
 	users.clear();
 }
 
-void Resource::NotifyUsers(ResourceNotificationType type) {
-	for (uint i = 0; i < users.size(); ++i) {
+void Resource::NotifyUsers(ResourceNotificationType type) 
+{
+	for (uint i = 0; i < users.size(); ++i) 
+	{
 		users[i]->ONResourceEvent(UID, type);
 	}
 }
 
-void Resource::SetName(const char* name) {
+void Resource::SetName(const char* name) 
+{
 	this->name = name;
 }
 

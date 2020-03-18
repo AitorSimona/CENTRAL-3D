@@ -12,24 +12,28 @@
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene) {
+ImporterScene::ImporterScene() : Importer(Importer::ImporterType::Scene)
+{
 
 }
 
-ImporterScene::~ImporterScene() {
+ImporterScene::~ImporterScene()
+{
 
 }
 
 // MYTODO: Give some use to return type (bool) in all functions (if load fails log...)
 
-Resource* ImporterScene::Import(ImportData& IData) const {
+Resource* ImporterScene::Import(ImportData& IData) const
+{
 	// --- Meta was deleted, just trigger a load with a new uid ---
 	Resource* scene = Load(IData.path);
 
 	return scene;
 }
 
-Resource* ImporterScene::Load(const char* path) const {
+Resource* ImporterScene::Load(const char* path) const
+{
 	ResourceScene* scene = nullptr;
 
 	// --- Load Scene file ---
@@ -43,7 +47,6 @@ Resource* ImporterScene::Load(const char* path) const {
 		else {
 			scene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, path);
 		}
-
 
 	}
 
@@ -62,6 +65,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		// --- Create GO Structure ---
 		file[string_uid];
 		file[string_uid]["Name"] = (*it).second->GetName();
+		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
 		file[string_uid]["Components"];
 
@@ -70,8 +74,8 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 			// --- Save Components to file ---
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["UID"] = (*it).second->GetComponents()[i]->GetUID();
 		}
-
 	}
 
 	for (std::unordered_map<uint, GameObject*>::iterator it = scene->StaticGameObjects.begin(); it != scene->StaticGameObjects.end(); ++it)
@@ -80,6 +84,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		// --- Create GO Structure ---
 		file[string_uid];
 		file[string_uid]["Name"] = (*it).second->GetName();
+		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
 		file[string_uid]["Components"];
 

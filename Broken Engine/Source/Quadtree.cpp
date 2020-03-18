@@ -3,21 +3,24 @@
 #include "ComponentTransform.h"
 #include "QuadTree.h"
 
+#include "Application.h"
+#include "ModuleSceneManager.h"
+
 #include "mmgr/mmgr.h"
 
 // --- All child indexes ---
-#define NET 0
-#define SET 1
-#define SWT 2
-#define NWT 3
-#define NEB 4
-#define SEB 5
-#define SWB 6
-#define NWB 7
+#define NET 0	//North-east  TOP
+#define SET 1	//Suth-east   TOP
+#define SWT 2	//South-west  TOP
+#define NWT 3	//North-west  TOP
+#define NEB 4	//North-east  BOT
+#define SEB 5	//Suth-east	  BOT
+#define SWB 6	//South-west  BOT
+#define NWB 7	//North-west  BOT
 
 // --- Max items before subdividing ---
-#define QUADTREE_MAX_ITEMS 10
-#define QUADTREE_MIN_SIZE 10.0f 
+#define QUADTREE_MAX_ITEMS 3
+#define QUADTREE_MIN_SIZE 3.0f
 
 using namespace Broken;
 
@@ -28,8 +31,9 @@ QuadtreeNode::QuadtreeNode(const AABB& box) : box(box) {
 
 QuadtreeNode::~QuadtreeNode() {
 	for (int i = 0; i < 8; ++i) {
-		if (childs[i] != nullptr)
+		if (childs[i] != nullptr) {
 			delete(childs[i]);
+		}
 	}
 }
 
@@ -88,7 +92,6 @@ void QuadtreeNode::CreateChilds() {
 	childs[NWT] = new QuadtreeNode(box);
 	childs[NWT]->CreateNode(NWT);
 
-
 	// NorthEast - BOT
 	childs[NEB] = new QuadtreeNode(box);
 	childs[NEB]->CreateNode(NEB);
@@ -114,14 +117,15 @@ void QuadtreeNode::CreateNode(uint index) {
 	//2 3
 
 	float3 minPoint, maxPoint;
-	minPoint.y = this->box.minPoint.y;
-	maxPoint.y = this->box.maxPoint.y;
+	minPoint.y = (index < 4)? (this->box.minPoint.y + this->box.maxPoint.y) / 2: this->box.minPoint.y;
+	maxPoint.y = (index < 4)? this->box.maxPoint.y : (this->box.minPoint.y + this->box.maxPoint.y)/2;
 
-	minPoint.x = (index / 2) == 1 ? this->box.minPoint.x : (this->box.maxPoint.x + this->box.minPoint.x) / 2;
-	maxPoint.x = (index / 2) == 1 ? (this->box.maxPoint.x + this->box.minPoint.x) / 2 : this->box.maxPoint.x;
+	minPoint.x = ((index / 2) == 1 || (index / 2)==3) ? this->box.minPoint.x : (this->box.maxPoint.x + this->box.minPoint.x) / 2;
+	maxPoint.x = ((index / 2) == 1 || (index / 2)==3 )? (this->box.maxPoint.x + this->box.minPoint.x) / 2 : this->box.maxPoint.x;
 
 	minPoint.z = index % 2 == 0 ? this->box.minPoint.z : (this->box.maxPoint.z + this->box.minPoint.z) / 2;
 	maxPoint.z = index % 2 == 0 ? (this->box.maxPoint.z + this->box.minPoint.z) / 2 : this->box.maxPoint.z;
+
 	box = AABB(minPoint, maxPoint);
 }
 
@@ -134,12 +138,14 @@ void QuadtreeNode::RedistributeChilds() {
 
 		// --- Distribute this new gameobject onto the childs ---
 		bool intersects[8];
-		for (int i = 0; i < 8; ++i)
+		uint intersections = 0;
+		for (int i = 0; i < 8; ++i) {
 			intersects[i] = childs[i]->box.Intersects(new_box);
-
-		if (intersects[0] && intersects[1] && intersects[2] && intersects[3]
-			&& intersects[4] && intersects[5] && intersects[6] && intersects[7])
-			++it; // if it hits all childs, better to just keep it here
+			if (intersects[i])
+				intersections++;
+		}
+		if (intersections > 1)
+			++it; // if it more than one child, better to just keep it here
 		else {
 			it = objects.erase(it);
 			for (int i = 0; i < 8; ++i) {
@@ -157,7 +163,8 @@ void QuadtreeNode::CollectObjects(std::vector<GameObject*>& objects) const {
 		objects.push_back(*it);
 
 	for (int i = 0; i < 8; ++i)
-		if (childs[i] != nullptr) childs[i]->CollectObjects(objects);
+		if (childs[i] != nullptr) 
+			childs[i]->CollectObjects(objects);
 }
 
 void QuadtreeNode::CollectObjects(std::map<float, GameObject*>& objects, const float3& origin) const {
@@ -199,6 +206,11 @@ void Quadtree::Insert(GameObject* go) {
 	if (root != nullptr) {
 		if (go->GetOBB().MinimalEnclosingAABB().Intersects(root->box))
 			root->Insert(go);
+		else {
+			root->box.Enclose(go->GetOBB().MinimalEnclosingAABB());
+			root->Insert(go);
+			App->scene_manager->RedoOctree(root->box);
+		}
 	}
 }
 
@@ -210,7 +222,7 @@ void Quadtree::Erase(GameObject* go) {
 void Quadtree::Clear()
 {
 	if(root)
-	delete root;
+		delete root;
 }
 
 void Quadtree::CollectBoxes(std::vector<const QuadtreeNode*>& nodes) const {
@@ -227,4 +239,3 @@ void Quadtree::CollectObjects(std::map<float, GameObject*>& objects, const float
 	if (root != nullptr)
 		root->CollectObjects(objects, origin);
 }
-

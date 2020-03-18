@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Imgui/imgui.h"
 #include "Math.h"
+#include "ModuleSceneManager.h"
 
 #include "mmgr/mmgr.h"
 
@@ -113,9 +114,12 @@ void ComponentTransform::UpdateLocalTransform() {
 }
 
 void ComponentTransform::OnUpdateTransform(const float4x4& ParentGlobal) {
+
 	Global_transform = ParentGlobal * Local_transform;
 	UpdateTRS();
-
+	GO->UpdateAABB();
+	if (GO->Static)
+		App->scene_manager->update_tree = true;
 	update_transform = false;
 }
 

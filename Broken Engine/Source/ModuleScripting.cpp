@@ -67,7 +67,7 @@ bool ModuleScripting::DoHotReloading() {
 		bool can_instantiate = true;
 
 		//App->resources->GetAllFilesWithExtension(extension,files,App->resources->assets_dir); // Here we have to iterate all script resources from that list so we can get the files to recompile
-		
+
 		// Compile all the scripts of the Engine
 		for (int i = 0; i < files.size(); ++i) {
 			if (JustCompile(files[i]) == false) {
@@ -149,7 +149,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.beginNamespace("Scripting")
 
 		// ----------------------------------------------------------------------------------
-		// SCRIPTING DEBUG 
+		// SCRIPTING DEBUG
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingDebug>("Debug")
 		.addConstructor<void(*) (void)>()
@@ -162,9 +162,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("CompareFloats", &ScriptingDebug::FloatNumsAreEqual)
 		.addFunction("CompareDoubles", &ScriptingDebug::DoubleNumsAreEqual)
 		.endClass()
-		
+
 		// ----------------------------------------------------------------------------------
-		// SCRIPTING ELEMENTS 
+		// SCRIPTING ELEMENTS
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingElements>("Elements")
 		.addConstructor<void(*) (void)>()
@@ -176,6 +176,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetGameObjectPosY", &ScriptingElements::GetGameObjectPosY)
 		.addFunction("GetGameObjectPosZ", &ScriptingElements::GetGameObjectPosZ)
 		.addFunction("TranslateGameObject", &ScriptingElements::TranslateGameObject)
+
+		.addFunction("GetComponent", &ScriptingElements::GetComponentFromGO)
 
 		// Position
 		.addFunction("GetPosition", &ScriptingElements::GetPosition)
@@ -200,16 +202,16 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetPositionInFrustum", &ScriptingElements::GetPosInFrustum)
 
 		// GetScript functions
-		.addFunction("GetScriptTest",&ScriptingElements::GetScript)
+		.addFunction("GetScript", &ScriptingElements::GetScript)
 		.endClass()
-		
+
 		// ----------------------------------------------------------------------------------
-		// SCRIPTING SYSTEMS 
+		// SCRIPTING SYSTEMS
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingSystems>("Systems")
 		.addConstructor<void(*) (void)>()
 
-		// Physics 
+		// Physics
 		.addFunction("GetMass", &ScriptingSystems::GetMass)
 		.addFunction("SetMass", &ScriptingSystems::SetMass)
 
@@ -224,7 +226,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("UseGravity", &ScriptingSystems::UseGravity)
 		.addFunction("SetKinematic", &ScriptingSystems::SetKinematic)
 
-		// Particles 
+		// Particles
 		.addFunction("ActivateParticlesEmission", &ScriptingSystems::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &ScriptingSystems::DeactivateParticlesEmission)
 
@@ -242,7 +244,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
-		// SCRIPTING INPUTS 
+		// SCRIPTING INPUTS
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingInputs>("Inputs")
 		.addConstructor<void(*) (void)>()
@@ -274,7 +276,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetAxisRealValue", &ScriptingInputs::GetAxisRealValue)
 		.addFunction("GetAxisValue", &ScriptingInputs::GetAxisValue)
 		.addFunction("ShakeController", &ScriptingInputs::ShakeController)
-		.addFunction("StopControllerShake", &ScriptingInputs::StopControllerShake)		
+		.addFunction("StopControllerShake", &ScriptingInputs::StopControllerShake)
 		.endClass()
 		.endNamespace();
 
@@ -308,13 +310,13 @@ void ModuleScripting::SendScriptToModule(ComponentScript* script_component) {
 	s_instance->my_component = script_component;
 
 	class_instances.push_back(s_instance);
-	JustCompile(script_component->script->absolute_path);	
+	JustCompile(script_component->script->absolute_path);
 	CompileScriptTableClass(s_instance); // Compile so we can give the instance its table/class reference
 }
 
 // Fill the ScriptVars of the component associated with this script
 void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
-	
+
 	// Reset the type of all the variables
 	for (int i = 0; i < script->my_component->script_variables.size(); ++i)
 		script->my_component->script_variables[i].type = VarType::NONE;
@@ -354,16 +356,16 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 		variable.name = str;
 		int variable_index = script->my_component->ScriptVarAlreadyInComponent(variable.name);
 		if (variable_type != VarType::NONE) {
-			
+
 			//If the var was already on the component (in case of hot reloading)
-			if (variable_index > -1)  
+			if (variable_index > -1)
 			{
 				// Check that the variable is still of the same type before changing any value
 				if (variable.type == script->my_component->script_variables[variable_index].type) {
 					script->my_component->script_variables[variable_index].editor_value = variable.editor_value;
 				}
 				// The variable changed its type
-				else   
+				else
 				{
 					script->my_component->script_variables[variable_index] = variable;
 				}
@@ -371,7 +373,7 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 			else {
 				script->my_component->script_variables.push_back(variable);
 			}
-		} 
+		}
 	}
 
 	// Erase from memory variables deleted in hot reloading (those that are still type NONE)
@@ -464,7 +466,7 @@ update_status ModuleScripting::Update(float realDT) {
 	// 1. You can use the "IsWhatever" functions of App to check the current game state.
 	// 2. "App->IsGameFirstFrame()" marks the first frame a GameUpdate() will happen, if you want to do anything right before the game plays in preparation
 	// 3. Referring to your previous code, you expected DoHotReloading() to NOT run if the game is playing, I put the condition accordingly "!IsGamePlaying()"
-	   
+
 	//TEST FUNCTION DEFINETIVELY SHOULD NOT BE HERE
 	//MYTODO: Didac PLEAse didac look into this why did you do this?
 	/*if (App->scene_intro->selected_go != nullptr && App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
@@ -481,14 +483,17 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 			current_script = class_instances[i];
 			if (current_script->script_is_null == false)
 			{
+				std::string aux_str = "null";
 				for (std::vector<ScriptVar>::iterator it = current_script->my_component->script_variables.begin(); it != current_script->my_component->script_variables.end(); ++it)
+				{
 					if ((*it).changed_value) {
 						switch ((*it).type) {
 						case VarType::DOUBLE:
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_double;
 							break;
 						case VarType::STRING:
-							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_string;
+							aux_str = (*it).editor_value.as_string;
+							current_script->my_table_class[(*it).name.c_str()] = aux_str.c_str();
 							break;
 						case VarType::BOOLEAN:
 							current_script->my_table_class[(*it).name.c_str()] = (*it).editor_value.as_boolean;
@@ -496,6 +501,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 						}
 						(*it).changed_value = false;
 					}
+				}
 
 				if (current_script->awoken == false)
 				{
@@ -539,6 +545,23 @@ void ModuleScripting::CleanUpInstances() {
 	}
 
 	class_instances.clear();
+}
+
+//Return a pointer to a Script instance that is attached to the component script
+ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript* component_script)
+{
+	ScriptInstance* ret = nullptr;
+
+	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
+	{
+		if ((*it)->my_component == component_script)
+		{
+			ret = (*it);
+			break;
+		}
+	}
+
+	return ret;
 }
 
 bool ModuleScripting::Stop() {

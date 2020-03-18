@@ -19,6 +19,7 @@ class ResourceShader;
 class ResourceMesh;
 class ResourceBone;
 class ResourceAnimation;
+class ResourceAnimator;
 class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
@@ -31,6 +32,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterMesh;
 	friend class ImporterBone;
 	friend class ImporterAnimation;
+	friend class ImporterAnimator;
 	friend class ImporterMaterial;
 	friend class ImporterScene;
 	friend class ImporterFolder;
@@ -63,10 +65,9 @@ public:
 	Resource* ImportMaterial(Importer::ImportData& IData);
 	Resource* ImportShaderProgram(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
-	//
 	Resource* ImportBone(Importer::ImportData& IData);
 	Resource* ImportAnimation(Importer::ImportData& IData);
-	//
+	Resource* ImportAnimator(Importer::ImportData& IData);
 	Resource* ImportTexture(Importer::ImportData& IData);
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 	Resource* ImportScript(Importer::ImportData& IData);
@@ -129,6 +130,7 @@ private:
 	std::map<uint, ResourceMesh*> meshes;
 	std::map<uint, ResourceBone*> bones;
 	std::map<uint, ResourceAnimation*> animations;
+	std::map<uint, ResourceAnimator*> anim_info;
 	std::map<uint, ResourceTexture*> textures;
 	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;
