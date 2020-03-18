@@ -63,19 +63,11 @@ void ComponentButton::Update()
 
 void ComponentButton::Draw()
 {
-	// --- Update transform and rotation to face camera ---
-
 	// --- Frame image with camera ---
-	float4x4 transform = transform.FromTRS(App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1),
-		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
-		float3(size2D, 1.0f));
+	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
+	float3 scale = float3(App->renderer3D->active_camera->frustum.NearPlaneWidth(), App->renderer3D->active_camera->frustum.NearPlaneHeight(), 1.0f);
 
-	float3 Movement = App->renderer3D->active_camera->frustum.Front();
-	float3 camera_pos = App->renderer3D->active_camera->frustum.Pos();
-	float3 center = App->renderer3D->active_camera->frustum.NearPlanePos(-1, 1);
-
-	if (Movement.IsFinite())
-		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
+	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D, 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -100,7 +92,7 @@ void ComponentButton::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -118,10 +110,7 @@ void ComponentButton::Draw()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
-
-	// --- Set camera back to original position ---
-	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
-
+	// --- Text ---
 	//glColorColorF(text_color);
 	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
 
@@ -140,6 +129,10 @@ json ComponentButton::Save() const
 
 	if (texture)
 		node["Resources"]["ResourceTexture"] = std::string(texture->GetResourceFile());
+
+	node["visible"] = std::to_string(visible);
+	node["draggable"] = std::to_string(draggable);
+	node["interactable"] = std::to_string(interactable);
 
 	node["position2Dx"] = std::to_string(position2D.x);
 	node["position2Dy"] = std::to_string(position2D.y);
@@ -161,11 +154,19 @@ void ComponentButton::Load(json& node)
 	if (texture)
 		texture->AddUser(GO);
 
+	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
+	std::string draggable_str = node["visible"].is_null() ? "0" : node["draggable"];
+	std::string interactable_str = node["visible"].is_null() ? "0" : node["interactable"];
+
 	std::string position2Dx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
 	std::string position2Dy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
 
 	std::string size2Dx = node["size2Dx"].is_null() ? "0" : node["size2Dx"];
 	std::string size2Dy = node["size2Dy"].is_null() ? "0" : node["size2Dy"];
+
+	visible = bool(std::stoi(visible_str));
+	draggable = bool(std::stoi(draggable_str));
+	interactable = bool(std::stoi(interactable_str));
 
 	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
 	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
@@ -356,8 +357,9 @@ void ComponentButton::UpdateState()
 
 void ComponentButton::UpdateCollider()
 {
-	collider.x = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).x + position2D.x; //global pos x
-	collider.y = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).y + position2D.y; //global pos y
+	float2 nearp = float2(App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).x, App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).y);
+	collider.x = nearp.x + position2D.x; //global pos x
+	collider.y = nearp.y + position2D.y; //global pos y
 	collider.w = size2D.x; //real width
 	collider.h = size2D.y; //real height
 }

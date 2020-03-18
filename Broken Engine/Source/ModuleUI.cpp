@@ -104,13 +104,13 @@ void ModuleUI::Clear()
 	canvas.clear();
 }
 
-bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)
+bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider) // 0,0 is bottom left corner
 {
-	//if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
-	//	int i = 0;
+	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN) 
+		int i = 0;
 
 	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX;
-	mouse_pos.y = math::Abs(App->input->GetMouseY() - App->gui->sceneY);
+	mouse_pos.y = Abs(App->input->GetMouseY() - App->gui->sceneY - App->gui->sceneHeight);
 
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
 	if (SDL_HasIntersection(&MouseCollider, &collider))

@@ -9,8 +9,6 @@
 
 BE_BEGIN_NAMESPACE
 
-class ResourceTexture;
-
 class BROKEN_API ComponentCanvas : public Component
 {
 public:
@@ -30,12 +28,7 @@ public:
 public:
 	bool visible = true;
 
-	// for debug purposes
-	float2 size2D = { 0,0 };
-	float2 position2D = { 0,0 };
-
 private:
-	ResourceTexture* texture = nullptr;
 	std::vector<Component*> elements;
 };
 
