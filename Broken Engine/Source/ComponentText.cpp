@@ -161,11 +161,10 @@ void ComponentText::CreateInspectorNode()
 
 		ImGui::ColorEdit3("Color", (float*)&color);
 
-		//if (ImGui::DragInt("Font size", &font->font_size, 1.0f, 0.0f, 100.0f, "%.2f")) {
+		if (ImGui::DragInt("Font size", &font->size, 1, 1, 200, "%.2f")) {
 
-		//	//font.clean();
-		//	//font.init(font.path, font_size);
-		//}
+			font->Init();
+		}
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
 
@@ -182,19 +181,19 @@ void ComponentText::CreateInspectorNode()
 		ImGui::Text("Size:    ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##textsize", &size2D.x, 0.01f);
+		ImGui::DragFloat("x##textsize", &size2D.x, 0.001f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##textsize", &size2D.y, 0.01f);
+		ImGui::DragFloat("y##textsize", &size2D.y, 0.001f);
 
 		// Position
 		ImGui::Text("Position:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##textposition", &position2D.x, 0.1f);
+		ImGui::DragFloat("x##textposition", &position2D.x, 0.05f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##textposition", &position2D.y, 0.1f);
+		ImGui::DragFloat("y##textposition", &position2D.y, 0.05f);
 
 		// Rotation
 		ImGui::Text("Rotation:");

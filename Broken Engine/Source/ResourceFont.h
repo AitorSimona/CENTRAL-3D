@@ -5,6 +5,10 @@
 #include <map>
 #include "Math.h"
 
+
+
+#define FONT_SIZE_DEFAULT 99
+
 BE_BEGIN_NAMESPACE
 
 class BROKEN_API ResourceFont : public Resource {
@@ -24,13 +28,14 @@ public:
 	void FreeMemory() override;
 
 	std::map<GLchar, Character> characters;
-	float size = 0.02f;
 
 	GLuint VAO = 0;
 	GLuint VBO = 0;
-	GLuint texture = 0;
+	// Sample texture TODO
+	GLuint sample_texture = 0;
+	int size = FONT_SIZE_DEFAULT;
 
-	
+	void Init();
 
 private:
 	void OnOverwrite() override;

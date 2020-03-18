@@ -3,10 +3,6 @@
 
 #include "Importer.h"
 
-#include "Freetype/include/ft2build.h"
-
-#include FT_FREETYPE_H
-
 BE_BEGIN_NAMESPACE
 
 class Resource;
@@ -24,7 +20,6 @@ public:
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Font; };
 
-	FT_Library ft;
 };
 
 
