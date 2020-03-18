@@ -42,7 +42,7 @@ void ComponentCanvas::Draw() const
 	// --- Frame image with camera ---
 	//float3 Movement = App->renderer3D->active_camera->frustum.Front();
 	//float3 camera_pos = App->renderer3D->active_camera->frustum.Pos();
-	float3 position = float3(App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1));
+	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
 	float3 scale = float3(App->renderer3D->active_camera->frustum.NearPlaneWidth() + size2D.x * 0.01f, App->renderer3D->active_camera->frustum.NearPlaneHeight() + size2D.y * 0.01f, 1.0f);
 
 	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), scale);
@@ -67,7 +67,7 @@ void ComponentCanvas::Draw() const
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp-0.05f, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -83,7 +83,7 @@ void ComponentCanvas::Draw() const
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
-	// --- Set camera back to original position ---
+	//--- Set camera back to original position ---
 	//App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 
 
