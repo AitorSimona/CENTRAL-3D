@@ -51,6 +51,9 @@ bool ResourceScene::LoadInMemory() {
 				std::string name = file[it.key()]["Name"];
 				go->SetName(name.c_str());
 
+				if (!file[it.key()]["Static"].is_null())
+					go->Static = file[it.key()]["Static"];
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];				
 
@@ -86,6 +89,9 @@ bool ResourceScene::LoadInMemory() {
 				}
 
 				objects.push_back(go);
+
+				if (go->Static)
+					App->scene_manager->SetStatic(go, true, false);
 			}
 
 
