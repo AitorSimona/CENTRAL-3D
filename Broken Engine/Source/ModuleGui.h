@@ -83,6 +83,7 @@ public:
 	uint prefabTexID = 0;
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
+	uint animatorTexID = 0;
 
 	bool isSceneHovered = false;
 

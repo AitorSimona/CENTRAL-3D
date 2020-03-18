@@ -633,6 +633,9 @@
     <ClInclude Include="ComponentButton.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceAnimator.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="ScriptingInputs.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
@@ -647,6 +650,9 @@
     </ClInclude>
     <ClInclude Include="ScriptingElements.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterAnimator.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1049,6 +1055,9 @@
     <ClCompile Include="ComponentButton.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceAnimator.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="ScriptingInputs.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
@@ -1063,6 +1072,9 @@
     </ClCompile>
     <ClCompile Include="ScriptingElements.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterAnimator.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
