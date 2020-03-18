@@ -3,6 +3,7 @@
 #pragma once
 #include "Module.h"
 #include <vector>
+#include "ResourceFont.h"
 #include "Math.h"
 
 BE_BEGIN_NAMESPACE
@@ -34,6 +35,7 @@ public:
 
 public:
 	std::vector<ComponentCanvas*> canvas;
+	std::vector<ResourceFont*> fonts;
 
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;

@@ -175,7 +175,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Import Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -761,6 +761,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
+	resource = resource ? resource : (fonts.find(UID) == fonts.end() ? resource : (*fonts.find(UID)).second);
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
@@ -841,6 +842,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, co
 		resource = (Resource*)new ResourceFont(App->GetRandom().Int(), source_file);
 		fonts[resource->GetUID()] = (ResourceFont*)resource;
 		break;
+
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
@@ -1231,6 +1233,10 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 	case Resource::ResourceType::SCRIPT:
 		scripts.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::FONT:
+		fonts.erase(resource->GetUID());
 		break;
 
 	case Resource::ResourceType::META:

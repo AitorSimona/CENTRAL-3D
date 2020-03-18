@@ -4,7 +4,7 @@
 #include "ModuleFileSystem.h"
 #include "ResourceFont.h"
 #include "ImporterMeta.h"
-
+#include "ModuleUI.h"
 #include "mmgr/mmgr.h"
 
 #define FONT_SIZE_DEFAULT 32
@@ -35,6 +35,8 @@ Resource* ImporterFont::Import(ImportData& IData) const
 		IMeta->Save(meta);
 
 	FT_Face face;
+
+	App->ui_system->fonts.push_back(font);
 
 	if (FT_New_Face(ft, IData.path, 0, &face))
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;

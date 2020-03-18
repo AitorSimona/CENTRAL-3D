@@ -20,21 +20,13 @@ ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Com
 	visible = true;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	//texture = (ResourceMaterial*)App->resources->CreateResource(Resource::ResourceType::TEXTURE);
 	canvas->AddElement(this);
 
-	//LoadFont("Assets/Fonts/Dukas.ttf", font_size);
-	//font.path = "Assets/Fonts/Dukas.ttf";
-	//canvas->AddElement(this);
-	font = (*App->resources->fonts.begin()).second;
-	position2D.y = 0;
+	font = App->ui_system->fonts[0];
 }
 
 
-ComponentText::~ComponentText()
-{
-	//font.clean();
-}
+ComponentText::~ComponentText() {}
 
 void ComponentText::Update()
 {
@@ -44,6 +36,11 @@ void ComponentText::Update()
 
 void ComponentText::Draw()
 {
+	if (font == nullptr) {
+		//WARNING LOG("No font available in text component");
+		return;
+	}
+
 	// --- Update transform and rotation to face camera ---
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
 	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
@@ -138,10 +135,6 @@ void ComponentText::Draw()
 	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
 
-//void ComponentText::Print(std::string text, float x, float y, float scale, Color color)
-//{
-//	
-//}
 json ComponentText::Save() const
 {
 	json node;
@@ -168,7 +161,7 @@ void ComponentText::CreateInspectorNode()
 
 		ImGui::ColorEdit3("Color", (float*)&color);
 
-		//if (ImGui::DragFloat("Font size", &font->font_size, 1.0f, 0.0f, 100.0f, "%.2f")) {
+		//if (ImGui::DragInt("Font size", &font->font_size, 1.0f, 0.0f, 100.0f, "%.2f")) {
 
 		//	//font.clean();
 		//	//font.init(font.path, font_size);
@@ -212,7 +205,6 @@ void ComponentText::CreateInspectorNode()
 		// Image
 		ImGui::Separator();
 		ImGui::Text("Font: ");
-		//ImGui::Text(font.path);
 		ImGui::SameLine();
 
 		if (ImGui::Button("Load..."))
@@ -220,35 +212,18 @@ void ComponentText::CreateInspectorNode()
 
 		if (ImGui::BeginPopup("Load Font"))
 		{
-			//if (ImGui::Selectable("Dukas")) {
-			//	font.clean();
-			//	LoadFont("Assets/Fonts/Dukas.ttf", DEFAULT_FONT_SIZE);
-			//	font.path = "Assets/Fonts/Dukas.ttf";
-			//}
-			//if (ImGui::Selectable("Wintersoul")) {
-			//	font.clean();
-			//	LoadFont("Assets/Fonts/Wintersoul.ttf", DEFAULT_FONT_SIZE);
-			//	font.path = "Assets/Fonts/Wintersoul.ttf";
-			//}
-			//if (ImGui::Selectable("EvilEmpire")) {
-			//	font.clean();
-			//	LoadFont("Assets/Fonts/EvilEmpire.otf", DEFAULT_FONT_SIZE);
-			//	font.path = "Assets/Fonts/EvilEmpire.otf";
-			//}
-			//if (ImGui::Selectable("Smack")) {
-			//	font.clean();
-			//	LoadFont("Assets/Fonts/Smack.otf", DEFAULT_FONT_SIZE);
-			//	font.path = "Assets/Fonts/Smack.otf";
-			//}
+			for (int i = 0; i < App->ui_system->fonts.size(); i++)
+			{
+				if (ImGui::Selectable(App->ui_system->fonts[i]->GetName()))
+				{
+					font = App->ui_system->fonts[i];
+				}
+			}
 			ImGui::EndPopup();
 		}
+		
+		ImGui::Text(font->GetName());
 
-		//if (!font.textures.empty())
-		//	ImGui::Image((ImTextureID)font.textures.back(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0));
-		//else
-			ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "*Font not loaded*");
-
-		ImGui::Separator();
 		ImGui::Separator();
 		ImGui::TreePop();
 	}
