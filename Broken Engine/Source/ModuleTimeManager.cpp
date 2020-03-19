@@ -110,9 +110,6 @@ void ModuleTimeManager::FinishUpdate() {
 	// --- Cap fps ---
 	if (capped_ms > 0 && (last_frame_ms < capped_ms))
 		SDL_Delay(capped_ms - last_frame_ms);
-
-	// --- Send data to GUI-PanelSettings Historiograms
-	App->gui->LogFPS((float)last_fps, (float)last_frame_ms);
 }
 
 uint ModuleTimeManager::GetMaxFramerate() const {
@@ -129,6 +126,14 @@ float ModuleTimeManager::GetTimeScale() const {
 float ModuleTimeManager::GetGameplayTimePassed() const
 {
 	return gametime_passed;
+}
+
+uint ModuleTimeManager::GetLastFrameMs() const {
+	return last_frame_ms;
+}
+
+float ModuleTimeManager::GetFPS() const {
+	return last_fps;
 }
 
 void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)

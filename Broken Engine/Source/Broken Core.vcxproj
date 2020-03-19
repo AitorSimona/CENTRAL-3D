@@ -136,6 +136,7 @@
     <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="Importer.h" />
     <ClInclude Include="ImporterAnimation.h" />
+    <ClInclude Include="ImporterAnimator.h" />
     <ClInclude Include="ImporterBone.h" />
     <ClInclude Include="ImporterFolder.h" />
     <ClInclude Include="ImporterMaterial.h" />
@@ -256,6 +257,7 @@
     <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceAnimation.h" />
+    <ClInclude Include="ResourceAnimator.h" />
     <ClInclude Include="ResourceBone.h" />
     <ClInclude Include="ResourceFolder.h" />
     <ClInclude Include="ResourceMaterial.h" />
@@ -321,6 +323,7 @@
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Importer.cpp" />
     <ClCompile Include="ImporterAnimation.cpp" />
+    <ClCompile Include="ImporterAnimator.cpp" />
     <ClCompile Include="ImporterBone.cpp" />
     <ClCompile Include="ImporterFolder.cpp" />
     <ClCompile Include="ImporterMaterial.cpp" />
@@ -402,6 +405,7 @@
     <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
+    <ClCompile Include="ResourceAnimator.cpp" />
     <ClCompile Include="ResourceBone.cpp" />
     <ClCompile Include="ResourceFolder.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />

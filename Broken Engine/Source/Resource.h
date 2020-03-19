@@ -19,6 +19,7 @@ public:
 		MESH,
 		BONE,
 		ANIMATION,
+		ANIMATOR,
 		TEXTURE,
 		SHADER_OBJECT,
 		SCRIPT,
@@ -60,6 +61,7 @@ public:
 
 	virtual void OnOverwrite() = 0;
 	virtual void OnDelete() = 0;
+	virtual void CreateInspectorNode() {};
 
 	// to encapsulate model childs in panelproject
 	bool has_parent = false;
@@ -68,6 +70,7 @@ protected:
 	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
 	virtual void Repath() {};
+
 
 
 protected:

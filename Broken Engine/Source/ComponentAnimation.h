@@ -9,6 +9,7 @@ BE_BEGIN_NAMESPACE
 class ComponentMesh;
 class ComponentBone;
 class ResourceAnimation;
+class ResourceAnimator;
 class Channel;
 
 struct BROKEN_API Animation
@@ -66,6 +67,8 @@ private:
 
 	bool HasSkeleton(std::vector<GameObject*> GO) const;
 
+	void LoadAnimator(bool drop, uint UID = 0);
+
 public:
 
 	std::vector<Animation*> animations;
@@ -73,6 +76,7 @@ public:
 	Animation* playing_animation = nullptr;;
 
 	ResourceAnimation* res_anim = nullptr;
+	ResourceAnimator* res_animator = nullptr;
 	float blend_time_value = 0.3f;
 
 	bool draw_bones = false;
@@ -102,7 +106,7 @@ private:
 	float3* start_scale = nullptr;
 	Animation* next_animation = nullptr;
 
-
+	bool to_copy = false;
 };
 
 BE_END_NAMESPACE

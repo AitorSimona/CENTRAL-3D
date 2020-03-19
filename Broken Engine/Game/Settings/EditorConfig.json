@@ -9,11 +9,11 @@
         "Console": true,
         "Hierarchy": true,
         "Inspector": true,
-        "Physics": true,
+        "Physics": false,
         "Project": true,
         "Resources": true,
         "Scene": true,
-        "Settings": false,
+        "Settings": true,
         "ShaderEditor": false,
         "Toolbar": true
     },
@@ -21,8 +21,8 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 810,
+        "height": 1080,
         "resizable": true,
-        "width": 1440
+        "width": 1920
     }
 }
