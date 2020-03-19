@@ -2,6 +2,8 @@
 #include "Imgui/imgui.h"
 
 #include "EngineApplication.h"
+#include "ModuleEditorUI.h"
+#include "PanelProject.h"
 //#include "ModuleSceneManager.h"
 //#include "ModuleRenderer3D.h"
 //#include "ModuleResourceManager.h"
@@ -41,134 +43,145 @@ bool PanelInspector::Draw()
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 		Broken::GameObject* Selected = EngineApp->scene_manager->GetSelectedGameObject();
+		Broken::Resource* SelectedRes = EngineApp->editorui->panelProject->GetSelected();
 
-		if (Selected == nullptr)
+		if (Selected != nullptr)
 		{
-			ImGui::End();
-			return false;
-		}
+			// --- Game Object ---
+			CreateGameObjectNode(*Selected);
 
-		// --- Game Object ---
-		CreateGameObjectNode(*Selected);
+			// --- Components ---
 
-		// --- Components ---
+			std::vector<Broken::Component*>* components = &Selected->GetComponents();
 
-		std::vector<Broken::Component*>* components = &Selected->GetComponents();
+			for (std::vector<Broken::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
+			{
+				if ((*it) == nullptr)
+					continue;
 
-		for (std::vector<Broken::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
-		{
-			if ((*it) == nullptr)
-				continue;
+				if (Startup)
+					ImGui::SetNextItemOpen(true);
+
+				if (*it)
+					(*it)->CreateInspectorNode();
+
+				ImGui::NewLine();
+				ImGui::Separator();
+			}
+
+			static ImGuiComboFlags flags = 0;
+
+			const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
+			static const char* item_current = items[0];
+
+			ImGui::NewLine();
+
+			// --- Add component ---
+			if (ImGui::BeginCombo("##Components Combo", "Add Component", flags)) // The second parameter is the label previewed before opening the combo.
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+				{
+					bool is_selected = (item_current == items[n]);
+					if (ImGui::Selectable(items[n], is_selected))
+						item_current = items[n];
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+				}
+				ImGui::EndCombo();
+			}
+
+			// --- Handle drag & drop ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					Broken::Resource* resource = EngineApp->resources->GetResource(UID, false);
+
+					// MYTODO: Instance resource here, put it on scene (depending on resource)
+					if (resource && resource->GetType() == Broken::Resource::ResourceType::SCRIPT)
+					{
+						resource = EngineApp->resources->GetResource(UID);
+						Broken::ComponentScript* script = (Broken::ComponentScript*)Selected->AddComponent(Broken::Component::ComponentType::Script);
+						script->AssignScript((Broken::ResourceScript*)resource);
+
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+			// --- Add here temporal conditions to know which component to add ---
+
+			// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
+
+			if (item_current == "Mesh")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::Mesh);
+			}
+
+			if (item_current == "Mesh Renderer")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::MeshRenderer);
+			}
+
+			if (item_current == "UI Canvas")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::Canvas);
+			}
+
+			if (item_current == "UI Image")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::Image);
+			}
+
+			if (item_current == "UI Text")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::Text);
+			}
+
+			if (item_current == "UI Button")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::Button);
+			}
+
+			if (item_current == "Dynamic RigidBody")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::DynamicRigidBody);
+			}
+
+			if (item_current == "Collider")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::Collider);
+			}
+			if (item_current == "Particle Emitter")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::ParticleEmitter);
+			}
+			if (item_current == "Audio Source")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::AudioSource);
+			}
+
+			item_current = items[0];
 
 			if (Startup)
-				ImGui::SetNextItemOpen(true);
-
-			if (*it)
-				(*it)->CreateInspectorNode();
-			
-			ImGui::NewLine();
-			ImGui::Separator();
+				Startup = false;
 		}
 
-		static ImGuiComboFlags flags = 0;
+		// --- Display Resource Information ---
+		else if (SelectedRes)
+		{	
+			ImGui::BeginChild("res", ImVec2(0, 35), true);
 
-		const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
-		static const char* item_current = items[0];
+			ImGui::Text(SelectedRes->GetName());
 
-		ImGui::NewLine();
+			SelectedRes->CreateInspectorNode();
 
-		// --- Add component ---
-		if (ImGui::BeginCombo("##Components Combo", "Add Component", flags)) // The second parameter is the label previewed before opening the combo.
-		{
-			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
-			{
-				bool is_selected = (item_current == items[n]);
-				if (ImGui::Selectable(items[n], is_selected))
-					item_current = items[n];
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
-			}
-			ImGui::EndCombo();
+			ImGui::EndChild();
 		}
-
-		// --- Handle drag & drop ---
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-			{
-				uint UID = *(const uint*)payload->Data;
-				Broken::Resource* resource = EngineApp->resources->GetResource(UID, false);
-
-				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if (resource && resource->GetType() == Broken::Resource::ResourceType::SCRIPT)
-				{
-					resource = EngineApp->resources->GetResource(UID);
-					Broken::ComponentScript* script = (Broken::ComponentScript*)Selected->AddComponent(Broken::Component::ComponentType::Script);
-					script->AssignScript((Broken::ResourceScript*)resource);
-
-				}
-			}
-
-			ImGui::EndDragDropTarget();
-		}
-
-		// --- Add here temporal conditions to know which component to add ---
-
-		// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
-
-		if (item_current == "Mesh")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::Mesh);
-		}
-
-		if (item_current == "Mesh Renderer")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::MeshRenderer);
-		}
-
-		if (item_current == "UI Canvas")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::Canvas);
-		}
-
-		if (item_current == "UI Image")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::Image);
-		}
-
-		if (item_current == "UI Text")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::Text);
-		}
-
-		if (item_current == "UI Button")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::Button);
-		}
-
-		if (item_current == "Dynamic RigidBody")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::DynamicRigidBody);
-		}
-
-		if (item_current == "Collider")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::Collider);
-		}
-		if (item_current == "Particle Emitter")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::ParticleEmitter);
-		}
-		if (item_current == "Audio Source")
-		{
-			Selected->AddComponent(Broken::Component::ComponentType::AudioSource);
-		}
-
-		item_current = items[0];
-
-		if (Startup)
-			Startup = false;
 	}
+
 	ImGui::End();
 
 
