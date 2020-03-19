@@ -45,6 +45,14 @@ void ComponentMeshRenderer::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
+
+	if (unuse_material && material && material->IsInMemory())
+	{
+		material->Release();
+		material->RemoveUser(GO);
+		material = nullptr;
+	}
+		
 }
 
 void ComponentMeshRenderer::Draw(bool outline) const {
@@ -132,8 +140,9 @@ void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const {
 
 		if (this->checkers)
 			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-		else {
-			if (material->resource_diffuse)
+		else 
+		{
+			if (material && material->resource_diffuse)
 				glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
 			else
 				glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
@@ -436,9 +445,12 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 	ImGui::Separator();
 	ImGui::PushID("Material");
 
+	
+
 	// --- Material node ---
 	if (material)
 	{
+	
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
@@ -517,7 +529,33 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 			ImGui::SameLine();
 			ImGui::Text("Albedo");
 			ImGui::TreePop();
+
+			if (ImGui::Button("Unuse Material"))
+				unuse_material = true;
 		}
+	}
+	else
+	{
+		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+		// --- Handle drag & drop ---
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) {
+				uint UID = *(const uint*)payload->Data;
+				Resource* resource = App->resources->GetResource(UID, false);
+
+				if (resource && resource->GetType() == Resource::ResourceType::MATERIAL) {
+					
+					material = (ResourceMaterial*)App->resources->GetResource(UID);
+					unuse_material = false;
+
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+		ImGui::SameLine();
+		ImGui::Text("Drop Material");
 	}
 
 	ImGui::PopID();

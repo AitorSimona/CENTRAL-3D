@@ -8,6 +8,8 @@
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"
 #include "ResourceAnimation.h"
+#include "ResourceAnimator.h"
+#include "ImporterAnimator.h"
 
 #include "GameObject.h"
 #include "Imgui/imgui.h"
@@ -25,7 +27,12 @@ ComponentAnimation::~ComponentAnimation()
 {
 	for (int i = 0; i < animations.size(); i++)
 	{
-		delete animations[i];
+		if (animations[i])
+		{
+			delete animations[i];
+			animations[i] = nullptr;
+		}
+		
 	}
 
 	animations.clear();
@@ -45,6 +52,12 @@ ComponentAnimation::~ComponentAnimation()
 	{
 		res_anim->Release();
 		res_anim->RemoveUser(GO);
+	}
+
+	if (res_animator && res_animator->IsInMemory())
+	{
+		res_animator->Release();
+		res_animator->RemoveUser(GO);
 	}
 
 }
@@ -85,6 +98,16 @@ void ComponentAnimation::Update()
 		time = 0;
 		if(animations.size()>0)
 			playing_animation = GetDefaultAnimation();
+	}
+
+	if (to_copy)
+	{
+		// -- New Copy function goes here, or in the button itself
+
+		//ENGINE_AND_SYSTEM_CONSOLE_LOG("Animation info size: %d", anim_info.size());
+		
+
+		to_copy = false;
 	}
 
 	if(to_delete)
@@ -227,13 +250,17 @@ void ComponentAnimation::ONResourceEvent(uint UID, Resource::ResourceNotificatio
 	switch (type)
 	{
 	case Resource::ResourceNotificationType::Overwrite:
-		if (res_anim && UID == res_anim->GetUID())
-			res_anim = (ResourceAnimation*)App->resources->GetResource(UID);
+		if (res_animator && UID == res_animator->GetUID())
+			LoadAnimator(false);
+			//res_anim = (ResourceAnimation*)App->resources->GetResource(UID);
 		break;
 
 	case Resource::ResourceNotificationType::Deletion:
 		if (res_anim && UID == res_anim->GetUID())
 			res_anim = nullptr;
+
+		if (res_animator && UID == res_animator->GetUID())
+			res_animator = nullptr;
 		break;
 
 	default:
@@ -258,6 +285,47 @@ void ComponentAnimation::CreateInspectorNode()
 			ImGui::Checkbox("Draw Bones", &draw_bones);
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);
+			
+			if (res_animator)
+			{
+				if (ImGui::Button("Save animation info"))
+				{
+					
+					res_animator->FreeMemory();
+
+					for (auto iterator = animations.begin(); iterator != animations.end(); ++iterator)
+					{
+						Animation* anim = new Animation((*iterator)->name, (*iterator)->start, (*iterator)->end, (*iterator)->loop, (*iterator)->Default);
+						res_animator->animations.push_back(anim);
+					}
+						
+					ImporterAnimator* IAnim = App->resources->GetImporter<ImporterAnimator>();
+					IAnim->Save(res_animator);
+				}
+			}
+			else
+				ImGui::Text("No Animator applied");
+		
+
+			ImGui::SameLine();
+			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+			// --- Handle drag & drop ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					Resource* resource = App->resources->GetResource(UID, false);
+
+					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR) 
+					{
+						LoadAnimator(true, UID);
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
 
 			for (int i = 0; i < animations.size(); i++)
 			{
@@ -265,7 +333,7 @@ void ComponentAnimation::CreateInspectorNode()
 				// --- Game Object Name Setter ---
 				char Anim_name[100] = "";
 				strcpy_s(Anim_name, 100, animations[i]->name.c_str());
-				std::string str = "Aniamtion";
+				std::string str = "Animation ";
 				ImGui::PushItemWidth(200); if (ImGui::InputText(str.append(std::to_string(i + 1)).c_str(), Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 					animations[i]->name = Anim_name;
 
@@ -278,10 +346,10 @@ void ComponentAnimation::CreateInspectorNode()
 				ImGui::PushItemWidth(100); ImGui::InputFloat(Speed.append(" Speed").c_str(), &animations[i]->speed, 1, 0);
 				std::string Loop = animations[i]->name;
 				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
-				
-				std::string name = animations[i]->name;
+
+				std::string name1 = animations[i]->name;
 				std::string Delete = "Delete ";
-				std::string button = Delete.append(name);
+				std::string button = Delete.append(name1);
 				if (ImGui::Button(button.c_str()))
 				{
 					delete animations[i];
@@ -331,12 +399,15 @@ void ComponentAnimation::DoBoneLink()
 	{
 		// -- Uncomment when Comp/Res Bone is done
 
-		uint tmp_id = bones[i]->res_bone->meshID;
-		//They have to have the same ID (Mesh/Bone), that's how they are linked
-		std::map<uint, ComponentMesh*>::iterator it = meshes.find(tmp_id);
-		if (it != meshes.end())
+		if (bones[i]->res_bone)
 		{
-			it->second->AddBone(bones[i]);
+			uint tmp_id = bones[i]->res_bone->meshID;
+			//They have to have the same ID (Mesh/Bone), that's how they are linked
+			std::map<uint, ComponentMesh*>::iterator it = meshes.find(tmp_id);
+			if (it != meshes.end())
+			{
+				it->second->AddBone(bones[i]);
+			}
 		}
 	}
 
@@ -523,8 +594,12 @@ void ComponentAnimation::UpdateMesh(GameObject* go)
 void ComponentAnimation::GetAllBones(GameObject* go, std::map<uint, ComponentMesh*>& meshes, std::vector<ComponentBone*>& bones)
 {
 	ComponentMesh* mesh = go->GetComponent<ComponentMesh>();
+
 	if (mesh != nullptr)
+	{
+		if(mesh->resource_mesh)
 		meshes[mesh->resource_mesh->GetUID()] = mesh;
+	}
 
 	ComponentBone* bone = go->GetComponent<ComponentBone>();
 	if (bone != nullptr)
@@ -542,3 +617,53 @@ bool ComponentAnimation::HasSkeleton(std::vector<GameObject*> collector) const
 		return false;
 }
 
+void ComponentAnimation::LoadAnimator(bool drop, uint UID)
+{
+	for (auto it = animations.begin(); it != animations.end(); ++it)
+	{
+		if (res_animator)
+		{
+			bool found = false;
+			for (auto iterator = res_animator->animations.begin(); iterator != res_animator->animations.end(); ++iterator)
+			{
+
+				if ((*it) == (*iterator))
+				{
+					found = true;
+				}
+			}
+
+			if (!found)
+			{
+				delete (*it);
+				(*it) = nullptr;
+			}
+
+		}
+		else
+		{
+			delete (*it);
+			(*it) = nullptr;
+		}
+	}
+
+	if (drop && res_animator)
+	{
+		res_animator->Release();
+		res_animator->RemoveUser(GO);
+	}
+
+	animations.clear();
+
+	if (drop)
+	{
+		res_animator = (ResourceAnimator*)App->resources->GetResource(UID);
+		res_animator->AddUser(GO);
+	}
+	
+
+	for (auto it = res_animator->animations.begin(); it != res_animator->animations.end(); ++it)
+	{
+		CreateAnimation((*it)->name, (*it)->start, (*it)->end, (*it)->loop, (*it)->Default);
+	}
+}

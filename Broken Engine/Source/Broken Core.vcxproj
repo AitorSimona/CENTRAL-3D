@@ -136,6 +136,7 @@
     <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="Importer.h" />
     <ClInclude Include="ImporterAnimation.h" />
+    <ClInclude Include="ImporterAnimator.h" />
     <ClInclude Include="ImporterBone.h" />
     <ClInclude Include="ImporterFolder.h" />
     <ClInclude Include="ImporterMaterial.h" />
@@ -256,6 +257,7 @@
     <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceAnimation.h" />
+    <ClInclude Include="ResourceAnimator.h" />
     <ClInclude Include="ResourceBone.h" />
     <ClInclude Include="ResourceFolder.h" />
     <ClInclude Include="ResourceMaterial.h" />
@@ -271,6 +273,10 @@
     <ClInclude Include="ResourceTexture.h" />
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
+    <ClInclude Include="ScriptingDebug.h" />
+    <ClInclude Include="ScriptingElements.h" />
+    <ClInclude Include="ScriptingInputs.h" />
+    <ClInclude Include="ScriptingSystems.h" />
     <ClInclude Include="ScriptVar.h" />
     <ClInclude Include="ComponentText.h" />
     <ClInclude Include="Timer.h" />
@@ -313,6 +319,7 @@
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Importer.cpp" />
     <ClCompile Include="ImporterAnimation.cpp" />
+    <ClCompile Include="ImporterAnimator.cpp" />
     <ClCompile Include="ImporterBone.cpp" />
     <ClCompile Include="ImporterFolder.cpp" />
     <ClCompile Include="ImporterMaterial.cpp" />
@@ -394,6 +401,7 @@
     <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
+    <ClCompile Include="ResourceAnimator.cpp" />
     <ClCompile Include="ResourceBone.cpp" />
     <ClCompile Include="ResourceFolder.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />
@@ -407,6 +415,10 @@
     <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Scripting.cpp" />
+    <ClCompile Include="ScriptingDebug.cpp" />
+    <ClCompile Include="ScriptingElements.cpp" />
+    <ClCompile Include="ScriptingInputs.cpp" />
+    <ClCompile Include="ScriptingSystems.cpp" />
     <ClCompile Include="ScriptVar.cpp" />
     <ClCompile Include="ComponentText.cpp" />
     <ClCompile Include="Timer.cpp" />

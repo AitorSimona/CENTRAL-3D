@@ -31,6 +31,8 @@ public:
 	void ChangeEditorValue(const char* value);
 	void ChangeEditorValue(double number);
 
+	bool operator == (const ScriptVar &comp) const;
+
 public:
 	// Type of the variable
 	VarType type = VarType::NONE;
