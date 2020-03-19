@@ -22,11 +22,21 @@ ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Com
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	canvas->AddElement(this);
 
-	font = App->ui_system->fonts[0];
+	font = App->resources->DefaultFont;
+	if (font)
+		font->AddUser(GO);
 }
 
 
-ComponentText::~ComponentText() {}
+ComponentText::~ComponentText() 
+{
+
+	if (font && font->IsInMemory())
+	{
+		font->Release();
+		font->RemoveUser(GO);
+	}
+}
 
 void ComponentText::Update()
 {
@@ -143,8 +153,29 @@ json ComponentText::Save() const
 
 void ComponentText::Load(json& node)
 {
+	//When loading scene, load the saved font if exists else use default font
 }
 
+// Function called before dying
+void ComponentText::ONResourceEvent(uint UID, Resource::ResourceNotificationType type)
+{
+	// --- Always check if your resources are already invalidated, since go sends events from all of its components resources ---
+	switch (type)
+	{
+	case Resource::ResourceNotificationType::Overwrite:
+		break;
+
+	case Resource::ResourceNotificationType::Deletion:
+		if (font && UID == font->GetUID())
+		{
+			font = nullptr;
+		}
+		break;
+
+	default:
+		break;
+	}
+}
 void ComponentText::CreateInspectorNode()
 {
 	ImGui::Checkbox("##TextActive", &GetActive());
@@ -209,19 +240,36 @@ void ComponentText::CreateInspectorNode()
 		if (ImGui::Button("Load..."))
 			ImGui::OpenPopup("Load Font");
 
-		if (ImGui::BeginPopup("Load Font"))
-		{
-			for (int i = 0; i < App->ui_system->fonts.size(); i++)
-			{
-				if (ImGui::Selectable(App->ui_system->fonts[i]->GetName()))
-				{
-					font = App->ui_system->fonts[i];
+		ImGui::Text(font->GetName());
+
+		// --- Texture Preview ---
+		if (font)
+			ImGui::ImageButton((void*)(uint)font->GetPreviewTexID(), ImVec2(20, 20));
+		else
+			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+		// --- Handle drag & drop ---
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("resource")) {
+				uint UID = *(const uint*)payload->Data;
+				Resource* resource = App->resources->GetResource(UID, false);
+
+				if (resource && resource->GetType() == Resource::ResourceType::FONT) {
+					if (font && font->IsInMemory())
+					{
+						font->Release();
+						font->RemoveUser(GO);
+					}
+
+					font = (ResourceFont*)App->resources->GetResource(UID);
+
+					if (font)
+						font->AddUser(GO);
 				}
 			}
-			ImGui::EndPopup();
+
+			ImGui::EndDragDropTarget();
 		}
-		
-		ImGui::Text(font->GetName());
 
 		ImGui::Separator();
 		ImGui::TreePop();

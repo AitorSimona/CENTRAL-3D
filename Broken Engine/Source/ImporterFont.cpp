@@ -4,6 +4,7 @@
 #include "ModuleFileSystem.h"
 #include "ResourceFont.h"
 #include "ImporterMeta.h"
+#include "ResourceMeta.h"
 #include "ModuleUI.h"
 #include "mmgr/mmgr.h"
 
@@ -32,11 +33,11 @@ Resource* ImporterFont::Import(ImportData& IData) const
 	if (meta)
 		IMeta->Save(meta);
 
-	font->Init();
 
-	App->ui_system->fonts.push_back(font);
-
-	
+	if (font != nullptr)
+	{
+		font->Init();
+	}
 
 	return font;
 }
@@ -47,6 +48,23 @@ void ImporterFont::Save(ImporterFont* anim) const
 
 Resource* ImporterFont::Load(const char* path) const
 {
+	ResourceFont* font = nullptr;
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
-	return nullptr;
+	font = App->resources->fonts.find(meta->GetUID()) != App->resources->fonts.end() ? App->resources->fonts.find(meta->GetUID())->second : (ResourceFont*)App->resources->CreateResourceGivenUID(Resource::ResourceType::FONT, path, meta->GetUID());
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(font->GetOriginalFile())) {
+		font->SetOriginalFile(path);
+		meta->SetOriginalFile(path);
+		App->resources->AddResourceToFolder(font);
+	}
+	
+	if (font != nullptr)
+	{
+		font->Init();
+	}
+
+	return font;
 }

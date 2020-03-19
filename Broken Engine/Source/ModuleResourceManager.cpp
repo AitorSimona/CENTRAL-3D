@@ -73,6 +73,10 @@ bool ModuleResourceManager::Start()
 	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
 
+	// --- Create default font ---
+	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
+	DefaultFont->Init();
+
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
 	filters.push_back("mat");
@@ -1206,7 +1210,7 @@ std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::R
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Destruction Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -1321,7 +1325,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Clean Up needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)

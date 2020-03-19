@@ -9,7 +9,7 @@
 #include "Math.h"
 
 #define DEFAULT_FONT_SIZE 12
-#define MAX_TEXT_SIZE 256
+#define MAX_TEXT_SIZE 512
 
 BE_BEGIN_NAMESPACE
 
@@ -36,6 +36,7 @@ public:
 	// --- Save & Load ---
 	json Save() const override;
 	void Load(json& node) override;
+	void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) override;
 	void CreateInspectorNode() override;
 
 public:
@@ -53,8 +54,11 @@ public:
 
 	ResourceFont* font = nullptr;
 
+	// Try to change to char*
 	std::string text = "SampleText";
+	//char* text = 
 	//std::string buffer = "SampleText";
+
 	char buffer[MAX_TEXT_SIZE] = "SampleText";
 };
 

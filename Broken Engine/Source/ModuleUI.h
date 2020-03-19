@@ -35,7 +35,6 @@ public:
 
 public:
 	std::vector<ComponentCanvas*> canvas;
-	std::vector<ResourceFont*> fonts;
 
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;

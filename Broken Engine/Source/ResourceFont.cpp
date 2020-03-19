@@ -1,6 +1,8 @@
 #include "ResourceFont.h"
 #include "Application.h"
 #include "ModuleGui.h"
+#include "ModuleFileSystem.h"
+#include "ModuleResourceManager.h"
 
 #include "mmgr/mmgr.h"
 
@@ -9,9 +11,6 @@
 #include FT_FREETYPE_H
 
 using namespace Broken;
-
-// un cop tens una resource importada al seu map(he creat una nova), com accedeixes a ella ? veig que hi ha el GetResource() pero necessites el ID, mhaig de guardar el ID amb el importer ?
-// 
 
 
 ResourceFont::ResourceFont(uint UID, const char* source_file) : Resource(Resource::ResourceType::FONT, UID, source_file)
@@ -95,6 +94,9 @@ void ResourceFont::Init()
 		};
 		characters.insert(std::pair<GLchar, ResourceFont::Character>(c, character));
 	}
+
+	// TEsting
+	previewTexID = characters[65].TextureID;
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	FT_Done_Face(face);
@@ -118,9 +120,20 @@ void ResourceFont::Init()
 
 void ResourceFont::OnOverwrite()
 {
+	// Fonts are not overwritten 
 }
 
 void ResourceFont::OnDelete()
 {
+	// Notify module ui of font removed
+
+	NotifyUsers(ResourceNotificationType::Deletion);
+
+	FreeMemory();
+	if (App->fs->Exists(resource_file.c_str()))
+		App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+	App->resources->ONResourceDestroyed(this);
 }
 
