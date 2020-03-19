@@ -666,6 +666,12 @@
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptingInterface.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingScenes.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1099,6 +1105,12 @@
     </ClCompile>
     <ClCompile Include="ImporterAnimator.cpp">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingInterface.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingScenes.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

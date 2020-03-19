@@ -19,6 +19,8 @@
 #include "ScriptingAudio.h"
 #include "ScriptingGameobject.h"
 #include "ScriptingParticles.h"
+#include "ScriptingInterface.h"
+#include "ScriptingScenes.h"
 #include "ScriptVar.h"
 #include <iterator>
 
@@ -272,7 +274,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
-		// AUDIO
+		// ANIMATIONS
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingAnimations>("Animations")
 		.addConstructor<void(*) (void)>()
@@ -285,6 +287,25 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// ----------------------------------------------------------------------------------
 		// USER INTERFACE
 		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingInterface>("Interface")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("MakeElementVisible", &ScriptingInterface::MakeUIComponentVisible)
+		.addFunction("ChangeButtonColor", &ScriptingInterface::ChangeButtonColor)
+		.addFunction("ChangeImageColor", &ScriptingInterface::ChangeImageColor)
+		.addFunction("ChangeText", &ScriptingInterface::ChangeUIText)
+		.addFunction("ChangeTextWithNumber", &ScriptingInterface::ChangeUITextWithNumber)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// SCENES
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingScenes>("Scenes")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("LoadScene", &ScriptingScenes::LoadSceneFromScript)
+		.addFunction("QuitGame", &ScriptingScenes::QuitGame)
+		.endClass()
 
 		// ----------------------------------------------------------------------------------
 		// SCRIPTING INPUTS

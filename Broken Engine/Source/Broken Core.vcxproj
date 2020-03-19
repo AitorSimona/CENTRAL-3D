@@ -275,8 +275,10 @@
     <ClInclude Include="Scripting.h" />
     <ClInclude Include="ScriptingAudio.h" />
     <ClInclude Include="ScriptingGameobject.h" />
+    <ClInclude Include="ScriptingInterface.h" />
     <ClInclude Include="ScriptingParticles.h" />
     <ClInclude Include="ScriptingPhysics.h" />
+    <ClInclude Include="ScriptingScenes.h" />
     <ClInclude Include="ScriptingSystem.h" />
     <ClInclude Include="ScriptingInputs.h" />
     <ClInclude Include="ScriptingAnimations.h" />
@@ -421,8 +423,10 @@
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptingAudio.cpp" />
     <ClCompile Include="ScriptingGameobject.cpp" />
+    <ClCompile Include="ScriptingInterface.cpp" />
     <ClCompile Include="ScriptingParticles.cpp" />
     <ClCompile Include="ScriptingPhysics.cpp" />
+    <ClCompile Include="ScriptingScenes.cpp" />
     <ClCompile Include="ScriptingSystem.cpp" />
     <ClCompile Include="ScriptingInputs.cpp" />
     <ClCompile Include="ScriptingAnimations.cpp" />
