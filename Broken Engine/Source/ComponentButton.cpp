@@ -13,7 +13,6 @@
 
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
-//#include "ModuleWindow.h"
 
 #include "ResourceShader.h"
 #include "ResourceTexture.h"
@@ -67,7 +66,7 @@ void ComponentButton::Draw()
 	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
 	float3 scale = float3(App->renderer3D->active_camera->frustum.NearPlaneWidth(), App->renderer3D->active_camera->frustum.NearPlaneHeight(), 1.0f);
 
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D, 1.0f));
+	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D*0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -119,6 +118,15 @@ void ComponentButton::Draw()
 	if (state == HOVERED) ChangeColorTo(hovered_color);
 	if (state == SELECTED || state == DRAGGING) ChangeColorTo(selected_color);
 	if (state == LOCKED) ChangeColorTo(locked_color);
+
+	// --- Collider ---
+	if (collider_visible && App->GetAppState() == AppState::EDITOR) //draw only in editor mode
+	{
+		App->gui->draw_list->AddRect(ImVec2(App->gui->sceneX + collider.x, App->gui->sceneY + collider.y),
+			ImVec2(App->gui->sceneX + collider.x + collider.w, App->gui->sceneY + collider.y + collider.h),
+			ImU32(ImColor(ImVec4(1.0f, 0.0f, 0.0f, 1.0f))), 0.0f, 0, 1.0f);
+	}
+
 }
 
 json ComponentButton::Save() const
@@ -139,6 +147,11 @@ json ComponentButton::Save() const
 
 	node["size2Dx"] = std::to_string(size2D.x);
 	node["size2Dy"] = std::to_string(size2D.y);
+
+	node["colliderx"] = std::to_string(collider.x);
+	node["collidery"] = std::to_string(collider.y);
+	node["colliderw"] = std::to_string(collider.w);
+	node["colliderh"] = std::to_string(collider.h);
 
 	return node;
 }
@@ -164,12 +177,22 @@ void ComponentButton::Load(json& node)
 	std::string size2Dx = node["size2Dx"].is_null() ? "0" : node["size2Dx"];
 	std::string size2Dy = node["size2Dy"].is_null() ? "0" : node["size2Dy"];
 
+	std::string colliderx = node["colliderx"].is_null() ? "0" : node["colliderx"];
+	std::string collidery = node["collidery"].is_null() ? "0" : node["collidery"];
+	std::string colliderw = node["colliderw"].is_null() ? "0" : node["colliderw"];
+	std::string colliderh = node["colliderh"].is_null() ? "0" : node["colliderh"];
+
 	visible = bool(std::stoi(visible_str));
 	draggable = bool(std::stoi(draggable_str));
 	interactable = bool(std::stoi(interactable_str));
 
 	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
 	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
+
+	collider.x = int(std::stoi(colliderx));
+	collider.y = int(std::stoi(collidery));
+	collider.w = int(std::stoi(colliderw));
+	collider.h = int(std::stoi(colliderh));
 }
 
 void ComponentButton::CreateInspectorNode()
@@ -205,16 +228,42 @@ void ComponentButton::CreateInspectorNode()
 		ImGui::Text("Position:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##buttonposition", &position2D.x);
+		ImGui::DragFloat("x##buttonposition", &position2D.x, 0.1f);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##buttonposition", &position2D.y);
+		ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
 
 		// Rotation
 		ImGui::Text("Rotation:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
 		ImGui::DragFloat("##buttonrotation", &rotation2D);
+
+		// ------------------------------------------
+
+		// Collider
+		ImGui::Separator();
+		ImGui::Text("Collider"); 
+		ImGui::SameLine();
+		ImGui::Checkbox("Visible##2", &collider_visible);
+
+		// Position
+		ImGui::Text("Position:");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragInt("x##buttoncolliderposition", &collider.x);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragInt("y##buttoncolliderposition", &collider.y);
+
+		// Size
+		ImGui::Text("Size:    ");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragInt("x##buttoncollidersize", &collider.w);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragInt("y##buttoncollidersize", &collider.h);
 
 		// ------------------------------------------
 
@@ -353,15 +402,6 @@ void ComponentButton::UpdateState()
 				ChangeStateTo(IDLE);
 		}
 	}
-}
-
-void ComponentButton::UpdateCollider()
-{
-	float2 nearp = float2(App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).x, App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1).y);
-	collider.x = nearp.x + position2D.x; //global pos x
-	collider.y = nearp.y + position2D.y; //global pos y
-	collider.w = size2D.x; //real width
-	collider.h = size2D.y; //real height
 }
 
 void ComponentButton::OnClick()

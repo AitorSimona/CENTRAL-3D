@@ -29,11 +29,9 @@ public:
 
 	State GetState() { return state; }
 	void UpdateState();
+	void OnClick();
 	void ChangeStateTo(State new_state) { state = new_state; }
 	void ChangeColorTo(Color new_color) { color = new_color; }
-	void UpdateCollider();
-	void OnClick();
-
 
 	// UI Functions
 	void Scale(float2 size) { size2D = size; }
@@ -64,6 +62,8 @@ public:
 private:
 	SDL_Rect collider;
 	Color color;
+
+	bool collider_visible = true;
 
 	Color idle_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Color hovered_color = { 0.5f, 0.5f, 0.5f, 1.0f };

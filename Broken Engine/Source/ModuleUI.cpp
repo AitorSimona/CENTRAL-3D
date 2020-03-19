@@ -40,7 +40,6 @@ update_status ModuleUI::PreUpdate(float dt)
 		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
 		{
 			ComponentButton* element = (ComponentButton*)obj->HasComponent(Component::ComponentType::Button); //single component (change when able to have multiple components of same type)
-			element->UpdateCollider(); //update colliders
 			element->UpdateState(); //update state
 		}
 	}
@@ -104,13 +103,13 @@ void ModuleUI::Clear()
 	canvas.clear();
 }
 
-bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider) // 0,0 is bottom left corner
+bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider) // 0,0 is top left corner
 {
 	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN) 
 		int i = 0;
 
 	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX;
-	mouse_pos.y = Abs(App->input->GetMouseY() - App->gui->sceneY - App->gui->sceneHeight);
+	mouse_pos.y = App->input->GetMouseY() - App->gui->sceneY; 
 
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
 	if (SDL_HasIntersection(&MouseCollider, &collider))

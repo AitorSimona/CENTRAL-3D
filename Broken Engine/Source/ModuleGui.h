@@ -7,6 +7,7 @@
 
 #include <vector>
 struct ImGuiContext;
+struct ImDrawList;
 //
 //class PanelSettings;
 //class PanelAbout;
@@ -94,6 +95,8 @@ public:
 	float sceneHeight = 0;
 
 	bool isUsingGuizmo = false;
+
+	ImDrawList* draw_list;
 
 private:
 
