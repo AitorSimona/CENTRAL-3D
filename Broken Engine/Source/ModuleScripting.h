@@ -38,6 +38,7 @@ public:
 	update_status GameUpdate(float gameDT);
 
 	bool Stop() override;
+	ScriptInstance* GetScriptInstanceFromComponent(ComponentScript* component_script);
 
 public:
 	ScriptInstance* current_script;
@@ -52,7 +53,6 @@ private:
 	_AppState previous_AppState = (_AppState)2; // we use the EDITOR value of the script (can't include application.h because it would slow down compilation time)
 
 	void CleanUpInstances();
-	ScriptInstance* GetScriptInstanceFromComponent(ComponentScript* component_script);
 
 	std::vector<ScriptInstance*> recompiled_instances;
 	std::vector<ScriptInstance*> class_instances;
