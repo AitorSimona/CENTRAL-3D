@@ -478,7 +478,7 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"out vec4 color; \n"
 		"uniform sampler2D ourTexture; \n"
 		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
+		"color = texture(ourTexture, TexCoord) * vec4(ourColor, 1); \n"
 		"if(Texture == -1)\n"
 		"color = vec4(ourColor, 1);\n"
 		"} \n"
