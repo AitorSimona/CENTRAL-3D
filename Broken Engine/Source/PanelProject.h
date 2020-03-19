@@ -16,6 +16,7 @@ public:
 
 	bool Draw();
 	void SetSelected(Broken::Resource* new_selected);
+	Broken::Resource* GetSelected();
 	//const Broken::Resource* GetcurrentDirectory() const;
 
 private:

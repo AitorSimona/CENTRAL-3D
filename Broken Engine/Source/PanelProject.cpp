@@ -245,6 +245,11 @@ void PanelProject::SetSelected(Broken::Resource* new_selected)
 		selected_uid = 0;
 }
 
+Broken::Resource* PanelProject::GetSelected()
+{
+	return selected;
+}
+
 //const Broken::Resource* PanelProject::GetcurrentDirectory() const
 //{
 //	return currentDirectory;
