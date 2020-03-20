@@ -299,42 +299,51 @@ void ComponentButton::CreateInspectorNode()
 		
 		if (ImGui::BeginDragDropTarget()) //drag and drop
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("gameobject"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
 			{
 				uint UID = *(const uint*)payload->Data;
 				script_obj = App->scene_manager->currentScene->GetGOWithUID(UID);
 
 				if (script_obj != nullptr)
-					script = (ComponentScript*)GO->HasComponent(Component::ComponentType::Script); //get script component
+					script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
 			}
 			ImGui::EndDragDropTarget();
 		}
-
 		ImGui::SameLine();
 		if (script_obj == nullptr)
 			ImGui::Text("No Script Loaded");
 		else
-			ImGui::Text("%c", script_obj->GetName());
+			ImGui::Text("Name: %s", script_obj->GetName());
 
-		const char* items[] = { "None", "Something" };
-		static const char* item_current = items[0];
-
-		ImGui::Text("OnClick");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(120.0f);
-		if (ImGui::BeginCombo("##OnClick", item_current, 0)) // The second parameter is the label previewed before opening the combo.
+		if (script != nullptr)
 		{
-			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			std::vector<const char*> list;
+			list.push_back("None");
+			for (uint i = 0; i < script->script_functions.size(); ++i)
+				list.push_back(script->script_functions[i].name.c_str());
+
+			static const char* item_current = list[0];
+			ImGui::Text("OnClick");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(120.0f);
+			if (ImGui::BeginCombo("##OnClick", item_current, 0))
 			{
-				bool is_selected = (item_current == items[n]);
-				if (ImGui::Selectable(items[n], is_selected))
-					item_current = items[n];
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+				for (int n = 0; n < list.size(); ++n)
+				{
+					bool is_selected = (item_current == list[n]);
+					if (ImGui::Selectable(list[n], is_selected))
+						item_current = list[n];
+					if (is_selected)
+					{
+						ImGui::SetItemDefaultFocus();
+						func_pos = n;
+					}
+				}
+				ImGui::EndCombo();
 			}
-			ImGui::EndCombo();
 		}
-		//function_to_execute = item_current
+		else
+			ImGui::Text("GameObject has no ComponentScript");
 
 		// States (Colors)
 		ImGui::Separator();
@@ -450,5 +459,5 @@ void ComponentButton::OnClick()
 	if (script == nullptr)
 		return;
 
-	script->Enable();
+	App->scripting->CallbackScriptFunction(script, script->script_functions[func_pos]);
 }

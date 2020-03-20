@@ -164,8 +164,10 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			ImGui::SetDragDropPayload("GO", Go, sizeof(Broken::GameObject));        // Set payload to carry the index of our item (could be anything)
+			uint UID = Go->GetUID();
+			ImGui::SetDragDropPayload("GO", &UID, sizeof(uint));
 			dragged = Go;
+			ImGui::Text(Go->GetName());
 			ImGui::EndDragDropSource();
 		}
 
@@ -176,8 +178,6 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 				target = Go;
 				end_drag = true;
 			}
-
-			
 			ImGui::EndDragDropTarget();
 		}
 

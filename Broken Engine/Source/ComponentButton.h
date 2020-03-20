@@ -63,6 +63,7 @@ private:
 	SDL_Rect collider;
 	Color color;
 	GameObject* script_obj = nullptr;
+	uint func_pos = 0;
 
 	bool collider_visible = true;
 
