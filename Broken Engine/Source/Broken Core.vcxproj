@@ -45,7 +45,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
