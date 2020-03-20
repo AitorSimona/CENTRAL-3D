@@ -3,6 +3,7 @@
 #pragma once
 #include "Module.h"
 #include <vector>
+#include "ResourceFont.h"
 #include "Math.h"
 
 BE_BEGIN_NAMESPACE
@@ -11,12 +12,14 @@ class ComponentCanvas;
 class Component;
 class BROKEN_API ModuleUI : public Module
 {
+
 public:
 	ModuleUI(bool start_enabled = true);
 	~ModuleUI();
 
 	bool Init(json& file) override;
 	bool Start() override;
+	void LoadFont(std::string& font);
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
@@ -35,6 +38,7 @@ public:
 
 	float2 drag_start = float2::zero;
 	float2 mouse_pos = float2::zero;
+
 };
 
 BE_END_NAMESPACE
