@@ -33,7 +33,14 @@ bool ResourceFont::LoadInMemory()
 void ResourceFont::FreeMemory()
 {
 	// delete vbo vao texture
+	if (VAO != 0) glDeleteVertexArrays(1,&VAO);
+	if (VBO != 0) glDeleteBuffers(1,&VBO);
 	
+	for (GLchar i=0;i<characters.size();i++)
+	{
+		glDeleteTextures(1, &characters[i].TextureID);
+	}
+	characters.clear();
 }
 
 void ResourceFont::Init()
@@ -50,10 +57,11 @@ void ResourceFont::Init()
 
 	FT_Set_Pixel_Sizes(face, 0, size);
 	//FT_Set_Char_Size(face, size << 6, size << 6, 96, 96);
-	//FT_Activate_Size();
+	
 	// Init of all chars of the font to the map of character textures
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
-	characters.clear();
+	
+	FreeMemory();
 	// Load first 128 characters of ASCII set
 	for (GLubyte c = 0; c < 128; c++)
 	{
@@ -95,7 +103,7 @@ void ResourceFont::Init()
 		characters.insert(std::pair<GLchar, ResourceFont::Character>(c, character));
 	}
 
-	// TEsting
+	// Preview the A character (65 in ascii code) at the panel assets
 	previewTexID = characters[65].TextureID;
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -125,8 +133,6 @@ void ResourceFont::OnOverwrite()
 
 void ResourceFont::OnDelete()
 {
-	// Notify module ui of font removed
-
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();

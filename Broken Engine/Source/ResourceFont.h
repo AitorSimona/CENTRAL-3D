@@ -5,9 +5,7 @@
 #include <map>
 #include "Math.h"
 
-
-
-#define FONT_SIZE_DEFAULT 99
+#define FONT_SIZE_DEFAULT 96
 
 BE_BEGIN_NAMESPACE
 
@@ -22,6 +20,7 @@ public:
 	};
 
 	ResourceFont(uint UID, const char* source_file);
+
 	~ResourceFont();
 
 	bool LoadInMemory() override;
@@ -32,7 +31,7 @@ public:
 	GLuint VAO = 0;
 	GLuint VBO = 0;
 	// Sample texture TODO
-	GLuint sample_texture = 0;
+	//GLuint sample_texture = 0;
 	int size = FONT_SIZE_DEFAULT;
 
 	void Init();

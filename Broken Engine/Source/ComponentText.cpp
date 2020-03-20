@@ -4,7 +4,6 @@
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
 #include "ComponentCanvas.h"
-#include "ResourceTexture.h"
 #include "ModuleRenderer3D.h"
 #include "ResourceShader.h"
 #include "ComponentCamera.h"
@@ -148,12 +147,58 @@ void ComponentText::Draw()
 json ComponentText::Save() const
 {
 	json node;
+
+	node["position2Dx"] = std::to_string(position2D.x);
+	node["position2Dy"] = std::to_string(position2D.y);
+
+	node["rotation2D"] = std::to_string(rotation2D);
+
+	node["scale2Dx"] = std::to_string(size2D.x);
+	node["scale2Dy"] = std::to_string(size2D.y);
+
+	node["colorR"] = std::to_string(color.r);
+	node["colorG"] = std::to_string(color.g);
+	node["colorB"] = std::to_string(color.b);
+	node["colorA"] = std::to_string(color.a);
+
+	node["text"] = text;
+
+	if (font) 
+		node["font"] = std::to_string(font->GetUID());
+	
+
 	return node;
 }
 
 void ComponentText::Load(json& node)
 {
 	//When loading scene, load the saved font if exists else use default font
+
+	std::string posx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
+	std::string posy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
+
+	std::string rot = node["rotation2D"].is_null() ? "0" : node["rotation2D"];
+
+	std::string scalex = node["scale2Dx"].is_null() ? "0" : node["scale2Dx"];
+	std::string scaley = node["scale2Dy"].is_null() ? "0" : node["scale2Dy"];
+
+	std::string colorr = node["colorR"].is_null() ? "1" : node["colorR"];
+	std::string colorg = node["colorG"].is_null() ? "1" : node["colorG"];
+	std::string colorb = node["colorB"].is_null() ? "1" : node["colorB"];
+	std::string colora = node["colorA"].is_null() ? "1" : node["colorA"];
+
+	std::string Text = node["text"].is_null() ? "ErrorLoading" : node["text"];
+	std::string Font = node["font"].is_null() ? std::to_string(App->resources->DefaultFont->GetUID()).c_str() : node["font"];
+	
+	Move({ std::stof(posx),std::stof(posy) });
+	Rotate(std::stof(rot));
+	Scale({ std::stof(scalex), std::stof(scaley) });
+
+	color = { std::stof(colorr),std::stof(colorg),std::stof(colorb),std::stof(colora) };
+
+	text = Text;
+
+	font = (ResourceFont*)App->resources->GetResource(std::stoul(Font));
 }
 
 // Function called before dying
@@ -181,7 +226,7 @@ void ComponentText::CreateInspectorNode()
 	ImGui::Checkbox("##TextActive", &GetActive());
 	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Text"))
+	if (ImGui::TreeNodeEx("Text",ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
@@ -192,13 +237,14 @@ void ComponentText::CreateInspectorNode()
 
 		ImGui::ColorEdit3("Color", (float*)&color);
 
-		if (ImGui::DragInt("Font size", &font->size, 1, 1, 200, "%.2f")) {
+		// Temporary disabled for usability and design consistency
+		/*if (ImGui::DragInt("Font size", &font->size, 1, 1, 200, "%.2f")) {
 
 			font->Init();
 		}
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
-
+*/
 
 		ImGui::Text(text.c_str());
 
@@ -237,16 +283,17 @@ void ComponentText::CreateInspectorNode()
 		ImGui::Text("Font: ");
 		ImGui::SameLine();
 
-		if (ImGui::Button("Load..."))
-			ImGui::OpenPopup("Load Font");
-
-		ImGui::Text(font->GetName());
 
 		// --- Texture Preview ---
-		if (font)
+		if (font) {
+			ImGui::Text(font->GetName());
 			ImGui::ImageButton((void*)(uint)font->GetPreviewTexID(), ImVec2(20, 20));
+		}
 		else
 			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Drag and drop any font from your assets to change it");
 
 		// --- Handle drag & drop ---
 		if (ImGui::BeginDragDropTarget()) {

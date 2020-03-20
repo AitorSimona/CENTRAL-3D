@@ -13,7 +13,6 @@
 
 BE_BEGIN_NAMESPACE
 
-class ResourceTexture;
 class ResourceFont;
 class ComponentCanvas;
 
@@ -42,23 +41,21 @@ public:
 public:
 	bool visible = true;
 
-	float2 size2D = { 0.07f,0.07f };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
+	float2 size2D = { 0.04f,0.04f };
+	
 
 	Color color = White;
 
 public:
 	ComponentCanvas* canvas = nullptr;
-	ResourceTexture* texture = nullptr;
 
 	ResourceFont* font = nullptr;
 
 	// Try to change to char*
 	std::string text = "SampleText";
-	//char* text = 
-	//std::string buffer = "SampleText";
-
+	// Or try to change to string
 	char buffer[MAX_TEXT_SIZE] = "SampleText";
 };
 
