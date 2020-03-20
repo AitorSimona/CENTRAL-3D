@@ -348,7 +348,7 @@ bool ModuleRenderer3D::GetVSync() const {
 }
 
 // --- Add render order to queue ---
-void ModuleRenderer3D::Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags)
+void ModuleRenderer3D::Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags)
 {
 	// --- Check data validity
 	if (transform.IsFinite() && mesh && mat)
@@ -356,13 +356,20 @@ void ModuleRenderer3D::Render(const float4x4 transform, const ResourceMesh* mesh
 		// --- Add given instance to relevant vector ---
 		if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
 		{
-			render_meshes[mesh->GetUID()].push_back(RenderMesh(transform, mesh, mat, flags));
+			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags);
+			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+
+			render_meshes[mesh->GetUID()].push_back(rmesh);
 		}
 		else
 		{
 			// --- Build new vector to store mesh's instances --- 
 			std::vector<RenderMesh> new_vec;
-			new_vec.push_back(RenderMesh(transform, mesh, mat, flags));
+
+			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags);
+			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+
+			new_vec.push_back(rmesh);
 			render_meshes[mesh->GetUID()] = new_vec;		
 		}
 	}
@@ -554,7 +561,7 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 	for(uint i = 0; i < meshInstances.size(); ++i)
 	{
 		RenderMesh* mesh = &meshInstances[i];
-		uint shader = App->renderer3D->defaultShader->ID;
+		uint shader = defaultShader->ID;
 		float4x4 model = mesh->transform;
 
 		if (mesh->mat->shader)
@@ -568,11 +575,17 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 
 		if (mesh->flags & RenderMeshFlags_::outline)
 		{
-			shader = App->renderer3D->OutlineShader->ID;
+			shader = OutlineShader->ID;
 			// --- Draw selected, pass scaled-up matrix to shader ---
 			float3 scale = float3(1.05f, 1.05f, 1.05f);
 
 			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
+		}
+
+		// --- Display Z buffer ---
+		if (zdrawer)
+		{
+			shader = ZDrawerShader->ID;
 		}
 
 		glUseProgram(shader);
@@ -582,23 +595,25 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr()); // model matrix
 
 		GLint viewLoc = glGetUniformLocation(shader, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, active_camera->GetOpenGLViewMatrix().ptr());
 
 		GLint timeLoc = glGetUniformLocation(shader, "time");
 		glUniform1f(timeLoc, App->time->time);
 
-		float farp = App->renderer3D->active_camera->GetFarPlane();
-		float nearp = App->renderer3D->active_camera->GetNearPlane();
+		float farp = active_camera->GetFarPlane();
+		float nearp = active_camera->GetNearPlane();
+
 		// --- Give ZDrawer near and far camera frustum planes pos ---
-		if (App->renderer3D->zdrawer) {
+		if (zdrawer) 
+		{
 			int nearfarLoc = glGetUniformLocation(shader, "nearfar");
 			glUniform2f(nearfarLoc, nearp, farp);
 		}
 
 		// right handed projection matrix
-		float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+		float f = 1.0f / tan(active_camera->GetFOV() * DEGTORAD / 2.0f);
 		float4x4 proj_RH(
-			f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+			f / active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 			0.0f, f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, -1.0f,
 			0.0f, 0.0f, nearp, 0.0f);
@@ -609,7 +624,12 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 
 		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices) 
 		{
-			glBindVertexArray(mesh->resource_mesh->VAO);
+			const ResourceMesh* rmesh = mesh->resource_mesh;
+
+			if (mesh->deformable_mesh)
+				rmesh = mesh->deformable_mesh;
+
+			glBindVertexArray(rmesh->VAO);
 
 			if (mesh->flags & RenderMeshFlags_::checkers)
 				glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
@@ -621,8 +641,8 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 					glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 			}
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->resource_mesh->EBO);
-			glDrawElements(GL_TRIANGLES, mesh->resource_mesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
+			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 			glBindVertexArray(0);
 			glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
@@ -635,7 +655,7 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 
 	}
 
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	glUseProgram(defaultShader->ID);
 }
 
 

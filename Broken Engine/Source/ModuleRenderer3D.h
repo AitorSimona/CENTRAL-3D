@@ -31,6 +31,10 @@ struct RenderMesh
 	const ResourceMesh* resource_mesh;
 	const ResourceMaterial* mat;
 
+	// temporal!
+	const ResourceMesh* deformable_mesh;
+
+
 	// --- Add rendering options here ---
 	RenderMeshFlags flags;
 };
@@ -61,8 +65,8 @@ public:
 	// --- Getters ---
 	bool GetVSync() const;
 
-	// --- Issue Render order ---
-	void Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags = 0);
+	// --- Issue Render order --- // Deformable mesh is Temporal!
+	void Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0);
 
 private:
 	void HandleObjectOutlining();

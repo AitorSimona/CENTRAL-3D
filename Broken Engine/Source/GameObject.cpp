@@ -87,7 +87,8 @@ void GameObject::Draw()
 		flags |= checkers;
 
 	if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
-			App->renderer3D->Render(GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags);
+			App->renderer3D->Render(GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, cmesh->deformable_mesh, flags);
+
 }
 
 void GameObject::RecursiveDelete()

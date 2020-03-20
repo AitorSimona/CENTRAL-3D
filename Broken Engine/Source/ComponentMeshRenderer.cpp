@@ -107,7 +107,8 @@ void ComponentMeshRenderer::Draw(bool outline) const
 	float farp = App->renderer3D->active_camera->GetFarPlane();
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 	// --- Give ZDrawer near and far camera frustum planes pos ---
-	if (App->renderer3D->zdrawer) {
+	if (App->renderer3D->zdrawer) 
+	{
 		int nearfarLoc = glGetUniformLocation(shader, "nearfar");
 		glUniform2f(nearfarLoc, nearp, farp);
 	}
