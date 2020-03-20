@@ -603,6 +603,15 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		{
 			currentScene = scene; // force this so gos are not added to another scene
 			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+
+			// --- Make sure to save newly loaded scene to temporal scene so we do not load a previous one on stop ---
+			if (App->GetAppState() == AppState::PLAY)
+			{
+				App->scene_manager->temporalScene->NoStaticGameObjects.clear();
+				App->scene_manager->temporalScene->StaticGameObjects.clear();
+				App->scene_manager->currentScene->CopyInto(App->scene_manager->temporalScene);
+				App->scene_manager->SaveScene(App->scene_manager->temporalScene);
+			}
 		}
 	}
 	else
