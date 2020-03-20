@@ -25,6 +25,7 @@ public:
 	void CompileScriptTableClass(ScriptInstance* script);
 	void SendScriptToModule(ComponentScript* script_component);
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
+	void FillScriptInstanceComponentFuncs(ScriptInstance* script);
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NullifyScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NotifyHotReloading();
