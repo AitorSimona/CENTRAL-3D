@@ -10,6 +10,21 @@
 BE_BEGIN_NAMESPACE
 class ComponentCamera;
 class ResourceShader;
+class ResourceMesh;
+class ResourceMaterial;
+class math::float4x4;
+
+struct RenderMesh
+{
+	RenderMesh(float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat) : transform(transform), resource_mesh(mesh), mat(mat) {}
+
+	float4x4 transform;
+	const ResourceMesh* resource_mesh;
+	const ResourceMaterial* mat;
+
+	// --- Add rendering options here ---
+};
+
 
 class BROKEN_API ModuleRenderer3D : public Module {
 public:
@@ -36,10 +51,14 @@ public:
 	// --- Getters ---
 	bool GetVSync() const;
 
+	// --- Issue Render order ---
+	void Render(float4x4 transform, ResourceMesh* mesh, ResourceMaterial* mat);
+
 private:
 	void HandleObjectOutlining();
 	void CreateDefaultShaders();
-
+	void DrawScene();
+	void DrawMesh(std::vector<RenderMesh> meshInstances);
 public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;
@@ -64,6 +83,9 @@ public:
 	bool wireframe = false;
 	bool zdrawer = false;
 	bool renderfbo = true;
+
+private:
+	std::map<uint, std::vector<RenderMesh>> render_meshes;
 };
 BE_END_NAMESPACE
 #endif

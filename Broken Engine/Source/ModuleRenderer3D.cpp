@@ -14,20 +14,26 @@
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
-#include "ResourceShader.h"
 #include "ComponentAudioListener.h"
 #include "Component.h"
+
+#include "ResourceShader.h"
+#include "ResourceMesh.h"
+#include "ResourceMaterial.h"
 
 #include "PanelScene.h"
 
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
+#include "Math.h"
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
 #include "mmgr/mmgr.h"
+
 using namespace Broken;
+
 ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled) {
 	name = "Renderer3D";
 }
@@ -105,6 +111,10 @@ bool ModuleRenderer3D::Init(json& file) {
 
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt) {
+
+	// --- Clear render orders ---
+	render_meshes.clear();
+
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -161,11 +171,14 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	glStencilMask(0x00);
 
 	// --- Draw Level Geometry ---
-	App->scene_manager->Draw();
-	App->ui_system->Draw();
+	//App->scene_manager->Draw();
+	DrawScene();
 
 	// --- Draw Particles ---
 	App->particles->DrawParticles();
+
+	// --- Draw Game UI ---
+	App->ui_system->Draw();
 
 	// --- Selected Object Outlining ---
 	//#ifndef BE_GAME_BUILD
@@ -179,7 +192,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// --- Draw ui and swap buffers ---
+	// --- Draw GUI and swap buffers ---
 	App->gui->Draw();
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
@@ -332,6 +345,27 @@ bool ModuleRenderer3D::GetVSync() const {
 	return vsync;
 }
 
+// --- Add render order to queue ---
+void ModuleRenderer3D::Render(float4x4 transform, ResourceMesh* mesh, ResourceMaterial* mat)
+{
+	// --- Check data validity
+	if (transform.IsFinite() && mesh && mat)
+	{
+		// --- Add given instance to relevant vector ---
+		if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
+		{
+			render_meshes[mesh->GetUID()].push_back(RenderMesh(transform, mesh, mat));
+		}
+		else
+		{
+			// --- Build new vector to store mesh's instances --- 
+			std::vector<RenderMesh> new_vec;
+			new_vec.push_back(RenderMesh(transform, mesh, mat));
+			render_meshes[mesh->GetUID()] = new_vec;		
+		}
+	}
+}
+
 void ModuleRenderer3D::HandleObjectOutlining() {
 	// --- Selected Object Outlining ---
 	if (App->scene_manager->GetSelectedGameObject() != nullptr) {
@@ -476,4 +510,96 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 	defaultShader->name = "Standard";
 	defaultShader->use();
 }
+
+void ModuleRenderer3D::DrawScene()
+{
+	// MYTODO: migrate thid draw to renderer!
+	// --- Draw Grid ---
+	if (App->scene_manager->display_grid)
+		App->scene_manager->DrawGrid(true, 75.0f);
+
+	// --- Activate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// --- Draw Game Object Meshes ---
+	for (std::map<uint, std::vector<RenderMesh>>::const_iterator it = render_meshes.begin(); it != render_meshes.end(); ++it)
+	{
+		DrawMesh((*it).second);
+	}
+
+	// --- DeActivate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+}
+
+void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
+{
+	for(uint i = 0; i < meshInstances.size(); ++i)
+	{
+		RenderMesh* mesh = &meshInstances[i];
+		uint shader = App->renderer3D->defaultShader->ID;
+
+		if (mesh->mat->shader)
+			shader = mesh->mat->shader->ID;
+
+		glUseProgram(shader);
+
+		// --- Set uniforms ---
+		GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mesh->transform.Transposed().ptr()); // model matrix
+
+		GLint viewLoc = glGetUniformLocation(shader, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+		GLint timeLoc = glGetUniformLocation(shader, "time");
+		glUniform1f(timeLoc, App->time->time);
+
+		float farp = App->renderer3D->active_camera->GetFarPlane();
+		float nearp = App->renderer3D->active_camera->GetNearPlane();
+		// --- Give ZDrawer near and far camera frustum planes pos ---
+		if (App->renderer3D->zdrawer) {
+			int nearfarLoc = glGetUniformLocation(shader, "nearfar");
+			glUniform2f(nearfarLoc, nearp, farp);
+		}
+
+		// right handed projection matrix
+		float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+		float4x4 proj_RH(
+			f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+			0.0f, f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, -1.0f,
+			0.0f, 0.0f, nearp, 0.0f);
+
+		GLint projectLoc = glGetUniformLocation(shader, "projection");
+		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+
+		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices) 
+		{
+			glBindVertexArray(mesh->resource_mesh->VAO);
+
+			//if (this->checkers)
+			//	glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+			//else
+			//{
+				if (mesh->mat && mesh->mat->resource_diffuse)
+					glBindTexture(GL_TEXTURE_2D, mesh->mat->resource_diffuse->GetTexID());
+				else
+					glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+			//}
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->resource_mesh->EBO);
+			glDrawElements(GL_TRIANGLES, mesh->resource_mesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+			glBindVertexArray(0);
+			glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+		}
+
+	}
+
+	glUseProgram(App->renderer3D->defaultShader->ID);
+}
+
 

@@ -67,6 +67,10 @@ void ComponentMeshRenderer::Draw(bool outline) const {
 
 	float4x4 model = transform->GetGlobalTransform();
 
+	//// --- Issue render order ---
+	//if(mesh)
+	//	App->renderer3D->Render(model, mesh->resource_mesh, material);
+
 	if (outline) {
 		shader = App->renderer3D->OutlineShader->ID;
 		// --- Draw selected, pass scaled-up matrix to shader ---
@@ -134,8 +138,10 @@ void ComponentMeshRenderer::Draw(bool outline) const {
 		ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 }
 
-void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const {
-	if (mesh.vertices && mesh.Indices) {
+void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const 
+{
+	if (mesh.vertices && mesh.Indices) 
+	{
 		glBindVertexArray(mesh.VAO);
 
 		if (this->checkers)

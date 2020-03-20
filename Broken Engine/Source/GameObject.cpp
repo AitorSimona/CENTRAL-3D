@@ -1,25 +1,9 @@
 #include "Application.h"
 #include "GameObject.h"
-#include "ComponentTransform.h"
-#include "ComponentMesh.h"
-#include "ComponentMeshRenderer.h"
-#include "ComponentAnimation.h"
-#include "ComponentCamera.h"
-#include "ComponentBone.h"
-#include "ComponentCollider.h"
-#include "ComponentDynamicRigidBody.h"
-#include "ComponentParticleEmitter.h"
-#include "ComponentScript.h"
+#include "Components.h"
+
 #include "ModuleSceneManager.h"
-#include "ComponentAudioListener.h"
-#include "ComponentAudioSource.h"
-#include "ComponentCanvas.h"
-#include "ComponentText.h"
-#include "ComponentImage.h"
-#include "ComponentButton.h"
-//#include "ComponentCheckBox.h"
-//#include "ComponentInputText.h"
-//#include "ComponentProgressBar.h"
+#include "ModuleRenderer3D.h"
 
 #include "ResourceModel.h"
 #include "ResourceScene.h"
@@ -78,16 +62,25 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		TransformGlobal(this);
 
-	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
-	{
-		(*it)->Update(dt);
-	}
-
 	for (int i = 0; i < components.size(); ++i)
 	{
 		if (components[i] && components[i]->GetActive())
 			components[i]->Update();
 	}
+
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		(*it)->Update(dt);
+	}
+}
+
+void GameObject::Draw()
+{
+	ComponentMesh* cmesh = GetComponent<ComponentMesh>();
+	ComponentMeshRenderer* cmesh_renderer = GetComponent<ComponentMeshRenderer>();
+
+	if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
+			App->renderer3D->Render(GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material);
 }
 
 void GameObject::RecursiveDelete()
