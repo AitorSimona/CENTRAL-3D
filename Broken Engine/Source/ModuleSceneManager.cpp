@@ -620,13 +620,12 @@ GameObject* ModuleSceneManager::GetSelectedGameObject() const
 void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
 	SelectedGameObject = go;
 
-	// MYTODO: Temporal adjustment for GameObject deselection
-	//if (SelectedGameObject)
-	//{
-	Event e(Event::EventType::GameObject_selected);
-	e.go = go;
-	App->event_manager->PushEvent(e);
-	//}
+	if (SelectedGameObject)
+	{
+		Event e(Event::EventType::GameObject_selected);
+		e.go = go;
+		App->event_manager->PushEvent(e);
+	}
 }
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() {
