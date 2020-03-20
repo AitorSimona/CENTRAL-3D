@@ -140,6 +140,7 @@ json ComponentCamera::Save() const {
 	node["FARPLANE"] = GetFarPlane();
 	node["ASPECTRATIO"] = GetAspectRatio();
 	node["ACTIVECAM"] = active_camera;
+	node["CULLINGCAM"] = culling;
 
 	return node;
 }
@@ -151,9 +152,13 @@ void ComponentCamera::Load(json& node)
 	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
 	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
 	active_camera = node["ACTIVECAM"].is_null() ? false : node["ACTIVECAM"].get<bool>();
+	culling = node["CULLINGCAM"].is_null() ? false : node["CULLINGCAM"].get<bool>();
 
 	if (active_camera)
 		App->renderer3D->SetActiveCamera(this);
+
+	if (culling)
+		App->renderer3D->SetCullingCamera(this);
 
 }
 
