@@ -32,6 +32,8 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+	static inline Component::ComponentType GetType() { return Component::ComponentType::ProgressBar; };
+
 	//Scripting function
 	void SetPercentage(float p) { percentage = p; }
 
