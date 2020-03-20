@@ -56,8 +56,6 @@ void ComponentButton::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
-
-	script = (ComponentScript*)GO->HasComponent(Component::ComponentType::Script); //get script component
 }
 
 void ComponentButton::Draw()
@@ -276,8 +274,7 @@ void ComponentButton::CreateInspectorNode()
 		else
 			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
 
-		//drag and drop
-		if (ImGui::BeginDragDropTarget())
+		if (ImGui::BeginDragDropTarget()) //drag and drop
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
@@ -294,6 +291,50 @@ void ComponentButton::CreateInspectorNode()
 			}
 			ImGui::EndDragDropTarget();
 		}
+
+		// Script
+		ImGui::Separator();
+		ImGui::Text("Script");
+		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+		
+		if (ImGui::BeginDragDropTarget()) //drag and drop
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("gameobject"))
+			{
+				uint UID = *(const uint*)payload->Data;
+				script_obj = App->scene_manager->currentScene->GetGOWithUID(UID);
+
+				if (script_obj != nullptr)
+					script = (ComponentScript*)GO->HasComponent(Component::ComponentType::Script); //get script component
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::SameLine();
+		if (script_obj == nullptr)
+			ImGui::Text("No Script Loaded");
+		else
+			ImGui::Text("%c", script_obj->GetName());
+
+		const char* items[] = { "None", "Something" };
+		static const char* item_current = items[0];
+
+		ImGui::Text("OnClick");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(120.0f);
+		if (ImGui::BeginCombo("##OnClick", item_current, 0)) // The second parameter is the label previewed before opening the combo.
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			{
+				bool is_selected = (item_current == items[n]);
+				if (ImGui::Selectable(items[n], is_selected))
+					item_current = items[n];
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+			}
+			ImGui::EndCombo();
+		}
+		//function_to_execute = item_current
 
 		// States (Colors)
 		ImGui::Separator();
