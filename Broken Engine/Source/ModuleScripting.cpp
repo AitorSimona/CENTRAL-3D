@@ -452,6 +452,23 @@ bool ModuleScripting::CheckEverythingCompiles()
 	return true;
 }
 
+//Calls a determined function from a lua script
+void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, const ScriptFunc& function_to_call)
+{
+	ScriptInstance* script = GetScriptInstanceFromComponent(script_component);
+
+	std::string aux_str = function_to_call.name;
+	if (script != nullptr)
+	{
+		script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
+		ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+	}
+	else
+	{
+		ENGINE_CONSOLE_LOG("Can't callback %s since component has a null script", aux_str.c_str());
+	}
+}
+
 
 bool ModuleScripting::Init(json& file) {
 	// Create the Virtual Machine
