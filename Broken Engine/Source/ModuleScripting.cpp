@@ -326,7 +326,11 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 		VarType variable_type = VarType::NONE;
 		std::string str = (*iterator).first.tostring();
 		ScriptVar variable;
+		ScriptFunc function;
 		std::string var_value;
+
+		//If the variable examined is a function  then we will use this bool later on
+		bool is_func = false;
 
 		// Fill values --> first == .key () and second == .value() in Lua
 		if ((*iterator).second.isNumber()) {
@@ -350,28 +354,49 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 			}
 			variable = ScriptVar(val);
 		}
+		else if ((*iterator).second.isFunction()){
+			function.name = (*iterator).first.tostring();
+			is_func = true;
+		}
 		else continue;
 
-		// Assign name to variable and push it if is compatible
-		variable.name = str;
-		int variable_index = script->my_component->ScriptVarAlreadyInComponent(variable.name);
-		if (variable_type != VarType::NONE) {
+		if (is_func == false) //Dealing with a variable
+		{
+			// Assign name to variable and push it if is compatible
+			variable.name = str;
+			int variable_index = script->my_component->ScriptVarAlreadyInComponent(variable.name);
+			if (variable_type != VarType::NONE) {
 
-			//If the var was already on the component (in case of hot reloading)
-			if (variable_index > -1)
-			{
-				// Check that the variable is still of the same type before changing any value
-				if (variable.type == script->my_component->script_variables[variable_index].type) {
-					script->my_component->script_variables[variable_index].editor_value = variable.editor_value;
-				}
-				// The variable changed its type
-				else
+				//If the var was already on the component (in case of hot reloading)
+				if (variable_index > -1)
 				{
-					script->my_component->script_variables[variable_index] = variable;
+					// Check that the variable is still of the same type before changing any value
+					if (variable.type == script->my_component->script_variables[variable_index].type) {
+						script->my_component->script_variables[variable_index].editor_value = variable.editor_value;
+					}
+					// The variable changed its type
+					else
+					{
+						script->my_component->script_variables[variable_index] = variable;
+					}
+				}
+				else {
+					script->my_component->script_variables.push_back(variable);
 				}
 			}
-			else {
-				script->my_component->script_variables.push_back(variable);
+		}
+		else //We are dealing with a Function
+		{
+			if (!function.name.compare("null_function") )
+			{
+				//Something went wrong, LOG Component name & GameObject affected
+				std::string aux_str = script->my_component->GetContainerGameObject()->GetName();
+				ENGINE_CONSOLE_LOG("Tried to add a ''null_function'' to script component: %s of GameObject: %s", script->my_component->script_name.c_str(), aux_str.c_str());
+			}
+			else if (script->my_component->ScriptFuncAlreadyInComponent(function.name) == false)
+			{
+				//Function is not yet in component list. Add it!
+				script->my_component->script_functions.push_back(function);
 			}
 		}
 	}
