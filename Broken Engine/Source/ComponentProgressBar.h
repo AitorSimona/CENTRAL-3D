@@ -32,6 +32,9 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+	//Scripting function
+	void SetPercentage(float p) { percentage = p; }
+
 public:
 	bool visible = true;
 
