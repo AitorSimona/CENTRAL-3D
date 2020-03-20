@@ -82,13 +82,13 @@ void ComponentCanvas::Draw() const
 		//		elem->Draw();
 		//	continue;
 		//}
-		//else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
-		//{
-		//	ProgressBar* elem = (ProgressBar*)elements[i];
-		//	if (elem->visible) 
-		//		elem->Draw();
-		//	continue;
-		//}
+		else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
+		{
+			ComponentProgressBar* elem = (ComponentProgressBar*)elements[i];
+			if (elem->visible) 
+				elem->Draw();
+			continue;
+		}
 		else
 			continue;
 	}

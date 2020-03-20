@@ -19,9 +19,11 @@ public:
 	void Update() override;
 
 	void Draw();
+	void DrawPlane(float2 size);
 
 	// UI Functions
-	void Scale(float2 size) { size2D = size; }
+	void Scale_P1(float2 size) { P1_size2D = size; }
+	void Scale_P2(float2 size) { P2_size2D = size; }
 	void Move(float2 pos) { position2D = pos; }
 	void Rotate(float rot) { rotation2D = rot; }
 
@@ -33,9 +35,12 @@ public:
 public:
 	bool visible = true;
 
-	float2 size2D = { 1,1 };
+	float2 P1_size2D = { 1,1 };
+	float2 P2_size2D = { 1,1 };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
+
+	
 
 public:
 	ComponentCanvas* canvas = nullptr;

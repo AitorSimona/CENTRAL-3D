@@ -26,22 +26,16 @@
 
 using namespace Broken;
 
-ComponentProgressBar::ComponentProgressBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
+ComponentProgressBar::ComponentProgressBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ProgressBar)
 {
 	visible = true;
-
-	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	canvas->AddElement(this);
 }
 
 ComponentProgressBar::~ComponentProgressBar()
 {
-	if (texture)
-	{
-		texture->Release();
-		texture->RemoveUser(GO);
-	}
 }
 
 void ComponentProgressBar::Update()
@@ -52,6 +46,14 @@ void ComponentProgressBar::Update()
 
 void ComponentProgressBar::Draw()
 {
+	//Plane 1
+	DrawPlane(P1_size2D);
+	//Plane 2
+	DrawPlane(P2_size2D);
+}
+
+void ComponentProgressBar::DrawPlane(float2 size)
+{
 	// --- Update transform and rotation to face camera ---
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
 	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
@@ -59,7 +61,7 @@ void ComponentProgressBar::Draw()
 	// --- Frame image with camera ---
 	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
 		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
-		float3(size2D, 1));
+		float3(size, 1));
 
 	float3 Movement = App->renderer3D->active_camera->frustum.Front();
 	float3 camera_pos = frustum_pos;
@@ -101,10 +103,11 @@ void ComponentProgressBar::Draw()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
-
 	// --- Set camera back to original position ---
 	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
+
+
 
 json ComponentProgressBar::Save() const
 {
@@ -112,14 +115,12 @@ json ComponentProgressBar::Save() const
 
 	node["Resources"]["ResourceTexture"];
 
-	if (texture)
-		node["Resources"]["ResourceTexture"] = std::string(texture->GetResourceFile());
-
+	
 	node["position2Dx"] = std::to_string(position2D.x);
 	node["position2Dy"] = std::to_string(position2D.y);
 
-	node["size2Dx"] = std::to_string(size2D.x);
-	node["size2Dy"] = std::to_string(size2D.y);
+	//node["size2Dx"] = std::to_string(size2D.x);
+	//node["size2Dy"] = std::to_string(size2D.y);
 
 	return node;
 }
@@ -130,11 +131,7 @@ void ComponentProgressBar::Load(json& node)
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
-	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
-
-	if (texture)
-		texture->AddUser(GO);
-
+	
 	std::string position2Dx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
 	std::string position2Dy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
 
@@ -142,7 +139,7 @@ void ComponentProgressBar::Load(json& node)
 	std::string size2Dy = node["size2Dy"].is_null() ? "0" : node["size2Dy"];
 
 	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
-	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
+	//size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
 }
 
 void ComponentProgressBar::CreateInspectorNode()
@@ -159,15 +156,6 @@ void ComponentProgressBar::CreateInspectorNode()
 		ImGui::Checkbox("Visible", &visible);
 		ImGui::Separator();
 
-		// Size
-		ImGui::Text("Size:    ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f);
-
 		// Position
 		ImGui::Text("Position:");
 		ImGui::SameLine();
@@ -177,41 +165,31 @@ void ComponentProgressBar::CreateInspectorNode()
 		ImGui::SetNextItemWidth(60);
 		ImGui::DragFloat("y##imageposition", &position2D.y);
 
+		// Size Plane 1
+		ImGui::Text("Background Size:    ");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("x##imagesize", &P1_size2D.x, 0.01f);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("y##imagesize", &P1_size2D.y, 0.01f);
+
+		// Size Plane 2
+		ImGui::Text("Bar Size:    ");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("x##imagesize1", &P2_size2D.x, 0.01f);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("y##imagesize1", &P2_size2D.y, 0.01f);
+
 		// Rotation
 		ImGui::Text("Rotation:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
 		ImGui::DragFloat("##imagerotation", &rotation2D);
 
-		// ------------------------------------------
-
-		// Image
-		ImGui::Separator();
-		ImGui::Text("Image");
-
-		if (texture == nullptr)
-			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
-		else
-			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
-
-		//drag and drop
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-			{
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
-
-				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
-				{
-					if (texture)
-						texture->Release();
-
-					texture = (ResourceTexture*)App->resources->GetResource(UID);
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
+		
 
 		ImGui::Separator();
 		ImGui::Separator();
