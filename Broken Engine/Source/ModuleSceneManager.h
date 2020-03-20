@@ -29,6 +29,7 @@ public:
 	update_status PreUpdate(float dt) override;
 	update_status Update(float dt) override;
 	bool CleanUp() override;
+	void DrawScene();
 
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
@@ -54,7 +55,6 @@ public:
 
 	// --- Utilities ---
 	void DrawGrid(bool drawAxis, float size);
-	void Draw();
 	void RedoOctree();
 	void RedoOctree(AABB aabb);
 	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
@@ -96,7 +96,6 @@ private:
 
 private:
 	GameObject* CreateRootGameObject();
-	void DrawScene();
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;

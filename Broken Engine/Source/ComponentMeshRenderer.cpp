@@ -30,12 +30,15 @@
 
 
 using namespace Broken;
-ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::MeshRenderer) {
+ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::MeshRenderer) 
+{
 	material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 }
 
-ComponentMeshRenderer::~ComponentMeshRenderer() {
-	if (material && material->IsInMemory()) {
+ComponentMeshRenderer::~ComponentMeshRenderer()
+{
+	if (material && material->IsInMemory()) 
+	{
 		material->Release();
 		material->RemoveUser(GO);
 	}
@@ -55,7 +58,8 @@ void ComponentMeshRenderer::Update()
 		
 }
 
-void ComponentMeshRenderer::Draw(bool outline) const {
+void ComponentMeshRenderer::Draw(bool outline) const 
+{
 	ComponentMesh* mesh = this->GO->GetComponent<ComponentMesh>();
 	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
 	ComponentCamera* camera = GO->GetComponent<ComponentCamera>();
@@ -71,7 +75,8 @@ void ComponentMeshRenderer::Draw(bool outline) const {
 	//if(mesh)
 	//	App->renderer3D->Render(model, mesh->resource_mesh, material);
 
-	if (outline) {
+	if (outline) 
+	{
 		shader = App->renderer3D->OutlineShader->ID;
 		// --- Draw selected, pass scaled-up matrix to shader ---
 		float3 scale = float3(1.05f, 1.05f, 1.05f);
@@ -82,7 +87,8 @@ void ComponentMeshRenderer::Draw(bool outline) const {
 	//mat->resource_material->UpdateUniforms();
 
 	// --- Display Z buffer ---
-	if (App->renderer3D->zdrawer) {
+	if (App->renderer3D->zdrawer) 
+	{
 		shader = App->renderer3D->ZDrawerShader->ID;
 	}
 
@@ -238,7 +244,8 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 		float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
 
 		// --- Compute face normals ---
-		for (uint j = 0; j < mesh.IndicesSize / 3; ++j) {
+		for (uint j = 0; j < mesh.IndicesSize / 3; ++j) 
+		{
 			face.a = float3(mesh.vertices[mesh.Indices[j * 3]].position);
 			face.b = float3(mesh.vertices[mesh.Indices[(j * 3) + 1]].position);
 			face.c = float3(mesh.vertices[mesh.Indices[(j * 3) + 2]].position);
@@ -287,7 +294,8 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-json ComponentMeshRenderer::Save() const {
+json ComponentMeshRenderer::Save() const 
+{
 	json node;
 	node["Resources"]["ResourceMaterial"];
 
@@ -395,7 +403,8 @@ void ComponentMeshRenderer::Load(json& node)
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-	if (IMeta) {
+	if (IMeta) 
+	{
 		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat_path.c_str());
 
 		if (material)
@@ -410,10 +419,12 @@ void ComponentMeshRenderer::Load(json& node)
 	}
 }
 
-void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotificationType type) {
+void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotificationType type) 
+{
 	// --- Always check if your resources are already invalidated, since go sends events from all of its components resources ---
 
-	switch (type) {
+	switch (type) 
+	{
 	case Resource::ResourceNotificationType::Overwrite:
 		if (material && UID == material->GetUID())
 			material = (ResourceMaterial*)App->resources->GetResource(UID);
@@ -429,11 +440,13 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 	}
 }
 
-void ComponentMeshRenderer::CreateInspectorNode() {
+void ComponentMeshRenderer::CreateInspectorNode() 
+{
 	ImGui::Checkbox("##RenActive", &GetActive());
 	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Mesh Renderer")) {
+	if (ImGui::TreeNode("Mesh Renderer")) 
+	{
 
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
@@ -461,18 +474,22 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
 
-		if (ImGui::TreeNode(material->GetName())) {
+		if (ImGui::TreeNode(material->GetName()))
+		{
 			static ImGuiComboFlags flags = 0;
 
 			ImGui::Text("Shader");
 			ImGui::SameLine();
 
 			const char* item_current = material->shader->name.c_str();
-			if (ImGui::BeginCombo("##Shader", item_current, flags)) {
-				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it) {
+			if (ImGui::BeginCombo("##Shader", item_current, flags)) 
+			{
+				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it) 
+				{
 					bool is_selected = (item_current == it->second->name);
 
-					if (ImGui::Selectable(it->second->name.c_str(), is_selected)) {
+					if (ImGui::Selectable(it->second->name.c_str(), is_selected)) 
+					{
 						item_current = it->second->name.c_str();
 						material->shader = it->second;
 						material->shader->GetAllUniforms(material->uniforms);
@@ -490,7 +507,8 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 
 			//ImGui::Text(Path.data());
 
-			if (material->resource_diffuse) {
+			if (material->resource_diffuse) 
+			{
 				// --- Print Texture Width and Height ---
 				ImGui::Text(std::to_string(material->resource_diffuse->Texture_width).c_str());
 				ImGui::SameLine();
@@ -510,12 +528,15 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
 
 			// --- Handle drag & drop ---
-			if (ImGui::BeginDragDropTarget()) {
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) {
+			if (ImGui::BeginDragDropTarget()) 
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) 
+				{
 					uint UID = *(const uint*)payload->Data;
 					Resource* resource = App->resources->GetResource(UID, false);
 
-					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE) {
+					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE) 
+					{
 						if (material->resource_diffuse)
 							material->resource_diffuse->Release();
 
@@ -545,12 +566,15 @@ void ComponentMeshRenderer::CreateInspectorNode() {
 		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
 
 		// --- Handle drag & drop ---
-		if (ImGui::BeginDragDropTarget()) {
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) {
+		if (ImGui::BeginDragDropTarget()) 
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) 
+			{
 				uint UID = *(const uint*)payload->Data;
 				Resource* resource = App->resources->GetResource(UID, false);
 
-				if (resource && resource->GetType() == Resource::ResourceType::MATERIAL) {
+				if (resource && resource->GetType() == Resource::ResourceType::MATERIAL) 
+				{
 					
 					material = (ResourceMaterial*)App->resources->GetResource(UID);
 					unuse_material = false;

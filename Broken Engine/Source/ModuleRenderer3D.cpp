@@ -170,9 +170,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	// --- Do not write to the stencil buffer ---
 	glStencilMask(0x00);
 
+	// --- Issue Render orders ---
+	App->scene_manager->DrawScene();
+
 	// --- Draw Level Geometry ---
-	//App->scene_manager->Draw();
-	DrawScene();
+	DrawMeshes();
 
 	// --- Draw Particles ---
 	App->particles->DrawParticles();
@@ -346,7 +348,7 @@ bool ModuleRenderer3D::GetVSync() const {
 }
 
 // --- Add render order to queue ---
-void ModuleRenderer3D::Render(float4x4 transform, ResourceMesh* mesh, ResourceMaterial* mat)
+void ModuleRenderer3D::Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags)
 {
 	// --- Check data validity
 	if (transform.IsFinite() && mesh && mat)
@@ -354,13 +356,13 @@ void ModuleRenderer3D::Render(float4x4 transform, ResourceMesh* mesh, ResourceMa
 		// --- Add given instance to relevant vector ---
 		if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
 		{
-			render_meshes[mesh->GetUID()].push_back(RenderMesh(transform, mesh, mat));
+			render_meshes[mesh->GetUID()].push_back(RenderMesh(transform, mesh, mat, flags));
 		}
 		else
 		{
 			// --- Build new vector to store mesh's instances --- 
 			std::vector<RenderMesh> new_vec;
-			new_vec.push_back(RenderMesh(transform, mesh, mat));
+			new_vec.push_back(RenderMesh(transform, mesh, mat, flags));
 			render_meshes[mesh->GetUID()] = new_vec;		
 		}
 	}
@@ -388,7 +390,20 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 
 		// --- If Found, draw the mesh ---
 		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
-			MeshRenderer->Draw(true);
+		{
+			std::vector<RenderMesh> meshInstances;
+
+			ComponentMesh* cmesh = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMesh>();
+			ComponentMeshRenderer* cmesh_renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+			RenderMeshFlags flags = outline;
+
+			if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
+			{
+				meshInstances.push_back(RenderMesh(App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
+				DrawMesh(meshInstances);
+			}
+		}
+			//MeshRenderer->Draw(true);
 
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		glEnable(GL_DEPTH_TEST);
@@ -511,7 +526,7 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 	defaultShader->use();
 }
 
-void ModuleRenderer3D::DrawScene()
+void ModuleRenderer3D::DrawMeshes()
 {
 	// MYTODO: migrate thid draw to renderer!
 	// --- Draw Grid ---
@@ -540,15 +555,31 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 	{
 		RenderMesh* mesh = &meshInstances[i];
 		uint shader = App->renderer3D->defaultShader->ID;
+		float4x4 model = mesh->transform;
 
 		if (mesh->mat->shader)
 			shader = mesh->mat->shader->ID;
+
+		if (mesh->flags & RenderMeshFlags_::selected)
+		{
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+			glStencilMask(0xFF);
+		}
+
+		if (mesh->flags & RenderMeshFlags_::outline)
+		{
+			shader = App->renderer3D->OutlineShader->ID;
+			// --- Draw selected, pass scaled-up matrix to shader ---
+			float3 scale = float3(1.05f, 1.05f, 1.05f);
+
+			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
+		}
 
 		glUseProgram(shader);
 
 		// --- Set uniforms ---
 		GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mesh->transform.Transposed().ptr()); // model matrix
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr()); // model matrix
 
 		GLint viewLoc = glGetUniformLocation(shader, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
@@ -580,21 +611,26 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 		{
 			glBindVertexArray(mesh->resource_mesh->VAO);
 
-			//if (this->checkers)
-			//	glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-			//else
-			//{
+			if (mesh->flags & RenderMeshFlags_::checkers)
+				glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+			else
+			{
 				if (mesh->mat && mesh->mat->resource_diffuse)
 					glBindTexture(GL_TEXTURE_2D, mesh->mat->resource_diffuse->GetTexID());
 				else
 					glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
-			//}
+			}
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->resource_mesh->EBO);
 			glDrawElements(GL_TRIANGLES, mesh->resource_mesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 			glBindVertexArray(0);
 			glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+		}
+
+		if (mesh->flags & RenderMeshFlags_::selected)
+		{
+			glStencilMask(0x00);
 		}
 
 	}

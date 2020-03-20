@@ -14,15 +14,25 @@ class ResourceMesh;
 class ResourceMaterial;
 class math::float4x4;
 
+typedef int RenderMeshFlags;
+
+enum RenderMeshFlags_
+{
+	outline = 1,
+	selected,
+	checkers
+};
+
 struct RenderMesh
 {
-	RenderMesh(float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat) : transform(transform), resource_mesh(mesh), mat(mat) {}
+	RenderMesh(float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags = 0) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags) {}
 
 	float4x4 transform;
 	const ResourceMesh* resource_mesh;
 	const ResourceMaterial* mat;
 
 	// --- Add rendering options here ---
+	RenderMeshFlags flags;
 };
 
 
@@ -52,12 +62,12 @@ public:
 	bool GetVSync() const;
 
 	// --- Issue Render order ---
-	void Render(float4x4 transform, ResourceMesh* mesh, ResourceMaterial* mat);
+	void Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags = 0);
 
 private:
 	void HandleObjectOutlining();
 	void CreateDefaultShaders();
-	void DrawScene();
+	void DrawMeshes();
 	void DrawMesh(std::vector<RenderMesh> meshInstances);
 public:
 	// --- Default Shader ---

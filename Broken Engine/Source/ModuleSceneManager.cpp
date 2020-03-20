@@ -131,7 +131,7 @@ update_status ModuleSceneManager::Update(float dt) {
 			update_tree = false;
 		}
 
-	DrawScene();
+	//DrawScene();
 
 	return UPDATE_CONTINUE;
 }
@@ -145,6 +145,7 @@ bool ModuleSceneManager::CleanUp() {
 	delete root;
 	root = nullptr;
 
+	// MYTODO: Move this to renderer
 	glDeleteVertexArrays(1, &PointLineVAO);
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
@@ -152,6 +153,7 @@ bool ModuleSceneManager::CleanUp() {
 	return true;
 }
 
+// MYTODO: move this to renderer 
 void ModuleSceneManager::DrawGrid(bool drawAxis, float size) {
 	// -------------------------------------------------------------------------------------------------------
 	// -------------------------------------------------------------------------------------------------------
@@ -249,24 +251,6 @@ void ModuleSceneManager::DrawGrid(bool drawAxis, float size) {
 		glUniform1i(TextureSupportLocation, 0);*/
 }
 
-void ModuleSceneManager::Draw()
-{
-	//// --- Draw Grid ---
-	//if (display_grid)
-	//	DrawGrid(true, 75.0f);
-
-	//// --- Activate wireframe mode ---
-	//if (App->renderer3D->wireframe)
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	//// --- Draw Game Object Meshes ---
-	//DrawScene();
-
-	//// --- DeActivate wireframe mode ---
-	//if (App->renderer3D->wireframe)
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
 void ModuleSceneManager::DrawScene() {
 
 	if (display_tree)
@@ -287,27 +271,8 @@ void ModuleSceneManager::DrawScene() {
 
 				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
-					// --- Search for Renderer Component ---
-					//ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
-
-					if (SelectedGameObject == (*it).second)
-					{
-						glStencilFunc(GL_ALWAYS, 1, 0xFF);
-							glStencilMask(0xFF);
-					}
-
-					//// --- If Found, draw the mesh ---
-					//if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
-					//	MeshRenderer->Draw();
 					// --- Issue render order ---
-
 					(*it).second->Draw();
-
-
-					if (SelectedGameObject == (*it).second)
-					{
-						glStencilMask(0x00);
-					}
 				}
 			}
 		}
@@ -316,28 +281,14 @@ void ModuleSceneManager::DrawScene() {
 
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
-			// --- Search for Renderer Component ---
-			//ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
-
-			if (SelectedGameObject == (*it))
-			{
-				glStencilFunc(GL_ALWAYS, 1, 0xFF);
-				glStencilMask(0xFF);
-			}
-
-			//// --- If Found, draw the mesh ---
-			//if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
-			//	MeshRenderer->Draw();
+			// --- Issue render order ---
 			(*it)->Draw();
 
+			// MYTODO: Move this to renderer (temporally)
 			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
 			if (C_Bone)
 				C_Bone->DebugDrawBones();
 
-			if (SelectedGameObject == (*it))
-			{
-				glStencilMask(0x00);
-			}
 		}
 	}
 
