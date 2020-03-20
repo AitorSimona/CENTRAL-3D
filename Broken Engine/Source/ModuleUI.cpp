@@ -127,7 +127,7 @@ bool ModuleUI::CheckClick(Component* component, bool draggable)
 		return true;
 	}
 
-	if (draggable && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+	if (draggable || App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 		return true;
 
 	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)

@@ -151,6 +151,12 @@ json ComponentButton::Save() const
 	node["colliderw"] = std::to_string(collider.w);
 	node["colliderh"] = std::to_string(collider.h);
 
+	if (script)
+	{
+		node["script"] = std::to_string(script_obj->GetUID());
+		node["function"] = std::to_string(func_pos);
+	}
+
 	return node;
 }
 
@@ -162,8 +168,9 @@ void ComponentButton::Load(json& node)
 
 	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
 
-	if (texture)
-		texture->AddUser(GO);
+	if (texture == nullptr)
+		texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	texture->AddUser(GO);
 
 	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
 	std::string draggable_str = node["visible"].is_null() ? "0" : node["draggable"];
@@ -180,6 +187,9 @@ void ComponentButton::Load(json& node)
 	std::string colliderw = node["colliderw"].is_null() ? "0" : node["colliderw"];
 	std::string colliderh = node["colliderh"].is_null() ? "0" : node["colliderh"];
 
+	std::string script_str = node["script"].is_null() ? "0" : node["script"];
+	std::string function = node["function"].is_null() ? "0" : node["function"];
+
 	visible = bool(std::stoi(visible_str));
 	draggable = bool(std::stoi(draggable_str));
 	interactable = bool(std::stoi(interactable_str));
@@ -191,6 +201,13 @@ void ComponentButton::Load(json& node)
 	collider.y = int(std::stoi(collidery));
 	collider.w = int(std::stoi(colliderw));
 	collider.h = int(std::stoi(colliderh));
+
+	script_obj = App->scene_manager->currentScene->GetGOWithUID(uint(std::stoi(script_str)));
+	if (script_obj)
+	{
+		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script);
+		func_pos = int(std::stoi(function));
+	}
 }
 
 void ComponentButton::CreateInspectorNode()
@@ -322,7 +339,7 @@ void ComponentButton::CreateInspectorNode()
 			for (uint i = 0; i < script->script_functions.size(); ++i)
 				list.push_back(script->script_functions[i].name.c_str());
 
-			static const char* item_current = list[0];
+			static const char* item_current = list[func_pos];
 			ImGui::Text("OnClick");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(120.0f);
@@ -425,7 +442,6 @@ void ComponentButton::UpdateState()
 		{
 			if (App->ui_system->CheckMousePos(this, collider)) //check if hovering
 			{
-				ChangeStateTo(HOVERED);
 				if (App->ui_system->CheckClick(this, draggable)) //if hovering check if click
 				{
 					if (draggable == true && (App->ui_system->drag_start.x != App->ui_system->mouse_pos.x || App->ui_system->drag_start.y != App->ui_system->mouse_pos.y)) //if draggable and mouse moves
@@ -442,6 +458,8 @@ void ComponentButton::UpdateState()
 						ChangeStateTo(SELECTED);
 					}
 				}
+				else
+					ChangeStateTo(HOVERED);
 			}
 			else
 				ChangeStateTo(IDLE); //if stop hovering
