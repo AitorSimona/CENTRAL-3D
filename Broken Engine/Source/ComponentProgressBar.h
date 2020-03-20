@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Component.h"
+#include "ComponentCanvas.h"
 #include "Math.h"
 
 BE_BEGIN_NAMESPACE
@@ -19,11 +20,10 @@ public:
 	void Update() override;
 
 	void Draw();
-	void DrawPlane(float2 size);
+	void DrawPlane(Color color, float percentage = 100.0f);
 
 	// UI Functions
-	void Scale_P1(float2 size) { P1_size2D = size; }
-	void Scale_P2(float2 size) { P2_size2D = size; }
+	void Scale(float2 size) { size2D = size; }
 	void Move(float2 pos) { position2D = pos; }
 	void Rotate(float rot) { rotation2D = rot; }
 
@@ -35,11 +35,14 @@ public:
 public:
 	bool visible = true;
 
-	float2 P1_size2D = { 1,1 };
-	float2 P2_size2D = { 1,1 };
+	float2 size2D = { 0.3,0.1 };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 
+private:
+	Color colorP1 = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Color colorP2 = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float percentage = 100.0f;
 	
 
 public:

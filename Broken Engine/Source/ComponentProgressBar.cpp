@@ -36,6 +36,11 @@ ComponentProgressBar::ComponentProgressBar(GameObject* gameObject) : Component(g
 
 ComponentProgressBar::~ComponentProgressBar()
 {
+	if (texture)
+	{
+		texture->Release();
+		texture->RemoveUser(GO);
+	}
 }
 
 void ComponentProgressBar::Update()
@@ -47,21 +52,23 @@ void ComponentProgressBar::Update()
 void ComponentProgressBar::Draw()
 {
 	//Plane 1
-	DrawPlane(P1_size2D);
+	DrawPlane(colorP1);
 	//Plane 2
-	DrawPlane(P2_size2D);
+	DrawPlane(colorP2, percentage);
 }
 
-void ComponentProgressBar::DrawPlane(float2 size)
+void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 {
 	// --- Update transform and rotation to face camera ---
 	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
 	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
 
+	float2 new_size = float2((size2D.x * _percentage) / 100, size2D.y);
+
 	// --- Frame image with camera ---
 	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
 		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
-		float3(size, 1));
+		float3(new_size, 1));
 
 	float3 Movement = App->renderer3D->active_camera->frustum.Front();
 	float3 camera_pos = frustum_pos;
@@ -71,6 +78,14 @@ void ComponentProgressBar::DrawPlane(float2 size)
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
+
+	// color tint
+	
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, -1);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
@@ -102,6 +117,10 @@ void ComponentProgressBar::DrawPlane(float2 size)
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	
+	// --- Set uniforms back to defaults ---
+	glUniform1i(TextureLocation, 0);
+	glUniform3f(vertexColorLocation, 255, 255, 255);
 
 	// --- Set camera back to original position ---
 	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
@@ -115,12 +134,14 @@ json ComponentProgressBar::Save() const
 
 	node["Resources"]["ResourceTexture"];
 
-	
+	if (texture)
+		node["Resources"]["ResourceTexture"] = std::string(texture->GetResourceFile());
+
 	node["position2Dx"] = std::to_string(position2D.x);
 	node["position2Dy"] = std::to_string(position2D.y);
 
-	//node["size2Dx"] = std::to_string(size2D.x);
-	//node["size2Dy"] = std::to_string(size2D.y);
+	node["size2Dx"] = std::to_string(size2D.x);
+	node["size2Dy"] = std::to_string(size2D.y);
 
 	return node;
 }
@@ -131,15 +152,19 @@ void ComponentProgressBar::Load(json& node)
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
-	
+	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
+
+	if (texture)
+		texture->AddUser(GO);
+		
 	std::string position2Dx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
 	std::string position2Dy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
 
-	std::string size2Dx = node["size2Dx"].is_null() ? "0" : node["size2Dx"];
-	std::string size2Dy = node["size2Dy"].is_null() ? "0" : node["size2Dy"];
+	std::string size2Dx = node["P1size2Dx"].is_null() ? "0" : node["size2Dx"];
+	std::string size2Dy = node["P1size2Dy"].is_null() ? "0" : node["size2Dy"];
 
 	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
-	//size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
+	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
 }
 
 void ComponentProgressBar::CreateInspectorNode()
@@ -147,7 +172,7 @@ void ComponentProgressBar::CreateInspectorNode()
 	ImGui::Checkbox("##ImageActive", &GetActive());
 	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Image"))
+	if (ImGui::TreeNode("Progress Bar"))
 	{
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
@@ -155,6 +180,12 @@ void ComponentProgressBar::CreateInspectorNode()
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 		ImGui::Checkbox("Visible", &visible);
 		ImGui::Separator();
+
+		// Percentage (test)
+		ImGui::Text("Health percentage (test):");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
 
 		// Position
 		ImGui::Text("Position:");
@@ -165,23 +196,14 @@ void ComponentProgressBar::CreateInspectorNode()
 		ImGui::SetNextItemWidth(60);
 		ImGui::DragFloat("y##imageposition", &position2D.y);
 
-		// Size Plane 1
-		ImGui::Text("Background Size:    ");
+		// Size Planes
+		ImGui::Text("Bar Size:  ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &P1_size2D.x, 0.01f);
+		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &P1_size2D.y, 0.01f);
-
-		// Size Plane 2
-		ImGui::Text("Bar Size:    ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize1", &P2_size2D.x, 0.01f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize1", &P2_size2D.y, 0.01f);
+		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
 
 		// Rotation
 		ImGui::Text("Rotation:");
@@ -189,7 +211,16 @@ void ComponentProgressBar::CreateInspectorNode()
 		ImGui::SetNextItemWidth(60);
 		ImGui::DragFloat("##imagerotation", &rotation2D);
 
-		
+		// Planes Colors
+		ImGui::Separator();
+		ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		ImGui::Text("BG color");
+
+		ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		ImGui::Text("Bar color");
+
 
 		ImGui::Separator();
 		ImGui::Separator();
