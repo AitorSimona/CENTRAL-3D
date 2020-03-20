@@ -73,10 +73,38 @@ void ComponentScript::CreateInspectorNode() {
 				{
 					float auxVal(script_variables[i].editor_value.as_double);
 
-					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f, 0.0f, 0.0f, "%.2f", 1.0f)) {
-						script_variables[i].editor_value.as_double = auxVal;
-						script_variables[i].changed_value = true;
+					// Handle drag & drop of resources and GameObjects
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+						{
+							uint UID = *(const uint*)payload->Data;
+							Broken::Resource* resource = App->resources->GetResource(UID, false);
+
+							if (resource && resource->GetType() == Broken::Resource::ResourceType::SCENE)
+							{
+								script_variables[i].editor_value.as_double = UID;
+								script_variables[i].object_name = resource->GetName();
+								script_variables[i].display_object_name = true;
+								script_variables[i].changed_value = true;
+							}
+						}
+
+						ImGui::EndDragDropTarget();
 					}
+
+					if (script_variables[i].display_object_name) {						
+						char string[256];
+						strcpy(string, script_variables[i].object_name.c_str());
+						ImGui::InputText(auxName.c_str(), string, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+					}
+					else {
+						if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f, 0.0f, 0.0f, "%.2f", 1.0f)) {
+							script_variables[i].editor_value.as_double = auxVal;
+							script_variables[i].changed_value = true;
+						}
+					}
+
 				}
 				else if (type == VarType::BOOLEAN)
 				{
@@ -169,6 +197,8 @@ json ComponentScript::Save() const
 
 		sprintf_s(name, 50, "Variable %d", i);
 		node["Script variables"][name]["Name"] = script_variables[i].name.c_str();
+		node["Script variables"][name]["DisplayObjectName"] = script_variables[i].display_object_name;
+		node["Script variables"][name]["ObjectName"] = script_variables[i].object_name;
 
 		switch (script_variables[i].type) 
 		{
@@ -224,8 +254,12 @@ void ComponentScript::Load(json& node)
 		json js1 = node["Script variables"][name]["Name"];
 		script_variables[i].name = js1.get<std::string>(); 
 
-		json js2 = node["Script variables"][name]["Type"];
-		std::string type = js2.get<std::string>();
+		script_variables[i].display_object_name = node["Script variables"][name]["DisplayObjectName"];
+		json js2 = node["Script variables"][name]["ObjectName"];
+		script_variables[i].object_name = js2.get<std::string>();
+
+		json js3 = node["Script variables"][name]["Type"];
+		std::string type = js3.get<std::string>();
 
 		script_variables[i].changed_value = true; // We make sure the value will be changed in the script when we press PLAY
 

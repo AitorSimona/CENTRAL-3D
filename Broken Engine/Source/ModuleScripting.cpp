@@ -599,7 +599,8 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 	}
 
 	previous_AppState = (_AppState)App->GetAppState();
-	return UPDATE_CONTINUE;
+	
+	return game_update;
 }
 
 void ModuleScripting::CleanUpInstances() {

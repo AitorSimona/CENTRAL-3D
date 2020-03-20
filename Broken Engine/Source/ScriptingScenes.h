@@ -10,7 +10,7 @@ public:
 	~ScriptingScenes();
 
 public:
-	void LoadSceneFromScript();
+	void LoadSceneFromScript(uint UUID);
 	void QuitGame();
 
 };
