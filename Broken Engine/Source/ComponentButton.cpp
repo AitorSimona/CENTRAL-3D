@@ -40,6 +40,8 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 	//font.init("Assets/Fonts/Dukas.ttf", font_size);
 	//font.path = "Assets/Fonts/Dukas.ttf";
 
+	func_name = "None";
+
 	canvas->AddElement(this);
 }
 
@@ -154,7 +156,7 @@ json ComponentButton::Save() const
 	if (script)
 	{
 		node["script"] = std::to_string(script_obj->GetUID());
-		node["function"] = std::to_string(func_pos);
+		node["function"] = std::string(func_name);
 	}
 
 	return node;
@@ -188,7 +190,7 @@ void ComponentButton::Load(json& node)
 	std::string colliderh = node["colliderh"].is_null() ? "0" : node["colliderh"];
 
 	std::string script_str = node["script"].is_null() ? "0" : node["script"];
-	std::string function = node["function"].is_null() ? "0" : node["function"];
+	std::string function_str = node["function"].is_null() ? "None" : node["function"];
 
 	visible = bool(std::stoi(visible_str));
 	draggable = bool(std::stoi(draggable_str));
@@ -206,7 +208,7 @@ void ComponentButton::Load(json& node)
 	if (script_obj)
 	{
 		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script);
-		func_pos = int(std::stoi(function));
+		func_name = function_str.c_str();
 	}
 }
 
@@ -334,27 +336,23 @@ void ComponentButton::CreateInspectorNode()
 
 		if (script != nullptr)
 		{
-			std::vector<const char*> list;
-			list.push_back("None");
+			func_list.clear();
+			func_list.push_back("None");
 			for (uint i = 0; i < script->script_functions.size(); ++i)
-				list.push_back(script->script_functions[i].name.c_str());
+				func_list.push_back(script->script_functions[i].name.c_str());
 
-			static const char* item_current = list[func_pos];
 			ImGui::Text("OnClick");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(120.0f);
-			if (ImGui::BeginCombo("##OnClick", item_current, 0))
+			if (ImGui::BeginCombo("##OnClick", func_name, 0))
 			{
-				for (int n = 0; n < list.size(); ++n)
+				for (int n = 0; n < func_list.size(); ++n)
 				{
-					bool is_selected = (item_current == list[n]);
-					if (ImGui::Selectable(list[n], is_selected))
-						item_current = list[n];
+					bool is_selected = (func_name == func_list[n]);
+					if (ImGui::Selectable(func_list[n], is_selected))
+						func_name = func_list[n];
 					if (is_selected)
-					{
 						ImGui::SetItemDefaultFocus();
-						func_pos = n;
-					}
 				}
 				ImGui::EndCombo();
 			}
@@ -474,8 +472,17 @@ void ComponentButton::UpdateState()
 
 void ComponentButton::OnClick()
 {
-	if (script == nullptr)
+	if (script == nullptr || func_name == "None")
 		return;
 
-	App->scripting->CallbackScriptFunction(script, script->script_functions[func_pos]);
+	uint pos = 0;
+	for (uint i = 0; i < func_list.size(); ++i) //get function pos
+	{
+		if (func_list[i] == func_name)
+		{
+			pos = i - 1; //-1 because we are adding "None" at the start of func_list
+			break;
+		}
+	}
+	App->scripting->CallbackScriptFunction(script, script->script_functions[pos]);
 }

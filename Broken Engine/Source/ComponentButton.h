@@ -61,12 +61,13 @@ public:
 
 private:
 	SDL_Rect collider;
-	Color color;
-	GameObject* script_obj = nullptr;
-	uint func_pos = 0;
-
 	bool collider_visible = true;
 
+	GameObject* script_obj = nullptr;
+	const char* func_name;
+	std::vector<const char*> func_list;
+
+	Color color;
 	Color idle_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Color hovered_color = { 0.5f, 0.5f, 0.5f, 1.0f };
 	Color selected_color = { 0.25f, 0.25f, 1.0f, 1.0f };
