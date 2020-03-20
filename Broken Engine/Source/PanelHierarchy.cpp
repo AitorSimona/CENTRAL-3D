@@ -188,9 +188,24 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 			to_destroy = Go;
 		}
 
-		// --- If node is clicked set Go as selected ---
+		// --- Handle selection ---
+		if (selected_uid == Go->GetUID() && wasclicked && ImGui::IsMouseReleased(0))
+		{
+			if (ImGui::IsItemHovered())
+			{
+				EngineApp->scene_manager->SetSelectedGameObject(Go);
+				wasclicked = false;
+			}
+			else
+				EngineApp->scene_manager->SetSelectedGameObject(nullptr);
+		}
+
+		// --- Handle selection ---
 		if (ImGui::IsItemClicked())
-			EngineApp->scene_manager->SetSelectedGameObject(Go);
+		{
+			selected_uid = Go->GetUID();
+			wasclicked = true;
+		}
 
 
 		// --- Display children only if current node is open ---
