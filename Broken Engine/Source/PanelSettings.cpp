@@ -25,6 +25,12 @@ PanelSettings::~PanelSettings()
 
 bool PanelSettings::Draw()
 {
+	//We get the info for the last frame
+	float fps = EngineApp->time->GetFPS();
+	float last_frame_ms = EngineApp->time->GetLastFrameMs();
+	if (fps != -1)
+		AddFPS(fps, last_frame_ms);
+
 	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
 	ImGuiWindowFlags settingsFlags = 0;
@@ -353,22 +359,22 @@ inline void PanelSettings::SoftwareNode() const
 	Broken::SoftwareInfo swInfo = EngineApp->hardware->GetSwInfo();
 
 	// --- INFO
-	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate().c_str());
-	ImGui::SameLine(); ImGui::Text("and Time: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationTime().c_str());
-	ImGui::Text("%s", swInfo.MultithreadedSpecified().c_str());
+	ImGui::Text("Current Compiled Date: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationDate());
+	ImGui::SameLine(); ImGui::Text("and Time: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCompilationTime());
+	ImGui::Text("Multithreaded specified: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.MultithreadedSpecified());
 
 	ImGui::Separator();
-	ImGui::Text("Windows OS: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetWindowsVersion().c_str());
-	ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetSDLVersion().c_str());
-	ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLVersion().c_str());
-	ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLShadingVersion().c_str());
+	ImGui::Text("Windows OS: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetWindowsVersion());
+	ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetSDLVersion());
+	ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLVersion());
+	ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetOGLShadingVersion());
 
 	ImGui::Separator();
-	ImGui::Text("C++ Minimum Version Supported by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCppVersionImplementedByCompiler().c_str());
-	ImGui::SameLine(); ImGui::Text(" ("); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCPPNumericalVersion().c_str()); ImGui::SameLine(); ImGui::Text(")");
+	ImGui::Text("C++ Minimum Version Supported by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCppVersionImplementedByCompiler());
+	ImGui::SameLine(); ImGui::Text(" ("); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetCPPNumericalVersion()); ImGui::SameLine(); ImGui::Text(")");
 
-	ImGui::Text("C++ Used Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (swInfo.GetCppCompilerVersion()).c_str());
-	ImGui::Text("Visual Studio Compiler Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetVSCompilerVersion().c_str());
+	ImGui::Text("C++ Used Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", (swInfo.GetCppCompilerVersion()));
+	ImGui::Text("Visual Studio Compiler Version: "); ImGui::SameLine(); ImGui::TextColored(Color, "%s", swInfo.GetVSCompilerVersion());
 	// ---
 
 	ImGui::PopStyleVar();
@@ -412,32 +418,32 @@ inline void PanelSettings::HardwareNode() const
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 	ImVec4 Color = ImVec4(255, 255, 0, 255);
-	Broken::ProcessorHardware CPUData = EngineApp->hardware->GetProcessorInfo();
-	Broken::GPUHardware GPUData = EngineApp->hardware->GetGraphicsCardInfo();
+	const Broken::ProcessorHardware& CPUData = EngineApp->hardware->GetProcessorInfo();
+	const Broken::GPUHardware& GPUData = EngineApp->hardware->GetGraphicsCardInfo();
 
 	// --- INFO
 	ImGui::Text("PROCESSOR INFORMATION (CPU)");
 	ImGui::Separator();
 
-	ImGui::Text("CPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUBrand().c_str()));
-	ImGui::Text("CPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUVendor().c_str()));
-	ImGui::Text("CPU Arhitecture: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUArchitecture().c_str()));
+	ImGui::Text("CPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUBrand()));
+	ImGui::Text("CPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUVendor()));
+	ImGui::Text("CPU Arhitecture: "); ImGui::SameLine(); ImGui::TextColored(Color, (CPUData.GetCPUArchitecture()));
 	ImGui::SameLine(); ImGui::Text("    CPU Cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(CPUData.GetCPUCores()).c_str());
-	ImGui::SameLine(); ImGui::Text("    CPU Processors: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetNumberOfProcessors().c_str());
+	ImGui::SameLine(); ImGui::Text("    CPU Processors: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(CPUData.GetNumberOfProcessors()).c_str());
 	ImGui::Text("");
-	ImGui::Text("CPU Revision: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetProcessorRevision().c_str());
+	ImGui::Text("CPU Revision: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(CPUData.GetProcessorRevision()).c_str());
 	ImGui::Text("CPU Line L1 Cache Size: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(CPUData.GetCPUCacheLine1Size()) + " Bytes").c_str());
 	ImGui::Text("");
-	ImGui::Text("CPU Instructions Set: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetCPUInstructionSet().c_str());
+	ImGui::Text("CPU Instructions Set: "); ImGui::SameLine(); ImGui::TextColored(Color, CPUData.GetCPUInstructionSet());
 	// ---
 
 	ImGui::Separator();
 	ImGui::Text("GRAPHICS CARD INFORMATION (GPU)");
 	ImGui::Separator();
 
-	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUBenchmark().c_str());
+	ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUBenchmark());
 	ImGui::Text("GPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUInfo_GPUDet().m_GPUBrand.c_str());
-	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUModel().c_str());
+	ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, GPUData.GetGPUModel());
 	ImGui::Text("GPU Driver"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", EngineApp->hardware->GetInfo().gpu_driver.data());
 	ImGui::Text("GPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(GPUData.GetGPUInfo_GPUDet().m_GPUVendor).c_str());
@@ -568,7 +574,7 @@ inline void PanelSettings::LibrariesNode() const
 
 }
 
-void PanelSettings::AddFPS(float fps, float ms)
+void PanelSettings::AddFPS(const float& fps, const float& ms)
 {
 	static uint counter = 0;
 

@@ -908,18 +908,19 @@ void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, Reso
 
 void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh* rmesh)
 {
+
 	// --- Create spheres and cylinder to build capsule ---
 	par_shapes_mesh* top_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* bot_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* cylinder = par_shapes_create_cylinder(25,25);
-	par_shapes_scale(top_sphere, 0.5f, 0.5f, 0.5f);
-	par_shapes_scale(bot_sphere, 0.5f, 0.5f, 0.5f);
-	par_shapes_scale(cylinder, radius / 2, radius/2, height / 2);
+
+	par_shapes_scale(top_sphere, radius / 2, radius/2 * 1/height, radius / 2);
+	par_shapes_scale(bot_sphere, radius / 2, radius/2 * 1/height, radius / 2);
+	par_shapes_scale(cylinder, radius / 2, radius / 2, height / 2);
 
 	// --- Rotate and translate hemispheres ---
 	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
-	par_shapes_translate(top_sphere, 0, 0, height / 2);
-	//par_shapes_translate(bot_sphere, 0, 0, -height / 2);
+	par_shapes_translate(top_sphere, 0, 0, height/2);
 	par_shapes_rotate(bot_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_rotate(bot_sphere, float(PAR_PI), (float*)&float3::unitX);
 
@@ -930,6 +931,7 @@ void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh*
 	// --- Position final mesh ---
 	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(top_sphere, 0, height/4, 0);
+
 
 	if (top_sphere)
 	{

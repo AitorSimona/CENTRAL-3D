@@ -22,6 +22,10 @@ private:
 	mutable std::string mSoftware_LANGCppVersion;
 	mutable std::string mSoftware_WindowsVersion;
 	mutable std::string mSoftware_SDLVersion;
+	mutable std::string mCppCompilerVersion;
+	mutable std::string mMultithreadedSpecified;
+	mutable std::string mCppNumericalVersion;
+	mutable std::string mVsCompilerVersion;
 
 private:
 
@@ -35,28 +39,28 @@ public:
 	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 	//Methods to return the different values for software versions... Ready to print -- Use them :)
-	const std::string GetWindowsVersion()	const { return mSoftware_WindowsVersion; }
-	const std::string OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
+	const char* GetWindowsVersion()	const { return mSoftware_WindowsVersion.c_str(); }
+	const char* OsFoundString()		const { return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
 
-	const std::string GetSDLVersion()		const { return mSoftware_SDLVersion; }
-	const std::string GetOGLVersion()				const;
-	const std::string GetOGLShadingVersion()		const;
+	const char* GetSDLVersion()		const { return mSoftware_SDLVersion.c_str(); }
+	const char* GetOGLVersion()				const;
+	const char* GetOGLShadingVersion()		const;
 
 	///__cplusplus returning values:
 	///199711L (C++98 or C++03)
 	///201103L (C++11)
 	///201402L (C++14)
 	///201703L (C++17)
-	const std::string GetCppVersionImplementedByCompiler()	const { return mSoftware_CppVersion; }
-	const std::string GetCPPNumericalVersion()				const { return std::to_string(__cplusplus); }
-	const std::string GetCppCompilerVersion()				const;
+	const char* GetCppVersionImplementedByCompiler()	const { return mSoftware_CppVersion.c_str(); }
+	const char* GetCPPNumericalVersion()				const;
+	const char* GetCppCompilerVersion()				const;
 
 
-	const std::string GetVSCompilerVersion()				const { return (std::to_string(_MSC_VER)); }
-	const std::string MultithreadedSpecified()				const { return ("Multithreaded Specified: " + std::string(_MT ? "YES" : "NO")); }
+	const char* GetVSCompilerVersion()				const;
+	const char* MultithreadedSpecified()				const;
 
-	const std::string GetCompilationDate()					const { return __DATE__; }
-	const std::string GetCompilationTime()					const { return __TIME__; }
+	const char* GetCompilationDate()					const { return __DATE__; }
+	const char* GetCompilationTime()					const { return __TIME__; }
 };
 
 
@@ -124,6 +128,7 @@ private:
 	std::string m_CPUVendor;
 
 	std::string m_CpuArchitecture;
+	std::string m_InstructionsSet;
 
 	struct InstructionsSet {
 		bool Available_3DNow = false;
@@ -154,15 +159,15 @@ public:
 	const uint GetCPUCores()						const { return SDL_GetCPUCount(); }
 	const uint GetCPUCacheLine1Size()				const { return SDL_GetCPUCacheLineSize(); } //In bytes
 
-	const std::string GetCPUArchitecture()			const { return m_CpuArchitecture; }
-	const std::string GetNumberOfProcessors()		const { return std::to_string(m_CpuSysInfo.dwNumberOfProcessors); }
-	const std::string GetProcessorRevision()		const { return std::to_string(m_CpuSysInfo.wProcessorRevision); }
+	const char* GetCPUArchitecture()			const { return m_CpuArchitecture.c_str(); }
+	const DWORD GetNumberOfProcessors()		const { return m_CpuSysInfo.dwNumberOfProcessors; }
+	const WORD GetProcessorRevision()		const { return m_CpuSysInfo.wProcessorRevision; }
 
-	const InstructionsSet GetCPUInstructionsSet()	const { return m_CPUInstructionSet; }
-	const std::string GetCPUInstructionSet()		const;
+	const InstructionsSet& GetCPUInstructionsSet()	const { return m_CPUInstructionSet; }
+	const char* GetCPUInstructionSet()		const;
 
-	const std::string GetCPUBrand()					const { return m_CPUBrand; }
-	const std::string GetCPUVendor()				const { return m_CPUVendor; }
+	const char* GetCPUBrand()					const { return m_CPUBrand.c_str(); }
+	const char* GetCPUVendor()				const { return m_CPUVendor.c_str(); }
 };
 
 
@@ -206,13 +211,13 @@ public:
 	void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 	void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
 
-	const std::string GetGPUBenchmark()	const { return (const char*)glGetString(GL_VENDOR); }
-	const std::string GetGPUModel()		const { return (const char*)glGetString(GL_RENDERER); }
+	const char* GetGPUBenchmark()	const { return (const char*)glGetString(GL_VENDOR); }
+	const char* GetGPUModel()		const { return (const char*)glGetString(GL_RENDERER); }
 
 	const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 	const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 
-	const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
+	const GPUPrimaryInfo_IntelGPUDetect& GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
 };
 
 
@@ -257,10 +262,10 @@ public:
 	bool Start();
 
 	const hw_info& GetInfo() const;
-	const SoftwareInfo GetSwInfo() const { return info.Software_Information; }
-	const MemoryHardware GetMemInfo() const { return info.Memory_Information; }
-	const ProcessorHardware GetProcessorInfo() const { return info.CPU_Information; }
-	const GPUHardware GetGraphicsCardInfo() const { return info.GPU_Information; }
+	const SoftwareInfo& GetSwInfo() const { return info.Software_Information; }
+	const MemoryHardware& GetMemInfo() const { return info.Memory_Information; }
+	const ProcessorHardware& GetProcessorInfo() const { return info.CPU_Information; }
+	const GPUHardware& GetGraphicsCardInfo() const { return info.GPU_Information; }
 
 	void RecalculateParameters() { info.Memory_Information.RecalculateRAMParameters(); info.GPU_Information.RecalculateGPUParameters(); }
 

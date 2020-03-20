@@ -93,11 +93,11 @@ void SoftwareInfo::DetectSystemProperties() {
 	mSoftware_SDLVersion = ExtractSDLVersion();
 }
 
-const std::string SoftwareInfo::GetOGLVersion() const {
+const char* SoftwareInfo::GetOGLVersion() const {
 	return (const char*)glGetString(GL_VERSION);
 }
 
-const std::string SoftwareInfo::GetOGLShadingVersion() const {
+const char* SoftwareInfo::GetOGLShadingVersion() const {
 	return (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
@@ -187,8 +187,25 @@ const std::string SoftwareInfo::ExtractSDLVersion() {
 }
 
 
-const std::string SoftwareInfo::GetCppCompilerVersion() const {
-	return (mSoftware_LANGCppVersion + " (" + std::to_string(_MSVC_LANG) + ")");
+const char* SoftwareInfo::GetCPPNumericalVersion() const {
+	mCppNumericalVersion = std::to_string(__cplusplus);
+	return mCppNumericalVersion.c_str();
+}
+
+const char* SoftwareInfo::GetCppCompilerVersion() const {
+	mCppCompilerVersion = (mSoftware_LANGCppVersion + " (" + std::to_string(_MSVC_LANG) + ")");
+	return mCppCompilerVersion.c_str();
+}
+
+const char* SoftwareInfo::GetVSCompilerVersion() const {
+	mVsCompilerVersion = std::to_string(_MSC_VER);
+
+	return mVsCompilerVersion.c_str();
+}
+
+const char* SoftwareInfo::MultithreadedSpecified() const {
+	mMultithreadedSpecified = std::string(_MT ? "Yes" : "No");
+	return mMultithreadedSpecified.c_str();
 }
 
 
@@ -283,70 +300,99 @@ const std::string ProcessorHardware::ExtractCPUArchitecture(SYSTEM_INFO& SystemI
 
 
 void ProcessorHardware::CheckForCPUInstructionsSet() {
-	if ((bool)SDL_Has3DNow() == true)
+	bool first_line = false;
+	m_InstructionsSet = "";
+
+	if ((bool)SDL_Has3DNow()) {
+		first_line = true;
 		m_CPUInstructionSet.Available_3DNow = true;
-	if ((bool)SDL_HasRDTSC() == true)
+		m_InstructionsSet += "3DNOW";
+	}
+	if ((bool)SDL_HasRDTSC()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.RDTSC_Available = true;
-	if ((bool)SDL_HasAltiVec() == true)
+		m_InstructionsSet += "RDTSC";
+	}
+	if ((bool)SDL_HasAltiVec()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.AltiVec_Available = true;
-	if ((bool)SDL_HasAVX() == true)
+		m_InstructionsSet += "AltiVec";
+	}
+	if ((bool)SDL_HasAVX()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.AVX_Available = true;
-	if ((bool)SDL_HasAVX2() == true)
+		m_InstructionsSet += "AVX";
+	}
+	if ((bool)SDL_HasAVX2()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.AVX2_Available = true;
-	if ((bool)SDL_HasMMX() == true)
+		m_InstructionsSet += "AVX2";
+	}
+	if ((bool)SDL_HasMMX()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.MMX_Available = true;
-	if ((bool)SDL_HasSSE() == true)
+		m_InstructionsSet += "MMX";
+	}
+	if ((bool)SDL_HasSSE()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.SSE_Available = true;
-	if ((bool)SDL_HasSSE2() == true)
+		m_InstructionsSet += "SSE";
+	}
+	if ((bool)SDL_HasSSE2()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.SSE2_Available = true;
-	if ((bool)SDL_HasSSE3() == true)
+		m_InstructionsSet += "SSE2";
+	}
+	if ((bool)SDL_HasSSE3()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.SSE3_Available = true;
-	if ((bool)SDL_HasSSE41() == true)
+		m_InstructionsSet += "SSE3";
+	}
+	if ((bool)SDL_HasSSE41()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
+		else
+			first_line = true;
 		m_CPUInstructionSet.SSE41_Available = true;
-	if ((bool)SDL_HasSSE42() == true)
+		m_InstructionsSet += "SSE41";
+	}
+	if ((bool)SDL_HasSSE42()) {
+		if (first_line)
+			m_InstructionsSet += ", ";
 		m_CPUInstructionSet.SSE42_Available = true;
+		m_InstructionsSet += "SSE42";
+	}
+
+	m_InstructionsSet += '\n';
 }
 
 
-const std::string ProcessorHardware::GetCPUInstructionSet() const {
-	std::string ret = "";
-	InstructionsSet is = m_CPUInstructionSet;
-
-	if (is.Available_3DNow == true)
-		ret += "3DNOW, ";
-
-	if (is.RDTSC_Available == true)
-		ret += "RDTSC, ";
-
-	if (is.AltiVec_Available == true)
-		ret += "AltiVec, ";
-
-	if (is.AVX_Available == true)
-		ret += "AVX, ";
-
-	if (is.AVX2_Available == true)
-		ret += "AVX2, ";
-
-	if (is.MMX_Available == true)
-		ret += "MMX, ";
-
-	if (is.SSE_Available == true)
-		ret += "SSE, ";
-
-	if (is.SSE2_Available == true)
-		ret += "SSE2, ";
-
-	if (is.SSE3_Available == true)
-		ret += "SSE3, ";
-
-	if (is.SSE41_Available == true)
-		ret += "SSE41, ";
-
-	if (is.SSE42_Available == true)
-		ret += "SSE42, ";
-
-	ret += '\n';
-	return ret;
+const char * ProcessorHardware::GetCPUInstructionSet() const {
+	return m_InstructionsSet.c_str();
 }
 
 
