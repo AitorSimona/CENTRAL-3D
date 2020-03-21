@@ -9,6 +9,8 @@
 
 //#include "ResourceFolder.h"
 //#include "ResourceModel.h"
+#include <iostream>
+#include <fstream>
 #include <memory>
 #include "mmgr/nommgr.h"
 
@@ -190,6 +192,32 @@ void PanelProject::CreateResourceHandlingPopup()
 					IMeta->Save(meta);
 
 				IScript->Save((Broken::ResourceScript*)new_script);
+
+				// Initializate script
+				std::string full_name = new_script->GetName();
+				std::string full_path = new_script->GetResourceFile();
+
+				std::string::size_type const p(full_name.find_last_of('.'));
+				std::string script_name = full_name.substr(0, p);
+
+				std::ofstream file;
+				file.open(full_path);
+				file << "function GetTable" + script_name + "()\n";
+				file << "local lua_table = {}\n";
+				file << "lua_table.System = Scripting.System()\n\n";
+
+				file << "function lua_table:Awake()\n";
+				file << "end\n\n";
+
+				file << "function lua_table:Start()\n";
+				file << "end\n\n";
+
+				file << "function lua_table:Update()\n";
+				file << "end\n\n";
+
+				file << "return lua_table\n";
+				file << "end";
+				file.close();
 			}
 
 			if (ImGui::MenuItem("Scene"))
