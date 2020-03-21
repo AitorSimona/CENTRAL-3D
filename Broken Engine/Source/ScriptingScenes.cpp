@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleScripting.h"
 #include "ModuleSceneManager.h"
+#include "ModuleGui.h"
 #include "ModuleResourceManager.h"
 #include "ScriptData.h"
 
@@ -18,8 +19,11 @@ void ScriptingScenes::LoadSceneFromScript(uint UUID)
 
 void ScriptingScenes::QuitGame()
 {
-	/*if (App->isGame)
-
-	else 
-		App->GetAppState() = Broken::AppState::TO_EDITOR;*/
+	if (App->isGame)
+		App->scripting->game_update = UPDATE_STOP;
+	else {
+		App->GetAppState() = Broken::AppState::TO_EDITOR;
+		App->gui->play_button = "PLAY";
+		App->gui->pause_button = "PAUSE";
+	}
 }
