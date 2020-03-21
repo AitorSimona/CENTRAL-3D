@@ -15,6 +15,8 @@ public:
 private:
 	void DrawRecursive(Broken::GameObject* Go);
 
+	bool wasclicked = false;
+	uint selected_uid = 0;
 	Broken::GameObject* to_destroy = nullptr;
 	bool end_drag = false;
 	Broken::GameObject* target = nullptr;

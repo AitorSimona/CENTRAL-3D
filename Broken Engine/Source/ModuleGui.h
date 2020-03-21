@@ -46,8 +46,6 @@ public:
 
 	ImGuiContext* getImgUICtx() const;
 
-
-	void LogFPS(float fps, float ms);
 	void LoadStatus(const json & file) override;
 
 	void HandleInput(SDL_Event* event) const;
@@ -83,6 +81,7 @@ public:
 	uint prefabTexID = 0;
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
+	uint animatorTexID = 0;
 
 	bool isSceneHovered = false;
 

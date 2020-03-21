@@ -35,6 +35,8 @@
 
 #include "mmgr/mmgr.h"
 
+#define TREE_UPDATE_PERIOD 1000
+
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
@@ -108,17 +110,27 @@ bool ModuleSceneManager::Start() {
 	//if (App->isGame)
 	//	LoadStatus(App->GetConfigFile());
 
+	treeUpdateTimer = SDL_GetTicks();
+
 	return true;
 }
 
 update_status ModuleSceneManager::PreUpdate(float dt) {
 
-
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleSceneManager::Update(float dt) {
+	
 	root->Update(dt);
+
+	if (update_tree)
+		if ((SDL_GetTicks() - treeUpdateTimer) > TREE_UPDATE_PERIOD) {
+			treeUpdateTimer = SDL_GetTicks();
+			RedoOctree();
+			update_tree = false;
+		}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -254,34 +266,42 @@ void ModuleSceneManager::Draw()
 }
 
 void ModuleSceneManager::DrawScene() {
+
 	if (display_tree)
 		RecursiveDrawQuadtree(tree.root);
 
 	// MYTODO: Support multiple go selection and draw outline accordingly
-
 	if (currentScene)
 	{
-
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
 			if ((*it).second->GetUID() != root->GetUID())
 			{
-				// --- Search for Renderer Component ---
-				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
+				const AABB aabb = (*it).second->GetAABB();
 
-				if (SelectedGameObject == (*it).second)
+				// Careful! Some aabbs have NaN values inside, which triggers an assert in geolib's Intersects function
+
+				// MYTODO: Check why some aabbs have NaN values, found one with lots of them
+
+				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
-					glStencilFunc(GL_ALWAYS, 1, 0xFF);
-					glStencilMask(0xFF);
-				}
+					// --- Search for Renderer Component ---
+					ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
 
-				// --- If Found, draw the mesh ---
-				if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
-					MeshRenderer->Draw();
+						if (SelectedGameObject == (*it).second)
+						{
+							glStencilFunc(GL_ALWAYS, 1, 0xFF);
+								glStencilMask(0xFF);
+						}
 
-				if (SelectedGameObject == (*it).second)
-				{
-					glStencilMask(0x00);
+					// --- If Found, draw the mesh ---
+					if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
+						MeshRenderer->Draw();
+
+					if (SelectedGameObject == (*it).second)
+					{
+						glStencilMask(0x00);
+					}
 				}
 			}
 		}
@@ -292,7 +312,6 @@ void ModuleSceneManager::DrawScene() {
 		{
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
-
 
 			if (SelectedGameObject == (*it))
 			{
@@ -313,7 +332,6 @@ void ModuleSceneManager::DrawScene() {
 				glStencilMask(0x00);
 			}
 		}
-
 	}
 
 }
@@ -328,21 +346,36 @@ uint ModuleSceneManager::GetPointLineVAO() const {
 
 void ModuleSceneManager::RedoOctree()
 {
-	std::vector<GameObject*> NoStaticGameObjects;
-	tree.CollectObjects(NoStaticGameObjects);
+	std::vector<GameObject*> staticGameObjects;
+	tree.CollectObjects(staticGameObjects);
 
-	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
+	tree.SetBoundaries(AABB(tree.root->box));
 
-	for (uint i = 0; i < NoStaticGameObjects.size(); ++i)
+	for (uint i = 0; i < staticGameObjects.size(); ++i)
 	{
 		//tree.Erase(scene_gos[i]);
-		tree.Insert(NoStaticGameObjects[i]);
+		tree.Insert(staticGameObjects[i]);
 	}
 
 }
 
-void ModuleSceneManager::SetStatic(GameObject * go)
+void ModuleSceneManager::RedoOctree(AABB aabb)
 {
+	std::vector<GameObject*> staticGameObjects;
+	tree.CollectObjects(staticGameObjects);
+
+	tree.SetBoundaries(aabb);
+
+	for (uint i = 0; i < staticGameObjects.size(); ++i)
+	{
+		//tree.Erase(scene_gos[i]);
+		tree.Insert(staticGameObjects[i]);
+	}
+}
+
+void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChildren)
+{
+	go->Static = setStatic;
 	if (go->Static)
 	{
 		// --- Insert go into octree and remove it from currentscene's static go map ---
@@ -351,6 +384,26 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 
 		// --- Erase go from currentscene's no static map ---
 		currentScene->NoStaticGameObjects.erase(go->GetUID());
+
+		//If recursive, set the chilidren to static
+		if (setChildren)
+		{
+			std::vector<GameObject*> children;
+			go->GetAllChilds(children);
+			
+			//start the loop from 1, because the GO in the index 0 is the parent GO
+			for (int i = 1; i < children.size(); ++i)
+			{
+				if (!children[i]->Static) {
+					children[i]->Static = setStatic;
+
+					tree.Insert(children[i]);
+					currentScene->StaticGameObjects[children[i]->GetUID()] = children[i];
+
+					currentScene->NoStaticGameObjects.erase(children[i]->GetUID());
+				}
+			}
+		}
 	}
 	else
 	{
@@ -360,6 +413,25 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 		// --- Remove go from octree and currentscene's static go map ---
 		tree.Erase(go);
 		currentScene->StaticGameObjects.erase(go->GetUID());
+
+		update_tree = true;
+
+		//If recursive, set the children to non-static
+		if (setChildren)
+		{
+			std::vector<GameObject*> children;
+			go->GetAllChilds(children);
+
+			//start the loop from 1, because the GO in the index 0 is the parent GO
+			for (int i = 1; i < children.size(); ++i)
+			{
+				children[i]->Static = setStatic;
+				currentScene->NoStaticGameObjects[children[i]->GetUID()] = children[i];
+
+				tree.Erase(children[i]);
+				currentScene->StaticGameObjects.erase(children[i]->GetUID());
+			}
+		}
 	}
 }
 
@@ -370,7 +442,8 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const {
 		}
 	}
 
-	DrawWire(node->box, Red, GetPointLineVAO());
+	if (node->IsLeaf())
+		DrawWire(node->box, Red, GetPointLineVAO());
 }
 
 void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
@@ -434,16 +507,20 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray) {
 
 void ModuleSceneManager::LoadGame(const json & file)
 {
-	int bar = 1;
 	if (file["SceneManager"].find("MainScene") != file["SceneManager"].end())
 	{
 		std::string sceneName = file["SceneManager"]["MainScene"];
-		ResourceScene* scene = (ResourceScene*) App->resources->CreateResource(Resource::ResourceType::SCENE, sceneName.c_str());
+
+		ResourceScene* scene = nullptr;
+		for (std::map<uint, Broken::ResourceScene*>::const_iterator it = App->resources->scenes.begin(); it != App->resources->scenes.end() && scene == nullptr; ++it) {
+			if ((*it).second->GetName() == sceneName)
+				scene = (*it).second;
+
+		}
 		
 		if (scene != nullptr)
 		{
 			SetActiveScene(scene);
-			scene->LoadToMemory();
 
 			if (file["Camera3D"].find("MainCamera") != file["Camera3D"].end())
 			{
@@ -543,13 +620,12 @@ GameObject* ModuleSceneManager::GetSelectedGameObject() const
 void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
 	SelectedGameObject = go;
 
-	// MYTODO: Temporal adjustment for GameObject deselection
-	//if (SelectedGameObject)
-	//{
-	Event e(Event::EventType::GameObject_selected);
-	e.go = go;
-	App->event_manager->PushEvent(e);
-	//}
+	if (SelectedGameObject)
+	{
+		Event e(Event::EventType::GameObject_selected);
+		e.go = go;
+		App->event_manager->PushEvent(e);
+	}
 }
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() {
@@ -831,18 +907,19 @@ void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, Reso
 
 void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh* rmesh)
 {
+
 	// --- Create spheres and cylinder to build capsule ---
 	par_shapes_mesh* top_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* bot_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* cylinder = par_shapes_create_cylinder(25,25);
-	par_shapes_scale(top_sphere, 0.5f, 0.5f, 0.5f);
-	par_shapes_scale(bot_sphere, 0.5f, 0.5f, 0.5f);
-	par_shapes_scale(cylinder, radius / 2, radius/2, height / 2);
+
+	par_shapes_scale(top_sphere, radius / 2, radius/2 * 1/height, radius / 2);
+	par_shapes_scale(bot_sphere, radius / 2, radius/2 * 1/height, radius / 2);
+	par_shapes_scale(cylinder, radius / 2, radius / 2, height / 2);
 
 	// --- Rotate and translate hemispheres ---
 	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
-	par_shapes_translate(top_sphere, 0, 0, height / 2);
-	//par_shapes_translate(bot_sphere, 0, 0, -height / 2);
+	par_shapes_translate(top_sphere, 0, 0, height/2);
 	par_shapes_rotate(bot_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_rotate(bot_sphere, float(PAR_PI), (float*)&float3::unitX);
 
@@ -853,6 +930,7 @@ void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh*
 	// --- Position final mesh ---
 	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(top_sphere, 0, height/4, 0);
+
 
 	if (top_sphere)
 	{
@@ -948,4 +1026,3 @@ void ModuleSceneManager::DestroyGameObject(GameObject * go)
 	delete go;
 	this->go_count--;
 }
-

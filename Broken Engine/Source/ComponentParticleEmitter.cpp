@@ -23,11 +23,11 @@ using namespace Broken;
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
 	Enable();
-	
+
 	App->particles->AddEmitter(this);
-	
+
 	particles.resize(maxParticles);
-	
+
 	for (int i= 0; i < maxParticles; ++i)
 		particles[i] = new Particle();
 }
@@ -41,6 +41,7 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 	}
 
 	if (particleSystem && App->physics->mScene) {
+		particleSystem->releaseParticles();
 		App->physics->mScene->removeActor(*particleSystem);
 		indexPool->release();
 		particles.clear();
@@ -70,11 +71,8 @@ void ComponentParticleEmitter::Enable()
 
 void ComponentParticleEmitter::Disable()
 {
-	particleSystem->releaseParticles();
-	
+
 	App->physics->mScene->removeActor(*particleSystem);
-	
-	indexPool->release();
 
 	active = false;
 }
@@ -84,32 +82,44 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 	//Create particle if emision rate allows it
 	if (SDL_GetTicks() - spawnClock > emisionRate)
 	{
+		uint newParticlesAmount = (SDL_GetTicks() - spawnClock )/ emisionRate;
+
 		if (validParticles < maxParticles)
 		{
-			validParticles++;
+			if (newParticlesAmount > maxParticles - validParticles)
+				newParticlesAmount = maxParticles - validParticles;
+
+			validParticles += newParticlesAmount;
 			spawnClock = SDL_GetTicks();
 
 			physx::PxParticleCreationData creationData;
 
 			//Create 1 particle each time
-			creationData.numParticles = 1;
-			physx::PxU32 index[1];
+			creationData.numParticles = newParticlesAmount;
+			physx::PxU32* index = new physx::PxU32[newParticlesAmount];
 
 			const physx::PxStrideIterator<physx::PxU32> indexBuffer(index);
 
-			indexPool->allocateIndices(1, indexBuffer);
+			indexPool->allocateIndices(newParticlesAmount, indexBuffer);
 
 			float3 globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
 
-			physx::PxVec3 positionBuffer[] ={ physx::PxVec3(	globalPosition.x + GetRandomValue(-size.x,size.x),
-												globalPosition.y + GetRandomValue(-size.y,size.y),
-												globalPosition.z + GetRandomValue(-size.z,size.z))};
+			physx::PxVec3* positionBuffer = new physx::PxVec3[newParticlesAmount];
+			physx::PxVec3* velocityBuffer = new physx::PxVec3[newParticlesAmount];
 
-			physx::PxVec3 velocityBuffer[] = { physx::PxVec3(	particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x,velocityRandomFactor.x) ,
-												particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
-												particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
+			for (int i = 0; i < newParticlesAmount; ++i) {
+			velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
+											particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
+											particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
 
+			positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
+											globalPosition.y + GetRandomValue(-size.y,size.y),
+											globalPosition.z + GetRandomValue(-size.z,size.z)) };
 
+			particles[index[i]]->lifeTime = particlesLifeTime;
+			particles[index[i]]->spawnTime = SDL_GetTicks();
+			particles[index[i]]->color = particlesColor/255.0f;
+			}
 
 			creationData.indexBuffer = indexBuffer;
 			creationData.positionBuffer = physx::PxStrideIterator<const physx::PxVec3>(positionBuffer);
@@ -117,8 +127,9 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 			bool succes = particleSystem->createParticles(creationData);
 
-			particles[index[0]]->lifeTime = particlesLifeTime;
-			particles[index[0]]->spawnTime = SDL_GetTicks();
+			delete[] index;
+			delete[] positionBuffer;
+			delete[] velocityBuffer;
 		}
 	}
 
@@ -128,7 +139,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 	std::vector<physx::PxU32> indicesToErease;
 	uint particlesToRelease = 0;
-	
+
 	// access particle data from physx::PxParticleReadData
 	if (rd)
 	{
@@ -150,7 +161,6 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 				float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
 				particles[i]->position =newPosition;
 				particles[i]->diameter = particlesSize;
-				particles[i]->color = particlesColor;
 			}
 		}
 		// return ownership of the buffers back to the SDK
@@ -429,8 +439,8 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
 		colorChanged = true;
 
-	if (colorChanged)
-		ChangeParticlesColor(particlesColor);
+	/*if (colorChanged)
+		ChangeParticlesColor(particlesColor);*/
 }
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE

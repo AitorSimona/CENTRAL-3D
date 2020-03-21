@@ -1,6 +1,7 @@
 #include "PanelProject.h"
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
+
 //#include "ModuleFileSystem.h"
 //#include "ModuleResourceManager.h"
 //#include "ModuleEventManager.h"
@@ -244,6 +245,11 @@ void PanelProject::SetSelected(Broken::Resource* new_selected)
 		selected_uid = 0;
 }
 
+Broken::Resource* PanelProject::GetSelected()
+{
+	return selected;
+}
+
 //const Broken::Resource* PanelProject::GetcurrentDirectory() const
 //{
 //	return currentDirectory;
@@ -449,18 +455,7 @@ void PanelProject::DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2
 	else
 		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), color);
 
-	// --- Handle selection ---
-	if (selected && selected->GetUID() == resource->GetUID()
-		&& wasclicked && ImGui::IsMouseReleased(0))
-	{
-		if (ImGui::IsItemHovered())
-		{
-			SetSelected(resource);
-			wasclicked = false;
-		}
-		else
-			SetSelected(nullptr);
-	}
+
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
@@ -474,18 +469,57 @@ void PanelProject::DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2
 		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::EndDragDropSource();
 	}
+	// --- Handle selection ---
+	if (selected_uid == resource->GetUID() && wasclicked && ImGui::IsMouseReleased(0))
+	{
+		if (ImGui::IsItemHovered())
+		{
+			SetSelected(resource);
+			wasclicked = false;
+		}
+		else
+			SetSelected(nullptr);
+	}
 
 	// --- Handle selection ---
 	if (ImGui::IsItemClicked())
 	{
-		selected = resource;
+		selected_uid = resource->GetUID();
+		//selected = resource;
 		wasclicked = true;
 	}
-	// --- IF resource is a scene, load it on double click! ---
+
+	// --- Handle resource double click ---
 	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 	{
+		// If it is a scene, load it
 		if (resource->GetType() == Broken::Resource::ResourceType::SCENE)
 			EngineApp->scene_manager->SetActiveScene((Broken::ResourceScene*)resource);
+		// Open resources and files with default program
+		else {
+			// Construct absolute path for ShellExecute function
+			std::string abs_path = EngineApp->fs->GetBasePath();
+
+			std::size_t d_pos = 0;
+			d_pos = abs_path.find("Debug");
+			std::size_t r_pos = 0;
+			r_pos = abs_path.find("Release");
+
+			if (d_pos != 4294967295)  // If we are in DEBUG
+			{
+				abs_path = abs_path.substr(0, d_pos);
+				abs_path += "Game/";
+			}
+			else if (r_pos != 4294967295) // If we are in RELEASE
+			{
+				abs_path = abs_path.substr(0, r_pos);
+				abs_path += "Game/";
+			}
+
+			abs_path += resource->GetOriginalFile();
+			EngineApp->fs->NormalizePath(abs_path);
+			EngineApp->gui->RequestBrowser(abs_path.c_str());
+		}
 	}
 
 	//if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete), false))

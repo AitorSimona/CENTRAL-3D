@@ -7,6 +7,11 @@
 #include "ModuleGui.h"
 #include "Component.h"
 #include "ComponentCanvas.h"
+#include "ResourceFont.h"
+
+#pragma comment( lib, "Freetype/lib/freetype.lib" )
+
+
 
 #include "mmgr/mmgr.h"
 
@@ -21,12 +26,23 @@ ModuleUI::~ModuleUI()
 {
 }
 
-bool ModuleUI::Init(json& file)
+bool ModuleUI::Start()
 {
+	
+
+	/*std::string font_name = "calibri.ttf";
+
+	LoadFont(font_name);*/
+
 	return true;
 }
 
-bool ModuleUI::Start()
+void ModuleUI::LoadFont(std::string& font_name)
+{
+	//Moved to resourcegFont
+}
+
+bool ModuleUI::Init(json& file)
 {
 	return true;
 }
@@ -58,6 +74,7 @@ update_status ModuleUI::PostUpdate(float dt)
 
 bool ModuleUI::CleanUp()
 {
+	
 	return true;
 }
 

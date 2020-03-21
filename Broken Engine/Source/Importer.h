@@ -17,10 +17,12 @@ public:
 		Mesh,
 		Bone,
 		Animation,
+		Animator,
 		Texture,
 		Shader_Object,
 		Script,
 		Meta,
+		Font,
 		Unknown
 	};
 

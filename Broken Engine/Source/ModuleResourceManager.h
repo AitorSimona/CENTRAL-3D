@@ -11,7 +11,6 @@ class PanelResources;
 BE_BEGIN_NAMESPACE
 
 class ResourceFolder;
-class ResourceFolder;
 class ResourceScene;
 class ResourceModel;
 class ResourceMaterial;
@@ -19,10 +18,12 @@ class ResourceShader;
 class ResourceMesh;
 class ResourceBone;
 class ResourceAnimation;
+class ResourceAnimator;
 class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
 class ResourceScript;
+class ResourceFont;
 
 class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterTexture;
@@ -31,13 +32,16 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterMesh;
 	friend class ImporterBone;
 	friend class ImporterAnimation;
+	friend class ImporterAnimator;
 	friend class ImporterMaterial;
 	friend class ImporterScene;
 	friend class ImporterFolder;
 	friend class ImporterScript;
+	friend class ImporterFont;
 	friend class PanelResources;
 	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
+	friend class ModuleSceneManager;
 public:
 
 	// --- Basic ---
@@ -62,14 +66,15 @@ public:
 	Resource* ImportMaterial(Importer::ImportData& IData);
 	Resource* ImportShaderProgram(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
-	//
 	Resource* ImportBone(Importer::ImportData& IData);
 	Resource* ImportAnimation(Importer::ImportData& IData);
-	//
+	Resource* ImportAnimator(Importer::ImportData& IData);
 	Resource* ImportTexture(Importer::ImportData& IData);
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
+	//
+	Resource* ImportFont(Importer::ImportData& IData);
 
 	void HandleFsChanges();
 	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret);
@@ -106,6 +111,11 @@ public:
 	ResourceFolder* GetAssetsFolder();
 	uint GetFileFormatVersion();
 	uint GetDefaultMaterialUID();
+
+public:
+	// OSCAR TODO try to make it private
+	ResourceFont* DefaultFont = nullptr;
+
 private:
 
 	// --- Available importers ---
@@ -117,7 +127,6 @@ private:
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
 	ResourceMaterial* DefaultMaterial = nullptr;
-
 	//MYTODO Temporary public for resource panel
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;
@@ -128,16 +137,15 @@ private:
 	std::map<uint, ResourceMesh*> meshes;
 	std::map<uint, ResourceBone*> bones;
 	std::map<uint, ResourceAnimation*> animations;
+	std::map<uint, ResourceAnimator*> anim_info;
 	std::map<uint, ResourceTexture*> textures;
 	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
+	std::map<uint, ResourceFont*> fonts;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;
-
-
-
 };
 BE_END_NAMESPACE
 #endif

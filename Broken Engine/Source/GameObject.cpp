@@ -60,6 +60,9 @@ GameObject::~GameObject()
 	}
 	components.clear();
 
+	if (Static)
+		App->scene_manager->update_tree = true;
+
 	if (model)
 		model->Release();
 }

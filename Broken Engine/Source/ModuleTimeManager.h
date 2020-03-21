@@ -23,7 +23,8 @@ public:
 	uint GetMaxFramerate() const;
 	float GetTimeScale() const;
 	float GetGameplayTimePassed() const;
-
+	float GetFPS() const;
+	uint GetLastFrameMs() const;
 	// --- Setters ---
 	void SetMaxFramerate(uint maxFramerate);
 	void SetTimeScale(float scale);
