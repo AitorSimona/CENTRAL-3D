@@ -455,18 +455,7 @@ void PanelProject::DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2
 	else
 		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), color);
 
-	// --- Handle selection ---
-	if (selected && selected->GetUID() == resource->GetUID()
-		&& wasclicked && ImGui::IsMouseReleased(0))
-	{
-		if (ImGui::IsItemHovered())
-		{
-			SetSelected(resource);
-			wasclicked = false;
-		}
-		else
-			SetSelected(nullptr);
-	}
+
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
@@ -480,11 +469,23 @@ void PanelProject::DrawFile(Broken::Resource* resource, uint i, uint row, ImVec2
 		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::EndDragDropSource();
 	}
+	// --- Handle selection ---
+	if (selected_uid == resource->GetUID() && wasclicked && ImGui::IsMouseReleased(0))
+	{
+		if (ImGui::IsItemHovered())
+		{
+			SetSelected(resource);
+			wasclicked = false;
+		}
+		else
+			SetSelected(nullptr);
+	}
 
 	// --- Handle selection ---
 	if (ImGui::IsItemClicked())
 	{
-		selected = resource;
+		selected_uid = resource->GetUID();
+		//selected = resource;
 		wasclicked = true;
 	}
 

@@ -45,12 +45,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath);$(ProjectDir)Freetype\include\freetype;$(ProjectDir)Freetype\include</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath);$(ProjectDir)Freetype\include\freetype;$(ProjectDir)Freetype\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -139,6 +139,7 @@
     <ClInclude Include="ImporterAnimator.h" />
     <ClInclude Include="ImporterBone.h" />
     <ClInclude Include="ImporterFolder.h" />
+    <ClInclude Include="ImporterFont.h" />
     <ClInclude Include="ImporterMaterial.h" />
     <ClInclude Include="ImporterMesh.h" />
     <ClInclude Include="ImporterMeta.h" />
@@ -260,6 +261,7 @@
     <ClInclude Include="ResourceAnimator.h" />
     <ClInclude Include="ResourceBone.h" />
     <ClInclude Include="ResourceFolder.h" />
+    <ClInclude Include="ResourceFont.h" />
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceMeta.h" />
@@ -328,6 +330,7 @@
     <ClCompile Include="ImporterAnimator.cpp" />
     <ClCompile Include="ImporterBone.cpp" />
     <ClCompile Include="ImporterFolder.cpp" />
+    <ClCompile Include="ImporterFont.cpp" />
     <ClCompile Include="ImporterMaterial.cpp" />
     <ClCompile Include="ImporterMesh.cpp" />
     <ClCompile Include="ImporterMeta.cpp" />
@@ -410,6 +413,7 @@
     <ClCompile Include="ResourceAnimator.cpp" />
     <ClCompile Include="ResourceBone.cpp" />
     <ClCompile Include="ResourceFolder.cpp" />
+    <ClCompile Include="ResourceFont.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceMeta.cpp" />

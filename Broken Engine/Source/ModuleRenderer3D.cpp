@@ -84,16 +84,6 @@ bool ModuleRenderer3D::Init(json& file) {
 		 1.0f,  1.0f,  1.0f, 1.0f
 	};
 
-	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
 	// --- Check if graphics driver supports shaders in binary format ---
 	//GLint formats = 0;
 	//glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
@@ -209,8 +199,6 @@ bool ModuleRenderer3D::CleanUp() {
 	delete OutlineShader;
 
 	glDeleteFramebuffers(1, &fbo);
-	glDeleteVertexArrays(1, &quadVAO);
-	glDeleteBuffers(1, &quadVBO);
 	SDL_GL_DeleteContext(context);
 
 	return true;
@@ -449,6 +437,34 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
 	ZDrawerShader->name = "ZDrawer";
 
+	// --- Creating text rendering shaders ---
+
+	const char* textVertShaderSrc = 
+		"#version 440 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"layout (location = 1) in vec2 texCoords; \n"
+		"out vec2 TexCoords; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
+		"TexCoords = texCoords; \n"
+		"}\n";
+
+	const char* textFragShaderSrc = "#version 440 core \n"
+		"in vec2 TexCoords; \n"
+		"uniform sampler2D text; \n"
+		"uniform vec3 textColor; \n"
+		"out vec4 color; \n"
+		"void main(){ \n"
+		"vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r); \n"
+		"color = vec4(textColor, 1.0) * sampled; \n"
+		"} \n";
+
+	textShader = new ResourceShader(textVertShaderSrc, textFragShaderSrc, false);
+	textShader->name = "TextShader";
+
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char* vertexShaderSource =
@@ -487,5 +503,6 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
 	defaultShader->name = "Standard";
 	defaultShader->use();
+
 }
 
