@@ -66,6 +66,7 @@ private:
 	GameObject* script_obj = nullptr;
 	const char* func_name;
 	std::vector<const char*> func_list;
+	uint func_pos = 0;
 
 	Color color;
 	Color idle_color = { 1.0f, 1.0f, 1.0f, 1.0f };

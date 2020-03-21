@@ -209,6 +209,19 @@ void ComponentButton::Load(json& node)
 	{
 		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script);
 		func_name = function_str.c_str();
+
+		func_list.push_back("None");
+		for (uint i = 0; i < script->script_functions.size(); ++i)
+			func_list.push_back(script->script_functions[i].name.c_str());
+
+		for (uint i = 0; i < func_list.size(); ++i) //get function pos
+		{
+			if (strcmp(func_list[i], func_name) == 0)
+			{
+				func_pos = i;
+				break;
+			}
+		}
 	}
 }
 
@@ -344,13 +357,16 @@ void ComponentButton::CreateInspectorNode()
 			ImGui::Text("OnClick");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(120.0f);
-			if (ImGui::BeginCombo("##OnClick", func_name, 0))
+			if (ImGui::BeginCombo("##OnClick", func_list[func_pos], 0))
 			{
 				for (int n = 0; n < func_list.size(); ++n)
 				{
 					bool is_selected = (func_name == func_list[n]);
 					if (ImGui::Selectable(func_list[n], is_selected))
+					{
 						func_name = func_list[n];
+						func_pos = n;
+					}
 					if (is_selected)
 						ImGui::SetItemDefaultFocus();
 				}
@@ -358,7 +374,7 @@ void ComponentButton::CreateInspectorNode()
 			}
 		}
 		else
-			ImGui::Text("GameObject has no ComponentScript");
+			ImGui::Text("GO has no ComponentScript");
 
 		// States (Colors)
 		ImGui::Separator();
