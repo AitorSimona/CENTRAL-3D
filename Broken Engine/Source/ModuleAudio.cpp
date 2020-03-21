@@ -64,12 +64,19 @@ void ModuleAudio::InitWwise()
 	AkDeviceSettings deviceSettings;
 	AK::StreamMgr::GetDefaultDeviceSettings(deviceSettings);
 
+
+	
+
 	// Sound Engine
 	AkInitSettings l_InitSettings;
 	AkPlatformInitSettings l_platInitSetings;
 	AK::SoundEngine::GetDefaultInitSettings(l_InitSettings);
 	AK::SoundEngine::GetDefaultPlatformInitSettings(l_platInitSetings);
 
+	// Setting pool sizes for this game. Here, allow for user content; every game should determine its own optimal values.
+	l_InitSettings.uDefaultPoolSize = 2 * 1024 * 1024;
+	l_platInitSetings.uLEngineDefaultPoolSize = 4 * 1024 * 1024;
+	
 	// Music Engine
 	AkMusicSettings musicInit;
 	AK::MusicEngine::GetDefaultInitSettings(musicInit);
@@ -77,35 +84,35 @@ void ModuleAudio::InitWwise()
 	// Create and initialise an instance of our memory manager.
 	if (AK::MemoryMgr::Init(&memSettings) != AK_Success)
 	{
-		assert(!"Could not create the memory manager.");
+		AKASSERT(!"Could not create the memory manager.");
 		return;
 	}
 
 	// Create and initialise an instance of the default stream manager.
 	if (!AK::StreamMgr::Create(stmSettings))
 	{
-		assert(!"Could not create the Stream Manager");
+		AKASSERT(!"Could not create the Stream Manager");
 		return;
 	}
 
 	// Create an IO device.
 	if (g_lowLevelIO.Init(deviceSettings) != AK_Success)
 	{
-		assert(!"Cannot create streaming I/O device");
+		AKASSERT(!"Cannot create streaming I/O device");
 		return;
 	}
 
 	// Initialize sound engine.
 	if (AK::SoundEngine::Init(&l_InitSettings, &l_platInitSetings) != AK_Success)
 	{
-		assert(!"Cannot initialize sound engine");
+		AKASSERT(!"Cannot initialize sound engine");
 		return;
 	}
 
 	// Initialize music engine.
 	if (AK::MusicEngine::Init(&musicInit) != AK_Success)
 	{
-		assert(!"Cannot initialize music engine");
+		AKASSERT(!"Cannot initialize music engine");
 		return;
 	}
 
@@ -115,7 +122,7 @@ void ModuleAudio::InitWwise()
 	AK::Comm::GetDefaultInitSettings(settingsComm);
 	if (AK::Comm::Init(settingsComm) != AK_Success)
 	{
-		assert(!"Cannot initialize music communication");
+		AKASSERT(!"Cannot initialize music communication");
 		return;
 	}
 #endif // AK_OPTIMIZED
