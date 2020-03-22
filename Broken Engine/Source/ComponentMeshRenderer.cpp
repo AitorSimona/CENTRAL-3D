@@ -71,9 +71,6 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 	float4x4 model = transform->GetGlobalTransform();
 
-	//// --- Issue render order ---
-	//if(mesh)
-	//	App->renderer3D->Render(model, mesh->resource_mesh, material);
 
 	if (outline) 
 	{
@@ -147,26 +144,26 @@ void ComponentMeshRenderer::Draw(bool outline) const
 
 void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const 
 {
-	if (mesh.vertices && mesh.Indices) 
-	{
-		glBindVertexArray(mesh.VAO);
+	//if (mesh.vertices && mesh.Indices) 
+	//{
+	//	glBindVertexArray(mesh.VAO);
 
-		if (this->checkers)
-			glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-		else 
-		{
-			if (material && material->resource_diffuse)
-				glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
-			else
-				glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
-		}
+	//	if (this->checkers)
+	//		glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+	//	else 
+	//	{
+	//		if (material && material->resource_diffuse)
+	//			glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
+	//		else
+	//			glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+	//	}
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
-		glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+	//	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-		glBindVertexArray(0);
-		glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-	}
+	//	glBindVertexArray(0);
+	//	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	//}
 }
 
 void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const

@@ -39,6 +39,23 @@ struct RenderMesh
 	RenderMeshFlags flags;
 };
 
+template <typename Box>
+struct RenderBox
+{
+	RenderBox(const Box* box, const Color& color) : box(box), color(color) {}
+
+	const Box* box;
+	Color color;
+};
+
+struct RenderLine
+{
+	RenderLine(const float3& a, const float3& b, const Color& color) : a(a), b(b), color(color) {}
+
+	float3 a;
+	float3 b;
+	Color color;
+};
 
 class BROKEN_API ModuleRenderer3D : public Module {
 public:
@@ -53,7 +70,6 @@ public:
 	// --- Utilities ---
 	void UpdateGLCapabilities() const;
 	void OnResize(int width, int height);
-
 	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
 	void CreateFramebuffer();
 
@@ -65,14 +81,25 @@ public:
 	// --- Getters ---
 	bool GetVSync() const;
 
-	// --- Issue Render order --- // Deformable mesh is Temporal!
-	void Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0);
+	// --- Render orders --- // Deformable mesh is Temporal!
+	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0);
+	void DrawLine(const float3 a, const float3 b, const Color& color);
+	void DrawAABB(const AABB& box, const Color& color);
+	void DrawFrustum(const Frustum& box, const Color& color);
+
 
 private:
 	void HandleObjectOutlining();
 	void CreateDefaultShaders();
-	void DrawMeshes();
-	void DrawMesh(std::vector<RenderMesh> meshInstances);
+	void ClearRenderOrders();
+
+	// --- Draw ---
+	void DrawRenderMeshes();
+	void DrawRenderMesh(std::vector<RenderMesh> meshInstances);
+
+	void DrawRenderLines();
+	void DrawRenderBoxes();
+
 public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;
@@ -101,6 +128,10 @@ public:
 
 private:
 	std::map<uint, std::vector<RenderMesh>> render_meshes;
+
+	std::vector<RenderBox<AABB>> render_aabbs;
+	std::vector<RenderBox<Frustum>> render_frustums;
+	std::vector<RenderLine> render_lines;
 };
 BE_END_NAMESPACE
 #endif

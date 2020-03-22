@@ -113,7 +113,7 @@ bool ModuleRenderer3D::Init(json& file) {
 update_status ModuleRenderer3D::PreUpdate(float dt) {
 
 	// --- Clear render orders ---
-	render_meshes.clear();
+	ClearRenderOrders();
 
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
@@ -174,7 +174,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	App->scene_manager->DrawScene();
 
 	// --- Draw Level Geometry ---
-	DrawMeshes();
+	DrawRenderMeshes();
 
 	// --- Draw Particles ---
 	App->particles->DrawParticles();
@@ -348,7 +348,7 @@ bool ModuleRenderer3D::GetVSync() const {
 }
 
 // --- Add render order to queue ---
-void ModuleRenderer3D::Render(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags)
+void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags)
 {
 	// --- Check data validity
 	if (transform.IsFinite() && mesh && mat)
@@ -373,6 +373,18 @@ void ModuleRenderer3D::Render(const float4x4 transform, const ResourceMesh* mesh
 			render_meshes[mesh->GetUID()] = new_vec;		
 		}
 	}
+}
+
+void ModuleRenderer3D::DrawLine(const float3 a, const float3 b, const Color& color)
+{
+}
+
+void ModuleRenderer3D::DrawAABB(const AABB& box, const Color& color)
+{
+}
+
+void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
+{
 }
 
 void ModuleRenderer3D::HandleObjectOutlining() {
@@ -407,7 +419,7 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 			if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
 			{
 				meshInstances.push_back(RenderMesh(App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
-				DrawMesh(meshInstances);
+				DrawRenderMesh(meshInstances);
 			}
 		}
 			//MeshRenderer->Draw(true);
@@ -562,7 +574,15 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 
 }
 
-void ModuleRenderer3D::DrawMeshes()
+void ModuleRenderer3D::ClearRenderOrders()
+{
+	render_meshes.clear();
+	render_aabbs.clear();
+	render_frustums.clear();
+	render_lines.clear();
+}
+
+void ModuleRenderer3D::DrawRenderMeshes()
 {
 	// MYTODO: migrate thid draw to renderer!
 	// --- Draw Grid ---
@@ -576,7 +596,7 @@ void ModuleRenderer3D::DrawMeshes()
 	// --- Draw Game Object Meshes ---
 	for (std::map<uint, std::vector<RenderMesh>>::const_iterator it = render_meshes.begin(); it != render_meshes.end(); ++it)
 	{
-		DrawMesh((*it).second);
+		DrawRenderMesh((*it).second);
 	}
 
 	// --- DeActivate wireframe mode ---
@@ -585,7 +605,7 @@ void ModuleRenderer3D::DrawMeshes()
 
 }
 
-void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
+void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 {
 	for(uint i = 0; i < meshInstances.size(); ++i)
 	{
@@ -685,6 +705,14 @@ void ModuleRenderer3D::DrawMesh(std::vector<RenderMesh> meshInstances)
 	}
 
 	glUseProgram(defaultShader->ID);
+}
+
+void ModuleRenderer3D::DrawRenderLines()
+{
+}
+
+void ModuleRenderer3D::DrawRenderBoxes()
+{
 }
 
 
