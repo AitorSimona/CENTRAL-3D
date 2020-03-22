@@ -17,6 +17,8 @@ private:
 
 	bool navigationStatic = false;
 	bool popupNavigationFlag = false;
+	uint popupArea = 0;
+	bool openPopup = false;
 	bool affectChilds = false;
 	bool doChange = false;
 

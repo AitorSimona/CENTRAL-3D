@@ -176,16 +176,64 @@ bool PanelNavigation::Draw() {
 
 					}
 
-					if (selected->navigationStatic) 						{
-						const char* items[] = { "Walkable", "Not Walkable", "Jump" };
-						static int item = -1;
+					if (selected->navigationStatic) {
+
+						if (ImGui::BeginPopup("Change Navigation Area")) {
+							std::string popupAreaName = EngineApp->detour->areaNames[popupArea];
+							ImGui::Text(std::string("Do you want to change the navigation area to " + popupAreaName + " for all the child objects as well?" ).c_str());
+							if (ImGui::Button("Yes, change children")) {
+								std::queue<Broken::GameObject*> childs;
+								childs.push(selected);
+
+								while (!childs.empty()) {
+									Broken::GameObject* current_child = childs.front();
+									childs.pop();
+
+									//We add all of its childs
+									for (uint i = 0; i < current_child->childs.size(); i++)
+										childs.push(current_child->childs[i]);
+
+									//We change the value of static
+									if (current_child->GetComponent<Broken::ComponentMesh>() != nullptr)
+										current_child->navigationArea = popupArea;
+								}
+								ImGui::CloseCurrentPopup();
+							}
+							ImGui::SameLine();
+							if (ImGui::Button("No, this object only")) {
+								selected->navigationArea = popupArea;
+								ImGui::CloseCurrentPopup();
+							}
+							ImGui::SameLine();
+							if (ImGui::Button("Cancel"))
+								ImGui::CloseCurrentPopup();
+
+							ImGui::EndPopup();
+						}
+
 						ImGui::Text("Navigation Area"); ImGui::SameLine();
-						ImGui::Combo("##areaCombo", &item, 
-							
-							
-							items, IM_ARRAYSIZE(items));
-
-
+						if (ImGui::BeginCombo("##areaCombo", EngineApp->detour->areaNames[selected->navigationArea])) {
+							for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+								std::string areaName = EngineApp->detour->areaNames[i];
+								if (areaName != "") {
+									ImGui::PushID((void*)EngineApp->detour->areaNames[i]);
+									if (ImGui::Selectable(EngineApp->detour->areaNames[i], i == selected->navigationArea)) {
+										if (selected->childs.size() != 0) {
+											popupArea = i;
+											openPopup = true;
+										}
+										else
+											selected->navigationArea = i;
+									}
+									ImGui::PopID();
+								}
+							}
+							ImGui::EndCombo();
+						}
+						if (openPopup) {
+							ImGui::OpenPopup("Change Navigation Area");
+							openPopup = false;
+						}
 					}
 
 				}
