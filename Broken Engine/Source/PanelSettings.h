@@ -14,7 +14,7 @@ public:
 	PanelSettings(char* name);
 	~PanelSettings();
 
-	void AddFPS(float fps, float ms);
+	void AddFPS(const float& fps, const float& ms);
 	bool Draw();
 
 private:

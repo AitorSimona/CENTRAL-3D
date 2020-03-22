@@ -47,8 +47,6 @@ public:
 
 	ImGuiContext* getImgUICtx() const;
 
-
-	void LogFPS(float fps, float ms);
 	void LoadStatus(const json & file) override;
 
 	void HandleInput(SDL_Event* event) const;

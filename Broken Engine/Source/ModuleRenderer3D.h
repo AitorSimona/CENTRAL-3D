@@ -46,8 +46,8 @@ public:
 	ResourceShader* linepointShader = nullptr;
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
+	ResourceShader* textShader = nullptr;
 
-	unsigned int VAO = 0;
 	SDL_GLContext context;
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
@@ -55,8 +55,6 @@ public:
 	uint fbo = 0;
 	uint depthbuffer = 0;
 	uint rendertexture = 0;
-	uint quadVAO = 0;
-	uint quadVBO = 0;
 
 	// --- Flags ---
 	bool vsync = true;

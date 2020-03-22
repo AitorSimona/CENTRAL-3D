@@ -54,6 +54,7 @@ bool ModuleResourceManager::Init(json& file)
 	importers.push_back(new ImporterTexture());
 	importers.push_back(new ImporterScript);
 	importers.push_back(new ImporterMeta());
+	importers.push_back(new ImporterFont());
 
 	return true;
 }
@@ -72,12 +73,18 @@ bool ModuleResourceManager::Start()
 	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
 
+	// --- Create default font ---
+	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
+	DefaultFont->Init();
+
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
 	filters.push_back("lua");
 	filters.push_back("scene");
+	filters.push_back("ttf");
+	filters.push_back("otf");
 	filters.push_back("animator");
 
 	// --- Import files and folders ---
@@ -233,6 +240,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::META:
 		resource = ImportMeta(IData);
+		break;
+
+	case Resource::ResourceType::FONT:
+		resource = ImportFont(IData);
 		break;
 
 	case Resource::ResourceType::SCRIPT:
@@ -528,6 +539,22 @@ Resource* ModuleResourceManager::ImportMeta(Importer::ImportData& IData)
 	return resource;
 }
 
+Resource* ModuleResourceManager::ImportFont(Importer::ImportData& IData)
+{
+	Resource* font = nullptr;
+
+	ImporterFont* IFont = GetImporter<ImporterFont>();
+
+	if (IsFileImported(IData.path))
+		font = IFont->Load(IData.path);
+	else 
+	{
+		font = IFont->Import(IData);
+	}
+
+	return font;
+}
+
 void ModuleResourceManager::HandleFsChanges()
 {
 	// --- First retrieve all windows fs files and directories in ASSETS ---
@@ -773,6 +800,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
+	resource = resource ? resource : (fonts.find(UID) == fonts.end() ? resource : (*fonts.find(UID)).second);
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
@@ -852,6 +880,11 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, co
 		//MYTODO: D�dac fill code following Aitor's Guidelines
 		resource = (Resource*)new ResourceScript(App->GetRandom().Int(), source_file);
 		scripts[resource->GetUID()] = (ResourceScript*)resource;
+		break;
+
+	case Resource::ResourceType::FONT:
+		resource = (Resource*)new ResourceFont(App->GetRandom().Int(), source_file);
+		fonts[resource->GetUID()] = (ResourceFont*)resource;
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -946,6 +979,10 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		scripts[resource->GetUID()] = (ResourceScript*)resource;
 		break;
 
+	case Resource::ResourceType::FONT:
+		resource = (Resource*)new ResourceFont(UID, source_file);
+		fonts[resource->GetUID()] = (ResourceFont*)resource;
+		break;
 
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
@@ -983,6 +1020,7 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "vertex" || extension == "fragment" ? Resource::ResourceType::SHADER_OBJECT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "lua" ? Resource::ResourceType::SCRIPT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "ttf" || extension == "otf" ? Resource::ResourceType::FONT : type) : type;
 
 	return type;
 }
@@ -1172,7 +1210,7 @@ std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::R
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Destruction Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -1251,6 +1289,10 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		scripts.erase(resource->GetUID());
 		break;
 
+	case Resource::ResourceType::FONT:
+		fonts.erase(resource->GetUID());
+		break;
+
 	case Resource::ResourceType::META:
 		metas.erase(resource->GetUID());
 		break;
@@ -1283,7 +1325,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 13, "Resource Clean Up needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
@@ -1403,6 +1445,15 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	metas.clear();
+
+	for (std::map<uint, ResourceFont*>::iterator it = fonts.begin(); it != fonts.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = fonts.erase(it);
+	}
+
+	fonts.clear();
 
 	// --- Delete importers ---
 	for (uint i = 0; i < importers.size(); ++i)
