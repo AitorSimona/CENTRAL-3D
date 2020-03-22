@@ -175,6 +175,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 
 	// --- Draw Level Geometry ---
 	DrawRenderMeshes();
+	DrawRenderLines();
 
 	// --- Draw Particles ---
 	App->particles->DrawParticles();
@@ -375,16 +376,21 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 	}
 }
 
-void ModuleRenderer3D::DrawLine(const float3 a, const float3 b, const Color& color)
+void ModuleRenderer3D::DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color)
 {
+	render_lines.push_back(RenderLine(transform, a, b, color));
 }
 
 void ModuleRenderer3D::DrawAABB(const AABB& box, const Color& color)
 {
+	if(box.IsFinite())
+		render_aabbs.push_back(RenderBox<AABB>(&box, color));
 }
 
 void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 {
+	if(box.IsFinite())
+		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
 
 void ModuleRenderer3D::HandleObjectOutlining() {
@@ -709,6 +715,92 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 
 void ModuleRenderer3D::DrawRenderLines()
 {
+	// --- Set Uniforms ---
+	glUseProgram(App->renderer3D->linepointShader->ID);
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+
+	/*glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glDisable(GL_LIGHTING);
+	glLineWidth(3.0f);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glMultMatrixf(proj_RH.ptr());
+
+	glBegin(GL_LINES);*/
+
+	/*glColor3f((*it).color.r/255.0f, (*it).color.g/255.0f, (*it).color.b/255.0f);
+	glVertex3f((*it).a.x, (*it).a.y, (*it).a.z);
+	glVertex3f((*it).b.x, (*it).b.y, (*it).b.z);*/
+	
+	//glEnd();
+	
+	//glPopMatrix();
+	//glLineWidth(1.0f);
+	//glEnable(GL_LIGHTING);
+	
+	//glDisableClientState(GL_COLOR_ARRAY);
+	//glDisableClientState(GL_VERTEX_ARRAY);
+
+
+	float3* vertices = new float3[2];
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(App->scene_manager->GetPointLineVAO());
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// --- Draw Lines ---
+	for (std::vector<RenderLine>::const_iterator it = render_lines.begin(); it != render_lines.end(); ++it)
+	{
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (*it).transform.Transposed().ptr());
+		glUniform3f(vertexColorLocation, (*it).color.r / 255.0f, (*it).color.g / 255.0f, (*it).color.b / 255.0f);
+
+		vertices[0] = (*it).a;
+		vertices[1] = (*it).b;
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 2, vertices, GL_DYNAMIC_DRAW);
+
+		// --- Draw lines ---
+		glLineWidth(3.0f);
+		glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		glDrawArrays(GL_LINES, 0, 2);
+		glBindVertexArray(0);
+		glLineWidth(1.0f);
+	}
+
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	// --- Delete VBO and vertices ---
+	glDeleteBuffers(1, &VBO);
+	delete[] vertices;
+
+	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 void ModuleRenderer3D::DrawRenderBoxes()

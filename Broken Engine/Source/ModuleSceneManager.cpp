@@ -131,8 +131,6 @@ update_status ModuleSceneManager::Update(float dt) {
 			update_tree = false;
 		}
 
-	//DrawScene();
-
 	return UPDATE_CONTINUE;
 }
 
@@ -736,8 +734,8 @@ void ModuleSceneManager::DrawWireFromVertices(const float3* corners, Color color
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, color.r, color.g, color.b);
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
 	// --- Create VAO, VBO ---
 	unsigned int VBO;

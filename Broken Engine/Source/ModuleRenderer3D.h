@@ -18,9 +18,10 @@ typedef int RenderMeshFlags;
 
 enum RenderMeshFlags_
 {
-	outline = 1,
-	selected,
-	checkers
+	None		= 0,
+	outline		= 1 << 0,
+	selected	= 1 << 1,
+	checkers	= 1 << 2,
 };
 
 struct RenderMesh
@@ -28,15 +29,15 @@ struct RenderMesh
 	RenderMesh(float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags = 0) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags) {}
 
 	float4x4 transform;
-	const ResourceMesh* resource_mesh;
-	const ResourceMaterial* mat;
+	const ResourceMesh* resource_mesh = nullptr;
+	const ResourceMaterial* mat = nullptr;
 
 	// temporal!
-	const ResourceMesh* deformable_mesh;
+	const ResourceMesh* deformable_mesh = nullptr;
 
 
 	// --- Add rendering options here ---
-	RenderMeshFlags flags;
+	RenderMeshFlags flags = None;
 };
 
 template <typename Box>
@@ -50,8 +51,9 @@ struct RenderBox
 
 struct RenderLine
 {
-	RenderLine(const float3& a, const float3& b, const Color& color) : a(a), b(b), color(color) {}
+	RenderLine(float4x4 transform, const float3& a, const float3& b, const Color& color) : transform(transform), a(a), b(b), color(color) {}
 
+	float4x4 transform;
 	float3 a;
 	float3 b;
 	Color color;
@@ -83,7 +85,7 @@ public:
 
 	// --- Render orders --- // Deformable mesh is Temporal!
 	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0);
-	void DrawLine(const float3 a, const float3 b, const Color& color);
+	void DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color);
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
 

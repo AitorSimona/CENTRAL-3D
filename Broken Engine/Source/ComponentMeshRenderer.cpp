@@ -170,76 +170,86 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 {
 	// --- Draw Mesh Normals ---
 
-	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->linepointShader->ID);
+	//// --- Set Uniforms ---
+	//glUseProgram(App->renderer3D->linepointShader->ID);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.GetGlobalTransform().Transposed().ptr());
+	//GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.GetGlobalTransform().Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+	//GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	//float nearp = App->renderer3D->active_camera->GetNearPlane();
 
-	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
-	float4x4 proj_RH(
-		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-		0.0f, f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, nearp, 0.0f);
+	//// right handed projection matrix
+	//float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	//float4x4 proj_RH(
+	//	f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+	//	0.0f, f, 0.0f, 0.0f,
+	//	0.0f, 0.0f, 0.0f, -1.0f,
+	//	0.0f, 0.0f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+	//GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+	//glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+	//int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+
+	float3 origin = float3::zero;
+	float3 end = float3::zero;
+	Color color(255, 255, 0);
+	float4x4 transf = transform.GetGlobalTransform();
 
 	if (draw_vertexnormals && mesh.vertices->normal)
 	{
-		glUniform3f(vertexColorLocation,255, 255, 0);
+		//glUniform3f(vertexColorLocation,255, 255, 0);
 
 		// --- Draw Vertex Normals ---
-		float3* vertices = new float3[mesh.IndicesSize * 2];
+		//float3* vertices = new float3[mesh.IndicesSize * 2];
 
-		for (uint i = 0; i < mesh.IndicesSize; ++i) {
+		for (uint i = 0; i < mesh.IndicesSize; ++i) 
+		{
 			// --- Normals ---
-			vertices[i * 2] = float3(mesh.vertices[mesh.Indices[i]].position[0], mesh.vertices[mesh.Indices[i]].position[1], mesh.vertices[mesh.Indices[i]].position[2]);
-			vertices[(i * 2) + 1] = float3(mesh.vertices[mesh.Indices[i]].position[0] + mesh.vertices[mesh.Indices[i]].normal[0] * NORMAL_LENGTH, mesh.vertices[mesh.Indices[i]].position[1] + mesh.vertices[mesh.Indices[i]].normal[1] * NORMAL_LENGTH, mesh.vertices[mesh.Indices[i]].position[2] + mesh.vertices[mesh.Indices[i]].normal[2] * NORMAL_LENGTH);
+			origin = float3(mesh.vertices[mesh.Indices[i]].position[0], mesh.vertices[mesh.Indices[i]].position[1], mesh.vertices[mesh.Indices[i]].position[2]);
+			end = float3(mesh.vertices[mesh.Indices[i]].position[0] + mesh.vertices[mesh.Indices[i]].normal[0] * NORMAL_LENGTH, mesh.vertices[mesh.Indices[i]].position[1] + mesh.vertices[mesh.Indices[i]].normal[1] * NORMAL_LENGTH, mesh.vertices[mesh.Indices[i]].position[2] + mesh.vertices[mesh.Indices[i]].normal[2] * NORMAL_LENGTH);
+
+			App->renderer3D->DrawLine(transf, origin, end, color);
 		}
 
-		// --- Create VAO, VBO ---
-		unsigned int VBO;
-		glGenBuffers(1, &VBO);
-		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		//// --- Create VAO, VBO ---
+		//unsigned int VBO;
+		//glGenBuffers(1, &VBO);
+		//// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize * 2, vertices, GL_DYNAMIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize * 2, vertices, GL_DYNAMIC_DRAW);
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		//glEnableVertexAttribArray(0);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glBindVertexArray(0);
 
-		// --- Draw lines ---
-		glLineWidth(3.0f);
-		glBindVertexArray(App->scene_manager->GetPointLineVAO());
-		glDrawArrays(GL_LINES, 0, mesh.IndicesSize * 2);
-		glBindVertexArray(0);
-		glLineWidth(1.0f);
+		//// --- Draw lines ---
+		//glLineWidth(3.0f);
+		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		//glDrawArrays(GL_LINES, 0, mesh.IndicesSize * 2);
+		//glBindVertexArray(0);
+		//glLineWidth(1.0f);
 
-		// --- Delete VBO and vertices ---
-		glDeleteBuffers(1, &VBO);
-		delete[] vertices;
+		//// --- Delete VBO and vertices ---
+		//glDeleteBuffers(1, &VBO);
+		//delete[] vertices;
 	}
 
 	// --- Draw Face Normals 
 
 	if (draw_facenormals)
 	{
-		glUniform3f(vertexColorLocation, 0, 255, 255);
+		//glUniform3f(vertexColorLocation, 0, 255, 255);
 		Triangle face;
-		float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
+		float3 face_center;
+		float3 face_normal;
+		//float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
 
 		// --- Compute face normals ---
 		for (uint j = 0; j < mesh.IndicesSize / 3; ++j) 
@@ -248,48 +258,50 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 			face.b = float3(mesh.vertices[mesh.Indices[(j * 3) + 1]].position);
 			face.c = float3(mesh.vertices[mesh.Indices[(j * 3) + 2]].position);
 
-			float3 face_center = face.Centroid();
+			face_center = face.Centroid();
 
-			float3 face_normal = Cross(face.b - face.a, face.c - face.b);
+			face_normal = Cross(face.b - face.a, face.c - face.b);
 
 			face_normal.Normalize();
 
-			vertices[j * 2] = float3(face_center.x, face_center.y, face_center.z);
-			vertices[(j * 2) + 1] = float3(face_center.x + face_normal.x * NORMAL_LENGTH, face_center.y + face_normal.y * NORMAL_LENGTH, face_center.z + face_normal.z * NORMAL_LENGTH);
+			origin = float3(face_center.x, face_center.y, face_center.z);
+			end = float3(face_center.x + face_normal.x * NORMAL_LENGTH, face_center.y + face_normal.y * NORMAL_LENGTH, face_center.z + face_normal.z * NORMAL_LENGTH);
+			
+			App->renderer3D->DrawLine(transf, origin, end, color);
 		}
 
-		// --- Create VAO, VBO ---
-		unsigned int VBO;
-		glGenBuffers(1, &VBO);
-		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		//// --- Create VAO, VBO ---
+		//unsigned int VBO;
+		//glGenBuffers(1, &VBO);
+		//// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		//glEnableVertexAttribArray(0);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glBindVertexArray(0);
 
-		// --- Draw lines ---
-		glLineWidth(3.0f);
-		//glColor3f(255, 255, 0);
-		glBindVertexArray(App->scene_manager->GetPointLineVAO());
-		glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
-		glBindVertexArray(0);
-		//glColor3f(255, 255, 255);
-		glLineWidth(1.0f);
+		//// --- Draw lines ---
+		//glLineWidth(3.0f);
+		////glColor3f(255, 255, 0);
+		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		//glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
+		//glBindVertexArray(0);
+		////glColor3f(255, 255, 255);
+		//glLineWidth(1.0f);
 
-		// --- Delete VBO and vertices ---
-		glDeleteBuffers(1, &VBO);
-		delete[] vertices;
+		//// --- Delete VBO and vertices ---
+		//glDeleteBuffers(1, &VBO);
+		//delete[] vertices;
 	}
 
-	glUniform3f(vertexColorLocation, 255, 255, 255);
+	//glUniform3f(vertexColorLocation, 255, 255, 255);
 
 
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	//glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 json ComponentMeshRenderer::Save() const 

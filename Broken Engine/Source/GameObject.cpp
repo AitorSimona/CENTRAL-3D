@@ -87,7 +87,10 @@ void GameObject::Draw()
 		flags |= checkers;
 
 	if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
-			App->renderer3D->DrawMesh(GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, cmesh->deformable_mesh, flags);
+	{
+		App->renderer3D->DrawMesh(GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, cmesh->deformable_mesh, flags);
+		cmesh_renderer->DrawNormals(*cmesh->resource_mesh, *GetComponent<ComponentTransform>());
+	}
 
 }
 
