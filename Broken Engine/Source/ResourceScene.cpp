@@ -133,6 +133,16 @@ bool ResourceScene::LoadInMemory() {
 			App->detour->agentRadius = navigationdata["agentRadius"];
 			App->detour->maxSlope = navigationdata["maxSlope"];
 			App->detour->stepHeight = navigationdata["stepHeight"];
+			App->detour->voxelSize = navigationdata["voxelSize"];
+
+			App->detour->voxelHeight = navigationdata["voxelHeight"];
+			App->detour->regionMinSize = navigationdata["regionMinSize"];
+			App->detour->regionMergeSize = navigationdata["regionMergeSize"];
+			App->detour->edgeMaxLen = navigationdata["edgeMaxLen"];
+			App->detour->edgeMaxError = navigationdata["edgeMaxError"];
+			App->detour->vertsPerPoly = navigationdata["vertsPerPoly"];
+			App->detour->detailSampleDist = navigationdata["detailSampleDist"];
+			App->detour->detailSampleMaxError = navigationdata["detailSampleMaxError"];
 
 			for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
 				std::string areaName = navigationdata["Areas"][i]["name"];
@@ -165,6 +175,9 @@ void ResourceScene::FreeMemory() {
 	}
 
 	StaticGameObjects.clear();
+	Event e;
+	e.type = Event::EventType::Scene_unloaded;
+	App->event_manager->PushEvent(e);
 
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }

@@ -52,6 +52,12 @@
     <Filter Include="Sources\3rd party\Imgui\ImGuizmo">
       <UniqueIdentifier>{319e935e-aded-4788-b84c-e6b5eef8f7b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd party\RecastNavigation">
+      <UniqueIdentifier>{aa16bee1-28e8-4f0b-8ad5-88da32022ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd party\RecastNavigation\recast">
+      <UniqueIdentifier>{4511f2e0-7e42-40b5-825c-752f0eb7207b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VSresource.h">
@@ -574,6 +580,39 @@
     </ClCompile>
     <ClCompile Include="ModuleRecast.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\Recast.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAlloc.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastArea.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAssert.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastContour.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastFilter.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastLayers.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMesh.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMeshDetail.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRasterization.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRegion.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

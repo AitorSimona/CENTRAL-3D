@@ -255,6 +255,17 @@
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\Recast.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAlloc.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastArea.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAssert.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastContour.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastFilter.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastLayers.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMesh.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMeshDetail.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRasterization.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRegion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Broken Engine.rc" />

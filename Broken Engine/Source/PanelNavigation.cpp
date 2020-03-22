@@ -97,12 +97,24 @@ bool PanelNavigation::Draw() {
 				if (ImGui::DragFloat("Step Height", &EngineApp->detour->stepHeight, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f)) {
 				}
 
+				ImGui::Text("Advanced");
+				ImGui::Separator();
+				ImGui::Text("Manual Voxel Size"); ImGui::SameLine();
+				ImGui::Checkbox("##manualVoxelSize", &manualVoxel);
+				if (manualVoxel)
+					ImGui::DragFloat("Voxel Size##dragFloat", &EngineApp->detour->voxelSize, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+				else {
+					EngineApp->detour->voxelSize = EngineApp->detour->agentRadius / 3.0f;
+					float voxelSize = EngineApp->detour->voxelSize;
+					ImGui::DragFloat("Voxel Size##inputText", &voxelSize, 0.0f, 0.0f, 0.0f, "%.2f");
+				}
+
 				if (ImGui::Button("Clear")) {
 					//MYTODO delete the navmesh binary
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Build")) {
-					//MYTODO create the NavMesh binary
+					EngineApp->recast->BuildNavMesh();
 				}
 
 				ImGui::EndTabItem();

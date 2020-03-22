@@ -19,6 +19,7 @@ struct BROKEN_API Event {
 		GameObject_destroyed,
 		GameObject_selected,
 		GameObject_loaded,
+		Scene_unloaded,
 		Resource_selected,
 		Resource_destroyed,
 		Window_resize,

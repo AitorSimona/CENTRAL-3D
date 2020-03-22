@@ -108,6 +108,17 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 	file["Navigation Data"]["agentHeight"] = App->detour->agentHeight;
 	file["Navigation Data"]["maxSlope"] = App->detour->maxSlope;
 	file["Navigation Data"]["stepHeight"] = App->detour->stepHeight;
+	file["Navigation Data"]["voxelSize"] = App->detour->voxelSize;
+
+	//Currently not changed but for futureproofing
+	file["Navigation Data"]["voxelHeight"] = App->detour->voxelHeight;
+	file["Navigation Data"]["regionMinSize"] = App->detour->regionMinSize;
+	file["Navigation Data"]["regionMergeSize"] = App->detour->regionMergeSize;
+	file["Navigation Data"]["edgeMaxLen"] = App->detour->edgeMaxLen;
+	file["Navigation Data"]["edgeMaxError"] = App->detour->edgeMaxError;
+	file["Navigation Data"]["vertsPerPoly"] = App->detour->vertsPerPoly;
+	file["Navigation Data"]["detailSampleDist"] = App->detour->detailSampleDist;
+	file["Navigation Data"]["detailSampleMaxError"] = App->detour->detailSampleMaxError;
 
 	for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
 		file["Navigation Data"]["Areas"][i]["name"] = App->detour->areaNames[i];

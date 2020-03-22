@@ -15,6 +15,7 @@ public:
 
 private:
 
+	bool manualVoxel = false;
 	bool navigationStatic = false;
 	bool popupNavigationFlag = false;
 	uint popupArea = 0;

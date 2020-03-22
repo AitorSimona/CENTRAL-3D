@@ -3,6 +3,7 @@
 
 #include "Resource.h"
 #include "MathGeoLib/include/Geometry/AABB.h"
+#include "MathGeoLib/include/Geometry/OBB.h"
 
 BE_BEGIN_NAMESPACE
 struct BROKEN_API Vertex {
@@ -19,6 +20,7 @@ public:
 	~ResourceMesh();
 
 	void CreateAABB();
+	void CreateOBB();
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
@@ -31,6 +33,7 @@ private:
 
 public:
 	AABB aabb;
+	OBB obb;
 
 	Vertex* vertices = nullptr;
 	uint VerticesSize = 0;
