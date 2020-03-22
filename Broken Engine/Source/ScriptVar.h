@@ -47,5 +47,12 @@ public:
 	// Bool to see if the value was changed in the editor
 	bool changed_value = false;
 };
+
+//This data structure is created in order to restrict possibilities from callbacks and avoid users/programmers from crashing the engine
+struct BROKEN_API ScriptFunc
+{
+	std::string name = "null_function";
+
+};
 BE_END_NAMESPACE
 #endif // __SCRIPTVAR_H__

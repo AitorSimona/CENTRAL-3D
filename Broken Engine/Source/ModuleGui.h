@@ -7,6 +7,7 @@
 
 #include <vector>
 struct ImGuiContext;
+struct ImDrawList;
 //
 //class PanelSettings;
 //class PanelAbout;
@@ -94,6 +95,8 @@ public:
 	bool isUsingGuizmo = false;
 	std::string play_button;
 	std::string pause_button;
+
+	ImDrawList* draw_list;
 
 private:
 
