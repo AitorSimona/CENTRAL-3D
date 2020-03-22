@@ -23,7 +23,9 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 ComponentCamera::~ComponentCamera() 
 {
 	if(active_camera)
-	App->renderer3D->SetActiveCamera(nullptr);
+		App->renderer3D->SetActiveCamera(nullptr);
+	if (culling)
+		App->renderer3D->SetCullingCamera(nullptr);
 }
 
 float ComponentCamera::GetNearPlane() const {

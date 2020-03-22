@@ -79,6 +79,7 @@ public:
 	ResourceShader* linepointShader = nullptr;
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
+	ResourceShader* textShader = nullptr;
 
 	SDL_GLContext context;
 	ComponentCamera* active_camera = nullptr;
