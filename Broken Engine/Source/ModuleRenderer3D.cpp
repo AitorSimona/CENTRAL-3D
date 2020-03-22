@@ -346,7 +346,7 @@ bool ModuleRenderer3D::GetVSync() const {
 }
 
 // --- Add render order to queue ---
-void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags)
+void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags, const Color& color)
 {
 	// --- Check data validity
 	if (transform.IsFinite() && mesh && mat)
@@ -354,7 +354,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 		// --- Add given instance to relevant vector ---
 		if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
 		{
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags);
+			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags, color);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
 
 			render_meshes[mesh->GetUID()].push_back(rmesh);
@@ -364,7 +364,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 			// --- Build new vector to store mesh's instances --- 
 			std::vector<RenderMesh> new_vec;
 
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags);
+			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags, color);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
 
 			new_vec.push_back(rmesh);
@@ -697,7 +697,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			else
 			{
 				glUniform1i(TextureSupportLocation, -1);
-				//glUniform3f(vertexColorLocation, mesh->color.r, mesh->color.g, mesh->color.b);
+				glUniform3f(vertexColorLocation, mesh->color.r/255, mesh->color.g/255, mesh->color.b/255);
 			}
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);

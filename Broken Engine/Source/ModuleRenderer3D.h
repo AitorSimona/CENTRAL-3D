@@ -16,7 +16,7 @@ class math::float4x4;
 
 typedef int RenderMeshFlags;
 
-enum RenderMeshFlags_
+enum BROKEN_API RenderMeshFlags_
 {
 	None		= 0,
 	outline		= 1 << 0,
@@ -26,14 +26,15 @@ enum RenderMeshFlags_
 	texture		= 1 << 4
 };
 
-struct RenderMesh
+struct BROKEN_API RenderMesh
 {
-	RenderMesh(float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags = 0) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags) {}
+	RenderMesh(float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags = 0, const Color& color = White) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags), color(color) {}
 
 	float4x4 transform;
 	const ResourceMesh* resource_mesh = nullptr;
 	const ResourceMaterial* mat = nullptr;
-	//const Color color = White; // force a color draw, useful if no texture is given
+	Color color; // force a color draw, useful if no texture is given
+	
 
 	// temporal!
 	const ResourceMesh* deformable_mesh = nullptr;
@@ -44,7 +45,7 @@ struct RenderMesh
 };
 
 template <typename Box>
-struct RenderBox
+struct BROKEN_API RenderBox
 {
 	RenderBox(const Box* box, const Color& color) : box(box), color(color) {}
 
@@ -52,7 +53,7 @@ struct RenderBox
 	Color color;
 };
 
-struct RenderLine
+struct BROKEN_API RenderLine
 {
 	RenderLine(float4x4 transform, const float3& a, const float3& b, const Color& color) : transform(transform), a(a), b(b), color(color) {}
 
@@ -87,7 +88,7 @@ public:
 	bool GetVSync() const;
 
 	// --- Render orders --- // Deformable mesh is Temporal!
-	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0);
+	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
 	void DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color);
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
