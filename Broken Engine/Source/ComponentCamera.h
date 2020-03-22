@@ -29,6 +29,7 @@ public:
 	void SetCameraValues(float4 values);
 
 	void Update() override;
+	void DrawComponent() const override;
 
 	
 	// --- Utilities ---

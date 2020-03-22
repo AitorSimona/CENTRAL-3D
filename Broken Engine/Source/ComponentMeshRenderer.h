@@ -20,7 +20,7 @@ public:
 
 	void Update() override;
 
-	void Draw(bool outline = false) const;
+	void DrawComponent() const override;
 	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 
 	// --- Save & Load ---

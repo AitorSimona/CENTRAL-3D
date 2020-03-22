@@ -17,7 +17,8 @@ class ResourceMesh;
 class ResourceScene;
 struct Event;
 
-class BROKEN_API ModuleSceneManager : public Module {
+class BROKEN_API ModuleSceneManager : public Module 
+{
 public:
 
 	ModuleSceneManager(bool start_enabled = true);
@@ -36,6 +37,7 @@ public:
 	GameObject* CreateEmptyGameObjectGivenUID(uint UID);
 	void ResetGameObjectUID(GameObject* go);
 
+	//MYTODO: Move all resource stuff to RESOURCE MANAGER
 	void CreateGrid(float target_distance);
 	GameObject* LoadSphere();
 	GameObject* LoadCube();
@@ -66,9 +68,12 @@ public:
 	void SaveScene(ResourceScene* scene);
 	void SetActiveScene(ResourceScene* scene);
 
+	// MYTODO: Move all rendering stuff to RENDERER!
+
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
-	static void DrawWire(const Box& box, Color color, uint VAO) {
+	static void DrawWire(const Box& box, Color color, uint VAO) 
+	{
 		float3 corners[8];
 		box.GetCornerPoints(corners);
 		DrawWireFromVertices(corners, color, VAO);

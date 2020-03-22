@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "ComponentAudioListener.h"
+#include "ModuleSceneManager.h"
 
 #include "Imgui/imgui.h"
 
@@ -269,4 +270,11 @@ void ComponentCamera::Update()
 
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
+void ComponentCamera::DrawComponent() const
+{
+	// --- Draw Frustum ---
+	if (App->scene_manager->display_grid)
+		App->renderer3D->DrawFrustum(frustum, White);
 }

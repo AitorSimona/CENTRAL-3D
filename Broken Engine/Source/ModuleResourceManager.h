@@ -127,6 +127,7 @@ private:
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
 	ResourceMaterial* DefaultMaterial = nullptr;
+
 	//MYTODO Temporary public for resource panel
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;

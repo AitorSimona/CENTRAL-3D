@@ -22,6 +22,8 @@ enum RenderMeshFlags_
 	outline		= 1 << 0,
 	selected	= 1 << 1,
 	checkers	= 1 << 2,
+	wire		= 1 << 3,
+	texture		= 1 << 4
 };
 
 struct RenderMesh
@@ -31,6 +33,7 @@ struct RenderMesh
 	float4x4 transform;
 	const ResourceMesh* resource_mesh = nullptr;
 	const ResourceMaterial* mat = nullptr;
+	//const Color color = White; // force a color draw, useful if no texture is given
 
 	// temporal!
 	const ResourceMesh* deformable_mesh = nullptr;

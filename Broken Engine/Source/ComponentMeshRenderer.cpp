@@ -58,154 +58,41 @@ void ComponentMeshRenderer::Update()
 		
 }
 
-void ComponentMeshRenderer::Draw(bool outline) const 
+void ComponentMeshRenderer::DrawComponent() const 
 {
-	ComponentMesh* mesh = this->GO->GetComponent<ComponentMesh>();
-	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
-	ComponentCamera* camera = GO->GetComponent<ComponentCamera>();
+	RenderMeshFlags flags = texture;
 
-	uint shader = App->renderer3D->defaultShader->ID;
+	ComponentMesh* cmesh = GO->GetComponent<ComponentMesh>();
 
-	if (material)
-		shader = material->shader->ID;
+	if (App->scene_manager->GetSelectedGameObject() && App->scene_manager->GetSelectedGameObject()->GetUID() == GO->GetUID())
+		flags |= selected;
 
-	float4x4 model = transform->GetGlobalTransform();
+	if (checkers)
+		flags |= checkers;
 
-
-	if (outline) 
+	if (cmesh && cmesh->resource_mesh && material)
 	{
-		shader = App->renderer3D->OutlineShader->ID;
-		// --- Draw selected, pass scaled-up matrix to shader ---
-		float3 scale = float3(1.05f, 1.05f, 1.05f);
-
-		model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
+		App->renderer3D->DrawMesh(GO->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, material, cmesh->deformable_mesh, flags);
+		DrawNormals(*cmesh->resource_mesh, *GO->GetComponent<ComponentTransform>());
 	}
-
-	//mat->resource_material->UpdateUniforms();
-
-	// --- Display Z buffer ---
-	if (App->renderer3D->zdrawer) 
-	{
-		shader = App->renderer3D->ZDrawerShader->ID;
-	}
-
-	glUseProgram(shader);
-
-	// --- Set uniforms ---
-	GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr());
-
-	GLint viewLoc = glGetUniformLocation(shader, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	GLint timeLoc = glGetUniformLocation(shader, "time");
-	glUniform1f(timeLoc, App->time->time);
-
-	float farp = App->renderer3D->active_camera->GetFarPlane();
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
-	// --- Give ZDrawer near and far camera frustum planes pos ---
-	if (App->renderer3D->zdrawer) 
-	{
-		int nearfarLoc = glGetUniformLocation(shader, "nearfar");
-		glUniform2f(nearfarLoc, nearp, farp);
-	}
-
-	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
-	float4x4 proj_RH(
-		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-		0.0f, f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, nearp, 0.0f);
-
-	GLint projectLoc = glGetUniformLocation(shader, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-
-
-	if (mesh && mesh->resource_mesh && mesh->IsEnabled())
-	{
-		if(mesh->deformable_mesh)
-			DrawMesh(*mesh->deformable_mesh);
-		else
-			DrawMesh(*mesh->resource_mesh);
-
-		DrawNormals(*mesh->resource_mesh, *transform);
-	}
-
-	glUseProgram(App->renderer3D->defaultShader->ID);
-
-	// --- Draw Frustum ---
-	if (camera && App->scene_manager->display_grid)
-		ModuleSceneManager::DrawWire(camera->frustum, White, App->scene_manager->GetPointLineVAO());
-
-	if (App->scene_manager->display_boundingboxes)
-		ModuleSceneManager::DrawWire(GO->GetAABB(), Green, App->scene_manager->GetPointLineVAO());
 }
 
 void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const 
 {
-	//if (mesh.vertices && mesh.Indices) 
-	//{
-	//	glBindVertexArray(mesh.VAO);
 
-	//	if (this->checkers)
-	//		glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-	//	else 
-	//	{
-	//		if (material && material->resource_diffuse)
-	//			glBindTexture(GL_TEXTURE_2D, material->resource_diffuse->GetTexID());
-	//		else
-	//			glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
-	//	}
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
-	//	glDrawElements(GL_TRIANGLES, mesh.IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
-
-	//	glBindVertexArray(0);
-	//	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-	//}
 }
 
 void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
 {
-	// --- Draw Mesh Normals ---
-
-	//// --- Set Uniforms ---
-	//glUseProgram(App->renderer3D->linepointShader->ID);
-
-	//GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
-	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.GetGlobalTransform().Transposed().ptr());
-
-	//GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
-	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	//float nearp = App->renderer3D->active_camera->GetNearPlane();
-
-	//// right handed projection matrix
-	//float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
-	//float4x4 proj_RH(
-	//	f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-	//	0.0f, f, 0.0f, 0.0f,
-	//	0.0f, 0.0f, 0.0f, -1.0f,
-	//	0.0f, 0.0f, nearp, 0.0f);
-
-	//GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
-	//glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-
-	//int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
-
 	float3 origin = float3::zero;
 	float3 end = float3::zero;
 	Color color(255, 255, 0);
 	float4x4 transf = transform.GetGlobalTransform();
 
+	// --- Draw vertex normals ---
+
 	if (draw_vertexnormals && mesh.vertices->normal)
 	{
-		//glUniform3f(vertexColorLocation,255, 255, 0);
-
-		// --- Draw Vertex Normals ---
-		//float3* vertices = new float3[mesh.IndicesSize * 2];
-
 		for (uint i = 0; i < mesh.IndicesSize; ++i) 
 		{
 			// --- Normals ---
@@ -214,42 +101,15 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 			App->renderer3D->DrawLine(transf, origin, end, color);
 		}
-
-		//// --- Create VAO, VBO ---
-		//unsigned int VBO;
-		//glGenBuffers(1, &VBO);
-		//// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
-
-		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize * 2, vertices, GL_DYNAMIC_DRAW);
-		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-		//glEnableVertexAttribArray(0);
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//glBindVertexArray(0);
-
-		//// --- Draw lines ---
-		//glLineWidth(3.0f);
-		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
-		//glDrawArrays(GL_LINES, 0, mesh.IndicesSize * 2);
-		//glBindVertexArray(0);
-		//glLineWidth(1.0f);
-
-		//// --- Delete VBO and vertices ---
-		//glDeleteBuffers(1, &VBO);
-		//delete[] vertices;
 	}
 
-	// --- Draw Face Normals 
+	// --- Draw Face Normals ---
 
 	if (draw_facenormals)
 	{
-		//glUniform3f(vertexColorLocation, 0, 255, 255);
 		Triangle face;
 		float3 face_center;
 		float3 face_normal;
-		//float3* vertices = new float3[mesh.IndicesSize / 3 * 2];
 
 		// --- Compute face normals ---
 		for (uint j = 0; j < mesh.IndicesSize / 3; ++j) 
@@ -269,39 +129,7 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 			
 			App->renderer3D->DrawLine(transf, origin, end, color);
 		}
-
-		//// --- Create VAO, VBO ---
-		//unsigned int VBO;
-		//glGenBuffers(1, &VBO);
-		//// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
-
-		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * mesh.IndicesSize / 3 * 2, vertices, GL_DYNAMIC_DRAW);
-		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-		//glEnableVertexAttribArray(0);
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//glBindVertexArray(0);
-
-		//// --- Draw lines ---
-		//glLineWidth(3.0f);
-		////glColor3f(255, 255, 0);
-		//glBindVertexArray(App->scene_manager->GetPointLineVAO());
-		//glDrawArrays(GL_LINES, 0, mesh.IndicesSize / 3 * 2);
-		//glBindVertexArray(0);
-		////glColor3f(255, 255, 255);
-		//glLineWidth(1.0f);
-
-		//// --- Delete VBO and vertices ---
-		//glDeleteBuffers(1, &VBO);
-		//delete[] vertices;
 	}
-
-	//glUniform3f(vertexColorLocation, 255, 255, 255);
-
-
-	//glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 json ComponentMeshRenderer::Save() const 

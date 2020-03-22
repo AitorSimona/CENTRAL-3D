@@ -76,21 +76,28 @@ void GameObject::Update(float dt)
 
 void GameObject::Draw()
 {
-	ComponentMesh* cmesh = GetComponent<ComponentMesh>();
-	ComponentMeshRenderer* cmesh_renderer = GetComponent<ComponentMeshRenderer>();
-	RenderMeshFlags flags = 0;
+	//ComponentMesh* cmesh = GetComponent<ComponentMesh>();
+	//ComponentMeshRenderer* cmesh_renderer = GetComponent<ComponentMeshRenderer>();
+	//RenderMeshFlags flags = 0;
 
-	if (App->scene_manager->GetSelectedGameObject() && App->scene_manager->GetSelectedGameObject()->GetUID() == UID)
-		flags |= selected;
+	//if (App->scene_manager->GetSelectedGameObject() && App->scene_manager->GetSelectedGameObject()->GetUID() == UID)
+	//	flags |= selected;
 
-	if (cmesh_renderer && cmesh_renderer->checkers)
-		flags |= checkers;
+	//if (cmesh_renderer && cmesh_renderer->checkers)
+	//	flags |= checkers;
 
-	if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
-	{
-		App->renderer3D->DrawMesh(GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, cmesh->deformable_mesh, flags);
-		cmesh_renderer->DrawNormals(*cmesh->resource_mesh, *GetComponent<ComponentTransform>());
-	}
+	//if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
+	//{
+	//	App->renderer3D->DrawMesh(GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, cmesh->deformable_mesh, flags);
+	//	cmesh_renderer->DrawNormals(*cmesh->resource_mesh, *GetComponent<ComponentTransform>());
+	//}
+
+	if (App->scene_manager->display_boundingboxes)
+		App->renderer3D->DrawAABB(GetAABB(), Green);
+
+	// --- Call components Draw ---
+	for (int i = 0; i < components.size(); ++i)
+		components[i]->DrawComponent();
 
 }
 

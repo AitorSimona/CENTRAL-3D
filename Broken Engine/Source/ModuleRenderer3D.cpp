@@ -173,14 +173,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	// --- Issue Render orders ---
 	App->scene_manager->DrawScene();
 
-	// --- Draw Level Geometry ---
+	// --- Draw ---
 	DrawRenderMeshes();
 	DrawRenderLines();
-
-	// --- Draw Particles ---
+	DrawRenderBoxes();
 	App->particles->DrawParticles();
-
-	// --- Draw Game UI ---
 	App->ui_system->Draw();
 
 	// --- Selected Object Outlining ---
@@ -406,13 +403,6 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 		// --- Search for Renderer Component ---
 		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
 
-		// --- Search for Collider Component ---
-		ComponentCollider* collider = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCollider>();
-
-		// --- If Found, draw collider shape ---
-		if (collider && collider->IsEnabled())
-			collider->Draw();
-
 		// --- If Found, draw the mesh ---
 		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
 		{
@@ -590,7 +580,7 @@ void ModuleRenderer3D::ClearRenderOrders()
 
 void ModuleRenderer3D::DrawRenderMeshes()
 {
-	// MYTODO: migrate thid draw to renderer!
+	// MYTODO: migrate this draw to renderer!
 	// --- Draw Grid ---
 	if (App->scene_manager->display_grid)
 		App->scene_manager->DrawGrid(true, 75.0f);
@@ -655,6 +645,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		GLint timeLoc = glGetUniformLocation(shader, "time");
 		glUniform1f(timeLoc, App->time->time);
 
+		int TextureSupportLocation = glGetUniformLocation(shader, "Texture"); // as of now, this is only on DefaultShader!
+		int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+
 		float farp = active_camera->GetFarPlane();
 		float nearp = active_camera->GetNearPlane();
 
@@ -677,6 +670,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 
+		if (mesh->flags & RenderMeshFlags_::wire)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices) 
 		{
 			const ResourceMesh* rmesh = mesh->resource_mesh;
@@ -686,14 +682,22 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 
 			glBindVertexArray(rmesh->VAO);
 
-			if (mesh->flags & RenderMeshFlags_::checkers)
-				glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+			if (mesh->flags & RenderMeshFlags_::texture)
+			{
+				if (mesh->flags & RenderMeshFlags_::checkers)
+					glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+				else
+				{
+					if (mesh->mat && mesh->mat->resource_diffuse)
+						glBindTexture(GL_TEXTURE_2D, mesh->mat->resource_diffuse->GetTexID());
+					else
+						glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+				}
+			}
 			else
 			{
-				if (mesh->mat && mesh->mat->resource_diffuse)
-					glBindTexture(GL_TEXTURE_2D, mesh->mat->resource_diffuse->GetTexID());
-				else
-					glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+				glUniform1i(TextureSupportLocation, -1);
+				//glUniform3f(vertexColorLocation, mesh->color.r, mesh->color.g, mesh->color.b);
 			}
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
@@ -703,28 +707,40 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 		}
 
+		// --- DeActivate wireframe mode ---
+		if (mesh->flags & RenderMeshFlags_::wire)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 		if (mesh->flags & RenderMeshFlags_::selected)
 		{
 			glStencilMask(0x00);
 		}
 
+		// --- Set uniforms back to defaults ---
+		glUniform1i(TextureSupportLocation, 0);
+		glUniform3f(vertexColorLocation, 255, 255, 255);
 	}
+
+
 
 	glUseProgram(defaultShader->ID);
 }
 
 void ModuleRenderer3D::DrawRenderLines()
 {
-	// --- Set Uniforms ---
+	// --- Use linepoint shader ---
 	glUseProgram(App->renderer3D->linepointShader->ID);
 
+	// --- Get Uniform locations ---
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
 	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+
+	// --- Set Right handed projection matrix ---
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
-	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
@@ -732,43 +748,14 @@ void ModuleRenderer3D::DrawRenderLines()
 		0.0f, 0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+	// --- Set Uniforms ---
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
-
-	/*glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glDisable(GL_LIGHTING);
-	glLineWidth(3.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glMultMatrixf(proj_RH.ptr());
-
-	glBegin(GL_LINES);*/
-
-	/*glColor3f((*it).color.r/255.0f, (*it).color.g/255.0f, (*it).color.b/255.0f);
-	glVertex3f((*it).a.x, (*it).a.y, (*it).a.z);
-	glVertex3f((*it).b.x, (*it).b.y, (*it).b.z);*/
-	
-	//glEnd();
-	
-	//glPopMatrix();
-	//glLineWidth(1.0f);
-	//glEnable(GL_LIGHTING);
-	
-	//glDisableClientState(GL_COLOR_ARRAY);
-	//glDisableClientState(GL_VERTEX_ARRAY);
-
-
+	// --- Initialize vars, prepare buffer ---
 	float3* vertices = new float3[2];
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 	glBindVertexArray(App->scene_manager->GetPointLineVAO());
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -776,12 +763,15 @@ void ModuleRenderer3D::DrawRenderLines()
 	// --- Draw Lines ---
 	for (std::vector<RenderLine>::const_iterator it = render_lines.begin(); it != render_lines.end(); ++it)
 	{
+		// --- Assign color and model matrix ---
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (*it).transform.Transposed().ptr());
 		glUniform3f(vertexColorLocation, (*it).color.r / 255.0f, (*it).color.g / 255.0f, (*it).color.b / 255.0f);
 
+		// --- Assign line vertices, a and b ---
 		vertices[0] = (*it).a;
 		vertices[1] = (*it).b;
 
+		// --- Send data ---
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 2, vertices, GL_DYNAMIC_DRAW);
 
 		// --- Draw lines ---
@@ -792,6 +782,7 @@ void ModuleRenderer3D::DrawRenderLines()
 		glLineWidth(1.0f);
 	}
 
+	// --- Reset stuff ---
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -800,11 +791,21 @@ void ModuleRenderer3D::DrawRenderLines()
 	glDeleteBuffers(1, &VBO);
 	delete[] vertices;
 
+	// --- Back to default ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 void ModuleRenderer3D::DrawRenderBoxes()
 {
+	for (uint i = 0; i < render_aabbs.size(); ++i)
+	{
+		ModuleSceneManager::DrawWire(*render_aabbs[i].box, render_aabbs[i].color, App->scene_manager->GetPointLineVAO());
+	}
+
+	for (uint i = 0; i < render_frustums.size(); ++i)
+	{
+		ModuleSceneManager::DrawWire(*render_frustums[i].box, render_frustums[i].color, App->scene_manager->GetPointLineVAO());
+	}
 }
 
 
