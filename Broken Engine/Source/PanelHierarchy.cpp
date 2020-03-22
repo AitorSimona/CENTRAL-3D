@@ -186,6 +186,10 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		{
 			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
 			to_destroy = Go;
+			Broken::Event e(Broken::Event::EventType::GameObject_destroyed);
+			e.go = Go;
+			EngineApp->event_manager->PushEvent(e);
+
 		}
 
 		// --- Handle selection ---

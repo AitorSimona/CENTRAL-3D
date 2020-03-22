@@ -502,3 +502,9 @@ void ComponentButton::OnClick()
 	}
 	App->scripting->CallbackScriptFunction(script, script->script_functions[pos]);
 }
+
+void ComponentButton::SetNullptr()
+{
+	script_obj = nullptr;
+	script = nullptr;
+}

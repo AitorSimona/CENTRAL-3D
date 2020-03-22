@@ -42,6 +42,7 @@ public:
 	json Save() const override;
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
+	void SetNullptr();
 
 public:
 	bool visible = true;
@@ -58,12 +59,12 @@ public:
 	ComponentCanvas* canvas = nullptr;
 	ResourceTexture* texture = nullptr;
 	ComponentScript* script = nullptr;
+	GameObject* script_obj = nullptr;
 
 private:
 	SDL_Rect collider;
 	bool collider_visible = true;
 
-	GameObject* script_obj = nullptr;
 	const char* func_name;
 	std::vector<const char*> func_list;
 	uint func_pos = 0;
