@@ -75,6 +75,7 @@ public:
 	std::vector<GameObject*> childs;
 	bool Static = false;
 	bool navigationStatic = false;
+	uint navigationArea = 53; //RC_WALKABLE_AREA = 53
 	ResourceModel* model = nullptr;
 
 private:

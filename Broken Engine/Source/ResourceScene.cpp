@@ -58,6 +58,9 @@ bool ResourceScene::LoadInMemory() {
 				if (!file[it.key()]["Navigation Static"].is_null())
 					go->navigationStatic = file[it.key()]["Navigation Static"];
 
+				if (!file[it.key()]["Navigation Area"].is_null())
+					go->navigationArea = file[it.key()]["Navigation Area"];
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];				
 

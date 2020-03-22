@@ -1,6 +1,7 @@
 #include "PanelNavigation.h"
 #include "Imgui/imgui.h"
 #include "EngineApplication.h"
+#include "ModuleRecast.h"
 
 PanelNavigation::PanelNavigation(char* name) : Panel(name) {
 }
@@ -102,8 +103,66 @@ bool PanelNavigation::Draw() {
 					ImGui::Text(selected->GetName());
 					ImGui::Separator();
 					ImGui::Text("Navigation Static"); ImGui::SameLine();
-					if (ImGui::Checkbox("##navigationStaticCheckbox", &selected->navigationStatic)) {
-						//MYTODO Add it to the list of our own module
+					if (ImGui::BeginPopup("Change Static Flags")) {
+						std::string enable;
+						if (popupNavigationFlag)
+							enable = "enable";
+						else
+							enable = "disable";
+
+						ImGui::Text(std::string("Do you want to " + enable + " the Navigation Static flag for al the child objects as well?").c_str());
+						if (ImGui::Button("Yes, change children")) {
+							std::queue<Broken::GameObject*> childs;
+							childs.push(selected);
+
+							while (!childs.empty()) {
+								Broken::GameObject* current_child = childs.front();
+								childs.pop();
+
+								//We add all of its childs
+								for (uint i = 0; i < current_child->childs.size(); i++)
+									childs.push(current_child->childs[i]);
+
+								//We change the value of static
+								if (current_child->GetComponent<Broken::ComponentMesh>() != nullptr && current_child->navigationStatic != popupNavigationFlag) {
+									current_child->navigationStatic = popupNavigationFlag;
+									if (popupNavigationFlag)
+										EngineApp->recast->AddGO(current_child);
+									else
+										EngineApp->recast->DeleteGO(current_child);
+								}
+							}
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("No, this object only")) {
+							selected->navigationStatic = popupNavigationFlag;
+							if (popupNavigationFlag)
+								EngineApp->recast->AddGO(selected);
+							else
+								EngineApp->recast->DeleteGO(selected);
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel"))
+							ImGui::CloseCurrentPopup();
+
+						ImGui::EndPopup();
+					}
+					navigationStatic = selected->navigationStatic;
+					if (ImGui::Checkbox("##navigationStaticCheckbox", &navigationStatic)) {
+						if (selected->childs.size() > 0) {
+							popupNavigationFlag = navigationStatic;
+							ImGui::OpenPopup("Change Static Flags");
+						}
+						else {
+							selected->navigationStatic = navigationStatic;
+							if (navigationStatic)
+								EngineApp->recast->AddGO(selected);
+							else
+								EngineApp->recast->DeleteGO(selected);
+						}
+
 					}
 
 					if (selected->navigationStatic) 						{

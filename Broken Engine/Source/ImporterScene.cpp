@@ -67,6 +67,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Name"] = (*it).second->GetName();
 		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Navigation Static"] = (*it).second->navigationStatic;
+		file[string_uid]["Navigation Area"] = (*it).second->navigationArea;
 		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
 		file[string_uid]["Components"];
 
@@ -87,6 +88,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Name"] = (*it).second->GetName();
 		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Navigation Static"] = (*it).second->navigationStatic;
+		file[string_uid]["Navigation Area"] = (*it).second->navigationArea;
 		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
 		file[string_uid]["Components"];
 

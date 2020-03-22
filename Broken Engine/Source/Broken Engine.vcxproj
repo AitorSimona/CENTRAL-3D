@@ -169,6 +169,7 @@
     <ClInclude Include="mmgr\mmgr.h" />
     <ClInclude Include="mmgr\nommgr.h" />
     <ClInclude Include="ModuleEditorUI.h" />
+    <ClInclude Include="ModuleRecast.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="PanelAbout.h" />
     <ClInclude Include="PanelBuild.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleEditorUI.cpp" />
+    <ClCompile Include="ModuleRecast.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelBuild.cpp" />
     <ClCompile Include="PanelConsole.cpp" />

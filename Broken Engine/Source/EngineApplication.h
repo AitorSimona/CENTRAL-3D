@@ -3,8 +3,6 @@
 
 #include "BrokenEngine.h"
 
-class ModuleEditorUI;
-
 class EngineApplication : public Broken::Application {
 
 public:
@@ -13,7 +11,8 @@ public:
 	~EngineApplication();
 
 public:
-	ModuleEditorUI* editorui;
+	class ModuleEditorUI* editorui;
+	class ModuleRecast* recast;
 	
 };
 
