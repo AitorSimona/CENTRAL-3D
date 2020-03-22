@@ -241,6 +241,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("PlayAnimation", &ScriptingSystems::StartAnimation)
 		.addFunction("SetAnimationSpeed", &ScriptingSystems::SetAnimSpeed)
 		.addFunction("SetCurrentAnimationSpeed", &ScriptingSystems::SetCurrentAnimSpeed)
+
+		// UI
+		.addFunction("SetUIBarPercentage", &ScriptingSystems::SetBarPercentage)
+
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
