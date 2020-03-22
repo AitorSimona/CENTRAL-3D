@@ -654,6 +654,9 @@
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleDetour.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1075,6 +1078,9 @@
     </ClCompile>
     <ClCompile Include="ImporterAnimator.cpp">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleDetour.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

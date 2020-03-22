@@ -5,6 +5,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleSceneManager.h"
 #include "ModuleEventManager.h"
+#include "ModuleDetour.h"
 
 #include "GameObject.h"
 
@@ -45,6 +46,8 @@ bool ResourceScene::LoadInMemory() {
 			{
 				// --- Retrieve GO's UID ---
 				std::string uid = it.key().c_str();
+				if (uid == "Navigation Data")
+					continue;
 
 				// --- Create a Game Object for each node ---
 				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
@@ -121,7 +124,28 @@ bool ResourceScene::LoadInMemory() {
 				}
 			}
 		}
+
+
+		// Load navigation data
+		json navigationdata = file["Navigation Data"];
+		if (!navigationdata.is_null()) {
+			App->detour->agentHeight = navigationdata["agentHeight"];
+			App->detour->agentRadius = navigationdata["agentRadius"];
+			App->detour->maxSlope = navigationdata["maxSlope"];
+			App->detour->stepHeight = navigationdata["stepHeight"];
+
+			for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+				std::string areaName = navigationdata["Areas"][i]["name"];
+				sprintf_s(App->detour->areaNames[i], areaName.c_str());
+				App->detour->areaCosts[i] = navigationdata["Areas"][i]["cost"];
+			}
+		}
+		else {
+			App->detour->setDefaultValues();
+		}
 	}
+
+
 
 	return true;
 }

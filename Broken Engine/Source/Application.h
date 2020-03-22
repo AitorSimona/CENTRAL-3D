@@ -28,24 +28,6 @@ enum AppState {
 };
 
 class Module;
-class ModuleWindow;
-class ModuleInput;
-class ModuleRenderer3D;
-class ModuleCamera3D;
-class ModuleGui;
-class ModuleHardware;
-class ModuleFileSystem;
-class ModuleTextures;
-class ModuleSceneManager;
-class ModuleResourceManager;
-class ModuleScripting;
-class ModuleTimeManager;
-class ModuleEventManager;
-class ModuleThreading;
-class ModuleUI;
-class ModulePhysics;
-class ModuleParticles;
-class ModuleAudio;
 
 class BROKEN_API Application {
 public:
@@ -69,24 +51,25 @@ public:
 
 public:
 
-	ModuleWindow* window = nullptr;
-	ModuleInput* input = nullptr;
-	ModuleRenderer3D* renderer3D = nullptr;
-	ModuleCamera3D* camera = nullptr;
-	ModuleGui*			gui = nullptr;
-	ModuleHardware* hardware = nullptr;
-	ModuleFileSystem* fs = nullptr;
-	ModuleTextures* textures = nullptr;
-	ModuleSceneManager* scene_manager = nullptr;
-	ModuleResourceManager* resources = nullptr;
-	ModuleTimeManager* time = nullptr;
-	ModuleEventManager* event_manager = nullptr;
-	ModuleScripting* scripting = nullptr;
-	ModuleThreading* threading = nullptr;
-	ModuleUI* ui_system = nullptr;
-	ModulePhysics* physics = nullptr;
-	ModuleParticles* particles = nullptr;
-	ModuleAudio* audio = nullptr;
+	class ModuleWindow*				window = nullptr;
+	class ModuleInput*				input = nullptr;
+	class ModuleRenderer3D*			renderer3D = nullptr;
+	class ModuleCamera3D*			camera = nullptr;
+	class ModuleGui*				gui = nullptr;
+	class ModuleHardware*			hardware = nullptr;
+	class ModuleFileSystem*			fs = nullptr;
+	class ModuleTextures*			textures = nullptr;
+	class ModuleSceneManager*		scene_manager = nullptr;
+	class ModuleResourceManager*	resources = nullptr;
+	class ModuleTimeManager*		time = nullptr;
+	class ModuleEventManager*		event_manager = nullptr;
+	class ModuleScripting*			scripting = nullptr;
+	class ModuleThreading*			threading = nullptr;
+	class ModuleUI*					ui_system = nullptr;
+	class ModulePhysics*			physics = nullptr;
+	class ModuleParticles*			particles = nullptr;
+	class ModuleAudio*				audio = nullptr;
+	class ModuleDetour*				detour = nullptr;
 
 
 	bool isGame = false;

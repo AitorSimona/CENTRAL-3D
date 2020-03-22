@@ -38,36 +38,46 @@ bool PanelNavigation::Draw() {
 				ImGui::NextColumn();
 				ImGui::Text("Built-in 0");
 				ImGui::NextColumn();
-				char buf[100];
-				sprintf_s(buf, "Walkable");
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputText("##name_bi0", buf, ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputText("##name_bi0", EngineApp->detour->areaNames[0], 100, ImGuiInputTextFlags_ReadOnly);
 				ImGui::NextColumn();
-				int cost = 1;
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputInt("##cost_bi0", &cost);
+				ImGui::InputInt("##cost_bi0", &EngineApp->detour->areaCosts[0]);
 
 				ImGui::NextColumn();
 				ImGui::Text("Built-in 1");
 				ImGui::NextColumn();
-				sprintf_s(buf, "Not Walkable");
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputText("##name_bi1", buf, ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputText("##name_bi1", EngineApp->detour->areaNames[1], 100, ImGuiInputTextFlags_ReadOnly);
 				ImGui::NextColumn();
-				sprintf_s(buf, "1");
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputText("##cost_bi1", buf, ImGuiInputTextFlags_ReadOnly);
+				char buf[10];
+				sprintf_s(buf, "1");
+				ImGui::InputText("##cost_bi1", buf, 10, ImGuiInputTextFlags_ReadOnly);
 
 				ImGui::NextColumn();
 				ImGui::Text("Built-in 2");
 				ImGui::NextColumn();
-				sprintf_s(buf, "Jump");
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputText("##name_bi2", buf, ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputText("##name_bi2", EngineApp->detour->areaNames[2], 100, ImGuiInputTextFlags_ReadOnly);
 				ImGui::NextColumn();
-				int jumpcost = 2;
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputInt("##cost_bi2", &jumpcost);
+				ImGui::InputInt("##cost_bi2", &EngineApp->detour->areaCosts[2]);
+
+				std::string catname = "User ";
+				std::string namelabel = "##name_us";
+				std::string costlabel = "##cost_us";
+
+				for (int i = 3; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+					ImGui::NextColumn();
+					ImGui::Text((catname + std::to_string(i)).c_str());
+					ImGui::NextColumn();
+					ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
+					ImGui::InputText((namelabel + std::to_string(i)).c_str(), EngineApp->detour->areaNames[i], 100);
+					ImGui::NextColumn();
+					ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
+					ImGui::InputInt((costlabel + std::to_string(i)).c_str(), &EngineApp->detour->areaCosts[i]);
+				}
 
 
 
@@ -77,13 +87,14 @@ bool PanelNavigation::Draw() {
 			}
 			if (ImGui::BeginTabItem("Bake")) {
 				ImGui::Text("Baked Agent Size");
-				if (ImGui::DragFloat("Agent Radius", &agentRadius, 1.0f, 0.01f, 0.0f, "%.2f", 1.0f)) {
+				bool updateValues;
+				if (ImGui::DragFloat("Agent Radius", &EngineApp->detour->agentRadius, 0.25f, 0.01f, 9999999999.0f, "%.2f", 1.0f)) {
 				}
-				if (ImGui::DragFloat("Agent Height", &agentHeight, 1.0f, 0.02f, 0.0f, "%.2f", 1.0f)) {
+				if (ImGui::DragFloat("Agent Height", &EngineApp->detour->agentHeight, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f)) {
 				}
-				if (ImGui::SliderFloat("Max Slope", &maxSlope, 0.0f, 60.0f, "%.1f")) {
+				if (ImGui::SliderFloat("Max Slope", &EngineApp->detour->maxSlope, 0.0f, 60.0f, "%.1f")) {
 				}
-				if (ImGui::DragFloat("Step Height", &stepHeight, 1.0f, 0.02f, 0.0f, "%.2f", 1.0f)) {
+				if (ImGui::DragFloat("Step Height", &EngineApp->detour->stepHeight, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f)) {
 				}
 
 				if (ImGui::Button("Clear")) {
@@ -169,7 +180,10 @@ bool PanelNavigation::Draw() {
 						const char* items[] = { "Walkable", "Not Walkable", "Jump" };
 						static int item = -1;
 						ImGui::Text("Navigation Area"); ImGui::SameLine();
-						ImGui::Combo("##areaCombo", &item, items, IM_ARRAYSIZE(items));
+						ImGui::Combo("##areaCombo", &item, 
+							
+							
+							items, IM_ARRAYSIZE(items));
 
 
 					}

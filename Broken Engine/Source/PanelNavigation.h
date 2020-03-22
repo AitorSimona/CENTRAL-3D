@@ -14,10 +14,7 @@ public:
 	bool Draw();
 
 private:
-	float agentRadius = 0.5f;
-	float agentHeight = 2.0f;
-	float maxSlope = 45.0f;
-	float stepHeight = 0.4f;
+
 	bool navigationStatic = false;
 	bool popupNavigationFlag = false;
 	bool affectChilds = false;

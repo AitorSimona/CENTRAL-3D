@@ -45,6 +45,7 @@ EngineApplication::EngineApplication() {
 
 	// Recast
 	AddModule(recast);
+	AddModule(detour);
 
 	//Physics and particles
 	AddModule(physics);

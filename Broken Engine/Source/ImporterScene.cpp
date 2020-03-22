@@ -3,6 +3,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleSceneManager.h"
+#include "ModuleDetour.h"
 
 #include "ResourceScene.h"
 #include "GameObject.h"
@@ -99,6 +100,18 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
 		}
 
+	}
+
+	json navdata = file["Navigation Data"];
+	// --- Navigation Data --
+	file["Navigation Data"]["agentRadius"] = App->detour->agentRadius;
+	file["Navigation Data"]["agentHeight"] = App->detour->agentHeight;
+	file["Navigation Data"]["maxSlope"] = App->detour->maxSlope;
+	file["Navigation Data"]["stepHeight"] = App->detour->stepHeight;
+
+	for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+		file["Navigation Data"]["Areas"][i]["name"] = App->detour->areaNames[i];
+		file["Navigation Data"]["Areas"][i]["cost"] = App->detour->areaCosts[i];
 	}
 
 	// --- Serialize JSON to string ---
