@@ -40,6 +40,8 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 	//font.init("Assets/Fonts/Dukas.ttf", font_size);
 	//font.path = "Assets/Fonts/Dukas.ttf";
 
+	func_name = "None";
+
 	canvas->AddElement(this);
 }
 
@@ -56,8 +58,6 @@ void ComponentButton::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
-
-	script = (ComponentScript*)GO->HasComponent(Component::ComponentType::Script); //get script component
 }
 
 void ComponentButton::Draw()
@@ -153,6 +153,12 @@ json ComponentButton::Save() const
 	node["colliderw"] = std::to_string(collider.w);
 	node["colliderh"] = std::to_string(collider.h);
 
+	if (script)
+	{
+		node["script"] = std::to_string(script_obj->GetUID());
+		node["function"] = std::string(func_name);
+	}
+
 	return node;
 }
 
@@ -164,8 +170,9 @@ void ComponentButton::Load(json& node)
 
 	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
 
-	if (texture)
-		texture->AddUser(GO);
+	if (texture == nullptr)
+		texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	texture->AddUser(GO);
 
 	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
 	std::string draggable_str = node["visible"].is_null() ? "0" : node["draggable"];
@@ -182,6 +189,9 @@ void ComponentButton::Load(json& node)
 	std::string colliderw = node["colliderw"].is_null() ? "0" : node["colliderw"];
 	std::string colliderh = node["colliderh"].is_null() ? "0" : node["colliderh"];
 
+	std::string script_str = node["script"].is_null() ? "0" : node["script"];
+	std::string function_str = node["function"].is_null() ? "None" : node["function"];
+
 	visible = bool(std::stoi(visible_str));
 	draggable = bool(std::stoi(draggable_str));
 	interactable = bool(std::stoi(interactable_str));
@@ -193,6 +203,26 @@ void ComponentButton::Load(json& node)
 	collider.y = int(std::stoi(collidery));
 	collider.w = int(std::stoi(colliderw));
 	collider.h = int(std::stoi(colliderh));
+
+	script_obj = App->scene_manager->currentScene->GetGOWithUID(uint(std::stoi(script_str)));
+	if (script_obj)
+	{
+		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script);
+		func_name = function_str.c_str();
+
+		func_list.push_back("None");
+		for (uint i = 0; i < script->script_functions.size(); ++i)
+			func_list.push_back(script->script_functions[i].name.c_str());
+
+		for (uint i = 0; i < func_list.size(); ++i) //get function pos
+		{
+			if (strcmp(func_list[i], func_name) == 0)
+			{
+				func_pos = i;
+				break;
+			}
+		}
+	}
 }
 
 void ComponentButton::CreateInspectorNode()
@@ -276,8 +306,7 @@ void ComponentButton::CreateInspectorNode()
 		else
 			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
 
-		//drag and drop
-		if (ImGui::BeginDragDropTarget())
+		if (ImGui::BeginDragDropTarget()) //drag and drop
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
@@ -294,6 +323,58 @@ void ComponentButton::CreateInspectorNode()
 			}
 			ImGui::EndDragDropTarget();
 		}
+
+		// Script
+		ImGui::Separator();
+		ImGui::Text("Script");
+		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+		
+		if (ImGui::BeginDragDropTarget()) //drag and drop
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
+			{
+				uint UID = *(const uint*)payload->Data;
+				script_obj = App->scene_manager->currentScene->GetGOWithUID(UID);
+
+				if (script_obj != nullptr)
+					script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
+			}
+			ImGui::EndDragDropTarget();
+		}
+		ImGui::SameLine();
+		if (script_obj == nullptr)
+			ImGui::Text("No Script Loaded");
+		else
+			ImGui::Text("Name: %s", script_obj->GetName());
+
+		if (script != nullptr)
+		{
+			func_list.clear();
+			func_list.push_back("None");
+			for (uint i = 0; i < script->script_functions.size(); ++i)
+				func_list.push_back(script->script_functions[i].name.c_str());
+
+			ImGui::Text("OnClick");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(120.0f);
+			if (ImGui::BeginCombo("##OnClick", func_list[func_pos], 0))
+			{
+				for (int n = 0; n < func_list.size(); ++n)
+				{
+					bool is_selected = (func_name == func_list[n]);
+					if (ImGui::Selectable(func_list[n], is_selected))
+					{
+						func_name = func_list[n];
+						func_pos = n;
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+		}
+		else
+			ImGui::Text("GO has no ComponentScript");
 
 		// States (Colors)
 		ImGui::Separator();
@@ -375,7 +456,6 @@ void ComponentButton::UpdateState()
 		{
 			if (App->ui_system->CheckMousePos(this, collider)) //check if hovering
 			{
-				ChangeStateTo(HOVERED);
 				if (App->ui_system->CheckClick(this, draggable)) //if hovering check if click
 				{
 					if (draggable == true && (App->ui_system->drag_start.x != App->ui_system->mouse_pos.x || App->ui_system->drag_start.y != App->ui_system->mouse_pos.y)) //if draggable and mouse moves
@@ -392,6 +472,8 @@ void ComponentButton::UpdateState()
 						ChangeStateTo(SELECTED);
 					}
 				}
+				else
+					ChangeStateTo(HOVERED);
 			}
 			else
 				ChangeStateTo(IDLE); //if stop hovering
@@ -406,8 +488,23 @@ void ComponentButton::UpdateState()
 
 void ComponentButton::OnClick()
 {
-	if (script == nullptr)
+	if (script == nullptr || func_name == "None")
 		return;
 
-	script->Enable();
+	uint pos = 0;
+	for (uint i = 0; i < func_list.size(); ++i) //get function pos
+	{
+		if (func_list[i] == func_name)
+		{
+			pos = i - 1; //-1 because we are adding "None" at the start of func_list
+			break;
+		}
+	}
+	App->scripting->CallbackScriptFunction(script, script->script_functions[pos]);
+}
+
+void ComponentButton::SetNullptr()
+{
+	script_obj = nullptr;
+	script = nullptr;
 }
