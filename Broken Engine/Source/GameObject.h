@@ -74,6 +74,7 @@ public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childs;
 	bool Static = false;
+	bool navigationStatic = false;
 	ResourceModel* model = nullptr;
 
 private:

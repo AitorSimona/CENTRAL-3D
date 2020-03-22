@@ -4,6 +4,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 #include "ModuleSceneManager.h"
+#include "ModuleEventManager.h"
 
 #include "GameObject.h"
 
@@ -54,6 +55,9 @@ bool ResourceScene::LoadInMemory() {
 				if (!file[it.key()]["Static"].is_null())
 					go->Static = file[it.key()]["Static"];
 
+				if (!file[it.key()]["Navigation Static"].is_null())
+					go->navigationStatic = file[it.key()]["Navigation Static"];
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];				
 
@@ -92,6 +96,11 @@ bool ResourceScene::LoadInMemory() {
 
 				if (go->Static)
 					App->scene_manager->SetStatic(go, true, false);
+
+				Event e;
+				e.type = Event::EventType::GameObject_loaded;
+				e.go = go;
+				App->event_manager->PushEvent(e);
 			}
 
 

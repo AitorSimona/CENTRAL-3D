@@ -13,5 +13,6 @@
 #include "PanelResources.h"
 #include "PanelPhysics.h"
 #include "PanelBuild.h"
+#include "PanelNavigation.h"
 
 #endif // __PANELS_H__

@@ -18,6 +18,7 @@ struct BROKEN_API Event {
 	enum class EventType {
 		GameObject_destroyed,
 		GameObject_selected,
+		GameObject_loaded,
 		Resource_selected,
 		Resource_destroyed,
 		Window_resize,

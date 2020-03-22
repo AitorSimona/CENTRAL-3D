@@ -6,14 +6,15 @@
     "EditorUI": {
         "About": false,
         "Build": false,
-        "Console": true,
+        "Console": false,
         "Hierarchy": true,
         "Inspector": true,
+        "Navigation": true,
         "Physics": false,
         "Project": true,
         "Resources": true,
         "Scene": true,
-        "Settings": true,
+        "Settings": false,
         "ShaderEditor": false,
         "Toolbar": true
     },
@@ -21,8 +22,8 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 1080,
+        "height": 810,
         "resizable": true,
-        "width": 1920
+        "width": 1440
     }
 }
