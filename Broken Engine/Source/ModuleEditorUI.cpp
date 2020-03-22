@@ -154,15 +154,15 @@ update_status ModuleEditorUI::Update(float dt) {
 					Broken::GameObject* text_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::Text);
 				}
-				if (ImGui::MenuItem("Button", false, false, false)) {
+				if (ImGui::MenuItem("Button")) {
 					Broken::GameObject* button_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentText* button = (Broken::ComponentText*)button_go->AddComponent(Broken::Component::ComponentType::Button);
 				}
-				if (ImGui::MenuItem("Checkbox", false, false, false)) {
+				if (ImGui::MenuItem("Checkbox")) {
 				}
-				if (ImGui::MenuItem("Input Text", false, false, false)) {
+				if (ImGui::MenuItem("Input Text")) {
 				}
-				if (ImGui::MenuItem("Progress Bar", false, false, false)) {
+				if (ImGui::MenuItem("Progress Bar")) {
 				}
 				ImGui::EndMenu();
 			}
