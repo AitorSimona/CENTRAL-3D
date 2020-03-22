@@ -143,6 +143,16 @@ json ComponentProgressBar::Save() const
 	node["size2Dx"] = std::to_string(size2D.x);
 	node["size2Dy"] = std::to_string(size2D.y);
 
+	node["Color1_R"] = std::to_string(colorP1.r);
+	node["Color1_G"] = std::to_string(colorP1.g);
+	node["Color1_B"] = std::to_string(colorP1.b);
+	node["Color1_A"] = std::to_string(colorP1.a);
+
+	node["Color2_R"] = std::to_string(colorP2.r);
+	node["Color2_G"] = std::to_string(colorP2.g);
+	node["Color2_B"] = std::to_string(colorP2.b);
+	node["Color2_A"] = std::to_string(colorP2.a);
+
 	return node;
 }
 
@@ -160,11 +170,24 @@ void ComponentProgressBar::Load(json& node)
 	std::string position2Dx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
 	std::string position2Dy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
 
-	std::string size2Dx = node["P1size2Dx"].is_null() ? "0" : node["size2Dx"];
-	std::string size2Dy = node["P1size2Dy"].is_null() ? "0" : node["size2Dy"];
+	std::string size2Dx = node["size2Dx"].is_null() ? "0" : node["size2Dx"];
+	std::string size2Dy = node["size2Dy"].is_null() ? "0" : node["size2Dy"];
 
 	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
 	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
+
+	std::string Color1_R = node["Color1_R"].is_null() ? "0" : node["Color1_R"];
+	std::string Color1_G = node["Color1_G"].is_null() ? "0" : node["Color1_G"];
+	std::string Color1_B = node["Color1_B"].is_null() ? "0" : node["Color1_B"];
+	std::string Color1_A = node["Color1_A"].is_null() ? "0" : node["Color1_A"];
+
+	std::string Color2_R = node["Color2_R"].is_null() ? "0" : node["Color2_R"];
+	std::string Color2_G = node["Color2_G"].is_null() ? "0" : node["Color2_G"];
+	std::string Color2_B = node["Color2_B"].is_null() ? "0" : node["Color2_B"];
+	std::string Color2_A = node["Color2_A"].is_null() ? "0" : node["Color2_A"];
+
+	colorP1 = {std::stof(Color1_R),std::stof(Color1_G), std::stof(Color1_B), std::stof(Color1_A) };
+	colorP2 = { std::stof(Color2_R),std::stof(Color2_G), std::stof(Color2_B), std::stof(Color2_A) };
 }
 
 void ComponentProgressBar::CreateInspectorNode()
