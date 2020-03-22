@@ -106,6 +106,13 @@ bool ModuleRenderer3D::Init(json& file) {
 	//Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
 
+	// --- Create adaptive grid ---
+	glGenVertexArrays(1, &Grid_VAO);
+	glGenBuffers(1, &Grid_VBO);
+	CreateGrid(10.0f);
+
+	glGenVertexArrays(1, &PointLineVAO);
+
 	return ret;
 }
 
@@ -173,11 +180,14 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	// --- Issue Render orders ---
 	App->scene_manager->DrawScene();
 
+	// --- Draw Grid ---
+	if (display_grid)
+		DrawGrid(true, 75.0f);
+
 	// --- Draw ---
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();
-	App->particles->DrawParticles();
 	App->ui_system->Draw();
 
 	// --- Selected Object Outlining ---
@@ -210,6 +220,9 @@ bool ModuleRenderer3D::CleanUp() {
 	delete linepointShader;
 	delete ZDrawerShader;
 	delete OutlineShader;
+
+	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
+	glDeleteVertexArrays(1, &Grid_VAO);
 
 	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);
@@ -570,6 +583,146 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 
 }
 
+void ModuleRenderer3D::CreateGrid(float target_distance)
+{
+	// --- Fill vertex data ---
+
+	float distance = target_distance / 4;
+
+	if (distance < 1)
+		distance = 1;
+
+	float3 vertices[84];
+
+	uint i = 0;
+	int lines = -10;
+
+	for (i = 0; i < 20; i++) {
+		vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
+		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
+		vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
+		vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
+
+		lines++;
+	}
+
+	vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
+	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
+	vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
+	vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
+
+	// --- Configure vertex attributes ---
+
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(Grid_VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, Grid_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+// MYTODO: move this to renderer 
+void ModuleRenderer3D::DrawGrid(bool drawAxis, float size) {
+	// -------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------
+	//									BY NOW, DONE IN DIRECT MODE
+
+	//Set polygon draw mode and appropiated matrices for OGL
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPushMatrix();
+	glMultMatrixf(float4x4::identity.Transposed().ptr());
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());
+
+	float colorIntensity = 0.65f;
+
+	//Axis draw
+	if (drawAxis) {
+		glLineWidth(3.0f);
+		glBegin(GL_LINES);
+
+		glColor4f(colorIntensity, 0.0f, 0.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+		glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+
+		glColor4f(0.0f, colorIntensity, 0.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+		glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+		glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+
+		glColor4f(0.0f, 0.0f, colorIntensity, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+		glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+		glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+
+		glEnd();
+	}
+
+	//Plane draw
+	glLineWidth(1.5f);
+	glColor4f(colorIntensity, colorIntensity, colorIntensity, 1.0f);
+	glBegin(GL_LINES);
+
+	float d = size;
+	for (float i = -d; i <= d; i += 1.0f) {
+		//if ((int)i % 3 == 0)
+		//	continue;
+
+		glVertex3f(i, 0.0f, -d);
+		glVertex3f(i, 0.0f, d);
+		glVertex3f(-d, 0.0f, i);
+		glVertex3f(d, 0.0f, i);
+	}
+
+	glEnd();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glLineWidth(1.0f);
+
+	//Set again Identity for OGL Matrices & Polygon draw to fill again
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glPopMatrix();
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	// -------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------
+	//									THIS IS HOW IT WAS PREVIOUSLY DONE
+	// Is nice to keep this, since it was rendered in function of camera position, moving the grid with it.
+	// However, as the grid doesn't has an "infinite" sensation, it was weird, so that should be fixed in order
+	// for this to look good.
+
+		/*App->renderer3D->defaultShader->use();
+
+		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+
+		float gridColor = 0.8f;
+		int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
+		glVertexAttrib3f(vertexColorLocation, gridColor, gridColor, gridColor);
+
+		int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+		glUniform1i(TextureSupportLocation, -1);
+
+		glLineWidth(1.7f);
+		glBindVertexArray(Grid_VAO);
+		glDrawArrays(GL_LINES, 0, 84);
+		glBindVertexArray(0);
+		glLineWidth(1.0f);
+
+		glUniform1i(TextureSupportLocation, 0);*/
+}
+
 void ModuleRenderer3D::ClearRenderOrders()
 {
 	render_meshes.clear();
@@ -580,10 +733,6 @@ void ModuleRenderer3D::ClearRenderOrders()
 
 void ModuleRenderer3D::DrawRenderMeshes()
 {
-	// MYTODO: migrate this draw to renderer!
-	// --- Draw Grid ---
-	if (App->scene_manager->display_grid)
-		App->scene_manager->DrawGrid(true, 75.0f);
 
 	// --- Activate wireframe mode ---
 	if (wireframe)
@@ -756,7 +905,7 @@ void ModuleRenderer3D::DrawRenderLines()
 	float3* vertices = new float3[2];
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
-	glBindVertexArray(App->scene_manager->GetPointLineVAO());
+	glBindVertexArray(PointLineVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
@@ -776,7 +925,7 @@ void ModuleRenderer3D::DrawRenderLines()
 
 		// --- Draw lines ---
 		glLineWidth(3.0f);
-		glBindVertexArray(App->scene_manager->GetPointLineVAO());
+		glBindVertexArray(PointLineVAO);
 		glDrawArrays(GL_LINES, 0, 2);
 		glBindVertexArray(0);
 		glLineWidth(1.0f);
@@ -799,13 +948,106 @@ void ModuleRenderer3D::DrawRenderBoxes()
 {
 	for (uint i = 0; i < render_aabbs.size(); ++i)
 	{
-		ModuleSceneManager::DrawWire(*render_aabbs[i].box, render_aabbs[i].color, App->scene_manager->GetPointLineVAO());
+		DrawWire(*render_aabbs[i].box, render_aabbs[i].color, PointLineVAO);
 	}
 
 	for (uint i = 0; i < render_frustums.size(); ++i)
 	{
-		ModuleSceneManager::DrawWire(*render_frustums[i].box, render_frustums[i].color, App->scene_manager->GetPointLineVAO());
+		DrawWire(*render_frustums[i].box, render_frustums[i].color, PointLineVAO);
 	}
+}
+
+void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
+	float3 vertices[24] =
+	{
+		//Between-planes right
+		corners[1],
+		corners[5],
+		corners[7],
+		corners[3],
+
+		//Between-planes left
+		corners[4],
+		corners[0],
+		corners[2],
+		corners[6],
+
+		// Far plane horizontal
+		corners[5],
+		corners[4],
+		corners[6],
+		corners[7],
+
+		//Near plane horizontal
+		corners[0],
+		corners[1],
+		corners[3],
+		corners[2],
+
+		//Near plane vertical
+		corners[1],
+		corners[3],
+		corners[0],
+		corners[2],
+
+		//Far plane vertical
+		corners[5],
+		corners[7],
+		corners[4],
+		corners[6]
+	};
+
+	// --- Set Uniforms ---
+	glUseProgram(App->renderer3D->linepointShader->ID);
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+
+	// --- Create VAO, VBO ---
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	// --- Draw lines ---
+
+	glLineWidth(3.0f);
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_LINES, 0, 24);
+	glBindVertexArray(0);
+	glLineWidth(1.0f);
+
+	// --- Delete VBO ---
+	glDeleteBuffers(1, &VBO);
+
+	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
 

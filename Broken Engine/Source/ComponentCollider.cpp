@@ -38,7 +38,7 @@ void ComponentCollider::Update()
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
-void ComponentCollider::DrawComponent() const 
+void ComponentCollider::DrawComponent() 
 {
 	if (shape)
 	{

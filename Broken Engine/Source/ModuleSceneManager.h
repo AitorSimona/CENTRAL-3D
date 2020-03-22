@@ -38,7 +38,6 @@ public:
 	void ResetGameObjectUID(GameObject* go);
 
 	//MYTODO: Move all resource stuff to RESOURCE MANAGER
-	void CreateGrid(float target_distance);
 	GameObject* LoadSphere();
 	GameObject* LoadCube();
 	GameObject* LoadCapsule();
@@ -50,13 +49,11 @@ public:
 	// --- Getters ---
 	GameObject* GetSelectedGameObject() const;
 	GameObject* GetRootGO() const;
-	uint GetPointLineVAO() const;
 
 	// --- Setters ---
 	void SetSelectedGameObject(GameObject* go);
 
 	// --- Utilities ---
-	void DrawGrid(bool drawAxis, float size);
 	void RedoOctree();
 	void RedoOctree(AABB aabb);
 	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
@@ -67,17 +64,6 @@ public:
 	void LoadGame(const json & file);
 	void SaveScene(ResourceScene* scene);
 	void SetActiveScene(ResourceScene* scene);
-
-	// MYTODO: Move all rendering stuff to RENDERER!
-
-	// --- Draw Wireframe using given vertices ---
-	template <typename Box>
-	static void DrawWire(const Box& box, Color color, uint VAO) 
-	{
-		float3 corners[8];
-		box.GetCornerPoints(corners);
-		DrawWireFromVertices(corners, color, VAO);
-	};
 
 	// --- Primitives ---
 	GameObject* LoadPrimitiveObject(uint PrimitiveMeshID);
@@ -104,8 +90,6 @@ private:
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
-
 public:
 	//Components helper, check AddComponent function
 	std::vector<int> repeatable_components;
@@ -113,8 +97,7 @@ public:
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	bool display_tree = true;
-	bool display_boundingboxes = false;
-	bool display_grid = true;
+
 	bool update_tree=false;
 	uint treeUpdateTimer = 0;
 	ResourceScene* currentScene = nullptr;
@@ -132,10 +115,6 @@ private:
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* cylinder = nullptr;
 
-
-	uint PointLineVAO = 0;
-	uint Grid_VAO = 0;
-	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;

@@ -31,7 +31,7 @@ public:
 
 	void Update() override;
 
-	void DrawComponent() const override;
+	void DrawComponent() override;
 
 	void UpdateLocalMatrix();
 

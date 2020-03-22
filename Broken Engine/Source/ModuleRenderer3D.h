@@ -97,6 +97,7 @@ public:
 private:
 	void HandleObjectOutlining();
 	void CreateDefaultShaders();
+	void CreateGrid(float target_distance);
 	void ClearRenderOrders();
 
 	// --- Draw ---
@@ -105,6 +106,21 @@ private:
 
 	void DrawRenderLines();
 	void DrawRenderBoxes();
+
+	void DrawGrid(bool drawAxis, float size);
+
+	// --- Draw Wireframe using given vertices ---
+	template <typename Box>
+	static void DrawWire(const Box& box, Color color, uint VAO)
+	{
+		float3 corners[8];
+		box.GetCornerPoints(corners);
+		DrawWireFromVertices(corners, color, VAO);
+	};
+
+	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
+
+
 
 public:
 	// --- Default Shader ---
@@ -121,6 +137,9 @@ public:
 	uint fbo = 0;
 	uint depthbuffer = 0;
 	uint rendertexture = 0;
+	uint PointLineVAO = 0;
+	uint Grid_VAO = 0;
+	uint Grid_VBO = 0;
 
 	// --- Flags ---
 	bool vsync = true;
@@ -131,6 +150,8 @@ public:
 	bool wireframe = false;
 	bool zdrawer = false;
 	bool renderfbo = true;
+	bool display_boundingboxes = false;
+	bool display_grid = true;
 
 private:
 	std::map<uint, std::vector<RenderMesh>> render_meshes;

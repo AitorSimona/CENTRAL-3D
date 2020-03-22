@@ -58,7 +58,7 @@ void ComponentMeshRenderer::Update()
 		
 }
 
-void ComponentMeshRenderer::DrawComponent() const 
+void ComponentMeshRenderer::DrawComponent() 
 {
 	RenderMeshFlags flags = texture;
 

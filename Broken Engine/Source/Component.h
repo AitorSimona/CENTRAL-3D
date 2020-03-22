@@ -49,7 +49,7 @@ public:
 	void SetUID(uint new_UID) { UID = new_UID; };
 
 	virtual void Update() {};
-	virtual void DrawComponent() const {};
+	virtual void DrawComponent() {};
 
 	// --- Save & Load ---
 	virtual json Save() const = 0;
