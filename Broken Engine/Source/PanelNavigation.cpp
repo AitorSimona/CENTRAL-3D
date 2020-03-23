@@ -113,7 +113,7 @@ bool PanelNavigation::Draw() {
 					//MYTODO delete the navmesh binary
 				}
 				ImGui::SameLine();
-				if (ImGui::Button("Build")) {
+				if (ImGui::Button("Bake")) {
 					EngineApp->recast->BuildNavMesh();
 				}
 

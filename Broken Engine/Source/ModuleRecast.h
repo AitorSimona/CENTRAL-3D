@@ -22,6 +22,7 @@ public:
 	//Event handling
 	static void ONGameObjectAdded(const Broken::Event& e);
 	static void ONSceneUnloaded(const Broken::Event& e);
+	static void ONGameObjectDeleted(const Broken::Event& e);
 
 private:
 	void ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]);

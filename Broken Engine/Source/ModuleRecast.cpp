@@ -11,6 +11,7 @@ ModuleRecast::~ModuleRecast() {
 bool ModuleRecast::Init(Broken::json& config) {
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_loaded, ONGameObjectAdded);
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::Scene_unloaded, ONSceneUnloaded);
+	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_destroyed, ONGameObjectDeleted);
 	m_ctx = rcContext(false);
 	return true;
 }
@@ -149,6 +150,10 @@ bool ModuleRecast::BuildNavMesh() {
 	rcVcopy(m_cfg.bmin, bmin.ptr());
 	rcVcopy(m_cfg.bmax, bmax.ptr());
 	rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
+
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: Building navigation:");
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: - %d x %d cells", m_cfg.width, m_cfg.height);
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: - %.1fK verts, %.1fK tris", nverts / 1000.0f, ntriangles / 1000.0f);
 
 
 	//
@@ -329,6 +334,17 @@ void ModuleRecast::ONGameObjectAdded(const Broken::Event& e) {
 void ModuleRecast::ONSceneUnloaded(const Broken::Event& e) {
 	//If the scene is unloaded all our GOs are not valid anymore so we clear it.
 	EngineApp->recast->NavigationGameObjects.clear();
+}
+
+void ModuleRecast::ONGameObjectDeleted(const Broken::Event& e) {
+	if (e.go->navigationStatic) {
+		for (std::vector<Broken::GameObject*>::iterator it = EngineApp->recast->NavigationGameObjects.begin(); it != EngineApp->recast->NavigationGameObjects.end(); ++it) {
+			if (*it == e.go) {
+				EngineApp->recast->NavigationGameObjects.erase(it);
+				break;
+			}
+		}
+	}
 }
 
 void ModuleRecast::ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]) {
