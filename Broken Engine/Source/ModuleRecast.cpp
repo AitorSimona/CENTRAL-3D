@@ -233,7 +233,8 @@ bool ModuleRecast::BuildNavMesh() {
 	// (Optional) Mark areas.
 	for (std::vector<std::pair<Polyhedron, uint>>::iterator it = convex_volumes.begin(); it != convex_volumes.end(); ++it) {
 		AABB polaabb = (*it).first.MinimalEnclosingAABB();
-		rcMarkConvexPolyArea(&m_ctx, (*it).first.VertexArrayPtr()->ptr(), (*it).first.NumVertices(), polaabb.MinY(), polaabb.MaxY(),(*it).second, *m_chf);
+		vec* first_vec = (*it).first.VertexArrayPtr();
+		rcMarkConvexPolyArea(&m_ctx, (*first_vec).ptr(), (*it).first.NumVertices(), polaabb.MinY(), polaabb.MaxY(),(*it).second, *m_chf);
 	}
 
 	// Partition the heightfield so that we can use simple algorithm later to triangulate the walkable areas.

@@ -31,13 +31,13 @@ void ResourceMesh::CreateAABB() {
 }
 
 void ResourceMesh::CreateOBB() {
-	obb.SetNegativeInfinity();
+	//obb.SetNegativeInfinity();
 
 	std::vector<vec> vec_array;
 	for (uint i = 0; i < VerticesSize; ++i)
 		vec_array.push_back(vec(vertices[i].position));
 
-	obb.BruteEnclosingOBB(vec_array.data(), VerticesSize);
+	obb = OBB::OptimalEnclosingOBB(vec_array.data(), VerticesSize);
 
 
 }
