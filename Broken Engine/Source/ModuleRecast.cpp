@@ -70,7 +70,6 @@ bool ModuleRecast::BuildNavMesh() {
 	float3 bmax;
 	std::vector<float> verts;
 	int nverts = 0;
-	std::vector<int> indices;
 	int nindices = 0;
 
 	std::vector<std::pair<Polyhedron, uint>> convex_volumes;
@@ -81,11 +80,10 @@ bool ModuleRecast::BuildNavMesh() {
 		r_mesh = (*it)->GetComponent<Broken::ComponentMesh>()->resource_mesh;
 		comp_trans = (*it)->GetComponent<Broken::ComponentTransform>();
 
-		// We add the indices plus the current vertices since we are combining all triangles
+		// We add the index count
 		nindices += r_mesh->IndicesSize;
-		for (int i = 0; i < r_mesh->IndicesSize; ++i)
-			indices.push_back(r_mesh->Indices[i] + nverts);
 
+		// we add the transformed vertices
 		nverts += r_mesh->VerticesSize;
 		float4x4 transform = comp_trans->GetGlobalTransform();
 		for (int i = 0; i < r_mesh->VerticesSize; ++i) {
@@ -124,7 +122,7 @@ bool ModuleRecast::BuildNavMesh() {
 		convex_volumes.push_back(convex_volume);
 	}
 
-	nindices /= 3;
+	float ntriangles = nindices / 3;
 	//
 	// Step 1. Initialize build config.
 	//
@@ -171,20 +169,28 @@ bool ModuleRecast::BuildNavMesh() {
 	// Allocate array that can hold triangle area types.
 	// If you have multiple meshes you need to process, allocate
 	// and array which can hold the max number of triangles you need to process.
-	m_triareas = new unsigned char[nindices];
+	m_triareas = new unsigned char[ntriangles];
 	if (!m_triareas) {
-		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'm_triareas' (%d).", nindices);
+		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'm_triareas' (%d).", ntriangles);
 		return false;
 	}
 
 	// Find triangles which are walkable based on their slope and rasterize them.
 	// If your input data is multiple meshes, you can transform them here, calculate
 	// the are type for each of the meshes and rasterize them.
-	memset(m_triareas, 0, nindices * sizeof(unsigned char));
-	rcMarkWalkableTriangles(&m_ctx, m_cfg.walkableSlopeAngle, verts.data(), nverts, indices.data(), nindices, m_triareas);
-	if (!rcRasterizeTriangles(&m_ctx, verts.data(), nverts, indices.data(), m_triareas, nindices, *m_solid, m_cfg.walkableClimb)) {
-		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not rasterize triangles.");
-		return false;
+	memset(m_triareas, 0, ntriangles * sizeof(unsigned char));
+	unsigned char* triareas_index = m_triareas;
+	float* vert_index = verts.data();
+	for (std::vector<Broken::GameObject*>::const_iterator it = NavigationGameObjects.cbegin(); it != NavigationGameObjects.cend(); ++it) {
+		r_mesh = (*it)->GetComponent<Broken::ComponentMesh>()->resource_mesh;
+		int m_triangles = r_mesh->IndicesSize / 3;
+		rcMarkWalkableTriangles(&m_ctx, m_cfg.walkableSlopeAngle, vert_index, r_mesh->VerticesSize, (int*)r_mesh->Indices, m_triangles, triareas_index);
+		if (!rcRasterizeTriangles(&m_ctx, vert_index, r_mesh->VerticesSize, (int*)r_mesh->Indices, triareas_index, m_triangles, *m_solid, m_cfg.walkableClimb)) {
+			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not rasterize triangles.");
+			return false;
+		}
+		triareas_index += m_triangles;
+		vert_index += r_mesh->VerticesSize;
 	}
 
 	delete[] m_triareas;

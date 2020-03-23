@@ -8,6 +8,8 @@
 #include "ComponentCollider.h"
 #include "ComponentAnimation.h"
 
+#include "ComponentProgressBar.h"
+
 #include "ModuleRenderer3D.h"
 #include "ComponentCamera.h"
 
@@ -286,4 +288,16 @@ void ScriptingSystems::SetAnimSpeed(const char* name, float speed)
 		anim->SetAnimationSpeed(name, speed);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+// UI --------------------------------------------------------------------
+
+void ScriptingSystems::SetBarPercentage(float percentage)
+{
+	ComponentProgressBar* bar = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentProgressBar>();
+
+	if (bar)
+		bar->SetPercentage(percentage);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: ProgressBar component is NULL");
 }

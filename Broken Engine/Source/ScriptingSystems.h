@@ -45,6 +45,9 @@ public:
 	void SetAnimSpeed(const char* name, float speed);
 	void SetCurrentAnimSpeed(float speed);
 
+	// UI
+	void SetBarPercentage(float percentage);
+
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGSYSTEMS_H__

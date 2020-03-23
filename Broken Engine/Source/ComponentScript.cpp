@@ -152,6 +152,17 @@ int ComponentScript::ScriptVarAlreadyInComponent(std::string name) {
 	return ret;
 }
 
+bool ComponentScript::ScriptFuncAlreadyInComponent(std::string name)
+{
+	for (int i = 0; i < script_functions.size(); ++i) {
+		if (!name.compare(script_functions[i].name)) {
+			return true;
+			break;
+		}
+	}
+	return false;
+}
+
 json ComponentScript::Save() const
 {
 	json node;

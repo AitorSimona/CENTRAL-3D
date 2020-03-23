@@ -48,6 +48,7 @@
 #include "ComponentCanvas.h"
 #include "ComponentImage.h"
 #include "ComponentText.h"
+#include "ComponentProgressBar.h"
 // --------------------------------
 
 // ---Importers and Resources------

@@ -651,11 +651,20 @@
     <ClInclude Include="ScriptingElements.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceFont.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterFont.h">
+    <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ModuleDetour.h">
       <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentProgressBar.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1076,11 +1085,20 @@
     <ClCompile Include="ScriptingElements.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceFont.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterFont.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
     <ClCompile Include="ImporterAnimator.cpp">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ModuleDetour.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentProgressBar.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
