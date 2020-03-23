@@ -244,6 +244,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		// UI
 		.addFunction("SetUIBarPercentage", &ScriptingSystems::SetBarPercentage)
+		.addFunction("SetTextinTextComp", &ScriptingSystems::SetUIText)
+		.addFunction("SetTextAndNuminTextComp", &ScriptingSystems::SetUITextAndNumber)
+		.addFunction("SetNuminTextComp", &ScriptingSystems::SetUITextNumber)
 
 		.endClass()
 

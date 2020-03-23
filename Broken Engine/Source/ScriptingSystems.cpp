@@ -9,6 +9,7 @@
 #include "ComponentAnimation.h"
 
 #include "ComponentProgressBar.h"
+#include "ComponentText.h"
 
 #include "ModuleRenderer3D.h"
 #include "ComponentCamera.h"
@@ -18,6 +19,8 @@
 #include "ModuleAudio.h"
 
 #include "ScriptData.h"
+
+
 
 using namespace Broken;
 ScriptingSystems::ScriptingSystems() {}
@@ -291,7 +294,6 @@ void ScriptingSystems::SetAnimSpeed(const char* name, float speed)
 }
 
 // UI --------------------------------------------------------------------
-
 void ScriptingSystems::SetBarPercentage(float percentage)
 {
 	ComponentProgressBar* bar = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentProgressBar>();
@@ -300,4 +302,44 @@ void ScriptingSystems::SetBarPercentage(float percentage)
 		bar->SetPercentage(percentage);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: ProgressBar component is NULL");
+}
+
+void ScriptingSystems::SetUIText(const char* text)
+{
+	ComponentText* CompText = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentText>();
+
+	if (CompText)
+		CompText->SetText(text);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Text Component is NULL");
+}
+
+void ScriptingSystems::SetUITextAndNumber(const char* text, float number)
+{
+	ComponentText* CompText = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentText>();
+
+	if (CompText && text)
+	{
+		//String streams aren't very performative, but we need them to keep OK the number's decimals
+		std::ostringstream ss;
+		ss << number;
+		CompText->SetText((text + ss.str()).c_str());
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Text Component or text passed is NULL");
+}
+
+void ScriptingSystems::SetUITextNumber(float number)
+{
+	ComponentText* CompText = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentText>();
+
+	if (CompText)
+	{
+		//String streams aren't very performative, but we need them to keep OK the number's decimals
+		std::ostringstream ss;
+		ss << number;
+		CompText->SetText(ss.str().c_str());
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Text Component or text passed is NULL");
 }

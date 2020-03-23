@@ -47,7 +47,9 @@ public:
 
 	// UI
 	void SetBarPercentage(float percentage);
-
+	void SetUIText(const char* text);
+	void SetUITextAndNumber(const char* text, float number);
+	void SetUITextNumber(float number);
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGSYSTEMS_H__
