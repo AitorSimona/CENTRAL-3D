@@ -162,7 +162,10 @@ update_status ModuleEditorUI::Update(float dt) {
 				}
 				if (ImGui::MenuItem("Input Text")) {
 				}
-				if (ImGui::MenuItem("Progress Bar")) {
+				if (ImGui::MenuItem("Progress Bar"))
+				{
+					Broken::GameObject* bar_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentProgressBar* bar = (Broken::ComponentProgressBar*)bar_go->AddComponent(Broken::Component::ComponentType::ProgressBar);
 				}
 				ImGui::EndMenu();
 			}

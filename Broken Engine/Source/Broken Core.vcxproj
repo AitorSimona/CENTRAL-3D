@@ -114,6 +114,7 @@
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="ComponentParticleEmitter.h" />
+    <ClInclude Include="ComponentProgressBar.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="ComponentScript.h" />
     <ClInclude Include="ComponentTransform.h" />
@@ -311,6 +312,7 @@
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentParticleEmitter.cpp" />
+    <ClCompile Include="ComponentProgressBar.cpp" />
     <ClCompile Include="ComponentScript.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="EngineLog.cpp" />

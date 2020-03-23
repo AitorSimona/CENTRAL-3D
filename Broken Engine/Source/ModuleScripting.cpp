@@ -295,6 +295,11 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("ChangeImageColor", &ScriptingInterface::ChangeImageColor)
 		.addFunction("ChangeText", &ScriptingInterface::ChangeUIText)
 		.addFunction("ChangeTextWithNumber", &ScriptingInterface::ChangeUITextWithNumber)
+
+		.addFunction("SetUIBarPercentage", &ScriptingInterface::SetBarPercentage)
+		.addFunction("SetTextinTextComp", &ScriptingInterface::SetUIText)
+		.addFunction("SetTextAndNuminTextComp", &ScriptingInterface::SetUITextAndNumber)
+		.addFunction("SetNuminTextComp", &ScriptingInterface::SetUITextNumber)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

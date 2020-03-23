@@ -678,6 +678,9 @@
     <ClInclude Include="ScriptingScenes.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentProgressBar.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1123,6 +1126,9 @@
     </ClCompile>
     <ClCompile Include="ScriptingScenes.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentProgressBar.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
