@@ -1,40 +1,28 @@
 # Broken Engine by Broken Gem Studio
-A 3D Game Engine developed by students of CITM-Barcelona for 3rd year's project 3 subject
+Broken Engine is a 3D Game Engine based on OpenGL and developed by students of the Degree in Videogames Design and Development of Universitat Politecnica de Catalunya for the Project III subject of 3rd course.
 
-## TOOLS USED
+We used as basis for the engine (fork), the Aitor Simona's [Central 3D Engine](https://github.com/AitorSimona/CENTRAL-3D).
+
+## TOOLS & LIBRARIES USED
+
+We used [SDL 2.0.10](https://www.libsdl.org/), STL, [OpenGL 4.4](https://www.opengl.org/) with [GLAD 0.1.33](https://glad.dav1d.de/), [ImGui 1.72b](https://github.com/ocornut/imgui), [GPUDetect](https://github.com/GameTechDev/gpudetect), [MMRG](https://www.flipcode.com/archives/Presenting_A_Memory_Manager.shtml), [ParShapes](https://prideout.net/shapes), [Assimp 3.3](http://www.assimp.org/), [Devil 1.8.0](http://openil.sourceforge.net/), [JSON for Modern C++](https://nlohmann.github.io/json/), [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo).
+
+In Addition:
 
 - Microsoft Visual Studio 2019 
-- 3rd Party Libraries used:
-- SDL 2.0.10
-- Assimp 3.3
-- Glad 0.1.33
-- ImGui 1.72b (with beta docking)
-- ImGuizmo
 - MathGeoLib 1.5 (commit 1994)
-- OpenGL 4.4
-- mmgr
-- par_shapes at commit 281 
-- DevIL 1.8.0
-- JSON for Modern C++
 - PhysFS
 - PhysX 3.4.2 
 
 
 ## HOW TO USE
+There is no formal installation process, just look around and play with it.
 
-There is no formal installation process, just look around and play with it
-
-- Navigation:
-
-Mouse and Keyboard controls are enabled both on UI and Scene, working on focused window only.
-
-- Mouse picking
-
-Self-explainable, click on an object to select it, notice how inspector info changes, but if the object is hidden
+* Navigation: Mouse and Keyboard controls are enabled both on UI and Scene, working on focused window only.
+* Mouse picking: Self-explainable, click on an object to select it, notice how inspector info changes, but if the object is hidden
 in the hierarchy you won't notice it there, open parent to see how it is selected.
-
-- Scene Camera:
-
+* Asset Import: Drop it into the editor.
+* Scene Camera:
 - Right Mouse button enables Look Around
 - Alt + Left Mouse button enables Camera Orbit
 - Mouse Wheel click enables camera Pan
@@ -43,22 +31,12 @@ in the hierarchy you won't notice it there, open parent to see how it is selecte
 
 Editor camera only works when in AppState EDITOR mode.
 
-- Guizmo:
+* Guizmo: Move (W), Rotate (E) and Scale (R), or from EditorUI (while editor camera is moving, guizmo is frozen)
 
-- Move: Q
-- Rotate: E
-- Scale: R
+**Note:** Do not modify config file, it will modify engine's configuration. And please, don't delete the dll or exe files, they are needed for the engine to work. In fact, do not touch any engine's inner files in Library or Settings, please.
 
-## ASSET IMPORT
-
-Drop it into the scene, done!
-
-## DEBUG
-
-- Debug Features
-
+## DEBUG FEATURES
 Game Objects - Redo Octree whenever you make some elements non-static and want it to be recalculated
-
 Head to Scene window and click DebugDraw to see available features: 
 
 - Wireframe
@@ -68,12 +46,7 @@ Head to Scene window and click DebugDraw to see available features:
 - Show AABBS
 - ZDrawer
 
-There are more options in Window - > Settings
-
-## Features in beta
-
-- Edit Menu
-- Load/Save cameras
+There are more options in Window -> Settings
 
 ## CHANGELOG
 
