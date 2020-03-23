@@ -378,6 +378,9 @@
     <ClInclude Include="ModuleRecast.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="InputGeometry.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineApplication.cpp">
@@ -613,6 +616,9 @@
     </ClCompile>
     <ClCompile Include="RecastNavigation\Recast\Source\RecastRegion.cpp">
       <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="InputGeometry.cpp">
+      <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #include "ModuleRecast.h"
 #include "EngineApplication.h"
+#include "InputGeometry.h"
 
 ModuleRecast::ModuleRecast(bool start_enabled) : Broken::Module(start_enabled) {
 	name = "Recast";
@@ -12,7 +13,7 @@ bool ModuleRecast::Init(Broken::json& config) {
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_loaded, ONGameObjectAdded);
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::Scene_unloaded, ONSceneUnloaded);
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_destroyed, ONGameObjectDeleted);
-	m_ctx = rcContext(false);
+	m_ctx = rcContext();
 	return true;
 }
 
@@ -60,6 +61,8 @@ bool ModuleRecast::CleanUp() {
 }
 
 bool ModuleRecast::BuildNavMesh() {
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Starting NavMesh build");
+
 	if (NavigationGameObjects.size() == 0) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: No input mesh");
 		return false;
@@ -67,66 +70,15 @@ bool ModuleRecast::BuildNavMesh() {
 
 	CleanUp();
 
-	float3 bmin;
-	float3 bmax;
-	std::vector<float> verts;
-	int nverts = 0;
-	int nindices = 0;
-
-	std::vector<std::pair<Polyhedron, uint>> convex_volumes;
-
-	Broken::ResourceMesh* r_mesh;
-	Broken::ComponentTransform* comp_trans;
-	for (std::vector<Broken::GameObject*>::const_iterator it = NavigationGameObjects.cbegin(); it != NavigationGameObjects.cend(); ++it) {
-		r_mesh = (*it)->GetComponent<Broken::ComponentMesh>()->resource_mesh;
-		comp_trans = (*it)->GetComponent<Broken::ComponentTransform>();
-
-		// We add the index count
-		nindices += r_mesh->IndicesSize;
-
-		// we add the transformed vertices
-		nverts += r_mesh->VerticesSize;
-		float4x4 transform = comp_trans->GetGlobalTransform();
-		for (int i = 0; i < r_mesh->VerticesSize; ++i) {
-			float t_vertex[3];
-			ApplyTransform(r_mesh->vertices[i], transform, t_vertex);
-			verts.push_back(t_vertex[0]);
-			verts.push_back(t_vertex[1]);
-			verts.push_back(t_vertex[2]);
-		}
-
-		const AABB &aabb = r_mesh->aabb;
-
-		if (it == NavigationGameObjects.cbegin()) {
-			bmin = aabb.minPoint;
-			bmax = aabb.maxPoint;
-		}
-		else {
-			bmin = math::Min(bmin, aabb.minPoint);
-			bmax = math::Max(bmax, aabb.maxPoint);
-		}
-
-		//Create convex hull for later flagging polys
-		r_mesh->CreateOBB();
-		OBB t_obb = r_mesh->obb;
-		t_obb.Transform(transform);
-		
-		std::pair<Polyhedron, uint> convex_volume;
-		convex_volume.first = t_obb.ToPolyhedron();
-		convex_volume.second = (*it)->navigationArea;
-
-		if (convex_volume.second == 0)
-			convex_volume.second = RC_WALKABLE_AREA;
-		else if (convex_volume.second == 1)
-			convex_volume.second = RC_NULL_AREA;
-
-		convex_volumes.push_back(convex_volume);
-	}
-
-	float ntriangles = nindices / 3;
+	InputGeom m_geom(NavigationGameObjects);
 	//
 	// Step 1. Initialize build config.
 	//
+	// Reset build times gathering.
+	m_ctx.resetTimers();
+
+	// Start the build process.
+	m_ctx.startTimer(RC_TIMER_TOTAL);
 
 	// Init build configuration from GUI
 	memset(&m_cfg, 0, sizeof(m_cfg));
@@ -147,13 +99,16 @@ bool ModuleRecast::BuildNavMesh() {
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
 	// area could be specified by an user defined box, etc.
-	rcVcopy(m_cfg.bmin, bmin.ptr());
-	rcVcopy(m_cfg.bmax, bmax.ptr());
+	rcVcopy(m_cfg.bmin, m_geom.getMeshBoundsMin());
+	rcVcopy(m_cfg.bmax, m_geom.getMeshBoundsMax());
 	rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
+
+	int nverts = m_geom.getVertCount();
+	int ntris = m_geom.getTriCount();
 
 	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: Building navigation:");
 	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: - %d x %d cells", m_cfg.width, m_cfg.height);
-	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: - %.1fK verts, %.1fK tris", nverts / 1000.0f, ntriangles / 1000.0f);
+	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: - %.1fK verts, %.1fK tris", nverts / 1000.0f, ntris / 1000.0f);
 
 
 	//
@@ -174,29 +129,18 @@ bool ModuleRecast::BuildNavMesh() {
 	// Allocate array that can hold triangle area types.
 	// If you have multiple meshes you need to process, allocate
 	// and array which can hold the max number of triangles you need to process.
-	m_triareas = new unsigned char[ntriangles];
+	m_triareas = new unsigned char[ntris];
 	if (!m_triareas) {
-		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'm_triareas' (%d).", ntriangles);
+		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'm_triareas' (%d).", ntris);
 		return false;
 	}
 
 	// Find triangles which are walkable based on their slope and rasterize them.
 	// If your input data is multiple meshes, you can transform them here, calculate
 	// the are type for each of the meshes and rasterize them.
-	memset(m_triareas, 0, ntriangles * sizeof(unsigned char));
-	unsigned char* triareas_index = m_triareas;
-	float* vert_index = verts.data();
-	for (std::vector<Broken::GameObject*>::const_iterator it = NavigationGameObjects.cbegin(); it != NavigationGameObjects.cend(); ++it) {
-		r_mesh = (*it)->GetComponent<Broken::ComponentMesh>()->resource_mesh;
-		int m_triangles = r_mesh->IndicesSize / 3;
-		rcMarkWalkableTriangles(&m_ctx, m_cfg.walkableSlopeAngle, vert_index, r_mesh->VerticesSize, (int*)r_mesh->Indices, m_triangles, triareas_index);
-		if (!rcRasterizeTriangles(&m_ctx, vert_index, r_mesh->VerticesSize, (int*)r_mesh->Indices, triareas_index, m_triangles, *m_solid, m_cfg.walkableClimb)) {
-			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not rasterize triangles.");
-			return false;
-		}
-		triareas_index += m_triangles;
-		vert_index += r_mesh->VerticesSize;
-	}
+	memset(m_triareas, 0, ntris * sizeof(unsigned char));
+	rcMarkWalkableTriangles(&m_ctx, m_cfg.walkableSlopeAngle, m_geom.getVerts(), nverts, m_geom.getTris(), ntris, m_triareas);
+	rcRasterizeTriangles(&m_ctx, m_geom.getVerts(), nverts, m_geom.getTris(), m_triareas, ntris, *m_solid, m_cfg.walkableClimb);
 
 	delete[] m_triareas;
 	m_triareas = nullptr;
@@ -242,11 +186,9 @@ bool ModuleRecast::BuildNavMesh() {
 	}
 
 	// (Optional) Mark areas.
-	for (std::vector<std::pair<Polyhedron, uint>>::iterator it = convex_volumes.begin(); it != convex_volumes.end(); ++it) {
-		AABB polaabb = (*it).first.MinimalEnclosingAABB();
-		vec* first_vec = (*it).first.VertexArrayPtr();
-		rcMarkConvexPolyArea(&m_ctx, (*first_vec).ptr(), (*it).first.NumVertices(), polaabb.MinY(), polaabb.MaxY(),(*it).second, *m_chf);
-	}
+	const ConvexVolume* vols = m_geom.getConvexVolumes();
+	for (int i  = 0; i < m_geom.getConvexVolumeCount(); ++i)
+	   rcMarkConvexPolyArea(&m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
 
 	// Partition the heightfield so that we can use simple algorithm later to triangulate the walkable areas.
 	// Using Watershed partitioning
@@ -345,17 +287,4 @@ void ModuleRecast::ONGameObjectDeleted(const Broken::Event& e) {
 			}
 		}
 	}
-}
-
-void ModuleRecast::ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]) {
-	float4 intermid;
-	intermid.x = vertex.position[0]; 
-	intermid.y = vertex.position[1];
-	intermid.z = vertex.position[2];
-	intermid.w = 1;
-
-	intermid = transform * intermid;
-	ret[0] = intermid.x / intermid.w;
-	ret[1] = intermid.y / intermid.w;
-	ret[2] = intermid.z / intermid.w;
 }

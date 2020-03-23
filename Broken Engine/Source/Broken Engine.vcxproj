@@ -92,6 +92,7 @@
     <ClInclude Include="Imgui\imstb_rectpack.h" />
     <ClInclude Include="Imgui\imstb_textedit.h" />
     <ClInclude Include="Imgui\imstb_truetype.h" />
+    <ClInclude Include="InputGeometry.h" />
     <ClInclude Include="json\json.hpp" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK2D.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="InputGeometry.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK2D.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\Random\LCG.cpp" />
