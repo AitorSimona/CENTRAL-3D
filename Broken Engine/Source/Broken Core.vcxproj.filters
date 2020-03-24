@@ -85,6 +85,12 @@
     <Filter Include="Sources\BrokenEngine\3rd Party\Wwise">
       <UniqueIdentifier>{66a1222c-d715-4978-80b8-e9d7167be77e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation">
+      <UniqueIdentifier>{c56a6bd3-efae-4251-a095-700b8b083604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\Detour">
+      <UniqueIdentifier>{5bf6fa64-51c9-40c1-8419-b88010226093}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrokenCore.h">
@@ -655,7 +661,7 @@
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ImporterFont.h">
-    <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
@@ -1099,6 +1105,27 @@
     </ClCompile>
     <ClCompile Include="ComponentProgressBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMesh.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

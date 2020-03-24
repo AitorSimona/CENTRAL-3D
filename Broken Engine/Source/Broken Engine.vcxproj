@@ -41,10 +41,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -186,6 +186,15 @@
     <ClInclude Include="PanelSettings.h" />
     <ClInclude Include="PanelShaderEditor.h" />
     <ClInclude Include="PanelToolbar.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourAlloc.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourAssert.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourCommon.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourMath.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMesh.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshBuilder.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshQuery.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNode.h" />
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourStatus.h" />
     <ClInclude Include="VSresource.h" />
   </ItemGroup>
   <ItemGroup>

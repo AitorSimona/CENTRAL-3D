@@ -58,6 +58,9 @@
     <Filter Include="Sources\3rd party\RecastNavigation\recast">
       <UniqueIdentifier>{4511f2e0-7e42-40b5-825c-752f0eb7207b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd party\RecastNavigation\detour">
+      <UniqueIdentifier>{abbcbaca-0a41-40ee-a7e8-d829685c3de9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VSresource.h">
@@ -380,6 +383,33 @@
     </ClInclude>
     <ClInclude Include="InputGeometry.h">
       <Filter>Sources\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourAlloc.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourAssert.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourCommon.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourMath.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMesh.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshBuilder.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshQuery.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourNode.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClInclude>
+    <ClInclude Include="RecastNavigation\Detour\Include\DetourStatus.h">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

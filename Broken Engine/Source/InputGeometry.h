@@ -80,6 +80,14 @@ public:
 	**/
 	const ConvexVolume* getConvexVolumes() const { return m_volumes; }
 
+	int getOffMeshConnectionCount() const { return m_offMeshConCount; }
+	float* getOffMeshConnectionVerts() const { return (float*)m_offMeshConVerts; }
+	float* getOffMeshConnectionRads() const { return (float*)m_offMeshConRads; }
+	unsigned char* getOffMeshConnectionDirs() const { return (unsigned char*)m_offMeshConDirs; }
+	unsigned char* getOffMeshConnectionAreas() const { return (unsigned char*)m_offMeshConAreas; }
+	unsigned short* getOffMeshConnectionFlags() const { return (unsigned short*)m_offMeshConFlags; }
+	unsigned int* getOffMeshConnectionId() const { return (unsigned int*)m_offMeshConId; }
+
 private:
 	void ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]);
 
@@ -107,7 +115,7 @@ private:
 	unsigned char m_offMeshConAreas[MAX_OFFMESH_CONNECTIONS];
 	unsigned short m_offMeshConFlags[MAX_OFFMESH_CONNECTIONS];
 	unsigned int m_offMeshConId[MAX_OFFMESH_CONNECTIONS];
-	int m_offMeshConCount;
+	int m_offMeshConCount = 0;
 	///@}
 
 	/// @name Convex Volumes (temporary) added to this geometry.

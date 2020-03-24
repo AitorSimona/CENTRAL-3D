@@ -50,7 +50,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath);$(ProjectDir)Freetype\include\freetype;$(ProjectDir)Freetype\include</IncludePath>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -406,6 +406,13 @@
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="RandomGenerator.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMesh.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
     <ClCompile Include="ResourceAnimator.cpp" />

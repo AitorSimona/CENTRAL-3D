@@ -4,14 +4,30 @@
 #include "Module.h"
 #include "BrokenCore.h"
 
+class dtNavMeshCreateParams;
+class dtNavMesh;
+class dtNavMeshQuery;
+
 BE_BEGIN_NAMESPACE
 #define BE_DETOUR_TOTAL_AREAS 31
+enum PolyFlags {
+	POLYFLAGS_WALK = 0x01,		// Ability to walk (ground, grass, road)
+	POLYFLAGS_SWIM = 0x02,      // Ability to swim (water).
+	POLYFLAGS_DOOR = 0x04,      // Ability to move through doors.
+	POLYFLAGS_JUMP = 0x08,      // Ability to jump.
+	POLYFLAGS_DISABLED = 0x10,		// Disabled polygon
+	POLYFLAGS_ALL = 0xffff      // All abilities.
+};
+
+
 class BROKEN_API ModuleDetour : public Module {
 public:
 	ModuleDetour(bool start_enabled = true);
 	~ModuleDetour();
 
 	bool Init(json& config) override;
+	bool createNavMesh(dtNavMeshCreateParams* params);
+	bool CleanUp() override;
 
 	void setDefaultValues();
 
@@ -33,6 +49,11 @@ public:
 
 	char areaNames[BE_DETOUR_TOTAL_AREAS][100];
 	int areaCosts[BE_DETOUR_TOTAL_AREAS];
+
+private:
+	dtNavMesh* m_navMesh = nullptr;
+	dtNavMeshQuery* m_navQuery = nullptr;
+
 
 };
 

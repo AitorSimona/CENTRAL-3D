@@ -2,6 +2,7 @@
 #include "EngineApplication.h"
 #include "InputGeometry.h"
 #include "mmgr/mmgr.h"
+#include "DetourNavMeshBuilder.h"
 
 
 ModuleRecast::ModuleRecast(bool start_enabled) : Broken::Module(start_enabled) {
@@ -266,7 +267,53 @@ bool ModuleRecast::BuildNavMesh() {
 	// (Optional) Step 8. Create Detour data from Recast poly mesh.
 	//
 
-	// Here we will call the Detour module
+	if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON) {
+		unsigned char* navData = 0;
+		int navDataSize = 0;
+
+		// Update poly flags from areas.
+		for (int i = 0; i < m_pmesh->npolys; ++i) {
+			if (m_pmesh->areas[i] == RC_WALKABLE_AREA) 
+				m_pmesh->flags[i] = Broken::PolyFlags::POLYFLAGS_WALK;
+		}
+
+
+		dtNavMeshCreateParams params;
+		memset(&params, 0, sizeof(params));
+		params.verts = m_pmesh->verts;
+		params.vertCount = m_pmesh->nverts;
+		params.polys = m_pmesh->polys;
+		params.polyAreas = m_pmesh->areas;
+		params.polyFlags = m_pmesh->flags;
+		params.polyCount = m_pmesh->npolys;
+		params.nvp = m_pmesh->nvp;
+		params.detailMeshes = m_dmesh->meshes;
+		params.detailVerts = m_dmesh->verts;
+		params.detailVertsCount = m_dmesh->nverts;
+		params.detailTris = m_dmesh->tris;
+		params.detailTriCount = m_dmesh->ntris;
+
+		//No offmesh connections yet
+		params.offMeshConCount = m_geom->getOffMeshConnectionCount();
+		params.offMeshConVerts = m_geom->getOffMeshConnectionVerts();
+		params.offMeshConRad = m_geom->getOffMeshConnectionRads();
+		params.offMeshConDir = m_geom->getOffMeshConnectionDirs();
+		params.offMeshConAreas = m_geom->getOffMeshConnectionAreas();
+		params.offMeshConFlags = m_geom->getOffMeshConnectionFlags();
+		params.offMeshConUserID = m_geom->getOffMeshConnectionId();
+
+
+		params.walkableHeight = EngineApp->detour->agentHeight;
+		params.walkableRadius = EngineApp->detour->agentRadius;
+		params.walkableClimb = EngineApp->detour->stepHeight;
+		rcVcopy(params.bmin, m_pmesh->bmin);
+		rcVcopy(params.bmax, m_pmesh->bmax);
+		params.cs = m_cfg.cs;
+		params.ch = m_cfg.ch;
+		params.buildBvTree = true;
+
+		EngineApp->detour->createNavMesh(&params);
+	}
 
 	delete m_geom;
 	return true;

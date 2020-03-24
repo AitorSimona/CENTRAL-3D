@@ -5,6 +5,10 @@
 #include "BrokenEngine.h"
 #include "Recast.h"
 
+/// The maximum number of vertices per navigation polygon.
+/// @ingroup detour
+static const int DT_VERTS_PER_POLYGON = 6;
+
 class ModuleRecast : public Broken::Module {
 public:
 	ModuleRecast(bool start_enabled = true);
