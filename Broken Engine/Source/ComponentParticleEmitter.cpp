@@ -308,7 +308,6 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	if (ImGui::DragInt("##PEDuration", &duration))
 		Play();
 
-
 	if (ImGui::Button("Delete component"))
 		to_delete = true;
 
@@ -462,6 +461,8 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 
 	if (validParticles < maxParticles)
 	{
+		Quat rotation= GO->GetComponent<ComponentTransform>()->rotation;
+
 		if (particlesToCreate > maxParticles - validParticles)
 			particlesToCreate = maxParticles - validParticles;
 
@@ -484,9 +485,16 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 		physx::PxVec3* velocityBuffer = new physx::PxVec3[particlesToCreate];
 
 		for (int i = 0; i < particlesToCreate; ++i) {
-			velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
+			velocityBuffer[i] = { physx::PxVec3((particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x)),
 											particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
 											particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
+
+
+			Quat quat = Quat(velocityBuffer[i].x, velocityBuffer[i].y, velocityBuffer[i].z,0);
+
+			quat = rotation * quat * rotation.Conjugated();
+
+			velocityBuffer[i] = physx::PxVec3(quat.x, quat.y, quat.z);
 
 			positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
 											globalPosition.y + GetRandomValue(-size.y,size.y),
