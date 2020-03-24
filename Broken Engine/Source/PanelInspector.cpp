@@ -71,7 +71,7 @@ bool PanelInspector::Draw()
 
 			static ImGuiComboFlags flags = 0;
 
-			const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
+			const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Character Controller", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
 			static const char* item_current = items[0];
 
 			ImGui::NewLine();
@@ -154,6 +154,12 @@ bool PanelInspector::Draw()
 			{
 				Selected->AddComponent(Broken::Component::ComponentType::Collider);
 			}
+			
+			if (item_current == "Character Controller")
+			{
+				Selected->AddComponent(Broken::Component::ComponentType::CharacterController);
+			}
+
 			if (item_current == "Particle Emitter")
 			{
 				Selected->AddComponent(Broken::Component::ComponentType::ParticleEmitter);

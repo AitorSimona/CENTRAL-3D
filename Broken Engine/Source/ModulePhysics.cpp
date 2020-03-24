@@ -13,6 +13,7 @@
 #include "PhysX_3.4/Include/pvd/PxPvdSceneClient.h"
 #include "PhysX_3.4/Include/pvd/PxPvdTransport.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "PhysX_3.4/Include/characterkinematic/PxControllerManager.h"
 
 #ifndef _DEBUG
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CHECKED_x86.lib")
@@ -20,6 +21,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3ExtensionsCHECKED.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PxFoundationCHECKED_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PxPvdSDKCHECKED_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CharacterKinematicCHECKED_x86.lib")
 /*
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3Common_x86.lib")
@@ -33,6 +35,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3ExtensionsDEBUG.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxFoundationDEBUG_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxPvdSDKDEBUG_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3CharacterKinematicDEBUG_x86.lib")
 #endif // _DEBUG
 
 #include "mmgr/mmgr.h"
@@ -93,6 +96,8 @@ bool ModulePhysics::Init(json& config)
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
 	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0);
+
+	mControllerManager = PxCreateControllerManager(*mScene);
 
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();

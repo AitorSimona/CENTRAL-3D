@@ -27,6 +27,7 @@ public:
 		Animation,
 		DynamicRigidBody,
 		Collider,
+		CharacterController,
 		ParticleEmitter,
 		AudioSource,
 		AudioListener,

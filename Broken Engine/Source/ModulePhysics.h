@@ -11,6 +11,7 @@ namespace physx
 	class PxScene;
 	class PxMaterial;
 	class PxRigidStatic;
+	class PxControllerManager;
 
 	const float fixed_dt = (1.0f/60.0f);
 }
@@ -42,10 +43,10 @@ public:
 	physx::PxPvd* mPvd = nullptr; 
 	physx::PxPvdSceneClient* pvdClient = nullptr;
 	physx::PxFoundation* mFoundation = nullptr;
+	physx::PxControllerManager* mControllerManager = nullptr;
 	physx::PxPhysics* mPhysics = nullptr;
 	physx::PxScene* mScene = nullptr;
 	physx::PxMaterial* mMaterial = nullptr;
-
 	physx::PxRigidStatic* plane = nullptr;
 
 private:

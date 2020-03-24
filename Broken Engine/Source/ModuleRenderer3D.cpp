@@ -14,10 +14,10 @@
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "ResourceShader.h"
 #include "ComponentAudioListener.h"
 #include "Component.h"
-
 #include "PanelScene.h"
 
 #include "Imgui/imgui.h"
@@ -351,6 +351,13 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 		// --- If Found, draw collider shape ---
 		if (collider && collider->IsEnabled())
 			collider->Draw();
+
+		// --- Search for Character Controller Component ---
+		ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+
+		// --- If Found, draw Character Controller shape ---
+		if (cct && cct->IsEnabled())
+			cct->Draw();
 
 		// --- If Found, draw the mesh ---
 		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())

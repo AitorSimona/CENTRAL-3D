@@ -109,6 +109,7 @@
     <ClInclude Include="ComponentAudioSource.h" />
     <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentCamera.h" />
+    <ClInclude Include="ComponentCharacterController.h" />
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
     <ClInclude Include="ComponentMesh.h" />
@@ -298,6 +299,7 @@
     <ClCompile Include="ComponentAudioSource.cpp" />
     <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
+    <ClCompile Include="ComponentCharacterController.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
