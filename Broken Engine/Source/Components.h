@@ -16,5 +16,7 @@
 #include "ComponentCanvas.h"
 #include "ComponentImage.h"
 #include "ComponentText.h"
+#include "ComponentProgressBar.h"
+#include "ComponentButton.h"
 
 #endif // __COMPONENTS_H__

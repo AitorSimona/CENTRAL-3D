@@ -667,7 +667,7 @@
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ImporterFont.h">
-    <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>

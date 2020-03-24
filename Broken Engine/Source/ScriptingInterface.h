@@ -10,9 +10,8 @@ public:
 	~ScriptingInterface();
 
 public:
-	void MakeUIComponentVisible();
-	void ChangeButtonColor();
-	void ChangeImageColor();
+	void MakeUIComponentVisible(uint component_UUID, const char* comp_type);
+	void MakeUIComponentInvisible(uint component_UUID, const char* comp_type);
 
 	void SetBarPercentage(float percentage);
 	void SetUIText(const char* text);

@@ -293,8 +293,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addConstructor<void(*) (void)>()
 
 		.addFunction("MakeElementVisible", &ScriptingInterface::MakeUIComponentVisible)
-		.addFunction("ChangeButtonColor", &ScriptingInterface::ChangeButtonColor)
-		.addFunction("ChangeImageColor", &ScriptingInterface::ChangeImageColor)
+		.addFunction("MakeElementInvisible", &ScriptingInterface::MakeUIComponentInvisible)
 
 		.addFunction("SetUIBarPercentage", &ScriptingInterface::SetBarPercentage)
 		.addFunction("SetText", &ScriptingInterface::SetUIText)

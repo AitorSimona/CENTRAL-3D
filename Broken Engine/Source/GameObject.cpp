@@ -183,6 +183,16 @@ void GameObject::RemoveChildGO(GameObject* GO)
 	}
 }
 
+Component* GameObject::GetComponentWithUID(uint UUID) 
+{
+	for (int i = 0; i < this->components.size(); ++i) {
+		if (this->components[i]->GetUID() == UUID)
+			return this->components[i];
+	}
+
+	return nullptr;
+}
+
 void GameObject::AddChildGO(GameObject* GO)
 {
 	// --- Add a child GO to a Game Object this ---

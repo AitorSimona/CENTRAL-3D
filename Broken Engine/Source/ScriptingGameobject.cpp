@@ -183,6 +183,16 @@ uint ScriptingGameobject::GetComponentFromGO(const char* component_name, const c
 			comp = (Component*)go->GetComponent<ComponentMesh>();
 		else if (name.compare("Emitter") == 0)
 			comp = (Component*)go->GetComponent<ComponentParticleEmitter>();
+		else if (name.compare("Text") == 0)
+			comp = (Component*)go->GetComponent<ComponentText>();
+		else if (name.compare("Bar") == 0)
+			comp = (Component*)go->GetComponent<ComponentProgressBar>();
+		else if (name.compare("Button") == 0)
+			comp = (Component*)go->GetComponent<ComponentButton>();
+		else if (name.compare("Image") == 0)
+			comp = (Component*)go->GetComponent<ComponentImage>();
+		else if (name.compare("Canvas") == 0)
+			comp = (Component*)go->GetComponent<ComponentCanvas>();
 
 		if (comp != nullptr)
 		{

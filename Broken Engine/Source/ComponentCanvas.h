@@ -19,6 +19,7 @@ public:
 
 	void Draw() const;
 	void AddElement(Component* element) { elements.push_back(element); }
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Canvas; }
 
 	// --- Save & Load ---
 	json Save() const override;
