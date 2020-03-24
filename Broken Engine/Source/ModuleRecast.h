@@ -40,7 +40,7 @@ private:
 	rcPolyMesh* m_pmesh = nullptr;
 	rcConfig m_cfg;
 	rcPolyMeshDetail* m_dmesh = nullptr;
-	rcContext m_ctx;
+	rcContext* m_ctx;
 
 };
 

@@ -1,19 +1,23 @@
 #include "ModuleRecast.h"
 #include "EngineApplication.h"
 #include "InputGeometry.h"
+#include "mmgr/mmgr.h"
+
 
 ModuleRecast::ModuleRecast(bool start_enabled) : Broken::Module(start_enabled) {
 	name = "Recast";
+	m_ctx = new rcContext();
+
 }
 
 ModuleRecast::~ModuleRecast() {
+	delete m_ctx;
 }
 
 bool ModuleRecast::Init(Broken::json& config) {
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_loaded, ONGameObjectAdded);
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::Scene_unloaded, ONSceneUnloaded);
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_destroyed, ONGameObjectDeleted);
-	m_ctx = rcContext();
 	return true;
 }
 
@@ -70,15 +74,15 @@ bool ModuleRecast::BuildNavMesh() {
 
 	CleanUp();
 
-	InputGeom m_geom(NavigationGameObjects);
+	InputGeom* m_geom = new InputGeom(NavigationGameObjects);
 	//
 	// Step 1. Initialize build config.
 	//
 	// Reset build times gathering.
-	m_ctx.resetTimers();
+	m_ctx->resetTimers();
 
 	// Start the build process.
-	m_ctx.startTimer(RC_TIMER_TOTAL);
+	m_ctx->startTimer(RC_TIMER_TOTAL);
 
 	// Init build configuration from GUI
 	memset(&m_cfg, 0, sizeof(m_cfg));
@@ -99,12 +103,12 @@ bool ModuleRecast::BuildNavMesh() {
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
 	// area could be specified by an user defined box, etc.
-	rcVcopy(m_cfg.bmin, m_geom.getMeshBoundsMin());
-	rcVcopy(m_cfg.bmax, m_geom.getMeshBoundsMax());
+	rcVcopy(m_cfg.bmin, m_geom->getMeshBoundsMin());
+	rcVcopy(m_cfg.bmax, m_geom->getMeshBoundsMax());
 	rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
 
-	int nverts = m_geom.getVertCount();
-	int ntris = m_geom.getTriCount();
+	int nverts = m_geom->getVertCount();
+	int ntris = m_geom->getTriCount();
 
 	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: Building navigation:");
 	EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Recast: - %d x %d cells", m_cfg.width, m_cfg.height);
@@ -121,7 +125,7 @@ bool ModuleRecast::BuildNavMesh() {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'solid'.");
 		return false;
 	}
-	if (!rcCreateHeightfield(&m_ctx, *m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch)) {
+	if (!rcCreateHeightfield(m_ctx, *m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch)) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not create solid heightfield.");
 		return false;
 	}
@@ -139,8 +143,8 @@ bool ModuleRecast::BuildNavMesh() {
 	// If your input data is multiple meshes, you can transform them here, calculate
 	// the are type for each of the meshes and rasterize them.
 	memset(m_triareas, 0, ntris * sizeof(unsigned char));
-	rcMarkWalkableTriangles(&m_ctx, m_cfg.walkableSlopeAngle, m_geom.getVerts(), nverts, m_geom.getTris(), ntris, m_triareas);
-	rcRasterizeTriangles(&m_ctx, m_geom.getVerts(), nverts, m_geom.getTris(), m_triareas, ntris, *m_solid, m_cfg.walkableClimb);
+	rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, m_geom->getVerts(), nverts, m_geom->getTris(), ntris, m_triareas);
+	rcRasterizeTriangles(m_ctx, m_geom->getVerts(), nverts, m_geom->getTris(), m_triareas, ntris, *m_solid, m_cfg.walkableClimb);
 
 	delete[] m_triareas;
 	m_triareas = nullptr;
@@ -153,11 +157,11 @@ bool ModuleRecast::BuildNavMesh() {
 	// remove unwanted overhangs caused by the conservative rasterization
 	// as well as filter spans where the character cannot possibly stand.
 	if (filterLowHangingObstacles)
-		rcFilterLowHangingWalkableObstacles(&m_ctx, m_cfg.walkableClimb, *m_solid);
+		rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.walkableClimb, *m_solid);
 	if (filterLedgeSpans)
-		rcFilterLedgeSpans(&m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
+		rcFilterLedgeSpans(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
 	if (filterWalkableLowHeightSpans)
-		rcFilterWalkableLowHeightSpans(&m_ctx, m_cfg.walkableHeight, *m_solid);
+		rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
 
 	//
 	// Step 4. Partition walkable surface to simple regions.
@@ -171,7 +175,7 @@ bool ModuleRecast::BuildNavMesh() {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'chf'.");
 		return false;
 	}
-	if (!rcBuildCompactHeightfield(&m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid, *m_chf)) {
+	if (!rcBuildCompactHeightfield(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid, *m_chf)) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not build compact data.");
 		return false;
 	}
@@ -180,27 +184,27 @@ bool ModuleRecast::BuildNavMesh() {
 	m_solid = nullptr;
 
 	// Erode the walkable area by agent radius.
-	if (!rcErodeWalkableArea(&m_ctx, m_cfg.walkableRadius, *m_chf)) {
+	if (!rcErodeWalkableArea(m_ctx, m_cfg.walkableRadius, *m_chf)) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not erode.");
 		return false;
 	}
 
 	// (Optional) Mark areas.
-	const ConvexVolume* vols = m_geom.getConvexVolumes();
-	for (int i  = 0; i < m_geom.getConvexVolumeCount(); ++i)
-	   rcMarkConvexPolyArea(&m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
+	const ConvexVolume* vols = m_geom->getConvexVolumes();
+	for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
+	   rcMarkConvexPolyArea(m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
 
 	// Partition the heightfield so that we can use simple algorithm later to triangulate the walkable areas.
 	// Using Watershed partitioning
 	// Prepare for region partitioning, by calculating distance field along the walkable surface.
-	if (!rcBuildDistanceField(&m_ctx, *m_chf)) {
+	if (!rcBuildDistanceField(m_ctx, *m_chf)) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not build distance field.");
 		return false;
 	}
 
 	// Partition the walkable surface into simple regions without holes.
-	if (!rcBuildRegions(&m_ctx, *m_chf, 0, m_cfg.minRegionArea, m_cfg.mergeRegionArea)) {
-		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not build watershed regions.");
+	if (!rcBuildRegions(m_ctx, *m_chf, m_cfg.borderSize, m_cfg.minRegionArea, m_cfg.mergeRegionArea)) {
+		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not build regions.");
 		return false;
 	}
 
@@ -214,7 +218,7 @@ bool ModuleRecast::BuildNavMesh() {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'cset'.");
 		return false;
 	}
-	if (!rcBuildContours(&m_ctx, *m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset)) {
+	if (!rcBuildContours(m_ctx, *m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset)) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not create contours.");
 		return false;
 	}
@@ -229,7 +233,7 @@ bool ModuleRecast::BuildNavMesh() {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'pmesh'.");
 		return false;
 	}
-	if (!rcBuildPolyMesh(&m_ctx, *m_cset, m_cfg.maxVertsPerPoly, *m_pmesh)) {
+	if (!rcBuildPolyMesh(m_ctx, *m_cset, m_cfg.maxVertsPerPoly, *m_pmesh)) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not triangulate contours.");
 		return false;
 	}
@@ -244,15 +248,15 @@ bool ModuleRecast::BuildNavMesh() {
 		return false;
 	}
 
-	if (!rcBuildPolyMeshDetail(&m_ctx, *m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh)) {
+	if (!rcBuildPolyMeshDetail(m_ctx, *m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh)) {
 		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Could not build detail mesh.");
 		return false;
 	}
 
 	rcFreeCompactHeightfield(m_chf);
-	m_chf = 0;
+	m_chf = nullptr;
 	rcFreeContourSet(m_cset);
-	m_cset = 0;
+	m_cset = nullptr;
 
 
 	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
@@ -264,6 +268,7 @@ bool ModuleRecast::BuildNavMesh() {
 
 	// Here we will call the Detour module
 
+	delete m_geom;
 	return true;
 
 }

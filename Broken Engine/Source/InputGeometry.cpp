@@ -4,6 +4,7 @@
 #include "ComponentMesh.h"
 #include "Recast.h"
 #include "EngineLog.h"
+#include "mmgr/mmgr.h"
 
 
 InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
