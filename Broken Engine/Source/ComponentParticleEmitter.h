@@ -34,7 +34,11 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+	void Play();
+
 private:
+
+	void CreateParticles(uint particlesAmount);
 
 	double GetRandomValue(double min, double max); //MUST EREASE IN THE FUTURE
 
@@ -55,6 +59,10 @@ private:
 	physx::PxVec3 externalAcceleration = {0,10,0};
 	physx::PxVec3 particlesVelocity = { 0,0,0 };
 	physx::PxVec3 velocityRandomFactor = {5,5,5};
+	bool loop = true;
+	bool emisionActive = true;
+	int duration = 0;
+	uint emisionStart = 0;
 
 	//Particle properties
 	int particlesLifeTime=1000;
