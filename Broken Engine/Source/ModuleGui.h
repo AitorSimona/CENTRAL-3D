@@ -93,6 +93,8 @@ public:
 	float sceneHeight = 0;
 
 	bool isUsingGuizmo = false;
+	std::string play_button;
+	std::string pause_button;
 
 	ImDrawList* draw_list;
 

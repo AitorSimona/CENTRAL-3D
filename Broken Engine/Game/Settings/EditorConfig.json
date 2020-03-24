@@ -9,7 +9,7 @@
         "Console": true,
         "Hierarchy": true,
         "Inspector": true,
-        "Physics": false,
+        "Physics": true,
         "Project": true,
         "Resources": true,
         "Scene": true,
@@ -21,7 +21,6 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-
         "height": 810,
         "resizable": true,
         "width": 1440

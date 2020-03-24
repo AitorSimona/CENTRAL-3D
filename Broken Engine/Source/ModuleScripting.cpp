@@ -11,10 +11,16 @@
 
 #include "ResourceScript.h"
 #include "ComponentScript.h"
-#include "ScriptingDebug.h"
-#include "ScriptingElements.h"
+#include "ScriptingSystem.h"
+#include "ScriptingTransform.h"
+#include "ScriptingPhysics.h"
 #include "ScriptingInputs.h"
-#include "ScriptingSystems.h"
+#include "ScriptingAnimations.h"
+#include "ScriptingAudio.h"
+#include "ScriptingGameobject.h"
+#include "ScriptingParticles.h"
+#include "ScriptingInterface.h"
+#include "ScriptingScenes.h"
 #include "ScriptVar.h"
 #include <iterator>
 
@@ -109,15 +115,31 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Scripting")
 
-		.beginClass <ScriptingDebug>("Debug")
+		.beginClass <ScriptingSystem>("System")
 		.addConstructor<void(*) (void)>()
 		.endClass()
 
-		.beginClass <ScriptingElements>("Elements")
+		.beginClass <ScriptingTransform>("Transform")
 		.addConstructor<void(*) (void)>()
 		.endClass()
 
-		.beginClass <ScriptingSystems>("Systems")
+		.beginClass <ScriptingGameobject>("GameObject")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingPhysics>("Physics")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingParticles>("Particles")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingAudio>("Audio")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingAnimations>("Animations")
 		.addConstructor<void(*) (void)>()
 		.endClass()
 
@@ -149,105 +171,144 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.beginNamespace("Scripting")
 
 		// ----------------------------------------------------------------------------------
-		// SCRIPTING DEBUG
+		// SYSTEM
 		// ----------------------------------------------------------------------------------
-		.beginClass <ScriptingDebug>("Debug")
+		.beginClass <ScriptingSystem>("System")
 		.addConstructor<void(*) (void)>()
-		.addFunction("LOG", &ScriptingDebug::LogFromLua)
-		.addFunction("RealDT", &ScriptingDebug::GetRealDT)
-		.addFunction("DT", &ScriptingDebug::GetDT)
-		.addFunction("GameTime", &ScriptingDebug::GameTime)
+		.addFunction("LOG", &ScriptingSystem::LogFromLua)
+		.addFunction("RealDT", &ScriptingSystem::GetRealDT)
+		.addFunction("DT", &ScriptingSystem::GetDT)
+		.addFunction("GameTime", &ScriptingSystem::GameTime)
 
 		// Maths
-		.addFunction("CompareFloats", &ScriptingDebug::FloatNumsAreEqual)
-		.addFunction("CompareDoubles", &ScriptingDebug::DoubleNumsAreEqual)
+		.addFunction("CompareFloats", &ScriptingSystem::FloatNumsAreEqual)
+		.addFunction("CompareDoubles", &ScriptingSystem::DoubleNumsAreEqual)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
-		// SCRIPTING ELEMENTS
+		// TRANSFORM
 		// ----------------------------------------------------------------------------------
-		.beginClass <ScriptingElements>("Elements")
+		.beginClass <ScriptingTransform>("Transform")
 		.addConstructor<void(*) (void)>()
-
-		// GameObject-related functions
-		.addFunction("FindGameObject", &ScriptingElements::FindGameObject)
-		.addFunction("GetGameObjectPos", &ScriptingElements::GetGameObjectPos)
-		.addFunction("GetGameObjectPosX", &ScriptingElements::GetGameObjectPosX)
-		.addFunction("GetGameObjectPosY", &ScriptingElements::GetGameObjectPosY)
-		.addFunction("GetGameObjectPosZ", &ScriptingElements::GetGameObjectPosZ)
-		.addFunction("TranslateGameObject", &ScriptingElements::TranslateGameObject)
-
-		.addFunction("GetComponent", &ScriptingElements::GetComponentFromGO)
 
 		// Position
-		.addFunction("GetPosition", &ScriptingElements::GetPosition)
-		.addFunction("GetPositionX", &ScriptingElements::GetPositionX)
-		.addFunction("GetPositionY", &ScriptingElements::GetPositionY)
-		.addFunction("GetPositionZ", &ScriptingElements::GetPositionZ)
+		.addFunction("GetPosition", &ScriptingTransform::GetPosition)
+		.addFunction("GetPositionX", &ScriptingTransform::GetPositionX)
+		.addFunction("GetPositionY", &ScriptingTransform::GetPositionY)
+		.addFunction("GetPositionZ", &ScriptingTransform::GetPositionZ)
 
-		.addFunction("Translate", &ScriptingElements::Translate)
-		.addFunction("SetPosition", &ScriptingElements::SetPosition)
+		.addFunction("Translate", &ScriptingTransform::Translate)
+		.addFunction("SetPosition", &ScriptingTransform::SetPosition)
 
 		// Rotation
-		.addFunction("RotateObject", &ScriptingElements::RotateObject)
-		.addFunction("SetObjectRotation", &ScriptingElements::SetObjectRotation)
-		.addFunction("LookAt", &ScriptingElements::LookAt)
+		.addFunction("RotateObject", &ScriptingTransform::RotateObject)
+		.addFunction("SetObjectRotation", &ScriptingTransform::SetObjectRotation)
+		.addFunction("LookAt", &ScriptingTransform::LookAt)
 
-		.addFunction("GetRotation", &ScriptingElements::GetRotation)
-		.addFunction("GetRotationX", &ScriptingElements::GetRotationX)
-		.addFunction("GetRotationY", &ScriptingElements::GetRotationY)
-		.addFunction("GetRotationZ", &ScriptingElements::GetRotationZ)
-
-		// Current Camera Functions
-		.addFunction("GetPositionInFrustum", &ScriptingElements::GetPosInFrustum)
-
-		// GetScript functions
-		.addFunction("GetScript", &ScriptingElements::GetScript)
+		.addFunction("GetRotation", &ScriptingTransform::GetRotation)
+		.addFunction("GetRotationX", &ScriptingTransform::GetRotationX)
+		.addFunction("GetRotationY", &ScriptingTransform::GetRotationY)
+		.addFunction("GetRotationZ", &ScriptingTransform::GetRotationZ)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
-		// SCRIPTING SYSTEMS
+		// GAMEOBJECT
 		// ----------------------------------------------------------------------------------
-		.beginClass <ScriptingSystems>("Systems")
+		.beginClass <ScriptingGameobject>("GameObject")
 		.addConstructor<void(*) (void)>()
 
-		// Physics
-		.addFunction("GetMass", &ScriptingSystems::GetMass)
-		.addFunction("SetMass", &ScriptingSystems::SetMass)
+		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
+		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
-		.addFunction("GetAngularVelocity", &ScriptingSystems::GetAngularVelocity)
-		.addFunction("SetAngularVelocity", &ScriptingSystems::SetAngularVelocity)
-		.addFunction("GetLinearVelocity", &ScriptingSystems::GetLinearVelocity)
-		.addFunction("SetLinearVelocity", &ScriptingSystems::SetLinearVelocity)
+		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
+		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
+		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
+		.addFunction("GetGameObjectPosZ", &ScriptingGameobject::GetGameObjectPosZ)
+		.addFunction("TranslateGameObject", &ScriptingGameobject::TranslateGameObject)
 
-		.addFunction("AddTorque", &ScriptingSystems::AddTorque)
-		.addFunction("AddForce", &ScriptingSystems::AddForce)
+		.addFunction("GetComponent", &ScriptingGameobject::GetComponentFromGO)
+		.addFunction("GetPositionInFrustum", &ScriptingGameobject::GetPosInFrustum)
+		.addFunction("GetScript", &ScriptingGameobject::GetScript)
+		.endClass()
 
-		.addFunction("UseGravity", &ScriptingSystems::UseGravity)
-		.addFunction("SetKinematic", &ScriptingSystems::SetKinematic)
+		// ----------------------------------------------------------------------------------
+		// PHYSICS
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingPhysics>("Physics")
+		.addConstructor<void(*) (void)>()
 
-		// Particles
-		.addFunction("ActivateParticlesEmission", &ScriptingSystems::ActivateParticlesEmission)
-		.addFunction("DeactivateParticlesEmission", &ScriptingSystems::DeactivateParticlesEmission)
+		.addFunction("GetMass", &ScriptingPhysics::GetMass)
+		.addFunction("SetMass", &ScriptingPhysics::SetMass)
 
-		// Audio
-		.addFunction("PlayAttackSound", &ScriptingSystems::PlayAttackSound)
-		.addFunction("PlayStepSound", &ScriptingSystems::PlayStepSound)
-		.addFunction("StopAttackSound", &ScriptingSystems::StopAttackSound)
-		.addFunction("StopStepSound", &ScriptingSystems::StopStepSound)
-		.addFunction("SetVolume", &ScriptingSystems::SetVolume)
+		.addFunction("GetAngularVelocity", &ScriptingPhysics::GetAngularVelocity)
+		.addFunction("SetAngularVelocity", &ScriptingPhysics::SetAngularVelocity)
+		.addFunction("GetLinearVelocity", &ScriptingPhysics::GetLinearVelocity)
+		.addFunction("SetLinearVelocity", &ScriptingPhysics::SetLinearVelocity)
 
-		// Animations
-		.addFunction("PlayAnimation", &ScriptingSystems::StartAnimation)
-		.addFunction("SetAnimationSpeed", &ScriptingSystems::SetAnimSpeed)
-		.addFunction("SetCurrentAnimationSpeed", &ScriptingSystems::SetCurrentAnimSpeed)
+		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
+		.addFunction("AddForce", &ScriptingPhysics::AddForce)
 
-		// UI
-		.addFunction("SetUIBarPercentage", &ScriptingSystems::SetBarPercentage)
-		.addFunction("SetTextinTextComp", &ScriptingSystems::SetUIText)
-		.addFunction("SetTextAndNuminTextComp", &ScriptingSystems::SetUITextAndNumber)
-		.addFunction("SetNuminTextComp", &ScriptingSystems::SetUITextNumber)
+		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
+		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
+		.endClass()
 
+		// ----------------------------------------------------------------------------------
+		// PARTICLES
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingParticles>("Particles")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticlesEmission)
+		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticlesEmission)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// AUDIO
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingAudio>("Audio")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("PlayAttackSound", &ScriptingAudio::PlayAttackSound)
+		.addFunction("PlayStepSound", &ScriptingAudio::PlayStepSound)
+		.addFunction("StopAttackSound", &ScriptingAudio::StopAttackSound)
+		.addFunction("StopStepSound", &ScriptingAudio::StopStepSound)
+		.addFunction("SetVolume", &ScriptingAudio::SetVolume)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// ANIMATIONS
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingAnimations>("Animations")
+		.addConstructor<void(*) (void)>()
+		
+		.addFunction("PlayAnimation", &ScriptingAnimations::StartAnimation)
+		.addFunction("SetAnimationSpeed", &ScriptingAnimations::SetAnimSpeed)
+		.addFunction("SetCurrentAnimationSpeed", &ScriptingAnimations::SetCurrentAnimSpeed)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// USER INTERFACE
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingInterface>("Interface")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("MakeElementVisible", &ScriptingInterface::MakeUIComponentVisible)
+		.addFunction("MakeElementInvisible", &ScriptingInterface::MakeUIComponentInvisible)
+
+		.addFunction("SetUIBarPercentage", &ScriptingInterface::SetBarPercentage)
+		.addFunction("SetText", &ScriptingInterface::SetUIText)
+		.addFunction("SetTextAndNumber", &ScriptingInterface::SetUITextAndNumber)
+		.addFunction("SetTextNumber", &ScriptingInterface::SetUITextNumber)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// SCENES
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingScenes>("Scenes")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("LoadScene", &ScriptingScenes::LoadSceneFromScript)
+		.addFunction("QuitGame", &ScriptingScenes::QuitGame)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -601,7 +662,8 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 	}
 
 	previous_AppState = (_AppState)App->GetAppState();
-	return UPDATE_CONTINUE;
+	
+	return game_update;
 }
 
 void ModuleScripting::CleanUpInstances() {
