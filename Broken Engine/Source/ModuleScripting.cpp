@@ -218,6 +218,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addConstructor<void(*) (void)>()
 
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
+		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
+
 		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
 		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
 		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
@@ -293,13 +295,11 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("MakeElementVisible", &ScriptingInterface::MakeUIComponentVisible)
 		.addFunction("ChangeButtonColor", &ScriptingInterface::ChangeButtonColor)
 		.addFunction("ChangeImageColor", &ScriptingInterface::ChangeImageColor)
-		.addFunction("ChangeText", &ScriptingInterface::ChangeUIText)
-		.addFunction("ChangeTextWithNumber", &ScriptingInterface::ChangeUITextWithNumber)
 
 		.addFunction("SetUIBarPercentage", &ScriptingInterface::SetBarPercentage)
-		.addFunction("SetTextinTextComp", &ScriptingInterface::SetUIText)
-		.addFunction("SetTextAndNuminTextComp", &ScriptingInterface::SetUITextAndNumber)
-		.addFunction("SetNuminTextComp", &ScriptingInterface::SetUITextNumber)
+		.addFunction("SetText", &ScriptingInterface::SetUIText)
+		.addFunction("SetTextAndNumber", &ScriptingInterface::SetUITextAndNumber)
+		.addFunction("SetTextNumber", &ScriptingInterface::SetUITextNumber)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

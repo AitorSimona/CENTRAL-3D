@@ -10,6 +10,7 @@
 #include "ComponentScript.h"
 #include "ModuleRenderer3D.h"
 #include "ScriptData.h"
+#include "ModuleEventManager.h"
 
 using namespace Broken;
 ScriptingGameobject::ScriptingGameobject() {}
@@ -34,15 +35,23 @@ uint ScriptingGameobject::FindGameObject(const char* go_name)
 	return ret;
 }
 
-float ScriptingGameobject::GetGameObjectPos(uint gameobject_UID, lua_State* L)
+void ScriptingGameobject::DestroyGOFromScript(uint gameobject_UUID)
+{
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	ENGINE_CONSOLE_LOG("Destroying: %s ...", go->GetName());	
+
+	App->scene_manager->SendToDelete(go); 
+}
+
+float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
 {
 	float ret = 0;
 	float3 rot = float3(0.0f);
 
-	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UID)).second;
+	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UUID)).second;
 	if (go == nullptr)
 	{
-		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UID)).second;
+		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UUID)).second;
 	}
 
 	ComponentTransform* transform;
@@ -61,10 +70,10 @@ float ScriptingGameobject::GetGameObjectPos(uint gameobject_UID, lua_State* L)
 	return 0.0f;
 }
 
-float ScriptingGameobject::GetGameObjectPosX(uint gameobject_UID)
+float ScriptingGameobject::GetGameObjectPosX(uint gameobject_UUID)
 {
 	float ret = 0.0f;
-	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (GO != nullptr)
 	{
@@ -80,10 +89,10 @@ float ScriptingGameobject::GetGameObjectPosX(uint gameobject_UID)
 	return ret;
 }
 
-float ScriptingGameobject::GetGameObjectPosY(uint gameobject_UID)
+float ScriptingGameobject::GetGameObjectPosY(uint gameobject_UUID)
 {
 	float ret = 0.0f;
-	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (GO != nullptr)
 	{
@@ -99,10 +108,10 @@ float ScriptingGameobject::GetGameObjectPosY(uint gameobject_UID)
 	return ret;
 }
 
-float ScriptingGameobject::GetGameObjectPosZ(uint gameobject_UID)
+float ScriptingGameobject::GetGameObjectPosZ(uint gameobject_UUID)
 {
 	float ret = 0.0f;
-	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UID);
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (GO != nullptr)
 	{
@@ -118,12 +127,12 @@ float ScriptingGameobject::GetGameObjectPosZ(uint gameobject_UID)
 	return ret;
 }
 
-void ScriptingGameobject::TranslateGameObject(uint gameobject_UID, float x, float y, float z)
+void ScriptingGameobject::TranslateGameObject(uint gameobject_UUID, float x, float y, float z)
 {
-	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UID)).second;
+	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UUID)).second;
 	if (go == nullptr)
 	{
-		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UID)).second;
+		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UUID)).second;
 	}
 
 	ComponentTransform* transform;
@@ -230,11 +239,11 @@ int ScriptingGameobject::GetPosInFrustum(float x, float y, float z, float fovrat
 	return camlevel;
 }
 
-luabridge::LuaRef ScriptingGameobject::GetScript(uint go_UID, lua_State* L)
+luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State* L)
 {
 	luabridge::LuaRef ret = 0;
 
-	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UID);
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go != nullptr)
 	{

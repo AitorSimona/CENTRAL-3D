@@ -16,16 +16,6 @@ void ScriptingInterface::MakeUIComponentVisible()
 
 }
 
-void ScriptingInterface::ChangeUIText() 
-{
-
-}
-
-void ScriptingInterface::ChangeUITextWithNumber()
-{
-
-}
-
 void ScriptingInterface::ChangeButtonColor()
 {
 

@@ -49,6 +49,10 @@ void ModuleSceneManager::ONResourceSelected(const Event& e)
 
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
 {
+	// If destroyed GameObject is selected, put to nullptr
+	if (e.go->GetUID() == App->scene_manager->SelectedGameObject->GetUID())
+		App->scene_manager->SetSelectedGameObject(nullptr);
+
 	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
 	{
 		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
@@ -72,7 +76,6 @@ ModuleSceneManager::ModuleSceneManager(bool start_enabled)
 ModuleSceneManager::~ModuleSceneManager()
 {
 }
-
 
 bool ModuleSceneManager::Init(json& file) 
 {
@@ -135,6 +138,10 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
+	for (int i = 0; i < go_to_delete.size(); ++i)
+		DestroyGameObject(go_to_delete[i]);
+
+	go_to_delete.clear();
 
 	return UPDATE_CONTINUE;
 }
@@ -1056,11 +1063,20 @@ GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 	return new_object;
 }
 
-void ModuleSceneManager::DestroyGameObject(GameObject * go)
+void ModuleSceneManager::DestroyGameObject(GameObject* go)
 {
 	//App->physics->DeleteActors(go);
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
 	delete go;
 	this->go_count--;
+}
+
+void ModuleSceneManager::SendToDelete(GameObject* go) 
+{
+	Event e(Event::EventType::GameObject_destroyed);
+	e.go = go;
+	App->event_manager->PushEvent(e);
+
+	go_to_delete.push_back(go);
 }

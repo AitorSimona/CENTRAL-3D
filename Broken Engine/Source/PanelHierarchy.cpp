@@ -111,12 +111,6 @@ bool PanelHierarchy::Draw()
 		dragged = nullptr;
 		target = nullptr;
 	}
-	if (to_destroy)
-	{
-		EngineApp->scene_manager->DestroyGameObject(to_destroy);
-		to_destroy = nullptr;
-		EngineApp->scene_manager->SetSelectedGameObject(nullptr);
-	}
 
 	return true;
 }
@@ -185,11 +179,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		{
 			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
-			to_destroy = Go;
-			Broken::Event e(Broken::Event::EventType::GameObject_destroyed);
-			e.go = Go;
-			EngineApp->event_manager->PushEvent(e);
-
+			EngineApp->scene_manager->SendToDelete(Go);
 		}
 
 		// --- Handle selection ---

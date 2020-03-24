@@ -11,8 +11,6 @@ public:
 
 public:
 	void MakeUIComponentVisible();
-	void ChangeUIText();
-	void ChangeUITextWithNumber();
 	void ChangeButtonColor();
 	void ChangeImageColor();
 
