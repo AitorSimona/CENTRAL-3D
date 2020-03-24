@@ -21,7 +21,7 @@
 
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
-//#include "ComponentProgressBar.h"
+#include "ComponentProgressBar.h"
 
 #include "ResourceModel.h"
 #include "ResourceScene.h"
@@ -328,9 +328,9 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 		//	component = new ComponentInputText(this);
 		//	break;
 
-		//case Component::ComponentType::ProgressBar:
-		//	component = new ComponentProgressBar(this);
-		//	break;
+		case Component::ComponentType::ProgressBar:
+			component = new ComponentProgressBar(this);
+			break;
 		}
 
 		if (component)

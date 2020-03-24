@@ -241,6 +241,13 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("PlayAnimation", &ScriptingSystems::StartAnimation)
 		.addFunction("SetAnimationSpeed", &ScriptingSystems::SetAnimSpeed)
 		.addFunction("SetCurrentAnimationSpeed", &ScriptingSystems::SetCurrentAnimSpeed)
+
+		// UI
+		.addFunction("SetUIBarPercentage", &ScriptingSystems::SetBarPercentage)
+		.addFunction("SetTextinTextComp", &ScriptingSystems::SetUIText)
+		.addFunction("SetTextAndNuminTextComp", &ScriptingSystems::SetUITextAndNumber)
+		.addFunction("SetNuminTextComp", &ScriptingSystems::SetUITextNumber)
+
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -383,6 +390,45 @@ void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 			script->my_component->script_variables.erase(var_it);
 		}
 	}
+	//Fill Component Functions
+	FillScriptInstanceComponentFuncs(script);
+}
+
+void ModuleScripting::FillScriptInstanceComponentFuncs(ScriptInstance* script)
+{
+	uint functions_num = 0;
+	for (luabridge::Iterator iterator(script->my_table_class); !iterator.isNil(); ++iterator) {
+		ScriptFunc function;
+
+		if ((*iterator).second.isFunction()) {
+			function.name = (*iterator).first.tostring();
+
+			if (!function.name.compare("Awake") || !function.name.compare("Start") || !function.name.compare("Update"))
+				continue;
+
+			functions_num++;
+		}
+		else continue;
+
+		if (!function.name.compare("null_function"))
+		{
+			//Something went wrong, LOG Component name & GameObject affected
+			std::string aux_str = script->my_component->GetContainerGameObject()->GetName();
+			ENGINE_CONSOLE_LOG("Tried to add a ''null_function'' to script component: %s of GameObject: %s", script->my_component->script_name.c_str(), aux_str.c_str());
+		}
+		else if (script->my_component->ScriptFuncAlreadyInComponent(function.name) == false)
+		{
+			//Function is not yet in component list. Add it!
+			script->my_component->script_functions.push_back(function);
+		}
+	}
+
+	if (functions_num < script->my_component->script_functions.size()) // Functions were deleted!
+	{
+		//delete all functions and reload, a bit costly but easy & reliable
+		script->my_component->script_functions.clear();
+		FillScriptInstanceComponentFuncs(script);
+	}
 }
 
 void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript* script_component) {
@@ -425,6 +471,26 @@ bool ModuleScripting::CheckEverythingCompiles()
 	}
 
 	return true;
+}
+
+//Calls a determined function from a lua script
+void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, const ScriptFunc& function_to_call)
+{
+	ScriptInstance* script = GetScriptInstanceFromComponent(script_component);
+
+	std::string aux_str = function_to_call.name;
+	if (script != nullptr)
+	{
+		if (App->GetAppState() == AppState::PLAY)
+		{
+			script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
+			ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+		}
+	}
+	else
+	{
+		ENGINE_CONSOLE_LOG("Can't callback %s since component has a null script instance", aux_str.c_str());
+	}
 }
 
 

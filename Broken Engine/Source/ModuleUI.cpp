@@ -1,12 +1,17 @@
 #include "BrokenCore.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "ModuleUI.h"
 #include "ModuleInput.h"
 #include "ModuleSceneManager.h"
-#include "GameObject.h"
 #include "ModuleGui.h"
+
 #include "Component.h"
 #include "ComponentCanvas.h"
+#include "ComponentButton.h"
+#include "ResourceFont.h"
+
+#pragma comment( lib, "Freetype/lib/freetype.lib" )
 
 #include "mmgr/mmgr.h"
 
@@ -21,33 +26,37 @@ ModuleUI::~ModuleUI()
 {
 }
 
-bool ModuleUI::Init(json& file)
+bool ModuleUI::Start()
 {
+	
+
+	/*std::string font_name = "calibri.ttf";
+
+	LoadFont(font_name);*/
+
 	return true;
 }
 
-bool ModuleUI::Start()
+void ModuleUI::LoadFont(std::string& font_name)
+{
+	//Moved to resourcegFont
+}
+
+bool ModuleUI::Init(json& file)
 {
 	return true;
 }
 
 update_status ModuleUI::PreUpdate(float dt)
 {
-	//for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
-	//{
-	//	if (obj->HasComponent(Component::ComponentType::UI_Element)) //if has ui component
-	//	{
-	//		UI_Element* element = (UI_Element*)obj->GetComponent(Component::ComponentType::UI_Element); //single component (change when able to have multiple components of same type)
-	//		element->UpdateCollider(); //update colliders
-	//		element->UpdateState(); //update state
-
-	//		if (element->GetState() == DRAGGING)
-	//		{
-	//			element->position2D.x = App->input->GetMouseX();
-	//			element->position2D.y = App->input->GetMouseY();
-	//		}
-	//	}
-	//}
+	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
+	{
+		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
+		{
+			ComponentButton* element = (ComponentButton*)obj->HasComponent(Component::ComponentType::Button); //single component (change when able to have multiple components of same type)
+			element->UpdateState(); //update state
+		}
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -58,6 +67,7 @@ update_status ModuleUI::PostUpdate(float dt)
 
 bool ModuleUI::CleanUp()
 {
+	
 	return true;
 }
 
@@ -108,13 +118,13 @@ void ModuleUI::Clear()
 	canvas.clear();
 }
 
-bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider)
+bool ModuleUI::CheckMousePos(Component* component, SDL_Rect collider) // 0,0 is top left corner
 {
-	mouse_pos.x = App->input->GetMouseX();
-	mouse_pos.y = App->input->GetMouseY();
+	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN) 
+		int i = 0;
 
-	//mouse_pos.x -= App->editor->tab_viewport->pos_x + 7;
-	//mouse_pos.y = math::Abs(mouse_pos.y - (App->editor->tab_viewport->pos_y + 26 + App->editor->tab_viewport->height));// -mouse_pos.y + App->editor->focused_panel->pos_x;
+	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX;
+	mouse_pos.y = App->input->GetMouseY() - App->gui->sceneY; 
 
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
 	if (SDL_HasIntersection(&MouseCollider, &collider))
@@ -132,7 +142,7 @@ bool ModuleUI::CheckClick(Component* component, bool draggable)
 		return true;
 	}
 
-	if (draggable && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+	if (draggable || App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 		return true;
 
 	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
