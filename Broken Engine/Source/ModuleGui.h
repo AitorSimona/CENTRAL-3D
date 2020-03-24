@@ -82,6 +82,7 @@ public:
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
 	uint animatorTexID = 0;
+	uint shaderTexID = 0;
 
 	bool isSceneHovered = false;
 

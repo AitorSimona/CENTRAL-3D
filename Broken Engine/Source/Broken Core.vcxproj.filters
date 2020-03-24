@@ -492,12 +492,6 @@
     <ClInclude Include="ResourceShader.h">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceShaderObject.h">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceShaderProgram.h">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceTexture.h">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
@@ -655,7 +649,7 @@
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ImporterFont.h">
-    <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
@@ -921,12 +915,6 @@
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ResourceShader.cpp">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShaderObject.cpp">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShaderProgram.cpp">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ResourceTexture.cpp">

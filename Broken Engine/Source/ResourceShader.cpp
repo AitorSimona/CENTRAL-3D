@@ -1,8 +1,10 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include "ResourceShader.h"
 
+#include "ResourceShader.h"
+#include "ImporterMeta.h"
+#include "ResourceMeta.h"
 
 #include "Application.h"
 #include "ModuleGui.h"
@@ -14,166 +16,189 @@
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ResourceShader::ResourceShader(uint UID, const char* source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file) {
-	extension = ".shader";
+ResourceShader::ResourceShader(uint UID, const char* source_file) : Resource(Resource::ResourceType::SHADER, UID, source_file) 
+{
+	extension = ".glsl";
 	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
 
 	CreateShaderProgram();
 
-	previewTexID = App->gui->defaultfileTexID;
-
+	previewTexID = App->gui->shaderTexID;
 }
 
-ResourceShader::ResourceShader(const char* vertexPath, const char* fragmentPath, bool is_extern) : Resource(Resource::ResourceType::SHADER) {
+ResourceShader::~ResourceShader() 
+{
+	//DeleteShaderProgram();
+}
+
+
+bool ResourceShader::LoadInMemory() 
+{
 	bool ret = true;
 
-	// --- Load shaders ---
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	// ensure ifstream objects can throw exceptions:
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	// --- Load from binary file ---
 
-	// --- check if the shader has to be loaded from outside the engine ---
-	if (is_extern) {
-		try {
-			// open files
-			vShaderFile.open(vertexPath);
-			fShaderFile.open(fragmentPath);
-			std::stringstream vShaderStream, fShaderStream;
-			// read file's buffer contents into streams
-			vShaderStream << vShaderFile.rdbuf();
-			fShaderStream << fShaderFile.rdbuf();
-			// close file handlers
-			vShaderFile.close();
-			fShaderFile.close();
-			// convert stream into string
-			vertexCode = vShaderStream.str();
-			fragmentCode = fShaderStream.str();
+	if (binary)
+	{
+		int success;
+		char infoLog[512];
+		
+		// --- Create input stream object ---
+		std::ifstream ShaderFile;
+
+		// --- Ensure ifstream objects can throw exceptions ---
+		ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+		try
+		{
+			// --- Open files ---
+			ShaderFile.open(resource_file);
+			std::stringstream ShaderStream;
+			// --- Read file's buffer contents into streams ---
+			ShaderStream << ShaderFile.rdbuf();
+			// --- Close file handlers ---
+			ShaderFile.close();
+			// --- Convert stream into string ---
+			ShaderCode = ShaderStream.str();
 		}
-		catch (std::ifstream::failure e) {
+		catch (std::ifstream::failure e)
+		{
 			ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
 			ret = false;
 		}
+		
+		if (ret)
+		{
+			// --- Create empty program ---
+			success = CreateShaderProgram();
 
+			if (!success)
+			{
+				glGetProgramInfoLog(ID, 512, NULL, infoLog);
+				ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+
+				glDeleteProgram(ID);
+			}
+			else
+			{
+				// --- Separate vertex and fragment ---
+				uint FragmentLoc = ShaderCode.find("#elseif FRAGMENT_SHADER");
+
+				vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
+				fShaderCode = ShaderCode.substr(FragmentLoc, ShaderCode.size());
+
+				// --- Retrieve data from meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(original_file.c_str());
+
+				if (meta)
+				{
+					uint format = meta->ResourceData["FORMAT"].is_null() ? 0 : meta->ResourceData["FORMAT"].get<uint>();
+					uint size = meta->ResourceData["SIZE"].is_null() ? 0 : meta->ResourceData["SIZE"].get<uint>();
+
+					// --- Load binary program ---
+					glProgramBinary(ID, (GLenum)format, (void*)ShaderCode.c_str(), (GLint)size);
+
+				}
+
+				// --- Print linking errors if any ---
+				glGetProgramiv(ID, GL_LINK_STATUS, &success);
+
+				if (!success)
+				{
+					glGetProgramInfoLog(ID, 512, NULL, infoLog);
+					ENGINE_CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
+
+					// --- Trigger recompilation ---
+					glDeleteProgram(ID);
+					CreateShaderProgram();
+					ReloadAndCompileShader();
+				}
+			}
+		}
 	}
 
-	if (ret) {
-		vShaderCode = vertexCode.c_str();
-		fShaderCode = fragmentCode.c_str();
+	// --- Load glsl file ---
+	else
+	{	
+		// --- Create input stream object ---
+		std::ifstream ShaderFile;
 
-		if (!is_extern) {
-			vShaderCode = vertexPath;
-			fShaderCode = fragmentPath;
+		// --- Ensure ifstream objects can throw exceptions ---
+		ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	
+		try 
+		{
+			// --- Open files ---
+			ShaderFile.open(original_file);
+			std::stringstream ShaderStream;
+			// --- Read file's buffer contents into streams ---
+			ShaderStream << ShaderFile.rdbuf();
+			// --- Close file handlers ---
+			ShaderFile.close();
+			// --- Convert stream into string ---
+			ShaderCode = ShaderStream.str();
 		}
-
-		// 2. compile shaders
-		int success = 0;
-		char infoLog[512];
-
-		success = CreateVertexShader(vertex, vShaderCode.data());
-
-		if (!success) {
-			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			ENGINE_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+		catch (std::ifstream::failure e) 
+		{
+			ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+			ret = false;
 		}
+	
+		
+		// --- If no fs failure occurred... ---
+		if (ret) 
+		{
+			// --- Separate vertex and fragment ---
+			uint FragmentLoc = ShaderCode.find("#elseif FRAGMENT_SHADER");
 
-		success = CreateFragmentShader(fragment, fShaderCode.data());
-
-		if (!success) {
-			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			ENGINE_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+			vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
+			fShaderCode = ShaderCode.substr(FragmentLoc, ShaderCode.size());
+	
+			//--- Compile shaders ---
+			int success = 0;
+			char infoLog[512];
+	
+			success = CreateVertexShader(vertex, vShaderCode.data());
+	
+			if (!success) 
+			{
+				glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+				ENGINE_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+			}
+	
+			success = CreateFragmentShader(fragment, fShaderCode.data());
+	
+			if (!success) 
+			{
+				glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+				ENGINE_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+			}
+	
+			success = CreateShaderProgram(vertex, fragment);
+	
+			if (!success) 
+			{
+				glGetProgramInfoLog(ID, 512, NULL, infoLog);
+				ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+			}
+	
+			// delete the shaders as they're linked into our program now and no longer necessary
+			glDeleteShader(vertex);
+			glDeleteShader(fragment);
 		}
-
-		success = CreateShaderProgram(vertex, fragment);
-
-		if (!success) {
-			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
-		}
-
-		// delete the shaders as they're linked into our program now and no longer necessary
-		glDeleteShader(vertex);
-		glDeleteShader(fragment);
 	}
+
+	return ret;
 }
 
-ResourceShader::ResourceShader(const char* binary, uint size, uint format, const char* name, const char* vertexPath, const char* fragmentPath) : Resource(Resource::ResourceType::SHADER) {
-	int success;
-	char infoLog[512];
-
-	// --- Load shader's code ---
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	// ensure ifstream objects can throw exceptions:
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-	try {
-		// open files
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-		// read file's buffer contents into streams
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		// close file handlers
-		vShaderFile.close();
-		fShaderFile.close();
-		// convert stream into string
-		vShaderCode = vShaderStream.str();
-		fShaderCode = fShaderStream.str();
-	}
-	catch (std::ifstream::failure e) {
-		ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
-	}
-
-	success = CreateShaderProgram();
-	this->name = name;
-
-	if (!success) {
-		glGetProgramInfoLog(ID, 512, NULL, infoLog);
-		ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
-
-		glDeleteProgram(ID);
-	}
-	else {
-		glProgramBinary(ID, (GLenum)format, (void*)binary, (GLint)size);
-
-		// print linking errors if any
-		glGetProgramiv(ID, GL_LINK_STATUS, &success);
-
-		if (!success) {
-			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			ENGINE_CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
-
-			// --- Trigger recompilation ---
-			glDeleteProgram(ID);
-			CreateShaderProgram();
-			ReloadAndCompileShader();
-		}
-	}
-}
-
-ResourceShader::~ResourceShader() {
+void ResourceShader::FreeMemory() 
+{
 	DeleteShaderProgram();
 }
 
-void ResourceShader::Save() {
-	SaveShader();
-}
-
-bool ResourceShader::LoadInMemory() {
-	return true;
-
-}
-
-void ResourceShader::FreeMemory() {
-}
-
-void ResourceShader::ReloadAndCompileShader() {
+void ResourceShader::ReloadAndCompileShader() 
+{
 	uint new_vertex, new_fragment = 0;
 
 	// --- Compile new data ---
@@ -189,7 +214,8 @@ void ResourceShader::ReloadAndCompileShader() {
 
 	success = CreateVertexShader(new_vertex, vertexcode);
 
-	if (!success) {
+	if (!success) 
+	{
 		glGetShaderInfoLog(new_vertex, 512, NULL, infoLog);
 		ENGINE_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
 		accumulated_errors++;
@@ -201,7 +227,8 @@ void ResourceShader::ReloadAndCompileShader() {
 
 	success = CreateFragmentShader(new_fragment, fragmentcode);
 
-	if (!success) {
+	if (!success) 
+	{
 		glGetShaderInfoLog(new_fragment, 512, NULL, infoLog);
 		ENGINE_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
 		accumulated_errors++;
@@ -209,7 +236,8 @@ void ResourceShader::ReloadAndCompileShader() {
 	else
 		ENGINE_CONSOLE_LOG("Fragment Shader compiled successfully");
 
-	if (accumulated_errors == 0) {
+	if (accumulated_errors == 0) 
+	{
 		// --- Delete previous shader data ---
 		glDetachShader(ID, vertex);
 		glDetachShader(ID, fragment);
@@ -220,7 +248,8 @@ void ResourceShader::ReloadAndCompileShader() {
 		glLinkProgram(ID);
 		glGetProgramiv(ID, GL_LINK_STATUS, &success);
 
-		if (!success) {
+		if (!success) 
+		{
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
 			ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 
@@ -234,7 +263,8 @@ void ResourceShader::ReloadAndCompileShader() {
 			glAttachShader(ID, vertex);
 			glAttachShader(ID, fragment);
 		}
-		else {
+		else 
+		{
 			// --- On success, delete old shader objects and update ids ---
 			glDeleteShader(vertex);
 			glDeleteShader(fragment);
@@ -244,7 +274,8 @@ void ResourceShader::ReloadAndCompileShader() {
 			ENGINE_CONSOLE_LOG("Shader Program linked successfully");
 		}
 	}
-	else {
+	else 
+	{
 		glDeleteShader(new_vertex);
 		glDeleteShader(new_fragment);
 	}
@@ -252,7 +283,8 @@ void ResourceShader::ReloadAndCompileShader() {
 
 }
 
-void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) {
+void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) 
+{
 	std::vector<Uniform*> new_uniforms;
 
 	int uniform_count;
@@ -262,7 +294,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) {
 	GLenum type;
 	GLint size;
 
-	for (uint i = 0; i < uniform_count; ++i) {
+	for (uint i = 0; i < uniform_count; ++i) 
+	{
 		glGetActiveUniform(ID, i, 128, nullptr, &size, &type, name);
 
 		if (strcmp(name, "model_matrix") == 0
@@ -276,7 +309,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) {
 		// --- This switch prevents retrieving unwanted/unsupported uniforms ---
 		// MYTODO: we may avoid the switch by defining some filters and testing against them
 
-		switch (type) {
+		switch (type) 
+		{
 		case GL_INT:
 			uniform = new Uniform();
 			FillUniform(uniform, name, type);
@@ -324,7 +358,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) {
 		}
 
 		// --- Conserve previous uniform values if they still exist ---
-		for (uint i = 0; i < uniforms.size(); ++i) {
+		for (uint i = 0; i < uniforms.size(); ++i) 
+		{
 			if (uniforms[i]->name == uniform->name && uniforms[i]->type == uniform->type)
 				uniform->value = uniforms[i]->value;
 		}
@@ -333,7 +368,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) {
 	}
 
 	// --- Delete previous uniforms and retrieve new ones ---
-	for (uint i = 0; i < uniforms.size(); ++i) {
+	for (uint i = 0; i < uniforms.size(); ++i) 
+	{
 		delete uniforms[i];
 	}
 
@@ -344,7 +380,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms) {
 
 
 // Internal use only!
-bool ResourceShader::CreateVertexShader(unsigned int& vertex, const char* vShaderCode) {
+bool ResourceShader::CreateVertexShader(unsigned int& vertex, const char* vShaderCode) 
+{
 	GLint success = 0;
 
 	// vertex Shader
@@ -358,10 +395,11 @@ bool ResourceShader::CreateVertexShader(unsigned int& vertex, const char* vShade
 }
 
 // Internal use only!
-bool ResourceShader::CreateFragmentShader(unsigned int& fragment, const char* fShaderCode) {
+bool ResourceShader::CreateFragmentShader(unsigned int& fragment, const char* fShaderCode) 
+{
 	GLint success = 0;
 
-	// similiar for Fragment Shader
+	// similar for Fragment Shader
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, &fShaderCode, NULL);
 	glCompileShader(fragment);
@@ -372,7 +410,8 @@ bool ResourceShader::CreateFragmentShader(unsigned int& fragment, const char* fS
 }
 
 // Internal use only!
-bool ResourceShader::CreateShaderProgram(unsigned int vertex, unsigned int fragment) {
+bool ResourceShader::CreateShaderProgram(unsigned int vertex, unsigned int fragment) 
+{
 	GLint success = 0;
 
 	// shader Program
@@ -386,8 +425,10 @@ bool ResourceShader::CreateShaderProgram(unsigned int vertex, unsigned int fragm
 	return success;
 }
 
-bool ResourceShader::CreateShaderProgram() {
+bool ResourceShader::CreateShaderProgram() 
+{
 	GLint success = 1;
+	char infoLog[512];
 
 	// shader Program
 	ID = glCreateProgram();
@@ -395,129 +436,66 @@ bool ResourceShader::CreateShaderProgram() {
 	//// print linking errors if any
 	//glGetProgramiv(ID, GL_LINK_STATUS, &success);
 
+	//if (!success)
+	//{
+	//	glGetShaderInfoLog(ID, 512, NULL, infoLog);
+	//	ENGINE_CONSOLE_LOG("|[error]: Shader creation error: %s", infoLog);
+	//}
+	//else
+	//	ENGINE_CONSOLE_LOG("Shader created successfully");
+
 	return success;
 }
 
-// Internal use only!
-void ResourceShader::SaveShader() {
-	//	std::string path = SHADERS_FOLDER;
-	//	path.append(std::to_string(UID));
-	//	path.append(".shader");
-	//
-	//	GLint buffer_size;
-	//	glGetProgramiv(ID,GL_PROGRAM_BINARY_LENGTH, &buffer_size);
-	//
-	//	if (buffer_size > 0)
-	//	{
-	//		char* buffer = new char[buffer_size];
-	//		GLint bytes_written = 0;
-	//		GLenum format = 0;
-	//
-	//		glGetProgramBinary(ID, buffer_size, &bytes_written, &format, buffer);
-	//
-	//		if (bytes_written > 0)
-	//		{
-	//			// --- Save shader to file ---
-	//			App->fs->Save(path.data(), buffer, buffer_size);
-	//
-	//			std::string binary_format;
-	//			path.append(".format");
-	//			json jsonfile;
-	//			char* bin_buffer = nullptr;
-	//
-	//			// --- Create Meta ---
-	//			jsonfile["FORMAT"] = std::to_string(format);
-	//			jsonfile["NAME"] = name;
-	//			binary_format = App->GetJLoader()->Serialize(jsonfile);
-	//			bin_buffer = (char*)binary_format.data();
-	//
-	//			App->fs->Save(path.data(), bin_buffer, binary_format.size());
-	//;
-	//
-	//			// --- Save code to Assets folder, save meta ---
-	//			path = ASSETS_FOLDER;
-	//			path.append("Shaders/");
-	//			path.append(name);
-	//
-	//			std::string final_name = path + ".vertex";
-	//
-	//			if(!App->resources->IsFileImported(final_name.data()))
-	//			App->resources->CreateMetaFromUID(UID, final_name.data());
-	//
-	//			std::ofstream file;
-	//			file.open(final_name);
-	//
-	//			if (!file.is_open())
-	//			{
-	//				ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
-	//			}
-	//			else
-	//			{
-	//				file << std::setw(4) << vShaderCode << std::endl;
-	//				file.close();
-	//			}
-	//
-	//			final_name = path + ".fragment";
-	//
-	//			if (!App->resources->IsFileImported(final_name.data()))
-	//			App->resources->CreateMetaFromUID(UID, final_name.data());
-	//
-	//			std::ofstream file2;
-	//			file2.open(final_name);
-	//
-	//			if (!file2.is_open())
-	//			{
-	//				ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", final_name.data());
-	//			}
-	//			else
-	//			{
-	//				file2 << std::setw(4) << fShaderCode << std::endl;
-	//				file2.close();
-	//			}
-	//		}
-	//
-	//		delete[] buffer;
-	//	}
-	//	else
-	//		ENGINE_CONSOLE_LOG("|[error]: Could not save Shader: %s, try compiling it first", name.data());
-}
-
-void ResourceShader::DeleteShaderProgram() {
-	if (glIsProgram(ID)) {
+void ResourceShader::DeleteShaderProgram() 
+{
+	if (glIsProgram(ID)) 
+	{
 		glDeleteProgram(ID);
 		ID = 0;
 	}
 }
 
-void ResourceShader::FillUniform(Uniform* uniform, const char* name, const uint type) const {
+void ResourceShader::FillUniform(Uniform* uniform, const char* name, const uint type) const 
+{
 	uniform->name = name;
 	uniform->location = glGetUniformLocation(ID, name);
 	uniform->type = type;
 }
 
-void ResourceShader::OnOverwrite() {
+void ResourceShader::OnOverwrite() 
+{
+	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
-void ResourceShader::OnDelete() {
+void ResourceShader::OnDelete() 
+{
+	NotifyUsers(ResourceNotificationType::Deletion);
+
+	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
 }
 
-void ResourceShader::use() {
+void ResourceShader::use() 
+{
 	glUseProgram(ID);
 }
 
-void ResourceShader::setBool(const std::string& name, bool value) const {
+void ResourceShader::setBool(const std::string& name, bool value) const 
+{
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 
-void ResourceShader::setInt(const std::string& name, int value) const {
+void ResourceShader::setInt(const std::string& name, int value) const 
+{
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void ResourceShader::setFloat(const std::string& name, float value) const {
+void ResourceShader::setFloat(const std::string& name, float value) const 
+{
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 

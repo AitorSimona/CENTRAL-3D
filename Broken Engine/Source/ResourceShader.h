@@ -5,7 +5,8 @@
 #include "Math.h"
 
 BE_BEGIN_NAMESPACE
-union BROKEN_API data {
+union BROKEN_API data
+{
 	data() {
 		intU = 0;
 		floatU = 0;
@@ -21,7 +22,8 @@ union BROKEN_API data {
 	float4 vec4U;
 };
 
-struct BROKEN_API Uniform {
+struct BROKEN_API Uniform 
+{
 	Uniform() {};
 
 	std::string name;
@@ -31,36 +33,36 @@ struct BROKEN_API Uniform {
 	data value;
 };
 
-class BROKEN_API ResourceShader : public Resource {
+class BROKEN_API ResourceShader : public Resource 
+{
 public:
 	ResourceShader(uint UID, const char* source_file);
-
-
-	// constructor reads and builds the shader
-	ResourceShader(const char* vertexPath, const char* fragmentPath, bool is_extern = true);
-	ResourceShader(const char* binary, uint size, uint format, const char* name, const char* vertexPath, const char* fragmentPath);
 	~ResourceShader();
-
-	void Save();
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
-	void ReloadAndCompileShader();
+
+	//// constructor reads and builds the shader
+	//ResourceShader(const char* vertexPath, const char* fragmentPath, bool is_extern = true);
+	//ResourceShader(const char* binary, uint size, uint format, const char* name, const char* vertexPath, const char* fragmentPath);
+
+	// --- Getters ---
 	void GetAllUniforms(std::vector<Uniform*>& uniforms);
 
-public:
-	// use/activate the shader
-	void use();
-	// utility uniform functions
+	// --- Setters ---
 	void setBool(const std::string& name, bool value) const;
 	void setInt(const std::string& name, int value) const;
 	void setFloat(const std::string& name, float value) const;
 
+	// --- Utilities ---
+	void use();
+	void ReloadAndCompileShader();
+
 public:
 	// the program ID
 	unsigned int ID = 0;
-	std::string name;
-
+	bool binary = false;
+	std::string ShaderCode;
 	std::string vShaderCode;
 	std::string fShaderCode;
 private:
@@ -70,11 +72,8 @@ private:
 	bool CreateFragmentShader(unsigned int& fragment, const char* fShaderCode);
 	bool CreateShaderProgram(unsigned int vertex, unsigned int fragment);
 	bool CreateShaderProgram();
-	void SaveShader();
 	void DeleteShaderProgram();
-
 	void FillUniform(Uniform* uniform, const char* name, const uint type) const;
-
 private:
 	void OnOverwrite() override;
 	void OnDelete() override;

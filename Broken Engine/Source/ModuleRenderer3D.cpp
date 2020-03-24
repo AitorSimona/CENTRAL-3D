@@ -216,10 +216,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 bool ModuleRenderer3D::CleanUp() {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
 
-	delete defaultShader;
-	delete linepointShader;
-	delete ZDrawerShader;
-	delete OutlineShader;
+	//delete defaultShader;
+	//delete linepointShader;
+	//delete ZDrawerShader;
+	//delete OutlineShader;
 
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
@@ -438,7 +438,9 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 	}
 }
 
-void ModuleRenderer3D::CreateDefaultShaders() {
+void ModuleRenderer3D::CreateDefaultShaders()
+{
+
 	// --- Creating outline drawing shaders ---
 	const char* OutlineVertShaderSrc = "#version 440 core \n"
 		"layout (location = 0) in vec3 position; \n"
@@ -456,8 +458,11 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"color = vec4(1.0,0.65,0.0, 1.0); \n"
 		"} \n";
 
-	OutlineShader = new ResourceShader(OutlineVertShaderSrc, OutlineFragShaderSrc, false);
-	OutlineShader->name = "OutlineShader";
+	OutlineShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/OutlineShader.glsl", 8);
+	OutlineShader->vShaderCode = OutlineVertShaderSrc;
+	OutlineShader->fShaderCode = OutlineFragShaderSrc;
+	OutlineShader->ReloadAndCompileShader();
+	OutlineShader->SetName("OutlineShader");
 
 	// --- Creating point/line drawing shaders ---
 
@@ -480,8 +485,11 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"color = vec4(ourColor, 1.0); \n"
 		"} \n";
 
-	linepointShader = new ResourceShader(linePointVertShaderSrc, linePointFragShaderSrc, false);
-	linepointShader->name = "LinePoint";
+	linepointShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/LinePoint.glsl", 9);
+	linepointShader->vShaderCode = linePointVertShaderSrc;
+	linepointShader->fShaderCode = linePointFragShaderSrc;
+	linepointShader->ReloadAndCompileShader();
+	linepointShader->SetName("LinePoint");
 
 	// --- Creating z buffer shader drawer ---
 
@@ -511,8 +519,11 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"FragColor = vec4(vec3(gl_FragCoord.z*nearfarfrag.y*nearfarfrag.x), 1.0); } \n";
 	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z), just in case I need it again (doubt it though)
 
-	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
-	ZDrawerShader->name = "ZDrawer";
+	ZDrawerShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/ZDrawer.glsl", 10);
+	ZDrawerShader->vShaderCode = zdrawervertex;
+	ZDrawerShader->fShaderCode = zdrawerfragment;
+	ZDrawerShader->ReloadAndCompileShader();
+	ZDrawerShader->SetName("ZDrawer");
 
 	// --- Creating text rendering shaders ---
 
@@ -539,8 +550,11 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"color = vec4(textColor, 1.0) * sampled; \n"
 		"} \n";
 
-	textShader = new ResourceShader(textVertShaderSrc, textFragShaderSrc, false);
-	textShader->name = "TextShader";
+	textShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TextShader.glsl", 11);
+	textShader->vShaderCode = textVertShaderSrc;
+	textShader->fShaderCode = textFragShaderSrc;
+	textShader->ReloadAndCompileShader();
+	textShader->SetName("TextShader");
 
 	// --- Creating Default Vertex and Fragment Shaders ---
 
@@ -577,8 +591,11 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"} \n"
 		;
 
-	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
-	defaultShader->name = "Standard";
+	defaultShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/Standard.glsl", 12);
+	defaultShader->vShaderCode = vertexShaderSource;
+	defaultShader->fShaderCode = fragmentShaderSource;
+	defaultShader->ReloadAndCompileShader();
+	defaultShader->SetName("Standard");
 	defaultShader->use();
 
 }

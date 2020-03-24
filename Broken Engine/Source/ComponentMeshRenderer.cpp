@@ -319,16 +319,16 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			ImGui::Text("Shader");
 			ImGui::SameLine();
 
-			const char* item_current = material->shader->name.c_str();
+			const char* item_current = material->shader->GetName();
 			if (ImGui::BeginCombo("##Shader", item_current, flags)) 
 			{
 				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it) 
 				{
-					bool is_selected = (item_current == it->second->name);
+					bool is_selected = (item_current == it->second->GetName());
 
-					if (ImGui::Selectable(it->second->name.c_str(), is_selected)) 
+					if (ImGui::Selectable(it->second->GetName(), is_selected)) 
 					{
-						item_current = it->second->name.c_str();
+						item_current = it->second->GetName();
 						material->shader = it->second;
 						material->shader->GetAllUniforms(material->uniforms);
 					}
