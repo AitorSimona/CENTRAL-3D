@@ -1164,6 +1164,22 @@ std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::R
 		unique_name.append(".mat");
 		break;
 
+	case Resource::ResourceType::SHADER:
+		unique_name = "New shader" + std::to_string(shaders.size());
+
+		for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end(); ++it)
+		{
+			if ((*it).second->GetName() == unique_name)
+			{
+				instance++;
+				unique_name = "New shader" + std::to_string(shaders.size() + instance);
+				it = shaders.begin();
+			}
+		}
+
+		unique_name.append(".glsl");
+		break;
+
 
 	case Resource::ResourceType::SCRIPT:
 		unique_name = "New script " + std::to_string(scripts.size());

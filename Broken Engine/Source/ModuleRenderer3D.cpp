@@ -436,6 +436,49 @@ void ModuleRenderer3D::CreateDefaultShaders()
 {
 	ImporterShader* IShader = App->resources->GetImporter<ImporterShader>();
 
+	const char* vertexShaderT =
+		"#version 440 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
+		"layout (location = 0) in vec3 position; \n"
+		"layout(location = 1) in vec3 normal; \n"
+		"layout(location = 2) in vec3 color; \n"
+		"layout (location = 3) in vec2 texCoord; \n"
+		"uniform vec3 Color; \n"
+		"out vec3 ourColor; \n"
+		"out vec2 TexCoord; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
+		"ourColor = Color; \n"
+		"TexCoord = texCoord; \n"
+		"}\n"
+		"#endif //VERTEX_SHADER\n"
+		;
+
+	const char* fragmentShaderT =
+		"#version 440 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
+		"uniform int Texture;\n"
+		"in vec3 ourColor; \n"
+		"in vec2 TexCoord; \n"
+		"out vec4 color; \n"
+		"uniform sampler2D ourTexture; \n"
+		"void main(){ \n"
+		"color = texture(ourTexture, TexCoord); \n"
+		"if(Texture == -1)\n"
+		"color = vec4(ourColor, 1);\n"
+		"} \n"
+		"#endif //FRAGMENT_SHADER\n"
+		;
+
+	VertexShaderTemplate = vertexShaderT;
+	FragmentShaderTemplate = fragmentShaderT;
+
+
 	// --- Creating outline drawing shaders ---
 	const char* OutlineVertShaderSrc = 
 		"#version 440 core \n"

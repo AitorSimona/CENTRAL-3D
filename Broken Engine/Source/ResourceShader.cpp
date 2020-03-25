@@ -10,6 +10,7 @@
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "OpenGL.h"
 
@@ -20,6 +21,9 @@ ResourceShader::ResourceShader(uint UID, const char* source_file) : Resource(Res
 {
 	extension = ".glsl";
 	resource_file = SHADERS_FOLDER + std::to_string(UID) + extension;
+
+	vShaderCode = App->renderer3D->VertexShaderTemplate;
+	fShaderCode = App->renderer3D->FragmentShaderTemplate;
 
 	CreateShaderProgram();
 

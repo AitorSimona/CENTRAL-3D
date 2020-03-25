@@ -132,6 +132,10 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
 
+	std::string VertexShaderTemplate;
+	std::string FragmentShaderTemplate;
+
+
 	SDL_GLContext context;
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
