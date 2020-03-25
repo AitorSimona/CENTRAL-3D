@@ -111,10 +111,9 @@ bool ModuleScripting::DoHotReloading() {
 bool ModuleScripting::JustCompile(std::string absolute_path) {
 	bool ret = false;
 
-	//MYTODO: D�dac Commented this so I can try and compile, must uncomment when SCRIPTING class contents are uncommented too
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Scripting")
-
+		
 		.beginClass <ScriptingSystem>("System")
 		.addConstructor<void(*) (void)>()
 		.endClass()
@@ -140,6 +139,14 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 		.endClass()
 
 		.beginClass <ScriptingAnimations>("Animations")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingInterface>("Interface")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingScenes>("Scenes")
 		.addConstructor<void(*) (void)>()
 		.endClass()
 
@@ -179,6 +186,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("RealDT", &ScriptingSystem::GetRealDT)
 		.addFunction("DT", &ScriptingSystem::GetDT)
 		.addFunction("GameTime", &ScriptingSystem::GameTime)
+		.addFunction("PauseGame", &ScriptingSystem::PauseGame)
+		.addFunction("ResumeGame", &ScriptingSystem::ResumeGame)
 
 		// Maths
 		.addFunction("CompareFloats", &ScriptingSystem::FloatNumsAreEqual)

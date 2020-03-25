@@ -15,6 +15,8 @@ public:
 	float GetRealDT() const;
 	float GetDT() const;
 	float GameTime();
+	void PauseGame();
+	void ResumeGame();
 
 	// Maths
 	int FloatNumsAreEqual(float a, float b);
