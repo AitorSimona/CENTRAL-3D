@@ -220,6 +220,14 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &meshTexID);
 	glDeleteTextures(1, &boneTexID);
 	glDeleteTextures(1, &animationTexID);
+	// -- Toolbar
+	glDeleteTextures(1, &translateTexID);
+	glDeleteTextures(1, &rotateTexID);
+	glDeleteTextures(1, &scaleTexID);
+	glDeleteTextures(1, &toolbarPlayTexID);
+	glDeleteTextures(1, &toolbarPauseTexID);
+	glDeleteTextures(1, &toolbarPauseTexID);
+	//glDeleteTextures(1, &toolbarStopTexID);
 
 	return ret;
 }
@@ -326,6 +334,15 @@ void ModuleGui::CreateIcons()
 	meshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MeshIcon.png", width, height, -1);
 	boneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/BoneIcon.png", width, height, -1);
 	animationTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimationIcon.png", width, height, -1);
+
+	// -- Toolbar icons
+	translateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/TranslateIcon.png", width, height, -1);
+	rotateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/RotateIcon.png", width, height, -1);
+	scaleTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScaleIcon.png", width, height, -1);
+
+	toolbarPlayTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPlayIcon.png", width, height, -1);
+	toolbarPauseTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPauseIcon.png", width, height, -1);
+	toolbarStepTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarStepIcon.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
 }

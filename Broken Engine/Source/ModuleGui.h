@@ -88,6 +88,13 @@ public:
 	uint meshTexID = 0;
 	uint boneTexID = 0;
 	uint animationTexID = 0;
+	// --- Toolbar icons
+	uint translateTexID = 0;
+	uint rotateTexID = 0;
+	uint scaleTexID = 0;
+	uint toolbarPlayTexID = 0;
+	uint toolbarPauseTexID = 0;
+	uint toolbarStepTexID = 0;
 
 	bool isSceneHovered = false;
 
@@ -98,8 +105,6 @@ public:
 	float sceneHeight = 0;
 
 	bool isUsingGuizmo = false;
-	std::string play_button;
-	std::string pause_button;
 
 	ImDrawList* draw_list;
 
