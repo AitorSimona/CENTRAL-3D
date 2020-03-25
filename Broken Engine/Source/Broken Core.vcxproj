@@ -45,12 +45,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/DetourTileCache/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/DetourTileCache/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -145,6 +145,7 @@
     <ClInclude Include="ImporterMesh.h" />
     <ClInclude Include="ImporterMeta.h" />
     <ClInclude Include="ImporterModel.h" />
+    <ClInclude Include="ImporterNavMesh.h" />
     <ClInclude Include="Importers.h" />
     <ClInclude Include="ImporterScene.h" />
     <ClInclude Include="ImporterScript.h" />
@@ -268,6 +269,7 @@
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceMeta.h" />
     <ClInclude Include="ResourceModel.h" />
+    <ClInclude Include="ResourceNavMesh.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ResourceScene.h" />
     <ClInclude Include="ResourceScript.h" />
@@ -332,6 +334,7 @@
     <ClCompile Include="ImporterMesh.cpp" />
     <ClCompile Include="ImporterMeta.cpp" />
     <ClCompile Include="ImporterModel.cpp" />
+    <ClCompile Include="ImporterNavMesh.cpp" />
     <ClCompile Include="ImporterScene.cpp" />
     <ClCompile Include="ImporterScript.cpp" />
     <ClCompile Include="ImporterShader.cpp" />
@@ -406,6 +409,10 @@
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="RandomGenerator.cpp" />
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\DebugDraw.cpp" />
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\DetourDebugDraw.cpp" />
+    <ClCompile Include="RecastNavigation\DetourTileCache\Source\DetourTileCache.cpp" />
+    <ClCompile Include="RecastNavigation\DetourTileCache\Source\DetourTileCacheBuilder.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp" />
@@ -423,6 +430,7 @@
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceMeta.cpp" />
     <ClCompile Include="ResourceModel.cpp" />
+    <ClCompile Include="ResourceNavMesh.cpp" />
     <ClCompile Include="ResourceScene.cpp" />
     <ClCompile Include="ResourceScript.cpp" />
     <ClCompile Include="ResourceShader.cpp" />

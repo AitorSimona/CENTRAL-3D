@@ -91,6 +91,12 @@
     <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\Detour">
       <UniqueIdentifier>{5bf6fa64-51c9-40c1-8419-b88010226093}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\DebugUtils">
+      <UniqueIdentifier>{fb574cad-a6dd-487e-847c-c7b79c2ae007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\DetourTileCache">
+      <UniqueIdentifier>{327df616-7529-4ed7-8a79-95ebc84a0635}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrokenCore.h">
@@ -672,6 +678,12 @@
     <ClInclude Include="ComponentProgressBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceNavMesh.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterNavMesh.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1126,6 +1138,24 @@
     </ClCompile>
     <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp">
       <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\DebugDraw.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DebugUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\DetourDebugDraw.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DebugUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DetourTileCache\Source\DetourTileCache.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DetourTileCache</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DetourTileCache\Source\DetourTileCacheBuilder.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DetourTileCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceNavMesh.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterNavMesh.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

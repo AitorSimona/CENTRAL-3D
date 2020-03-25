@@ -16,6 +16,7 @@ bool PanelNavigation::Draw() {
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags)) {
+		EngineApp->detour->setDebugDraw(true);
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 		if (ImGui::BeginTabBar("NavigationTabBar", tab_bar_flags)) {
 			if (ImGui::BeginTabItem("Areas")) {
@@ -97,18 +98,29 @@ bool PanelNavigation::Draw() {
 				if (ImGui::DragFloat("Step Height", &EngineApp->detour->stepHeight, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f)) {
 				}
 
-				ImGui::Text("Advanced");
-				ImGui::Separator();
-				ImGui::Text("Manual Voxel Size"); ImGui::SameLine();
-				ImGui::Checkbox("##manualVoxelSize", &manualVoxel);
-				if (manualVoxel)
-					ImGui::DragFloat("Voxel Size##dragFloat", &EngineApp->detour->voxelSize, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
-				else {
-					EngineApp->detour->voxelSize = EngineApp->detour->agentRadius / 3.0f;
-					float voxelSize = EngineApp->detour->voxelSize;
-					ImGui::DragFloat("Voxel Size##inputText", &voxelSize, 0.0f, 0.0f, 0.0f, "%.2f");
-				}
+				if (ImGui::TreeNode("Advanced")) {
+					ImGui::Text("Manual Voxel Size"); ImGui::SameLine();
+					ImGui::Checkbox("##manualVoxelSize", &manualVoxel);
+					if (manualVoxel)
+						ImGui::DragFloat("Voxel Size##dragFloat", &EngineApp->detour->voxelSize, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					else {
+						EngineApp->detour->voxelSize = EngineApp->detour->agentRadius / 3.0f;
+						float voxelSize = EngineApp->detour->voxelSize;
+						ImGui::DragFloat("Voxel Size##inputText", &voxelSize, 0.0f, 0.0f, 0.0f, "%.2f");
+					}
 
+					ImGui::DragFloat("Voxel Height", &EngineApp->detour->voxelHeight, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+
+					ImGui::DragFloat("Region Minimum Size", &EngineApp->detour->regionMinSize, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::DragFloat("Region Merge Size", &EngineApp->detour->regionMergeSize, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::DragFloat("Edge Maximum Length", &EngineApp->detour->edgeMaxLen, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::DragFloat("Edge Maximum Error", &EngineApp->detour->edgeMaxError, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::DragFloat("Vertices Per Polygon", &EngineApp->detour->vertsPerPoly, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::DragFloat("Detail Sample Distance", &EngineApp->detour->detailSampleDist, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::DragFloat("Detail Sample Max. Error", &EngineApp->detour->detailSampleMaxError, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::TreePop();
+				}
+				ImGui::Separator();
 				if (ImGui::Button("Clear")) {
 					//MYTODO delete the navmesh binary
 				}
@@ -258,6 +270,21 @@ bool PanelNavigation::Draw() {
 			ImGui::EndTabBar();
 		}
 	}
+	else {
+		EngineApp->detour->setDebugDraw(false);
+	}
 	ImGui::End();
 	return true;
+}
+
+void PanelNavigation::SetOnOff(bool status) {
+	enabled = status;
+	if (!status)
+		EngineApp->detour->setDebugDraw(false);
+}
+
+void PanelNavigation::OnOff() {
+	enabled = !enabled;
+	if (!enabled)
+		EngineApp->detour->setDebugDraw(false);
 }

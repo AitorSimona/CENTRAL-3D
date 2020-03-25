@@ -25,7 +25,8 @@ public:
 		SCRIPT,
 		META,
 		FONT,
-		UNKNOWN,
+		NAVMESH,
+		UNKNOWN
 	};
 	enum class ResourceNotificationType {
 		Overwrite,

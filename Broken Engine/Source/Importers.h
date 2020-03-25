@@ -15,5 +15,6 @@
 #include "ImporterScript.h"
 #include "ImporterMeta.h"
 #include "ImporterFont.h"
+#include "ImporterNavMesh.h"
 
 #endif // __IMPORTERS_H__

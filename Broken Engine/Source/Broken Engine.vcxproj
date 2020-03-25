@@ -186,15 +186,6 @@
     <ClInclude Include="PanelSettings.h" />
     <ClInclude Include="PanelShaderEditor.h" />
     <ClInclude Include="PanelToolbar.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourAlloc.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourAssert.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourCommon.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourMath.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMesh.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshBuilder.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshQuery.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNode.h" />
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourStatus.h" />
     <ClInclude Include="VSresource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +257,13 @@
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMesh.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp" />
     <ClCompile Include="RecastNavigation\Recast\Source\Recast.cpp" />
     <ClCompile Include="RecastNavigation\Recast\Source\RecastAlloc.cpp" />
     <ClCompile Include="RecastNavigation\Recast\Source\RecastArea.cpp" />

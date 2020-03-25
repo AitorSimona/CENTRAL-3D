@@ -13,6 +13,9 @@ public:
 
 	bool Draw();
 
+	void SetOnOff(bool status) override;
+	void OnOff() override;
+
 private:
 
 	bool manualVoxel = false;

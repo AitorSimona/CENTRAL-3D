@@ -144,6 +144,9 @@ bool ResourceScene::LoadInMemory() {
 			App->detour->detailSampleDist = navigationdata["detailSampleDist"];
 			App->detour->detailSampleMaxError = navigationdata["detailSampleMaxError"];
 
+			if (!navigationdata["navMeshUID"].is_null())
+				App->detour->loadNavMeshFile(navigationdata["navMeshUID"]);
+
 			for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
 				std::string areaName = navigationdata["Areas"][i]["name"];
 				sprintf_s(App->detour->areaNames[i], areaName.c_str());

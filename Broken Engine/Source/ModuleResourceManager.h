@@ -24,6 +24,7 @@ class ResourceShaderObject;
 class ResourceMeta;
 class ResourceScript;
 class ResourceFont;
+class ResourceNavMesh;
 
 class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterTexture;
@@ -38,6 +39,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterFolder;
 	friend class ImporterScript;
 	friend class ImporterFont;
+	friend class ImporterNavMesh;
 	friend class PanelResources;
 	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
@@ -73,8 +75,8 @@ public:
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
-	//
 	Resource* ImportFont(Importer::ImportData& IData);
+	Resource* ImportNavMesh(Importer::ImportData& IData);
 
 	void HandleFsChanges();
 	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret);
@@ -127,7 +129,6 @@ private:
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
 	ResourceMaterial* DefaultMaterial = nullptr;
-	//MYTODO Temporary public for resource panel
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;
 	std::map<uint, ResourceScene*> scenes;
@@ -143,6 +144,7 @@ private:
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 	std::map<uint, ResourceFont*> fonts;
+	std::map<uint, ResourceNavMesh*> navmeshes;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;

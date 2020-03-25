@@ -55,6 +55,7 @@ bool ModuleResourceManager::Init(json& file)
 	importers.push_back(new ImporterScript);
 	importers.push_back(new ImporterMeta());
 	importers.push_back(new ImporterFont());
+	importers.push_back(new ImporterNavMesh());
 
 	return true;
 }
@@ -86,6 +87,7 @@ bool ModuleResourceManager::Start()
 	filters.push_back("ttf");
 	filters.push_back("otf");
 	filters.push_back("animator");
+	filters.push_back("navmesh");
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -248,6 +250,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::SCRIPT:
 		resource = ImportScript(IData); //MYTODO: Dídac I assume I must create a new Importer to handle scripts importing
+		break;
+
+	case Resource::ResourceType::NAVMESH:
+		resource = ImportNavMesh(IData);
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -555,6 +561,20 @@ Resource* ModuleResourceManager::ImportFont(Importer::ImportData& IData)
 	return font;
 }
 
+Resource* ModuleResourceManager::ImportNavMesh(Importer::ImportData& IData) {
+	Resource* navmesh = nullptr;
+
+	ImporterNavMesh* INavMesh = GetImporter<ImporterNavMesh>();
+
+	if (IsFileImported(IData.path))
+		navmesh = INavMesh->Load(IData.path);
+	else {
+		navmesh = INavMesh->Import(IData);
+	}
+
+	return navmesh;
+}
+
 void ModuleResourceManager::HandleFsChanges()
 {
 	// --- First retrieve all windows fs files and directories in ASSETS ---
@@ -801,6 +821,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
 	resource = resource ? resource : (fonts.find(UID) == fonts.end() ? resource : (*fonts.find(UID)).second);
+	resource = resource ? resource : (navmeshes.find(UID) == navmeshes.end() ? resource : (*navmeshes.find(UID)).second);
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
@@ -885,6 +906,11 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, co
 	case Resource::ResourceType::FONT:
 		resource = (Resource*)new ResourceFont(App->GetRandom().Int(), source_file);
 		fonts[resource->GetUID()] = (ResourceFont*)resource;
+		break;
+
+	case Resource::ResourceType::NAVMESH:
+		resource = (Resource*) new ResourceNavMesh(App->GetRandom().Int(), source_file);
+		navmeshes[resource->GetUID()] = (ResourceNavMesh*)resource;
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -983,6 +1009,11 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		resource = (Resource*)new ResourceFont(UID, source_file);
 		fonts[resource->GetUID()] = (ResourceFont*)resource;
 		break;
+	
+	case Resource::ResourceType::NAVMESH:
+		resource = (Resource*)new ResourceNavMesh(UID, source_file);
+		navmeshes[resource->GetUID()] = (ResourceNavMesh*)resource;
+		break;
 
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
@@ -1021,6 +1052,7 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "lua" ? Resource::ResourceType::SCRIPT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "ttf" || extension == "otf" ? Resource::ResourceType::FONT : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "navmesh" ? Resource::ResourceType::NAVMESH : type) : type;
 
 	return type;
 }

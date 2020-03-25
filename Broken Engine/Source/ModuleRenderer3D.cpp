@@ -7,6 +7,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
 #include "ModuleParticles.h"
+#include "ModuleDetour.h"
 
 
 #include "GameObject.h"
@@ -162,6 +163,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 
 	// --- Draw Level Geometry ---
 	App->scene_manager->Draw();
+
+	// --- Draw Recast Debug ---
+	App->detour->Draw();
+
 	App->ui_system->Draw();
 
 	// --- Draw Particles ---

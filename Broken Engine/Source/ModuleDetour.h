@@ -19,6 +19,7 @@ enum PolyFlags {
 	POLYFLAGS_ALL = 0xffff      // All abilities.
 };
 
+class ResourceNavMesh;
 
 class BROKEN_API ModuleDetour : public Module {
 public:
@@ -26,10 +27,17 @@ public:
 	~ModuleDetour();
 
 	bool Init(json& config) override;
-	bool createNavMesh(dtNavMeshCreateParams* params);
 	bool CleanUp() override;
 
+	void Draw() const;
+	void setDebugDraw(bool state);
+
+	bool createNavMesh(dtNavMeshCreateParams* params);
+	void loadNavMeshFile(uint UID);
+
 	void setDefaultValues();
+	void setDefaultBakeValues();
+	const ResourceNavMesh* getNavMeshResource() const;
 
 public:
 	float agentRadius = 0.5f;
@@ -51,7 +59,9 @@ public:
 	int areaCosts[BE_DETOUR_TOTAL_AREAS];
 
 private:
-	dtNavMesh* m_navMesh = nullptr;
+	bool debugDraw = false;
+	class DebugDrawGL* m_dd = nullptr;
+	ResourceNavMesh* navMeshResource = nullptr;
 	dtNavMeshQuery* m_navQuery = nullptr;
 
 

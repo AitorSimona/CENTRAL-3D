@@ -384,33 +384,6 @@
     <ClInclude Include="InputGeometry.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourAlloc.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourAssert.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourCommon.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourMath.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMesh.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshBuilder.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNavMeshQuery.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourNode.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
-    <ClInclude Include="RecastNavigation\Detour\Include\DetourStatus.h">
-      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineApplication.cpp">
@@ -649,6 +622,27 @@
     </ClCompile>
     <ClCompile Include="InputGeometry.cpp">
       <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMesh.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

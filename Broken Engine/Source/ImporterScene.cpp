@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
+#include "ResourceNavMesh.h"
 
 #include "mmgr/mmgr.h"
 
@@ -124,6 +125,10 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file["Navigation Data"]["Areas"][i]["name"] = App->detour->areaNames[i];
 		file["Navigation Data"]["Areas"][i]["cost"] = App->detour->areaCosts[i];
 	}
+
+	const ResourceNavMesh* c_navmesh = App->detour->getNavMeshResource();
+	if (c_navmesh != nullptr)
+		file["Navigation Data"]["navMeshUID"] = c_navmesh->GetUID();
 
 	// --- Serialize JSON to string ---
 	std::string data;
