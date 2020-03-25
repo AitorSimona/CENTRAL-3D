@@ -216,9 +216,8 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 	if (navMeshResource == nullptr) {
 		std::string resourceName = App->scene_manager->currentScene->GetName();
 		resourceName.erase(resourceName.find('.'));
-		resourceName = NAVMESH_FOLDER + resourceName;
+		resourceName = NAVMESH_FOLDER + resourceName + ".navmesh";
 		navMeshResource = (ResourceNavMesh*)App->resources->CreateResource(Resource::ResourceType::NAVMESH, resourceName.c_str());
-		navMeshResource->navMesh = m_navMesh;
 
 		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 		ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, navMeshResource->GetResourceFile(), navMeshResource->GetUID());
@@ -229,6 +228,8 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 		App->resources->AddResourceToFolder(navMeshResource);
 
 	}
+	navMeshResource->navMesh = m_navMesh;
+
 
 	ImporterNavMesh* INavMesh = App->resources->GetImporter<ImporterNavMesh>();
 	INavMesh->Save(navMeshResource);
