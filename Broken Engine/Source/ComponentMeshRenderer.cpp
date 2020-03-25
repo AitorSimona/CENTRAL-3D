@@ -354,7 +354,8 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			}
 
 			//ImGui::Text("Shader Uniforms");
-			//App->gui->panelShaderEditor->DisplayAndUpdateUniforms(material);
+
+			//DisplayAndUpdateUniforms(material);
 			//ImGui::TreePop();
 
 			ImGui::NewLine();

@@ -161,6 +161,7 @@ void PanelShaderEditor::DisplayAndUpdateUniforms(Broken::ResourceMaterial* resou
 
 	for (uint i = 0; i < resource_mat->uniforms.size(); ++i)
 	{
+		ImGui::PushID(resource_mat->GetUID() + i);
 		ImGui::Text(resource_mat->uniforms[i]->name.data());
 		ImGui::SameLine();
 
@@ -243,6 +244,8 @@ void PanelShaderEditor::DisplayAndUpdateUniforms(Broken::ResourceMaterial* resou
 
 			break;
 		}
+
+		ImGui::PopID();
 	}
 
 	glUseProgram(EngineApp->renderer3D->defaultShader->ID);

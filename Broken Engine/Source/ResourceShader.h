@@ -28,9 +28,19 @@ struct BROKEN_API Uniform
 
 	std::string name;
 	uint location = 0;
-	uint type; // GLenum
+	uint type = 0; // GLenum
 
 	data value;
+};
+
+enum class UniformType
+{
+	intU,
+	floatU,
+	vec2U,
+	vec3U,
+	vec4U,
+	vec4x4U
 };
 
 class BROKEN_API ResourceShader : public Resource 
@@ -47,8 +57,7 @@ public:
 
 	// --- Setters ---
 	void setBool(const std::string& name, bool value) const;
-	void setInt(const std::string& name, int value) const;
-	void setFloat(const std::string& name, float value) const;
+	void setUniform(const char* name, data& unidata, UniformType UniType) const;
 
 	// --- Utilities ---
 	void use();

@@ -14,6 +14,7 @@ public:
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
+	void CreateInspectorNode() override;
 
 	void UpdateUniforms();
 
@@ -23,6 +24,8 @@ public:
 	std::vector<Uniform*> uniforms;
 
 private:
+	void DisplayAndUpdateUniforms();
+
 	void OnOverwrite() override;
 	void OnDelete() override;
 	void Repath() override;
