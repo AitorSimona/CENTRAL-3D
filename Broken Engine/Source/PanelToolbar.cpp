@@ -50,7 +50,7 @@ bool PanelToolbar::Draw()
 				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
 			}
 
-			if (app_status == Broken::AppState::PLAY)
+			if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE)
 			{
 				EngineApp->GetAppState() = Broken::AppState::TO_EDITOR;
 			}
