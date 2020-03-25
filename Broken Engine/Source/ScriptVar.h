@@ -40,7 +40,10 @@ public:
 	VarValue editor_value;
 	VarValue script_defined_value;
 
-	std::string name;
+	std::string name = "";
+	std::string object_name = "";
+	bool display_object_name = false;
+
 	// Bool to see if the value was changed in the editor
 	bool changed_value = false;
 };

@@ -37,6 +37,7 @@ public:
 	bool IsDirectory(const char* file) const;
 	void CreateDirectory(const char* directory);
 	std::string GetDirectoryFromPath(std::string& path);
+	std::string GetNameFromPath(std::string path, bool withExtension = false);
 	void DiscoverFiles(const char* directory, std::vector<std::string>& files) const;
 	const std::vector<std::string>* ExDiscoverFiles(const char* directory);
 	void DiscoverDirectories(const char* directory, std::vector<std::string>& dirs) const;

@@ -12,9 +12,6 @@ public:
 
 	bool Draw();
 
-private:
-	std::string play_button;
-	std::string pause_button;
 };
 
 #endif

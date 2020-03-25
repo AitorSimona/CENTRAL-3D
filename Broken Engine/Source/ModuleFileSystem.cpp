@@ -189,6 +189,23 @@ std::string ModuleFileSystem::GetDirectoryFromPath(std::string& path) {
 	return directory;
 }
 
+std::string ModuleFileSystem::GetNameFromPath(std::string path, bool withExtension)
+{
+	std::string full_name;
+
+	App->fs->NormalizePath(path);
+	full_name = path.substr(path.find_last_of("//") + 1);
+
+	if (withExtension)
+		return full_name;
+	else {
+		std::string::size_type const p(full_name.find_last_of('.'));
+		std::string file_name = full_name.substr(0, p);
+
+		return file_name;
+	}
+}
+
 void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<std::string>& file_list) const {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
