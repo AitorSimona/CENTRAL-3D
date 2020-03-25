@@ -197,6 +197,7 @@ bool ModuleRenderer3D::CleanUp() {
 	delete linepointShader;
 	delete ZDrawerShader;
 	delete OutlineShader;
+	delete textShader;
 
 	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);
@@ -473,7 +474,7 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
 		"layout (location = 3) in vec2 texCoord; \n"
-		"uniform vec3 Color; \n"
+		"uniform vec3 Color = vec3(1.0); \n"
 		"out vec3 ourColor; \n"
 		"out vec2 TexCoord; \n"
 		"uniform mat4 model_matrix; \n"
