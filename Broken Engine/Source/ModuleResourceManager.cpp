@@ -88,6 +88,8 @@ bool ModuleResourceManager::Start()
 	filters.push_back("animator");
 	filters.push_back("glsl");
 
+	// --- Set engine's basic shaders ---
+	App->renderer3D->CreateDefaultShaders();
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -1020,6 +1022,10 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 {
 	if (resource)
 	{
+		// --- Manage exceptions ---
+		if (resource->GetUID() == App->renderer3D->defaultShader->GetUID())
+			return;
+
 		std::string directory;
 		std::string original_file;
 

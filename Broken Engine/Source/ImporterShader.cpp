@@ -53,9 +53,6 @@ Resource* ImporterShader::Load(const char* path) const
 
 	shader = App->resources->shaders.find(meta->GetUID()) != App->resources->shaders.end() ? App->resources->shaders.find(meta->GetUID())->second : (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, path, meta->GetUID());
 
-	if(shader)
-		shader->binary = true;
-
 	// --- A folder has been renamed ---
 	if (!App->fs->Exists(shader->GetOriginalFile()))
 	{
@@ -75,6 +72,7 @@ void ImporterShader::Save(ResourceShader* shader) const
 	
 	if (buffer_size > 0)
 	{
+		// --- Create binary ---
 		char* buffer = new char[buffer_size];
 		GLint bytes_written = 0;
 		GLenum format = 0;
@@ -90,7 +88,7 @@ void ImporterShader::Save(ResourceShader* shader) const
 			json jsonfile;
 	
 			std::ofstream file;
-			file.open(shader->GetOriginalFile());
+			file.open(shader->GetOriginalFile(), std::ofstream::out | std::ofstream::trunc);
 	
 			if (!file.is_open())
 			{
@@ -98,18 +96,42 @@ void ImporterShader::Save(ResourceShader* shader) const
 			}
 			else
 			{
-				file << std::setw(4) << shader->ShaderCode << std::endl;
+				// --- Build shader code and save to file---
+				//file << std::setw(5) << "#if VERTEX_SHADER" << std::endl;
+
+				file << std::setw(5) << shader->vShaderCode << std::endl;
+
+				//file << std::setw(5) << "#elseif FRAGMENT_SHADER" << std::endl;
+				std::string tmp = shader->fShaderCode;
+				uint loc = tmp.find("#define FRAGMENT_SHADER");
+
+				if (loc != std::string::npos)
+				{
+					tmp = tmp.substr(loc, tmp.size());
+				}
+
+				file << std::setw(5) << tmp << std::endl;
+
+				//file << std::setw(5) << "#endif" << std::endl;
+
 				file.close();
 
+				// --- Update meta ---
 				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(shader->GetOriginalFile());
+				jsonfile["FORMAT"] = format;
+				jsonfile["SIZE"] = buffer_size;
+
+				// --- Create Meta ---
+				if (!meta)
+					meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, shader->GetOriginalFile(), shader->GetUID());
 
 				// --- Add shader data to meta ---
-				jsonfile["FORMAT"] = std::to_string(format);
-				jsonfile["SIZE"] = std::to_string(buffer_size);
-				meta->ResourceData = jsonfile;
-
-				IMeta->Save(meta);
+				if (meta)
+				{
+					meta->ResourceData = jsonfile;
+					IMeta->Save(meta);
+				}
 			}
 		}
 	

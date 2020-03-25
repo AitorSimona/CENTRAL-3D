@@ -37,35 +37,12 @@ bool ResourceShader::LoadInMemory()
 	bool ret = true;
 
 	// --- Load from binary file ---
-
-	if (binary)
+	if (App->fs->Exists(resource_file.c_str()))
 	{
 		int success;
 		char infoLog[512];
 		
-		// --- Create input stream object ---
-		std::ifstream ShaderFile;
-
-		// --- Ensure ifstream objects can throw exceptions ---
-		ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-		try
-		{
-			// --- Open files ---
-			ShaderFile.open(resource_file);
-			std::stringstream ShaderStream;
-			// --- Read file's buffer contents into streams ---
-			ShaderStream << ShaderFile.rdbuf();
-			// --- Close file handlers ---
-			ShaderFile.close();
-			// --- Convert stream into string ---
-			ShaderCode = ShaderStream.str();
-		}
-		catch (std::ifstream::failure e)
-		{
-			ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
-			ret = false;
-		}
+		ret = LoadStream(resource_file.c_str());
 		
 		if (ret)
 		{
@@ -81,12 +58,6 @@ bool ResourceShader::LoadInMemory()
 			}
 			else
 			{
-				// --- Separate vertex and fragment ---
-				uint FragmentLoc = ShaderCode.find("#elseif FRAGMENT_SHADER");
-
-				vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
-				fShaderCode = ShaderCode.substr(FragmentLoc, ShaderCode.size());
-
 				// --- Retrieve data from meta ---
 				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(original_file.c_str());
@@ -114,6 +85,19 @@ bool ResourceShader::LoadInMemory()
 					CreateShaderProgram();
 					ReloadAndCompileShader();
 				}
+
+				if (App->fs->Exists(original_file.c_str()))
+				{
+					// --- Load original code ---
+					LoadStream(original_file.c_str());
+
+					// --- Separate vertex and fragment ---
+					std::string ftag = "#define FRAGMENT_SHADER";
+					uint FragmentLoc = ShaderCode.find(ftag);
+
+					vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
+					fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
+				}
 			}
 		}
 	}
@@ -121,39 +105,17 @@ bool ResourceShader::LoadInMemory()
 	// --- Load glsl file ---
 	else
 	{	
-		// --- Create input stream object ---
-		std::ifstream ShaderFile;
+		ret = LoadStream(original_file.c_str());
 
-		// --- Ensure ifstream objects can throw exceptions ---
-		ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	
-		try 
-		{
-			// --- Open files ---
-			ShaderFile.open(original_file);
-			std::stringstream ShaderStream;
-			// --- Read file's buffer contents into streams ---
-			ShaderStream << ShaderFile.rdbuf();
-			// --- Close file handlers ---
-			ShaderFile.close();
-			// --- Convert stream into string ---
-			ShaderCode = ShaderStream.str();
-		}
-		catch (std::ifstream::failure e) 
-		{
-			ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
-			ret = false;
-		}
-	
-		
 		// --- If no fs failure occurred... ---
 		if (ret) 
 		{
 			// --- Separate vertex and fragment ---
-			uint FragmentLoc = ShaderCode.find("#elseif FRAGMENT_SHADER");
+			std::string ftag = "#define FRAGMENT_SHADER";
+			uint FragmentLoc = ShaderCode.find(ftag);
 
 			vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
-			fShaderCode = ShaderCode.substr(FragmentLoc, ShaderCode.size());
+			fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
 	
 			//--- Compile shaders ---
 			int success = 0;
@@ -461,6 +423,37 @@ void ResourceShader::FillUniform(Uniform* uniform, const char* name, const uint 
 	uniform->name = name;
 	uniform->location = glGetUniformLocation(ID, name);
 	uniform->type = type;
+}
+
+bool ResourceShader::LoadStream(const char* path)
+{
+	bool ret = true;
+
+	// --- Create input stream object ---
+	std::ifstream ShaderFile;
+
+	// --- Ensure ifstream objects can throw exceptions ---
+	ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+	try
+	{
+		// --- Open files ---
+		ShaderFile.open(path);
+		std::stringstream ShaderStream;
+		// --- Read file's buffer contents into streams ---
+		ShaderStream << ShaderFile.rdbuf();
+		// --- Close file handlers ---
+		ShaderFile.close();
+		// --- Convert stream into string ---
+		ShaderCode = ShaderStream.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+		ret = false;
+	}
+
+	return ret;
 }
 
 void ResourceShader::OnOverwrite() 

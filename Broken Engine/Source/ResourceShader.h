@@ -42,10 +42,6 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 
-	//// constructor reads and builds the shader
-	//ResourceShader(const char* vertexPath, const char* fragmentPath, bool is_extern = true);
-	//ResourceShader(const char* binary, uint size, uint format, const char* name, const char* vertexPath, const char* fragmentPath);
-
 	// --- Getters ---
 	void GetAllUniforms(std::vector<Uniform*>& uniforms);
 
@@ -61,7 +57,6 @@ public:
 public:
 	// the program ID
 	unsigned int ID = 0;
-	bool binary = false;
 	std::string ShaderCode;
 	std::string vShaderCode;
 	std::string fShaderCode;
@@ -74,6 +69,8 @@ private:
 	bool CreateShaderProgram();
 	void DeleteShaderProgram();
 	void FillUniform(Uniform* uniform, const char* name, const uint type) const;
+
+	bool LoadStream(const char* path);
 private:
 	void OnOverwrite() override;
 	void OnDelete() override;

@@ -100,8 +100,7 @@ bool ModuleRenderer3D::Init(json& file) {
 
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("OpenGL Version: %s", glGetString(GL_VERSION));
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Glad Version: 0.1.33"); //Glad has no way to check its version
-	// --- Set engine's basic shaders ---
-	CreateDefaultShaders();
+
 
 	//Projection matrix for
 	OnResize(App->window->GetWindowWidth(), App->window->GetWindowHeight());
@@ -215,11 +214,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 // Called before quitting
 bool ModuleRenderer3D::CleanUp() {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
-
-	//delete defaultShader;
-	//delete linepointShader;
-	//delete ZDrawerShader;
-	//delete OutlineShader;
 
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
@@ -440,33 +434,49 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 
 void ModuleRenderer3D::CreateDefaultShaders()
 {
+	ImporterShader* IShader = App->resources->GetImporter<ImporterShader>();
 
 	// --- Creating outline drawing shaders ---
-	const char* OutlineVertShaderSrc = "#version 440 core \n"
+	const char* OutlineVertShaderSrc = 
+		"#version 440 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform mat4 model_matrix; \n"
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"}\n";
+		"}\n"
+		"#endif //VERTEX_SHADER\n"
+		;
 
-	const char* OutlineFragShaderSrc = "#version 440 core \n"
+	const char* OutlineFragShaderSrc = 
+		"#version 440 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
 		"color = vec4(1.0,0.65,0.0, 1.0); \n"
-		"} \n";
+		"} \n"
+		"#endif //FRAGMENT_SHADER \n"
+		;
 
 	OutlineShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/OutlineShader.glsl", 8);
 	OutlineShader->vShaderCode = OutlineVertShaderSrc;
 	OutlineShader->fShaderCode = OutlineFragShaderSrc;
 	OutlineShader->ReloadAndCompileShader();
 	OutlineShader->SetName("OutlineShader");
+	OutlineShader->LoadToMemory();
+	IShader->Save(OutlineShader);
 
 	// --- Creating point/line drawing shaders ---
 
-	const char* linePointVertShaderSrc = "#version 440 core \n"
+	const char* linePointVertShaderSrc = 
+		"#version 440 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
 		"layout (location = 0) in vec3 position; \n"
 		"out vec3 ourColor; \n"
 		"uniform vec3 Color; \n"
@@ -476,24 +486,37 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"void main(){ \n"
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
 		"ourColor = Color; \n"
-		"}\n";
+		"}\n"
+		"#endif //VERTEX_SHADER\n"
+		;
 
-	const char* linePointFragShaderSrc = "#version 440 core \n"
+	const char* linePointFragShaderSrc = 
+		"#version 440 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
 		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
 		"color = vec4(ourColor, 1.0); \n"
-		"} \n";
+		"} \n"
+		"#endif //FRAGMENT_SHADER\n"
+		;
 
 	linepointShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/LinePoint.glsl", 9);
 	linepointShader->vShaderCode = linePointVertShaderSrc;
 	linepointShader->fShaderCode = linePointFragShaderSrc;
 	linepointShader->ReloadAndCompileShader();
 	linepointShader->SetName("LinePoint");
+	linepointShader->LoadToMemory();
+	IShader->Save(linepointShader);
+
 
 	// --- Creating z buffer shader drawer ---
 
-	const char* zdrawervertex = "#version 440 core \n"
+	const char* zdrawervertex = 
+		"#version 440 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
 		"layout (location = 0) in vec3 position; \n"
 		"uniform vec2 nearfar; \n"
 		"uniform mat4 model_matrix; \n"
@@ -505,9 +528,14 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"nearfarfrag = nearfar; \n"
 		"_projection = projection; \n"
 		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"}\n";
+		"}\n"
+		"#endif //VERTEX_SHADER\n"
+		;
 
-	const char* zdrawerfragment = "#version 440 core \n"
+	const char* zdrawerfragment = 
+		"#version 440 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
 		"out vec4 FragColor; \n"
 		"in vec2 nearfarfrag; \n"
 		"in mat4 _projection; \n"
@@ -516,7 +544,9 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"return 2.0* nearfarfrag.x * nearfarfrag.y / (nearfarfrag.y + nearfarfrag.x - z * (nearfarfrag.y - nearfarfrag.x)); }\n"
 		"void main(){ \n"
 		"float depth = LinearizeDepth(gl_FragCoord.z) / nearfarfrag.y;  \n"
-		"FragColor = vec4(vec3(gl_FragCoord.z*nearfarfrag.y*nearfarfrag.x), 1.0); } \n";
+		"FragColor = vec4(vec3(gl_FragCoord.z*nearfarfrag.y*nearfarfrag.x), 1.0); } \n"
+		"#endif //FRAGMENT_SHADER\n"
+		;
 	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z), just in case I need it again (doubt it though)
 
 	ZDrawerShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/ZDrawer.glsl", 10);
@@ -524,11 +554,16 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	ZDrawerShader->fShaderCode = zdrawerfragment;
 	ZDrawerShader->ReloadAndCompileShader();
 	ZDrawerShader->SetName("ZDrawer");
+	ZDrawerShader->LoadToMemory();
+	IShader->Save(ZDrawerShader);
+
 
 	// --- Creating text rendering shaders ---
 
 	const char* textVertShaderSrc = 
 		"#version 440 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
 		"layout (location = 0) in vec3 position; \n"
 		"layout (location = 1) in vec2 texCoords; \n"
 		"out vec2 TexCoords; \n"
@@ -538,9 +573,14 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"void main(){ \n"
 		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
 		"TexCoords = texCoords; \n"
-		"}\n";
+		"}\n"
+		"#endif //VERTEX_SHADER\n"
+		;
 
-	const char* textFragShaderSrc = "#version 440 core \n"
+	const char* textFragShaderSrc =
+		"#version 440 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
 		"in vec2 TexCoords; \n"
 		"uniform sampler2D text; \n"
 		"uniform vec3 textColor; \n"
@@ -548,18 +588,25 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"void main(){ \n"
 		"vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r); \n"
 		"color = vec4(textColor, 1.0) * sampled; \n"
-		"} \n";
+		"} \n"
+		"#endif //FRAGMENT_SHADER\n"
+		;
 
 	textShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TextShader.glsl", 11);
 	textShader->vShaderCode = textVertShaderSrc;
 	textShader->fShaderCode = textFragShaderSrc;
 	textShader->ReloadAndCompileShader();
 	textShader->SetName("TextShader");
+	textShader->LoadToMemory();
+	IShader->Save(textShader);
+
 
 	// --- Creating Default Vertex and Fragment Shaders ---
 
-	const char* vertexShaderSource =
+	const char* vertexShaderSource = 
 		"#version 440 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
 		"layout (location = 0) in vec3 position; \n"
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
@@ -575,10 +622,13 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"ourColor = Color; \n"
 		"TexCoord = texCoord; \n"
 		"}\n"
+		"#endif //VERTEX_SHADER\n"
 		;
 
-	const char* fragmentShaderSource =
+	const char* fragmentShaderSource = 
 		"#version 440 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
 		"uniform int Texture;\n"
 		"in vec3 ourColor; \n"
 		"in vec2 TexCoord; \n"
@@ -589,6 +639,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"if(Texture == -1)\n"
 		"color = vec4(ourColor, 1);\n"
 		"} \n"
+		"#endif //FRAGMENT_SHADER\n"
 		;
 
 	defaultShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/Standard.glsl", 12);
@@ -596,8 +647,10 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader->fShaderCode = fragmentShaderSource;
 	defaultShader->ReloadAndCompileShader();
 	defaultShader->SetName("Standard");
-	defaultShader->use();
+	defaultShader->LoadToMemory();
+	IShader->Save(defaultShader);
 
+	defaultShader->use();
 }
 
 void ModuleRenderer3D::CreateGrid(float target_distance)

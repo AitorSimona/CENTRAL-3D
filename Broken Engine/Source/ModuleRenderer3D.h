@@ -63,7 +63,9 @@ struct BROKEN_API RenderLine
 	Color color;
 };
 
-class BROKEN_API ModuleRenderer3D : public Module {
+class BROKEN_API ModuleRenderer3D : public Module 
+{
+	friend class ModuleResourceManager;
 public:
 	ModuleRenderer3D(bool start_enabled = true);
 	~ModuleRenderer3D();
