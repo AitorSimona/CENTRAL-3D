@@ -209,14 +209,17 @@ bool ModuleGui::CleanUp()
 	//panelShaderEditor = nullptr;
 
 	// --- Delete editor textures ---
-	glDeleteTextures(1, &materialTexID);
 	glDeleteTextures(1, &folderTexID);
 	glDeleteTextures(1, &defaultfileTexID);
+	glDeleteTextures(1, &materialTexID);
 	glDeleteTextures(1, &prefabTexID);
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
 	glDeleteTextures(1, &animatorTexID);
 	glDeleteTextures(1, &scriptTexID);
+	glDeleteTextures(1, &meshTexID);
+	glDeleteTextures(1, &boneTexID);
+	glDeleteTextures(1, &animationTexID);
 
 	return ret;
 }
