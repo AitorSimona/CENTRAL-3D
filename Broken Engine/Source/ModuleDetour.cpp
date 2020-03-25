@@ -263,7 +263,7 @@ bool ModuleDetour::CleanUp() {
 
 
 void ModuleDetour::Draw() const {
-	if (debugDraw && navMeshResource != nullptr) {
+	if (debugDraw && navMeshResource != nullptr && navMeshResource->navMesh != nullptr) {
 		unsigned char flags = 0;
 		duDebugDrawNavMesh((duDebugDraw*)m_dd, *(navMeshResource->navMesh), flags);
 	}
