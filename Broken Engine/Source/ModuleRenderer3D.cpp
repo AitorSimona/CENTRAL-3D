@@ -34,6 +34,8 @@
 
 using namespace Broken;
 
+// ------------------------------ Basic --------------------------------------------------------
+
 ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled) {
 	name = "Renderer3D";
 }
@@ -116,8 +118,8 @@ bool ModuleRenderer3D::Init(json& file) {
 }
 
 // PreUpdate: clear buffer
-update_status ModuleRenderer3D::PreUpdate(float dt) {
-
+update_status ModuleRenderer3D::PreUpdate(float dt) 
+{
 	// --- Clear render orders ---
 	ClearRenderOrders();
 
@@ -165,7 +167,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
 
-
 	// --- Bind fbo ---
     if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -181,7 +182,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 
 	// --- Draw Grid ---
 	if (display_grid)
-		DrawGrid(true, 75.0f);
+		DrawGrid();
 
 	// --- Draw ---
 	DrawRenderMeshes();
@@ -212,7 +213,8 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 }
 
 // Called before quitting
-bool ModuleRenderer3D::CleanUp() {
+bool ModuleRenderer3D::CleanUp() 
+{
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
 
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
@@ -224,33 +226,8 @@ bool ModuleRenderer3D::CleanUp() {
 	return true;
 }
 
-void ModuleRenderer3D::UpdateGLCapabilities() const {
-	// --- Enable/Disable OpenGL Capabilities ---
-
-	if (!depth)
-		glDisable(GL_DEPTH_TEST);
-	else
-		glEnable(GL_DEPTH_TEST);
-
-	if (!cull_face)
-		glDisable(GL_CULL_FACE);
-	else
-		glEnable(GL_CULL_FACE);
-
-	if (!lighting)
-		glDisable(GL_LIGHTING);
-	else
-		glEnable(GL_LIGHTING);
-
-	if (!color_material)
-		glDisable(GL_COLOR_MATERIAL);
-	else
-		glEnable(GL_COLOR_MATERIAL);
-
-}
-
-
-void ModuleRenderer3D::OnResize(int width, int height) {
+void ModuleRenderer3D::OnResize(int width, int height) 
+{
 	// --- Called by UpdateWindowSize() in Window module this when resizing windows to prevent rendering issues ---
 
 	// --- Resetting View matrices ---
@@ -265,38 +242,11 @@ void ModuleRenderer3D::OnResize(int width, int height) {
 	CreateFramebuffer();
 }
 
-uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* data) const {
-	uint ID = 0;
+// ----------------------------------------------------
 
-	glGenBuffers(1, (GLuint*)&ID); // create buffer
-	glBindBuffer(Targetbuffer, ID); // start using created buffer
-	glBufferData(Targetbuffer, size, data, GL_STATIC_DRAW); // send data to VRAM
-	glBindBuffer(Targetbuffer, 0); // Stop using buffer
 
-	return ID;
-}
+// ------------------------------ Setters --------------------------------------------------------
 
-void ModuleRenderer3D::CreateFramebuffer() {
-	// --- Create a texture to use it as render target ---
-	glGenTextures(1, &rendertexture);
-	glBindTexture(GL_TEXTURE_2D, rendertexture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// --- Generate attachments, DEPTH and STENCIL ---
-	glGenTextures(1, &depthbuffer);
-	glBindTexture(GL_TEXTURE_2D, depthbuffer);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// --- Generate framebuffer object (fbo) ---
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
 
 bool ModuleRenderer3D::SetVSync(bool _vsync)
 {
@@ -306,14 +256,16 @@ bool ModuleRenderer3D::SetVSync(bool _vsync)
 
 	if (vsync) {
 
-		if (SDL_GL_SetSwapInterval(1) == -1) {
+		if (SDL_GL_SetSwapInterval(1) == -1)
+		{
 			ret = false;
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 		}
 	}
 	else {
 
-		if (SDL_GL_SetSwapInterval(0) == -1) {
+		if (SDL_GL_SetSwapInterval(0) == -1)
+		{
 			ret = false;
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set immediate updates! SDL Error: %s\n", SDL_GetError());
 		}
@@ -337,20 +289,34 @@ void ModuleRenderer3D::SetActiveCamera(ComponentCamera* camera)
 		this->active_camera = App->camera->camera;
 }
 
-void ModuleRenderer3D::SetCullingCamera(ComponentCamera* camera) {
-	if (culling_camera) {
+void ModuleRenderer3D::SetCullingCamera(ComponentCamera* camera)
+{
+	if (culling_camera)
+	{
 		culling_camera->culling = false;
 	}
 	// if camera is not nullptr, then we set it as culling camera, else we set editor camera as culling camera
 	this->culling_camera = camera ? camera : App->camera->camera;
-	if (camera) {
+	if (camera)
+	{
 		camera->culling = true;
 	}
 }
 
-bool ModuleRenderer3D::GetVSync() const {
+// ----------------------------------------------------
+
+
+// ------------------------------ Getters --------------------------------------------------------
+
+bool ModuleRenderer3D::GetVSync() const
+{
 	return vsync;
 }
+
+// ----------------------------------------------------
+
+
+// ------------------------------ Render Orders --------------------------------------------------------
 
 // --- Add render order to queue ---
 void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags, const Color& color)
@@ -375,7 +341,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
 
 			new_vec.push_back(rmesh);
-			render_meshes[mesh->GetUID()] = new_vec;		
+			render_meshes[mesh->GetUID()] = new_vec;
 		}
 	}
 }
@@ -387,49 +353,88 @@ void ModuleRenderer3D::DrawLine(const float4x4 transform, const float3 a, const 
 
 void ModuleRenderer3D::DrawAABB(const AABB& box, const Color& color)
 {
-	if(box.IsFinite())
+	if (box.IsFinite())
 		render_aabbs.push_back(RenderBox<AABB>(&box, color));
 }
 
 void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 {
-	if(box.IsFinite())
+	if (box.IsFinite())
 		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
 
-void ModuleRenderer3D::HandleObjectOutlining() {
-	// --- Selected Object Outlining ---
-	if (App->scene_manager->GetSelectedGameObject() != nullptr) {
-		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
-		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
-		// differences, making it look like borders ---
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
+// ----------------------------------------------------
+
+
+// ------------------------------ Utilities --------------------------------------------------------
+
+void ModuleRenderer3D::ClearRenderOrders()
+{
+	render_meshes.clear();
+	render_aabbs.clear();
+	render_frustums.clear();
+	render_lines.clear();
+}
+
+void ModuleRenderer3D::UpdateGLCapabilities() const
+{
+	// --- Enable/Disable OpenGL Capabilities ---
+
+	if (!depth)
 		glDisable(GL_DEPTH_TEST);
-
-		// --- Search for Renderer Component ---
-		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
-
-		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
-		{
-			std::vector<RenderMesh> meshInstances;
-
-			ComponentMesh* cmesh = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMesh>();
-			ComponentMeshRenderer* cmesh_renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
-			RenderMeshFlags flags = outline;
-
-			if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
-			{
-				meshInstances.push_back(RenderMesh(App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
-				DrawRenderMesh(meshInstances);
-			}
-		}
-			//MeshRenderer->Draw(true);
-
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	else
 		glEnable(GL_DEPTH_TEST);
-	}
+
+	if (!cull_face)
+		glDisable(GL_CULL_FACE);
+	else
+		glEnable(GL_CULL_FACE);
+
+	if (!lighting)
+		glDisable(GL_LIGHTING);
+	else
+		glEnable(GL_LIGHTING);
+
+	if (!color_material)
+		glDisable(GL_COLOR_MATERIAL);
+	else
+		glEnable(GL_COLOR_MATERIAL);
+
+}
+
+uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* data) const 
+{
+	uint ID = 0;
+
+	glGenBuffers(1, (GLuint*)&ID); // create buffer
+	glBindBuffer(Targetbuffer, ID); // start using created buffer
+	glBufferData(Targetbuffer, size, data, GL_STATIC_DRAW); // send data to VRAM
+	glBindBuffer(Targetbuffer, 0); // Stop using buffer
+
+	return ID;
+}
+
+void ModuleRenderer3D::CreateFramebuffer() 
+{
+	// --- Create a texture to use it as render target ---
+	glGenTextures(1, &rendertexture);
+	glBindTexture(GL_TEXTURE_2D, rendertexture);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// --- Generate attachments, DEPTH and STENCIL ---
+	glGenTextures(1, &depthbuffer);
+	glBindTexture(GL_TEXTURE_2D, depthbuffer);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// --- Generate framebuffer object (fbo) ---
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void ModuleRenderer3D::CreateDefaultShaders()
@@ -696,6 +701,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader->use();
 }
 
+
+
 void ModuleRenderer3D::CreateGrid(float target_distance)
 {
 	// --- Fill vertex data ---
@@ -705,24 +712,25 @@ void ModuleRenderer3D::CreateGrid(float target_distance)
 	if (distance < 1)
 		distance = 1;
 
-	float3 vertices[84];
+	float3 vertices[164];
 
 	uint i = 0;
-	int lines = -10;
+	int lines = -20;
 
-	for (i = 0; i < 20; i++) {
-		vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
-		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
-		vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
-		vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
+	for (i = 0; i < 40; i++) 
+	{
+		vertices[4 * i] = float3(lines * -distance, 0.0f, 20 * -distance);
+		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 20 * distance);
+		vertices[4 * i + 2] = float3(20 * -distance, 0.0f, lines * distance);
+		vertices[4 * i + 3] = float3(20 * distance, 0.0f, lines * distance);
 
 		lines++;
 	}
 
-	vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
-	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
-	vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
-	vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
+	vertices[4 * i] = float3(lines * -distance, 0.0f, 20 * -distance);
+	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 20 * distance);
+	vertices[4 * i + 2] = float3(20 * -distance, 0.0f, lines * distance);
+	vertices[4 * i + 3] = float3(20 * distance, 0.0f, lines * distance);
 
 	// --- Configure vertex attributes ---
 
@@ -738,111 +746,12 @@ void ModuleRenderer3D::CreateGrid(float target_distance)
 	glBindVertexArray(0);
 }
 
-// MYTODO: move this to renderer 
-void ModuleRenderer3D::DrawGrid(bool drawAxis, float size) {
-	// -------------------------------------------------------------------------------------------------------
-	// -------------------------------------------------------------------------------------------------------
-	//									BY NOW, DONE IN DIRECT MODE
 
-	//Set polygon draw mode and appropiated matrices for OGL
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glPushMatrix();
-	glMultMatrixf(float4x4::identity.Transposed().ptr());
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());
+// ----------------------------------------------------
 
-	float colorIntensity = 0.65f;
 
-	//Axis draw
-	if (drawAxis) {
-		glLineWidth(3.0f);
-		glBegin(GL_LINES);
+// ------------------------------ Draw --------------------------------------------------------
 
-		glColor4f(colorIntensity, 0.0f, 0.0f, 1.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-		glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-
-		glColor4f(0.0f, colorIntensity, 0.0f, 1.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-		glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-		glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-
-		glColor4f(0.0f, 0.0f, colorIntensity, 1.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-		glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-		glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-
-		glEnd();
-	}
-
-	//Plane draw
-	glLineWidth(1.5f);
-	glColor4f(colorIntensity, colorIntensity, colorIntensity, 1.0f);
-	glBegin(GL_LINES);
-
-	float d = size;
-	for (float i = -d; i <= d; i += 1.0f) {
-		//if ((int)i % 3 == 0)
-		//	continue;
-
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
-	}
-
-	glEnd();
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glLineWidth(1.0f);
-
-	//Set again Identity for OGL Matrices & Polygon draw to fill again
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glPopMatrix();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	// -------------------------------------------------------------------------------------------------------
-	// -------------------------------------------------------------------------------------------------------
-	//									THIS IS HOW IT WAS PREVIOUSLY DONE
-	// Is nice to keep this, since it was rendered in function of camera position, moving the grid with it.
-	// However, as the grid doesn't has an "infinite" sensation, it was weird, so that should be fixed in order
-	// for this to look good.
-
-		/*App->renderer3D->defaultShader->use();
-
-		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-		float gridColor = 0.8f;
-		int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-		glVertexAttrib3f(vertexColorLocation, gridColor, gridColor, gridColor);
-
-		int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-		glUniform1i(TextureSupportLocation, -1);
-
-		glLineWidth(1.7f);
-		glBindVertexArray(Grid_VAO);
-		glDrawArrays(GL_LINES, 0, 84);
-		glBindVertexArray(0);
-		glLineWidth(1.0f);
-
-		glUniform1i(TextureSupportLocation, 0);*/
-}
-
-void ModuleRenderer3D::ClearRenderOrders()
-{
-	render_meshes.clear();
-	render_aabbs.clear();
-	render_frustums.clear();
-	render_lines.clear();
-}
 
 void ModuleRenderer3D::DrawRenderMeshes()
 {
@@ -988,6 +897,43 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 	glUseProgram(defaultShader->ID);
 }
 
+void ModuleRenderer3D::HandleObjectOutlining()
+{
+	// --- Selected Object Outlining ---
+	if (App->scene_manager->GetSelectedGameObject() != nullptr)
+	{
+		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
+		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
+		// differences, making it look like borders ---
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+
+		// --- Search for Renderer Component ---
+		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+
+		// --- If Found, draw the mesh ---
+		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
+		{
+			std::vector<RenderMesh> meshInstances;
+
+			ComponentMesh* cmesh = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMesh>();
+			ComponentMeshRenderer* cmesh_renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+			RenderMeshFlags flags = outline;
+
+			if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
+			{
+				meshInstances.push_back(RenderMesh(App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
+				DrawRenderMesh(meshInstances);
+			}
+		}
+		//MeshRenderer->Draw(true);
+
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glEnable(GL_DEPTH_TEST);
+	}
+}
+
 void ModuleRenderer3D::DrawRenderLines()
 {
 	// --- Use linepoint shader ---
@@ -1068,6 +1014,29 @@ void ModuleRenderer3D::DrawRenderBoxes()
 	{
 		DrawWire(*render_frustums[i].box, render_frustums[i].color, PointLineVAO);
 	}
+}
+
+void ModuleRenderer3D::DrawGrid()
+{
+	App->renderer3D->defaultShader->use();
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
+
+	float gridColor = 0.8f;
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
+
+	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureSupportLocation, -1);
+
+	glLineWidth(1.7f);
+	glBindVertexArray(Grid_VAO);
+	glDrawArrays(GL_LINES, 0, 164);
+	glBindVertexArray(0);
+	glLineWidth(1.0f);
+
+	glUniform1i(TextureSupportLocation, 0);
 }
 
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
@@ -1163,4 +1132,5 @@ void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
+// ----------------------------------------------------
 

@@ -463,6 +463,24 @@ bool ResourceShader::LoadStream(const char* path)
 void ResourceShader::OnOverwrite() 
 {
 	NotifyUsers(ResourceNotificationType::Overwrite);
+
+	bool ret = LoadStream(original_file.c_str());
+
+	// --- If no fs failure occurred... ---
+	if (ret)
+	{
+		// --- Separate vertex and fragment ---
+		std::string ftag = "#define FRAGMENT_SHADER";
+		uint FragmentLoc = ShaderCode.find(ftag);
+
+		vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
+		fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
+	}
+
+	ReloadAndCompileShader();
+
+	//FreeMemory();
+	//LoadInMemory();
 }
 
 void ResourceShader::OnDelete() 

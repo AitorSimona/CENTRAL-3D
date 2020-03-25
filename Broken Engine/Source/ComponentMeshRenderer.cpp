@@ -319,24 +319,27 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			ImGui::Text("Shader");
 			ImGui::SameLine();
 
-			const char* item_current = material->shader->GetName();
-			if (ImGui::BeginCombo("##Shader", item_current, flags)) 
+			if (material->shader)
 			{
-				for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it) 
+				const char* item_current = material->shader->GetName();
+				if (ImGui::BeginCombo("##Shader", item_current, flags))
 				{
-					bool is_selected = (item_current == it->second->GetName());
-
-					if (ImGui::Selectable(it->second->GetName(), is_selected)) 
+					for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
 					{
-						item_current = it->second->GetName();
-						material->shader = it->second;
-						material->shader->GetAllUniforms(material->uniforms);
-					}
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
-				}
+						bool is_selected = (item_current == it->second->GetName());
 
-				ImGui::EndCombo();
+						if (ImGui::Selectable(it->second->GetName(), is_selected))
+						{
+							item_current = it->second->GetName();
+							material->shader = it->second;
+							material->shader->GetAllUniforms(material->uniforms);
+						}
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
 			}
 
 			// --- Print Texture Path ---

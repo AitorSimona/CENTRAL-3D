@@ -64,6 +64,9 @@ bool ModuleResourceManager::Start()
 	// --- Import all resources in Assets at startup ---
 	App->gui->CreateIcons();
 
+	// --- Set engine's basic shaders ---
+	App->renderer3D->CreateDefaultShaders();
+
 	// --- Create default scene ---
 	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene", 1);
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
@@ -88,8 +91,6 @@ bool ModuleResourceManager::Start()
 	filters.push_back("animator");
 	filters.push_back("glsl");
 
-	// --- Set engine's basic shaders ---
-	App->renderer3D->CreateDefaultShaders();
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);

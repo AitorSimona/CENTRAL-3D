@@ -79,6 +79,7 @@ private:
 	void DeleteShaderProgram();
 	void FillUniform(Uniform* uniform, const char* name, const uint type) const;
 
+
 	bool LoadStream(const char* path);
 private:
 	void OnOverwrite() override;

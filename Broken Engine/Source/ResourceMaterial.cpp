@@ -15,7 +15,8 @@
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file) {
+ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource(Resource::ResourceType::MATERIAL, UID, source_file) 
+{
 	extension = ".mat";
 	resource_file = source_file;
 	shader = App->renderer3D->defaultShader;
@@ -23,18 +24,22 @@ ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource
 
 }
 
-ResourceMaterial::~ResourceMaterial() {
+ResourceMaterial::~ResourceMaterial() 
+{
 
 }
 
-bool ResourceMaterial::LoadInMemory() {
+bool ResourceMaterial::LoadInMemory() 
+{
 	//shader->GetAllUniforms(uniforms);
 
 	return true;
 }
 
-void ResourceMaterial::FreeMemory() {
-	for (uint i = 0; i < uniforms.size(); ++i) {
+void ResourceMaterial::FreeMemory() 
+{
+	for (uint i = 0; i < uniforms.size(); ++i) 
+	{
 		delete uniforms[i];
 	}
 
@@ -45,9 +50,11 @@ void ResourceMaterial::CreateInspectorNode()
 {
 	shader->GetAllUniforms(uniforms);
 	DisplayAndUpdateUniforms();
+	UpdateUniforms();
 }
 
-void ResourceMaterial::UpdateUniforms() {
+void ResourceMaterial::UpdateUniforms() 
+{
 	glUseProgram(shader->ID);
 
 	for (uint i = 0; i < uniforms.size(); ++i) {

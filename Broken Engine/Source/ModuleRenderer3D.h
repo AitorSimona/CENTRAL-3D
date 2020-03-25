@@ -67,6 +67,8 @@ class BROKEN_API ModuleRenderer3D : public Module
 {
 	friend class ModuleResourceManager;
 public:
+
+	// --- Basic ---
 	ModuleRenderer3D(bool start_enabled = true);
 	~ModuleRenderer3D();
 
@@ -75,11 +77,7 @@ public:
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
 
-	// --- Utilities ---
-	void UpdateGLCapabilities() const;
 	void OnResize(int width, int height);
-	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
-	void CreateFramebuffer();
 
 	// --- Setters ---
 	bool SetVSync(bool _vsync);
@@ -95,21 +93,24 @@ public:
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
 
-
 private:
-	void HandleObjectOutlining();
+	// --- Utilities ---
+	void ClearRenderOrders();
+	void UpdateGLCapabilities() const;
+	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
+	void CreateFramebuffer();
 	void CreateDefaultShaders();
 	void CreateGrid(float target_distance);
-	void ClearRenderOrders();
+
+private:
 
 	// --- Draw ---
 	void DrawRenderMeshes();
 	void DrawRenderMesh(std::vector<RenderMesh> meshInstances);
-
+	void HandleObjectOutlining();
 	void DrawRenderLines();
 	void DrawRenderBoxes();
-
-	void DrawGrid(bool drawAxis, float size);
+	void DrawGrid();
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -122,8 +123,6 @@ private:
 
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 
-
-
 public:
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;
@@ -135,17 +134,10 @@ public:
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
 
-
-	SDL_GLContext context;
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
 
-	uint fbo = 0;
-	uint depthbuffer = 0;
-	uint rendertexture = 0;
-	uint PointLineVAO = 0;
-	uint Grid_VAO = 0;
-	uint Grid_VBO = 0;
+	SDL_GLContext context;
 
 	// --- Flags ---
 	bool vsync = true;
@@ -159,12 +151,20 @@ public:
 	bool display_boundingboxes = false;
 	bool display_grid = true;
 
+	uint rendertexture = 0;
+
 private:
 	std::map<uint, std::vector<RenderMesh>> render_meshes;
 
 	std::vector<RenderBox<AABB>> render_aabbs;
 	std::vector<RenderBox<Frustum>> render_frustums;
 	std::vector<RenderLine> render_lines;
+
+	uint fbo = 0;
+	uint depthbuffer = 0;
+	uint PointLineVAO = 0;
+	uint Grid_VAO = 0;
+	uint Grid_VBO = 0;
 };
 BE_END_NAMESPACE
 #endif
