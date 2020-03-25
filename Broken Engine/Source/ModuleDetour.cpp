@@ -8,6 +8,13 @@
 #include "ImporterNavMesh.h"
 #include "ModuleResourceManager.h"
 #include "Application.h"
+#include "Math.h"
+#include "ModuleCamera3D.h"
+#include "ComponentCamera.h"
+#include "ModuleSceneManager.h"
+#include "ResourceScene.h"
+#include "ImporterMeta.h"
+#include "ResourceMeta.h"
 
 using namespace Broken;
 
@@ -72,6 +79,16 @@ public:
 	}
 
 	void begin(duDebugDrawPrimitives prim, float size) {
+		//Set polygon draw mode and appropiated matrices for OGL
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPushMatrix();
+		glMultMatrixf(float4x4::identity.Transposed().ptr());
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());
+
+
 		switch (prim) {
 		case DU_DRAW_POINTS:
 			glPointSize(size);
@@ -197,13 +214,27 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 	}
 
 	if (navMeshResource == nullptr) {
-		navMeshResource = (ResourceNavMesh*) App->resources->CreateResource(Resource::ResourceType::NAVMESH, "");
+		std::string resourceName = App->scene_manager->currentScene->GetName();
+		resourceName.erase(resourceName.find('.'));
+		resourceName = NAVMESH_FOLDER + resourceName;
+		navMeshResource = (ResourceNavMesh*)App->resources->CreateResource(Resource::ResourceType::NAVMESH, resourceName.c_str());
 		navMeshResource->navMesh = m_navMesh;
+
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, navMeshResource->GetResourceFile(), navMeshResource->GetUID());
+
+		if (meta)
+			IMeta->Save(meta);
+
+		App->resources->AddResourceToFolder(navMeshResource);
+
 	}
 
 	ImporterNavMesh* INavMesh = App->resources->GetImporter<ImporterNavMesh>();
 	INavMesh->Save(navMeshResource);
 
+	//We save the scene so that it stores the NavMesh
+	App->scene_manager->SaveScene(App->scene_manager->currentScene);
 
 	return true;
 }
@@ -228,6 +259,8 @@ bool ModuleDetour::CleanUp() {
 
 	return true;
 }
+
+
 
 void ModuleDetour::Draw() const {
 	if (debugDraw && navMeshResource != nullptr) {

@@ -157,7 +157,7 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define SOUNDS_FOLDER "Assets/Sounds/"
 #define SCRIPTS_FOLDER "Library/Scripts/"
 #define FONTS_FOLDER "Assets/Fonts/"
-#define NAVMESH_FOLDER "Library/NavMeshes/"
+#define NAVMESH_FOLDER "Assets/NavMeshes/"
 #define GAME_EXE "BEG.exe"
 
 #define SCREEN_SIZE 1

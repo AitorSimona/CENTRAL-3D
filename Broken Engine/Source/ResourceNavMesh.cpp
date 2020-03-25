@@ -12,7 +12,11 @@ using namespace Broken;
 
 ResourceNavMesh::ResourceNavMesh(uint UID, const char* source_file) : Resource(Resource::ResourceType::NAVMESH, UID, source_file) {
 	extension = ".navmesh";
-	resource_file = NAVMESH_FOLDER + std::to_string(UID) + extension;
+	resource_file = source_file + extension;
+	original_file = resource_file;
+
+	previewTexID = App->gui->navmeshTexID;
+
 }
 
 ResourceNavMesh::~ResourceNavMesh() {

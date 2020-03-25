@@ -216,6 +216,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
 	glDeleteTextures(1, &animatorTexID);
+	glDeleteTextures(1, &navmeshTexID);
 
 	return ret;
 }
@@ -318,6 +319,7 @@ void ModuleGui::CreateIcons()
 	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, -1);
+	navmeshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/NavMesh.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
 }

@@ -4,6 +4,8 @@
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "Application.h"
+#include "ResourceMeta.h"
+#include "ImporterMeta.h"
 
 using namespace Broken;
 
@@ -14,7 +16,9 @@ ImporterNavMesh::~ImporterNavMesh() {
 }
 
 Resource* ImporterNavMesh::Import(ImportData& IData) const {
-	ResourceNavMesh* navmesh = (ResourceNavMesh*)App->resources->CreateResource(Resource::ResourceType::NAVMESH, IData.path);
+
+	// --- Meta was deleted, just trigger a load with a new uid ---
+	Resource* navmesh = Load(IData.path);
 
 	return navmesh;
 }
@@ -74,17 +78,20 @@ void ImporterNavMesh::Save(ResourceNavMesh* navmesh) const {
 }
 
 Resource* ImporterNavMesh::Load(const char* path) const {
-	Resource* navmesh = nullptr;
+	ResourceNavMesh* navmesh = nullptr;
 
+	// --- Load NavMesh file ---
 	if (App->fs->Exists(path)) {
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
-		// --- Extract UID from path ---
-		std::string uid = path;
-		App->fs->SplitFilePath(path, nullptr, &uid);
-		uid = uid.substr(0, uid.find_last_of("."));
+		if (meta) {
+			navmesh = App->resources->navmeshes.find(meta->GetUID()) != App->resources->navmeshes.end() ? App->resources->navmeshes.find(meta->GetUID())->second : (ResourceNavMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::NAVMESH, meta->GetOriginalFile(), meta->GetUID());
+		}
+		else {
+			navmesh = (ResourceNavMesh*)App->resources->CreateResource(Resource::ResourceType::NAVMESH, path);
+		}
 
-
-		navmesh = App->resources->navmeshes.find(std::stoi(uid)) != App->resources->navmeshes.end() ? App->resources->navmeshes.find(std::stoi(uid))->second : App->resources->CreateResourceGivenUID(Resource::ResourceType::NAVMESH, path, std::stoi(uid));
 	}
 
 	return navmesh;
