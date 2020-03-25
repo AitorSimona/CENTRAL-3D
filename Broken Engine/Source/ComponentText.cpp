@@ -273,10 +273,10 @@ void ComponentText::CreateInspectorNode()
 		ImGui::DragFloat("y##textposition", &position2D.y, 0.05f);
 
 		// Rotation
-		ImGui::Text("Rotation:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##textrotation", &rotation2D);
+		//ImGui::Text("Rotation:");
+		//ImGui::SameLine();
+		//ImGui::SetNextItemWidth(60);
+		//ImGui::DragFloat("##textrotation", &rotation2D);
 
 		// Image
 		ImGui::Separator();

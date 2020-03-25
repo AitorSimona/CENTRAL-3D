@@ -40,9 +40,19 @@ public:
 	VarValue editor_value;
 	VarValue script_defined_value;
 
-	std::string name;
+	std::string name = "";
+	std::string object_name = "";
+	bool display_object_name = false;
+
 	// Bool to see if the value was changed in the editor
 	bool changed_value = false;
+};
+
+//This data structure is created in order to restrict possibilities from callbacks and avoid users/programmers from crashing the engine
+struct BROKEN_API ScriptFunc
+{
+	std::string name = "null_function";
+
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTVAR_H__
