@@ -137,6 +137,8 @@ bool ComponentCamera::ContainsAABB(const AABB& ref) {
 json ComponentCamera::Save() const {
 	json node;
 
+	node["Active"] = this->active;
+
 	node["FOV"] = GetFOV();
 	node["NEARPLANE"] = GetNearPlane();
 	node["FARPLANE"] = GetFarPlane();
@@ -148,6 +150,8 @@ json ComponentCamera::Save() const {
 
 void ComponentCamera::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
 	SetFOV(node["FOV"].is_null() ? 60.0f : node["FOV"].get<float>());
 	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
