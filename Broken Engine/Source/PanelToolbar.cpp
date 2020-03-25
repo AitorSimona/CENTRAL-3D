@@ -89,6 +89,14 @@ bool PanelToolbar::Draw()
 
 		if(scale != EngineApp->time->GetTimeScale())
 			EngineApp->time->SetTimeScale(scale);
+
+		if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE || app_status == Broken::AppState::STEP)
+		{
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.7, 1.0, 1.0, 1.0), "Elapsed time: %.5f", EngineApp->time->GetGameplayTimePassed());
+		}
+		
+
 	}
 	ImGui::End();
 
