@@ -47,7 +47,7 @@ private:
 
 	std::vector<Particle*> particles;
 
-	unsigned int maxParticles = 2000;
+	unsigned int maxParticles = 1000;
 	bool perParticleRestOffset = false;
 
 	physx::PxParticleExt::IndexPool* indexPool;
@@ -61,7 +61,7 @@ private:
 	physx::PxVec3 velocityRandomFactor = {5,5,5};
 	bool loop = true;
 	bool emisionActive = true;
-	int duration = 0;
+	int duration = 1000;
 	uint emisionStart = 0;
 
 	//Particle properties

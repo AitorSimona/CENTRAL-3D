@@ -173,6 +173,9 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 void ComponentParticleEmitter::DrawParticles()
 {
+	if (!active)
+		return;
+
 	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
 	if (rd)
 	{
@@ -231,6 +234,9 @@ json ComponentParticleEmitter::Save() const
 	node["ColorG"] = std::to_string(particlesColor.y);
 	node["ColorB"] = std::to_string(particlesColor.z);
 
+	node["Loop"] = loop;
+	node["Duration"] = std::to_string(duration);
+
 	return node;
 }
 
@@ -258,10 +264,18 @@ void ComponentParticleEmitter::Load(json& node)
 	std::string LparticlesLifeTime = node["particlesLifeTime"].is_null() ? "0" : node["particlesLifeTime"];
 
 	std::string LParticlesSize = node["particlesSize"].is_null() ? "0" : node["particlesSize"];
+	
+	std::string LDuration = node["Duration"].is_null() ? "0" : node["Duration"];
+
 
 	std::string LColorR = node["ColorR"].is_null() ? "0" : node["ColorR"];
 	std::string LColorG = node["ColorG"].is_null() ? "0" : node["ColorG"];
 	std::string LColorB = node["ColorB"].is_null() ? "0" : node["ColorB"];
+
+	if (!node["Loop"].is_null())
+		loop = node["Loop"];
+	else
+		loop = true;
 
 	//Pass the strings to the needed dada types
 	size.x = std::stof(Lsizex);
@@ -287,167 +301,178 @@ void ComponentParticleEmitter::Load(json& node)
 	particlesSize = std::stof(LParticlesSize);
 
 	particlesColor = float3(std::stof(LColorR), std::stof(LColorG), std::stof(LColorB));
+
+	duration = std::stoi(LDuration);
 }
 
 void ComponentParticleEmitter::CreateInspectorNode()
 {
-	if (ImGui::Checkbox("Active", &active)) {
-		if (active)
-			Enable();
-		else
-			Disable();
+	if (ImGui::Checkbox("##PEActive", &active)) {
+			if (active)
+				Enable();
+			else
+				Disable();
+		}
+
+	ImGui::SameLine();
+	if (ImGui::TreeNode("ParticleEmitter")) {
+
+
+		ImGui::Text("Loop");
+		ImGui::SameLine();
+		ImGui::Checkbox("##PELoop", &loop);
+
+
+		ImGui::Text("Duration");
+		ImGui::SameLine();
+		if (ImGui::DragInt("##PEDuration", &duration))
+			Play();
+
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
+		//Emitter size
+		ImGui::Text("Emitter size");
+
+		ImGui::Text("X");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		ImGui::DragFloat("##SEmitterX", &size.x, 0.05f, 0.0f, 100.0f);
+
+		ImGui::SameLine();
+
+		ImGui::Text("Y");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		ImGui::DragFloat("##SEmitterY", &size.y, 0.05f, 0.0f, 100.0f);
+
+		ImGui::SameLine();
+
+		ImGui::Text("Z");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		ImGui::DragFloat("##SEmitterZ", &size.z, 0.05f, 0.0f, 100.0f);
+
+		//Emision rate
+		ImGui::Text("Emision rate (ms)");
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
+		ImGui::DragFloat("##SEmision rate", &emisionRate, 1.0f, 1.0f, 100000.0f);
+
+		//External forces
+		ImGui::Text("External forces ");
+		bool forceChanged = false;
+		//X
+		ImGui::Text("X");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		if (ImGui::DragFloat("##SExternalforcesX", &externalAcceleration.x, 0.05f, -50.0f, 50.0f))
+			forceChanged = true;
+
+		ImGui::SameLine();
+		//Y
+		ImGui::Text("Y");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		if (ImGui::DragFloat("##SExternalforcesY", &externalAcceleration.y, 0.05f, -50.0f, 50.0f))
+			forceChanged = true;
+		//Z
+		ImGui::SameLine();
+		ImGui::Text("Z");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		if (ImGui::DragFloat("##SExternalforcesZ", &externalAcceleration.z, 0.05f, -50.0f, 50.0f))
+			forceChanged = true;
+
+		if (forceChanged)
+			particleSystem->setExternalAcceleration(externalAcceleration);
+
+		if (ImGui::TreeNode("Velocity"))
+		{
+			//Particles velocity
+			ImGui::Text("Particles velocity");
+			//X
+			ImGui::Text("X");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -100.0f, 100.0f);
+
+			ImGui::SameLine();
+			//Y
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -100.0f, 100.0f);
+			//Z
+			ImGui::SameLine();
+			ImGui::Text("Z");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -100.0f, 100.0f);
+
+			//Random velocity factor
+			ImGui::Text("Velocity random factor");
+			//X
+			ImGui::Text("X");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SRandomVelocityX", &velocityRandomFactor.x, 0.05f, 0.0f, 100.0f);
+
+			ImGui::SameLine();
+			//Y
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SRandomVelocityY", &velocityRandomFactor.y, 0.05f, 0.0f, 100.0f);
+			//Z
+			ImGui::SameLine();
+			ImGui::Text("Z");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SRandomVelocityZ", &velocityRandomFactor.z, 0.05f, 0.0f, 100.0f);
+
+			ImGui::TreePop();
+		}
+
+		//Particles lifetime
+		ImGui::Text("Particles lifetime (ms)");
+		ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 3.0f, 0.0f, 10000.0f);
+
+		//Particles size
+		ImGui::Text("Particles size");
+		ImGui::DragFloat("##SParticlesSize", &particlesSize, 0.005f, 0.01f, 3.0f);
+
+		//Particles Color particlesColor
+		ImGui::Text("Particles Color");
+		bool colorChanged = false;
+
+		//R
+		ImGui::Text("R");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		if (ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
+			colorChanged = true;
+
+		ImGui::SameLine();
+		//G
+		ImGui::Text("G");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		if (ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
+			colorChanged = true;
+
+		//B
+		ImGui::SameLine();
+		ImGui::Text("B");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
+			colorChanged = true;
+
+		ImGui::TreePop();
 	}
-
-	ImGui::Text("Loop");
-	ImGui::SameLine();
-	ImGui::Checkbox("##PELoop", &loop);
-
-
-	ImGui::Text("Duration");
-	ImGui::SameLine();
-	if (ImGui::DragInt("##PEDuration", &duration))
-		Play();
-
-	if (ImGui::Button("Delete component"))
-		to_delete = true;
-
-	//Emitter size
-	ImGui::Text("Emitter size");
-
-	ImGui::Text("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-	ImGui::DragFloat("##SEmitterX", &size.x, 0.05f, 0.0f, 100.0f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-	ImGui::DragFloat("##SEmitterY", &size.y, 0.05f,0.0f, 100.0f);
-
-	ImGui::SameLine();
-
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-	ImGui::DragFloat("##SEmitterZ", &size.z, 0.05f, 0.0f, 100.0f);
-
-	//Emision rate
-	ImGui::Text("Emision rate (ms)");
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
-	ImGui::DragFloat("##SEmision rate", &emisionRate, 1.0f, 1.0f, 100000.0f);
-
-	//External forces
-	ImGui::Text("External forces ");
-	bool forceChanged = false;
-	//X
-	ImGui::Text("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SExternalforcesX", &externalAcceleration.x, 0.05f,-50.0f,50.0f))
-		forceChanged = true;
-
-	ImGui::SameLine();
-	//Y
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SExternalforcesY", &externalAcceleration.y, 0.05f, -50.0f, 50.0f))
-		forceChanged = true;
-	//Z
-	ImGui::SameLine();
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##SExternalforcesZ", &externalAcceleration.z, 0.05f, -50.0f, 50.0f))
-		forceChanged = true;
-
-	if (forceChanged)
-		particleSystem->setExternalAcceleration(externalAcceleration);
-
-	//Particles velocity
-	ImGui::Text("Particles velocity");
-	//X
-	ImGui::Text("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityX", &particlesVelocity.x, 0.05f, -100.0f, 100.0f);
-
-	ImGui::SameLine();
-	//Y
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityY", &particlesVelocity.y, 0.05f, -100.0f, 100.0f);
-	//Z
-	ImGui::SameLine();
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SVelocityZ", &particlesVelocity.z, 0.05f, -100.0f, 100.0f);
-
-	//Random velocity factor
-	ImGui::Text("Velocity random factor");
-	//X
-	ImGui::Text("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SRandomVelocityX", &velocityRandomFactor.x, 0.05f, 0.0f, 100.0f);
-
-	ImGui::SameLine();
-	//Y
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SRandomVelocityY", &velocityRandomFactor.y, 0.05f, 0.0f, 100.0f);
-	//Z
-	ImGui::SameLine();
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	ImGui::DragFloat("##SRandomVelocityZ", &velocityRandomFactor.z, 0.05f, 0.0f, 100.0f);
-
-	//Particles lifetime
-	ImGui::Text("Particles lifetime (ms)");
-	ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 3.0f, 0.0f, 10000.0f);
-
-	//Particles size
-	ImGui::Text("Particles size");
-	ImGui::DragFloat("##SParticlesSize", &particlesSize, 0.005f, 0.01f, 3.0f);
-
-	//Particles Color particlesColor
-	ImGui::Text("Particles Color");
-	bool colorChanged = false;
-
-	//R
-	ImGui::Text("R");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if(ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
-		colorChanged = true;
-
-	ImGui::SameLine();
-	//G
-	ImGui::Text("G");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if(ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
-		colorChanged = true;
-
-	//B
-	ImGui::SameLine();
-	ImGui::Text("B");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
-		colorChanged = true;
-
-	/*if (colorChanged)
-		ChangeParticlesColor(particlesColor);*/
 }
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE
@@ -489,12 +514,15 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 											particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
 											particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
 
+			//TESTING PERFORMANCE
 
-			Quat quat = Quat(velocityBuffer[i].x, velocityBuffer[i].y, velocityBuffer[i].z,0);
+			Quat velocityQuat = Quat(velocityBuffer[i].x, velocityBuffer[i].y, velocityBuffer[i].z,0);
 
-			quat = rotation * quat * rotation.Conjugated();
+			velocityQuat = rotation * velocityQuat * rotation.Conjugated();
 
-			velocityBuffer[i] = physx::PxVec3(quat.x, quat.y, quat.z);
+			velocityBuffer[i] = physx::PxVec3(velocityQuat.x, velocityQuat.y, velocityQuat.z);
+
+			//TESTING PERFORMANCE 
 
 			positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
 											globalPosition.y + GetRandomValue(-size.y,size.y),
