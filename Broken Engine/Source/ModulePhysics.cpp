@@ -1,4 +1,5 @@
 #include "ModulePhysics.h"
+#include "ModulePhysics.h"
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ComponentCollider.h"
@@ -13,6 +14,7 @@
 #include "PhysX_3.4/Include/pvd/PxPvdSceneClient.h"
 #include "PhysX_3.4/Include/pvd/PxPvdTransport.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "PhysX_3.4/Include/foundation/PxAllocatorCallback.h"
 
 #ifndef _DEBUG
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CHECKED_x86.lib")
@@ -48,8 +50,61 @@ ModulePhysics::~ModulePhysics()
 {
 }
 
+void ModulePhysics::setupFiltering(physx::PxRigidActor* actor, physx::PxU32 LayerMask, physx::PxU32 filterMask)
+{
+	physx::PxFilterData filterData;
+	filterData.word0 = LayerMask; // word0 = own ID
+	filterData.word1 = filterMask;	// word1 = ID mask to filter pairs that trigger a contact callback;
+
+	const physx::PxU32 numShapes = actor->getNbShapes();
+	physx::PxShape** shapes = (physx::PxShape**)malloc(sizeof(physx::PxShape*) * numShapes);
+	actor->getShapes(shapes, numShapes);
+	for (physx::PxU32 i = 0; i < numShapes; i++)
+	{
+		physx::PxShape* shape = shapes[i];
+		shape->setSimulationFilterData(filterData);
+	}
+	free(shapes);
+}
+
+physx::PxFilterFlags customFilterShader(
+	physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+{
+	// let triggers through
+	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+		return physx::PxFilterFlag::eDEFAULT;
+	}
+
+	// generate contacts for all that were not filtered above
+	//pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+	if(filterData0.word0 == filterData1.word1 || filterData1.word0 == filterData0.word1)
+		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+
+	// trigger the contact callback for pairs (A,B) where 
+	// the filtermask of A contains the ID of B and vice versa.
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1)) {
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+	}
+
+	return physx::PxFilterFlag::eDEFAULT;
+}
+
 bool ModulePhysics::Init(json& config)
 {
+	layer_list.push_back(Layer{ "Default", LayerMask::LAYER_0 });
+	layer_list.push_back(Layer{ "Player", LayerMask::LAYER_1 });
+	layer_list.push_back(Layer{ "Enemy", LayerMask::LAYER_2 });
+	layer_list.push_back(Layer{ "UI", LayerMask::LAYER_3 });
+	layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+
+	for (int i = 0; i < layer_list.size(); ++i) {
+		layer_list.at(i).active_layers.resize(layer_list.size(), true);
+	}
+
 	static physx::PxDefaultErrorCallback gDefaultErrorCallback;
 	static physx::PxDefaultAllocator gDefaultAllocatorCallback;
 
@@ -83,7 +138,10 @@ bool ModulePhysics::Init(json& config)
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
 	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2; 
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
-	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.filterShader = customFilterShader;
+	sceneDesc.flags = physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
+
 	mScene = mPhysics->createScene(sceneDesc);
 
 	// This will enable basic visualization of PhysX objects like - actors collision shapes and their axes.

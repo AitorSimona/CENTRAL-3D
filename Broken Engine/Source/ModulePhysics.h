@@ -11,9 +11,32 @@ namespace physx
 	class PxScene;
 	class PxMaterial;
 	class PxRigidStatic;
+	class PxRigidActor;
+	typedef uint32_t PxU32;
 
 	const float fixed_dt = (1.0f/60.0f);
 }
+
+
+	enum LayerMask
+	{
+		LAYER_0 /*= (1 << 0)*/,
+		LAYER_1 /*= (1 << 1)*/,
+		LAYER_2 /*= (1 << 2)*/,
+		LAYER_3 /*= (1 << 3)*/,
+		LAYER_4 /*= (1 << 4)*/,
+		LAYER_5 /*= (1 << 5)*/,
+		LAYER_6 /*= (1 << 6)*/,
+		LAYER_7 /*= (1 << 7)*/,
+		LAYER_8 /*= (1 << 8)*/,
+		LAYER_9 /*= (1 << 9)*/,
+	};
+
+struct Layer {
+	std::string name;
+	LayerMask layer;
+	std::vector<bool> active_layers;
+};
 
 BE_BEGIN_NAMESPACE
 class GameObject;
@@ -28,6 +51,11 @@ public:
 	update_status Update(float dt) override;
 	void FixedUpdate();
 
+	void setupFiltering(physx::PxRigidActor* actor, physx::PxU32 LayerMask, physx::PxU32 filterMask);
+
+	//physx::PxFilterFlags customFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0, physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize);
+
+	
 	bool CleanUp() override;
 
 	void PlaneCollider(float posX, float posY, float posZ);
@@ -47,6 +75,8 @@ public:
 	physx::PxMaterial* mMaterial = nullptr;
 
 	physx::PxRigidStatic* plane = nullptr;
+	std::vector<Layer> layer_list;
+	std::list<physx::PxRigidActor*> actors;
 
 private:
 

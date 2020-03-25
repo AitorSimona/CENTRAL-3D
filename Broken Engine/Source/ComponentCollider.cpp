@@ -652,6 +652,9 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
+
+				App->physics->setupFiltering((physx::PxRigidActor *)rigidStatic, (1 << GO->layer), (1 << GO->layer)); //Setup filtering Layers
+
 				App->physics->mScene->addActor(*rigidStatic);
 			}
 
@@ -747,6 +750,38 @@ void ComponentCollider::Delete()
 		App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 }
 
+void ComponentCollider::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+{
+	for (physx::PxU32 i = 0; i < nbPairs; i++)
+	{
+		const physx::PxContactPair& cp = pairs[i];
+
+		if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			if ((pairHeader.actors[0] == shape->getActor()) || (pairHeader.actors[1] == shape->getActor()))
+			{
+				ENGINE_CONSOLE_LOG("ON COLLISION");
+				break;
+			}
+		}
+	}
+}
+
+void ComponentCollider::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+{
+	for (physx::PxU32 i = 0; i < count; i++)
+	{
+		// ignore pairs when shapes have been deleted
+		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+			continue;
+
+		if ((pairs[i].otherActor == shape->getActor()) && (pairs[i].triggerActor == shape->getActor()))
+		{
+			ENGINE_CONSOLE_LOG("ON TRIGGER");
+		}
+	}
+}
+
 
 template <class Geometry>
 bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const
@@ -755,18 +790,23 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 	
 	if (dynamicRB != nullptr)
 	{
+
 		float3 position, scale = float3::zero;
 		Quat rot = Quat::identity;
 
 		globalMatrix.Decompose(position, rot, scale);
 
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
+
+		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), (1 << GO->layer)); //Setup filtering Layers
+
 		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
 		App->physics->mScene->addActor(*dynamicRB->rigidBody);
 
 		return true;
 	}
 
-	else
+	else {
 		return false;
+	}
 }
