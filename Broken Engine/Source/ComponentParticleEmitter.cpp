@@ -9,6 +9,10 @@
 #include "Particle.h"
 #include "Timer.h"
 #include "RandomGenerator.h"
+#include "ComponentText.h"
+#include "ModuleTextures.h"
+#include "ModuleResourceManager.h"
+#include "ResourceTexture.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -30,6 +34,8 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 
 	for (int i= 0; i < maxParticles; ++i)
 		particles[i] = new Particle();
+
+	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
@@ -46,6 +52,8 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 		indexPool->release();
 		particles.clear();
 	}
+
+	texture->Release();
 }
 
 void ComponentParticleEmitter::Update()
@@ -317,11 +325,9 @@ void ComponentParticleEmitter::CreateInspectorNode()
 	ImGui::SameLine();
 	if (ImGui::TreeNode("ParticleEmitter")) {
 
-
 		ImGui::Text("Loop");
 		ImGui::SameLine();
 		ImGui::Checkbox("##PELoop", &loop);
-
 
 		ImGui::Text("Duration");
 		ImGui::SameLine();
@@ -356,10 +362,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 
 		ImGui::DragFloat("##SEmitterZ", &size.z, 0.05f, 0.0f, 100.0f);
 
-		//Emision rate
-		ImGui::Text("Emision rate (ms)");
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
-		ImGui::DragFloat("##SEmision rate", &emisionRate, 1.0f, 1.0f, 100000.0f);
+		
 
 		//External forces
 		ImGui::Text("External forces ");
@@ -389,7 +392,18 @@ void ComponentParticleEmitter::CreateInspectorNode()
 		if (forceChanged)
 			particleSystem->setExternalAcceleration(externalAcceleration);
 
-		if (ImGui::TreeNode("Velocity"))
+			
+
+		//Emision rate
+		ImGui::Text("Emision rate (ms)");
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
+		ImGui::DragFloat("##SEmision rate", &emisionRate, 1.0f, 1.0f, 100000.0f);
+
+		//Particles lifetime
+		ImGui::Text("Particles lifetime (ms)");
+		ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 3.0f, 0.0f, 10000.0f);
+
+		if (ImGui::TreeNode("Direction & velocity"))
 		{
 			//Particles velocity
 			ImGui::Text("Particles velocity");
@@ -436,41 +450,82 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			ImGui::TreePop();
 		}
 
-		//Particles lifetime
-		ImGui::Text("Particles lifetime (ms)");
-		ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 3.0f, 0.0f, 10000.0f);
+		
 
-		//Particles size
-		ImGui::Text("Particles size");
-		ImGui::DragFloat("##SParticlesSize", &particlesSize, 0.005f, 0.01f, 3.0f);
+		if (ImGui::TreeNode("Renderer"))
+		{
+			// Image
+			ImGui::Separator();
+			ImGui::Text("Image");
 
-		//Particles Color particlesColor
-		ImGui::Text("Particles Color");
-		bool colorChanged = false;
+			if (texture == nullptr)
+				ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
+			else
+				ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
 
-		//R
-		ImGui::Text("R");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		if (ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
-			colorChanged = true;
+			//drag and drop
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					Resource* resource = App->resources->GetResource(UID, false);
 
-		ImGui::SameLine();
-		//G
-		ImGui::Text("G");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		if (ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
-			colorChanged = true;
+					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+					{
+						if (texture)
+							texture->Release();
 
-		//B
-		ImGui::SameLine();
-		ImGui::Text("B");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
-			colorChanged = true;
+						texture = (ResourceTexture*)App->resources->GetResource(UID);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
 
+			ImGui::Separator();
+			ImGui::Separator();
+
+			ImGui::TreePop();
+		}
+
+		//if (ImGui::TreeNode("Visuals"))
+		//{
+
+		//	//Particles size
+		//	ImGui::Text("Particles size");
+		//	ImGui::DragFloat("##SParticlesSize", &particlesSize, 0.005f, 0.01f, 3.0f);
+
+		//	//Particles Color particlesColor
+		//	ImGui::Text("Particles Color");
+		//	bool colorChanged = false;
+
+		//	//R
+		//	ImGui::Text("R");
+		//	ImGui::SameLine();
+		//	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		//	if (ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
+		//		colorChanged = true;
+
+		//	ImGui::SameLine();
+		//	//G
+		//	ImGui::Text("G");
+		//	ImGui::SameLine();
+		//	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		//	if (ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
+		//		colorChanged = true;
+
+		//	//B
+		//	ImGui::SameLine();
+		//	ImGui::Text("B");
+		//	ImGui::SameLine();
+		//	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+		//	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
+		//		colorChanged = true;
+
+		//	ImGui::TreePop();
+		//}
+		//
+		
 		ImGui::TreePop();
 	}
 }
@@ -531,6 +586,7 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 			particles[index[i]]->lifeTime = particlesLifeTime;
 			particles[index[i]]->spawnTime = SDL_GetTicks();
 			particles[index[i]]->color = particlesColor / 255.0f;
+			particles[index[i]]->texture = texture;
 		}
 
 		creationData.indexBuffer = indexBuffer;

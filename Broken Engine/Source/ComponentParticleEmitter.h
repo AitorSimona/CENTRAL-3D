@@ -9,6 +9,7 @@
 BE_BEGIN_NAMESPACE
 
 class Particle;
+class ResourceTexture;
 
 class BROKEN_API ComponentParticleEmitter : public Component
 {
@@ -67,6 +68,7 @@ private:
 	//Particle properties
 	int particlesLifeTime=1000;
 	float particlesSize = 1;
+	ResourceTexture* texture = nullptr;
 
 	float3 particlesColor = { 255, 255, 255 };
 
