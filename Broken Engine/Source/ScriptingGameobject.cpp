@@ -251,35 +251,31 @@ int ScriptingGameobject::GetPosInFrustum(float x, float y, float z, float fovrat
 int ScriptingGameobject::GetFrustumPlanesIntersection(float x, float y, float z, lua_State* luaSt)
 {
 	ComponentCamera* cam = App->renderer3D->active_camera;
-	int pointsOutside = 0;	//No points outside considered by default
-
 	if (cam)
 	{
 		float3 pos = { x, y, z };
 		int T, B, L, R;		//Top, Bottom, Left, Right
-		T = B = L = R = 1;	//Considered to be inside (at plane's positive side) by default
+		T = B = L = R = 1;	//Considered to be inside the frustum (at planes' negative side) by default
 
-		if (!cam->frustum.TopPlane().IsOnPositiveSide(pos))
+		if (cam->frustum.TopPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
 			T = 0;
-		if (!cam->frustum.BottomPlane().IsOnPositiveSide(pos))
+		if (cam->frustum.BottomPlane().IsOnPositiveSide(pos))
 			B = 0;
-		if (!cam->frustum.LeftPlane().IsOnPositiveSide(pos))
+		if (cam->frustum.LeftPlane().IsOnPositiveSide(pos))
 			L = 0;
-		if (!cam->frustum.RightPlane().IsOnPositiveSide(pos))
+		if (cam->frustum.RightPlane().IsOnPositiveSide(pos))
 			R = 0;
-
-		if (T == 0 || B == 0 || L == 0 || R == 0)
-			pointsOutside = 1;
 
 		lua_pushnumber(luaSt, T);
 		lua_pushnumber(luaSt, B);
 		lua_pushnumber(luaSt, L);
 		lua_pushnumber(luaSt, R);
+		return 4;
 	}
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
 
-	return pointsOutside;
+	return 0;
 }
 
 
