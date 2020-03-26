@@ -59,22 +59,10 @@ void ComponentProgressBar::Draw()
 
 void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 {
-	// --- Update transform and rotation to face camera ---
-	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
-	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
-
-	float2 new_size = float2((size2D.x * _percentage) / 100, size2D.y);
-
 	// --- Frame image with camera ---
-	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
-		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
-		float3(new_size, 1));
-
-	float3 Movement = App->renderer3D->active_camera->frustum.Front();
-	float3 camera_pos = frustum_pos;
-
-	if (Movement.IsFinite())
-		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
+	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
+	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), 
+		float3(float2((size2D.x * _percentage) / 100, size2D.y), 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -110,7 +98,7 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
 
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID()); //***Change if you want to have a custom texture
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
@@ -121,12 +109,7 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	// --- Set uniforms back to defaults ---
 	glUniform1i(TextureLocation, 0);
 	glUniform3f(vertexColorLocation, 255, 255, 255);
-
-	// --- Set camera back to original position ---
-	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
-
-
 
 json ComponentProgressBar::Save() const
 {
@@ -249,6 +232,4 @@ void ComponentProgressBar::CreateInspectorNode()
 		ImGui::Separator();
 		ImGui::TreePop();
 	}
-
-
 }

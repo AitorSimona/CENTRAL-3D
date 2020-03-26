@@ -1,4 +1,4 @@
-#include "ComponentImage.h"
+#include "ComponentCircularBar.h"
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
@@ -26,16 +26,15 @@
 
 using namespace Broken;
 
-ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
+ComponentCircularBar::ComponentCircularBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ProgressBar)
 {
 	visible = true;
-
-	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	canvas->AddElement(this);
 }
 
-ComponentImage::~ComponentImage()
+ComponentCircularBar::~ComponentCircularBar()
 {
 	if (texture)
 	{
@@ -44,25 +43,38 @@ ComponentImage::~ComponentImage()
 	}
 }
 
-void ComponentImage::Update()
+void ComponentCircularBar::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
-void ComponentImage::Draw()
+void ComponentCircularBar::Draw()
 {
-	// --- Update transform and rotation to face camera ---
+	DrawCircle(colorP1);
+	DrawCircle(colorP2, axis, percentage);
+}
+
+void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
+{
+	// --- Frame image with camera ---
 	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
+
+	if (axis == 0) //x axis
+		size2D = float2((size2D.x * _percentage) / 100, size2D.y);
+	else //y axis
+		size2D = float2(size2D.x, (size2D.y * _percentage) / 100);
+
 	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+
 	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
 	glUniform1i(TextureLocation, -1);
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
@@ -71,7 +83,7 @@ void ComponentImage::Draw()
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
-	
+
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
@@ -83,21 +95,24 @@ void ComponentImage::Draw()
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	glUniform1i(TextureLocation, 0); //reset texture location
 
-	// --- Draw plane with given texture ---
-	glBindVertexArray(App->scene_manager->plane->VAO);
+	// --- Draw circle with given texture ---
+	glBindVertexArray(App->scene_manager->/*circle*/plane->VAO);
 
 	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
-	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->/*circle*/plane->EBO);
+	glDrawElements(GL_TRIANGLES, App->scene_manager->/*circle*/plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+
+	// --- Set uniforms back to defaults ---
+	glUniform1i(TextureLocation, 0);
+	glUniform3f(vertexColorLocation, 255, 255, 255);
 }
 
-json ComponentImage::Save() const
+json ComponentCircularBar::Save() const
 {
 	json node;
 
@@ -112,10 +127,20 @@ json ComponentImage::Save() const
 	node["size2Dx"] = std::to_string(size2D.x);
 	node["size2Dy"] = std::to_string(size2D.y);
 
+	node["Color1_R"] = std::to_string(colorP1.r);
+	node["Color1_G"] = std::to_string(colorP1.g);
+	node["Color1_B"] = std::to_string(colorP1.b);
+	node["Color1_A"] = std::to_string(colorP1.a);
+
+	node["Color2_R"] = std::to_string(colorP2.r);
+	node["Color2_G"] = std::to_string(colorP2.g);
+	node["Color2_B"] = std::to_string(colorP2.b);
+	node["Color2_A"] = std::to_string(colorP2.a);
+
 	return node;
 }
 
-void ComponentImage::Load(json& node)
+void ComponentCircularBar::Load(json& node)
 {
 	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
@@ -134,14 +159,27 @@ void ComponentImage::Load(json& node)
 
 	position2D = float2(std::stof(position2Dx), std::stof(position2Dy));
 	size2D = float2(std::stof(size2Dx), std::stof(size2Dy));
+
+	std::string Color1_R = node["Color1_R"].is_null() ? "0" : node["Color1_R"];
+	std::string Color1_G = node["Color1_G"].is_null() ? "0" : node["Color1_G"];
+	std::string Color1_B = node["Color1_B"].is_null() ? "0" : node["Color1_B"];
+	std::string Color1_A = node["Color1_A"].is_null() ? "0" : node["Color1_A"];
+
+	std::string Color2_R = node["Color2_R"].is_null() ? "0" : node["Color2_R"];
+	std::string Color2_G = node["Color2_G"].is_null() ? "0" : node["Color2_G"];
+	std::string Color2_B = node["Color2_B"].is_null() ? "0" : node["Color2_B"];
+	std::string Color2_A = node["Color2_A"].is_null() ? "0" : node["Color2_A"];
+
+	colorP1 = { std::stof(Color1_R),std::stof(Color1_G), std::stof(Color1_B), std::stof(Color1_A) };
+	colorP2 = { std::stof(Color2_R),std::stof(Color2_G), std::stof(Color2_B), std::stof(Color2_A) };
 }
 
-void ComponentImage::CreateInspectorNode()
+void ComponentCircularBar::CreateInspectorNode()
 {
 	ImGui::Checkbox("##ImageActive", &GetActive());
 	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Image"))
+	if (ImGui::TreeNode("Progress Bar"))
 	{
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
@@ -150,23 +188,32 @@ void ComponentImage::CreateInspectorNode()
 		ImGui::Checkbox("Visible", &visible);
 		ImGui::Separator();
 
-		// Size
-		ImGui::Text("Size:    ");
+		// Percentage (test)
+		ImGui::Text("Percentage (test):");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f);
+		ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
+
+		// Axis
+		ImGui::Checkbox("Vertical Axis", &axis);
 
 		// Position
 		ImGui::Text("Position:");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
+		ImGui::DragFloat("x##imageposition", &position2D.x);
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
+		ImGui::DragFloat("y##imageposition", &position2D.y);
+
+		// Size Planes
+		ImGui::Text("Bar Size:  ");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
 
 		// Rotation
 		ImGui::Text("Rotation:");
@@ -174,44 +221,16 @@ void ComponentImage::CreateInspectorNode()
 		ImGui::SetNextItemWidth(60);
 		ImGui::DragFloat("##imagerotation", &rotation2D);
 
-		// ------------------------------------------
-
-		// Image
+		// Planes Colors
 		ImGui::Separator();
-		ImGui::Text("Image");
+		ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		ImGui::Text("BG color");
 
-		if (texture == nullptr)
-			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
-		else
-			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
-		 
-		//drag and drop
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-			{
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
+		ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		ImGui::Text("Bar color");
 
-				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
-				{
-					if (texture)
-						texture->Release();
-
-					texture = (ResourceTexture*)App->resources->GetResource(UID);
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-
-		// Aspect Ratio & Scale
-		ImGui::Checkbox("Maintain Aspect Ratio", &resize);
-		if (texture != nullptr && resize == true && (texture->Texture_height != 0 && texture->Texture_width != 0))
-			size2D = float2(texture->Texture_width, texture->Texture_height) * scale;
-		ImGui::Text("Scale:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##imagescale", &scale, 0.01f, 0.0f);
 
 		ImGui::Separator();
 		ImGui::Separator();

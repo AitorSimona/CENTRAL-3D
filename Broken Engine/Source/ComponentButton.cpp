@@ -64,8 +64,6 @@ void ComponentButton::Draw()
 {
 	// --- Frame image with camera ---
 	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float3 scale = float3(App->renderer3D->active_camera->frustum.NearPlaneWidth(), App->renderer3D->active_camera->frustum.NearPlaneHeight(), 1.0f);
-
 	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D*0.01f, 1.0f));
 
 	// --- Set Uniforms ---
@@ -126,7 +124,6 @@ void ComponentButton::Draw()
 			ImVec2(App->gui->sceneX + collider.x + collider.w, App->gui->sceneY + collider.y + collider.h),
 			ImU32(ImColor(ImVec4(1.0f, 0.0f, 0.0f, 1.0f))), 0.0f, 0, 1.0f);
 	}
-
 }
 
 json ComponentButton::Save() const
@@ -208,18 +205,22 @@ void ComponentButton::Load(json& node)
 	if (script_obj)
 	{
 		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script);
-		func_name = function_str.c_str();
 
-		func_list.push_back("None");
-		for (uint i = 0; i < script->script_functions.size(); ++i)
-			func_list.push_back(script->script_functions[i].name.c_str());
-
-		for (uint i = 0; i < func_list.size(); ++i) //get function pos
+		if (script != nullptr)
 		{
-			if (strcmp(func_list[i], func_name) == 0)
+			func_name = function_str.c_str();
+
+			func_list.push_back("None");
+			for (uint i = 0; i < script->script_functions.size(); ++i)
+				func_list.push_back(script->script_functions[i].name.c_str());
+
+			for (uint i = 0; i < func_list.size(); ++i) //get function pos
 			{
-				func_pos = i;
-				break;
+				if (strcmp(func_list[i], func_name) == 0)
+				{
+					func_pos = i;
+					break;
+				}
 			}
 		}
 	}

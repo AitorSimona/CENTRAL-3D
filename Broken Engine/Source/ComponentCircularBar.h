@@ -1,5 +1,3 @@
-#ifndef __COMPONENTPROGRESSBAR_H__
-#define __COMPONENTPROGRESSBAR_H__
 #pragma once
 
 #include "Component.h"
@@ -11,16 +9,16 @@ BE_BEGIN_NAMESPACE
 class ComponentCanvas;
 class ResourceTexture;
 
-class BROKEN_API ComponentProgressBar : public Component
+class BROKEN_API ComponentCircularBar : public Component
 {
 public:
-	ComponentProgressBar(GameObject* gameObject);
-	virtual ~ComponentProgressBar();
+	ComponentCircularBar(GameObject* gameObject);
+	virtual ~ComponentCircularBar();
 
 	void Update() override;
 
 	void Draw();
-	void DrawPlane(Color color, float percentage = 100.0f);
+	void DrawCircle(Color color, bool axis = 0, float percentage = 100.0f); //axis 0(X), 1(Y)
 
 	// UI Functions
 	void Scale(float2 size) { size2D = size; }
@@ -32,7 +30,7 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
-	static inline Component::ComponentType GetType() { return Component::ComponentType::ProgressBar; };
+	static inline Component::ComponentType GetType() { return Component::ComponentType::CircularBar; };
 
 	//Scripting function
 	void SetPercentage(float p) { percentage = p; }
@@ -40,6 +38,7 @@ public:
 
 public:
 	bool visible = true;
+	bool axis = 0;
 
 	float2 size2D = { 0.3,0.1 };
 	float2 position2D = { 0,0 };
@@ -56,4 +55,3 @@ public:
 };
 
 BE_END_NAMESPACE
-#endif
