@@ -10,9 +10,65 @@
 BE_BEGIN_NAMESPACE
 class ComponentCamera;
 class ResourceShader;
+class ResourceMesh;
+class ResourceMaterial;
+class math::float4x4;
 
-class BROKEN_API ModuleRenderer3D : public Module {
+typedef int RenderMeshFlags;
+
+enum BROKEN_API RenderMeshFlags_
+{
+	None		= 0,
+	outline		= 1 << 0,
+	selected	= 1 << 1,
+	checkers	= 1 << 2,
+	wire		= 1 << 3,
+	texture		= 1 << 4
+};
+
+struct BROKEN_API RenderMesh
+{
+	RenderMesh(float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const RenderMeshFlags flags = 0, const Color& color = White) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags), color(color) {}
+
+	float4x4 transform;
+	const ResourceMesh* resource_mesh = nullptr;
+	ResourceMaterial* mat = nullptr;
+	Color color; // force a color draw, useful if no texture is given
+	
+
+	// temporal!
+	const ResourceMesh* deformable_mesh = nullptr;
+
+
+	// --- Add rendering options here ---
+	RenderMeshFlags flags = None;
+};
+
+template <typename Box>
+struct BROKEN_API RenderBox
+{
+	RenderBox(const Box* box, const Color& color) : box(box), color(color) {}
+
+	const Box* box;
+	Color color;
+};
+
+struct BROKEN_API RenderLine
+{
+	RenderLine(float4x4 transform, const float3& a, const float3& b, const Color& color) : transform(transform), a(a), b(b), color(color) {}
+
+	float4x4 transform;
+	float3 a;
+	float3 b;
+	Color color;
+};
+
+class BROKEN_API ModuleRenderer3D : public Module 
+{
+	friend class ModuleResourceManager;
 public:
+
+	// --- Basic ---
 	ModuleRenderer3D(bool start_enabled = true);
 	~ModuleRenderer3D();
 
@@ -21,12 +77,7 @@ public:
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
 
-	// --- Utilities ---
-	void UpdateGLCapabilities() const;
 	void OnResize(int width, int height);
-
-	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
-	void CreateFramebuffer();
 
 	// --- Setters ---
 	bool SetVSync(bool _vsync);
@@ -36,9 +87,41 @@ public:
 	// --- Getters ---
 	bool GetVSync() const;
 
+	// --- Render orders --- // Deformable mesh is Temporal!
+	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
+	void DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color);
+	void DrawAABB(const AABB& box, const Color& color);
+	void DrawFrustum(const Frustum& box, const Color& color);
+
 private:
-	void HandleObjectOutlining();
+	// --- Utilities ---
+	void ClearRenderOrders();
+	void UpdateGLCapabilities() const;
+	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
+	void CreateFramebuffer();
 	void CreateDefaultShaders();
+	void CreateGrid(float target_distance);
+
+private:
+
+	// --- Draw ---
+	void DrawRenderMeshes();
+	void DrawRenderMesh(std::vector<RenderMesh> meshInstances);
+	void HandleObjectOutlining();
+	void DrawRenderLines();
+	void DrawRenderBoxes();
+	void DrawGrid();
+
+	// --- Draw Wireframe using given vertices ---
+	template <typename Box>
+	static void DrawWire(const Box& box, Color color, uint VAO)
+	{
+		float3 corners[8];
+		box.GetCornerPoints(corners);
+		DrawWireFromVertices(corners, color, VAO);
+	};
+
+	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 
 public:
 	// --- Default Shader ---
@@ -48,13 +131,13 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
 
-	SDL_GLContext context;
+	std::string VertexShaderTemplate;
+	std::string FragmentShaderTemplate;
+
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
 
-	uint fbo = 0;
-	uint depthbuffer = 0;
-	uint rendertexture = 0;
+	SDL_GLContext context;
 
 	// --- Flags ---
 	bool vsync = true;
@@ -65,6 +148,23 @@ public:
 	bool wireframe = false;
 	bool zdrawer = false;
 	bool renderfbo = true;
+	bool display_boundingboxes = false;
+	bool display_grid = true;
+
+	uint rendertexture = 0;
+
+private:
+	std::map<uint, std::vector<RenderMesh>> render_meshes;
+
+	std::vector<RenderBox<AABB>> render_aabbs;
+	std::vector<RenderBox<Frustum>> render_frustums;
+	std::vector<RenderLine> render_lines;
+
+	uint fbo = 0;
+	uint depthbuffer = 0;
+	uint PointLineVAO = 0;
+	uint Grid_VAO = 0;
+	uint Grid_VBO = 0;
 };
 BE_END_NAMESPACE
 #endif

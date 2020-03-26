@@ -31,6 +31,7 @@ public:
 
 	// Current Camera
 	int GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2);
+	int GetFrustumPlanesIntersection(float x, float y, float z, lua_State* luaSt);
 
 	// Get a script file
 	luabridge::LuaRef GetScript(uint gameobject_UUID, lua_State* L);

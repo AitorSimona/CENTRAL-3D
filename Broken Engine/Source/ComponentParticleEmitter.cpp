@@ -176,10 +176,10 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			validParticles -= particlesToRelease;
 			indexPool->freeIndices(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
 		}
-	
+
 }
 
-void ComponentParticleEmitter::DrawParticles()
+void ComponentParticleEmitter::DrawComponent()
 {
 	if (!active)
 		return;
@@ -215,6 +215,8 @@ void ComponentParticleEmitter::ChangeParticlesColor(float3 color)
 json ComponentParticleEmitter::Save() const
 {
 	json node;
+
+	node["Active"] = this->active;
 
 	node["sizeX"]=std::to_string(size.x);
 	node["sizeY"] = std::to_string(size.y);
@@ -253,6 +255,8 @@ json ComponentParticleEmitter::Save() const
 
 void ComponentParticleEmitter::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	//load the strings
 	std::string Lsizex = node["sizeX"].is_null() ? "0" : node["sizeX"];
 	std::string Lsizey = node["sizeY"].is_null() ? "0" : node["sizeY"];
@@ -275,7 +279,7 @@ void ComponentParticleEmitter::Load(json& node)
 	std::string LparticlesLifeTime = node["particlesLifeTime"].is_null() ? "0" : node["particlesLifeTime"];
 
 	std::string LParticlesSize = node["particlesSize"].is_null() ? "0" : node["particlesSize"];
-	
+
 	std::string LDuration = node["Duration"].is_null() ? "0" : node["Duration"];
 
 	std::string LColorR = node["ColorR"].is_null() ? "0" : node["ColorR"];
@@ -398,7 +402,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 		if (forceChanged)
 			particleSystem->setExternalAcceleration(externalAcceleration);
 
-			
+
 
 		//Emision rate
 		ImGui::Text("Emision rate (ms)");
@@ -456,7 +460,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			ImGui::TreePop();
 		}
 
-		
+
 
 		if (ImGui::TreeNode("Renderer"))
 		{
@@ -546,7 +550,7 @@ void ComponentParticleEmitter::CreateInspectorNode()
 		//	ImGui::TreePop();
 		//}
 		//
-		
+
 		ImGui::TreePop();
 	}
 }
@@ -598,7 +602,7 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 
 			velocityBuffer[i] = physx::PxVec3(velocityQuat.x, velocityQuat.y, velocityQuat.z);
 
-			//TESTING PERFORMANCE 
+			//TESTING PERFORMANCE
 
 			positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
 											globalPosition.y + GetRandomValue(-size.y,size.y),

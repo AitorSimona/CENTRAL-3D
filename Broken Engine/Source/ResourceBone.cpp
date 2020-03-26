@@ -15,7 +15,7 @@ ResourceBone::ResourceBone(uint UID, const char* source_file) : Resource(Resourc
 	extension = ".bone";
 	resource_file = BONES_FOLDER + std::to_string(UID) + extension;
 
-	previewTexID = App->gui->defaultfileTexID;
+	previewTexID = App->gui->boneTexID;
 
 }
 

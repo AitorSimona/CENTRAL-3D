@@ -21,9 +21,8 @@ void ScriptingScenes::QuitGame()
 {
 	if (App->isGame)
 		App->scripting->game_update = UPDATE_STOP;
-	else {
+	else 
+	{
 		App->GetAppState() = Broken::AppState::TO_EDITOR;
-		App->gui->play_button = "PLAY";
-		App->gui->pause_button = "PAUSE";
 	}
 }
