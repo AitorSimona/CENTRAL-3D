@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "Resource.h"
+#include "ModulePhysics.h"
 
 BE_BEGIN_NAMESPACE
 
@@ -75,6 +76,7 @@ public:
 	std::vector<GameObject*> childs;
 	bool Static = false;
 	ResourceModel* model = nullptr;
+	LayerMask layer;
 
 private:
 	// Unique Identifier

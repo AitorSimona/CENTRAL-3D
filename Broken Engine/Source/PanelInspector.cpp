@@ -1,9 +1,15 @@
 #include "PanelInspector.h"
 #include "Imgui/imgui.h"
-
+#include "Application.h"
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
 #include "PanelProject.h"
+#include "ModulePhysics.h"
+#include "ComponentCollider.h"
+
+#include "PhysX_3.4/Include/PxPhysicsAPI.h"
+
+using namespace Broken;
 //#include "ModuleSceneManager.h"
 //#include "ModuleRenderer3D.h"
 //#include "ModuleResourceManager.h"
@@ -196,7 +202,7 @@ bool PanelInspector::Draw()
 
 void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 {
-	ImGui::BeginChild("child", ImVec2(0, 35), true);
+	ImGui::BeginChild("child", ImVec2(0, 70), true);
 
 	if (ImGui::Checkbox("##GOActive", &Selected.GetActive()))
 	{
@@ -277,5 +283,38 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 
 		ImGui::EndPopup();
 	}
+
+	std::vector<Layer>* layers = &App->physics->layer_list;
+
+	static ImGuiComboFlags flags = 0;
+
+	const char* item_current = layers->at(Selected.layer).name.c_str();
+	ImGui::Text("Layer: ");
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("##Layer:", item_current, flags))
+	{
+		for (int n = 0; n < layers->size(); n++)
+		{
+			bool is_selected = (item_current == layers->at(n).name.c_str());
+			if (ImGui::Selectable(layers->at(n).name.c_str(), is_selected)) {
+				item_current = layers->at(n).name.c_str();
+				Selected.layer = layers->at(n).layer;
+
+				ComponentCollider* col = Selected.GetComponent<ComponentCollider>();
+
+				if(col)
+					col->UpdateActor(&layers->at(n).layer);
+			}
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+	else {
+		//Selected.layer = layers->at(Selected.layer >> 1).layer;
+		//UpdateFilter
+	}
+
 	ImGui::EndChild();
 }

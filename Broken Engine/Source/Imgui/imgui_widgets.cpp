@@ -2169,6 +2169,45 @@ bool ImGui::DragScalarN(const char* label, ImGuiDataType data_type, void* v, int
     return value_changed;
 }
 
+bool ImGui::verticalText(const char* text, ImVec2* padding)
+{
+    ImFont* font = GImGui->Font;
+    const ImFont::Glyph* glyph;
+    char c;
+    bool ret;
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    float pad = style.FramePadding.x;
+    //ImVec4 color;
+    ImVec2 text_size = CalcTextSize(text);
+    ImGuiWindow* window = GetCurrentWindow();
+    ImVec2 pos = window->DC.CursorPos + ImVec2(pad , text_size.x + pad);
+    pos.x += padding->x;
+    const  ImU32 text_color = ImGui::ColorConvertFloat4ToU32(style.Colors[ImGuiCol_Text]);
+
+    ImGui::PushID(text);
+    ImGui::Text("", ImVec2(text_size.y + pad * 2, text_size.x + pad * 2));
+    while ((c = *text++)) {
+        glyph = font->FindGlyph(c);
+        if (!glyph) continue;
+        window->DrawList->PrimReserve(6, 4);
+        window->DrawList->PrimQuadUV(
+            pos + ImVec2(glyph->Y0, -glyph->X0),
+            pos + ImVec2(glyph->Y0, -glyph->X1),
+            pos + ImVec2(glyph->Y1, -glyph->X1),
+            pos + ImVec2(glyph->Y1, -glyph->X0),
+
+            ImVec2(glyph->U0, glyph->V0),
+            ImVec2(glyph->U1, glyph->V0),
+            ImVec2(glyph->U1, glyph->V1),
+            ImVec2(glyph->U0, glyph->V1),
+            text_color);
+        pos.y -= glyph->AdvanceX;
+    }
+    ImGui::PopID();
+    return true;
+}
+
 bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, float v_max, const char* format, float power)
 {
     return DragScalar(label, ImGuiDataType_Float, v, v_speed, &v_min, &v_max, format, power);

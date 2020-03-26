@@ -36,6 +36,7 @@ GameObject::GameObject(const char* name) {
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
+	layer = LAYER_0;
 
 	Enable();
 }

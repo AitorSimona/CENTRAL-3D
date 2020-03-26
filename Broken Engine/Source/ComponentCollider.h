@@ -3,16 +3,17 @@
 
 #include "Component.h"
 #include "Math.h"
-
+#include "ModulePhysics.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 BE_BEGIN_NAMESPACE
+
 
 class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
 
-class ComponentCollider : public Component
+class BROKEN_API ComponentCollider : public Component
 {
 public:
 	enum class COLLIDER_TYPE
@@ -49,7 +50,17 @@ public:
 
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
-	void Delete();
+	physx::PxRigidActor*					GetActor();
+	void									UpdateActor(LayerMask* layerMask);
+	void									Delete();
+
+	// Implements PxSimulationEventCallback
+	virtual void							onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs);
+	virtual void							onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count);
+	//virtual void							onConstraintBreak(physx::PxConstraintInfo*, physx::PxU32) {}
+	//virtual void							onWake(physx::PxActor**, physx::PxU32) {}
+	//virtual void							onSleep(physx::PxActor**, physx::PxU32) {}
+	//virtual void							onAdvance(const physx::PxRigidBody* const*, const physx::PxTransform*, const physx::PxU32) {}
 
 private:
 	template <class Geometry>
@@ -65,6 +76,7 @@ public:
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
 	int colliderType = 0;
+	
 
 private:
 	physx::PxShape* shape = nullptr;
