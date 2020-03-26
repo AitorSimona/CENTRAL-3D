@@ -107,18 +107,19 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			physx::PxVec3* positionBuffer = new physx::PxVec3[newParticlesAmount];
 			physx::PxVec3* velocityBuffer = new physx::PxVec3[newParticlesAmount];
 
-			for (int i = 0; i < newParticlesAmount; ++i) {
-			velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
-											particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
-											particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
+			for (int i = 0; i < newParticlesAmount; ++i) 
+			{
+				velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
+												particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
+												particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
 
-			positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
-											globalPosition.y + GetRandomValue(-size.y,size.y),
-											globalPosition.z + GetRandomValue(-size.z,size.z)) };
+				positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
+												globalPosition.y + GetRandomValue(-size.y,size.y),
+												globalPosition.z + GetRandomValue(-size.z,size.z)) };
 
-			particles[index[i]]->lifeTime = particlesLifeTime;
-			particles[index[i]]->spawnTime = SDL_GetTicks();
-			particles[index[i]]->color = particlesColor/255.0f;
+				particles[index[i]]->lifeTime = particlesLifeTime;
+				particles[index[i]]->spawnTime = SDL_GetTicks();
+				particles[index[i]]->color = particlesColor;
 			}
 
 			creationData.indexBuffer = indexBuffer;
@@ -174,7 +175,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 	}
 }
 
-void ComponentParticleEmitter::DrawParticles()
+void ComponentParticleEmitter::DrawComponent()
 {
 	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
 	if (rd)

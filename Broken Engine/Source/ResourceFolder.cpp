@@ -115,7 +115,8 @@ void ResourceFolder::OnOverwrite()
 
 }
 
-void ResourceFolder::OnDelete() {
+void ResourceFolder::OnDelete() 
+{
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	for (uint i = 0; i < resources.size(); ++i) {

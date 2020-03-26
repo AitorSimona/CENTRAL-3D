@@ -166,9 +166,14 @@ bool PanelInspector::Draw()
 
 			ImGui::Text(SelectedRes->GetName());
 
+			ImGui::EndChild();
+
+			ImGui::BeginChild("resdata", ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), false);
+
 			SelectedRes->CreateInspectorNode();
 
 			ImGui::EndChild();
+
 		}
 	}
 
