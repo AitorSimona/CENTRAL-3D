@@ -40,6 +40,8 @@ private:
 	void LimitText( std::string& text);
 
 	void RecursiveDirectoryDraw(Broken::ResourceFolder* directory);
+
+	bool createScript = false;
 };
 
 #endif

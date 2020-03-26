@@ -47,6 +47,8 @@ const AABB& ComponentMesh::GetAABB() const {
 
 json ComponentMesh::Save() const {
 	json node;
+	node["Active"] = this->active;
+
 	node["Resources"]["ResourceMesh"];
 
 	// --- Store path to component file ---
@@ -58,6 +60,8 @@ json ComponentMesh::Save() const {
 
 void ComponentMesh::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	std::string path = node["Resources"]["ResourceMesh"].is_null() ? "0" : node["Resources"]["ResourceMesh"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));

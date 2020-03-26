@@ -211,6 +211,8 @@ json ComponentCollider::Save() const
 	ENGINE_CONSOLE_LOG("Saved");
 	json node;
 
+	node["Active"] = this->active;
+
 	int colliderType = 0;
 	switch (type)
 	{
@@ -282,6 +284,8 @@ json ComponentCollider::Save() const
 
 void ComponentCollider::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	ENGINE_CONSOLE_LOG("Load");
 	CreateCollider(COLLIDER_TYPE::NONE, true);
 

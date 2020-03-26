@@ -4,6 +4,15 @@
 
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
+#include "ComponentAudioListener.h"
+#include "ComponentAudioSource.h"
+#include "ComponentCanvas.h"
+#include "ComponentText.h"
+#include "ComponentImage.h"
+#include "ComponentButton.h"
+//#include "ComponentCheckBox.h"
+//#include "ComponentInputText.h"
+#include "ComponentProgressBar.h"
 
 #include "ResourceModel.h"
 #include "ResourceScene.h"
@@ -178,6 +187,16 @@ void GameObject::RemoveChildGO(GameObject* GO)
 	}
 }
 
+Component* GameObject::GetComponentWithUID(uint UUID)
+{
+	for (int i = 0; i < this->components.size(); ++i) {
+		if (this->components[i]->GetUID() == UUID)
+			return this->components[i];
+	}
+
+	return nullptr;
+}
+
 void GameObject::AddChildGO(GameObject* GO)
 {
 	// --- Add a child GO to a Game Object this ---
@@ -317,9 +336,9 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 		//	component = new ComponentInputText(this);
 		//	break;
 
-		//case Component::ComponentType::ProgressBar:
-		//	component = new ComponentProgressBar(this);
-		//	break;
+		case Component::ComponentType::ProgressBar:
+			component = new ComponentProgressBar(this);
+			break;
 		}
 
 		if (component)
@@ -338,12 +357,12 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 					delete components[index];
 					components[index] = nullptr;
 				}
-					
+
 				// --- Insert element at given index ---
 				components[index] = component;
 			}
 			// --- Else push back ---
-			else 
+			else
 				components.push_back(component);
 
 		}

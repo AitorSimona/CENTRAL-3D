@@ -29,6 +29,7 @@
 #include "ResourceShader.h"
 
 #include "Component.h"
+#include "ComponentButton.h"
 
 #include "ResourceScene.h"
 
@@ -39,25 +40,44 @@
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
-void ModuleSceneManager::ONResourceSelected(const Event& e) {
+void ModuleSceneManager::ONResourceSelected(const Event& e)
+{
 	if (App->scene_manager->SelectedGameObject)
 		App->scene_manager->SetSelectedGameObject(nullptr);
 }
 
-void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) {
+void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
+{
+	// If destroyed GameObject is selected, put to nullptr
+	if (e.go->GetUID() == App->scene_manager->SelectedGameObject->GetUID())
+		App->scene_manager->SetSelectedGameObject(nullptr);
+
+	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
+	{
+		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
+		{
+			ComponentButton* button = (ComponentButton*)obj->HasComponent(Component::ComponentType::Button); //single component (change when able to have multiple components of same type)
+			if (button->script_obj->GetUID() == e.go->GetUID())
+			{
+				button->SetNullptr();
+			}
+		}
+	}
 }
 
 // -------------------------------
 
-ModuleSceneManager::ModuleSceneManager(bool start_enabled) {
+ModuleSceneManager::ModuleSceneManager(bool start_enabled)
+{
 	name = "Scene Manager";
 }
 
-ModuleSceneManager::~ModuleSceneManager() {
+ModuleSceneManager::~ModuleSceneManager()
+{
 }
 
-
-bool ModuleSceneManager::Init(json& file) {
+bool ModuleSceneManager::Init(json& file)
+{
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
@@ -73,7 +93,8 @@ bool ModuleSceneManager::Init(json& file) {
 	return true;
 }
 
-bool ModuleSceneManager::Start() {
+bool ModuleSceneManager::Start()
+{
 	// --- Create primitives ---
 	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
 	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
@@ -107,13 +128,19 @@ bool ModuleSceneManager::Start() {
 	return true;
 }
 
-update_status ModuleSceneManager::PreUpdate(float dt) {
+update_status ModuleSceneManager::PreUpdate(float dt)
+{
+	for (int i = 0; i < go_to_delete.size(); ++i)
+		DestroyGameObject(go_to_delete[i]);
+
+	go_to_delete.clear();
 
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleSceneManager::Update(float dt) {
-	
+update_status ModuleSceneManager::Update(float dt)
+{
+
 	root->Update(dt);
 
 	if (update_tree)
@@ -126,7 +153,8 @@ update_status ModuleSceneManager::Update(float dt) {
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleSceneManager::CleanUp() {
+bool ModuleSceneManager::CleanUp()
+{
 	root->RecursiveDelete();
 
 	if (temporalScene != nullptr)
@@ -141,7 +169,8 @@ bool ModuleSceneManager::CleanUp() {
 	return true;
 }
 
-void ModuleSceneManager::DrawScene() {
+void ModuleSceneManager::DrawScene()
+{
 
 	if (display_tree)
 		RecursiveDrawQuadtree(tree.root);
@@ -178,7 +207,7 @@ void ModuleSceneManager::DrawScene() {
 
 }
 
-GameObject* ModuleSceneManager::GetRootGO() const 
+GameObject* ModuleSceneManager::GetRootGO() const
 {
 	return root;
 }
@@ -229,7 +258,7 @@ void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChild
 		{
 			std::vector<GameObject*> children;
 			go->GetAllChilds(children);
-			
+
 			//start the loop from 1, because the GO in the index 0 is the parent GO
 			for (int i = 1; i < children.size(); ++i)
 			{
@@ -274,10 +303,9 @@ void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChild
 	}
 }
 
-void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const 
+void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 {
-	if (!node->IsLeaf()) 
-	{
+	if (!node->IsLeaf()) {
 		for (uint i = 0; i < 8; ++i) {
 			RecursiveDrawQuadtree(node->childs[i]);
 		}
@@ -287,7 +315,7 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 		App->renderer3D->DrawAABB(node->box, Red);
 }
 
-void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
+void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 	if (currentScene)
@@ -359,7 +387,7 @@ void ModuleSceneManager::LoadGame(const json & file)
 				scene = (*it).second;
 
 		}
-		
+
 		if (scene != nullptr)
 		{
 			SetActiveScene(scene);
@@ -386,7 +414,7 @@ void ModuleSceneManager::LoadGame(const json & file)
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main camera for game.", );
 		}
 	}
-	else 
+	else
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
 }
 
@@ -445,6 +473,15 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		{
 			currentScene = scene; // force this so gos are not added to another scene
 			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
+
+			// --- Make sure to save newly loaded scene to temporal scene so we do not load a previous one on stop ---
+			if (App->GetAppState() == AppState::PLAY)
+			{
+				App->scene_manager->temporalScene->NoStaticGameObjects.clear();
+				App->scene_manager->temporalScene->StaticGameObjects.clear();
+				App->scene_manager->currentScene->CopyInto(App->scene_manager->temporalScene);
+				App->scene_manager->SaveScene(App->scene_manager->temporalScene);
+			}
 		}
 	}
 	else
@@ -725,11 +762,20 @@ GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 	return new_object;
 }
 
-void ModuleSceneManager::DestroyGameObject(GameObject * go)
+void ModuleSceneManager::DestroyGameObject(GameObject* go)
 {
 	//App->physics->DeleteActors(go);
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
 	delete go;
 	this->go_count--;
+}
+
+void ModuleSceneManager::SendToDelete(GameObject* go)
+{
+	Event e(Event::EventType::GameObject_destroyed);
+	e.go = go;
+	App->event_manager->PushEvent(e);
+
+	go_to_delete.push_back(go);
 }

@@ -10,6 +10,7 @@ BE_BEGIN_NAMESPACE
 class GameObject;
 class ComponentScript;
 struct ScriptInstance;
+struct ScriptFunc;
 
 enum _AppState;
 class BROKEN_API ModuleScripting : public Module {
@@ -24,10 +25,12 @@ public:
 	void CompileScriptTableClass(ScriptInstance* script);
 	void SendScriptToModule(ComponentScript* script_component);
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
+	void FillScriptInstanceComponentFuncs(ScriptInstance* script);
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NullifyScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NotifyHotReloading();
 	bool CheckEverythingCompiles();
+	void CallbackScriptFunction(ComponentScript* script_component, const ScriptFunc& function_to_call);
 
 public:
 	bool Init(json& file) override;
@@ -38,9 +41,11 @@ public:
 	update_status GameUpdate(float gameDT);
 
 	bool Stop() override;
+	ScriptInstance* GetScriptInstanceFromComponent(ComponentScript* component_script);
 
 public:
 	ScriptInstance* current_script;
+	update_status game_update = UPDATE_CONTINUE;
 
 private:
 	// L is our Lua Virtual Machine, it's called L because its the common name it receives, so all programers can understand what this var is
@@ -52,7 +57,6 @@ private:
 	_AppState previous_AppState = (_AppState)2; // we use the EDITOR value of the script (can't include application.h because it would slow down compilation time)
 
 	void CleanUpInstances();
-	ScriptInstance* GetScriptInstanceFromComponent(ComponentScript* component_script);
 
 	std::vector<ScriptInstance*> recompiled_instances;
 	std::vector<ScriptInstance*> class_instances;

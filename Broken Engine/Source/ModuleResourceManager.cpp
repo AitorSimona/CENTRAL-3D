@@ -802,7 +802,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	return resource;
 }
 
-Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, const char* source_file)
+Resource* ModuleResourceManager::CreateResource(Resource::ResourceType type, const char* source_file)
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 

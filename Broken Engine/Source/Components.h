@@ -18,5 +18,6 @@
 #include "ComponentText.h"
 #include "ComponentButton.h"
 #include "ComponentScript.h"
+#include "ComponentProgressBar.h"
 
 #endif // __COMPONENTS_H__

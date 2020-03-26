@@ -118,7 +118,7 @@ bool ModuleRenderer3D::Init(json& file) {
 }
 
 // PreUpdate: clear buffer
-update_status ModuleRenderer3D::PreUpdate(float dt) 
+update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	// --- Clear render orders ---
 	ClearRenderOrders();
@@ -213,7 +213,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 }
 
 // Called before quitting
-bool ModuleRenderer3D::CleanUp() 
+bool ModuleRenderer3D::CleanUp()
 {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
 
@@ -226,7 +226,7 @@ bool ModuleRenderer3D::CleanUp()
 	return true;
 }
 
-void ModuleRenderer3D::OnResize(int width, int height) 
+void ModuleRenderer3D::OnResize(int width, int height)
 {
 	// --- Called by UpdateWindowSize() in Window module this when resizing windows to prevent rendering issues ---
 
@@ -334,7 +334,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 		}
 		else
 		{
-			// --- Build new vector to store mesh's instances --- 
+			// --- Build new vector to store mesh's instances ---
 			std::vector<RenderMesh> new_vec;
 
 			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags, color);
@@ -402,7 +402,7 @@ void ModuleRenderer3D::UpdateGLCapabilities() const
 
 }
 
-uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* data) const 
+uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* data) const
 {
 	uint ID = 0;
 
@@ -414,7 +414,7 @@ uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* 
 	return ID;
 }
 
-void ModuleRenderer3D::CreateFramebuffer() 
+void ModuleRenderer3D::CreateFramebuffer()
 {
 	// --- Create a texture to use it as render target ---
 	glGenTextures(1, &rendertexture);
@@ -485,7 +485,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 
 	// --- Creating outline drawing shaders ---
-	const char* OutlineVertShaderSrc = 
+	const char* OutlineVertShaderSrc =
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
@@ -499,7 +499,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#endif //VERTEX_SHADER\n"
 		;
 
-	const char* OutlineFragShaderSrc = 
+	const char* OutlineFragShaderSrc =
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
@@ -521,7 +521,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating point/line drawing shaders ---
 
-	const char* linePointVertShaderSrc = 
+	const char* linePointVertShaderSrc =
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
@@ -538,7 +538,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#endif //VERTEX_SHADER\n"
 		;
 
-	const char* linePointFragShaderSrc = 
+	const char* linePointFragShaderSrc =
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
@@ -561,7 +561,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating z buffer shader drawer ---
 
-	const char* zdrawervertex = 
+	const char* zdrawervertex =
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
@@ -580,7 +580,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#endif //VERTEX_SHADER\n"
 		;
 
-	const char* zdrawerfragment = 
+	const char* zdrawerfragment =
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
@@ -608,7 +608,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating text rendering shaders ---
 
-	const char* textVertShaderSrc = 
+	const char* textVertShaderSrc =
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
@@ -651,7 +651,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating Default Vertex and Fragment Shaders ---
 
-	const char* vertexShaderSource = 
+	const char* vertexShaderSource =
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
@@ -659,7 +659,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"layout(location = 1) in vec3 normal; \n"
 		"layout(location = 2) in vec3 color; \n"
 		"layout (location = 3) in vec2 texCoord; \n"
-		"uniform vec3 Color; \n"
+		"uniform vec3 Color = vec3(1.0); \n"
 		"out vec3 ourColor; \n"
 		"out vec2 TexCoord; \n"
 		"uniform mat4 model_matrix; \n"
@@ -673,7 +673,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#endif //VERTEX_SHADER\n"
 		;
 
-	const char* fragmentShaderSource = 
+	const char* fragmentShaderSource =
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
@@ -683,7 +683,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"out vec4 color; \n"
 		"uniform sampler2D ourTexture; \n"
 		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
+		"color = texture(ourTexture, TexCoord) * vec4(ourColor, 1); \n"
 		"if(Texture == -1)\n"
 		"color = vec4(ourColor, 1);\n"
 		"} \n"
@@ -717,7 +717,7 @@ void ModuleRenderer3D::CreateGrid(float target_distance)
 	uint i = 0;
 	int lines = -20;
 
-	for (i = 0; i < 40; i++) 
+	for (i = 0; i < 40; i++)
 	{
 		vertices[4 * i] = float3(lines * -distance, 0.0f, 20 * -distance);
 		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 20 * distance);
@@ -826,7 +826,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		float nearp = active_camera->GetNearPlane();
 
 		// --- Give ZDrawer near and far camera frustum planes pos ---
-		if (zdrawer) 
+		if (zdrawer)
 		{
 			int nearfarLoc = glGetUniformLocation(shader, "nearfar");
 			glUniform2f(nearfarLoc, nearp, farp);
@@ -847,7 +847,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (mesh->flags & RenderMeshFlags_::wire)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices) 
+		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices)
 		{
 			const ResourceMesh* rmesh = mesh->resource_mesh;
 
@@ -1136,4 +1136,3 @@ void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, 
 }
 
 // ----------------------------------------------------
-

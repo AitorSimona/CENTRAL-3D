@@ -77,6 +77,8 @@ ComponentBone* ComponentBone::GetHipBone()
 json ComponentBone::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+
 	node["Resources"]["ResourceBone"];
 
 	// --- Store path to component file ---
@@ -89,6 +91,8 @@ json ComponentBone::Save() const
 
 void ComponentBone::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	std::string path = node["Resources"]["ResourceBone"].is_null() ? "0" : node["Resources"]["ResourceBone"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));

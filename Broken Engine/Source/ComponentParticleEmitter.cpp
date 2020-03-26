@@ -209,6 +209,8 @@ json ComponentParticleEmitter::Save() const
 {
 	json node;
 
+	node["Active"] = this->active;
+
 	node["sizeX"]=std::to_string(size.x);
 	node["sizeY"] = std::to_string(size.y);
 	node["sizeZ"] = std::to_string(size.z);
@@ -240,6 +242,8 @@ json ComponentParticleEmitter::Save() const
 
 void ComponentParticleEmitter::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	//load the strings
 	std::string Lsizex = node["sizeX"].is_null() ? "0" : node["sizeX"];
 	std::string Lsizey = node["sizeY"].is_null() ? "0" : node["sizeY"];

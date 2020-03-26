@@ -106,11 +106,13 @@ void ComponentAudioSource::Update()
 
 void ComponentAudioSource::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 }
 
 json ComponentAudioSource::Save() const
 {
 	json node;
+	node["Active"] = this->active;
 	return node;
 }
 

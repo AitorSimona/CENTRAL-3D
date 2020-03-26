@@ -70,6 +70,11 @@ void ComponentImage::Draw()
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, -1);
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
@@ -89,6 +94,7 @@ void ComponentImage::Draw()
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
+	glUniform1i(TextureLocation, 0); //reset texture location
 
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
@@ -109,6 +115,8 @@ void ComponentImage::Draw()
 json ComponentImage::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+	node["visible"] = std::to_string(visible);
 
 	node["Resources"]["ResourceTexture"];
 
@@ -126,6 +134,10 @@ json ComponentImage::Save() const
 
 void ComponentImage::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
+	visible = bool(std::stoi(visible_str));
+
 	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));

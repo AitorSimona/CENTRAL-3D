@@ -181,12 +181,15 @@ void ComponentAnimation::SetCurrentAnimationSpeed(float speed)
 json ComponentAnimation::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+
+
 	node["Resources"]["ResourceAnimation"];
 
 	// --- Store path to component file ---
 	if (res_anim)
 		node["Resources"]["ResourceAnimation"] = std::string(res_anim->GetResourceFile());
-
+	
 	// --- Saving animations ------------------
 	node["Animations"]["Size"] = std::to_string(animations.size());
 	node["Animations"]["BlendTime"] = std::to_string(blend_time_value);
@@ -206,6 +209,8 @@ json ComponentAnimation::Save() const
 
 void ComponentAnimation::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	std::string path = node["Resources"]["ResourceAnimation"].is_null() ? "0" : node["Resources"]["ResourceAnimation"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));

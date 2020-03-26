@@ -147,6 +147,8 @@ void ComponentText::Draw()
 json ComponentText::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+	node["visible"] = std::to_string(visible);
 
 	node["position2Dx"] = std::to_string(position2D.x);
 	node["position2Dy"] = std::to_string(position2D.y);
@@ -173,6 +175,10 @@ json ComponentText::Save() const
 void ComponentText::Load(json& node)
 {
 	//When loading scene, load the saved font if exists else use default font
+
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
+	visible = bool(std::stoi(visible_str));
 
 	std::string posx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
 	std::string posy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
@@ -273,10 +279,10 @@ void ComponentText::CreateInspectorNode()
 		ImGui::DragFloat("y##textposition", &position2D.y, 0.05f);
 
 		// Rotation
-		ImGui::Text("Rotation:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##textrotation", &rotation2D);
+		//ImGui::Text("Rotation:");
+		//ImGui::SameLine();
+		//ImGui::SetNextItemWidth(60);
+		//ImGui::DragFloat("##textrotation", &rotation2D);
 
 		// Image
 		ImGui::Separator();

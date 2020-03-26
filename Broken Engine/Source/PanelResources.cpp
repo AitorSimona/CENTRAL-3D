@@ -99,6 +99,18 @@ bool PanelResources::Draw()
 
 			ImGui::Separator();
 		}
+		if (ImGui::CollapsingHeader("Animators"))
+		{
+			for (std::map<uint, Broken::ResourceAnimator*>::const_iterator it = EngineApp->resources->anim_info.begin(); it != EngineApp->resources->anim_info.end(); ++it)
+			{
+				if ((*it).second)
+				{
+					DrawResourceNode((*it).second, instances_color);
+				}
+			}
+
+			ImGui::Separator();
+		}
 		if (ImGui::CollapsingHeader("Shaders"))
 		{
 			for (std::map<uint, Broken::ResourceShader*>::const_iterator it = EngineApp->resources->shaders.begin(); it != EngineApp->resources->shaders.end(); ++it)

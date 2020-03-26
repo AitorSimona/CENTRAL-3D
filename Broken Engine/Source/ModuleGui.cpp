@@ -140,7 +140,7 @@ bool ModuleGui::Start()
 }
 
 update_status ModuleGui::PreUpdate(float dt)
-{  
+{
 	// --- Start the frame ---
 
 	ImGui_ImplOpenGL3_NewFrame();
@@ -209,14 +209,26 @@ bool ModuleGui::CleanUp()
 	//panelShaderEditor = nullptr;
 
 	// --- Delete editor textures ---
-	glDeleteTextures(1, &materialTexID);
 	glDeleteTextures(1, &folderTexID);
 	glDeleteTextures(1, &defaultfileTexID);
+	glDeleteTextures(1, &materialTexID);
 	glDeleteTextures(1, &prefabTexID);
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
 	glDeleteTextures(1, &animatorTexID);
 	glDeleteTextures(1, &shaderTexID);
+	glDeleteTextures(1, &scriptTexID);
+	glDeleteTextures(1, &meshTexID);
+	glDeleteTextures(1, &boneTexID);
+	glDeleteTextures(1, &animationTexID);
+	// -- Toolbar
+	glDeleteTextures(1, &translateTexID);
+	glDeleteTextures(1, &rotateTexID);
+	glDeleteTextures(1, &scaleTexID);
+	glDeleteTextures(1, &toolbarPlayTexID);
+	glDeleteTextures(1, &toolbarPauseTexID);
+	glDeleteTextures(1, &toolbarPauseTexID);
+	//glDeleteTextures(1, &toolbarStopTexID);
 
 	return ret;
 }
@@ -279,12 +291,12 @@ ImGuiContext* ModuleGui::getImgUICtx() const {
 	return ctx;
 }
 
-void ModuleGui::LoadStatus(const json & file) 
+void ModuleGui::LoadStatus(const json & file)
 {
-	
+
 	for (uint i = 0; i < panels.size(); ++i)
 	{
-		
+
 		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end()) {
 			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
 		}
@@ -314,12 +326,25 @@ void ModuleGui::CreateIcons()
 	// --- Create Icon textures ---
 	folderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, -1);
 	defaultfileTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, -1);
-	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Material Icon.png", width, height, -1);
+	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MaterialIcon.png", width, height, -1);
 	prefabTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Prefab.png", width, height, -1);
 	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, -1);
 	shaderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ShaderIcon.png", width, height, -1);
+	scriptTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScriptIcon.png", width, height, -1);
+	meshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MeshIcon.png", width, height, -1);
+	boneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/BoneIcon.png", width, height, -1);
+	animationTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimationIcon.png", width, height, -1);
+
+	// -- Toolbar icons
+	translateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/TranslateIcon.png", width, height, -1);
+	rotateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/RotateIcon.png", width, height, -1);
+	scaleTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScaleIcon.png", width, height, -1);
+
+	toolbarPlayTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPlayIcon.png", width, height, -1);
+	toolbarPauseTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPauseIcon.png", width, height, -1);
+	toolbarStepTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarStepIcon.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
 }
@@ -331,4 +356,3 @@ be_imguialloc ModuleGui::GetImGuiAlloc() const {
 be_imguifree ModuleGui::GetImGuiFree() const {
 	return &ImGuiCustomDeallocator;
 }
-

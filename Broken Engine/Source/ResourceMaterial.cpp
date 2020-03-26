@@ -22,6 +22,7 @@ ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource
 	extension = ".mat";
 	resource_file = source_file;
 	shader = App->renderer3D->defaultShader;
+
 	previewTexID = App->gui->materialTexID;
 
 	shader->GetAllUniforms(uniforms);

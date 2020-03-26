@@ -17,7 +17,7 @@ ResourceAnimation::ResourceAnimation(uint UID, const char* source_file) : Resour
 	extension = ".anim";
 	resource_file = ANIMATIONS_FOLDER + std::to_string(UID) + extension;
 
-	previewTexID = App->gui->defaultfileTexID;
+	previewTexID = App->gui->animationTexID;
 
 }
 

@@ -7,6 +7,7 @@
 
 #include <vector>
 struct ImGuiContext;
+struct ImDrawList;
 //
 //class PanelSettings;
 //class PanelAbout;
@@ -74,15 +75,27 @@ public:
 	//PanelResources*		panelResources = nullptr;
 	//PanelPhysics*		panelPhysics = nullptr;
 	//PanelGame*			panelGame = nullptr;
-	
-	uint materialTexID = 0;
+
+
 	uint folderTexID = 0;
 	uint defaultfileTexID = 0;
+	uint materialTexID = 0;
 	uint prefabTexID = 0;
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
 	uint animatorTexID = 0;
 	uint shaderTexID = 0;
+	uint scriptTexID = 0;
+	uint meshTexID = 0;
+	uint boneTexID = 0;
+	uint animationTexID = 0;
+	// --- Toolbar icons
+	uint translateTexID = 0;
+	uint rotateTexID = 0;
+	uint scaleTexID = 0;
+	uint toolbarPlayTexID = 0;
+	uint toolbarPauseTexID = 0;
+	uint toolbarStepTexID = 0;
 
 	bool isSceneHovered = false;
 
@@ -93,6 +106,8 @@ public:
 	float sceneHeight = 0;
 
 	bool isUsingGuizmo = false;
+
+	ImDrawList* draw_list;
 
 private:
 

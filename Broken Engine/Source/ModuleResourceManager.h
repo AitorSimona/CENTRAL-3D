@@ -90,7 +90,7 @@ public:
 	}
 
 	// --- Resource Handling ---
-	Resource* GetResource(uint UID, bool loadinmemory = true);
+	Resource* GetResource(uint UID, bool loadinmemory = true); 
 	void AddResourceToFolder(Resource* resource);
 	void RemoveResourceFromFolder(Resource* resource);
 	Resource* CreateResource(Resource::ResourceType type, const char* source_file);
