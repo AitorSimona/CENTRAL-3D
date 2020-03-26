@@ -140,7 +140,7 @@ bool ModuleGui::Start()
 }
 
 update_status ModuleGui::PreUpdate(float dt)
-{  
+{
 	// --- Start the frame ---
 
 	ImGui_ImplOpenGL3_NewFrame();
@@ -216,6 +216,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
 	glDeleteTextures(1, &animatorTexID);
+	glDeleteTextures(1, &shaderTexID);
 	glDeleteTextures(1, &scriptTexID);
 	glDeleteTextures(1, &meshTexID);
 	glDeleteTextures(1, &boneTexID);
@@ -290,12 +291,12 @@ ImGuiContext* ModuleGui::getImgUICtx() const {
 	return ctx;
 }
 
-void ModuleGui::LoadStatus(const json & file) 
+void ModuleGui::LoadStatus(const json & file)
 {
-	
+
 	for (uint i = 0; i < panels.size(); ++i)
 	{
-		
+
 		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end()) {
 			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
 		}
@@ -330,6 +331,7 @@ void ModuleGui::CreateIcons()
 	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, -1);
+	shaderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ShaderIcon.png", width, height, -1);
 	scriptTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScriptIcon.png", width, height, -1);
 	meshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MeshIcon.png", width, height, -1);
 	boneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/BoneIcon.png", width, height, -1);
@@ -354,4 +356,3 @@ be_imguialloc ModuleGui::GetImGuiAlloc() const {
 be_imguifree ModuleGui::GetImGuiFree() const {
 	return &ImGuiCustomDeallocator;
 }
-

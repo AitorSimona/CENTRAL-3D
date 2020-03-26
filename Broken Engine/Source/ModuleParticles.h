@@ -15,8 +15,6 @@ public:
 	bool Start() override;
 	update_status Update(float dt) override;
 
-	void DrawParticles();
-
 	void AddEmitter(ComponentParticleEmitter* componentEmitter);
 	void DeleteEmitter(ComponentParticleEmitter* componentEmitter);
 
