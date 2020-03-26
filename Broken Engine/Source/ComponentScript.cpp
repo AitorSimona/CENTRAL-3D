@@ -194,6 +194,8 @@ bool ComponentScript::ScriptFuncAlreadyInComponent(std::string name)
 json ComponentScript::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+
 	node["Resources"]["ResourceScript"];
 
 	// Store path to component file
@@ -235,6 +237,8 @@ json ComponentScript::Save() const
 
 void ComponentScript::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	std::string path = node["Resources"]["ResourceScript"].is_null() ? "0" : node["Resources"]["ResourceScript"];
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();

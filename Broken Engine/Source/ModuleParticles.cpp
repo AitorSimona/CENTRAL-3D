@@ -42,12 +42,6 @@ update_status ModuleParticles::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleParticles::DrawParticles()
-{
-	for (uint i = 0; i < particleEmitters.size(); ++i)
-		particleEmitters[i]->DrawParticles();
-}
-
 void ModuleParticles::AddEmitter(ComponentParticleEmitter* componentEmitter)
 {
 	particleEmitters.push_back(componentEmitter);

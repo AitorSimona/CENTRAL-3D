@@ -10,10 +10,6 @@
 
 
 using namespace Broken;
-// MYTODO: TO BE DELETED ONCE SHADERS REWORK IS DONE 
-Resource::Resource(ResourceType type) {
-	this->type = type;
-}
 
 Resource::Resource(ResourceType type, uint UID, const char* source_file) {
 	this->type = type;

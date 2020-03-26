@@ -23,6 +23,7 @@ public:
 	void Disable();
 	void Update(float dt);
 	void PostUpdate();
+	void Draw();
 
 	// --- Getters ---
 	uint			GetUID();

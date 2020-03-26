@@ -11,7 +11,8 @@
 
 
 using namespace Broken;
-ResourceMeta::ResourceMeta(uint UID, const char* source_file) : Resource(Resource::ResourceType::META, UID, source_file) {
+ResourceMeta::ResourceMeta(uint UID, const char* source_file) : Resource(Resource::ResourceType::META, UID, source_file) 
+{
 	extension = ".meta";
 	resource_file = source_file + extension;
 
@@ -21,18 +22,22 @@ ResourceMeta::ResourceMeta(uint UID, const char* source_file) : Resource(Resourc
 
 }
 
-ResourceMeta::~ResourceMeta() {
+ResourceMeta::~ResourceMeta() 
+{
 }
 
-bool ResourceMeta::LoadInMemory() {
+bool ResourceMeta::LoadInMemory() 
+{
 	return true;
 
 }
 
-void ResourceMeta::FreeMemory() {
+void ResourceMeta::FreeMemory() 
+{
 }
 
-void ResourceMeta::OnOverwrite() {
+void ResourceMeta::OnOverwrite() 
+{
 	NotifyUsers(ResourceNotificationType::Overwrite);
 
 	// If a file is overwritten, its meta is notified so it can update the last modification time of its assigned resource
@@ -48,7 +53,8 @@ void ResourceMeta::OnOverwrite() {
 
 }
 
-void ResourceMeta::OnDelete() {
+void ResourceMeta::OnDelete() 
+{
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
@@ -58,7 +64,8 @@ void ResourceMeta::OnDelete() {
 	App->resources->ONResourceDestroyed(this);
 }
 
-void ResourceMeta::Repath() {
+void ResourceMeta::Repath()
+{
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	IMeta->Save(this);
 }

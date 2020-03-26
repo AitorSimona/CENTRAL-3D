@@ -55,6 +55,9 @@ bool ResourceScene::LoadInMemory() {
 				std::string name = file[it.key()]["Name"];
 				go->SetName(name.c_str());
 
+				if (!file[it.key()]["Active"].is_null())
+					go->GetActive() = file[it.key()]["Active"];
+
 				if (!file[it.key()]["Static"].is_null())
 					go->Static = file[it.key()]["Static"];
 

@@ -21,7 +21,6 @@ public:
 		ANIMATION,
 		ANIMATOR,
 		TEXTURE,
-		SHADER_OBJECT,
 		SCRIPT,
 		META,
 		FONT,
@@ -34,7 +33,6 @@ public:
 	};
 
 
-	Resource(ResourceType type);
 	Resource(ResourceType type, uint UID, const char* source_file);
 	virtual ~Resource();
 
