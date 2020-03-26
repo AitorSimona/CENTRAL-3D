@@ -335,7 +335,7 @@ bool ModuleRenderer3D::GetVSync() const {
 
 void ModuleRenderer3D::HandleObjectOutlining() {
 	// --- Selected Object Outlining ---
-	if (App->scene_manager->GetSelectedGameObject() != nullptr) {
+	for (GameObject* obj : App->scene_manager->selected_gameobjects) {
 		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
 		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
 		// differences, making it look like borders ---
@@ -344,17 +344,20 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 		glDisable(GL_DEPTH_TEST);
 
 		// --- Search for Renderer Component ---
-		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+		//ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+		ComponentMeshRenderer* MeshRenderer = obj->GetComponent<ComponentMeshRenderer>();
 
 		// --- Search for Collider Component ---
-		ComponentCollider* collider = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCollider>();
+		//ComponentCollider* collider = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCollider>();
+		ComponentCollider* collider = obj->GetComponent<ComponentCollider>();
 
 		// --- If Found, draw collider shape ---
 		if (collider && collider->IsEnabled())
 			collider->Draw();
 
 		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
+		//if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
+		if (MeshRenderer && MeshRenderer->IsEnabled() && obj->GetActive())
 			MeshRenderer->Draw(true);
 
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);

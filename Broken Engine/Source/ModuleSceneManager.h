@@ -45,6 +45,8 @@ public:
 	void DestroyGameObject(GameObject* go);
 
 	// --- Getters ---
+
+	// Returns the last selected gameobject
 	GameObject* GetSelectedGameObject() const;
 	GameObject* GetRootGO() const;
 	uint GetPointLineVAO() const;
