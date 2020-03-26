@@ -1079,8 +1079,13 @@ void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
 			std::string path = resource->GetOriginalFile();
 			directory = App->fs->GetDirectoryFromPath(path);
+
+			if(directory.size() > 0)
 			directory.pop_back();
+
 			original_file = (*it).second->GetOriginalFile();
+
+			if (original_file.size() > 0)
 			original_file.pop_back();
 
 			if (directory == original_file)

@@ -62,6 +62,7 @@ public:
 	// --- Utilities ---
 	void use();
 	void ReloadAndCompileShader();
+	void FillUniform(Uniform* uniform, const char* name, const uint type) const;
 
 public:
 	// the program ID
@@ -77,7 +78,6 @@ private:
 	bool CreateShaderProgram(unsigned int vertex, unsigned int fragment);
 	bool CreateShaderProgram();
 	void DeleteShaderProgram();
-	void FillUniform(Uniform* uniform, const char* name, const uint type) const;
 
 
 	bool LoadStream(const char* path);

@@ -10,6 +10,8 @@
 
 #include "ResourceTexture.h"
 
+#include "ImporterMaterial.h"
+
 #include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
@@ -22,6 +24,7 @@ ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource
 	shader = App->renderer3D->defaultShader;
 	previewTexID = App->gui->materialTexID;
 
+	shader->GetAllUniforms(uniforms);
 }
 
 ResourceMaterial::~ResourceMaterial() 
@@ -50,7 +53,7 @@ void ResourceMaterial::CreateInspectorNode()
 {
 	shader->GetAllUniforms(uniforms);
 	DisplayAndUpdateUniforms();
-	UpdateUniforms();
+	//UpdateUniforms();
 }
 
 void ResourceMaterial::UpdateUniforms() 
@@ -109,6 +112,8 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 	glUseProgram(shader->ID);
 
+	bool updated = false;
+
 	for (uint i = 0; i < uniforms.size(); ++i)
 	{
 		ImGui::PushID(GetUID() + i);
@@ -122,6 +127,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputInt("##inputintuniform", &tmp_int, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.intU = tmp_int;
 			}
 			break;
@@ -131,6 +137,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputFloat("##inputfloatuniform", &tmp_float, 1.0f, 100.0f, "%3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.floatU = tmp_float;
 			}
 
@@ -141,6 +148,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputFloat2("##inputfloat2uniform", tmp_vec2.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.vec2U = tmp_vec2;
 			}
 
@@ -151,6 +159,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputFloat3("##inputfloat3uniform", tmp_vec3.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.vec3U = tmp_vec3;
 			}
 
@@ -161,6 +170,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputFloat4("##inputfloat4uniform", tmp_vec4.ptr(), 2, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.vec4U = tmp_vec4;
 			}
 
@@ -171,6 +181,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputInt2("##inputint2uniform", (int*)tmp_vec2.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.vec2U = tmp_vec2;
 			}
 			break;
@@ -180,6 +191,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputInt3("##inputint3uniform", (int*)tmp_vec3.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.vec3U = tmp_vec3;
 			}
 			break;
@@ -189,6 +201,7 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 
 			if (ImGui::InputInt4("##inputint4uniform", (int*)tmp_vec4.ptr(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
+				updated = true;
 				uniforms[i]->value.vec4U = tmp_vec4;
 			}
 
@@ -196,6 +209,12 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 		}
 
 		ImGui::PopID();
+	}
+
+	if (updated)
+	{
+		UpdateUniforms();
+		App->resources->GetImporter<ImporterMaterial>()->Save(this);
 	}
 
 	glUseProgram(App->renderer3D->defaultShader->ID);

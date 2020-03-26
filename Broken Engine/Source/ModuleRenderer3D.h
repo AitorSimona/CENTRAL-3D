@@ -28,11 +28,11 @@ enum BROKEN_API RenderMeshFlags_
 
 struct BROKEN_API RenderMesh
 {
-	RenderMesh(float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const RenderMeshFlags flags = 0, const Color& color = White) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags), color(color) {}
+	RenderMesh(float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const RenderMeshFlags flags = 0, const Color& color = White) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags), color(color) {}
 
 	float4x4 transform;
 	const ResourceMesh* resource_mesh = nullptr;
-	const ResourceMaterial* mat = nullptr;
+	ResourceMaterial* mat = nullptr;
 	Color color; // force a color draw, useful if no texture is given
 	
 
@@ -88,7 +88,7 @@ public:
 	bool GetVSync() const;
 
 	// --- Render orders --- // Deformable mesh is Temporal!
-	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
+	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
 	void DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color);
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);

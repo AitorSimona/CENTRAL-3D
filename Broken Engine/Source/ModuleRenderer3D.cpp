@@ -319,7 +319,7 @@ bool ModuleRenderer3D::GetVSync() const
 // ------------------------------ Render Orders --------------------------------------------------------
 
 // --- Add render order to queue ---
-void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* mesh, const ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags, const Color& color)
+void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags, const Color& color)
 {
 	// --- Check data validity
 	if (transform.IsFinite() && mesh && mat)
@@ -781,7 +781,10 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		float4x4 model = mesh->transform;
 
 		if (mesh->mat->shader)
+		{
 			shader = mesh->mat->shader->ID;
+			mesh->mat->UpdateUniforms();
+		}
 
 		if (mesh->flags & RenderMeshFlags_::selected)
 		{

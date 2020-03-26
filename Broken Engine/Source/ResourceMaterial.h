@@ -7,7 +7,8 @@
 #include "ResourceShader.h"
 
 BE_BEGIN_NAMESPACE
-class BROKEN_API ResourceMaterial : public Resource {
+class BROKEN_API ResourceMaterial : public Resource 
+{
 public:
 	ResourceMaterial(uint UID, const char* source_file);
 	~ResourceMaterial();
@@ -17,6 +18,7 @@ public:
 	void CreateInspectorNode() override;
 
 	void UpdateUniforms();
+	void DisplayAndUpdateUniforms();
 
 public:
 	ResourceTexture* resource_diffuse = nullptr;
@@ -24,7 +26,6 @@ public:
 	std::vector<Uniform*> uniforms;
 
 private:
-	void DisplayAndUpdateUniforms();
 
 	void OnOverwrite() override;
 	void OnDelete() override;

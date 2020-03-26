@@ -37,14 +37,17 @@ Resource* ImporterScene::Load(const char* path) const
 	ResourceScene* scene = nullptr;
 
 	// --- Load Scene file ---
-	if (path) {
+	if (path) 
+	{
 		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
-		if (meta) {
+		if (meta) 
+		{
 			scene = App->resources->scenes.find(meta->GetUID()) != App->resources->scenes.end() ? App->resources->scenes.find(meta->GetUID())->second : (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, meta->GetOriginalFile(), meta->GetUID());
 		}
-		else {
+		else 
+		{
 			scene = (ResourceScene*)App->resources->CreateResource(Resource::ResourceType::SCENE, path);
 		}
 
