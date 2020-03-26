@@ -2,14 +2,15 @@
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
 #include "PanelScene.h"
+#include "ModuleGui.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
 PanelToolbar::PanelToolbar(char * name) : Broken::Panel(name)
 {
-	play_button = "PLAY";
-	pause_button = "PAUSE";
+	EngineApp->gui->play_button = "PLAY";
+	EngineApp->gui->pause_button = "PAUSE";
 }
 
 PanelToolbar::~PanelToolbar()
@@ -41,29 +42,29 @@ bool PanelToolbar::Draw()
 
 		Broken::AppState app_status = EngineApp->GetAppState();
 
-		if(ImGui::Button(play_button.c_str()))
+		if(ImGui::Button(EngineApp->gui->play_button.c_str()))
 		{
 			if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE) {
 				EngineApp->GetAppState() = Broken::AppState::TO_EDITOR;
-				play_button = "PLAY";
-				pause_button = "PAUSE";
+				EngineApp->gui->play_button = "PLAY";
+				EngineApp->gui->pause_button = "PAUSE";
 			}
 			else {
 				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
-				play_button = "STOP";
+				EngineApp->gui->play_button = "STOP";
 			}
 		}
 		ImGui::SameLine();
 
 		if (app_status != Broken::AppState::EDITOR && app_status != Broken::AppState::TO_EDITOR) {
-			if (ImGui::Button(pause_button.c_str())) {
+			if (ImGui::Button(EngineApp->gui->pause_button.c_str())) {
 				if (app_status == Broken::AppState::PLAY) {
 					EngineApp->GetAppState() = Broken::AppState::TO_PAUSE;
-					pause_button = "PLAY";
+					EngineApp->gui->pause_button = "PLAY";
 				}
 				else if (app_status == Broken::AppState::PAUSE) {
 					EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
-					pause_button = "PAUSE";
+					EngineApp->gui->pause_button = "PAUSE";
 				}
 
 			}

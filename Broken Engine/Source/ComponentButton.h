@@ -37,6 +37,7 @@ public:
 	void Scale(float2 size) { size2D = size; }
 	void Move(float2 pos) { position2D = pos; }
 	void Rotate(float rot) { rotation2D = rot; }
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Button; }
 
 	// --- Save & Load ---
 	json Save() const override;

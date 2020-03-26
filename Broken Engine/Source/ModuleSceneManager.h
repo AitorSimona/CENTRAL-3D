@@ -88,6 +88,8 @@ public:
 	const ResourceMesh* GetPlaneMesh() const { return plane; }
 	const ResourceMesh* GetCylinderMesh() const { return cylinder; }
 
+	void SendToDelete(GameObject* go);
+
 private:
 
 	// --- Event Callbacks ---
@@ -121,6 +123,9 @@ public:
 	ResourceScene* defaultScene = nullptr;
 	ResourceScene* temporalScene = nullptr;
 private:
+
+	// Game objects to be deleted
+	std::vector<GameObject*> go_to_delete;
 
 	// --- Do not modify, just use ---
 	ResourceMesh* cube = nullptr;
