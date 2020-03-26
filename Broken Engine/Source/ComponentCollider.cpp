@@ -658,6 +658,9 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
 				shape->setSimulationFilterData(filterData);
 
+				if(rigidStatic)
+					App->physics->DeleteActor(rigidStatic);
+
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
 				App->physics->addActor(rigidStatic,&GO->layer);
@@ -811,8 +814,11 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 		
 		if (rigidStatic) {
 			App->physics->DeleteActor(rigidStatic);
-
 		}
+		else if (dynamicRB->rigidBody) {
+			App->physics->DeleteActor(dynamicRB->rigidBody);
+		}
+
 		App->physics->addActor(dynamicRB->rigidBody, &GO->layer);
 
 		return true;
