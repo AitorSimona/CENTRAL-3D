@@ -158,6 +158,7 @@ void ComponentTransform::Load(json& node)
 	std::string scalez = node["scalez"].is_null() ? "0" : node["scalez"];
 
 	float3 pos = float3(std::stof(posx), std::stof(posy), std::stof(posz));
+
 	SetPosition(pos);
 	SetQuatRotation(Quat(std::stof(rotx), std::stof(roty), std::stof(rotz), std::stof(rotw)));
 	Scale(std::stof(scalex), std::stof(scaley), std::stof(scalez));

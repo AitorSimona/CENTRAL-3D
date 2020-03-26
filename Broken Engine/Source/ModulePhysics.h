@@ -11,6 +11,7 @@ namespace physx
 	class PxScene;
 	class PxMaterial;
 	class PxRigidStatic;
+	class PxControllerManager;
 	class PxRigidActor;
 	typedef uint32_t PxU32;
 
@@ -68,7 +69,7 @@ public:
 
 	//physx::PxFilterFlags customFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0, physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize);
 
-	
+
 	bool CleanUp() override;
 
 	void PlaneCollider(float posX, float posY, float posZ);
@@ -87,14 +88,14 @@ public:
 	void DeleteActors(GameObject* go = nullptr);
 
 public:
-	
-	physx::PxPvd* mPvd = nullptr; 
+
+	physx::PxPvd* mPvd = nullptr;
 	physx::PxPvdSceneClient* pvdClient = nullptr;
 	physx::PxFoundation* mFoundation = nullptr;
+	physx::PxControllerManager* mControllerManager = nullptr;
 	physx::PxPhysics* mPhysics = nullptr;
 	physx::PxScene* mScene = nullptr;
 	physx::PxMaterial* mMaterial = nullptr;
-
 	physx::PxRigidStatic* plane = nullptr;
 	std::vector<Layer> layer_list;
 	std::map<physx::PxRigidActor*, LayerMask*> actors;

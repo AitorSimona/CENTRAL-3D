@@ -7,6 +7,10 @@
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ComponentAnimation.h"
+#include "ComponentCharacterController.h"
+
+#include "ComponentProgressBar.h"
+#include "ComponentText.h"
 
 #include "ModuleRenderer3D.h"
 #include "ComponentCamera.h"
@@ -16,6 +20,8 @@
 #include "ModuleAudio.h"
 
 #include "ScriptData.h"
+
+
 
 using namespace Broken;
 ScriptingSystems::ScriptingSystems() {}
@@ -156,6 +162,17 @@ void ScriptingSystems::UseGravity(bool enable)
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
 
+void ScriptingSystems::Move(float velX, float velZ)
+{
+	ComponentCharacterController* cct = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+
+	if (cct)
+		cct->Move(velX, velZ);
+
+	else
+		ENGINE_CONSOLE_LOG("Object Character Controller component is null");	
+}
+
 // PARTICLES ----------------------------------------------------------
 void ScriptingSystems::ActivateParticlesEmission() const
 {
@@ -286,4 +303,55 @@ void ScriptingSystems::SetAnimSpeed(const char* name, float speed)
 		anim->SetAnimationSpeed(name, speed);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+// UI --------------------------------------------------------------------
+void ScriptingSystems::SetBarPercentage(float percentage)
+{
+	ComponentProgressBar* bar = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentProgressBar>();
+
+	if (bar)
+		bar->SetPercentage(percentage);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: ProgressBar component is NULL");
+}
+
+void ScriptingSystems::SetUIText(const char* text)
+{
+	ComponentText* CompText = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentText>();
+
+	if (CompText)
+		CompText->SetText(text);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Text Component is NULL");
+}
+
+void ScriptingSystems::SetUITextAndNumber(const char* text, float number)
+{
+	ComponentText* CompText = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentText>();
+
+	if (CompText && text)
+	{
+		//String streams aren't very performative, but we need them to keep OK the number's decimals
+		std::ostringstream ss;
+		ss << number;
+		CompText->SetText((text + ss.str()).c_str());
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Text Component or text passed is NULL");
+}
+
+void ScriptingSystems::SetUITextNumber(float number)
+{
+	ComponentText* CompText = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentText>();
+
+	if (CompText)
+	{
+		//String streams aren't very performative, but we need them to keep OK the number's decimals
+		std::ostringstream ss;
+		ss << number;
+		CompText->SetText(ss.str().c_str());
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Text Component or text passed is NULL");
 }

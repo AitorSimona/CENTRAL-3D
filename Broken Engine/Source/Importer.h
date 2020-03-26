@@ -22,6 +22,7 @@ public:
 		Shader_Object,
 		Script,
 		Meta,
+		Font,
 		Unknown
 	};
 

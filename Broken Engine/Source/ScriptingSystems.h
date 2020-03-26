@@ -29,6 +29,8 @@ public:
 	void SetKinematic(bool enable);
 	void UseGravity(bool enable);
 	
+	void Move(float velX, float velZ);
+
 	// Particles
 	void ActivateParticlesEmission() const;
 	void DeactivateParticlesEmission() const;
@@ -45,6 +47,11 @@ public:
 	void SetAnimSpeed(const char* name, float speed);
 	void SetCurrentAnimSpeed(float speed);
 
+	// UI
+	void SetBarPercentage(float percentage);
+	void SetUIText(const char* text);
+	void SetUITextAndNumber(const char* text, float number);
+	void SetUITextNumber(float number);
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGSYSTEMS_H__

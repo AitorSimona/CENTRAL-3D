@@ -22,6 +22,8 @@ PanelScene::~PanelScene()
 
 bool PanelScene::Draw()
 {
+	EngineApp->gui->draw_list = ImGui::GetForegroundDrawList(); //used for ui system
+
 	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
 	ImGuiWindowFlags settingsFlags = 0;

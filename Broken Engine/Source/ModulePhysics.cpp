@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "GameObject.h"
 
 #include "ModuleTimeManager.h"
@@ -16,6 +17,7 @@
 #include "PhysX_3.4/Include/pvd/PxPvdSceneClient.h"
 #include "PhysX_3.4/Include/pvd/PxPvdTransport.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "PhysX_3.4/Include/characterkinematic/PxControllerManager.h"
 #include "PhysX_3.4/Include/foundation/PxAllocatorCallback.h"
 
 #ifndef _DEBUG
@@ -24,6 +26,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3ExtensionsCHECKED.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PxFoundationCHECKED_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PxPvdSDKCHECKED_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CharacterKinematicCHECKED_x86.lib")
 /*
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3Common_x86.lib")
@@ -37,6 +40,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3ExtensionsDEBUG.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxFoundationDEBUG_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxPvdSDKDEBUG_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3CharacterKinematicDEBUG_x86.lib")
 #endif // _DEBUG
 
 #include "mmgr/mmgr.h"
@@ -83,7 +87,7 @@ physx::PxFilterFlags customFilterShader(
 		return physx::PxFilterFlag::eDEFAULT;
 	}
 
-	// trigger the contact callback for pairs (A,B) where 
+	// trigger the contact callback for pairs (A,B) where
 	// the filtermask of A contains the ID of B and vice versa.
 	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1)) {
 		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
@@ -140,7 +144,7 @@ bool ModulePhysics::Init(json& config)
 
 	physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
-	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2; 
+	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2;
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.filterShader = customFilterShader;
@@ -154,7 +158,9 @@ bool ModulePhysics::Init(json& config)
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
-	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0);
+	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0.0f);
+
+	mControllerManager = PxCreateControllerManager(*mScene);
 
 	//Setup Configuration-----------------------------------------------------------------------
 	pvdClient = mScene->getScenePvdClient();
@@ -166,7 +172,7 @@ bool ModulePhysics::Init(json& config)
 	//-------------------------------------
 	//BoxCollider(0, 10, 0);
 	PlaneCollider(0, 0, 0);
-	
+
 	return true;
 }
 
@@ -332,7 +338,9 @@ void ModulePhysics::DeleteActors(GameObject* go)
 				actors.erase(actor);
 				col->Delete();
 			}
+
+			if ((*it)->GetComponent<ComponentCharacterController>() != nullptr)
+				(*it)->GetComponent<ComponentCharacterController>()->Delete();
 		}
 	}
 }
-

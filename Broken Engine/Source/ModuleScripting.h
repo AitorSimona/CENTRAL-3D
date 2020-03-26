@@ -10,6 +10,7 @@ BE_BEGIN_NAMESPACE
 class GameObject;
 class ComponentScript;
 struct ScriptInstance;
+struct ScriptFunc;
 
 enum _AppState;
 class BROKEN_API ModuleScripting : public Module {
@@ -24,10 +25,12 @@ public:
 	void CompileScriptTableClass(ScriptInstance* script);
 	void SendScriptToModule(ComponentScript* script_component);
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
+	void FillScriptInstanceComponentFuncs(ScriptInstance* script);
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NullifyScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NotifyHotReloading();
 	bool CheckEverythingCompiles();
+	void CallbackScriptFunction(ComponentScript* script_component, const ScriptFunc& function_to_call);
 
 public:
 	bool Init(json& file) override;

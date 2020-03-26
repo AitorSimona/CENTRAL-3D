@@ -14,10 +14,10 @@
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "ResourceShader.h"
 #include "ComponentAudioListener.h"
 #include "Component.h"
-
 #include "PanelScene.h"
 
 #include "Imgui/imgui.h"
@@ -352,6 +352,13 @@ void ModuleRenderer3D::HandleObjectOutlining() {
 		if (collider && collider->IsEnabled())
 			collider->Draw();
 
+		// --- Search for Character Controller Component ---
+		ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+
+		// --- If Found, draw Character Controller shape ---
+		if (cct && cct->IsEnabled())
+			cct->Draw();
+
 		// --- If Found, draw the mesh ---
 		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
 			MeshRenderer->Draw(true);
@@ -437,6 +444,34 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 	ZDrawerShader = new ResourceShader(zdrawervertex, zdrawerfragment, false);
 	ZDrawerShader->name = "ZDrawer";
 
+	// --- Creating text rendering shaders ---
+
+	const char* textVertShaderSrc = 
+		"#version 440 core \n"
+		"layout (location = 0) in vec3 position; \n"
+		"layout (location = 1) in vec2 texCoords; \n"
+		"out vec2 TexCoords; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
+		"TexCoords = texCoords; \n"
+		"}\n";
+
+	const char* textFragShaderSrc = "#version 440 core \n"
+		"in vec2 TexCoords; \n"
+		"uniform sampler2D text; \n"
+		"uniform vec3 textColor; \n"
+		"out vec4 color; \n"
+		"void main(){ \n"
+		"vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r); \n"
+		"color = vec4(textColor, 1.0) * sampled; \n"
+		"} \n";
+
+	textShader = new ResourceShader(textVertShaderSrc, textFragShaderSrc, false);
+	textShader->name = "TextShader";
+
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char* vertexShaderSource =
@@ -466,7 +501,7 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 		"out vec4 color; \n"
 		"uniform sampler2D ourTexture; \n"
 		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
+		"color = texture(ourTexture, TexCoord) * vec4(ourColor, 1); \n"
 		"if(Texture == -1)\n"
 		"color = vec4(ourColor, 1);\n"
 		"} \n"
@@ -475,5 +510,6 @@ void ModuleRenderer3D::CreateDefaultShaders() {
 	defaultShader = new ResourceShader(vertexShaderSource, fragmentShaderSource, false);
 	defaultShader->name = "Standard";
 	defaultShader->use();
+
 }
 

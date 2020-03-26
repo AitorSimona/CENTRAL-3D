@@ -11,7 +11,6 @@ class PanelResources;
 BE_BEGIN_NAMESPACE
 
 class ResourceFolder;
-class ResourceFolder;
 class ResourceScene;
 class ResourceModel;
 class ResourceMaterial;
@@ -24,6 +23,7 @@ class ResourceTexture;
 class ResourceShaderObject;
 class ResourceMeta;
 class ResourceScript;
+class ResourceFont;
 
 class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterTexture;
@@ -37,6 +37,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterScene;
 	friend class ImporterFolder;
 	friend class ImporterScript;
+	friend class ImporterFont;
 	friend class PanelResources;
 	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
@@ -72,6 +73,8 @@ public:
 	Resource* ImportShaderObject(Importer::ImportData& IData);
 	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
+	//
+	Resource* ImportFont(Importer::ImportData& IData);
 
 	void HandleFsChanges();
 	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret);
@@ -108,6 +111,11 @@ public:
 	ResourceFolder* GetAssetsFolder();
 	uint GetFileFormatVersion();
 	uint GetDefaultMaterialUID();
+
+public:
+	// OSCAR TODO try to make it private
+	ResourceFont* DefaultFont = nullptr;
+
 private:
 
 	// --- Available importers ---
@@ -119,7 +127,6 @@ private:
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
 	ResourceMaterial* DefaultMaterial = nullptr;
-
 	//MYTODO Temporary public for resource panel
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;
@@ -135,12 +142,10 @@ private:
 	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
+	std::map<uint, ResourceFont*> fonts;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;
-
-
-
 };
 BE_END_NAMESPACE
 #endif

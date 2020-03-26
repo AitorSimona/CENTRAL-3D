@@ -17,9 +17,11 @@
 #include "ComponentText.h"
 #include "ComponentImage.h"
 #include "ComponentButton.h"
+#include "ComponentCharacterController.h"
+
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
-//#include "ComponentProgressBar.h"
+#include "ComponentProgressBar.h"
 
 #include "ResourceModel.h"
 #include "ResourceScene.h"
@@ -244,7 +246,7 @@ GameObject* GameObject::GetAnimGO(GameObject* GO)
 
 Component * GameObject::AddComponent(Component::ComponentType type, int index)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 19, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 20, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given --- & if it can be repeated
@@ -314,6 +316,10 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 		case Component::ComponentType::Button:
 			component = new ComponentButton(this);
 			break;
+		
+		case Component::ComponentType::CharacterController:
+			component = new ComponentCharacterController(this);
+			break;
 
 		//case Component::ComponentType::CheckBox:
 		//	component = new ComponentCheckBox(this);
@@ -323,9 +329,9 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 		//	component = new ComponentInputText(this);
 		//	break;
 
-		//case Component::ComponentType::ProgressBar:
-		//	component = new ComponentProgressBar(this);
-		//	break;
+		case Component::ComponentType::ProgressBar:
+			component = new ComponentProgressBar(this);
+			break;
 		}
 
 		if (component)
