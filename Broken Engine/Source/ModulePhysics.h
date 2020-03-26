@@ -15,8 +15,8 @@ namespace physx
 	class PxRigidActor;
 	typedef uint32_t PxU32;
 
-	const float fixed_dt = (1.0f/60.0f);
-}
+	const float fixed_dt = (1.0f / 60.0f);
+};
 
 
 	enum LayerMask

@@ -10,7 +10,7 @@
 #include "ComponentTransform.h"
 #include "ModuleTimeManager.h"
 #include "ModuleGui.h"
-//#include "ModuleInput.h"
+#include "ModuleInput.h"
 
 #include "PhysX_3.4/Include/characterkinematic/PxController.h"
 #include "PhysX_3.4/Include/characterkinematic/PxCapsuleController.h"
@@ -40,6 +40,7 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	
 	controller = App->physics->mControllerManager->createController(*desc);
 	
+	//App->physics->mScene->addActor(*controller->getActor());
 	initialPosition = capsuleDesc.position;
 
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCharacterController");
@@ -54,7 +55,7 @@ ComponentCharacterController::~ComponentCharacterController()
 
 void ComponentCharacterController::Update()
 {
-	/*if (App->input->GetKey(SDL_SCANCODE_UP))
+	if (App->input->GetKey(SDL_SCANCODE_UP))
 		velocity.z = -10.0f;
 
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN))
@@ -68,7 +69,7 @@ void ComponentCharacterController::Update()
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT))
 		velocity.x = -10.0f;
 	else
-		velocity.x = 0.0f;*/
+		velocity.x = 0.0f;
 
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
 
@@ -78,7 +79,7 @@ void ComponentCharacterController::Update()
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
 		
-	//Move(velocity.x, velocity.z);
+	Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
 	float3 cctPos(cctPosition.x, cctPosition.y, cctPosition.z);
@@ -151,7 +152,9 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 	vel.x = velX;
 	vel.y = App->physics->mScene->getGravity().y;
 	vel.z = velZ;
-	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), physx::PxControllerFilters());
+
+	physx::PxFilterData* mFilterData = (new physx::PxFilterData((1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup, 0, 0));
+	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), physx::PxControllerFilters(mFilterData, 0, 0));
 }
 
 void ComponentCharacterController::Delete()
