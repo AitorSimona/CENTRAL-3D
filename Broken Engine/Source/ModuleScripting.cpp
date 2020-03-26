@@ -268,11 +268,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.beginClass <ScriptingAudio>("Audio")
 		.addConstructor<void(*) (void)>()
 
-		.addFunction("PlayAttackSound", &ScriptingAudio::PlayAttackSound)
-		.addFunction("PlayStepSound", &ScriptingAudio::PlayStepSound)
-		.addFunction("StopAttackSound", &ScriptingAudio::StopAttackSound)
-		.addFunction("StopStepSound", &ScriptingAudio::StopStepSound)
 		.addFunction("SetVolume", &ScriptingAudio::SetVolume)
+		.addFunction("PlayAudioEvent", &ScriptingAudio::PlayAudioEvent)
+		.addFunction("StopAudioEvent", &ScriptingAudio::StopAudioEvent)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

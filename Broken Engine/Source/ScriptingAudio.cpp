@@ -22,36 +22,6 @@ ScriptingAudio::ScriptingAudio() {}
 
 ScriptingAudio::~ScriptingAudio() {}
 
-void ScriptingAudio::PlayAttackSound()
-{
-	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
-	sound->SetID(AK::EVENTS::GERALT_ATTACK);
-
-	if (sound)
-	{
-		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_ATTACK);
-		sound->wwiseGO->PlayEvent(AK::EVENTS::GERALT_ATTACK);
-		sound->isPlaying = true;
-	}
-	else
-		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
-}
-
-void ScriptingAudio::PlayStepSound()
-{
-	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
-	sound->SetID(AK::EVENTS::GERALT_RUN);
-
-	if (sound)
-	{
-		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_RUN);
-		sound->wwiseGO->PlayEvent(AK::EVENTS::GERALT_RUN);
-		sound->isPlaying = true;
-	}
-	else
-		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
-}
-
 void ScriptingAudio::SetVolume(float volume)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
@@ -62,28 +32,36 @@ void ScriptingAudio::SetVolume(float volume)
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void ScriptingAudio::StopAttackSound()
+void ScriptingAudio::PlayAudioEvent(std::string event)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
-	sound->SetID(AK::EVENTS::GERALT_ATTACK);
+
+	uint EventId = App->audio->EventMap[event];
+
+
+	sound->SetID(EventId);
 
 	if (sound)
 	{
-		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_ATTACK);
-		sound->isPlaying = false;
+		sound->wwiseGO->StopEvent(EventId);
+		sound->wwiseGO->PlayEvent(EventId);
+		sound->isPlaying = true;
 	}
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void ScriptingAudio::StopStepSound()
+void ScriptingAudio::StopAudioEvent(std::string event)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
-	sound->SetID(AK::EVENTS::GERALT_RUN);
+
+	uint EventId = App->audio->EventMap[event];
+
+	sound->SetID(EventId);
 
 	if (sound)
 	{
-		sound->wwiseGO->StopEvent(AK::EVENTS::GERALT_RUN);
+		sound->wwiseGO->StopEvent(EventId);
 		sound->isPlaying = false;
 	}
 	else

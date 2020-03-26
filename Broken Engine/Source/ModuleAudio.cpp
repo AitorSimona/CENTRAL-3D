@@ -5,6 +5,7 @@
 #include "..\Game\Assets\Sounds\Wwise_IDs.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
+#include "JSONLoader.h"
 
 #include "mmgr/mmgr.h"
 
@@ -32,6 +33,8 @@ bool ModuleAudio::Init(json& file)
 
 bool ModuleAudio::Start()
 {
+	LoadEventsFromJson();
+
 	return true;
 }
 
@@ -122,9 +125,9 @@ void ModuleAudio::InitWwise()
 	AK::Comm::GetDefaultInitSettings(settingsComm);
 	if (AK::Comm::Init(settingsComm) != AK_Success)
 	{
-		AKASSERT(!"Cannot initialize music communication");
+		assert(!"Cannot initialize music communication");
 		return;
-	}
+}
 #endif // AK_OPTIMIZED
 
 	AkBankID bankID;
@@ -276,4 +279,22 @@ void WwiseGameObject::SetAuxSends()
 uint WwiseGameObject::GetID()
 {
 	return id;
+}
+
+void ModuleAudio::LoadEventsFromJson()
+{
+
+	uint Id;
+	std::string name;
+	json File = App->GetJLoader()->Load("/Game/Assets/Sounds/Main.json");
+	
+	json Events = File["SoundBanks"]["IncludedEvents"];
+	EventMap.begin();
+	for (json::iterator it = Events.begin(); it != Events.end(); ++it)
+	{
+		Id = (*it).find("Id").value();
+		//name = (*it).find("Name").value();
+
+		EventMap.insert(std::pair<std::string, uint>(name, Id));
+	}
 }

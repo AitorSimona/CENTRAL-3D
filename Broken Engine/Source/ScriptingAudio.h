@@ -10,11 +10,9 @@ public:
 	~ScriptingAudio();
 
 public:
-	void PlayAttackSound();
-	void PlayStepSound();
-	void StopAttackSound();
-	void StopStepSound();
 	void SetVolume(float volume);
+	void PlayAudioEvent(std::string event);
+	void StopAudioEvent(std::string event);
 
 };
 BE_END_NAMESPACE

@@ -13,8 +13,8 @@ namespace AK
 {
     namespace EVENTS
     {
-        static const AkUniqueID GERALT_ATTACK = 3764996949U;
-        static const AkUniqueID GERALT_RUN = 136547680U;
+        static const AkUniqueID SILVER_FOR_MONSTERS = 3882315704U;
+        static const AkUniqueID SPIKEROOG = 3409726414U;
     } // namespace EVENTS
 
     namespace BANKS

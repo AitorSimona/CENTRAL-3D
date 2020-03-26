@@ -56,10 +56,13 @@ private:
 	void InitWwise();
 	void TerminateWwise();
 	void LoadSoundBank(const char* path);
+	void LoadEventsFromJson();
 
 public:
 	AkGameObjectID currentListenerID = 0;
 	//unsigned long g_envMAP[255];
+	std::map <std::string, uint> EventMap;
+
 };
 BE_END_NAMESPACE
 #endif __ModuleAudio__H__
