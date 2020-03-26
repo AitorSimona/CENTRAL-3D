@@ -36,7 +36,7 @@ struct Layer {
 	std::string name;
 	LayerMask layer;
 	std::vector<bool> active_layers;
-	uint LayerGroup;
+	physx::PxU32 LayerGroup;
 
 	void UpdateLayerGroup() {
 		physx::PxU32 ID = 0;
@@ -78,9 +78,11 @@ public:
 
 	void addActor(physx::PxRigidActor* actor, LayerMask* LayerGroup);
 
-	void UpdateActor(physx::PxRigidActor* actor, physx::PxU32 LayerMask);
+	void UpdateActor(physx::PxRigidActor* actor, LayerMask* LayerMask);
 
 	void UpdateActors(LayerMask* updateLayer);
+
+	void DeleteActor(physx::PxRigidActor* actor);
 
 	void DeleteActors(GameObject* go = nullptr);
 

@@ -382,7 +382,7 @@ void ComponentCollider::Load(json& node)
 	//tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
 	tmpScale = float3(0.f, 0.f, 0.f);
 
-	firstCreation = true;
+	firstCreation = false;
 
 	toPlay = false;
 

@@ -135,7 +135,8 @@ void PanelPhysics::CreateLayerFilterGrid() {
 				//UPDATE LAYERS
 				layer->UpdateLayerGroup();
 				aux_layer->UpdateLayerGroup();
-				App->physics->UpdateActors((LayerMask*)j);
+				App->physics->UpdateActors(&layer->layer);
+				App->physics->UpdateActors(&aux_layer->layer);
 			}
 
 		}

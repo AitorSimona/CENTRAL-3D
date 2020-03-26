@@ -3,16 +3,17 @@
 
 #include "Component.h"
 #include "Math.h"
-
+#include "ModulePhysics.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 BE_BEGIN_NAMESPACE
+
 
 class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
 
-class ComponentCollider : public Component
+class BROKEN_API ComponentCollider : public Component
 {
 public:
 	enum class COLLIDER_TYPE
@@ -50,7 +51,7 @@ public:
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
 	physx::PxRigidActor*					GetActor();
-	void									UpdateActor(int layerMask);
+	void									UpdateActor(LayerMask* layerMask);
 	void									Delete();
 
 	// Implements PxSimulationEventCallback
