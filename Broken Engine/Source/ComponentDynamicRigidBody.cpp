@@ -50,6 +50,8 @@ json ComponentDynamicRigidBody::Save() const
 {
 	json node;
 
+	node["Active"] = this->active;
+
 	node["mass"] = std::to_string(mass);
 	node["density"] = std::to_string(density);
 	node["use_gravity"] = std::to_string((int)use_gravity);
@@ -80,6 +82,8 @@ json ComponentDynamicRigidBody::Save() const
 
 void ComponentDynamicRigidBody::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	std::string mass_ = node["mass"].is_null() ? "0" : node["mass"];
 	std::string density_ = node["density"].is_null() ? "0" : node["density"];
 	std::string use_gravity_ = node["use_gravity"].is_null() ? "0" : node["use_gravity"];

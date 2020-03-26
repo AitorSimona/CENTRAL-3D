@@ -283,6 +283,8 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 
 json ComponentMeshRenderer::Save() const {
 	json node;
+	node["Active"] = this->active;
+
 	node["Resources"]["ResourceMaterial"];
 
 	if(material)
@@ -385,6 +387,8 @@ json ComponentMeshRenderer::Save() const {
 
 void ComponentMeshRenderer::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
