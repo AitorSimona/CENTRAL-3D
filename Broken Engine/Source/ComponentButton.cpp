@@ -156,6 +156,26 @@ json ComponentButton::Save() const
 		node["function"] = std::string(func_name);
 	}
 
+	node["idle_color.r"] = std::to_string(idle_color.r);
+	node["idle_color.g"] = std::to_string(idle_color.g);
+	node["idle_color.b"] = std::to_string(idle_color.b);
+	node["idle_color.a"] = std::to_string(idle_color.a);
+
+	node["hovered_color.r"] = std::to_string(hovered_color.r);
+	node["hovered_color.g"] = std::to_string(hovered_color.g);
+	node["hovered_color.b"] = std::to_string(hovered_color.b);
+	node["hovered_color.a"] = std::to_string(hovered_color.a);
+
+	node["selected_color.r"] = std::to_string(selected_color.r);
+	node["selected_color.g"] = std::to_string(selected_color.g);
+	node["selected_color.b"] = std::to_string(selected_color.b);
+	node["selected_color.a"] = std::to_string(selected_color.a);
+
+	node["locked_color.r"] = std::to_string(locked_color.r);
+	node["locked_color.g"] = std::to_string(locked_color.g);
+	node["locked_color.b"] = std::to_string(locked_color.b);
+	node["locked_color.a"] = std::to_string(locked_color.a);
+
 	return node;
 }
 
@@ -189,6 +209,27 @@ void ComponentButton::Load(json& node)
 	std::string script_str = node["script"].is_null() ? "0" : node["script"];
 	std::string function_str = node["function"].is_null() ? "None" : node["function"];
 
+	std::string idle_color_r = node["idle_color.r"].is_null() ? "0" : node["idle_color.r"];
+	std::string idle_color_g = node["idle_color.g"].is_null() ? "0" : node["idle_color.g"];
+	std::string idle_color_b = node["idle_color.b"].is_null() ? "0" : node["idle_color.b"];
+	std::string idle_color_a = node["idle_color.a"].is_null() ? "0" : node["idle_color.a"];
+
+	std::string hovered_color_r = node["hovered_color.r"].is_null() ? "0" : node["hovered_color.r"];
+	std::string hovered_color_g = node["hovered_color.g"].is_null() ? "0" : node["hovered_color.g"];
+	std::string hovered_color_b = node["hovered_color.b"].is_null() ? "0" : node["hovered_color.b"];
+	std::string hovered_color_a = node["hovered_color.a"].is_null() ? "0" : node["hovered_color.a"];
+
+	std::string selected_color_r = node["selected_color.r"].is_null() ? "0" : node["selected_color.r"];
+	std::string selected_color_g = node["selected_color.g"].is_null() ? "0" : node["selected_color.g"];
+	std::string selected_color_b = node["selected_color.b"].is_null() ? "0" : node["selected_color.b"];
+	std::string selected_color_a = node["selected_color.a"].is_null() ? "0" : node["selected_color.a"];
+
+	std::string locked_color_r = node["locked_color.r"].is_null() ? "0" : node["locked_color.r"];
+	std::string locked_color_g = node["locked_color.g"].is_null() ? "0" : node["locked_color.g"];
+	std::string locked_color_b = node["locked_color.b"].is_null() ? "0" : node["locked_color.b"];
+	std::string locked_color_a = node["locked_color.a"].is_null() ? "0" : node["locked_color.a"];
+
+	//-------
 	visible = bool(std::stoi(visible_str));
 	draggable = bool(std::stoi(draggable_str));
 	interactable = bool(std::stoi(interactable_str));
@@ -224,6 +265,26 @@ void ComponentButton::Load(json& node)
 			}
 		}
 	}
+
+	idle_color.r = float(std::stof(idle_color_r));
+	idle_color.g = float(std::stof(idle_color_g));
+	idle_color.b = float(std::stof(idle_color_b));
+	idle_color.a = float(std::stof(idle_color_a));
+
+	hovered_color.r = float(std::stof(hovered_color_r));
+	hovered_color.g = float(std::stof(hovered_color_g));
+	hovered_color.b = float(std::stof(hovered_color_b));
+	hovered_color.a = float(std::stof(hovered_color_a));
+
+	selected_color.r = float(std::stof(selected_color_r));
+	selected_color.g = float(std::stof(selected_color_g));
+	selected_color.b = float(std::stof(selected_color_b));
+	selected_color.a = float(std::stof(selected_color_a));
+
+	locked_color.r = float(std::stof(locked_color_r));
+	locked_color.g = float(std::stof(locked_color_g));
+	locked_color.b = float(std::stof(locked_color_b));
+	locked_color.a = float(std::stof(locked_color_a));
 }
 
 void ComponentButton::CreateInspectorNode()

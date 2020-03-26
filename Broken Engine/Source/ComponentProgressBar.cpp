@@ -62,7 +62,7 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	// --- Frame image with camera ---
 	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
 	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), 
-		float3(float2((size2D.x * _percentage) / 100, size2D.y), 1.0f));
+		float3(float2((size2D.x * _percentage) / 100, size2D.y) * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);

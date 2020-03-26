@@ -36,7 +36,7 @@ public:
 	bool visible = true;
 	bool resize = true;
 
-	float2 size2D = { 1,1 };
+	float2 size2D = { 1.5,1.5 };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 	float scale = 1.0f;
