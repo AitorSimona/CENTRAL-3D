@@ -35,6 +35,9 @@ public:
 	bool createNavMesh(dtNavMeshCreateParams* params);
 	void loadNavMeshFile(uint UID);
 
+	void deleteNavMesh();
+	void clearNavMesh();
+
 	void setDefaultValues();
 	void setDefaultBakeValues();
 	const ResourceNavMesh* getNavMeshResource() const;

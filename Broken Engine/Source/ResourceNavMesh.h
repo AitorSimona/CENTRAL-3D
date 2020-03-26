@@ -9,6 +9,7 @@ class dtNavMesh;
 
 BE_BEGIN_NAMESPACE
 class BROKEN_API ResourceNavMesh : public Resource {
+	friend class ModuleDetour;
 public:
 	ResourceNavMesh(uint UID, const char* source_file);
 	~ResourceNavMesh();

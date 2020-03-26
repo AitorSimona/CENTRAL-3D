@@ -80,16 +80,17 @@ public:
 
 	void begin(duDebugDrawPrimitives prim, float size) {
 		//Set polygon draw mode and appropiated matrices for OGL
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glPushMatrix();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		/*glPushMatrix();
 		glMultMatrixf(float4x4::identity.Transposed().ptr());
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());
+		glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());*/
 
 
 		switch (prim) {
+
 		case DU_DRAW_POINTS:
 			glPointSize(size);
 			glBegin(GL_POINTS);
@@ -272,6 +273,24 @@ void ModuleDetour::Draw() const {
 
 void ModuleDetour::setDebugDraw(bool state) {
 	debugDraw = state;
+}
+
+void ModuleDetour::deleteNavMesh() {
+	if (navMeshResource != nullptr) {
+		navMeshResource->OnDelete();
+		delete navMeshResource;
+		navMeshResource = nullptr;
+	}
+
+	//We save the scene so that it stores that we no longer have a navmesh
+	App->scene_manager->SaveScene(App->scene_manager->currentScene);
+}
+
+void ModuleDetour::clearNavMesh() {
+	if (navMeshResource != nullptr)
+		navMeshResource->FreeMemory();
+
+	navMeshResource = nullptr;
 }
 
 void ModuleDetour::setDefaultValues() {

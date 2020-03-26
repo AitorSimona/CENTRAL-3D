@@ -121,10 +121,12 @@ bool PanelNavigation::Draw() {
 					ImGui::TreePop();
 				}
 				ImGui::Separator();
-				if (ImGui::Button("Clear")) {
-					//MYTODO delete the navmesh binary
+				if (EngineApp->detour->getNavMeshResource() != nullptr) {
+					if (ImGui::Button("Clear")) {
+						EngineApp->detour->deleteNavMesh();
+					}
+					ImGui::SameLine();
 				}
-				ImGui::SameLine();
 				if (ImGui::Button("Bake")) {
 					EngineApp->recast->BuildNavMesh();
 				}

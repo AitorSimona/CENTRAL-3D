@@ -1325,6 +1325,10 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		fonts.erase(resource->GetUID());
 		break;
 
+	case Resource::ResourceType::NAVMESH:
+		navmeshes.erase(resource->GetUID());
+		break;
+
 	case Resource::ResourceType::META:
 		metas.erase(resource->GetUID());
 		break;

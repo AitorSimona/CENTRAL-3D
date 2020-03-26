@@ -146,6 +146,8 @@ bool ResourceScene::LoadInMemory() {
 
 			if (!navigationdata["navMeshUID"].is_null())
 				App->detour->loadNavMeshFile(navigationdata["navMeshUID"]);
+			else
+				App->detour->clearNavMesh();
 
 			for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
 				std::string areaName = navigationdata["Areas"][i]["name"];

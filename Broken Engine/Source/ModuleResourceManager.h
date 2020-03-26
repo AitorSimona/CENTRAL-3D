@@ -102,7 +102,6 @@ public:
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	bool IsFileImported(const char* file);
 	std::shared_ptr<std::string> GetNewUniqueName(Resource::ResourceType type);
-
 	void ONResourceDestroyed(Resource* resource);
 
 	//MYTODO For editor panel to set currentDirectory
