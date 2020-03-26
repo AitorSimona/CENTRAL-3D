@@ -133,6 +133,20 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
+
+	float3 pos = { 0.0f, 0.0f, 1000.0f };
+
+	bool averKeOnda = active_camera->frustum.TopPlane().IsOnPositiveSide(pos);
+	averKeOnda = active_camera->frustum.BottomPlane().IsOnPositiveSide(pos);
+	averKeOnda = active_camera->frustum.LeftPlane().IsOnPositiveSide(pos);
+	averKeOnda = active_camera->frustum.RightPlane().IsOnPositiveSide(pos);
+
+
+
+
+
+
+
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix (just different standard)

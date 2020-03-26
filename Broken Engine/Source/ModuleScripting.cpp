@@ -228,6 +228,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetComponent", &ScriptingGameobject::GetComponentFromGO)
 		.addFunction("GetPositionInFrustum", &ScriptingGameobject::GetPosInFrustum)
+		.addFunction("GetFrustumPlanesIntersection", &ScriptingGameobject::GetFrustumPlanesIntersection) //Returns 1 if any point outside. For the referenced LuaState passed: Top (x), Bottom (y), Left (z), Right (w) will be 1 if in positive plane side, 0 if not
 		.addFunction("GetScript", &ScriptingGameobject::GetScript)
 		.endClass()
 
