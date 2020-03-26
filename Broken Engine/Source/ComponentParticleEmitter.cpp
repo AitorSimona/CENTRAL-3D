@@ -245,6 +245,9 @@ json ComponentParticleEmitter::Save() const
 	node["Loop"] = loop;
 	node["Duration"] = std::to_string(duration);
 
+	node["particlesScaleX"] = std::to_string(particlesScale.x);
+	node["particlesScaleY"] = std::to_string(particlesScale.y);
+
 	return node;
 }
 
@@ -275,10 +278,12 @@ void ComponentParticleEmitter::Load(json& node)
 	
 	std::string LDuration = node["Duration"].is_null() ? "0" : node["Duration"];
 
-
 	std::string LColorR = node["ColorR"].is_null() ? "0" : node["ColorR"];
 	std::string LColorG = node["ColorG"].is_null() ? "0" : node["ColorG"];
 	std::string LColorB = node["ColorB"].is_null() ? "0" : node["ColorB"];
+
+	std::string LParticlesScaleX = node["particlesScaleX"].is_null() ? "1" : node["particlesScaleX"];
+	std::string LParticlesScaleY = node["particlesScaleY"].is_null() ? "1" : node["particlesScaleY"];
 
 	if (!node["Loop"].is_null())
 		loop = node["Loop"];
@@ -311,6 +316,9 @@ void ComponentParticleEmitter::Load(json& node)
 	particlesColor = float3(std::stof(LColorR), std::stof(LColorG), std::stof(LColorB));
 
 	duration = std::stoi(LDuration);
+
+	particlesScale.x = std::stof(LParticlesScaleX);
+	particlesScale.y = std::stof(LParticlesScaleY);
 }
 
 void ComponentParticleEmitter::CreateInspectorNode()
@@ -361,8 +369,6 @@ void ComponentParticleEmitter::CreateInspectorNode()
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
 		ImGui::DragFloat("##SEmitterZ", &size.z, 0.05f, 0.0f, 100.0f);
-
-		
 
 		//External forces
 		ImGui::Text("External forces ");
@@ -454,6 +460,21 @@ void ComponentParticleEmitter::CreateInspectorNode()
 
 		if (ImGui::TreeNode("Renderer"))
 		{
+			ImGui::Text("Scale");
+
+			//X
+			ImGui::Text("X");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SParticlesScaleX", &particlesScale.x, 0.05f, 0.1f, 50.0f);
+
+			ImGui::SameLine();
+			//Y
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SParticlesScaleY", &particlesScale.y, 0.05f, 0.1f, 50.0f);
+
 			// Image
 			ImGui::Separator();
 			ImGui::Text("Image");
@@ -587,6 +608,7 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 			particles[index[i]]->spawnTime = SDL_GetTicks();
 			particles[index[i]]->color = particlesColor / 255.0f;
 			particles[index[i]]->texture = texture;
+			particles[index[i]]->scale = particlesScale;
 		}
 
 		creationData.indexBuffer = indexBuffer;

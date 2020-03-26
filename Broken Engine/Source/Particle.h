@@ -25,6 +25,7 @@ public:
 	uint lifeTime=1;
 	uint spawnTime = 1;
 	float diameter=1;
+	float2 scale = {1,1};
 
 	ResourceTexture* texture = nullptr;
 };

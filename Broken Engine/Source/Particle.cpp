@@ -102,7 +102,7 @@ void Particle::Draw()
 	// --- Frame image with camera ---
 	float4x4 transform = transform.FromTRS(float3(position.x, position.y, position.z),
 		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
-		float3(1,1, 1));
+		float3(scale.x, scale.y, 1));
 	
 	float3 Movement = App->renderer3D->active_camera->frustum.Front();
 	//float3 camera_pos = frustum_pos;
