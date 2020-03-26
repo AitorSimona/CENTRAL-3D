@@ -49,7 +49,9 @@ public:
 
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
-	void Delete();
+	physx::PxRigidActor*					GetActor();
+	void									UpdateActor(int layerMask);
+	void									Delete();
 
 	// Implements PxSimulationEventCallback
 	virtual void							onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs);
@@ -73,6 +75,7 @@ public:
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
 	int colliderType = 0;
+	
 
 private:
 	physx::PxShape* shape = nullptr;

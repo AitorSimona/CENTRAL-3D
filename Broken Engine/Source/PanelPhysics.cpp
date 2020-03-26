@@ -132,6 +132,10 @@ void PanelPhysics::CreateLayerFilterGrid() {
 			if (ImGui::Checkbox(st.c_str(), &b)) {
 				layer->active_layers.at(j) = b;
 				aux_layer->active_layers.at(i) = layer->active_layers.at(j);
+				//UPDATE LAYERS
+				layer->UpdateLayerGroup();
+				aux_layer->UpdateLayerGroup();
+				App->physics->UpdateActors((LayerMask*)j);
 			}
 
 		}

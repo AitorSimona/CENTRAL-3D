@@ -5,6 +5,9 @@
 #include "ModuleEditorUI.h"
 #include "PanelProject.h"
 #include "ModulePhysics.h"
+#include "ComponentCollider.h"
+
+#include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 using namespace Broken;
 //#include "ModuleSceneManager.h"
@@ -290,7 +293,11 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 			if (ImGui::Selectable(layers->at(n).name.c_str(), is_selected)) {
 				item_current = layers->at(n).name.c_str();
 				Selected.layer = layers->at(n).layer;
-				//UpdateFilter
+
+				ComponentCollider* col = Selected.GetComponent<ComponentCollider>();
+				uint a = layers->at(n).LayerGroup;
+				if(col)
+					col->UpdateActor(0);
 			}
 			if (is_selected) {
 				ImGui::SetItemDefaultFocus();

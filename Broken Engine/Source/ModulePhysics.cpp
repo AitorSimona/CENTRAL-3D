@@ -1,5 +1,7 @@
 #include "ModulePhysics.h"
 #include "ModulePhysics.h"
+#include "ModulePhysics.h"
+#include "ModulePhysics.h"
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ComponentCollider.h"
@@ -105,6 +107,10 @@ bool ModulePhysics::Init(json& config)
 
 	for (int i = 0; i < layer_list.size(); ++i) {
 		layer_list.at(i).active_layers.resize(layer_list.size(), true);
+		if (i == 0)
+			layer_list.at(i).UpdateLayerGroup();
+		else
+			layer_list.at(i).LayerGroup = layer_list.at(0).LayerGroup;
 	}
 
 	static physx::PxDefaultErrorCallback gDefaultErrorCallback;
@@ -240,6 +246,59 @@ void ModulePhysics::SimulatePhysics(float dt, float speed)
 	mScene->fetchResults(true);
 }
 
+
+void ModulePhysics::addActor(physx::PxRigidActor* actor, LayerMask* LayerGroup) {
+	actors.insert(std::pair<physx::PxRigidActor*, LayerMask*>(actor, LayerGroup));
+	mScene->addActor(*actor);
+}
+
+void ModulePhysics::UpdateActor(physx::PxRigidActor* actor, physx::PxU32 Layermask) {
+	const physx::PxU32 numShapes = actor->getNbShapes();
+	physx::PxShape** shapes = (physx::PxShape**)malloc(sizeof(physx::PxShape*) * numShapes);
+	actor->getShapes(shapes, numShapes);
+	for (physx::PxU32 i = 0; i < numShapes; i++)
+	{
+		physx::PxShape* shape = shapes[i];
+
+		physx::PxFilterData filterData;
+		filterData = shape->getSimulationFilterData();
+		filterData.word0 = Layermask;
+
+		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+		shape->setQueryFilterData(filterData);
+		shape->setSimulationFilterData(filterData);
+	}
+	free(shapes);
+}
+
+void ModulePhysics::UpdateActors(LayerMask* updateLayer)
+{
+	if (actors.size() == 0)
+		return;
+
+	for (std::map<physx::PxRigidActor*, LayerMask*>::iterator it = actors.begin(); it != actors.end(); ++it)
+	{
+		if (updateLayer == (*it).second) {
+			physx::PxFilterData filterData;
+
+			const physx::PxU32 numShapes = (*it).first->getNbShapes();
+			physx::PxShape** shapes = (physx::PxShape**)malloc(sizeof(physx::PxShape*) * numShapes);
+			(*it).first->getShapes(shapes, numShapes);
+			for (physx::PxU32 i = 0; i < numShapes; i++)
+			{
+				physx::PxShape* shape = shapes[i];
+				filterData = shape->getSimulationFilterData();
+				filterData.word1 = layer_list.at((int)updateLayer).LayerGroup;
+
+				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+				shape->setQueryFilterData(filterData);
+				shape->setSimulationFilterData(filterData);
+			}
+			free(shapes);
+		}
+	}
+}
+
 void ModulePhysics::DeleteActors(GameObject* go)
 {
 	if (go == nullptr)
@@ -249,8 +308,12 @@ void ModulePhysics::DeleteActors(GameObject* go)
 	{
 		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
 		{
-			if ((*it)->GetComponent<ComponentCollider>() != nullptr)
-				(*it)->GetComponent<ComponentCollider>()->Delete();
+			if ((*it)->GetComponent<ComponentCollider>() != nullptr) {
+				ComponentCollider* col = (*it)->GetComponent<ComponentCollider>();
+				col->Delete();
+				actors.erase(col->GetActor());
+				//delete
+			}
 		}
 	}
 }

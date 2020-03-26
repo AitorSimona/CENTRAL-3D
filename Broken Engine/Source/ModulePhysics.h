@@ -36,6 +36,19 @@ struct Layer {
 	std::string name;
 	LayerMask layer;
 	std::vector<bool> active_layers;
+	uint LayerGroup;
+
+	void UpdateLayerGroup() {
+		physx::PxU32 ID = 0;
+		for (int i = 0; i < active_layers.size(); ++i) //Return group of layers
+		{
+			bool active = active_layers.at(i);
+			if (active)
+				ID |= (1 << i);
+		}
+		LayerGroup = ID;
+	}
+
 };
 
 BE_BEGIN_NAMESPACE
@@ -63,6 +76,12 @@ public:
 
 	void SimulatePhysics(float dt, float speed = 1.0f);
 
+	void addActor(physx::PxRigidActor* actor, LayerMask* LayerGroup);
+
+	void UpdateActor(physx::PxRigidActor* actor, physx::PxU32 LayerMask);
+
+	void UpdateActors(LayerMask* updateLayer);
+
 	void DeleteActors(GameObject* go = nullptr);
 
 public:
@@ -76,7 +95,7 @@ public:
 
 	physx::PxRigidStatic* plane = nullptr;
 	std::vector<Layer> layer_list;
-	std::list<physx::PxRigidActor*> actors;
+	std::map<physx::PxRigidActor*, LayerMask*> actors;
 
 private:
 

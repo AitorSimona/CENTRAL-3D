@@ -653,12 +653,14 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			{
 				physx::PxFilterData filterData;
 				filterData.word0 = (1 << GO->layer); // word0 = own ID
-				filterData.word1 = (1 << GO->layer);	// word1 = ID mask to filter pairs that trigger a contact callback;
+				filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
 				shape->setSimulationFilterData(filterData);
 
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
-				App->physics->mScene->addActor(*rigidStatic);
+				App->physics->addActor(rigidStatic,&GO->layer);
+
+				//App->physics->mScene->addActor(*rigidStatic);
 			}
 
 			
@@ -691,7 +693,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(SphereGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->mScene->addActor(*rigidStatic);
+				App->physics->addActor(rigidStatic, &GO->layer);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::SPHERE;
@@ -705,7 +707,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(planeGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->mScene->addActor(*rigidStatic);
+				App->physics->addActor(rigidStatic, &GO->layer);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::PLANE;
@@ -719,7 +721,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(CapsuleGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->mScene->addActor(*rigidStatic);
+				App->physics->addActor(rigidStatic, &GO->layer);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
@@ -801,10 +803,11 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
 
-		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), (1 << GO->layer)); //Setup filtering Layers
+		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup); //Setup filtering Layers
 
 		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
-		App->physics->mScene->addActor(*dynamicRB->rigidBody);
+		
+		App->physics->addActor(dynamicRB->rigidBody, &GO->layer);
 
 		return true;
 	}
@@ -812,4 +815,22 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 	else {
 		return false;
 	}
+}
+
+physx::PxRigidActor* ComponentCollider::GetActor() {
+	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+
+	if (dynamicRB != nullptr)
+		return dynamicRB->rigidBody;
+	else
+		return rigidStatic;
+}
+
+void ComponentCollider::UpdateActor(int LayerMask) {
+	//ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+
+	/*if (dynamicRB != nullptr)
+		App->physics->UpdateActor(dynamicRB->rigidBody, layerMask);
+	else
+		App->physics->UpdateActor(rigidStatic, layerMask);*/
 }
