@@ -118,21 +118,18 @@ Resource* ImporterMaterial::Load(const char* path) const
 		App->resources->AddResourceToFolder(mat);
 	}
 
-	if (diffuse) 
-	{
-		mat->resource_diffuse = diffuse;
-		//mat->resource_diffuse->SetParent(mat);
-	}
-
 	if (!file.is_null())
 	{
 		Importer::ImportData IData(texture_path.c_str());
 		diffuse = (ResourceTexture*)App->resources->ImportAssets(IData);
 
 		// --- Load Shader and Uniforms ---
-		std::string shader_path = file["shader"]["ResourceShader"].is_null() ? "0" : file["shader"]["ResourceShader"].get<std::string>();
+		std::string shader_path = file["shader"]["ResourceShader"].is_null() ? "NONE" : file["shader"]["ResourceShader"].get<std::string>();
 		Importer::ImportData IData2(shader_path.c_str());
-		mat->shader = (ResourceShader*)App->resources->ImportAssets(IData2);
+
+		if(shader_path != "NONE")
+			mat->shader = (ResourceShader*)App->resources->ImportAssets(IData2);
+
 		json uniforms_node = file["shader"]["uniforms"];
 
 		if (mat->shader && !uniforms_node.is_null())
@@ -224,6 +221,12 @@ Resource* ImporterMaterial::Load(const char* path) const
 			delete[] tmpf;
 			delete[] tmpi;
 		}
+	}
+
+	if (diffuse)
+	{
+		mat->resource_diffuse = diffuse;
+		//mat->resource_diffuse->SetParent(mat);
 	}
 
 	return mat;

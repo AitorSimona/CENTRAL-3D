@@ -105,7 +105,7 @@ void ComponentCollider::DrawComponent()
 	}
 
 	// --- Render shape ---
-	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
+	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices && App->GetAppState() != AppState::PLAY)
 	{
 		RenderMeshFlags flags = wire;
 		App->renderer3D->DrawMesh(globalMatrix, mesh, (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), false), nullptr, flags, Color(125,125,125));
