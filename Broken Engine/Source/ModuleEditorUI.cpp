@@ -118,6 +118,9 @@ update_status ModuleEditorUI::Update(float dt) {
 				if (ImGui::MenuItem("Cube"))
 					EngineApp->scene_manager->LoadCube();
 
+				if (ImGui::MenuItem("Disk"))
+					EngineApp->scene_manager->LoadDisk();
+
 				if (ImGui::MenuItem("Cylinder"))
 					EngineApp->scene_manager->LoadCylinder()->GetComponent<Broken::ComponentTransform>()->SetRotation({ -90, 0, 0 });
 

@@ -41,6 +41,8 @@ public:
 	GameObject* LoadCapsule();
 	GameObject* LoadPlane();
 	GameObject* LoadCylinder();
+	GameObject* LoadDisk();
+
 
 	void DestroyGameObject(GameObject* go);
 
@@ -81,12 +83,15 @@ public:
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+	void CreateDisk(float radius, ResourceMesh* rmesh);
 
 	const ResourceMesh* GetCubeMesh()const { return cube; }
 	const ResourceMesh* GetSphereMesh() const { return sphere; }
 	const ResourceMesh* GetCapsuleMesh() const { return capsule; }
 	const ResourceMesh* GetPlaneMesh() const { return plane; }
 	const ResourceMesh* GetCylinderMesh() const { return cylinder; }
+	const ResourceMesh* GetDiskMesh() const { return disk; }
+
 
 	void SendToDelete(GameObject* go);
 
@@ -132,6 +137,7 @@ private:
 	ResourceMesh* sphere = nullptr;
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* cylinder = nullptr;
+	ResourceMesh* disk = nullptr;
 
 
 	uint PointLineVAO = 0;
