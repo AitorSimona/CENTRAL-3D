@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "GameObject.h"
 
 #include "ModuleTimeManager.h"
@@ -95,7 +96,7 @@ bool ModulePhysics::Init(json& config)
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
-	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0);
+	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0.0f);
 
 	mControllerManager = PxCreateControllerManager(*mScene);
 
@@ -196,6 +197,9 @@ void ModulePhysics::DeleteActors(GameObject* go)
 		{
 			if ((*it)->GetComponent<ComponentCollider>() != nullptr)
 				(*it)->GetComponent<ComponentCollider>()->Delete();
+
+			if ((*it)->GetComponent<ComponentCharacterController>() != nullptr)
+				(*it)->GetComponent<ComponentCharacterController>()->Delete();
 		}
 	}
 }

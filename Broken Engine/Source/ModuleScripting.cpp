@@ -226,6 +226,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("UseGravity", &ScriptingSystems::UseGravity)
 		.addFunction("SetKinematic", &ScriptingSystems::SetKinematic)
 
+		.addFunction("Move", &ScriptingSystems::Move)
+
 		// Particles
 		.addFunction("ActivateParticlesEmission", &ScriptingSystems::ActivateParticlesEmission)
 		.addFunction("DeactivateParticlesEmission", &ScriptingSystems::DeactivateParticlesEmission)

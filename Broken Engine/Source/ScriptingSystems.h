@@ -29,6 +29,8 @@ public:
 	void SetKinematic(bool enable);
 	void UseGravity(bool enable);
 	
+	void Move(float velX, float velZ);
+
 	// Particles
 	void ActivateParticlesEmission() const;
 	void DeactivateParticlesEmission() const;

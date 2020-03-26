@@ -7,6 +7,7 @@
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ComponentAnimation.h"
+#include "ComponentCharacterController.h"
 
 #include "ComponentProgressBar.h"
 #include "ComponentText.h"
@@ -159,6 +160,17 @@ void ScriptingSystems::UseGravity(bool enable)
 		return body->UseGravity(enable);
 	else
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+void ScriptingSystems::Move(float velX, float velZ)
+{
+	ComponentCharacterController* cct = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+
+	if (cct)
+		cct->Move(velX, velZ);
+
+	else
+		ENGINE_CONSOLE_LOG("Object Character Controller component is null");	
 }
 
 // PARTICLES ----------------------------------------------------------

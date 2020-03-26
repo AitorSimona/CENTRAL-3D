@@ -19,6 +19,10 @@ public:
 
 	void Draw();
 
+	void Move(float velX, float velZ, float minDist = 0.01f);
+
+	void Delete();
+
 	static inline Component::ComponentType GetType() { return Component::ComponentType::CharacterController; };
 
 	// --- Save & Load ---
@@ -33,6 +37,10 @@ public:
 	void SetRadius(float radius);
 	void SetHeight(float height);
 
+	virtual physx::PxControllerBehaviorFlags		getBehaviorFlags(const physx::PxShape&, const physx::PxActor&);
+	virtual physx::PxControllerBehaviorFlags		getBehaviorFlags(const physx::PxController&);
+	virtual physx::PxControllerBehaviorFlags		getBehaviorFlags(const physx::PxObstacle&);
+
 public: 
 	ResourceMesh* mesh = nullptr;
 
@@ -40,12 +48,19 @@ private:
 	physx::PxControllerDesc* desc = nullptr;
 	physx::PxCapsuleControllerDesc capsuleDesc;
 	physx::PxController* controller = nullptr;
+	physx::PxVec3 velocity = physx::PxVec3(0.0f, 0.0f, 0.0f);
 
-	float contactOffset = 0.05f;
-	float stepOffset = 0.01f;
-	float slopeLimit = 0.5f;
+	float contactOffset = 0.01f;
+	float stepOffset = 0.3f;
+	float slopeLimit = 45.0f;
 	float radius = 0.5f;
-	float height = 1.0f;
+	float height = 2.0f;
+	bool sliding = true;
+
+	physx::PxVec3 position = physx::PxVec3(0.0f, 0.0f, 0.0f);
+	physx::PxExtendedVec3 initialPosition = physx::PxExtendedVec3(0.0f, 0.0f, 0.0f);
+
+	bool creation = false;
 };
 
 BE_END_NAMESPACE
