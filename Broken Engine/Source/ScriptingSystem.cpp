@@ -29,15 +29,11 @@ float ScriptingSystem::GameTime()
 void ScriptingSystem::PauseGame()
 {
 	App->GetAppState() = Broken::AppState::TO_PAUSE;	
-	if (App->isGame)
-		App->gui->pause_button = "PLAY";
 }
 
 void ScriptingSystem::ResumeGame()
 {
 	App->GetAppState() = Broken::AppState::TO_PLAY;
-	if (App->isGame)
-		App->gui->pause_button = "PAUSE";
 }
 
 // MATHS -------------------------------------------------------------
