@@ -121,8 +121,9 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 	ImGuiTreeNodeFlags node_flags = base_flags;
 
-	if (Go == EngineApp->scene_manager->GetSelectedGameObject())
+	if (EngineApp->scene_manager->IsSelected(Go))
 		node_flags |= ImGuiTreeNodeFlags_Selected;
+	//if (Go == EngineApp->scene_manager->GetSelectedGameObject())
 
 	// --- Avoid displaying root ---
 	if (Go->GetName() == EngineApp->scene_manager->GetRootGO()->GetName())
@@ -176,7 +177,8 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		}
 
 		// --- Set Game Object to be destroyed ---
-		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
+		//if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
+		if (ImGui::IsWindowFocused() && EngineApp->scene_manager->IsSelected(Go) && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		{
 			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
 			EngineApp->scene_manager->SendToDelete(Go);

@@ -41,17 +41,26 @@
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
+// SELECTED TODO
 void ModuleSceneManager::ONResourceSelected(const Event& e) 
 {
-	if (App->scene_manager->SelectedGameObject)
-		App->scene_manager->SetSelectedGameObject(nullptr);
+	/*if (App->scene_manager->SelectedGameObject)
+		App->scene_manager->SetSelectedGameObject(nullptr);*/
 }
 
+// SELECTED TODO
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
 {
-	// If destroyed GameObject is selected, put to nullptr
-	if (e.go->GetUID() == App->scene_manager->SelectedGameObject->GetUID())
-		App->scene_manager->SetSelectedGameObject(nullptr);
+	// If destroyed GameObject is selected, erase from selected
+	for (std::vector<GameObject*>::iterator it = App->scene_manager->selected_gameobjects.begin(); it != App->scene_manager->selected_gameobjects.end();)
+	{
+		if (e.go->GetUID() == (*it)->GetUID()) {
+			App->scene_manager->selected_gameobjects.erase(it);
+			break;
+		}
+		it++;
+	}
+	
 
 	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
 	{
@@ -319,21 +328,33 @@ void ModuleSceneManager::DrawScene()
 				{
 					// --- Search for Renderer Component ---
 					ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
-
-						if (SelectedGameObject == (*it).second)
+					// SELECTED TODO
+					for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+					{
+						if ((*it).second == (*selit))
 						{
 							glStencilFunc(GL_ALWAYS, 1, 0xFF);
-								glStencilMask(0xFF);
+							glStencilMask(0xFF);
+							break;
 						}
+					}
 
 					// --- If Found, draw the mesh ---
 					if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
 						MeshRenderer->Draw();
-
-					if (SelectedGameObject == (*it).second)
+					// SELECTED TODO
+					for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+					{
+						if ((*it).second == (*selit))
+						{
+							glStencilMask(0x00);
+							break;
+						}
+					}
+					/*if (SelectedGameObject == (*it).second)
 					{
 						glStencilMask(0x00);
-					}
+					}*/
 				}
 			}
 		}
@@ -345,11 +366,20 @@ void ModuleSceneManager::DrawScene()
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
-			if (SelectedGameObject == (*it))
+			for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+			{
+				if ((*it) == (*selit))
+				{
+					glStencilFunc(GL_ALWAYS, 1, 0xFF);
+					glStencilMask(0xFF);
+					break;
+				}
+			}
+			/*if (SelectedGameObject == (*it))
 			{
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
-			}
+			}*/
 
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
@@ -358,11 +388,20 @@ void ModuleSceneManager::DrawScene()
 			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
 			if (C_Bone)
 				C_Bone->DebugDrawBones();
+			// SELECTED TODO
+			for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+			{
+				if ((*it) == (*selit))
+				{
+					glStencilMask(0x00);
+					break;
+				}
+			}
 
-			if (SelectedGameObject == (*it))
+			/*if (SelectedGameObject == (*it))
 			{
 				glStencilMask(0x00);
-			}
+			}*/
 		}
 	}
 
@@ -479,6 +518,17 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 
 	if (node->IsLeaf())
 		DrawWire(node->box, Red, GetPointLineVAO());
+}
+
+bool ModuleSceneManager::IsSelected(GameObject* go)
+{
+	for (int i = 0; i < selected_gameobjects.size(); i++)
+	{
+		if (selected_gameobjects[i] == go)
+			return true;
+	}
+
+	return false;
 }
 
 void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
@@ -611,7 +661,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 {
 	if (scene)
 	{
-		SelectedGameObject = nullptr;
+		App->scene_manager->selected_gameobjects.clear();
+		//SelectedGameObject = nullptr;
 
 		// --- Unload current scene ---
 		if (currentScene)
@@ -655,22 +706,38 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 
 }
 
-
+// SELECTED TODO
 GameObject* ModuleSceneManager::GetSelectedGameObject() const
 {
-	return SelectedGameObject;
+
+	return selected_gameobjects.empty() ? nullptr : *selected_gameobjects.rbegin();
 }
 
 
+
+// SELECTED TODO
 void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
-	SelectedGameObject = go;
+	
+	if (go == nullptr)
+	{
+		App->scene_manager->selected_gameobjects.clear();
+	}
+	else {
+
+		App->scene_manager->selected_gameobjects.push_back(go);
+		Event e(Event::EventType::GameObject_selected);
+		e.go = go;
+		App->event_manager->PushEvent(e);
+	}
+	
+	/*SelectedGameObject = go;
 
 	if (SelectedGameObject)
 	{
 		Event e(Event::EventType::GameObject_selected);
 		e.go = go;
 		App->event_manager->PushEvent(e);
-	}
+	}*/
 }
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() {

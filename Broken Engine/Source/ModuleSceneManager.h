@@ -59,6 +59,7 @@ public:
 	void RedoOctree(AABB aabb);
 	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
 	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
+	bool IsSelected(GameObject* go);
 	void SelectFromRay(LineSegment& ray);
 
 	// --- Save/Load ----
@@ -139,8 +140,11 @@ private:
 	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
-	GameObject* SelectedGameObject = nullptr;
+	//GameObject* SelectedGameObject = nullptr;
 	GameObject* music = nullptr;
+public:
+
+	std::vector<GameObject*> selected_gameobjects;
 };
 
 BE_END_NAMESPACE
