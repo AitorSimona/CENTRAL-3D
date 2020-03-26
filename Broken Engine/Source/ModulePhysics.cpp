@@ -62,6 +62,8 @@ void ModulePhysics::setupFiltering(physx::PxRigidActor* actor, physx::PxU32 Laye
 	for (physx::PxU32 i = 0; i < numShapes; i++)
 	{
 		physx::PxShape* shape = shapes[i];
+		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+		shape->setQueryFilterData(filterData);
 		shape->setSimulationFilterData(filterData);
 	}
 	free(shapes);
@@ -140,7 +142,7 @@ bool ModulePhysics::Init(json& config)
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.filterShader = customFilterShader;
-	sceneDesc.flags = physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
+	//sceneDesc.flags = physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
 
 	mScene = mPhysics->createScene(sceneDesc);
 

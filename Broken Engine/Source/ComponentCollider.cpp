@@ -651,9 +651,12 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
-				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
+				physx::PxFilterData filterData;
+				filterData.word0 = (1 << GO->layer); // word0 = own ID
+				filterData.word1 = (1 << GO->layer);	// word1 = ID mask to filter pairs that trigger a contact callback;
+				shape->setSimulationFilterData(filterData);
 
-				App->physics->setupFiltering((physx::PxRigidActor *)rigidStatic, (1 << GO->layer), (1 << GO->layer)); //Setup filtering Layers
+				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
 				App->physics->mScene->addActor(*rigidStatic);
 			}
