@@ -42,8 +42,8 @@ bool PanelInspector::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		Broken::GameObject* Selected = EngineApp->scene_manager->GetSelectedGameObject();
-		std::vector<Broken::GameObject*>* GosSelected = &EngineApp->scene_manager->selected_gameobjects;
+		Broken::GameObject* Selected = EngineApp->selection->GetLastSelected();
+		const std::vector<Broken::GameObject*>* GosSelected = EngineApp->selection->GetSelected();
 		Broken::Resource* SelectedRes = EngineApp->editorui->panelProject->GetSelected();
 
 		if (Selected != nullptr)
@@ -104,7 +104,7 @@ bool PanelInspector::Draw()
 					{
 						resource = EngineApp->resources->GetResource(UID);
 
-						for (Broken::GameObject* obj : EngineApp->scene_manager->selected_gameobjects) 
+						for (Broken::GameObject* obj : *EngineApp->selection->GetSelected()) 
 						{
 							Broken::ComponentScript* script = (Broken::ComponentScript*)obj->AddComponent(Broken::Component::ComponentType::Script);
 							// SELECTED TODO - It is necessary to assign all the scripts? (move the line below out of the for loop)
@@ -173,7 +173,7 @@ bool PanelInspector::Draw()
 
 			if (type != Broken::Component::ComponentType::Unknown)
 			{
-				for (Broken::GameObject* obj : EngineApp->scene_manager->selected_gameobjects)
+				for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
 				{
 					obj->AddComponent(type);
 				}

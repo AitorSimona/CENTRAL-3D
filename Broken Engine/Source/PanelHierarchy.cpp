@@ -29,7 +29,8 @@ bool PanelHierarchy::Draw()
 
 		// Deselect the current GameObject when clicking in an empty space of the hierarchy
 		if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
-			EngineApp->scene_manager->SetSelectedGameObject(nullptr);
+			EngineApp->selection->ClearSelection();
+			//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 
 		// Allow creating GameObjects and UI Elements from the hierarchy
 		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN
@@ -117,12 +118,13 @@ bool PanelHierarchy::Draw()
 
 void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 {
-	// --- Set node flags ---
-	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+	// --- Set node flags --- MANAGED BY MODULE SELECTION 
+	/*static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 	ImGuiTreeNodeFlags node_flags = base_flags;
 
+	MANAGED BY MODULE SELECTION
 	if (EngineApp->scene_manager->IsSelected(Go))
-		node_flags |= ImGuiTreeNodeFlags_Selected;
+		node_flags |= ImGuiTreeNodeFlags_Selected;*/
 	//if (Go == EngineApp->scene_manager->GetSelectedGameObject())
 
 	// --- Avoid displaying root ---
@@ -140,9 +142,10 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 	// --- Display Go node ---
     else 
 	{
-		if (Go->childs.size() == 0)
-			node_flags |= ImGuiTreeNodeFlags_Leaf;
-
+		if (Go->childs.empty())
+			Go->node_flags |= ImGuiTreeNodeFlags_Leaf;
+		else
+			Go->node_flags &= ~ImGuiTreeNodeFlags_Leaf;
 		// --- Create current node and get if it is opened or not ---
 
 		if(!Go->GetActive())
@@ -151,7 +154,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		ImGui::Image((ImTextureID)EngineApp->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::SameLine();
 
-		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName());
+		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), Go->node_flags, Go->GetName());
 
 		if (!Go->GetActive())
 		ImGui::PopStyleColor();
@@ -178,7 +181,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 
 		// --- Set Game Object to be destroyed ---
 		//if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
-		if (ImGui::IsWindowFocused() && EngineApp->scene_manager->IsSelected(Go) && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
+		if (ImGui::IsWindowFocused() && EngineApp->selection->IsSelected(Go) && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		{
 			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
 			EngineApp->scene_manager->SendToDelete(Go);
@@ -189,11 +192,15 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		{
 			if (ImGui::IsItemHovered())
 			{
-				EngineApp->scene_manager->SetSelectedGameObject(Go);
+				EngineApp->selection->Select(Go);
+				//EngineApp->scene_manager->SetSelectedGameObject(Go);
 				wasclicked = false;
 			}
 			else
-				EngineApp->scene_manager->SetSelectedGameObject(nullptr);
+			{
+				EX_ENGINE_CONSOLE_LOG("Panel Hierarchy 201 - EngineApp->scene_manager->SetSelectedGameObject(nullptr);");
+				//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
+			}
 		}
 
 		// --- Handle selection ---

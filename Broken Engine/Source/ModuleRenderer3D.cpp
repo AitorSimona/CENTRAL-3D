@@ -335,7 +335,7 @@ bool ModuleRenderer3D::GetVSync() const {
 
 void ModuleRenderer3D::HandleObjectOutlining() {
 	// --- Selected Object Outlining ---
-	for (GameObject* obj : App->scene_manager->selected_gameobjects) {
+	for (GameObject* obj : *App->selection->GetSelected()) {
 		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
 		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
 		// differences, making it look like borders ---

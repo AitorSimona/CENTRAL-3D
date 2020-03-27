@@ -16,6 +16,7 @@
 #include "ComponentCamera.h"
 #include "ComponentBone.h"
 #include "ModuleUI.h"
+#include "ModuleSelection.h"
 
 //#include "ModuleGui.h"
 
@@ -52,14 +53,15 @@ void ModuleSceneManager::ONResourceSelected(const Event& e)
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
 {
 	// If destroyed GameObject is selected, erase from selected
-	for (std::vector<GameObject*>::iterator it = App->scene_manager->selected_gameobjects.begin(); it != App->scene_manager->selected_gameobjects.end();)
+	// MANAGED BY MODULE SELECTION
+	/*for (std::vector<GameObject*>::iterator it = App->selection->selected_gameobjects.begin(); it != App->scene_manager->selected_gameobjects.end();)
 	{
 		if (e.go->GetUID() == (*it)->GetUID()) {
 			App->scene_manager->selected_gameobjects.erase(it);
 			break;
 		}
 		it++;
-	}
+	}*/
 	
 
 	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
@@ -90,7 +92,7 @@ bool ModuleSceneManager::Init(json& file)
 {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
-	root_selected = CreateRootSelectedGameObject();
+	//root_selected = CreateRootSelectedGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
 	// --- Add Event Listeners ---
@@ -148,21 +150,7 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
-	// Delete selection
-	if (!go_to_delete.empty())
-	{
-		root_selected->childs.clear();
-
-		for (int i = 0; i < go_to_delete.size(); ++i)
-		{
-			root_selected->AddChildGO(go_to_delete[i]);
-		}
-
-		root_selected->RecursiveDelete();
-		this->go_count -= go_to_delete.size();
-
-		go_to_delete.clear();
-	}
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -340,7 +328,7 @@ void ModuleSceneManager::DrawScene()
 					// --- Search for Renderer Component ---
 					ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
 					// SELECTED TODO
-					for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+					/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
 					{
 						if ((*it).second == (*selit))
 						{
@@ -348,20 +336,20 @@ void ModuleSceneManager::DrawScene()
 							glStencilMask(0xFF);
 							break;
 						}
-					}
+					}*/
 
 					// --- If Found, draw the mesh ---
 					if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
 						MeshRenderer->Draw();
 					// SELECTED TODO
-					for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+					/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
 					{
 						if ((*it).second == (*selit))
 						{
 							glStencilMask(0x00);
 							break;
 						}
-					}
+					}*/
 					/*if (SelectedGameObject == (*it).second)
 					{
 						glStencilMask(0x00);
@@ -377,7 +365,7 @@ void ModuleSceneManager::DrawScene()
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
-			for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+			/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
 			{
 				if ((*it) == (*selit))
 				{
@@ -385,7 +373,7 @@ void ModuleSceneManager::DrawScene()
 					glStencilMask(0xFF);
 					break;
 				}
-			}
+			}*/
 			/*if (SelectedGameObject == (*it))
 			{
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -400,14 +388,14 @@ void ModuleSceneManager::DrawScene()
 			if (C_Bone)
 				C_Bone->DebugDrawBones();
 			// SELECTED TODO
-			for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
+			/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
 			{
 				if ((*it) == (*selit))
 				{
 					glStencilMask(0x00);
 					break;
 				}
-			}
+			}*/
 
 			/*if (SelectedGameObject == (*it))
 			{
@@ -531,16 +519,16 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 		DrawWire(node->box, Red, GetPointLineVAO());
 }
 
-bool ModuleSceneManager::IsSelected(GameObject* go)
-{
-	for (int i = 0; i < selected_gameobjects.size(); i++)
-	{
-		if (selected_gameobjects[i] == go)
-			return true;
-	}
-
-	return false;
-}
+//bool ModuleSceneManager::IsSelected(GameObject* go)
+//{
+//	for (int i = 0; i < selected_gameobjects.size(); i++)
+//	{
+//		if (selected_gameobjects[i] == go)
+//			return true;
+//	}
+//
+//	return false;
+//}
 
 void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
 {
@@ -597,7 +585,9 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 
 		// --- Set Selected ---
 		//if (toSelect)
-		SetSelectedGameObject(toSelect);
+		// RAYCAST SELECTION
+		App->selection->Select(toSelect);
+		//SetSelectedGameObject(toSelect);
 	}
 }
 
@@ -672,7 +662,7 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 {
 	if (scene)
 	{
-		App->scene_manager->selected_gameobjects.clear();
+		App->selection->ClearSelection();
 		//SelectedGameObject = nullptr;
 
 		// --- Unload current scene ---
@@ -718,38 +708,38 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 }
 
 // SELECTED TODO
-GameObject* ModuleSceneManager::GetSelectedGameObject() const
-{
-
-	return selected_gameobjects.empty() ? nullptr : *selected_gameobjects.rbegin();
-}
+//GameObject* ModuleSceneManager::GetSelectedGameObject() const
+//{
+//
+//	return selected_gameobjects.empty() ? nullptr : *selected_gameobjects.rbegin();
+//}
 
 
 
 // SELECTED TODO
-void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
-	
-	if (go == nullptr)
-	{
-		App->scene_manager->selected_gameobjects.clear();
-	}
-	else {
-
-		App->scene_manager->selected_gameobjects.push_back(go);
-		Event e(Event::EventType::GameObject_selected);
-		e.go = go;
-		App->event_manager->PushEvent(e);
-	}
-	
-	/*SelectedGameObject = go;
-
-	if (SelectedGameObject)
-	{
-		Event e(Event::EventType::GameObject_selected);
-		e.go = go;
-		App->event_manager->PushEvent(e);
-	}*/
-}
+//void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
+//	
+//	if (go == nullptr)
+//	{
+//		App->scene_manager->selected_gameobjects.clear();
+//	}
+//	else {
+//
+//		App->scene_manager->selected_gameobjects.push_back(go);
+//		Event e(Event::EventType::GameObject_selected);
+//		e.go = go;
+//		App->event_manager->PushEvent(e);
+//	}
+//	
+//	/*SelectedGameObject = go;
+//
+//	if (SelectedGameObject)
+//	{
+//		Event e(Event::EventType::GameObject_selected);
+//		e.go = go;
+//		App->event_manager->PushEvent(e);
+//	}*/
+//}
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	// --- Create New Game Object Name ---
@@ -804,16 +794,16 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 	return new_object;
 }
 
-GameObject* ModuleSceneManager::CreateRootSelectedGameObject()
-{
-	// --- Create New Game Object Name ---
-	std::string Name = "rootSelected";
-
-	// --- Create empty Game object to be filled out ---
-	GameObject* new_object = new GameObject(Name.c_str());
-
-	return new_object;
-}
+//GameObject* ModuleSceneManager::CreateRootSelectedGameObject()
+//{
+//	// --- Create New Game Object Name ---
+//	std::string Name = "rootSelected";
+//
+//	// --- Create empty Game object to be filled out ---
+//	GameObject* new_object = new GameObject(Name.c_str());
+//
+//	return new_object;
+//}
 
 void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const {
 	// --- Obtain data from par shapes mesh and load it into mesh ---

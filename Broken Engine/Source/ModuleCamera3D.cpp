@@ -124,12 +124,14 @@ void ModuleCamera3D::UpdateCamera() {
 			CameraLookAround(m_CameraSpeedDeltaTime, reference);
 
 		// --- Frame object ---
-		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
+
+		// SELECTED TODO
+		/*if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
 			if (GameObject* GO = App->scene_manager->GetSelectedGameObject())
 				FrameObject(GO);
 			else
 				FrameObject(float3(0.0f));
-		}
+		}*/
 
 		//App->scene_manager->CreateGrid(camera->frustum.Pos().Length()); // rip adaptive grid
 	}

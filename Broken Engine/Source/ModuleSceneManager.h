@@ -19,6 +19,7 @@ struct Event;
 
 class BROKEN_API ModuleSceneManager : public Module {
 public:
+	friend class ModuleSelection;
 
 	ModuleSceneManager(bool start_enabled = true);
 	~ModuleSceneManager();
@@ -47,12 +48,12 @@ public:
 	// --- Getters ---
 
 	// Returns the last selected gameobject
-	GameObject* GetSelectedGameObject() const;
+	//GameObject* GetSelectedGameObject() const;
 	GameObject* GetRootGO() const;
 	uint GetPointLineVAO() const;
 
 	// --- Setters ---
-	void SetSelectedGameObject(GameObject* go);
+	//void SetSelectedGameObject(GameObject* go);
 
 	// --- Utilities ---
 	void DrawGrid(bool drawAxis, float size);
@@ -61,7 +62,7 @@ public:
 	void RedoOctree(AABB aabb);
 	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
 	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
-	bool IsSelected(GameObject* go);
+	//bool IsSelected(GameObject* go);
 	void SelectFromRay(LineSegment& ray);
 
 	// --- Save/Load ----
@@ -101,7 +102,7 @@ private:
 
 private:
 	GameObject* CreateRootGameObject();
-	GameObject* CreateRootSelectedGameObject();
+	//GameObject* CreateRootSelectedGameObject();
 	void DrawScene();
 
 	// --- Primitives ---
@@ -143,12 +144,12 @@ private:
 	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
-	GameObject* root_selected = nullptr;
+	//GameObject* root_selected = nullptr;
 	//GameObject* SelectedGameObject = nullptr;
 	GameObject* music = nullptr;
 public:
 
-	std::vector<GameObject*> selected_gameobjects;
+	//std::vector<GameObject*> selected_gameobjects;
 };
 
 BE_END_NAMESPACE
