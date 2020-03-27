@@ -81,7 +81,7 @@ bool ResourceNavMesh::LoadInMemory() {
 		}
 
 		if (buffer != nullptr)
-			delete buffer;
+			delete[] buffer;
 
 	}
 
