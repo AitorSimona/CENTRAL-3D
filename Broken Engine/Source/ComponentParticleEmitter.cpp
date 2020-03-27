@@ -13,6 +13,8 @@
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 #include "ResourceTexture.h"
+#include "ModuleRenderer3D.h"
+#include "ComponentCamera.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -36,6 +38,8 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 		particles[i] = new Particle();
 
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+
+	App->renderer3D->particleEmitters.push_back(this);
 }
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
@@ -54,6 +58,8 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 	}
 
 	texture->Release();
+
+	//App->renderer3D->particleEmitters.erase(this);
 }
 
 void ComponentParticleEmitter::Update()
@@ -170,6 +176,8 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			// return ownership of the buffers back to the SDK
 			rd->unlock();
 		}
+
+		
 		if (particlesToRelease > 0) {
 
 			particleSystem->releaseParticles(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
@@ -177,12 +185,42 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			indexPool->freeIndices(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
 		}
 
+
+		//SortParticles();
 }
 
-void ComponentParticleEmitter::DrawComponent()
+//void ComponentParticleEmitter::SortParticles()
+//{
+//	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
+//	if (rd)
+//	{
+//		physx::PxStrideIterator<const physx::PxParticleFlags> flagsIt(rd->flagsBuffer);
+//
+//		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt)
+//		{
+//			if (*flagsIt & physx::PxParticleFlag::eVALID)
+//			{
+//				drawingIndices
+//			}
+//		}
+//
+//		// return ownership of the buffers back to the SDK
+//		rd->unlock();
+//	}
+//
+//}
+
+void ComponentParticleEmitter::DrawParticles()
 {
 	if (!active)
 		return;
+
+	//while (!drawingIndices.empty())
+	//{
+	//	//particles[drawingIndices.front()]->Draw();
+
+	//	drawingIndices.pop();
+	//}
 
 	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
 	if (rd)
@@ -202,6 +240,28 @@ void ComponentParticleEmitter::DrawComponent()
 	}
 }
 
+//void ComponentParticleEmitter::DrawComponent()
+//{
+//	if (!active)
+//		return;
+//
+//	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
+//	if (rd)
+//	{
+//		physx::PxStrideIterator<const physx::PxParticleFlags> flagsIt(rd->flagsBuffer);
+//
+//		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt)
+//		{
+//			if (*flagsIt & physx::PxParticleFlag::eVALID)
+//			{
+//				particles[i]->Draw();
+//			}
+//		}
+//
+//		// return ownership of the buffers back to the SDK
+//		rd->unlock();
+//	}
+//}
 
 void ComponentParticleEmitter::ChangeParticlesColor(float3 color)
 {

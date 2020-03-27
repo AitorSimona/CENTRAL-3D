@@ -6,6 +6,8 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
+#include <queue>
+
 BE_BEGIN_NAMESPACE
 
 class Particle;
@@ -25,7 +27,8 @@ public:
 	void Disable() override;
 
 	void UpdateParticles(float dt);
-	void DrawComponent() override;
+	//void DrawComponent() override;
+	void DrawParticles();
 	void ChangeParticlesColor(float3 color);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::ParticleEmitter; };
@@ -39,6 +42,8 @@ public:
 
 private:
 
+	void SortParticles();
+
 	void CreateParticles(uint particlesAmount);
 
 	double GetRandomValue(double min, double max); //MUST EREASE IN THE FUTURE
@@ -47,6 +52,7 @@ private:
 	physx::PxParticleSystem* particleSystem = nullptr;
 
 	std::vector<Particle*> particles;
+	//std::priority_queue<int, int> drawingIndices;
 
 	unsigned int maxParticles = 1000;
 	bool perParticleRestOffset = false;

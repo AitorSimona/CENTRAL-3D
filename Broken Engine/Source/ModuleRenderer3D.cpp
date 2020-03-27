@@ -16,6 +16,7 @@
 #include "ComponentCollider.h"
 #include "ComponentAudioListener.h"
 #include "Component.h"
+#include "ComponentParticleEmitter.h"
 
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
@@ -188,6 +189,16 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// -- Draw particles ---
+	for (int i = 0; i < particleEmitters.size(); ++i)
+		particleEmitters[i]->DrawParticles();
+
+	glDisable(GL_BLEND);
+
 	App->ui_system->Draw();
 
 	// --- Selected Object Outlining ---
@@ -204,6 +215,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 
 	// --- Draw GUI and swap buffers ---
 	App->gui->Draw();
+
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context);

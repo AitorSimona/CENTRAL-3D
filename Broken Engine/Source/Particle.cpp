@@ -31,7 +31,6 @@ Particle::~Particle()
 
 void Particle::Draw()
 {
-
 	/*
 	float4x4 transform=float4x4::identity;
 	transform.SetIdentity();
@@ -122,6 +121,9 @@ void Particle::Draw()
 	if (Movement.IsFinite())
 		App->renderer3D->active_camera->frustum.SetPos(center - Movement);*/
 
+
+	
+
 		// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
@@ -162,6 +164,7 @@ void Particle::Draw()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
+	
 
 	// --- Set camera back to original position ---
 	//App->renderer3D->active_camera->frustum.SetPos(camera_pos);
