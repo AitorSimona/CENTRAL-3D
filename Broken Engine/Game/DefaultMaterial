@@ -1,4 +1,8 @@
 {
     "DefaultMaterial": null,
-    "ResourceDiffuse": "Assets/SwordToBake_default_AlbedoTransparency.png"
+    "ResourceDiffuse": "Assets/Gerald_LowMesh_Material__34_AlbedoTransparency.png",
+    "shader": {
+        "ResourceShader": "Assets/Shaders/Standard.glsl",
+        "uniforms": null
+    }
 }

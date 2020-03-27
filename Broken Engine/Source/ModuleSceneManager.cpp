@@ -192,7 +192,8 @@ void ModuleSceneManager::DrawScene()
 				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
 					// --- Issue render order ---
-					(*it).second->Draw();
+					if ((*it).second->GetActive())
+						(*it).second->Draw();
 				}
 			}
 		}
@@ -202,7 +203,10 @@ void ModuleSceneManager::DrawScene()
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
 			// --- Issue render order ---
-			(*it)->Draw();
+			if ((*it)->GetActive())
+				(*it)->Draw();
+
+
 		}
 
 		App->detour->Draw();

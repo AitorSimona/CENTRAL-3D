@@ -420,15 +420,15 @@ inline int bit(int a, int b) {
 }
 
 Color ModuleDetour::areaToColor(uint area) const {
-	int	r = bit(area, 1) + bit(area, 3) * 2 + 1;
-	int	g = bit(area, 2) + bit(area, 4) * 2 + 1;
-	int	b = bit(area, 0) + bit(area, 5) * 2 + 1;
+	int	r = (bit(area, 1) + bit(area, 3) * 2 + 1);
+	int	g = (bit(area, 2) + bit(area, 4) * 2 + 1);
+	int	b = (bit(area, 0) + bit(area, 5) * 2 + 1);
 
-	return Color(r,g,b);
+	return Color(r, g, b, 255);
 }
 
 navigationPoly::navigationPoly() {
-	rmesh = new ResourceMesh(0, "NULLFILE");
+	rmesh = new ResourceMesh(App->GetRandom().Int(), "NULLFILE");
 }
 
 navigationPoly::~navigationPoly() {
