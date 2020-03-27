@@ -283,18 +283,34 @@ uint WwiseGameObject::GetID()
 
 void ModuleAudio::LoadEventsFromJson()
 {
-
-	uint Id;
+	uint Id = 0;
 	std::string name;
-	json File = App->GetJLoader()->Load("/Game/Assets/Sounds/Main.json");
+	json File = App->GetJLoader()->Load("Assets/Sounds/Main.json");
 	
-	json Events = File["SoundBanks"]["IncludedEvents"];
+	json Events = File["SoundBanksInfo"]["SoundBanks"][0]["IncludedEvents"];
 	EventMap.begin();
-	for (json::iterator it = Events.begin(); it != Events.end(); ++it)
-	{
-		Id = (*it).find("Id").value();
-		//name = (*it).find("Name").value();
+	//for (json::iterator it = Events.begin(); it != Events.end(); ++it)
+	//{
 
-		EventMap.insert(std::pair<std::string, uint>(name, Id));
+	//	std::string idstring = Events["Id"];
+	//	std::string namestring = Events["Name"];
+
+	//	Id = std::stoul(idstring);
+	//	//name = (*it).find("Name").value();
+
+	//	//EventMap.insert(std::pair<std::string, uint>(name, Id));
+	//}
+
+	for (uint i = 0; i < Events.size(); ++i)
+	{
+		json node = Events[i];
+
+		std::string idstring = node["Id"];
+		std::string namestring = node["Name"];
+		Id = std::stoul(idstring);
+
+		EventMap.insert(std::pair<std::string, uint>(namestring, Id));
 	}
+
+	uint i = 0;
 }
