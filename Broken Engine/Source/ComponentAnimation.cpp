@@ -156,6 +156,14 @@ void ComponentAnimation::PlayAnimation(const char* name, float speed)
 	}
 }
 
+void ComponentAnimation::ChangeBlendTime(float value)
+{
+	if(value > 0)
+		blend_time_value = value;
+	else
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("Can't change blend time, value has to be greater than 0");
+}
+
 void ComponentAnimation::SetAnimationSpeed(const char* name, float speed)
 {
 	for (int i = 0; i < animations.size(); ++i)
