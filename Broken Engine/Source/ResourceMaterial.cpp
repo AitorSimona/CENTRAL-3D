@@ -231,10 +231,14 @@ void ResourceMaterial::OnDelete() {
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
-	Resource* diffuse = resource_diffuse;
+	Resource* diffuse = m_DiffuseResTexture;
+	Resource* specular = m_SpecularResTexture;
 
 	if (diffuse)
 		diffuse->Release();
+
+	if (specular)
+		specular->Release();
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
