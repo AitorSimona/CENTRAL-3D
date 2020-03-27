@@ -32,6 +32,9 @@ bool ModuleSelection::CleanUp()
 	delete root;
 	root = nullptr;
 
+	//hierarchy_order.clear();
+	selection.clear();
+
 	return true;
 }
 update_status ModuleSelection::PreUpdate(float dt)
@@ -112,6 +115,24 @@ void ModuleSelection::Select(GameObject* gameobject)
 	}
 }
 
+//void ModuleSelection::SelectLastTo(GameObject* gameobject)
+//{
+//	GameObject* from = GetLastSelected();
+//
+//	if ( from != nullptr && gameobject != nullptr) {
+//
+//		for (GameObject* go : hierarchy_order)
+//		{
+//			if (go == from) start_selecting = true;
+//			
+//			if (start_selecting) Select(go);
+//
+//			if (go == gameobject) return;
+//		}
+//	}
+//}
+
+
 void ModuleSelection::UnSelect(GameObject* gameobject)
 {
 	if (gameobject == nullptr)
@@ -119,12 +140,16 @@ void ModuleSelection::UnSelect(GameObject* gameobject)
 		ClearSelection();
 	}
 	else {
-		for (std::vector<GameObject*>::iterator it = selection.begin(); it != selection.end(); it++)
+		for (std::vector<GameObject*>::iterator it = selection.begin(); it != selection.end();)
 		{
 			if ((*it) == gameobject)
+			{
 				selection.erase(it);
+				gameobject->node_flags &= ~ImGuiTreeNodeFlags_Selected;
+				break;
+			}
+			it++;
 		}
-		gameobject->node_flags &= ~ImGuiTreeNodeFlags_Selected;
 
 		/*Event e(Event::EventType::GameObject_Unselected);
 		e.go = gameobject;

@@ -25,6 +25,7 @@ bool PanelHierarchy::Draw()
 		ImGui::Text(EngineApp->scene_manager->currentScene->GetName());
 		ImGui::EndMenuBar();
 
+		//EngineApp->selection->hierarchy_order.clear();
 		DrawRecursive(EngineApp->scene_manager->GetRootGO());
 
 		// Deselect the current GameObject when clicking in an empty space of the hierarchy
@@ -147,6 +148,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 	// --- Display Go node ---
     else 
 	{
+		//EngineApp->selection->hierarchy_order.push_back(Go);
 		if (Go->childs.empty())
 			Go->node_flags |= ImGuiTreeNodeFlags_Leaf;
 		else
@@ -193,27 +195,49 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		}
 
 		// --- Handle selection ---
-		if (selected_uid == Go->GetUID() && wasclicked && ImGui::IsMouseReleased(0))
-		{
-			if (ImGui::IsItemHovered())
-			{
-				EngineApp->selection->Select(Go);
-				//EngineApp->scene_manager->SetSelectedGameObject(Go);
-				wasclicked = false;
-			}
-			else
-			{
-				EX_ENGINE_CONSOLE_LOG("Panel Hierarchy 201 - EngineApp->scene_manager->SetSelectedGameObject(nullptr);");
-				//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
-			}
-		}
-
-		// --- Handle selection ---
 		if (ImGui::IsItemClicked())
 		{
-			selected_uid = Go->GetUID();
-			wasclicked = true;
+			// User is not holding CTRL neither SHIFT -> clean and single select the gameobject
+			if(EngineApp->input->GetKey(SDL_SCANCODE_LCTRL) == Broken::KEY_IDLE && EngineApp->input->GetKey(SDL_SCANCODE_RCTRL) == Broken::KEY_IDLE &&
+				EngineApp->input->GetKey(SDL_SCANCODE_LSHIFT) == Broken::KEY_IDLE && EngineApp->input->GetKey(SDL_SCANCODE_RSHIFT) == Broken::KEY_IDLE)
+			{
+				EngineApp->selection->ClearSelection();
+				EngineApp->selection->Select(Go);
+			}
+			// User is holding CTRL, toggle selection state
+			else if (EngineApp->input->GetKey(SDL_SCANCODE_LCTRL) == Broken::KEY_REPEAT || EngineApp->input->GetKey(SDL_SCANCODE_RCTRL) == Broken::KEY_REPEAT)
+			{
+				EngineApp->selection->ToggleSelect(Go);
+			}
+			// SELECTED TODO
+			// User is holding SHIFT, multi select the objects between selected and the new one
+			/*else if (EngineApp->input->GetKey(SDL_SCANCODE_LSHIFT) == Broken::KEY_REPEAT || EngineApp->input->GetKey(SDL_SCANCODE_RSHIFT) == Broken::KEY_REPEAT)
+			{
+				EngineApp->selection->SelectLastTo(Go);
+			}*/
 		}
+
+		//if (selected_uid == Go->GetUID() && wasclicked && ImGui::IsMouseReleased(0))
+		//{
+		//	if (ImGui::IsItemHovered())
+		//	{
+		//		EngineApp->selection->Select(Go);
+		//		//EngineApp->scene_manager->SetSelectedGameObject(Go);
+		//		wasclicked = false;
+		//	}
+		//	else
+		//	{
+		//		EX_ENGINE_CONSOLE_LOG("Panel Hierarchy 201 - EngineApp->scene_manager->SetSelectedGameObject(nullptr);");
+		//		//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
+		//	}
+		//}
+
+		//// --- Handle selection ---
+		//if (ImGui::IsItemClicked())
+		//{
+		//	selected_uid = Go->GetUID();
+		//	wasclicked = true;
+		//}
 
 
 		// --- Display children only if current node is open ---
