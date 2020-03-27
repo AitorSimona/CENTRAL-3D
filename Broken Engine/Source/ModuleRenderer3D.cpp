@@ -327,7 +327,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 		// --- Add given instance to relevant vector ---
 		if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
 		{
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags, color);
+			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
 
 			render_meshes[mesh->GetUID()].push_back(rmesh);
@@ -337,7 +337,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 			// --- Build new vector to store mesh's instances ---
 			std::vector<RenderMesh> new_vec;
 
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags, color);
+			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
 
 			new_vec.push_back(rmesh);
@@ -779,13 +779,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		RenderMesh* mesh = &meshInstances[i];
 		uint shader = defaultShader->ID;
 		float4x4 model = mesh->transform;
+		float3 colorToDraw = float3(1.0f);
 
-		if (mesh->mat->shader)
-		{
-			shader = mesh->mat->shader->ID;
-			mesh->mat->UpdateUniforms();
-		}
-
+		// --- Select/Outline ---
 		if (mesh->flags & RenderMeshFlags_::selected)
 		{
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -795,6 +791,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (mesh->flags & RenderMeshFlags_::outline)
 		{
 			shader = OutlineShader->ID;
+			colorToDraw = { 1.0f, 0.65f, 0.0f };
 			// --- Draw selected, pass scaled-up matrix to shader ---
 			float3 scale = float3(1.05f, 1.05f, 1.05f);
 
@@ -805,6 +802,13 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (zdrawer)
 		{
 			shader = ZDrawerShader->ID;
+		}
+
+		// --- Get Mesh Material ---
+		if (mesh->mat->shader)
+		{
+			shader = mesh->mat->shader->ID;
+			mesh->mat->UpdateUniforms();
 		}
 
 		glUseProgram(shader);
@@ -843,6 +847,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		GLint projectLoc = glGetUniformLocation(shader, "projection");
 		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
+		//Send Color
+		glUniform3f(vertexColorLocation, colorToDraw.x, colorToDraw.y, colorToDraw.z);
 
 		if (mesh->flags & RenderMeshFlags_::wire)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -862,17 +868,37 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 					glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
 				else
 				{
-					if (mesh->mat && mesh->mat->resource_diffuse)
-						glBindTexture(GL_TEXTURE_2D, mesh->mat->resource_diffuse->GetTexID());
+					//glActiveTexture(GL_TEXTURE1);
+					if (mesh->mat && mesh->mat->m_DiffuseResTexture)
+					{
+						glUniform3f(vertexColorLocation, mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
+						glUniform1i(TextureSupportLocation, 1);
+						glUniform1i(glGetUniformLocation(shader, "ourTexture"), 1);
+						glActiveTexture(GL_TEXTURE0 + 1);
+						glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
+
+						//if (mesh->mat->m_SpecularResTexture)
+						//{
+						//	glUniform1i(glGetUniformLocation(shader, "SpecText"), 2);
+						//	glActiveTexture(GL_TEXTURE0 + 2);
+						//	glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
+						//	//SpecText
+						//
+						//	//glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
+						//}
+					}
 					else
 						glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+
+					//glActiveTexture(GL_TEXTURE2);
+					//if (mesh->mat && mesh->mat->m_SpecularResTexture)
+					//	glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
+					//else
+					//	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 				}
 			}
 			else
-			{
 				glUniform1i(TextureSupportLocation, -1);
-				glUniform3f(vertexColorLocation, mesh->color.r/255, mesh->color.g/255, mesh->color.b/255);
-			}
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
 			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data

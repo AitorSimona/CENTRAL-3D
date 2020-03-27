@@ -267,7 +267,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 		if (strcmp(name, "model_matrix") == 0
 			|| strcmp(name, "view") == 0
 			|| strcmp(name, "projection") == 0
-			|| strcmp(name, "time") == 0)
+			|| strcmp(name, "time") == 0
+			|| strcmp(name, "Color") == 0)
 			continue;
 
 		Uniform* uniform = nullptr;

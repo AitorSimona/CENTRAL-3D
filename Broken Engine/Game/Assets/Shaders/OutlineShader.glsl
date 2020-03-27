@@ -4,6 +4,7 @@
 
 layout (location = 0) in vec3 position; 
 
+uniform vec3 Color = vec3(1.0, 0.65, 0.0);
 uniform mat4 model_matrix; 
 uniform mat4 view; 
 uniform mat4 projection; 
@@ -21,69 +22,6 @@ out vec4 color;
 
 void main()
 { 
-	color = vec4(1.0, 0.65, 0.0, 1.0); 
+	color = vec4(Color, 1.0); 
 } 
 #endif //FRAGMENT_SHADER 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
