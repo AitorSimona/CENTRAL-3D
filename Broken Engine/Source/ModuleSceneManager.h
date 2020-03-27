@@ -101,6 +101,7 @@ private:
 
 private:
 	GameObject* CreateRootGameObject();
+	GameObject* CreateRootSelectedGameObject();
 	void DrawScene();
 
 	// --- Primitives ---
@@ -142,6 +143,7 @@ private:
 	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
+	GameObject* root_selected = nullptr;
 	//GameObject* SelectedGameObject = nullptr;
 	GameObject* music = nullptr;
 public:

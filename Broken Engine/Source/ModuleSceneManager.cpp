@@ -90,6 +90,7 @@ bool ModuleSceneManager::Init(json& file)
 {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
+	root_selected = CreateRootSelectedGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
 	// --- Add Event Listeners ---
@@ -147,11 +148,21 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
-	for (int i = 0; i < go_to_delete.size(); ++i)
-		DestroyGameObject(go_to_delete[i]);
+	// Delete selection
+	if (!go_to_delete.empty())
+	{
+		root_selected->childs.clear();
 
-	go_to_delete.clear();
+		for (int i = 0; i < go_to_delete.size(); ++i)
+		{
+			root_selected->AddChildGO(go_to_delete[i]);
+		}
 
+		root_selected->RecursiveDelete();
+		this->go_count -= go_to_delete.size();
+
+		go_to_delete.clear();
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -786,6 +797,17 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 {
 	// --- Create New Game Object Name ---
 	std::string Name = "root1";
+
+	// --- Create empty Game object to be filled out ---
+	GameObject* new_object = new GameObject(Name.c_str());
+
+	return new_object;
+}
+
+GameObject* ModuleSceneManager::CreateRootSelectedGameObject()
+{
+	// --- Create New Game Object Name ---
+	std::string Name = "rootSelected";
 
 	// --- Create empty Game object to be filled out ---
 	GameObject* new_object = new GameObject(Name.c_str());
