@@ -21,7 +21,13 @@ public:
 	void DisplayAndUpdateUniforms();
 
 public:
-	ResourceTexture* resource_diffuse = nullptr;
+
+	float3 m_AmbientColor = { 1.0f, 1.0f, 1.0f };
+	ResourceTexture* m_DiffuseResTexture = nullptr;
+	ResourceTexture* m_SpecularResTexture = nullptr;
+
+	bool m_UseTexture = true;
+
 	ResourceShader* shader = nullptr;
 	std::vector<Uniform*> uniforms;
 
