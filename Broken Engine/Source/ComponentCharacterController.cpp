@@ -39,6 +39,7 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	
 	controller = App->physics->mControllerManager->createController(*desc);
 	
+	App->physics->mScene->addActor(*controller->getActor());
 	initialPosition = capsuleDesc.position;
 
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCharacterController");
@@ -308,6 +309,7 @@ void ComponentCharacterController::SetRadius(float radius)
 
 void ComponentCharacterController::SetHeight(float height)
 {
+	
 	static_cast<physx::PxCapsuleController*>(controller)->resize(height);
 	//static_cast<physx::PxCapsuleController*>(controller)->setHeight(height);
 }

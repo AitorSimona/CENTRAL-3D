@@ -7,6 +7,7 @@
 #include "ComponentCollider.h"
 #include "ComponentCharacterController.h"
 #include "GameObject.h"
+#include "PhysxSimulationEvents.h"
 
 #include "ModuleTimeManager.h"
 #include "ModuleScripting.h"
@@ -43,7 +44,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3CharacterKinematicDEBUG_x86.lib")
 #endif // _DEBUG
 
-#include "mmgr/mmgr.h"
+//#include "mmgr/mmgr.h"
 
 using namespace Broken;
 
@@ -84,6 +85,7 @@ physx::PxFilterFlags customFilterShader(
 	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
 	{
 		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+		//pairFlags |= physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
 		return physx::PxFilterFlag::eDEFAULT;
 	}
 
@@ -92,6 +94,7 @@ physx::PxFilterFlags customFilterShader(
 	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1)) {
 		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		pairFlags |= physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
 	}
 
 	return physx::PxFilterFlag::eDEFAULT;
@@ -142,6 +145,8 @@ bool ModulePhysics::Init(json& config)
 
 	PxRegisterParticles(*mPhysics);
 
+	simulationEventsCallback = new PhysxSimulationEvents(this);
+
 	physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
 	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2;
@@ -149,7 +154,7 @@ bool ModulePhysics::Init(json& config)
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.filterShader = customFilterShader;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
-
+	sceneDesc.simulationEventCallback = simulationEventsCallback;
 	mScene = mPhysics->createScene(sceneDesc);
 
 	// This will enable basic visualization of PhysX objects like - actors collision shapes and their axes.
@@ -219,6 +224,8 @@ bool ModulePhysics::CleanUp()
 	mFoundation = nullptr;
 	mScene = nullptr;
 	mPvd = nullptr;
+
+	RELEASE(simulationEventsCallback);
 
 	return true;
 }

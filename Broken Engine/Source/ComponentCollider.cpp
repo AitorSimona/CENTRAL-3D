@@ -761,39 +761,6 @@ void ComponentCollider::Delete()
 		App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 }
 
-void ComponentCollider::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
-{
-	for (physx::PxU32 i = 0; i < nbPairs; i++)
-	{
-		const physx::PxContactPair& cp = pairs[i];
-
-		if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
-		{
-			if ((pairHeader.actors[0] == shape->getActor()) || (pairHeader.actors[1] == shape->getActor()))
-			{
-				ENGINE_CONSOLE_LOG("ON COLLISION");
-				break;
-			}
-		}
-	}
-}
-
-void ComponentCollider::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
-{
-	for (physx::PxU32 i = 0; i < count; i++)
-	{
-		// ignore pairs when shapes have been deleted
-		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
-			continue;
-
-		if ((pairs[i].otherActor == shape->getActor()) && (pairs[i].triggerActor == shape->getActor()))
-		{
-			ENGINE_CONSOLE_LOG("ON TRIGGER");
-		}
-	}
-}
-
-
 template <class Geometry>
 bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const
 {
@@ -846,4 +813,36 @@ void ComponentCollider::UpdateActor(LayerMask* layerMask) {
 		App->physics->UpdateActor(dynamicRB->rigidBody, layerMask);
 	else
 		App->physics->UpdateActor(rigidStatic, layerMask);
+}
+
+void Callbacks::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+{
+	for (physx::PxU32 i = 0; i < nbPairs; ++i)
+	{
+		const physx::PxContactPair& cp = pairs[i];
+
+		if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			if ((pairHeader.actors[0] == shape->getActor()) || (pairHeader.actors[1] == shape->getActor()))
+			{
+				ENGINE_CONSOLE_LOG("ON COLLISION");
+				break;
+			}
+		}
+	}
+}
+
+void Callbacks::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+{	
+	for (physx::PxU32 i = 0; i < count; ++i)
+	{
+		// ignore pairs when shapes have been deleted
+		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+			continue;
+
+		if ((pairs[i].otherActor == shape->getActor()) && (pairs[i].triggerActor == shape->getActor()))
+		{
+			ENGINE_CONSOLE_LOG("ON TRIGGER");
+		}
+	}
 }
