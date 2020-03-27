@@ -1,6 +1,7 @@
 #include "ModuleSelection.h"
 #include "Application.h"
 #include "ModuleEventManager.h"
+#include "ModuleInput.h"
 #include "ModuleSceneManager.h"
 
 
@@ -32,7 +33,6 @@ bool ModuleSelection::CleanUp()
 	delete root;
 	root = nullptr;
 
-	//hierarchy_order.clear();
 	selection.clear();
 
 	return true;
@@ -84,6 +84,28 @@ bool ModuleSelection::IsSelected(GameObject* gameobject)
 	return false;
 }
 
+void ModuleSelection::HandleSelection(GameObject* gameobject) 
+{
+	// User is not holding CTRL neither SHIFT -> clean and single select the gameobject
+	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_RCTRL) == KEY_IDLE &&
+		App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_IDLE)
+	{
+		ClearSelection();
+		Select(gameobject);
+	}
+	// User is holding CTRL, toggle selection state
+	else if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RCTRL) == KEY_REPEAT)
+	{
+		ToggleSelect(gameobject);
+	}
+	// SELECTED TODO
+	// User is holding SHIFT, multi select the objects between selected and the new one
+	else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_REPEAT)
+	{
+		SelectLastTo(gameobject);
+	}
+}
+
 GameObject* ModuleSelection::GetLastSelected() const
 {
 	return selection.empty() ? nullptr : *selection.rbegin();
@@ -106,7 +128,7 @@ void ModuleSelection::Select(GameObject* gameobject)
 	{
 		ClearSelection();
 	}
-	else {
+	else if (!IsSelected(gameobject)) {
 		gameobject->node_flags |= ImGuiTreeNodeFlags_Selected;
 		selection.push_back(gameobject);
 		Event e(Event::EventType::GameObject_selected);
@@ -115,22 +137,52 @@ void ModuleSelection::Select(GameObject* gameobject)
 	}
 }
 
-//void ModuleSelection::SelectLastTo(GameObject* gameobject)
-//{
-//	GameObject* from = GetLastSelected();
-//
-//	if ( from != nullptr && gameobject != nullptr) {
-//
-//		for (GameObject* go : hierarchy_order)
-//		{
-//			if (go == from) start_selecting = true;
-//			
-//			if (start_selecting) Select(go);
-//
-//			if (go == gameobject) return;
-//		}
-//	}
-//}
+void ModuleSelection::SelectLastTo(GameObject* gameobject)
+{
+	GameObject* from = GetLastSelected();
+
+	if (from != nullptr && gameobject != nullptr) {
+		start_selecting = false;
+		stop_selecting = false;
+
+		SelectRecursive(App->scene_manager->GetRootGO(), from, gameobject);
+	}
+}
+
+void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, GameObject* to)
+{
+	if (stop_selecting) return;
+
+	if (gameobject->GetUID() == App->scene_manager->GetRootGO()->GetUID())
+	{
+		if (gameobject->childs.size() > 0)
+		{
+			for (std::vector<Broken::GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); ++it)
+			{
+				SelectRecursive(*it,from, to);
+			}
+		}
+	}
+
+	// --- Display Go node ---
+	else
+	{
+		if (gameobject == from) start_selecting = true;
+
+		if (start_selecting) Select(gameobject);
+
+		if (gameobject == to) stop_selecting = true;
+
+		if (gameobject->childs.size() > 0)
+		{
+			for (std::vector<Broken::GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); ++it)
+			{
+				SelectRecursive(*it,from,to);
+			}
+		}
+
+	}
+}
 
 
 void ModuleSelection::UnSelect(GameObject* gameobject)
@@ -139,7 +191,8 @@ void ModuleSelection::UnSelect(GameObject* gameobject)
 	{
 		ClearSelection();
 	}
-	else {
+	else if(IsSelected(gameobject)){
+
 		for (std::vector<GameObject*>::iterator it = selection.begin(); it != selection.end();)
 		{
 			if ((*it) == gameobject)

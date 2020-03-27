@@ -10,9 +10,9 @@
 	- Selection can be:
 		- Single -> mouse left click
 		- Additive/Substractive -> mouse left click + CTRL
-		- Multiple -> mouse left click + SHIFT if there's at least one selected (WORKING ON IT)
+		- Multiple -> mouse left click + SHIFT if there's at least one selected and from up to down
 	- Selected gameobjects can now:
-		- Change parent to the dragged one
+		- Change parent to the dragged one (WORKING ON IT)
 		- Add same component
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
@@ -38,35 +38,37 @@ public:
 
 	bool IsSelected(GameObject* gameobject);
 
+	void HandleSelection(GameObject* gameobject);
+
 	GameObject* GetLastSelected() const;
 
 	void ClearSelection();
 
 	void Select(GameObject* gameobject);
 
-	//void SelectLastTo(GameObject* gameobject);
+	void SelectLastTo(GameObject* gameobject);
+
+	void SelectRecursive(GameObject* gameobject, GameObject* from, GameObject* to);
 
 
 	void UnSelect(GameObject* gameobject);
 
 	bool ToggleSelect(GameObject* gameobject);
 
-	const std::vector<GameObject*>* GetSelected() const { return &selection; }
-
-	// PLEASE DO NOT EDIT
-	// I think is the best short term approach to one click multi selection
-	// I sacrifice memory over speed, as I'm duplicating the vector
-	//std::vector<GameObject*> hierarchy_order;
+	const std::vector<GameObject*>* GetSelected() const { 
+		return &selection; 
+	}
 
 private:
-	//bool start_selecting = false;
+	bool start_selecting = false;
+	bool stop_selecting = false;
 
 	std::vector<GameObject*> selection;
 	
 	GameObject* root = nullptr;
 
 	// --- Set node flags ---
-	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+	//ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 	//ImGuiTreeNodeFlags node_flags = base_flags;
 	
 };
