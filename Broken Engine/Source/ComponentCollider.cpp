@@ -664,7 +664,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
-				App->physics->addActor(rigidStatic,&GO->layer);
+				App->physics->addActor(rigidStatic, GO);
 
 				//App->physics->mScene->addActor(*rigidStatic);
 			}
@@ -699,7 +699,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(SphereGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->addActor(rigidStatic, &GO->layer);
+				App->physics->addActor(rigidStatic, GO);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::SPHERE;
@@ -713,7 +713,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(planeGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->addActor(rigidStatic, &GO->layer);
+				App->physics->addActor(rigidStatic, GO);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::PLANE;
@@ -727,7 +727,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(CapsuleGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->addActor(rigidStatic, &GO->layer);
+				App->physics->addActor(rigidStatic, GO);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
@@ -820,7 +820,7 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 			App->physics->DeleteActor(dynamicRB->rigidBody);
 		}
 
-		App->physics->addActor(dynamicRB->rigidBody, &GO->layer);
+		App->physics->addActor(dynamicRB->rigidBody, GO);
 
 		return true;
 	}

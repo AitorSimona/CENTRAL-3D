@@ -1,7 +1,4 @@
 #include "ModulePhysics.h"
-#include "ModulePhysics.h"
-#include "ModulePhysics.h"
-#include "ModulePhysics.h"
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ComponentCollider.h"
@@ -19,6 +16,8 @@
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 #include "PhysX_3.4/Include/characterkinematic/PxControllerManager.h"
 #include "PhysX_3.4/Include/foundation/PxAllocatorCallback.h"
+#include "PhysX_3.4/Include/PxQueryReport.h"
+#include "PhysX_3.4/Include/PxVolumeCache.h"
 
 #ifndef _DEBUG
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CHECKED_x86.lib")
@@ -27,12 +26,15 @@
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PxFoundationCHECKED_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PxPvdSDKCHECKED_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CharacterKinematicCHECKED_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Checked/SceneQueryCHECKED.lib")
 /*
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3Common_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3Extensions.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Release/PxFoundation_x86.lib")
-#pragma comment(lib, "PhysX_3.4/lib/Checked/PxPvdSDK_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Release/PxPvdSDK_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Release/PhysX3CharacterKinematic_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Release/SceneQuery.lib")
 */
 #else
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3CommonDEBUG_x86.lib")
@@ -41,6 +43,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxFoundationDEBUG_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PxPvdSDKDEBUG_x86.lib")
 #pragma comment(lib, "PhysX_3.4/lib/Debug/PhysX3CharacterKinematicDEBUG_x86.lib")
+#pragma comment(lib, "PhysX_3.4/lib/Debug/SceneQueryDEBUG.lib")
 #endif // _DEBUG
 
 #include "mmgr/mmgr.h"
@@ -80,18 +83,21 @@ physx::PxFilterFlags customFilterShader(
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
-	// let triggers through
-	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
-	{
-		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
-		return physx::PxFilterFlag::eDEFAULT;
-	}
+	if ((filterData0.word0 != 0 || filterData1.word0 != 0) &&
+		!(filterData0.word0 & filterData1.word1 || filterData1.word0 & filterData0.word1))
+		return physx::PxFilterFlag::eSUPPRESS;
 
-	// trigger the contact callback for pairs (A,B) where
-	// the filtermask of A contains the ID of B and vice versa.
-	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1)) {
+	// Let triggers through
+	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+	else
+	{
+		// Generate contacts for all that were not filtered above
 		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+		pairFlags |= physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
 		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
 	}
 
 	return physx::PxFilterFlag::eDEFAULT;
@@ -173,6 +179,9 @@ bool ModulePhysics::Init(json& config)
 	//BoxCollider(0, 10, 0);
 	//PlaneCollider(0, 0, 0);
 
+	cache = mScene->createVolumeCache(32, 8);
+	cache->setMaxNbStaticShapes(64); cache->setMaxNbDynamicShapes(16);
+
 	return true;
 }
 
@@ -194,7 +203,9 @@ update_status ModulePhysics::Update(float dt)
 		    FixedUpdate();
 
 			mScene->simulate(physx::fixed_dt);
-			mScene->fetchResults(true);
+			mScene->fetchResults(true); 
+
+			OverlapSphere(float3::zero, 5.0f, LayerMask::LAYER_0);
 		}
 	}
 
@@ -208,6 +219,7 @@ void ModulePhysics::FixedUpdate()
 
 bool ModulePhysics::CleanUp()
 {
+	cache->release();
 	mControllerManager->release();
 	mScene->release();
 	mPhysics->release();
@@ -251,8 +263,8 @@ void ModulePhysics::SimulatePhysics(float dt, float speed)
 }
 
 
-void ModulePhysics::addActor(physx::PxRigidActor* actor, LayerMask* LayerGroup) {
-	actors.insert(std::pair<physx::PxRigidActor*, LayerMask*>(actor, LayerGroup));
+void ModulePhysics::addActor(physx::PxRigidActor* actor, GameObject* gameObject) {
+	actors.insert(std::pair<physx::PxRigidActor*, GameObject*>(actor, gameObject));
 	mScene->addActor(*actor);
 }
 
@@ -282,9 +294,9 @@ void ModulePhysics::UpdateActors(LayerMask* updateLayer)
 	if (actors.size() == 0)
 		return;
 
-	for (std::map<physx::PxRigidActor*, LayerMask*>::iterator it = actors.begin(); it != actors.end(); ++it)
+	for (std::map<physx::PxRigidActor*, GameObject*>::iterator it = actors.begin(); it != actors.end(); ++it)
 	{
-		LayerMask layer1 = *(*it).second;
+		LayerMask layer1 = (*it).second->layer;
 		LayerMask layer2 = *updateLayer;
 		if (layer1 == layer2) {
 			physx::PxFilterData filterData;
@@ -312,7 +324,7 @@ void ModulePhysics::DeleteActor(physx::PxRigidActor* actor)
 {
 	if (actors.size() > 0)
 	{
-		for (std::map<physx::PxRigidActor*, LayerMask*>::iterator it = actors.begin(); it != actors.end(); ++it)
+		for (std::map<physx::PxRigidActor*, GameObject*>::iterator it = actors.begin(); it != actors.end(); ++it)
 		{
 			if ((*it).first == actor) {
 				mScene->removeActor(*actor);
@@ -345,4 +357,23 @@ void ModulePhysics::DeleteActors(GameObject* go)
 				(*it)->GetComponent<ComponentCharacterController>()->Delete();
 		}
 	}
+}
+
+void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer)
+{
+	physx::PxOverlapHit hit[MAX_HITS];
+	physx::PxOverlapBuffer hit_buffer(hit, MAX_HITS);       // [out] Overlap results
+	const physx::PxSphereGeometry overlapShape(radius);			// [in] shape to test for overlaps
+	const physx::PxTransform shapePose = physx::PxTransform(position.x, position.y, position.z);    // [in] initial shape pose (at distance=0)
+
+	physx::PxQueryFilterData filterData;
+	filterData.data.word0 = layer_list.at(0).LayerGroup;
+
+	bool status = cache->overlap(overlapShape, shapePose, hit_buffer);
+
+	if (status) {
+		ENGINE_CONSOLE_LOG("Inside: %i", hit_buffer.getNbTouches());
+	}
+	
+	
 }

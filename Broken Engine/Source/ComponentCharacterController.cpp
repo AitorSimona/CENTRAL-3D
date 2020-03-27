@@ -38,6 +38,9 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	desc = &capsuleDesc;
 	
 	controller = App->physics->mControllerManager->createController(*desc);
+
+	/*physx::PxTransform pose(controller->getPosition().x, controller->getPosition().y, controller->getPosition().z);
+	App->physics->cache->fill(physx::PxCapsuleGeometry(capsuleDesc.radius, capsuleDesc.height / 2), pose);*/
 	
 	initialPosition = capsuleDesc.position;
 
@@ -51,6 +54,8 @@ ComponentCharacterController::~ComponentCharacterController()
 
 void ComponentCharacterController::Update()
 {
+
+
 	if (App->input->GetKey(SDL_SCANCODE_UP))
 		velocity.z = -10.0f;
 

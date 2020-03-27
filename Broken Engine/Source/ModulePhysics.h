@@ -2,6 +2,7 @@
 #define MODULE_PHYSICS_H_
 #include "Module.h"
 
+#include "Math.h"
 namespace physx
 {
 	class PxPvd;
@@ -13,11 +14,13 @@ namespace physx
 	class PxRigidStatic;
 	class PxControllerManager;
 	class PxRigidActor;
+	class PxVolumeCache;
 	typedef uint32_t PxU32;
 
 	const float fixed_dt = (1.0f / 60.0f);
 };
 
+#define MAX_HITS 256
 
 	enum LayerMask
 	{
@@ -77,7 +80,7 @@ public:
 
 	void SimulatePhysics(float dt, float speed = 1.0f);
 
-	void addActor(physx::PxRigidActor* actor, LayerMask* LayerGroup);
+	void addActor(physx::PxRigidActor* actor, GameObject* gameObject);
 
 	void UpdateActor(physx::PxRigidActor* actor, LayerMask* LayerMask);
 
@@ -86,6 +89,8 @@ public:
 	void DeleteActor(physx::PxRigidActor* actor);
 
 	void DeleteActors(GameObject* go = nullptr);
+
+	void OverlapSphere(float3 position, float radius, LayerMask layer);
 
 public:
 
@@ -98,7 +103,9 @@ public:
 	physx::PxMaterial* mMaterial = nullptr;
 	physx::PxRigidStatic* plane = nullptr;
 	std::vector<Layer> layer_list;
-	std::map<physx::PxRigidActor*, LayerMask*> actors;
+	std::map<physx::PxRigidActor*, GameObject*> actors;
+
+	physx::PxVolumeCache* cache;
 
 private:
 
