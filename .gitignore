@@ -347,6 +347,9 @@ Broken Engine/Game/Assets/*/*
 !Broken Engine/Game/Assets/Sounds/WWise_IDs.h
 !Broken Engine/Game/Assets/Sounds/Init.*
 
+# Shaders
+!Broken Engine/Game/Assets/Shaders/*.glsl
+
 # Imgui Ini File
 Broken Engine/Game/imgui.ini
 
