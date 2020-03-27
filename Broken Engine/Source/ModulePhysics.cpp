@@ -208,11 +208,13 @@ void ModulePhysics::FixedUpdate()
 
 bool ModulePhysics::CleanUp()
 {
+	mControllerManager->release();
 	mScene->release();
 	mPhysics->release();
 	mPvd->release();
 	mFoundation->release();
 
+	mControllerManager = nullptr;
 	mPhysics = nullptr;
 	mFoundation = nullptr;
 	mScene = nullptr;

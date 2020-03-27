@@ -34,13 +34,11 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	capsuleDesc.nonWalkableMode = physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING;
 	capsuleDesc.upDirection = physx::PxVec3(0, 1, 0);
 	capsuleDesc.material = App->physics->mMaterial;
-	//capsuleDesc.behaviorCallback = 0;
 
 	desc = &capsuleDesc;
 	
 	controller = App->physics->mControllerManager->createController(*desc);
 	
-	//App->physics->mScene->addActor(*controller->getActor());
 	initialPosition = capsuleDesc.position;
 
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCharacterController");
@@ -49,8 +47,6 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 ComponentCharacterController::~ComponentCharacterController()
 {
 	mesh->Release();
-
-	//controller->release();
 }
 
 void ComponentCharacterController::Update()
@@ -156,7 +152,6 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 	physx::PxFilterData filterData;
 	filterData.word0 = App->physics->layer_list.at(GO->layer).LayerGroup; // layers that will collide
 	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), physx::PxControllerFilters(&filterData,0,0));
-
 }
 
 void ComponentCharacterController::Delete()
