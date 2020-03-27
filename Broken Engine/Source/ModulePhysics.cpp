@@ -68,9 +68,9 @@ void ModulePhysics::setupFiltering(physx::PxRigidActor* actor, physx::PxU32 Laye
 	for (physx::PxU32 i = 0; i < numShapes; i++)
 	{
 		physx::PxShape* shape = shapes[i];
+		shape->setSimulationFilterData(filterData);
 		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 		shape->setQueryFilterData(filterData);
-		shape->setSimulationFilterData(filterData);
 	}
 	free(shapes);
 }
@@ -148,7 +148,7 @@ bool ModulePhysics::Init(json& config)
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.filterShader = customFilterShader;
-	//sceneDesc.flags = physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
 
 	mScene = mPhysics->createScene(sceneDesc);
 
@@ -171,7 +171,7 @@ bool ModulePhysics::Init(json& config)
 	}
 	//-------------------------------------
 	//BoxCollider(0, 10, 0);
-	PlaneCollider(0, 0, 0);
+	//PlaneCollider(0, 0, 0);
 
 	return true;
 }
@@ -267,9 +267,9 @@ void ModulePhysics::UpdateActor(physx::PxRigidActor* actor, LayerMask* Layermask
 		filterData = shape->getSimulationFilterData();
 		filterData.word0 = (1 << *Layermask);
 
+		shape->setSimulationFilterData(filterData);
 		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 		shape->setQueryFilterData(filterData);
-		shape->setSimulationFilterData(filterData);
 	}
 	//addActor(actor, Layermask);
 	free(shapes);
@@ -296,9 +296,9 @@ void ModulePhysics::UpdateActors(LayerMask* updateLayer)
 				filterData = shape->getSimulationFilterData();
 				filterData.word1 = layer_list.at(layer2).LayerGroup;
 
+				shape->setSimulationFilterData(filterData);
 				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 				shape->setQueryFilterData(filterData);
-				shape->setSimulationFilterData(filterData);
 			}
 			free(shapes);
 			break;

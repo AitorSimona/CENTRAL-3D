@@ -657,6 +657,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				filterData.word0 = (1 << GO->layer); // word0 = own ID
 				filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
 				shape->setSimulationFilterData(filterData);
+				shape->setQueryFilterData(filterData);
 
 				if(rigidStatic)
 					App->physics->DeleteActor(rigidStatic);
