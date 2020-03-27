@@ -209,14 +209,14 @@ bool InputGeom::hasMesh() {
 }
 
 void InputGeom::ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]) {
-	float4 intermid;
-	intermid.x = vertex.position[0];
-	intermid.y = vertex.position[1];
-	intermid.z = vertex.position[2];
-	intermid.w = 1;
+	float3 v;
+	v.x = vertex.position[0];
+	v.y = vertex.position[1];
+	v.z = vertex.position[2];
 
-	intermid = transform * intermid;
-	ret[0] = intermid.x / intermid.w;
-	ret[1] = intermid.y / intermid.w;
-	ret[2] = intermid.z / intermid.w;
+	v = transform.MulPos(v);
+	ret[0] = v[0];
+	ret[1] = v[1];
+	ret[2] = v[2];
+
 }
