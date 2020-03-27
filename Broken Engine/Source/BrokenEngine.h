@@ -22,6 +22,7 @@
 #include "ModuleParticles.h"
 #include "ModulePhysics.h"
 #include "ModuleUI.h"
+#include "ModuleSelection.h"
 // --------------------------------
 
 // ---Panel------------------------
