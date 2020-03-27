@@ -105,9 +105,14 @@ bool PanelHierarchy::Draw()
 	// --- Manage Drag & Drop ---
 	if (end_drag)
 	{
-		if (!dragged->FindChildGO(target) && target != dragged)
-			target->AddChildGO(dragged);
+		/*if (!dragged->FindChildGO(target) && target != dragged)
+			target->AddChildGO(dragged);*/
 
+		if (!dragged->FindChildGO(target) && !App->selection->IsSelected(target)) 
+		{
+			for (GameObject* obj : *App->selection->GetSelected())
+				target->AddChildGO(obj);
+		}
 		end_drag = false;
 		dragged = nullptr;
 		target = nullptr;

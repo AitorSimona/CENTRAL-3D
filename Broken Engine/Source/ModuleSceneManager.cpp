@@ -45,6 +45,7 @@ using namespace Broken;
 // SELECTED TODO
 void ModuleSceneManager::ONResourceSelected(const Event& e) 
 {
+	App->selection->ClearSelection();
 	/*if (App->scene_manager->SelectedGameObject)
 		App->scene_manager->SetSelectedGameObject(nullptr);*/
 }
@@ -337,11 +338,17 @@ void ModuleSceneManager::DrawScene()
 							break;
 						}
 					}*/
+					if (App->selection->IsSelected((*it).second))
+					{
+						glStencilFunc(GL_ALWAYS, 1, 0xFF);
+						glStencilMask(0xFF);
+					}
 
 					// --- If Found, draw the mesh ---
 					if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
 						MeshRenderer->Draw();
 					// SELECTED TODO
+
 					/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
 					{
 						if ((*it).second == (*selit))
@@ -354,6 +361,10 @@ void ModuleSceneManager::DrawScene()
 					{
 						glStencilMask(0x00);
 					}*/
+					if (App->selection->IsSelected((*it).second))
+					{
+						glStencilMask(0x00);
+					}
 				}
 			}
 		}
@@ -379,6 +390,11 @@ void ModuleSceneManager::DrawScene()
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
 			}*/
+			if (App->selection->IsSelected(*it))
+			{
+				glStencilFunc(GL_ALWAYS, 1, 0xFF);
+				glStencilMask(0xFF);
+			}
 
 			// --- If Found, draw the mesh ---
 			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
@@ -401,6 +417,10 @@ void ModuleSceneManager::DrawScene()
 			{
 				glStencilMask(0x00);
 			}*/
+			if (App->selection->IsSelected(*it))
+			{
+				glStencilMask(0x00);
+			}
 		}
 	}
 
