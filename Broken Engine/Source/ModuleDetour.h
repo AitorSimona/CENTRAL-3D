@@ -8,6 +8,7 @@
 class dtNavMeshCreateParams;
 class dtNavMesh;
 class dtNavMeshQuery;
+class dtQueryFilter;
 class dtMeshTile;
 
 BE_BEGIN_NAMESPACE
@@ -85,6 +86,7 @@ private:
 	class DebugDrawGL* m_dd = nullptr;
 	ResourceNavMesh* navMeshResource = nullptr;
 	dtNavMeshQuery* m_navQuery = nullptr;
+	dtQueryFilter* m_filterQuery = nullptr;
 	std::vector<navigationPoly*> renderMeshes;
 	ResourceMaterial* mat = nullptr;
 

@@ -20,17 +20,17 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 	m_mesh(false)
 {
 	Broken::ResourceMesh* r_mesh;
-	Broken::ComponentTransform* comp_trans;
 	vec _bmin, _bmax;
 	bool minmaxset = false;
 	
 	std::vector<float> v_verts;
 	std::vector<int> v_tris;
 
+	float4x4 transform;
+
 	for (std::vector<Broken::GameObject*>::const_iterator it = srcMeshes.cbegin(); it != srcMeshes.cend(); ++it) {
 		r_mesh = (*it)->GetComponent<Broken::ComponentMesh>()->resource_mesh;
-		comp_trans = (*it)->GetComponent<Broken::ComponentTransform>();
-		float4x4 transform = comp_trans->GetGlobalTransform();
+		transform = (*it)->GetComponent<Broken::ComponentTransform>()->GetGlobalTransform();
 		const AABB& aabb = r_mesh->aabb;
 
 		// If it is non-walkable we don't need to add its geometry
@@ -95,73 +95,12 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 		tris = new int[v_tris.size()];
 		memcpy(tris, v_tris.data(), v_tris.size() * sizeof(int));
 		verts = new float[v_verts.size()];
-		memcpy(verts, v_verts.data(), v_tris.size() * sizeof(float));
+		memcpy(verts, v_verts.data(), v_verts.size() * sizeof(float));
+		
+		calculateNormals();
 	}
 }
 
-InputGeom::InputGeom(Broken::GameObject* srcMesh) :
-	nverts(0),
-	ntris(0),
-	bmin(nullptr),
-	bmax(nullptr),
-	m_offMeshConCount(0),
-	m_volumeCount(0),
-	normals(nullptr),
-	verts(nullptr),
-	tris(nullptr),
-	m_mesh(false) 
-{
-	m_volumeCount = 0;
-	Broken::ResourceMesh* r_mesh = srcMesh->GetComponent<Broken::ComponentMesh>()->resource_mesh;
-	Broken::ComponentTransform* comp_trans = srcMesh->GetComponent<Broken::ComponentTransform>();
-	float4x4 transform = comp_trans->GetGlobalTransform();
-	const AABB& aabb = r_mesh->aabb;
-
-	// If it is non-walkable we don't need to add its geometry
-	if (srcMesh->navigationArea != 1) {
-		// We add the index count
-		ntris = r_mesh->IndicesSize;
-		tris = new int[ntris];
-		memcpy(tris, r_mesh->Indices, ntris * sizeof(int));
-
-		// we add the transformed vertices
-		nverts = r_mesh->VerticesSize;
-		verts = new float[nverts];
-		float* vert_index = verts;
-		for (int i = 0; i < r_mesh->VerticesSize; ++i) {
-			ApplyTransform(r_mesh->vertices[i], transform, vert_index);
-			vert_index += 3;
-		}
-
-		bmin = new float[3];
-		memcpy(bmin, aabb.minPoint.ptr(), 3 * sizeof(float));
-		bmax = new float[3];
-		memcpy(bmax, aabb.maxPoint.ptr(), 3 * sizeof(float));
-		m_mesh = true;
-	}
-
-	if (srcMesh->navigationArea != 0) {
-		//Create convex hull for later flagging polys
-		r_mesh->CreateOBB();
-		OBB t_obb = r_mesh->obb;
-		t_obb.Transform(transform);
-
-		Polyhedron convexhull = t_obb.ToPolyhedron();
-
-		m_volumes[m_volumeCount].area = srcMesh->navigationArea;
-		if (m_volumes[m_volumeCount].area == 1)
-			m_volumes[m_volumeCount].area = RC_NULL_AREA;
-		m_volumes[m_volumeCount].hmax = aabb.MaxY();
-		m_volumes[m_volumeCount].hmin = aabb.MinY();
-		m_volumes[m_volumeCount].nverts = convexhull.NumVertices();
-		if (m_volumes[m_volumeCount].nverts < MAX_CONVEXVOL_PTS * 3) {
-			memcpy(m_volumes[m_volumeCount].verts, convexhull.VertexArrayPtr()->ptr(), m_volumes[m_volumeCount].nverts);
-			m_volumeCount++;
-		}
-		else
-			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Convex hull has too many vertices");
-	}
-}
 
 InputGeom::~InputGeom() {
 	if (bmin != nullptr)
@@ -218,5 +157,31 @@ void InputGeom::ApplyTransform(const Broken::Vertex& vertex, const float4x4& tra
 	ret[0] = v[0];
 	ret[1] = v[1];
 	ret[2] = v[2];
+
+}
+
+void InputGeom::calculateNormals() {
+	normals = new float[ntris*3];
+	for (int i = 0; i < ntris * 3; i += 3) {
+		const float* v0 = &verts[tris[i] * 3];
+		const float* v1 = &verts[tris[i + 1] * 3];
+		const float* v2 = &verts[tris[i + 2] * 3];
+		float e0[3], e1[3];
+		for (int j = 0; j < 3; ++j) {
+			e0[j] = v1[j] - v0[j];
+			e1[j] = v2[j] - v0[j];
+		}
+		float* n = &normals[i];
+		n[0] = e0[1] * e1[2] - e0[2] * e1[1];
+		n[1] = e0[2] * e1[0] - e0[0] * e1[2];
+		n[2] = e0[0] * e1[1] - e0[1] * e1[0];
+		float d = sqrtf(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+		if (d > 0) {
+			d = 1.0f / d;
+			n[0] *= d;
+			n[1] *= d;
+			n[2] *= d;
+		}
+	}
 
 }

@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "ResourceMesh.h"
 
-static const int MAX_CONVEXVOL_PTS = 12;
+static const int MAX_CONVEXVOL_PTS = 90; // Recast has way fewer
 struct ConvexVolume {
 	float verts[MAX_CONVEXVOL_PTS * 3];
 	float hmin, hmax;
@@ -22,7 +22,6 @@ public:
 	* groupingand origin points are lost.
 	**/
 	InputGeom(const std::vector<Broken::GameObject*>& srcMeshes);
-	InputGeom(Broken::GameObject* srcMesh);
 	~InputGeom();
 
 	/**
@@ -90,6 +89,7 @@ public:
 
 private:
 	void ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]);
+	void calculateNormals();
 
 private:
 	bool m_mesh;
