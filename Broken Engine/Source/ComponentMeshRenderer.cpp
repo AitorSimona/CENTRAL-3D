@@ -261,6 +261,10 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			// --- UNIFORMS ---
 			material->DisplayAndUpdateUniforms();
 
+			ImGui::Text("Use Textures");
+			ImGui::SameLine();
+			ImGui::Checkbox("##CB", &material->m_UseTexture);
+
 			//Color
 			ImGui::Separator();
 			ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs);

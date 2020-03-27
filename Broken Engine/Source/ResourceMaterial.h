@@ -26,6 +26,8 @@ public:
 	ResourceTexture* m_DiffuseResTexture = nullptr;
 	ResourceTexture* m_SpecularResTexture = nullptr;
 
+	bool m_UseTexture = true;
+
 	ResourceShader* shader = nullptr;
 	std::vector<Uniform*> uniforms;
 

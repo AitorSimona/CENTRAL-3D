@@ -872,7 +872,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 					if (mesh->mat && mesh->mat->m_DiffuseResTexture)
 					{
 						glUniform3f(vertexColorLocation, mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
-						glUniform1i(TextureSupportLocation, 1);
+						glUniform1i(TextureSupportLocation, (int)mesh->mat->m_UseTexture);
 						glUniform1i(glGetUniformLocation(shader, "ourTexture"), 1);
 						glActiveTexture(GL_TEXTURE0 + 1);
 						glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
@@ -898,7 +898,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 				}
 			}
 			else
-				glUniform1i(TextureSupportLocation, -1);
+				glUniform1i(TextureSupportLocation, 0);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
 			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
@@ -1057,7 +1057,7 @@ void ModuleRenderer3D::DrawGrid()
 	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
 
 	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureSupportLocation, -1);
+	glUniform1i(TextureSupportLocation, 0);
 
 	glLineWidth(1.7f);
 	glBindVertexArray(Grid_VAO);
@@ -1065,6 +1065,7 @@ void ModuleRenderer3D::DrawGrid()
 	glBindVertexArray(0);
 	glLineWidth(1.0f);
 
+	glUseProgram(0);
 	glUniform1i(TextureSupportLocation, 0);
 }
 

@@ -268,7 +268,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 			|| strcmp(name, "view") == 0
 			|| strcmp(name, "projection") == 0
 			|| strcmp(name, "time") == 0
-			|| strcmp(name, "Color") == 0)
+			|| strcmp(name, "Color") == 0
+			|| strcmp(name, "Texture") == 0)
 			continue;
 
 		Uniform* uniform = nullptr;
