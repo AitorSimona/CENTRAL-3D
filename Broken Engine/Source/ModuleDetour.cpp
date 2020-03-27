@@ -9,12 +9,13 @@
 #include "ModuleResourceManager.h"
 #include "Application.h"
 #include "Math.h"
-#include "ModuleCamera3D.h"
-#include "ComponentCamera.h"
+#include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
 #include "ResourceScene.h"
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
+#include "ResourceMesh.h"
+#include "ResourceMaterial.h"
 
 using namespace Broken;
 
@@ -235,6 +236,10 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 	ImporterNavMesh* INavMesh = App->resources->GetImporter<ImporterNavMesh>();
 	INavMesh->Save(navMeshResource);
 
+	//If we are in the editor we need to create the draw meshes
+	if (!App->isGame)
+		createRenderMeshes();
+
 	//We save the scene so that it stores the NavMesh
 	App->scene_manager->SaveScene(App->scene_manager->currentScene);
 
@@ -245,11 +250,31 @@ void ModuleDetour::loadNavMeshFile(uint UID) {
 	if (navMeshResource != nullptr)
 		navMeshResource->Release();
 
-	navMeshResource = (ResourceNavMesh*) App->resources->GetResource(UID, true);
+	navMeshResource = (ResourceNavMesh*)App->resources->GetResource(UID, true);
+
+	if (navMeshResource != nullptr) {
+		dtStatus status = m_navQuery->init(navMeshResource->navMesh, 2048);
+		if (dtStatusFailed(status)) {
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("Could not init Detour navmesh query");
+		}
+	}
+
+	if (!App->isGame) {
+		for (int i = 0; i < renderMeshes.size(); ++i)
+			delete renderMeshes[i];
+		renderMeshes.clear();
+		createRenderMeshes();
+	}
 }
 
 bool ModuleDetour::CleanUp() {
+	if (navMeshResource != nullptr)
+		navMeshResource->Release();
 	navMeshResource = nullptr;
+
+	for (int i = 0; i < renderMeshes.size(); ++i)
+		delete renderMeshes[i];
+	renderMeshes.clear();
 
 	dtFreeNavMeshQuery(m_navQuery);
 	m_navQuery = nullptr;
@@ -266,8 +291,8 @@ bool ModuleDetour::CleanUp() {
 
 void ModuleDetour::Draw() const {
 	if (debugDraw && navMeshResource != nullptr && navMeshResource->navMesh != nullptr) {
-		unsigned char flags = 0;
-		duDebugDrawNavMesh((duDebugDraw*)m_dd, *(navMeshResource->navMesh), flags);
+		for (int i = 0; i < renderMeshes.size(); ++i)
+			App->renderer3D->DrawMesh(float4x4::identity, renderMeshes[i]->rmesh, mat, nullptr, 0, renderMeshes[i]->color);
 	}
 }
 
@@ -281,6 +306,9 @@ void ModuleDetour::deleteNavMesh() {
 		delete navMeshResource;
 		navMeshResource = nullptr;
 	}
+	for (int i = 0; i < renderMeshes.size(); ++i)
+		delete renderMeshes[i];
+	renderMeshes.clear();
 
 	//We save the scene so that it stores that we no longer have a navmesh
 	App->scene_manager->SaveScene(App->scene_manager->currentScene);
@@ -291,6 +319,9 @@ void ModuleDetour::clearNavMesh() {
 		navMeshResource->FreeMemory();
 
 	navMeshResource = nullptr;
+	for (int i = 0; i < renderMeshes.size(); ++i)
+		delete renderMeshes[i];
+	renderMeshes.clear();
 }
 
 void ModuleDetour::setDefaultValues() {
@@ -329,4 +360,80 @@ void ModuleDetour::setDefaultBakeValues() {
 
 const ResourceNavMesh* ModuleDetour::getNavMeshResource() const {
 	return navMeshResource;
+}
+
+void ModuleDetour::createRenderMeshes() {
+	if (navMeshResource != nullptr && navMeshResource->navMesh != nullptr) {
+		const dtNavMesh* mesh = navMeshResource->navMesh;
+		for (int ti = 0; ti < mesh->getMaxTiles(); ++ti) {
+			const dtMeshTile* tile = mesh->getTile(ti);
+			if (!tile->header) continue;
+			processTile(tile);
+		}
+		if (mat == nullptr)
+			mat = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), true);
+	}
+}
+
+void ModuleDetour::processTile(const dtMeshTile* tile) {
+	for (int i = 0; i < tile->header->polyCount; ++i) {
+		const dtPoly* poly = &tile->polys[i];
+		if (poly->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)	// Skip off-mesh links.
+			continue;
+
+		const dtPolyDetail* poly_d = &tile->detailMeshes[i];
+		navigationPoly* navpol = new navigationPoly();
+		navpol->color = areaToColor(poly->getArea());
+		navpol->rmesh->VerticesSize = poly->vertCount + poly_d->vertCount;
+		navpol->rmesh->vertices = new Vertex[navpol->rmesh->VerticesSize];
+		navpol->rmesh->IndicesSize = poly_d->triCount * 3;
+		navpol->rmesh->Indices = new uint[navpol->rmesh->IndicesSize];
+
+		// Index pointer to copy the indices
+		uint* index_indices = navpol->rmesh->Indices;
+		for (int j = 0; j < poly_d->triCount; ++j) {
+			const unsigned char* t = &tile->detailTris[(poly_d->triBase + j) * 4];
+			memcpy(index_indices, t, sizeof(uint) * 3);
+			index_indices += 3;
+		}
+
+		// We copy the vertices
+		for (int j = 0; j < navpol->rmesh->VerticesSize; ++j) {
+			float* vert;
+			if (j < poly->vertCount)
+				vert = &tile->verts[poly->verts[j * 3]];
+			else
+				vert = &tile->detailVerts[(poly_d->vertBase + j - poly->vertCount) * 3];
+
+			memcpy(navpol->rmesh->vertices[j].position, vert, sizeof(float) * 3);
+		}
+
+		//To create EBO and VBO
+		navpol->rmesh->LoadInMemory();
+		renderMeshes.push_back(navpol);
+	}
+
+}
+
+inline int bit(int a, int b) {
+	return (a & (1 << b)) >> b;
+}
+
+Color ModuleDetour::areaToColor(uint area) const {
+	int	r = bit(area, 1) + bit(area, 3) * 2 + 1;
+	int	g = bit(area, 2) + bit(area, 4) * 2 + 1;
+	int	b = bit(area, 0) + bit(area, 5) * 2 + 1;
+
+	return Color(r,g,b);
+}
+
+navigationPoly::navigationPoly() {
+	rmesh = new ResourceMesh(0, "NULLFILE");
+}
+
+navigationPoly::~navigationPoly() {
+	if (rmesh) {
+		rmesh->FreeMemory();
+		delete rmesh;
+	}
 }

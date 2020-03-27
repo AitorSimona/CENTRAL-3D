@@ -3,10 +3,12 @@
 #pragma once
 #include "Module.h"
 #include "BrokenCore.h"
+#include "Color.h"
 
 class dtNavMeshCreateParams;
 class dtNavMesh;
 class dtNavMeshQuery;
+class dtMeshTile;
 
 BE_BEGIN_NAMESPACE
 #define BE_DETOUR_TOTAL_AREAS 31
@@ -20,6 +22,16 @@ enum PolyFlags {
 };
 
 class ResourceNavMesh;
+class ResourceMesh;
+class ResourceMaterial;
+
+struct BROKEN_API navigationPoly {
+	navigationPoly();
+	~navigationPoly();
+
+	ResourceMesh* rmesh;
+	Color color;
+};
 
 class BROKEN_API ModuleDetour : public Module {
 public:
@@ -41,6 +53,13 @@ public:
 	void setDefaultValues();
 	void setDefaultBakeValues();
 	const ResourceNavMesh* getNavMeshResource() const;
+
+private:
+	void createRenderMeshes();
+	void processTile(const dtMeshTile* tile);
+
+	//Copy of Detour duIntToCol but without transforming to unsigned int
+	Color areaToColor(uint area) const;
 
 public:
 	float agentRadius = 0.5f;
@@ -66,7 +85,8 @@ private:
 	class DebugDrawGL* m_dd = nullptr;
 	ResourceNavMesh* navMeshResource = nullptr;
 	dtNavMeshQuery* m_navQuery = nullptr;
-
+	std::vector<navigationPoly*> renderMeshes;
+	ResourceMaterial* mat = nullptr;
 
 };
 
