@@ -149,7 +149,7 @@ void ScriptingGameobject::TranslateGameObject(uint gameobject_UUID, float x, flo
 		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
 	}
 	else
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Object or its transformation component are null");
 }
 
 uint ScriptingGameobject::GetComponentFromGO(const char* component_name, const char* go_name)
@@ -243,7 +243,7 @@ int ScriptingGameobject::GetPosInFrustum(float x, float y, float z, float fovrat
 		}
 	}
 	else
-		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Current Active camera is NULL");
 
 	return camlevel;
 }
