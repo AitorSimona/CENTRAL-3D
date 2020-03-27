@@ -80,6 +80,9 @@ bool ResourceNavMesh::LoadInMemory() {
 			navMesh->addTile(data, tileHeader.dataSize, DT_TILE_FREE_DATA, tileHeader.tileRef, 0);
 		}
 
+		if (buffer != nullptr)
+			delete buffer;
+
 	}
 
 	return ret;

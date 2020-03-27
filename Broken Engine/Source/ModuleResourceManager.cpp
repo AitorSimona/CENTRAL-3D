@@ -1482,6 +1482,14 @@ bool ModuleResourceManager::CleanUp()
 
 	fonts.clear();
 
+	for (std::map<uint, ResourceNavMesh*>::iterator it = navmeshes.begin(); it != navmeshes.end();) {
+		it->second->FreeMemory();
+		delete it->second;
+		it = navmeshes.erase(it);
+	}
+
+	navmeshes.clear();
+
 	// --- Delete importers ---
 	for (uint i = 0; i < importers.size(); ++i)
 	{

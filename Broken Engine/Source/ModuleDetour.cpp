@@ -185,7 +185,8 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 	if (navMeshResource != nullptr)
 		m_navMesh = navMeshResource->navMesh;
 
-	dtFreeNavMesh(m_navMesh);
+	if (m_navMesh != nullptr)
+		dtFreeNavMesh(m_navMesh);
 	m_navMesh = nullptr;
 
 	if (!dtCreateNavMeshData(params, &navData, &navDataSize)) {
@@ -291,8 +292,9 @@ bool ModuleDetour::CleanUp() {
 
 void ModuleDetour::Draw() const {
 	if (debugDraw && navMeshResource != nullptr && navMeshResource->navMesh != nullptr) {
+
 		for (int i = 0; i < renderMeshes.size(); ++i)
-			App->renderer3D->DrawMesh(float4x4::identity, renderMeshes[i]->rmesh, mat, nullptr, 0, renderMeshes[i]->color);
+			App->renderer3D->DrawMesh(float4x4::identity, renderMeshes[i]->rmesh, mat, nullptr, RenderMeshFlags_::texture | ::checkers, renderMeshes[i]->color);
 	}
 }
 
