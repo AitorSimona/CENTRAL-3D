@@ -5,6 +5,7 @@
 #include "Math.h"
 #include "ModulePhysics.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "PhysX_3.4/Include/PxSimulationEventCallback.h"
 
 BE_BEGIN_NAMESPACE
 
@@ -13,8 +14,9 @@ class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
 
-class BROKEN_API ComponentCollider : public Component
+class BROKEN_API ComponentCollider : public Component//, public physx::PxSimulationEventCallback
 {
+
 public:
 	enum class COLLIDER_TYPE
 	{
@@ -26,6 +28,8 @@ public:
 	};
 
 public:
+
+	friend class Callbacks;
 
 	ComponentCollider(GameObject* ContainerGO);
 	virtual ~ComponentCollider();
@@ -54,9 +58,6 @@ public:
 	void									UpdateActor(LayerMask* layerMask);
 	void									Delete();
 
-	// Implements PxSimulationEventCallback
-	virtual void							onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs);
-	virtual void							onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count);
 	//virtual void							onConstraintBreak(physx::PxConstraintInfo*, physx::PxU32) {}
 	//virtual void							onWake(physx::PxActor**, physx::PxU32) {}
 	//virtual void							onSleep(physx::PxActor**, physx::PxU32) {}
@@ -90,6 +91,15 @@ private:
 	bool toPlay = false;
 	bool isTrigger = false;
 };
+
+
+class BROKEN_API Callbacks : public physx::PxSimulationEventCallback, public ComponentCollider
+{
+	// Implements PxSimulationEventCallback
+	virtual void							onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs);
+	virtual void							onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count);
+};
+
 
 BE_END_NAMESPACE
 #endif __COMPONENT_COLLIDER_H__

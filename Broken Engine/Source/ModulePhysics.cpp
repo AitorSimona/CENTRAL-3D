@@ -4,6 +4,7 @@
 #include "ComponentCollider.h"
 #include "ComponentCharacterController.h"
 #include "GameObject.h"
+#include "PhysxSimulationEvents.h"
 
 #include "ModuleTimeManager.h"
 #include "ModuleScripting.h"
@@ -46,7 +47,7 @@
 #pragma comment(lib, "PhysX_3.4/lib/Debug/SceneQueryDEBUG.lib")
 #endif // _DEBUG
 
-#include "mmgr/mmgr.h"
+//#include "mmgr/mmgr.h"
 
 using namespace Broken;
 
@@ -148,6 +149,8 @@ bool ModulePhysics::Init(json& config)
 
 	PxRegisterParticles(*mPhysics);
 
+	simulationEventsCallback = new PhysxSimulationEvents(this);
+
 	physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
 	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2;
@@ -155,7 +158,7 @@ bool ModulePhysics::Init(json& config)
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.filterShader = customFilterShader;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
-
+	sceneDesc.simulationEventCallback = simulationEventsCallback;
 	mScene = mPhysics->createScene(sceneDesc);
 
 	// This will enable basic visualization of PhysX objects like - actors collision shapes and their axes.
@@ -203,7 +206,7 @@ update_status ModulePhysics::Update(float dt)
 		    FixedUpdate();
 
 			mScene->simulate(physx::fixed_dt);
-			mScene->fetchResults(true); 
+			mScene->fetchResults(true);
 
 			OverlapSphere(float3::zero, 5.0f, LayerMask::LAYER_0);
 		}
@@ -231,6 +234,8 @@ bool ModulePhysics::CleanUp()
 	mFoundation = nullptr;
 	mScene = nullptr;
 	mPvd = nullptr;
+
+	RELEASE(simulationEventsCallback);
 
 	return true;
 }
@@ -374,6 +379,6 @@ void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer
 	if (status) {
 		ENGINE_CONSOLE_LOG("Inside: %i", hit_buffer.getNbTouches());
 	}
-	
-	
+
+
 }

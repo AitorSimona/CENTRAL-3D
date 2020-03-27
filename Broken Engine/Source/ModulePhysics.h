@@ -15,6 +15,7 @@ namespace physx
 	class PxControllerManager;
 	class PxRigidActor;
 	class PxVolumeCache;
+	class PxSimulationEventCallback;
 	typedef uint32_t PxU32;
 
 	const float fixed_dt = (1.0f / 60.0f);
@@ -57,6 +58,7 @@ struct Layer {
 
 BE_BEGIN_NAMESPACE
 class GameObject;
+class PhysxSimulationEvents;
 
 class BROKEN_API ModulePhysics : public Module
 {
@@ -109,6 +111,7 @@ public:
 
 private:
 
+	PhysxSimulationEvents* simulationEventsCallback = nullptr;
 	float physAccumulatedTime = 0.0f;
 };
 
