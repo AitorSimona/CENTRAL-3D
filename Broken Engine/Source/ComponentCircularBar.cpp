@@ -26,7 +26,7 @@
 
 using namespace Broken;
 
-ComponentCircularBar::ComponentCircularBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ProgressBar)
+ComponentCircularBar::ComponentCircularBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::CircularBar)
 {
 	visible = true;
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
@@ -59,13 +59,14 @@ void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 {
 	// --- Frame image with camera ---
 	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
+	float2 new_size;
 
 	if (axis == 0) //x axis
-		size2D = float2((size2D.x * _percentage) / 100, size2D.y);
+		new_size = float2((size2D.x * _percentage) / 100, size2D.y);
 	else //y axis
-		size2D = float2(size2D.x, (size2D.y * _percentage) / 100);
+		new_size = float2(size2D.x, (size2D.y * _percentage) / 100);
 
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D * 0.01f, 1.0f));
+	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(new_size * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -97,12 +98,12 @@ void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 
 
 	// --- Draw circle with given texture ---
-	glBindVertexArray(App->scene_manager->/*circle*/plane->VAO);
+	glBindVertexArray(App->scene_manager->GetDiskMesh()->VAO);
 
 	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->/*circle*/plane->EBO);
-	glDrawElements(GL_TRIANGLES, App->scene_manager->/*circle*/plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->GetDiskMesh()->EBO);
+	glDrawElements(GL_TRIANGLES, App->scene_manager->GetDiskMesh()->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)

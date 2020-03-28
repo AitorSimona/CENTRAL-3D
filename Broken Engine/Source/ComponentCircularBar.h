@@ -40,7 +40,7 @@ public:
 	bool visible = true;
 	bool axis = 0;
 
-	float2 size2D = { 0.3,0.1 };
+	float2 size2D = { 2,2 };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 

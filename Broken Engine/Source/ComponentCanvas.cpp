@@ -12,7 +12,8 @@
 #include "ComponentButton.h"
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
-//#include "ComponentProgressBar.h"
+#include "ComponentProgressBar.h"
+#include "ComponentCircularBar.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
@@ -84,9 +85,16 @@ void ComponentCanvas::Draw() const
 		//}
 		else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
 		{
-			ComponentProgressBar* elem = (ComponentProgressBar*)elements[i];
-			if (elem->visible) 
-				elem->Draw();
+			ComponentProgressBar* progressbar = (ComponentProgressBar*)elements[i];
+			if (progressbar->visible) 
+				progressbar->Draw();
+			continue;
+		}
+		else if (elements[i]->GetType() == Component::ComponentType::CircularBar)
+		{
+			ComponentCircularBar* circularbar = (ComponentCircularBar*)elements[i];
+			if (circularbar->visible)
+				circularbar->Draw();
 			continue;
 		}
 		else
