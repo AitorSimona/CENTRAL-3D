@@ -1,20 +1,24 @@
-#include "ComponentParticleEmitter.h"
 #include "Application.h"
-#include "ModulePhysics.h"
-#include "ModuleTimeManager.h"
 #include "Imgui/imgui.h"
 #include "GameObject.h"
-#include "ComponentTransform.h"
-#include "ModuleParticles.h"
-#include "Particle.h"
 #include "Timer.h"
 #include "RandomGenerator.h"
+#include "ResourceTexture.h"
+
+#include "ComponentParticleEmitter.h"
+#include "ComponentTransform.h"
 #include "ComponentText.h"
+#include "ComponentCamera.h"
+
+#include "ModuleTimeManager.h"
+#include "ModulePhysics.h"
+#include "ModuleParticles.h"
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
-#include "ResourceTexture.h"
 #include "ModuleRenderer3D.h"
-#include "ComponentCamera.h"
+#include "ModuleFileSystem.h"
+
+#include "Particle.h"
 
 #include "PhysX_3.4/Include/extensions/PxDefaultAllocator.h"
 #include "PhysX_3.4/Include/extensions/PxDefaultErrorCallback.h"
@@ -44,6 +48,8 @@ ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Comp
 
 ComponentParticleEmitter::~ComponentParticleEmitter()
 {
+	drawingIndices.clear();
+
 	App->particles->DeleteEmitter(this);
 
 	for (int i = 0; i < maxParticles; ++i){
@@ -58,6 +64,13 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 	}
 
 	texture->Release();
+
+
+	for (std::vector<ComponentParticleEmitter*>::iterator it = App->renderer3D->particleEmitters.begin(); it != App->renderer3D->particleEmitters.end();it++)
+		if ((*it) == this) {
+			App->renderer3D->particleEmitters.erase(it);
+			break;
+		}
 
 	//App->renderer3D->particleEmitters.erase(this);
 }
@@ -99,7 +112,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 		{
 			uint newParticlesAmount = (SDL_GetTicks() - spawnClock) / emisionRate;
 
-			CreateParticles(newParticlesAmount);
+			CreateParticles(newParticlesAmount*particlesPerCreation);
 
 			//if (validParticles < maxParticles)
 			//{
@@ -186,42 +199,12 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 		}
 
 
-		//SortParticles();
+	SortParticles();
+		
 }
 
-//void ComponentParticleEmitter::SortParticles()
-//{
-//	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
-//	if (rd)
-//	{
-//		physx::PxStrideIterator<const physx::PxParticleFlags> flagsIt(rd->flagsBuffer);
-//
-//		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt)
-//		{
-//			if (*flagsIt & physx::PxParticleFlag::eVALID)
-//			{
-//				drawingIndices
-//			}
-//		}
-//
-//		// return ownership of the buffers back to the SDK
-//		rd->unlock();
-//	}
-//
-//}
-
-void ComponentParticleEmitter::DrawParticles()
+void ComponentParticleEmitter::SortParticles()
 {
-	if (!active)
-		return;
-
-	//while (!drawingIndices.empty())
-	//{
-	//	//particles[drawingIndices.front()]->Draw();
-
-	//	drawingIndices.pop();
-	//}
-
 	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
 	if (rd)
 	{
@@ -231,13 +214,53 @@ void ComponentParticleEmitter::DrawParticles()
 		{
 			if (*flagsIt & physx::PxParticleFlag::eVALID)
 			{
-				particles[i]->Draw();
+				float distance = App->renderer3D->active_camera->frustum.Pos().Distance(particles[i]->position);
+				drawingIndices[1.0f/distance] = i;
 			}
 		}
 
 		// return ownership of the buffers back to the SDK
 		rd->unlock();
 	}
+}
+
+void ComponentParticleEmitter::DrawParticles()
+{
+	if (!active || drawingIndices.empty())
+		return;
+
+	//while (!drawingIndices.empty())
+	//{
+	//	//particles[drawingIndices.front()]->Draw();
+
+	//	drawingIndices.pop();
+	//}
+
+	//physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
+	//if (rd)
+	//{
+	//	physx::PxStrideIterator<const physx::PxParticleFlags> flagsIt(rd->flagsBuffer);
+
+	//	for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt)
+	//	{
+	//		if (*flagsIt & physx::PxParticleFlag::eVALID)
+	//		{
+	//			particles[i]->Draw();
+	//		}
+	//	}
+
+	//	// return ownership of the buffers back to the SDK
+	//	rd->unlock();
+	//}
+
+	std::map<float, int>::iterator it = drawingIndices.begin();
+	while (it != drawingIndices.end())
+	{
+		int paco = (*it).second;
+		particles[paco]->Draw();
+		it++;
+	}
+	drawingIndices.clear();
 }
 
 //void ComponentParticleEmitter::DrawComponent()
@@ -284,6 +307,8 @@ json ComponentParticleEmitter::Save() const
 
 	node["emisionRate"] = std::to_string(emisionRate);
 
+	node["particlesPerCreation"] = std::to_string(particlesPerCreation);
+
 	node["externalAccelerationX"] = std::to_string(externalAcceleration.x);
 	node["externalAccelerationY"] = std::to_string(externalAcceleration.y);
 	node["externalAccelerationZ"] = std::to_string(externalAcceleration.z);
@@ -310,6 +335,14 @@ json ComponentParticleEmitter::Save() const
 	node["particlesScaleX"] = std::to_string(particlesScale.x);
 	node["particlesScaleY"] = std::to_string(particlesScale.y);
 
+	node["particleScaleRandomFactor"] = std::to_string(particlesScaleRandomFactor);
+
+
+	node["Resources"]["ResourceTexture"];
+
+	if (texture)
+		node["Resources"]["ResourceTexture"] = std::string(texture->GetResourceFile());
+
 	return node;
 }
 
@@ -323,6 +356,8 @@ void ComponentParticleEmitter::Load(json& node)
 	std::string Lsizez = node["sizeZ"].is_null() ? "0" : node["sizeZ"];
 
 	std::string LemisionRate = node["emisionRate"].is_null() ? "0" : node["emisionRate"]; // typo: emission
+
+	std::string LparticlesPerCreation = node["particlesPerCreation"].is_null() ? "1" : node["particlesPerCreation"];
 
 	std::string LexternalAccelerationx = node["externalAccelerationX"].is_null() ? "0" : node["externalAccelerationX"];
 	std::string LexternalAccelerationy = node["externalAccelerationY"].is_null() ? "0" : node["externalAccelerationY"];
@@ -349,10 +384,21 @@ void ComponentParticleEmitter::Load(json& node)
 	std::string LParticlesScaleX = node["particlesScaleX"].is_null() ? "1" : node["particlesScaleX"];
 	std::string LParticlesScaleY = node["particlesScaleY"].is_null() ? "1" : node["particlesScaleY"];
 
+	std::string LParticleScaleRandomFactor = node["particleScaleRandomFactor"].is_null() ? "1" : node["particleScaleRandomFactor"];
+
 	if (!node["Loop"].is_null())
 		loop = node["Loop"];
 	else
 		loop = true;
+
+	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
+	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
+	path = path.substr(0, path.find_last_of("."));
+
+	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
+
+	if (texture)
+		texture->AddUser(GO);
 
 	//Pass the strings to the needed dada types
 	size.x = std::stof(Lsizex);
@@ -360,6 +406,8 @@ void ComponentParticleEmitter::Load(json& node)
 	size.z = std::stof(Lsizez);
 
 	emisionRate = std::stof(LemisionRate);
+
+	particlesPerCreation = std::stoi(LparticlesPerCreation);
 
 	externalAcceleration.x = std::stof(LexternalAccelerationx);
 	externalAcceleration.y = std::stof(LexternalAccelerationy);
@@ -383,6 +431,8 @@ void ComponentParticleEmitter::Load(json& node)
 
 	particlesScale.x = std::stof(LParticlesScaleX);
 	particlesScale.y = std::stof(LParticlesScaleY);
+
+	particlesScaleRandomFactor = std::stof(LParticleScaleRandomFactor);
 }
 
 void ComponentParticleEmitter::CreateInspectorNode()
@@ -463,11 +513,15 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			particleSystem->setExternalAcceleration(externalAcceleration);
 
 
-
 		//Emision rate
 		ImGui::Text("Emision rate (ms)");
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
 		ImGui::DragFloat("##SEmision rate", &emisionRate, 1.0f, 1.0f, 100000.0f);
+
+		//Emision rate
+		ImGui::Text("Particles to create");
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
+		ImGui::DragInt("##SParticlespercreation", &particlesPerCreation, 1.0f, 1.0f, 500.0f);
 
 		//Particles lifetime
 		ImGui::Text("Particles lifetime (ms)");
@@ -520,10 +574,9 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			ImGui::TreePop();
 		}
 
-
-
 		if (ImGui::TreeNode("Renderer"))
 		{
+			//Scale
 			ImGui::Text("Scale");
 
 			//X
@@ -538,6 +591,12 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 			ImGui::DragFloat("##SParticlesScaleY", &particlesScale.y, 0.05f, 0.1f, 50.0f);
+
+			//Scale random factor
+			ImGui::Text("Scale random factor");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##SParticlesRandomScaleX", &particlesScaleRandomFactor, 0.05f, 1.0f, 50.0f);
 
 			// Image
 			ImGui::Separator();
@@ -672,7 +731,9 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 			particles[index[i]]->spawnTime = SDL_GetTicks();
 			particles[index[i]]->color = particlesColor / 255.0f;
 			particles[index[i]]->texture = texture;
-			particles[index[i]]->scale = particlesScale;
+			float randomScaleValue = GetRandomValue(1, particlesScaleRandomFactor);
+			particles[index[i]]->scale.x = particlesScale.x *randomScaleValue;
+			particles[index[i]]->scale.y = particlesScale.y * randomScaleValue;
 		}
 
 		creationData.indexBuffer = indexBuffer;
@@ -691,4 +752,55 @@ void ComponentParticleEmitter::Play()
 {
 	emisionActive = true;
 	emisionStart = SDL_GetTicks();
+}
+
+void ComponentParticleEmitter::SetLooping(bool active)
+{
+	loop = active;
+}
+
+void ComponentParticleEmitter::SetEmisionRate(float ms)
+{
+	emisionRate = ms;
+}
+
+void ComponentParticleEmitter::SetParticlesPerCreation(int particlesAmount)
+{
+	particlesPerCreation = particlesAmount;
+}
+
+void ComponentParticleEmitter::SetExternalAcceleration(float x, float y, float z)
+{
+	particleSystem->setExternalAcceleration(physx::PxVec3(x,y,z));
+}
+
+void ComponentParticleEmitter::SetParticlesVelocity(float x, float y, float z)
+{
+	particlesVelocity = physx::PxVec3(x,y,z);
+}
+
+void ComponentParticleEmitter::SetVelocityRF(float x, float y, float z)
+{
+	velocityRandomFactor = physx::PxVec3(x, y, z);
+} 
+
+void ComponentParticleEmitter::SetDuration(int duration)
+{
+	duration = duration;
+}
+
+void ComponentParticleEmitter::SetLifeTime(int ms)
+{
+	particlesLifeTime = ms;
+}
+
+void ComponentParticleEmitter::SetParticlesScale(float x, float y)
+{
+	particlesScale.x = x;
+	particlesScale.y = y;
+}
+
+void ComponentParticleEmitter::SetParticlesScaleRF(float randomFactor)
+{
+	particlesScaleRandomFactor = randomFactor;
 }

@@ -6,8 +6,6 @@
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
-#include <queue>
-
 BE_BEGIN_NAMESPACE
 
 class Particle;
@@ -38,7 +36,19 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+
+	//Scripting functions
 	void Play();
+	void SetEmisionRate(float ms);
+	void SetParticlesPerCreation(int particlesAmount);
+	void SetExternalAcceleration(float x, float y, float z);
+	void SetParticlesVelocity(float x, float y, float z);
+	void SetVelocityRF(float x, float y, float z);
+	void SetLooping(bool active);
+	void SetDuration(int duration);
+	void SetLifeTime(int ms);
+	void SetParticlesScale(float x, float y);
+	void SetParticlesScaleRF(float randomFactor);
 
 private:
 
@@ -52,17 +62,19 @@ private:
 	physx::PxParticleSystem* particleSystem = nullptr;
 
 	std::vector<Particle*> particles;
-	//std::priority_queue<int, int> drawingIndices;
+	std::map<float, int> drawingIndices;
 
 	unsigned int maxParticles = 1000;
 	bool perParticleRestOffset = false;
 
 	physx::PxParticleExt::IndexPool* indexPool;
 
+	uint validParticles=0;
+
 	//Emitter properties
+	int particlesPerCreation =1  ;
 	physx::PxVec3 size = { 0,0,0 };
 	float emisionRate=500.0f;	//in milliseconds
-	uint validParticles=0;
 	physx::PxVec3 externalAcceleration = {0,10,0};
 	physx::PxVec3 particlesVelocity = { 0,0,0 };
 	physx::PxVec3 velocityRandomFactor = {5,5,5};
@@ -75,6 +87,7 @@ private:
 	int particlesLifeTime=1000;
 	float particlesSize = 1;
 	float2 particlesScale = { 1,1 };
+	float particlesScaleRandomFactor = 1;
 	ResourceTexture* texture = nullptr;
 
 	float3 particlesColor = { 255, 255, 255 };
