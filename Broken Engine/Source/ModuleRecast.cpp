@@ -134,18 +134,20 @@ bool ModuleRecast::BuildNavMesh() {
 	// Allocate array that can hold triangle area types.
 	// If you have multiple meshes you need to process, allocate
 	// and array which can hold the max number of triangles you need to process.
-	m_triareas = new unsigned char[ntris];
+	m_triareas = new unsigned char[m_geom->getMaxTris()];
 	if (!m_triareas) {
-		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'm_triareas' (%d).", ntris);
+		EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("RC_ERROR: buildNavigation: Out of memory 'm_triareas' (%d).", m_geom->getMaxTris());
 		return false;
 	}
 
 	// Find triangles which are walkable based on their slope and rasterize them.
 	// If your input data is multiple meshes, you can transform them here, calculate
 	// the are type for each of the meshes and rasterize them.
-	memset(m_triareas, 0, ntris * sizeof(unsigned char));
-	rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, m_geom->getVerts(), nverts, m_geom->getTris(), ntris, m_triareas);
-	rcRasterizeTriangles(m_ctx, m_geom->getVerts(), nverts, m_geom->getTris(), m_triareas, ntris, *m_solid, m_cfg.walkableClimb);
+	for (int i = 0; i < m_geom->getMeshes().size(); ++i) {
+		memset(m_triareas, 0, m_geom->getMaxTris() * sizeof(unsigned char));
+		rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, m_geom->getMeshes()[i].verts, m_geom->getMeshes()[i].nverts, m_geom->getMeshes()[i].tris, m_geom->getMeshes()[i].ntris, m_triareas);
+		rcRasterizeTriangles(m_ctx, m_geom->getMeshes()[i].verts, m_geom->getMeshes()[i].nverts, m_geom->getMeshes()[i].tris, m_triareas, m_geom->getMeshes()[i].ntris, *m_solid, m_cfg.walkableClimb);
+	}
 
 	delete[] m_triareas;
 	m_triareas = nullptr;
@@ -157,12 +159,12 @@ bool ModuleRecast::BuildNavMesh() {
 	// Once all geoemtry is rasterized, we do initial pass of filtering to
 	// remove unwanted overhangs caused by the conservative rasterization
 	// as well as filter spans where the character cannot possibly stand.
-	//if (filterLowHangingObstacles)
-	//	rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.walkableClimb, *m_solid);
-	//if (filterLedgeSpans)
-	//	rcFilterLedgeSpans(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
-	//if (filterWalkableLowHeightSpans)
-	//	rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
+	if (filterLowHangingObstacles)
+		rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.walkableClimb, *m_solid);
+	if (filterLedgeSpans)
+		rcFilterLedgeSpans(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
+	if (filterWalkableLowHeightSpans)
+		rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
 
 	//
 	// Step 4. Partition walkable surface to simple regions.

@@ -252,20 +252,23 @@ void ModuleDetour::loadNavMeshFile(uint UID) {
 	if (navMeshResource != nullptr)
 		navMeshResource->Release();
 
-	navMeshResource = (ResourceNavMesh*)App->resources->GetResource(UID, true);
+	navMeshResource = (ResourceNavMesh*)App->resources->GetResource(UID);
 
 	if (navMeshResource != nullptr) {
-		dtStatus status = m_navQuery->init(navMeshResource->navMesh, 2048);
-		if (dtStatusFailed(status)) {
-			ENGINE_AND_SYSTEM_CONSOLE_LOG("Could not init Detour navmesh query");
-		}
-	}
+		navMeshResource->LoadInMemory();
+		if (navMeshResource->navMesh != nullptr) {
+			dtStatus status = m_navQuery->init(navMeshResource->navMesh, 2048);
+			if (dtStatusFailed(status)) {
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("Could not init Detour navmesh query");
+			}
 
-	if (!App->isGame) {
-		for (int i = 0; i < renderMeshes.size(); ++i)
-			delete renderMeshes[i];
-		renderMeshes.clear();
-		createRenderMeshes();
+			if (!App->isGame) {
+				for (int i = 0; i < renderMeshes.size(); ++i)
+					delete renderMeshes[i];
+				renderMeshes.clear();
+				createRenderMeshes();
+			}
+		}
 	}
 }
 

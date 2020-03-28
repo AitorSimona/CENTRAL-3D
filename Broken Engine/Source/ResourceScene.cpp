@@ -160,6 +160,7 @@ bool ResourceScene::LoadInMemory() {
 		}
 		else {
 			App->detour->setDefaultValues();
+			App->detour->clearNavMesh();
 		}
 	}
 

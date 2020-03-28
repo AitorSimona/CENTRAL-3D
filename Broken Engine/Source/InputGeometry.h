@@ -13,6 +13,15 @@ struct ConvexVolume {
 	int area;
 };
 
+struct RecastMesh {
+	~RecastMesh();
+
+	float* verts = nullptr;
+	int* tris = nullptr;
+	int nverts;
+	int ntris;
+};
+
 class InputGeom {
 public:
 	/**
@@ -24,28 +33,18 @@ public:
 	InputGeom(const std::vector<Broken::GameObject*>& srcMeshes);
 	~InputGeom();
 
-	/**
-	 * Retrieves the vertices stored within this inputGeom. The verts are an array of floats in which each
-	 * subsequent three floats are in order the x, y and z coordinates of a vert. The size of this array is
-	 * always a multiple of three and is exactly 3*getVertCount().
-	 **/
-	const float* getVerts();
+	const std::vector<RecastMesh>& getMeshes() const;
 	/**
 	* The number of vertices stored in this inputGeom.
 	**/
 	uint getVertCount();
 
 	/**
-	* Retrieves the tris stored in this inputGeom.
-	* A tri is defined by a sequence of three indexes which refer to an index position in the getVerts() array.
-	* Similar to getVerts, the size of this array is a multitude of 3 and is exactly 3*getTriCount().
-	**/
-	const int* getTris();
-
-	/**
 	* The number of triangles stored in this inputGeom.
 	**/
 	int getTriCount();
+
+	int getMaxTris();
 
 	/**
 	* Retrieve the normals calculated for this inputGeom. Note that the normals are not exact and are not meant for rendering,
@@ -89,16 +88,14 @@ public:
 
 private:
 	void ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]);
-	void calculateNormals();
 
 private:
 	bool m_mesh;
 
-	float* verts;
+	std::vector<RecastMesh> meshes;
 	int nverts;
-
-	int* tris;
 	int ntris;
+	int maxtris;
 
 	float* normals;
 

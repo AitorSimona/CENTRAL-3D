@@ -4,30 +4,26 @@
 #include "ComponentMesh.h"
 #include "Recast.h"
 #include "EngineLog.h"
-#include "mmgr/mmgr.h"
+#include "mmgr/nommgr.h"
 
 
 InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 	nverts(0),
 	ntris(0),
+	maxtris(0),
 	bmin(nullptr),
 	bmax(nullptr),
 	m_offMeshConCount(0),
 	m_volumeCount(0),
 	normals(nullptr),
-	verts(nullptr),
-	tris(nullptr),
 	m_mesh(false)
 {
 	Broken::ResourceMesh* r_mesh;
 	vec _bmin, _bmax;
 	bool minmaxset = false;
-	
-	std::vector<float> v_verts;
-	std::vector<int> v_tris;
 
 	float4x4 transform;
-
+	meshes.reserve(srcMeshes.size());
 	for (std::vector<Broken::GameObject*>::const_iterator it = srcMeshes.cbegin(); it != srcMeshes.cend(); ++it) {
 		r_mesh = (*it)->GetComponent<Broken::ComponentMesh>()->resource_mesh;
 		transform = (*it)->GetComponent<Broken::ComponentTransform>()->GetGlobalTransform();
@@ -35,19 +31,25 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 
 		// If it is non-walkable we don't need to add its geometry
 		if ((*it)->navigationArea != 1) {
+			meshes.push_back(RecastMesh());
+
 			// We add the index count
-			for (int i = 0; i < r_mesh->IndicesSize; ++i)
-				v_tris.push_back(r_mesh->Indices[i] + ntris);
+			meshes.back().tris = new int[r_mesh->IndicesSize];
+			meshes.back().ntris = r_mesh->IndicesSize / 3;
+			memcpy(meshes.back().tris, r_mesh->Indices, r_mesh->IndicesSize * sizeof(int));
 			ntris += r_mesh->IndicesSize;
+			if (meshes.back().ntris > maxtris)
+				maxtris = meshes.back().ntris;
 
 			// we add the transformed vertices
 			nverts += r_mesh->VerticesSize;
+			meshes.back().nverts = r_mesh->VerticesSize;
+			meshes.back().verts = new float[r_mesh->VerticesSize * 3];
+			float* vert_index = meshes.back().verts;
 			float vert[3];
 			for (int i = 0; i < r_mesh->VerticesSize; ++i) {
-				ApplyTransform(r_mesh->vertices[i], transform, vert);
-				v_verts.push_back(vert[0]);
-				v_verts.push_back(vert[1]);
-				v_verts.push_back(vert[2]);
+				ApplyTransform(r_mesh->vertices[i], transform, vert_index);
+				vert_index += 3;
 			}
 
 			if (!minmaxset) {
@@ -80,8 +82,10 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 				memcpy(m_volumes[m_volumeCount].verts, convexhull.VertexArrayPtr()->ptr(), m_volumes[m_volumeCount].nverts * sizeof(float));
 				m_volumeCount++;
 			}
-			else
+			else {
+				// This needs to be in braces because it is a macro definition with two lines in it
 				EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("Convex hull has too many vertices");
+			}
 		}
 	}
 
@@ -91,13 +95,6 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 		memcpy(bmin, _bmin.ptr(), 3 * sizeof(float));
 		bmax = new float[3];
 		memcpy(bmax, _bmax.ptr(), 3 * sizeof(float));
-
-		tris = new int[v_tris.size()];
-		memcpy(tris, v_tris.data(), v_tris.size() * sizeof(int));
-		verts = new float[v_verts.size()];
-		memcpy(verts, v_verts.data(), v_verts.size() * sizeof(float));
-		
-		calculateNormals();
 	}
 }
 
@@ -109,26 +106,24 @@ InputGeom::~InputGeom() {
 		delete[] bmax;
 	if (normals != nullptr)
 		delete[] normals;
-	if (verts != nullptr)
-		delete[] verts;
-	if (tris != nullptr)
-		delete[] tris;
+
+	meshes.clear();
 }
 
-const float* InputGeom::getVerts() {
-	return verts;
+const std::vector<RecastMesh>& InputGeom::getMeshes() const {
+	return meshes;
 }
 
 uint InputGeom::getVertCount() {
 	return nverts;
 }
 
-const int* InputGeom::getTris() {
-	return tris;
-}
-
 int InputGeom::getTriCount() {
 	return ntris;
+}
+
+int InputGeom::getMaxTris() {
+	return maxtris;
 }
 
 const float* InputGeom::getNormals() {
@@ -154,34 +149,21 @@ void InputGeom::ApplyTransform(const Broken::Vertex& vertex, const float4x4& tra
 	v.z = vertex.position[2];
 
 	v = transform.MulPos(v);
-	ret[0] = v[0];
-	ret[1] = v[1];
-	ret[2] = v[2];
+	memcpy(ret, v.ptr(), sizeof(float) * 3);
+
+	// We keep this other method for reference
+	//math::float3 v = (transform * math::float4(vertex.position[0],
+	//	vertex.position[1],
+	//	vertex.position[2],
+	//	1)).xyz();
+
+	//memcpy(ret, v.ptr(), sizeof(float) * 3);
 
 }
 
-void InputGeom::calculateNormals() {
-	normals = new float[ntris*3];
-	for (int i = 0; i < ntris * 3; i += 3) {
-		const float* v0 = &verts[tris[i] * 3];
-		const float* v1 = &verts[tris[i + 1] * 3];
-		const float* v2 = &verts[tris[i + 2] * 3];
-		float e0[3], e1[3];
-		for (int j = 0; j < 3; ++j) {
-			e0[j] = v1[j] - v0[j];
-			e1[j] = v2[j] - v0[j];
-		}
-		float* n = &normals[i];
-		n[0] = e0[1] * e1[2] - e0[2] * e1[1];
-		n[1] = e0[2] * e1[0] - e0[0] * e1[2];
-		n[2] = e0[0] * e1[1] - e0[1] * e1[0];
-		float d = sqrtf(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-		if (d > 0) {
-			d = 1.0f / d;
-			n[0] *= d;
-			n[1] *= d;
-			n[2] *= d;
-		}
-	}
-
+RecastMesh::~RecastMesh() {
+	if (verts != nullptr)
+		delete[] verts;
+	if (tris != nullptr)
+		delete[] tris;
 }
