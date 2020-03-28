@@ -1084,13 +1084,14 @@ void ModuleRenderer3D::DrawRenderBoxes()
 
 void ModuleRenderer3D::DrawGrid()
 {
-	App->renderer3D->defaultShader->use();
+	//App->renderer3D->defaultShader->use();
+	glUseProgram(App->renderer3D->defaultShader->ID);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
 	float gridColor = 0.8f;
-	int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
 	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
 
 	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
@@ -1102,7 +1103,7 @@ void ModuleRenderer3D::DrawGrid()
 	glBindVertexArray(0);
 	glLineWidth(1.0f);
 
-	glUseProgram(0);
+	//glUseProgram(0);
 	glUniform1i(TextureSupportLocation, (int)false);
 }
 
