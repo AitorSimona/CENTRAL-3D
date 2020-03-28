@@ -103,7 +103,7 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::Text("Shininess");
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 	ImGui::SetNextItemWidth(300.0f);
-	ImGui::SliderFloat("", &m_Shininess, 0.00f, 500.00f);
+	ImGui::SliderFloat("", &m_Shininess, 0.01f, 500.00f);
 
 	// --- Print Texture Width and Height (Diffuse)
 	uint textSizeX = 0, textSizeY = 0;

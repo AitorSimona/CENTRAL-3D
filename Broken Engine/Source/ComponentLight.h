@@ -7,6 +7,7 @@
 
 BE_BEGIN_NAMESPACE
 
+class ResourceMesh;
 
 enum class LightType { NONE = -1, DIRECTIONAL, POINTLIGHT, SPOTLIGHT, MAX_LIGHT_TYPES };
 
@@ -14,13 +15,14 @@ class BROKEN_API ComponentLight : public Component
 {
 public:
 
-	ComponentLight(GameObject* ContainerGO) : Component(ContainerGO, ComponentType::Light) {}
-	~ComponentLight() {}
+	ComponentLight(GameObject* ContainerGO);
+	~ComponentLight();
 
 	void Update() override;
-	void SendUniforms(uint shader, uint shaderID, uint lightIndex);
+	void SendUniforms(uint shaderID, uint lightIndex);
+	void Draw();
 
-	static inline Component::ComponentType GetType() { return Component::ComponentType::Light; };
+	static inline Component::ComponentType GetType() { return Component::ComponentType::Light; }
 
 	// --- Save & Load ---
 	json Save() const override;
@@ -72,7 +74,9 @@ private:
 	float m_Intensity = 0.5f;
 
 	// --- Others ---
-	LightType m_LightType = LightType::NONE;	 
+	LightType m_LightType = LightType::NONE;
+
+	//ResourceMesh* rmeshLight = nullptr;
 
 	bool m_SetToZero = false;
 };

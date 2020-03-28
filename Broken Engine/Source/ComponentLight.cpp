@@ -1,6 +1,14 @@
 #include "ComponentLight.h"
+
+#include "Application.h"
+
 #include "ComponentTransform.h"
-//#include "Application.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleSceneManager.h"
+#include "ResourceShader.h"
+#include "ComponentCamera.h"
+#include "ResourceMesh.h"
+
 #include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
@@ -22,6 +30,16 @@ const std::string GetStringFromLightType(LightType type)
 
 	BROKEN_ASSERT((ret != ""), "Unexisting or Unsupported Light Type");
 	return ret;
+}
+
+ComponentLight::ComponentLight(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Light)
+{
+	App->renderer3D->AddLight(this);
+}
+
+ComponentLight::~ComponentLight()
+{
+	App->renderer3D->PopLight(this);
 }
 
 
@@ -47,7 +65,7 @@ void ComponentLight::Update()
 }
 
 
-void ComponentLight::SendUniforms(uint shader, uint shaderID, uint lightIndex)
+void ComponentLight::SendUniforms(uint shaderID, uint lightIndex)
 {
 	if ((!active || m_LightType == LightType::NONE || m_LightType == LightType::MAX_LIGHT_TYPES) && m_SetToZero)
 		return;
@@ -76,7 +94,7 @@ void ComponentLight::SendUniforms(uint shader, uint shaderID, uint lightIndex)
 		glUniform3f(dirLoc, 0.0f, 0.0f, 0.0f);
 
 		// --- Passing Color ---
-		glUniform3f(colorLoc, 0.0f, 0.0f, 0.0f);
+		glUniform3f(colorLoc, 1.0f, 1.0f, 1.0f);
 
 		// --- Passing Intensity & Light Type
 		glUniform1i(LtypeLoc, 0);
@@ -117,7 +135,8 @@ void ComponentLight::SendUniforms(uint shader, uint shaderID, uint lightIndex)
 		// --- Passing Light Attenuation
 		glUniform3f(attLoc, m_AttenuationKLQFactors.x, m_AttenuationKLQFactors.y, m_AttenuationKLQFactors.z);
 
-		m_SetToZero = false;
+		if(m_SetToZero)
+			m_SetToZero = false;
 	}
 }
 
@@ -126,6 +145,52 @@ const std::string ComponentLight::GetLightUniform(uint lightIndex, const char* u
 	char light_index_chars[10];
 	sprintf(light_index_chars, "[%i]", lightIndex);
 	return (uniformArrayName + std::string(light_index_chars));
+}
+
+
+// -------------------------------------------------------------------------------------------
+void ComponentLight::Draw()
+{
+	// --- Set Uniforms ---
+	glUseProgram(App->renderer3D->defaultShader->ID);
+
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, -1);
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, m_Color.x, m_Color.y, m_Color.z);
+
+	ComponentTransform* trans = GetContainerGameObject()->GetComponent<ComponentTransform>();
+	if (trans)
+	{
+		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, trans->GetGlobalTransform().Transposed().ptr());
+	}
+
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+	glUniform1i(TextureLocation, 0); //reset texture location
+
+	// --- Draw plane with given texture ---
+	glBindVertexArray(App->scene_manager->sphere->VAO);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->sphere->EBO);
+	glDrawElements(GL_TRIANGLES, App->scene_manager->sphere->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+
+	glBindVertexArray(0);
 }
 
 
@@ -185,9 +250,9 @@ void ComponentLight::CreateInspectorNode()
 		// --- Cutoff ---
 		ImGui::Separator(); ImGui::NewLine();
 		ImGui::Text("Inner Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, 360.00f);
+		ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, m_InOutCutoffDegrees.y - 0.01f);
 		ImGui::Text("Outer Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.1f, 0.00f, 360.00f);
+		ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.01f, m_InOutCutoffDegrees.x + 0.01f, 360.00f);
 		ImGui::NewLine();
 
 		// --- Attenuation ---	

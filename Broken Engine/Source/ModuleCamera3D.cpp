@@ -86,7 +86,8 @@ update_status ModuleCamera3D::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleCamera3D::UpdateCamera() {
+void ModuleCamera3D::UpdateCamera()
+{
 	if (App->GetAppState() == AppState::EDITOR && App->gui->isSceneHovered) 
 	{
 		float3 newPos(0, 0, 0);

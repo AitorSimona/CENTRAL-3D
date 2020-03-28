@@ -105,21 +105,21 @@ bool PanelHierarchy::Draw()
 			{
 				if (ImGui::MenuItem("Directional"))
 				{
-					Broken::GameObject* lightGObj = EngineApp->scene_manager->LoadCube();
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
 					light->SetLightType(Broken::LightType::DIRECTIONAL);
 				}
 
 				if (ImGui::MenuItem("Pointlight"))
 				{
-					Broken::GameObject* lightGObj = EngineApp->scene_manager->LoadCube();
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
 					light->SetLightType(Broken::LightType::POINTLIGHT);
 				}
 
 				if (ImGui::MenuItem("Spotlight"))
 				{
-					Broken::GameObject* lightGObj = EngineApp->scene_manager->LoadCube();
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
 					light->SetLightType(Broken::LightType::SPOTLIGHT);
 				}
