@@ -1,113 +1,144 @@
+#include <fstream>
+#include <iomanip>
+
 #include "ImporterShader.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 
+#include "ImporterMeta.h"
+#include "ResourceMeta.h"
 #include "ResourceShader.h"
+
+
 
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader) {
+ImporterShader::ImporterShader() : Importer(Importer::ImporterType::Shader) 
+{
 }
 
-ImporterShader::~ImporterShader() {
+ImporterShader::~ImporterShader() 
+{
 }
 
-Resource* ImporterShader::Import(ImportData& IData) const {
+Resource* ImporterShader::Import(ImportData& IData) const 
+{
+	if (!App->fs->Exists(IData.path))
+		return nullptr;
 
-	bool ret = true;
+	ResourceShader* shader = (ResourceShader*)App->resources->CreateResource(Resource::ResourceType::SHADER, IData.path);;
 
-	//if (data.vertexPath != nullptr || data.fragmentPath != nullptr)
-	//{
-	//	if (App->resources->IsFileImported(data.vertexPath) || App->resources->IsFileImported(data.fragmentPath))
-	//	{
-	//		// MYTODO: Should check if we are trying to import 2 times the same (check if resource exists)
+	// --- Create Meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
-	//		uint UID = App->resources->GetUIDFromMeta(data.vertexPath);
+	ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, shader->GetOriginalFile(), shader->GetUID());
 
-	//		std::string path = SHADERS_FOLDER;
-	//		path.append(std::to_string(UID));
-	//		path.append(".shader");
-
-	//		char* buffer = nullptr;
-
-	//		uint size = App->fs->Load(path.data(),&buffer);
-
-	//		uint format;
-	//		path.append(".format");
-	//		std::string shader_name;
-
-	//		if (App->fs->Exists(path.data()))
-	//		{
-	//			json file = App->GetJLoader()->Load(path.data());
-	//			std::string formatstring = file["FORMAT"];
-	//			std::string namestring = file["NAME"];
-	//			shader_name = namestring;
-
-	//			format = std::stoi(formatstring);
-	//		}
-
-	//		if (buffer)
-	//		{
-	//			// --- Load binary shader ---
-	//			ResourceShader* shader = new ResourceShader(buffer, size, format, shader_name.data(), data.vertexPath, data.fragmentPath);
-	//			shader->SetUID(UID);
-	//			App->resources->AddResource(shader);
-	//			App->resources->AddShader(shader);
+	if (meta)
+		IMeta->Save(meta);
 
 
-	//			delete[] buffer;
-	//		}
-	//		else
-	//			ENGINE_CONSOLE_LOG("|[error]: Could not load shader program");
-	//	}
+	Save(shader);
 
-	//	else
-	//	{
-
-
-	//		ResourceShader* shader = new ResourceShader(data.vertexPath, data.fragmentPath);
-
-	//		if (shader->ID != 0)
-	//		{
-	//			shader->name = data.vertexPath;
-	//			uint count = shader->name.find_last_of("/");
-	//			shader->name = shader->name.substr(count+1, shader->name.size());
-	//			count = shader->name.find_last_of(".");
-	//			shader->name = shader->name.substr(0,count);
-
-	//			App->resources->AddResource(shader);
-	//			App->resources->AddShader(shader);
-
-	//			std::string path = SHADERS_FOLDER;
-	//			path.append(std::to_string(shader->GetUID()));
-
-	//			Save(shader, path.data());
-
-	//			// --- Save metas ---
-	//			std::string vertexmeta = data.vertexPath;
-	//			std::string fragmentmeta = data.fragmentPath;
-
-	//			App->resources->CreateMetaFromUID(shader->GetUID(), vertexmeta.data());
-	//			App->resources->CreateMetaFromUID(shader->GetUID(), fragmentmeta.data());
-	//		}
-	//		else
-	//			delete shader;
-
-	//	}
-	//}
-	//else
-	//	ret = false;
-
-	return nullptr;
+	return shader;
 }
 
-void ImporterShader::Save(ResourceShader* shader, const char* path) const {
-	//// --- Save Shaders to lib --- 
-	//shader->Save();
+Resource* ImporterShader::Load(const char* path) const
+{
+	ResourceShader* shader = nullptr;
+
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
+
+	shader = App->resources->shaders.find(meta->GetUID()) != App->resources->shaders.end() ? App->resources->shaders.find(meta->GetUID())->second : (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, path, meta->GetUID());
+
+	// --- A folder has been renamed ---
+	if (!App->fs->Exists(shader->GetOriginalFile()))
+	{
+		shader->SetOriginalFile(path);
+		meta->SetOriginalFile(path);
+		App->resources->AddResourceToFolder(shader);
+	}
+
+	return shader;
 }
 
-Resource* ImporterShader::Load(const char* path) const {
-	return nullptr;
+
+void ImporterShader::Save(ResourceShader* shader) const 
+{
+	GLint buffer_size;
+	glGetProgramiv(shader->ID, GL_PROGRAM_BINARY_LENGTH, &buffer_size);
+	
+	if (buffer_size > 0)
+	{
+		// --- Create binary ---
+		char* buffer = new char[buffer_size];
+		GLint bytes_written = 0;
+		GLenum format = 0;
+	
+		glGetProgramBinary(shader->ID, buffer_size, &bytes_written, &format, buffer);
+	
+		if (bytes_written > 0)
+		{
+			// --- Save shader to binary ---
+			App->fs->Save(shader->GetResourceFile(), buffer, buffer_size);
+
+			// --- Save shader code, update meta ---
+			json jsonfile;
+	
+			std::ofstream file;
+			file.open(shader->GetOriginalFile(), std::ofstream::out | std::ofstream::trunc);
+	
+			if (!file.is_open())
+			{
+				ENGINE_CONSOLE_LOG("|[error]: JSONLoader::Save could not open File: %s", shader->GetOriginalFile());
+			}
+			else
+			{
+				// --- Build shader code and save to file---
+				//file << std::setw(5) << "#if VERTEX_SHADER" << std::endl;
+
+				file << std::setw(5) << shader->vShaderCode << std::endl;
+
+				//file << std::setw(5) << "#elseif FRAGMENT_SHADER" << std::endl;
+				std::string tmp = shader->fShaderCode;
+				uint loc = tmp.find("#define FRAGMENT_SHADER");
+
+				if (loc != std::string::npos)
+				{
+					tmp = tmp.substr(loc, tmp.size());
+				}
+
+				file << std::setw(5) << tmp << std::endl;
+
+				//file << std::setw(5) << "#endif" << std::endl;
+
+				file.close();
+
+				// --- Update meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(shader->GetOriginalFile());
+				jsonfile["FORMAT"] = format;
+				jsonfile["SIZE"] = buffer_size;
+
+				// --- Create Meta ---
+				if (!meta)
+					meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, shader->GetOriginalFile(), shader->GetUID());
+
+				// --- Add shader data to meta ---
+				if (meta)
+				{
+					meta->ResourceData = jsonfile;
+					IMeta->Save(meta);
+				}
+			}
+		}
+	
+		delete[] buffer;
+	}
+	else
+		ENGINE_CONSOLE_LOG("|[error]: Could not save Shader: %s, try compiling it first", shader->GetName());
 }
+
+

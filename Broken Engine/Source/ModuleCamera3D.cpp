@@ -86,7 +86,8 @@ update_status ModuleCamera3D::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleCamera3D::UpdateCamera() {
+void ModuleCamera3D::UpdateCamera()
+{
 	if (App->GetAppState() == AppState::EDITOR && App->gui->isSceneHovered) 
 	{
 		float3 newPos(0, 0, 0);
@@ -161,7 +162,7 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y) {
 
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 
-	ray.b = ray.a + ray.Dir() * camera->frustum.Pos().Length();
+	ray.b = ray.a + (ray.Dir()*camera->GetFarPlane()*2);
 
 	last_ray = ray;
 

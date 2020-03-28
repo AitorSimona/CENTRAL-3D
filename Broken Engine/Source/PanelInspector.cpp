@@ -72,7 +72,7 @@ bool PanelInspector::Draw()
 
 			static ImGuiComboFlags flags = 0;
 
-			const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
+			const char* items[] = { "Default", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
 			static const char* item_current = items[0];
 
 			ImGui::NewLine();
@@ -191,9 +191,14 @@ bool PanelInspector::Draw()
 
 			ImGui::Text(SelectedRes->GetName());
 
+			ImGui::EndChild();
+
+			ImGui::BeginChild("resdata", ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), false);
+
 			SelectedRes->CreateInspectorNode();
 
 			ImGui::EndChild();
+
 		}
 	}
 

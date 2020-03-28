@@ -49,6 +49,7 @@
 #include "ComponentImage.h"
 #include "ComponentText.h"
 #include "ComponentProgressBar.h"
+#include "ComponentLight.h"
 // --------------------------------
 
 // ---Importers and Resources------
@@ -72,10 +73,8 @@
 #include "ResourceModel.h"
 #include "ResourceScene.h"
 #include "ResourceMaterial.h"
-#include "ResourceShaderProgram.h"
 #include "ResourceMesh.h"
 #include "ResourceTexture.h"
-#include "ResourceShaderObject.h"
 #include "ResourceShader.h"
 #include "ResourceScript.h"
 #include "ResourceMeta.h"

@@ -8,7 +8,8 @@ class ResourceShader;
 class Resource;
 
 
-class BROKEN_API ImporterShader : public Importer {
+class BROKEN_API ImporterShader : public Importer 
+{
 
 public:
 	ImporterShader();
@@ -16,7 +17,7 @@ public:
 
 	Resource* Import(ImportData& IData) const override;
 
-	void Save(ResourceShader* shader, const char* path) const;
+	void Save(ResourceShader* shader) const;
 	Resource* Load(const char* path) const override;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Shader; };

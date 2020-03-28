@@ -9,8 +9,6 @@
 
 PanelToolbar::PanelToolbar(char * name) : Broken::Panel(name)
 {
-	EngineApp->gui->play_button = "PLAY";
-	EngineApp->gui->pause_button = "PAUSE";
 }
 
 PanelToolbar::~PanelToolbar()
@@ -26,15 +24,17 @@ bool PanelToolbar::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		if (ImGui::Button("TRANSLATE"))
+		if (ImGui::ImageButton((ImTextureID)EngineApp->gui->translateTexID, ImVec2(28, 28), ImVec2(0, 0), ImVec2(1, 1), 0))
 			EngineApp->editorui->panelScene->guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 		ImGui::SameLine();
+		ImGui::SetCursorPosX(38);
 
-		if (ImGui::Button("ROTATE"))
+		if (ImGui::ImageButton((ImTextureID)EngineApp->gui->rotateTexID, ImVec2(28, 28), ImVec2(0, 0), ImVec2(1, 1), 0))
 			EngineApp->editorui->panelScene->guizmoOperation = ImGuizmo::OPERATION::ROTATE;
 		ImGui::SameLine();
+		ImGui::SetCursorPosX(68);
 
-		if (ImGui::Button("SCALE"))
+		if (ImGui::ImageButton((ImTextureID)EngineApp->gui->scaleTexID, ImVec2(28, 28), ImVec2(0, 0), ImVec2(1, 1), 0))
 			EngineApp->editorui->panelScene->guizmoOperation = ImGuizmo::OPERATION::SCALE;
 		ImGui::SameLine();
 
@@ -42,53 +42,61 @@ bool PanelToolbar::Draw()
 
 		Broken::AppState app_status = EngineApp->GetAppState();
 
-		if(ImGui::Button(EngineApp->gui->play_button.c_str()))
+		// -- Play button
+		if (ImGui::ImageButton((ImTextureID)EngineApp->gui->toolbarPlayTexID, ImVec2(28, 28), ImVec2(0, 0), ImVec2(1, 1), 0))
 		{
-			if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE) {
-				EngineApp->GetAppState() = Broken::AppState::TO_EDITOR;
-				EngineApp->gui->play_button = "PLAY";
-				EngineApp->gui->pause_button = "PAUSE";
-			}
-			else {
+			if (app_status == Broken::AppState::EDITOR)
+			{
 				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
-				EngineApp->gui->play_button = "STOP";
 			}
+
+			if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE)
+			{
+				EngineApp->GetAppState() = Broken::AppState::TO_EDITOR;
+			}
+			
 		}
 		ImGui::SameLine();
+		
+		// -- Pause button
+		if (ImGui::ImageButton((ImTextureID)EngineApp->gui->toolbarPauseTexID, ImVec2(28, 28), ImVec2(0, 0), ImVec2(1, 1), 0))
+		{
+			if (app_status == Broken::AppState::PLAY)
+				EngineApp->GetAppState() = Broken::AppState::TO_PAUSE;
 
-		if (app_status != Broken::AppState::EDITOR && app_status != Broken::AppState::TO_EDITOR) {
-			if (ImGui::Button(EngineApp->gui->pause_button.c_str())) {
-				if (app_status == Broken::AppState::PLAY) {
-					EngineApp->GetAppState() = Broken::AppState::TO_PAUSE;
-					EngineApp->gui->pause_button = "PLAY";
-				}
-				else if (app_status == Broken::AppState::PAUSE) {
-					EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
-					EngineApp->gui->pause_button = "PAUSE";
-				}
+			if (app_status == Broken::AppState::PAUSE)
+				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
+		}
+		
+		ImGui::SameLine();
 
-			}
-			ImGui::SameLine();
-
-			if (app_status == Broken::AppState::PAUSE) {
-				if (ImGui::Button("STEP")) {
-					if (app_status == Broken::AppState::PAUSE)
-						EngineApp->GetAppState() = Broken::AppState::STEP;
-
-				}
-
-				ImGui::SameLine();
+		// -- Step button
+		if (ImGui::ImageButton((ImTextureID)EngineApp->gui->toolbarStepTexID, ImVec2(28, 28), ImVec2(0, 0), ImVec2(1, 1), 0))
+		{
+			if (app_status == Broken::AppState::PAUSE)
+			{
+				EngineApp->GetAppState() = Broken::AppState::STEP;
 			}
 		}
+
+		ImGui::SameLine();
+
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth()*0.05f);
 
 		float scale = EngineApp->time->GetTimeScale();
 
 		ImGui::DragFloat("Time Scale", &scale, 0.005f);
 
-
 		if(scale != EngineApp->time->GetTimeScale())
 			EngineApp->time->SetTimeScale(scale);
+
+		if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE || app_status == Broken::AppState::STEP)
+		{
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.7, 1.0, 1.0, 1.0), "Elapsed time: %.5f", EngineApp->time->GetGameplayTimePassed());
+		}
+		
+
 	}
 	ImGui::End();
 

@@ -111,6 +111,7 @@
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
+    <ClInclude Include="ComponentLight.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="ComponentParticleEmitter.h" />
@@ -272,8 +273,6 @@
     <ClInclude Include="ResourceScene.h" />
     <ClInclude Include="ResourceScript.h" />
     <ClInclude Include="ResourceShader.h" />
-    <ClInclude Include="ResourceShaderObject.h" />
-    <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
@@ -310,6 +309,7 @@
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
+    <ClCompile Include="ComponentLight.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="ComponentParticleEmitter.cpp" />
@@ -425,8 +425,6 @@
     <ClCompile Include="ResourceScene.cpp" />
     <ClCompile Include="ResourceScript.cpp" />
     <ClCompile Include="ResourceShader.cpp" />
-    <ClCompile Include="ResourceShaderObject.cpp" />
-    <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptingAudio.cpp" />

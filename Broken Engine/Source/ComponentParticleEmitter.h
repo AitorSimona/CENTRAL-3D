@@ -24,7 +24,7 @@ public:
 	void Disable() override;
 
 	void UpdateParticles(float dt);
-	void DrawParticles();
+	void DrawComponent() override;
 	void ChangeParticlesColor(float3 color);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::ParticleEmitter; };
