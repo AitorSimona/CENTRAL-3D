@@ -19,5 +19,6 @@
 #include "ComponentButton.h"
 #include "ComponentScript.h"
 #include "ComponentProgressBar.h"
+#include "ComponentLight.h"
 
 #endif // __COMPONENTS_H__

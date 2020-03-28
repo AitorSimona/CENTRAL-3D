@@ -30,6 +30,7 @@ public:
 		ParticleEmitter,
 		AudioSource,
 		AudioListener,
+		Light,
 		Unknown
 	};
 

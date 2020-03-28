@@ -51,12 +51,13 @@ bool ResourceShader::LoadInMemory()
 		if (ret)
 		{
 			// --- Create empty program ---
+			DeleteShaderProgram();
 			success = CreateShaderProgram();
 
 			if (!success)
 			{
 				glGetProgramInfoLog(ID, 512, NULL, infoLog);
-				ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 
 				glDeleteProgram(ID);
 			}
@@ -82,7 +83,7 @@ bool ResourceShader::LoadInMemory()
 				if (!success)
 				{
 					glGetProgramInfoLog(ID, 512, NULL, infoLog);
-					ENGINE_CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
+					ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not load binary shader, triggered recompilation %s", infoLog);
 
 					// --- Trigger recompilation ---
 					glDeleteProgram(ID);
@@ -130,7 +131,7 @@ bool ResourceShader::LoadInMemory()
 			if (!success) 
 			{
 				glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-				ENGINE_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
 			}
 	
 			success = CreateFragmentShader(fragment, fShaderCode.data());
@@ -138,7 +139,7 @@ bool ResourceShader::LoadInMemory()
 			if (!success) 
 			{
 				glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-				ENGINE_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
 			}
 	
 			success = CreateShaderProgram(vertex, fragment);
@@ -146,7 +147,7 @@ bool ResourceShader::LoadInMemory()
 			if (!success) 
 			{
 				glGetProgramInfoLog(ID, 512, NULL, infoLog);
-				ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 			}
 	
 			// delete the shaders as they're linked into our program now and no longer necessary
@@ -183,11 +184,11 @@ void ResourceShader::ReloadAndCompileShader()
 	if (!success) 
 	{
 		glGetShaderInfoLog(new_vertex, 512, NULL, infoLog);
-		ENGINE_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:Vertex Shader compilation error: %s", infoLog);
 		accumulated_errors++;
 	}
 	else
-		ENGINE_CONSOLE_LOG("Vertex Shader compiled successfully");
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("Vertex Shader compiled successfully");
 
 	// --- Compile new fragment shader ---
 
@@ -196,11 +197,11 @@ void ResourceShader::ReloadAndCompileShader()
 	if (!success) 
 	{
 		glGetShaderInfoLog(new_fragment, 512, NULL, infoLog);
-		ENGINE_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:Fragment Shader compilation error: %s", infoLog);
 		accumulated_errors++;
 	}
 	else
-		ENGINE_CONSOLE_LOG("Fragment Shader compiled successfully");
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("Fragment Shader compiled successfully");
 
 	if (accumulated_errors == 0) 
 	{
@@ -212,12 +213,20 @@ void ResourceShader::ReloadAndCompileShader()
 		glAttachShader(ID, new_vertex);
 		glAttachShader(ID, new_fragment);
 		glLinkProgram(ID);
+		//glValidateProgram(ID);
 		glGetProgramiv(ID, GL_LINK_STATUS, &success);
 
 		if (!success) 
 		{
-			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			ENGINE_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
+			GLint length;
+			glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &length);
+			std::vector<GLchar> message(length);
+			glGetProgramInfoLog(ID, length, &length, &message[0]);
+
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("Error in Shader Program Linking: %s", message.data());
+
+			//glGetProgramInfoLog(ID, 512, NULL, infoLog);
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:SHADER::PROGRAM::LINKING_FAILED: %s", infoLog);
 
 			// --- Detach new shader objects ---
 			glDetachShader(ID, new_vertex);
@@ -237,7 +246,7 @@ void ResourceShader::ReloadAndCompileShader()
 			vertex = new_vertex;
 			fragment = new_fragment;
 
-			ENGINE_CONSOLE_LOG("Shader Program linked successfully");
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("Shader Program linked successfully");
 		}
 	}
 	else 
@@ -269,7 +278,11 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 			|| strcmp(name, "projection") == 0
 			|| strcmp(name, "time") == 0
 			|| strcmp(name, "Color") == 0
-			|| strcmp(name, "Texture") == 0)
+			|| strcmp(name, "Texture") == 0
+			|| strcmp(name, "u_Shininess") == 0
+			|| strcmp(name, "u_LightsNumber") == 0
+			|| strcmp(name, "u_CameraPosition") == 0
+			|| std::string(name).find("u_BkLights") != std::string::npos)
 			continue;
 
 		Uniform* uniform = nullptr;
@@ -455,7 +468,7 @@ bool ResourceShader::LoadStream(const char* path)
 	}
 	catch (std::ifstream::failure e)
 	{
-		ENGINE_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]:SHADER:FILE_NOT_SUCCESFULLY_READ: %s", e.what());
 		ret = false;
 	}
 

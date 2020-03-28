@@ -8,13 +8,13 @@
 #include "ModuleUI.h"
 #include "ModuleParticles.h"
 
-
 #include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
 #include "ComponentAudioListener.h"
+#include "ComponentLight.h"
 #include "Component.h"
 #include "ComponentParticleEmitter.h"
 
@@ -168,6 +168,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
 
+	GLint camPosLoc = glGetUniformLocation(defaultShader->ID, "u_CameraPosition");
+	float3 camPos = App->renderer3D->active_camera->GetCameraPosition();
+	glUniform3f(camPosLoc, camPos.x, camPos.y, camPos.z);
+
 	// --- Bind fbo ---
     if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -201,6 +205,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 
 	App->ui_system->Draw();
 
+	std::vector<ComponentLight*>::iterator LightIterator = m_LightsVec.begin();
+	for (; LightIterator != m_LightsVec.end(); ++LightIterator)
+		(*LightIterator)->Draw();
+
 	// --- Selected Object Outlining ---
 	//#ifndef BE_GAME_BUILD
 	HandleObjectOutlining();
@@ -228,6 +236,8 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 bool ModuleRenderer3D::CleanUp()
 {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
+
+	m_LightsVec.clear();
 
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
@@ -258,7 +268,23 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 
 // ------------------------------ Setters --------------------------------------------------------
+void ModuleRenderer3D::AddLight(ComponentLight* light)
+{
+	if(light)
+		m_LightsVec.push_back(light);
+}
 
+void ModuleRenderer3D::PopLight(ComponentLight* light)
+{
+	if (light)
+	{
+		std::vector<ComponentLight*>::iterator it = std::find(m_LightsVec.begin(), m_LightsVec.end(), light);
+
+		if(it != m_LightsVec.end())
+			m_LightsVec.erase(it);
+	}
+		
+}
 
 bool ModuleRenderer3D::SetVSync(bool _vsync)
 {
@@ -708,6 +734,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader->ReloadAndCompileShader();
 	defaultShader->SetName("Standard");
 	defaultShader->LoadToMemory();
+	defaultShader->ReloadAndCompileShader();
 	IShader->Save(defaultShader);
 
 	defaultShader->use();
@@ -767,7 +794,6 @@ void ModuleRenderer3D::CreateGrid(float target_distance)
 
 void ModuleRenderer3D::DrawRenderMeshes()
 {
-
 	// --- Activate wireframe mode ---
 	if (wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -836,7 +862,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		glUniform1f(timeLoc, App->time->time);
 
 		int TextureSupportLocation = glGetUniformLocation(shader, "Texture"); // as of now, this is only on DefaultShader!
-		int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+		int vertexColorLocation = glGetUniformLocation(shader, "Color");
 
 		float farp = active_camera->GetFarPlane();
 		float nearp = active_camera->GetNearPlane();
@@ -859,8 +885,15 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		GLint projectLoc = glGetUniformLocation(shader, "projection");
 		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
+		uint defshID = defaultShader->ID;
+
 		//Send Color
 		glUniform3f(vertexColorLocation, colorToDraw.x, colorToDraw.y, colorToDraw.z);
+
+		//Send Lights
+		glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), m_LightsVec.size());
+		for (uint i = 0; i < m_LightsVec.size(); ++i)
+			m_LightsVec[i]->SendUniforms(shader, i);
 
 		if (mesh->flags & RenderMeshFlags_::wire)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -884,33 +917,26 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 					if (mesh->mat && mesh->mat->m_DiffuseResTexture)
 					{
 						glUniform3f(vertexColorLocation, mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
+						glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
 						glUniform1i(TextureSupportLocation, (int)mesh->mat->m_UseTexture);
+
 						glUniform1i(glGetUniformLocation(shader, "ourTexture"), 1);
 						glActiveTexture(GL_TEXTURE0 + 1);
 						glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
 
-						//if (mesh->mat->m_SpecularResTexture)
-						//{
-						//	glUniform1i(glGetUniformLocation(shader, "SpecText"), 2);
-						//	glActiveTexture(GL_TEXTURE0 + 2);
-						//	glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
-						//	//SpecText
-						//
-						//	//glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
-						//}
+						if (mesh->mat->m_SpecularResTexture)
+						{
+							glUniform1i(glGetUniformLocation(shader, "SpecText"), 2);
+							glActiveTexture(GL_TEXTURE0 + 2);
+							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
+						}
 					}
 					else
 						glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
-
-					//glActiveTexture(GL_TEXTURE2);
-					//if (mesh->mat && mesh->mat->m_SpecularResTexture)
-					//	glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
-					//else
-					//	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 				}
 			}
 			else
-				glUniform1i(TextureSupportLocation, 0);
+				glUniform1i(TextureSupportLocation, (int)false);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
 			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
@@ -929,7 +955,6 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		}
 
 		// --- Set uniforms back to defaults ---
-		glUniform1i(TextureSupportLocation, 0);
 		glUniform3f(vertexColorLocation, 255, 255, 255);
 	}
 
@@ -1069,7 +1094,7 @@ void ModuleRenderer3D::DrawGrid()
 	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
 
 	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureSupportLocation, 0);
+	glUniform1i(TextureSupportLocation, (int)false);
 
 	glLineWidth(1.7f);
 	glBindVertexArray(Grid_VAO);
@@ -1078,7 +1103,7 @@ void ModuleRenderer3D::DrawGrid()
 	glLineWidth(1.0f);
 
 	glUseProgram(0);
-	glUniform1i(TextureSupportLocation, 0);
+	glUniform1i(TextureSupportLocation, (int)false);
 }
 
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
