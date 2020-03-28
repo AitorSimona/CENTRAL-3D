@@ -127,6 +127,7 @@ bool ModuleSelection::IsSelected(GameObject* gameobject)
 	if (gameobject == nullptr) return false;
 
 	return gameobject->node_flags & 1;
+
 	/*for (int i = 0; i < selection.size(); i++)
 	{
 		if (selection[i] == gameobject)

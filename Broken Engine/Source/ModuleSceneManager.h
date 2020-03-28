@@ -93,8 +93,6 @@ private:
 
 private:
 	GameObject* CreateRootGameObject();
-	//GameObject* CreateRootSelectedGameObject();
-	void DrawScene();
 
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;

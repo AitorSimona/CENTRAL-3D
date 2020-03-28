@@ -954,7 +954,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 void ModuleRenderer3D::HandleObjectOutlining()
 {
 	// --- Selected Object Outlining ---
-	if (App->scene_manager->GetSelectedGameObject() != nullptr)
+	for (GameObject* obj : *App->selection->GetSelected())
 	{
 		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
 		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
@@ -964,20 +964,20 @@ void ModuleRenderer3D::HandleObjectOutlining()
 		glDisable(GL_DEPTH_TEST);
 
 		// --- Search for Renderer Component ---
-		ComponentMeshRenderer* MeshRenderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+		ComponentMeshRenderer* MeshRenderer = obj->GetComponent<ComponentMeshRenderer>();
 
 		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled() && App->scene_manager->GetSelectedGameObject()->GetActive())
+		if (MeshRenderer && MeshRenderer->IsEnabled() && obj->GetActive())
 		{
 			std::vector<RenderMesh> meshInstances;
 
-			ComponentMesh* cmesh = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMesh>();
-			ComponentMeshRenderer* cmesh_renderer = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentMeshRenderer>();
+			ComponentMesh* cmesh = obj->GetComponent<ComponentMesh>();
+			ComponentMeshRenderer* cmesh_renderer = obj->GetComponent<ComponentMeshRenderer>();
 			RenderMeshFlags flags = outline;
 
 			if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
 			{
-				meshInstances.push_back(RenderMesh(App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
+				meshInstances.push_back(RenderMesh(obj->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
 				DrawRenderMesh(meshInstances);
 			}
 		}

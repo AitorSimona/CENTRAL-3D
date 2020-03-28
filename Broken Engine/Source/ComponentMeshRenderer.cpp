@@ -12,7 +12,7 @@
 #include "ModuleTimeManager.h"
 #include "ModuleWindow.h"
 #include "ModuleResourceManager.h"
-
+#include "ModuleSelection.h"
 #include "ModuleFileSystem.h"
 
 #include "ResourceMesh.h"
@@ -64,7 +64,7 @@ void ComponentMeshRenderer::DrawComponent()
 
 	ComponentMesh* cmesh = GO->GetComponent<ComponentMesh>();
 
-	if (App->scene_manager->GetSelectedGameObject() && App->scene_manager->GetSelectedGameObject()->GetUID() == GO->GetUID())
+	if (App->selection->IsSelected(GO))
 		flags |= selected;
 
 	if (checkers)
