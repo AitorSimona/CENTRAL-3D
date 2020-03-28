@@ -52,6 +52,7 @@ bool ResourceShader::LoadInMemory()
 		{
 			// --- Create empty program ---
 			DeleteShaderProgram();
+
 			success = CreateShaderProgram();
 
 			if (!success)
@@ -115,6 +116,8 @@ bool ResourceShader::LoadInMemory()
 		// --- If no fs failure occurred... ---
 		if (ret) 
 		{
+			DeleteShaderProgram();
+
 			// --- Separate vertex and fragment ---
 			std::string ftag = "#define FRAGMENT_SHADER";
 			uint FragmentLoc = ShaderCode.find(ftag);
@@ -122,7 +125,7 @@ bool ResourceShader::LoadInMemory()
 			vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
 			fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
 	
-			//--- Compile shaders ---
+			// --- Compile shaders ---
 			int success = 0;
 			char infoLog[512];
 	
