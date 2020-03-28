@@ -101,6 +101,7 @@ Resource* ImporterMaterial::Load(const char* path) const
 	ResourceTexture* diffuse = nullptr;
 	ResourceTexture* specular = nullptr;
 	float3 matColor = float3(1.0f);
+	float matShine = 32.0f;
 
 	json file = App->GetJLoader()->Load(path);
 
@@ -126,6 +127,8 @@ Resource* ImporterMaterial::Load(const char* path) const
 		if (!file["AmbientColor"].is_null())
 			matColor = float3(file["AmbientColor"]["R"].get<float>(), file["AmbientColor"]["G"].get<float>(), file["AmbientColor"]["B"].get<float>());
 
+		if (!file["MaterialShininess"].is_null())
+			matShine = file["MaterialShininess"].get<float>();
 		//file["AmbientColor"]["R"] = mat->m_AmbientColor.x;
 		//file["AmbientColor"]["G"] = mat->m_AmbientColor.y;
 		//file["AmbientColor"]["B"] = mat->m_AmbientColor.z;
@@ -237,6 +240,8 @@ Resource* ImporterMaterial::Load(const char* path) const
 	}
 
 	mat->m_AmbientColor = matColor;
+	mat->m_Shininess = matShine;
+
 	if (diffuse)
 		mat->m_DiffuseResTexture = diffuse;	//mat->resource_diffuse->SetParent(mat);
 		
@@ -339,6 +344,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	file["AmbientColor"]["R"] = mat->m_AmbientColor.x;
 	file["AmbientColor"]["G"] = mat->m_AmbientColor.y;
 	file["AmbientColor"]["B"] = mat->m_AmbientColor.z;
+	file["MaterialShininess"] = mat->m_Shininess;
 
 	if (mat->m_DiffuseResTexture)
 		file["ResourceDiffuse"] = mat->m_DiffuseResTexture->GetOriginalFile();

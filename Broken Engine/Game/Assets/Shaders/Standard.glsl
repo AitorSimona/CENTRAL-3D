@@ -32,10 +32,30 @@ void main()
 #define FRAGMENT_SHADER 
 #ifdef FRAGMENT_SHADER 
 
+#define MAX_SHADER_LIGHTS 50
+
 //Uniforms
 uniform int Texture;
+uniform float u_Shininess;
 uniform sampler2D ourTexture;
 uniform sampler2D SpecText;
+
+//Light Uniforms
+struct BrokenLight
+{
+	vec3 dir;
+	vec3 pos;
+	vec3 color;
+
+	float intensity;
+
+	vec3 attenuationKLQ;
+	vec2 InOutCutoff;
+
+	int LightType;
+};
+
+uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS] = BrokenLight[MAX_SHADER_LIGHTS](BrokenLight(vec3(0.0), vec3(0.0), vec3(1.0), 0.5, vec3(1.0, 0.09, 0.032), vec2(12.5, 45.0), 2));
 
 //Input Variables (Varying)
 in vec3 v_Color;
@@ -58,6 +78,15 @@ void main()
 } 
 
 #endif //FRAGMENT_SHADER
+
+
+
+
+
+
+
+
+
 
 
 

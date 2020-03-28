@@ -14,10 +14,12 @@ class BROKEN_API ComponentLight : public Component
 {
 public:
 
-	ComponentLight(GameObject* ContainerGO);
-	~ComponentLight();
+	ComponentLight(GameObject* ContainerGO) : Component(ContainerGO, ComponentType::Light) {}
+	~ComponentLight() {}
 
 	void Update() override;
+	void SendUniforms(uint shader, uint shaderID, uint lightIndex);
+
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Light; };
 
 	// --- Save & Load ---
@@ -56,6 +58,10 @@ public:
 
 private:
 
+	const std::string GetLightUniform(uint lightIndex, const char* uniformArrayName);
+
+private:
+
 	// --- Light Data ---
 	float3 m_Direction = float3(0.0f);
 	float3 m_Color = float3(1.0f);
@@ -66,7 +72,9 @@ private:
 	float m_Intensity = 0.5f;
 
 	// --- Others ---
-	LightType m_LightType = LightType::NONE;	   
+	LightType m_LightType = LightType::NONE;	 
+
+	bool m_SetToZero = false;
 };
 
 BE_END_NAMESPACE

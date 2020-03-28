@@ -1,5 +1,5 @@
 #include "ComponentLight.h"
-//#include "ComponentTransform.h"
+#include "ComponentTransform.h"
 //#include "Application.h"
 #include "Imgui/imgui.h"
 
@@ -24,80 +24,114 @@ const std::string GetStringFromLightType(LightType type)
 	return ret;
 }
 
-ComponentLight::ComponentLight(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Light)
-{
-
-}
-
-ComponentLight::~ComponentLight()
-{
-}
 
 void ComponentLight::Update()
 {
+	ComponentTransform* trans = GetContainerGameObject()->GetComponent<ComponentTransform>();
+	if (trans)
+	{
+		float3 position = float3::zero, scale = float3::one;
+		Quat q = Quat::identity;
+		trans->GetGlobalTransform().Decompose(position, q, scale);
+
+		if (m_LightType == LightType::DIRECTIONAL)
+			m_Direction = position.Normalized();
+		else if (m_LightType == LightType::POINTLIGHT || m_LightType == LightType::SPOTLIGHT)
+		{
+			float3 orientation_vec = float3(2 * (q.x * q.z + q.w * q.y), 2 * (q.y * q.z - q.w * q.x), 1 - 2 * (q.x * q.x + q.y * q.y));
+			m_Direction = -orientation_vec;
+		}
+	}	
+	else
+		m_Direction = float3(0.0f);
 }
 
-json ComponentLight::Save() const
+
+void ComponentLight::SendUniforms(uint shader, uint shaderID, uint lightIndex)
 {
-	json node;
+	if ((!active || m_LightType == LightType::NONE || m_LightType == LightType::MAX_LIGHT_TYPES) && m_SetToZero)
+		return;
 
-	node["Active"] = this->active;
+	// ------------------ Passing Light Uniforms to Shader ------------------
+	// --- Light Uniform name + Index to string ---	
+	std::string light_index_str = GetLightUniform(lightIndex, "u_BkLights");
 
-	node["DirectionX"] = std::to_string(m_Direction.x);
-	node["DirectionY"] = std::to_string(m_Direction.y);
-	node["DirectionZ"] = std::to_string(m_Direction.z);
+	// --- Uniforms Location Collection ---
+	int dirLoc = glGetUniformLocation(shaderID, (light_index_str + ".dir").c_str());
+	int posLoc = glGetUniformLocation(shaderID, (light_index_str + ".pos").c_str());
+	int colorLoc = glGetUniformLocation(shaderID, (light_index_str + ".color").c_str());
+	int intensityLoc = glGetUniformLocation(shaderID, (light_index_str + ".intensity").c_str());
+	int attLoc = glGetUniformLocation(shaderID, (light_index_str + ".attenuationKLQ").c_str());
+	int cutoffLoc = glGetUniformLocation(shaderID, (light_index_str + ".InOutCutoff").c_str());
+	int LtypeLoc = glGetUniformLocation(shaderID, (light_index_str + ".LightType").c_str());
 
-	node["ColorR"] = std::to_string(m_Color.x);
-	node["ColorG"] = std::to_string(m_Color.y);
-	node["ColorB"] = std::to_string(m_Color.z);
+	
+	if ((!active || m_LightType == LightType::NONE || m_LightType == LightType::MAX_LIGHT_TYPES) && !m_SetToZero)
+	{
+		//Set uniforms to 0 and m_SetToZero to true (if the light doesn't has to light)
+		// --- Passing Position ---
+		glUniform3f(posLoc, 0.0f, 0.0f, 0.0f);
+		
+		// --- Passing Direction ---
+		glUniform3f(dirLoc, 0.0f, 0.0f, 0.0f);
 
-	node["AttenuationK"] = std::to_string(m_AttenuationKLQFactors.x);
-	node["AttenuationL"] = std::to_string(m_AttenuationKLQFactors.y);
-	node["AttenuationQ"] = std::to_string(m_AttenuationKLQFactors.z);
+		// --- Passing Color ---
+		glUniform3f(colorLoc, 0.0f, 0.0f, 0.0f);
 
-	node["InnerCutoff"] = std::to_string(m_InOutCutoffDegrees.x);
-	node["OuterCutoff"] = std::to_string(m_InOutCutoffDegrees.y);
+		// --- Passing Intensity & Light Type
+		glUniform1i(LtypeLoc, 0);
+		glUniform1f(intensityLoc, 0.0f);
 
-	node["Intensity"] = std::to_string(m_Intensity);
-	node["LightType"] = std::to_string((int)m_LightType);
+		// --- Passing Light Cutoff
+		glUniform2f(cutoffLoc, 0.0f, 0.0f);
 
-	return node;
+		// --- Passing Light Attenuation
+		glUniform3f(attLoc, 0.0f, 0.0f, 0.0f);
+
+		m_SetToZero = true;
+	}
+	else
+	{
+		//Set uniforms and m_SetToZero to false (if the light has to light)
+		// --- Passing Position ---
+		ComponentTransform* trans = GetContainerGameObject()->GetComponent<ComponentTransform>();
+		float3 pos = float3(0.0f);
+		if (trans)
+			pos = trans->GetPosition();
+
+		glUniform3f(posLoc, pos.x, pos.y, pos.z);
+
+		// --- Passing Direction ---
+		glUniform3f(dirLoc, m_Direction.x, m_Direction.y, m_Direction.z);
+
+		// --- Passing Color ---
+		glUniform3f(colorLoc, m_Color.x, m_Color.y, m_Color.z);
+
+		// --- Passing Intensity & Light Type
+		glUniform1i(LtypeLoc, (int)m_LightType);
+		glUniform1f(intensityLoc, m_Intensity);
+
+		// --- Passing Light Cutoff
+		glUniform2f(cutoffLoc, Cos(math::DegToRad(m_InOutCutoffDegrees.x)), Cos(math::DegToRad(m_InOutCutoffDegrees.y)));
+
+		// --- Passing Light Attenuation
+		glUniform3f(attLoc, m_AttenuationKLQFactors.x, m_AttenuationKLQFactors.y, m_AttenuationKLQFactors.z);
+
+		m_SetToZero = false;
+	}
 }
 
-void ComponentLight::Load(json& node)
+const std::string ComponentLight::GetLightUniform(uint lightIndex, const char* uniformArrayName)
 {
-	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
-
-	// --- Load Strings ---
-	std::string str_dirX = node["DirectionX"].is_null() ? "0" : node["DirectionX"];
-	std::string str_dirY = node["DirectionY"].is_null() ? "0" : node["DirectionY"];
-	std::string str_dirZ = node["DirectionZ"].is_null() ? "0" : node["DirectionZ"];
-
-	std::string str_colR = node["ColorR"].is_null() ? "1" : node["ColorR"];
-	std::string str_colG = node["ColorG"].is_null() ? "1" : node["ColorG"];
-	std::string str_colB = node["ColorB"].is_null() ? "1" : node["ColorB"];
-
-	std::string str_AttK = node["AttenuationK"].is_null() ? "1" : node["AttenuationK"];
-	std::string str_AttL = node["AttenuationL"].is_null() ? "0.09" : node["AttenuationL"];
-	std::string str_AttQ = node["AttenuationQ"].is_null() ? "0.032" : node["AttenuationQ"];
-
-	std::string str_inCut = node["InnerCutoff"].is_null() ? "12.5" : node["InnerCutoff"];
-	std::string str_outCut = node["OuterCutoff"].is_null() ? "45" : node["OuterCutoff"];
-
-	std::string str_intensity = node["Intensity"].is_null() ? "0.5" : node["Intensity"];	
-	std::string str_LType = node["LightType"].is_null() ? "1" : node["LightType"];
-
-	// --- Pass Strings to the needed Data Type
-	m_Direction =				float3(std::stof(str_dirX), std::stof(str_dirY), std::stof(str_dirZ));
-	m_Color =					float3(std::stof(str_colR), std::stof(str_colG), std::stof(str_colB));
-
-	m_AttenuationKLQFactors =	float3(std::stof(str_AttK), std::stof(str_AttL), std::stof(str_AttQ));
-	m_InOutCutoffDegrees =		float2(std::stof(str_inCut), std::stof(str_outCut));
-
-	m_Intensity =	std::stof(str_intensity);
-	m_LightType =	(LightType)(std::stoi(str_LType));
+	char light_index_chars[10];
+	sprintf(light_index_chars, "[%i]", lightIndex);
+	return (uniformArrayName + std::string(light_index_chars));
 }
 
+
+// -------------------------------------------------------------------------------------------
+// --------------------------------------- UI Inspector --------------------------------------
+// -------------------------------------------------------------------------------------------
 void ComponentLight::CreateInspectorNode()
 {
 	// --- Basic ---
@@ -145,7 +179,7 @@ void ComponentLight::CreateInspectorNode()
 		ImGui::Text("Intensity");
 		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 		ImGui::SetNextItemWidth(300.0f);
-		ImGui::SliderFloat("", &m_Intensity, 0.0f, 2.0f, "%.3f", 1.0f);
+		ImGui::SliderFloat("", &m_Intensity, 0.0f, 2.0f);
 		ImGui::NewLine();
 
 		// --- Cutoff ---
@@ -171,4 +205,69 @@ void ComponentLight::CreateInspectorNode()
 		// --- Tree End ---
 		ImGui::TreePop();
 	}
+}
+
+
+// -------------------------------------------------------------------------------------------
+// --------------------------------------- SAVE & LOAD ---------------------------------------
+// -------------------------------------------------------------------------------------------
+json ComponentLight::Save() const
+{
+	json node;
+
+	node["Active"] = this->active;
+
+	node["DirectionX"] = std::to_string(m_Direction.x);
+	node["DirectionY"] = std::to_string(m_Direction.y);
+	node["DirectionZ"] = std::to_string(m_Direction.z);
+
+	node["ColorR"] = std::to_string(m_Color.x);
+	node["ColorG"] = std::to_string(m_Color.y);
+	node["ColorB"] = std::to_string(m_Color.z);
+
+	node["AttenuationK"] = std::to_string(m_AttenuationKLQFactors.x);
+	node["AttenuationL"] = std::to_string(m_AttenuationKLQFactors.y);
+	node["AttenuationQ"] = std::to_string(m_AttenuationKLQFactors.z);
+
+	node["InnerCutoff"] = std::to_string(m_InOutCutoffDegrees.x);
+	node["OuterCutoff"] = std::to_string(m_InOutCutoffDegrees.y);
+
+	node["Intensity"] = std::to_string(m_Intensity);
+	node["LightType"] = std::to_string((int)m_LightType);
+
+	return node;
+}
+
+void ComponentLight::Load(json& node)
+{
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
+	// --- Load Strings ---
+	std::string str_dirX = node["DirectionX"].is_null() ? "0" : node["DirectionX"];
+	std::string str_dirY = node["DirectionY"].is_null() ? "0" : node["DirectionY"];
+	std::string str_dirZ = node["DirectionZ"].is_null() ? "0" : node["DirectionZ"];
+
+	std::string str_colR = node["ColorR"].is_null() ? "1" : node["ColorR"];
+	std::string str_colG = node["ColorG"].is_null() ? "1" : node["ColorG"];
+	std::string str_colB = node["ColorB"].is_null() ? "1" : node["ColorB"];
+
+	std::string str_AttK = node["AttenuationK"].is_null() ? "1" : node["AttenuationK"];
+	std::string str_AttL = node["AttenuationL"].is_null() ? "0.09" : node["AttenuationL"];
+	std::string str_AttQ = node["AttenuationQ"].is_null() ? "0.032" : node["AttenuationQ"];
+
+	std::string str_inCut = node["InnerCutoff"].is_null() ? "12.5" : node["InnerCutoff"];
+	std::string str_outCut = node["OuterCutoff"].is_null() ? "45" : node["OuterCutoff"];
+
+	std::string str_intensity = node["Intensity"].is_null() ? "0.5" : node["Intensity"];
+	std::string str_LType = node["LightType"].is_null() ? "1" : node["LightType"];
+
+	// --- Pass Strings to the needed Data Type
+	m_Direction = float3(std::stof(str_dirX), std::stof(str_dirY), std::stof(str_dirZ));
+	m_Color = float3(std::stof(str_colR), std::stof(str_colG), std::stof(str_colB));
+
+	m_AttenuationKLQFactors = float3(std::stof(str_AttK), std::stof(str_AttL), std::stof(str_AttQ));
+	m_InOutCutoffDegrees = float2(std::stof(str_inCut), std::stof(str_outCut));
+
+	m_Intensity = std::stof(str_intensity);
+	m_LightType = (LightType)(std::stoi(str_LType));
 }

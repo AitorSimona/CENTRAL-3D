@@ -8,7 +8,6 @@
 #include "ModuleUI.h"
 #include "ModuleParticles.h"
 
-
 #include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
@@ -755,7 +754,6 @@ void ModuleRenderer3D::CreateGrid(float target_distance)
 
 void ModuleRenderer3D::DrawRenderMeshes()
 {
-
 	// --- Activate wireframe mode ---
 	if (wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -872,6 +870,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 					if (mesh->mat && mesh->mat->m_DiffuseResTexture)
 					{
 						glUniform3f(vertexColorLocation, mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
+						glUniform1f(glGetUniformLocation(App->renderer3D->defaultShader->ID, "u_Shininess"), mesh->mat->m_Shininess);
 						glUniform1i(TextureSupportLocation, (int)mesh->mat->m_UseTexture);
 
 						glUniform1i(glGetUniformLocation(shader, "ourTexture"), 1);

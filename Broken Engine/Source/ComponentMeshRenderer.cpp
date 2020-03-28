@@ -267,7 +267,13 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			ImGui::Separator();
 			ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs);
 			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-			ImGui::Text("MatAmbientColor");
+			ImGui::Text("Ambient Color");
+
+			//Shininess
+			ImGui::Text("Shininess");
+			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
+			ImGui::SetNextItemWidth(300.0f);
+			ImGui::SliderFloat("", &material->m_Shininess, 0.00f, 500.00f);
 
 			//ImGui::Text("Shader Uniforms");
 
