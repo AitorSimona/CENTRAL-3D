@@ -1,16 +1,9 @@
 #include "Application.h"
 #include "GameObject.h"
-#include "ComponentTransform.h"
-#include "ComponentMesh.h"
-#include "ComponentMeshRenderer.h"
-#include "ComponentAnimation.h"
-#include "ComponentCamera.h"
-#include "ComponentBone.h"
-#include "ComponentCollider.h"
-#include "ComponentDynamicRigidBody.h"
-#include "ComponentParticleEmitter.h"
-#include "ComponentScript.h"
+#include "Components.h"
+
 #include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 #include "ComponentAudioListener.h"
 #include "ComponentAudioSource.h"
 #include "ComponentCanvas.h"
@@ -79,16 +72,27 @@ void GameObject::Update(float dt)
 	if (GetComponent<ComponentTransform>()->update_transform)
 		TransformGlobal(this);
 
-	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
-	{
-		(*it)->Update(dt);
-	}
-
 	for (int i = 0; i < components.size(); ++i)
 	{
 		if (components[i] && components[i]->GetActive())
 			components[i]->Update();
 	}
+
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		(*it)->Update(dt);
+	}
+}
+
+void GameObject::Draw()
+{
+	if (App->renderer3D->display_boundingboxes)
+		App->renderer3D->DrawAABB(GetAABB(), Green);
+
+	// --- Call components Draw ---
+	for (int i = 0; i < components.size(); ++i)
+		components[i]->DrawComponent();
+
 }
 
 void GameObject::RecursiveDelete()
@@ -184,7 +188,7 @@ void GameObject::RemoveChildGO(GameObject* GO)
 	}
 }
 
-Component* GameObject::GetComponentWithUID(uint UUID) 
+Component* GameObject::GetComponentWithUID(uint UUID)
 {
 	for (int i = 0; i < this->components.size(); ++i) {
 		if (this->components[i]->GetUID() == UUID)
@@ -358,12 +362,12 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 					delete components[index];
 					components[index] = nullptr;
 				}
-					
+
 				// --- Insert element at given index ---
 				components[index] = component;
 			}
 			// --- Else push back ---
-			else 
+			else
 				components.push_back(component);
 
 		}

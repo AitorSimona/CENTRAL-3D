@@ -71,7 +71,7 @@ bool PanelInspector::Draw()
 
 			static ImGuiComboFlags flags = 0;
 
-			const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
+			const char* items[] = { "Default", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
 			static const char* item_current = items[0];
 
 			ImGui::NewLine();
@@ -114,17 +114,7 @@ bool PanelInspector::Draw()
 			// --- Add here temporal conditions to know which component to add ---
 
 			// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
-
-			if (item_current == "Mesh")
-			{
-				Selected->AddComponent(Broken::Component::ComponentType::Mesh);
-			}
-
-			if (item_current == "Mesh Renderer")
-			{
-				Selected->AddComponent(Broken::Component::ComponentType::MeshRenderer);
-			}
-
+			
 			if (item_current == "UI Canvas")
 			{
 				Selected->AddComponent(Broken::Component::ComponentType::Canvas);
@@ -176,9 +166,14 @@ bool PanelInspector::Draw()
 
 			ImGui::Text(SelectedRes->GetName());
 
+			ImGui::EndChild();
+
+			ImGui::BeginChild("resdata", ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), false);
+
 			SelectedRes->CreateInspectorNode();
 
 			ImGui::EndChild();
+
 		}
 	}
 

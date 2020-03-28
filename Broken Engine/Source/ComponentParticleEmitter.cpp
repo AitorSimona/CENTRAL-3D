@@ -107,18 +107,19 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			physx::PxVec3* positionBuffer = new physx::PxVec3[newParticlesAmount];
 			physx::PxVec3* velocityBuffer = new physx::PxVec3[newParticlesAmount];
 
-			for (int i = 0; i < newParticlesAmount; ++i) {
-			velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
-											particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
-											particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
+			for (int i = 0; i < newParticlesAmount; ++i) 
+			{
+				velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
+												particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
+												particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
 
-			positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
-											globalPosition.y + GetRandomValue(-size.y,size.y),
-											globalPosition.z + GetRandomValue(-size.z,size.z)) };
+				positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
+												globalPosition.y + GetRandomValue(-size.y,size.y),
+												globalPosition.z + GetRandomValue(-size.z,size.z)) };
 
-			particles[index[i]]->lifeTime = particlesLifeTime;
-			particles[index[i]]->spawnTime = SDL_GetTicks();
-			particles[index[i]]->color = particlesColor/255.0f;
+				particles[index[i]]->lifeTime = particlesLifeTime;
+				particles[index[i]]->spawnTime = SDL_GetTicks();
+				particles[index[i]]->color = particlesColor;
 			}
 
 			creationData.indexBuffer = indexBuffer;
@@ -174,7 +175,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 	}
 }
 
-void ComponentParticleEmitter::DrawParticles()
+void ComponentParticleEmitter::DrawComponent()
 {
 	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
 	if (rd)
@@ -208,6 +209,8 @@ json ComponentParticleEmitter::Save() const
 {
 	json node;
 
+	node["Active"] = this->active;
+
 	node["sizeX"]=std::to_string(size.x);
 	node["sizeY"] = std::to_string(size.y);
 	node["sizeZ"] = std::to_string(size.z);
@@ -239,6 +242,8 @@ json ComponentParticleEmitter::Save() const
 
 void ComponentParticleEmitter::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	//load the strings
 	std::string Lsizex = node["sizeX"].is_null() ? "0" : node["sizeX"];
 	std::string Lsizey = node["sizeY"].is_null() ? "0" : node["sizeY"];

@@ -7,22 +7,32 @@
 #include "ResourceShader.h"
 
 BE_BEGIN_NAMESPACE
-class BROKEN_API ResourceMaterial : public Resource {
+class BROKEN_API ResourceMaterial : public Resource 
+{
 public:
 	ResourceMaterial(uint UID, const char* source_file);
 	~ResourceMaterial();
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
+	void CreateInspectorNode() override;
 
 	void UpdateUniforms();
+	void DisplayAndUpdateUniforms();
 
 public:
-	ResourceTexture* resource_diffuse = nullptr;
+
+	float3 m_AmbientColor = { 1.0f, 1.0f, 1.0f };
+	ResourceTexture* m_DiffuseResTexture = nullptr;
+	ResourceTexture* m_SpecularResTexture = nullptr;
+
+	bool m_UseTexture = true;
+
 	ResourceShader* shader = nullptr;
 	std::vector<Uniform*> uniforms;
 
 private:
+
 	void OnOverwrite() override;
 	void OnDelete() override;
 	void Repath() override;

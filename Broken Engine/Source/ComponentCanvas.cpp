@@ -39,73 +39,117 @@ void ComponentCanvas::Update()
 
 void ComponentCanvas::Draw() const
 {
-	// --- Draw elements inside canvas ---
-	for (int i = 0; i < elements.size(); i++)
+	if (this->active)
 	{
-		if (elements[i]->GetType() == Component::ComponentType::Canvas)
+		// --- Draw elements inside canvas ---
+		for (int i = 0; i < elements.size(); i++)
 		{
-			ComponentCanvas* canvas = (ComponentCanvas*)elements[i];
-			if (canvas->visible)
-				canvas->Draw();
-			continue;
+			if (elements[i]->GetType() == Component::ComponentType::Canvas)
+			{
+				ComponentCanvas* canvas = (ComponentCanvas*)elements[i];
+				if (canvas->visible && canvas->GetActive())
+					canvas->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Text)
+			{
+				ComponentText* text = (ComponentText*)elements[i];
+				if (text->visible && text->GetActive())
+					text->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Image)
+			{
+				ComponentImage* image = (ComponentImage*)elements[i];
+				if (image->visible && image->GetActive())
+					image->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Button)
+			{
+				ComponentButton* button = (ComponentButton*)elements[i];
+				if (button->visible && button->GetActive())
+					button->Draw();
+			}
+			//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
+			//{
+			//	CheckBox* elem = (CheckBox*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			//else if (elements[i]->GetType() == Component::ComponentType::InputText)
+			//{
+			//	InputText* elem = (InputText*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
+			{
+				ComponentProgressBar* bar = (ComponentProgressBar*)elements[i];
+				if (bar->visible && bar->GetActive())
+					bar->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Text)
+			{
+				ComponentText* text = (ComponentText*)elements[i];
+				if (text->visible)
+					text->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Image)
+			{
+				ComponentImage* image = (ComponentImage*)elements[i];
+				if (image->visible)
+					image->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Button)
+			{
+				ComponentButton* button = (ComponentButton*)elements[i];
+				if (button->visible)
+					button->Draw();
+			}
+			//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
+			//{
+			//	CheckBox* elem = (CheckBox*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			//else if (elements[i]->GetType() == Component::ComponentType::InputText)
+			//{
+			//	InputText* elem = (InputText*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
+			{
+				ComponentProgressBar* progressbar = (ComponentProgressBar*)elements[i];
+				if (progressbar->visible)
+					progressbar->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::CircularBar)
+			{
+				ComponentCircularBar* circularbar = (ComponentCircularBar*)elements[i];
+				if (circularbar->visible)
+					circularbar->Draw();
+				continue;
+			}
+			else
+				continue;
 		}
-		else if (elements[i]->GetType() == Component::ComponentType::Text)
-		{
-			ComponentText* text = (ComponentText*)elements[i];
-			if (text->visible)
-				text->Draw();
-			continue;
-		}
-		else if (elements[i]->GetType() == Component::ComponentType::Image)
-		{
-			ComponentImage* image = (ComponentImage*)elements[i];
-			if (image->visible)
-				image->Draw();
-			continue;
-		}
-		else if (elements[i]->GetType() == Component::ComponentType::Button)
-		{
-			ComponentButton* button = (ComponentButton*)elements[i];
-			if (button->visible) 
-				button->Draw();
-		}
-		//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
-		//{
-		//	CheckBox* elem = (CheckBox*)elements[i];
-		//	if (elem->visible) 
-		//		elem->Draw();
-		//	continue;
-		//}
-		//else if (elements[i]->GetType() == Component::ComponentType::InputText)
-		//{
-		//	InputText* elem = (InputText*)elements[i];
-		//	if (elem->visible) 
-		//		elem->Draw();
-		//	continue;
-		//}
-		else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
-		{
-			ComponentProgressBar* progressbar = (ComponentProgressBar*)elements[i];
-			if (progressbar->visible) 
-				progressbar->Draw();
-			continue;
-		}
-		else if (elements[i]->GetType() == Component::ComponentType::CircularBar)
-		{
-			ComponentCircularBar* circularbar = (ComponentCircularBar*)elements[i];
-			if (circularbar->visible)
-				circularbar->Draw();
-			continue;
-		}
-		else
-			continue;
 	}
 }
 
 json ComponentCanvas::Save() const
 {
 	json node;
-
+	node["Active"] = this->active;
 	node["visible"] = std::to_string(visible);
 
 	return node;
@@ -113,6 +157,7 @@ json ComponentCanvas::Save() const
 
 void ComponentCanvas::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
 	visible = bool(std::stoi(visible_str));
 }

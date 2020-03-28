@@ -38,7 +38,7 @@ void ComponentCollider::Update()
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
-void ComponentCollider::Draw() 
+void ComponentCollider::DrawComponent() 
 {
 	if (shape)
 	{
@@ -104,45 +104,12 @@ void ComponentCollider::Draw()
 		}
 	}
 
-		// --- Render shape ---
-		if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
-		{
-			// --- Use default shader ---
-			glUseProgram(App->renderer3D->defaultShader->ID);
-
-			// --- Set uniforms ---
-			GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-
-			//UpdateLocalMatrix();
-
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, globalMatrix.Transposed().ptr());
-
-			int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-			glUniform3f(vertexColorLocation, 125, 125, 125);
-
-			int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-			glUniform1i(TextureSupportLocation, -1);
-
-			// --- Bind mesh's vao ---
-			glBindVertexArray(mesh->VAO);
-
-			// --- Activate wireframe mode ---
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-			// --- bind indices buffer and draw ---
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
-			glDrawElements(GL_TRIANGLES, mesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
-
-			// --- Unbind mesh's vao ---
-			glBindVertexArray(0);
-
-			// --- DeActivate wireframe mode ---
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-			// --- Set uniforms back to defaults ---
-			glUniform1i(TextureSupportLocation, 0);
-			glUniform3f(vertexColorLocation, 255, 255, 255);
-		}
+	// --- Render shape ---
+	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices && App->GetAppState() != AppState::PLAY)
+	{
+		RenderMeshFlags flags = wire;
+		App->renderer3D->DrawMesh(globalMatrix, mesh, (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), false), nullptr, flags, Color(125,125,125));
+	}
 	
 }
 
@@ -244,6 +211,8 @@ json ComponentCollider::Save() const
 	ENGINE_CONSOLE_LOG("Saved");
 	json node;
 
+	node["Active"] = this->active;
+
 	int colliderType = 0;
 	switch (type)
 	{
@@ -315,6 +284,8 @@ json ComponentCollider::Save() const
 
 void ComponentCollider::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	ENGINE_CONSOLE_LOG("Load");
 	CreateCollider(COLLIDER_TYPE::NONE, true);
 

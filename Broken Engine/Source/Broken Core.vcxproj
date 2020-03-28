@@ -272,8 +272,6 @@
     <ClInclude Include="ResourceScene.h" />
     <ClInclude Include="ResourceScript.h" />
     <ClInclude Include="ResourceShader.h" />
-    <ClInclude Include="ResourceShaderObject.h" />
-    <ClInclude Include="ResourceShaderProgram.h" />
     <ClInclude Include="ResourceTexture.h" />
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
@@ -425,8 +423,6 @@
     <ClCompile Include="ResourceScene.cpp" />
     <ClCompile Include="ResourceScript.cpp" />
     <ClCompile Include="ResourceShader.cpp" />
-    <ClCompile Include="ResourceShaderObject.cpp" />
-    <ClCompile Include="ResourceShaderProgram.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptingAudio.cpp" />

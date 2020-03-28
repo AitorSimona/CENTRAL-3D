@@ -100,6 +100,8 @@ void ComponentImage::Draw()
 json ComponentImage::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+	node["visible"] = std::to_string(visible);
 
 	node["Resources"]["ResourceTexture"];
 
@@ -117,6 +119,10 @@ json ComponentImage::Save() const
 
 void ComponentImage::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
+	visible = bool(std::stoi(visible_str));
+
 	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));

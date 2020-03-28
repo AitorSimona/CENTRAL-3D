@@ -1,6 +1,7 @@
 #include "ScriptingSystem.h"
 #include "Application.h"
 #include "ModuleTimeManager.h"
+#include "ModuleGui.h"
 
 using namespace Broken;
 ScriptingSystem::ScriptingSystem() {}
@@ -23,6 +24,16 @@ float ScriptingSystem::GetDT() const {
 float ScriptingSystem::GameTime()
 {
 	return App->time->GetGameplayTimePassed();
+}
+
+void ScriptingSystem::PauseGame()
+{
+	App->time->gamePaused = true;
+}
+
+void ScriptingSystem::ResumeGame()
+{
+	App->time->gamePaused = false;
 }
 
 // MATHS -------------------------------------------------------------
