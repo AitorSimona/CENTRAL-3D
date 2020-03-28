@@ -311,10 +311,28 @@ void ComponentButton::CreateInspectorNode()
 		ImGui::Text("Size:    ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f);
+		if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
+		{
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width <= texture->Texture_height)
+					size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
+		}
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f);
+		if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
+		{
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width >= texture->Texture_height)
+					size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
+		}
 
 		// Position
 		ImGui::Text("Position:");
@@ -381,10 +399,16 @@ void ComponentButton::CreateInspectorNode()
 						texture->Release();
 
 					texture = (ResourceTexture*)App->resources->GetResource(UID);
+
+					if (resize && texture)
+						size2D = float2(texture->Texture_width, texture->Texture_height);
 				}
 			}
 			ImGui::EndDragDropTarget();
 		}
+
+		// Aspect Ratio
+		ImGui::Checkbox("Maintain Aspect Ratio", &resize);
 
 		// Script
 		ImGui::Separator();

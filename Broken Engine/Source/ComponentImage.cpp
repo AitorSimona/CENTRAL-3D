@@ -154,11 +154,29 @@ void ComponentImage::CreateInspectorNode()
 		ImGui::Text("Size:    ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f);
+		if (ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f) && resize)
+		{
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width <= texture->Texture_height)
+					size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
+		}
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f);
-
+		if (ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f) && resize)
+		{
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width >= texture->Texture_height)
+					size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
+		}
+		
 		// Position
 		ImGui::Text("Position:");
 		ImGui::SameLine();
@@ -199,19 +217,16 @@ void ComponentImage::CreateInspectorNode()
 						texture->Release();
 
 					texture = (ResourceTexture*)App->resources->GetResource(UID);
+
+					if (resize && texture)
+						size2D = float2(texture->Texture_width, texture->Texture_height);
 				}
 			}
 			ImGui::EndDragDropTarget();
 		}
 
-		// Aspect Ratio & Scale
+		// Aspect Ratio
 		ImGui::Checkbox("Maintain Aspect Ratio", &resize);
-		if (texture != nullptr && resize == true && (texture->Texture_height != 0 && texture->Texture_width != 0))
-			size2D = float2(texture->Texture_width, texture->Texture_height) * scale;
-		ImGui::Text("Scale:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##imagescale", &scale, 0.01f, 0.0f);
 
 		ImGui::Separator();
 		ImGui::Separator();
