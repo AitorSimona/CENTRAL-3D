@@ -265,7 +265,13 @@ void ModuleRenderer3D::AddLight(ComponentLight* light)
 void ModuleRenderer3D::PopLight(ComponentLight* light)
 {
 	if (light)
-		m_LightsVec.erase(std::find(m_LightsVec.begin(), m_LightsVec.end(), light));
+	{
+		std::vector<ComponentLight*>::iterator it = std::find(m_LightsVec.begin(), m_LightsVec.end(), light);
+
+		if(it != m_LightsVec.end())
+			m_LightsVec.erase(it);
+	}
+		
 }
 
 bool ModuleRenderer3D::SetVSync(bool _vsync)

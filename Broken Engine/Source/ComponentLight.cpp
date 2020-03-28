@@ -247,25 +247,31 @@ void ComponentLight::CreateInspectorNode()
 		ImGui::SliderFloat("", &m_Intensity, 0.0f, 2.0f);
 		ImGui::NewLine();
 
-		// --- Cutoff ---
-		ImGui::Separator(); ImGui::NewLine();
-		ImGui::Text("Inner Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, m_InOutCutoffDegrees.y - 0.01f);
-		ImGui::Text("Outer Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.01f, m_InOutCutoffDegrees.x + 0.01f, 360.00f);
-		ImGui::NewLine();
+		if (m_LightType == LightType::SPOTLIGHT)
+		{
+			// --- Cutoff ---
+			ImGui::Separator(); ImGui::NewLine();
+			ImGui::Text("Inner Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, m_InOutCutoffDegrees.y - 0.01f);
+			ImGui::Text("Outer Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.01f, m_InOutCutoffDegrees.x + 0.01f, 360.00f);
+			ImGui::NewLine();
+		}
 
-		// --- Attenuation ---	
-		ImGui::Separator(); ImGui::NewLine();
-		ImGui::Text("Constant Attenuation Value (K):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##AttK", &m_AttenuationKLQFactors.x, 0.001f, 0.000f, 2.0f);
-		ImGui::Text("Linear Attenuation Value (L):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##AttL", &m_AttenuationKLQFactors.y, 0.001f, 0.000f, 2.0f);
-		ImGui::Text("Quadratic Attenuation Value (Q):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##AttQ", &m_AttenuationKLQFactors.z, 0.00001f, 0.000000f, 2.0f, "%.5f");
+		if (m_LightType == LightType::SPOTLIGHT || m_LightType == LightType::POINTLIGHT)
+		{
+			// --- Attenuation ---	
+			ImGui::Separator(); ImGui::NewLine();
+			ImGui::Text("Constant Attenuation Value (K):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##AttK", &m_AttenuationKLQFactors.x, 0.001f, 0.000f, 2.0f);
+			ImGui::Text("Linear Attenuation Value (L):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##AttL", &m_AttenuationKLQFactors.y, 0.001f, 0.000f, 2.0f);
+			ImGui::Text("Quadratic Attenuation Value (Q):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##AttQ", &m_AttenuationKLQFactors.z, 0.00001f, 0.000000f, 2.0f, "%.5f");
 
-		if (ImGui::Button("Default", { 57, 18 }))
-			m_AttenuationKLQFactors = float3(1.0f, 0.09f, 0.032f);
+			if (ImGui::Button("Default", { 57, 18 }))
+				m_AttenuationKLQFactors = float3(1.0f, 0.09f, 0.032f);
+		}
 
 		// --- Tree End ---
 		ImGui::TreePop();
