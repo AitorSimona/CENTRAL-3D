@@ -12,6 +12,7 @@ class ComponentCamera;
 class ResourceShader;
 class ResourceMesh;
 class ResourceMaterial;
+class ComponentLight;
 class math::float4x4;
 
 typedef int RenderMeshFlags;
@@ -87,6 +88,10 @@ public:
 	// --- Getters ---
 	bool GetVSync() const;
 
+	// --- To Add Lights ---
+	void AddLight(ComponentLight* light);
+	void PopLight(ComponentLight* light);
+
 	// --- Render orders --- // Deformable mesh is Temporal!
 	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
 	void DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color);
@@ -159,6 +164,9 @@ private:
 	std::vector<RenderBox<AABB>> render_aabbs;
 	std::vector<RenderBox<Frustum>> render_frustums;
 	std::vector<RenderLine> render_lines;
+
+	//Lights vector
+	std::vector<ComponentLight*> m_LightsVec;
 
 	uint fbo = 0;
 	uint depthbuffer = 0;

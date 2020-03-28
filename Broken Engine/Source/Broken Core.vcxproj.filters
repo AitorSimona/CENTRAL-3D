@@ -675,6 +675,9 @@
     <ClInclude Include="ComponentProgressBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentLight.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1117,6 +1120,9 @@
     </ClCompile>
     <ClCompile Include="ComponentProgressBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentLight.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
