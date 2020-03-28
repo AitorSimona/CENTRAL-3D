@@ -49,10 +49,36 @@ void main()
 	if(Texture == 0)
 		out_color = vec4(v_Color, 1.0);
 	else
-		out_color = texture(ourTexture, v_TexCoord) * vec4(v_Color, 1.0); // * texture(SpecText, v_TexCoord)
+	{
+		vec4 textureRes = texture(ourTexture, v_TexCoord) + texture(SpecText, v_TexCoord);
+		out_color = textureRes + vec4(v_Color, 1.0)*texture(ourTexture, v_TexCoord);
+
+		//out_color = texture(ourTexture, v_TexCoord) * vec4(v_Color, 1.0) + texture(SpecText, v_TexCoord);
+	}
 } 
 
 #endif //FRAGMENT_SHADER
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
