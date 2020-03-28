@@ -3,7 +3,14 @@
 
 #include "Module.h"
 #include "GameObject.h"
-#include "Imgui/imgui.h"
+//#include "Imgui/imgui.h"
+
+/*
+	I use this to not include the whole library of imgui
+	ImGuiTreeNodeFlags_Selected 1
+	ImGuiTreeNodeFlags_OpenOnArrow 128
+	ImGuiTreeNodeFlags_SpanAvailWidth 2048
+*/
 
 /* CHANGE LIST
 	- Added ModuleSelection to manage selection
@@ -18,6 +25,9 @@
 		- Be deleted at once
 
 */
+
+
+
 BE_BEGIN_NAMESPACE
 // SELECTED TODO
 
@@ -32,6 +42,7 @@ public:
 	bool CleanUp();
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
+	void SelectIfIntersects();
 	update_status PostUpdate(float dt);
 
 public:
@@ -44,29 +55,31 @@ public:
 
 	void ClearSelection();
 
+	const std::vector<GameObject*>* GetSelected() const { return &selection; }
+
+private:
+
 	void Select(GameObject* gameobject);
 
 	void SelectLastTo(GameObject* gameobject);
 
 	void SelectRecursive(GameObject* gameobject, GameObject* from, GameObject* to);
 
-
 	void UnSelect(GameObject* gameobject);
 
 	bool ToggleSelect(GameObject* gameobject);
 
-	const std::vector<GameObject*>* GetSelected() const { 
-		return &selection; 
-	}
 
 private:
 	bool start_selecting = false;
 	bool stop_selecting = false;
 
+	bool aabb_selection = false;
 	std::vector<GameObject*> selection;
 	
 	GameObject* root = nullptr;
 
+	AABB aabb;
 	// --- Set node flags ---
 	//ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 	//ImGuiTreeNodeFlags node_flags = base_flags;

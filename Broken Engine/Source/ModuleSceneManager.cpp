@@ -329,16 +329,8 @@ void ModuleSceneManager::DrawScene()
 					// --- Search for Renderer Component ---
 					ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
 					// SELECTED TODO
-					/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
-					{
-						if ((*it).second == (*selit))
-						{
-							glStencilFunc(GL_ALWAYS, 1, 0xFF);
-							glStencilMask(0xFF);
-							break;
-						}
-					}*/
-					if (App->selection->IsSelected((*it).second))
+					bool selected = App->selection->IsSelected((*it).second);
+					if (selected)
 					{
 						glStencilFunc(GL_ALWAYS, 1, 0xFF);
 						glStencilMask(0xFF);
@@ -348,20 +340,7 @@ void ModuleSceneManager::DrawScene()
 					if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
 						MeshRenderer->Draw();
 					// SELECTED TODO
-
-					/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
-					{
-						if ((*it).second == (*selit))
-						{
-							glStencilMask(0x00);
-							break;
-						}
-					}*/
-					/*if (SelectedGameObject == (*it).second)
-					{
-						glStencilMask(0x00);
-					}*/
-					if (App->selection->IsSelected((*it).second))
+					if (selected)
 					{
 						glStencilMask(0x00);
 					}
@@ -376,21 +355,8 @@ void ModuleSceneManager::DrawScene()
 			// --- Search for Renderer Component ---
 			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
 
-			/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
-			{
-				if ((*it) == (*selit))
-				{
-					glStencilFunc(GL_ALWAYS, 1, 0xFF);
-					glStencilMask(0xFF);
-					break;
-				}
-			}*/
-			/*if (SelectedGameObject == (*it))
-			{
-				glStencilFunc(GL_ALWAYS, 1, 0xFF);
-				glStencilMask(0xFF);
-			}*/
-			if (App->selection->IsSelected(*it))
+			bool selected = App->selection->IsSelected(*it);
+			if (selected)
 			{
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
@@ -404,20 +370,7 @@ void ModuleSceneManager::DrawScene()
 			if (C_Bone)
 				C_Bone->DebugDrawBones();
 			// SELECTED TODO
-			/*for (std::vector<GameObject*>::iterator selit = App->scene_manager->selected_gameobjects.begin(); selit != App->scene_manager->selected_gameobjects.end(); selit++)
-			{
-				if ((*it) == (*selit))
-				{
-					glStencilMask(0x00);
-					break;
-				}
-			}*/
-
-			/*if (SelectedGameObject == (*it))
-			{
-				glStencilMask(0x00);
-			}*/
-			if (App->selection->IsSelected(*it))
+			if (selected)
 			{
 				glStencilMask(0x00);
 			}
@@ -606,7 +559,7 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 		// --- Set Selected ---
 		//if (toSelect)
 		// RAYCAST SELECTION
-		App->selection->Select(toSelect);
+		App->selection->HandleSelection(toSelect);
 		//SetSelectedGameObject(toSelect);
 	}
 }
