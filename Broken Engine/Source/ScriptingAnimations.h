@@ -14,6 +14,8 @@ public:
 	void SetAnimSpeed(const char* name, float speed);
 	void SetCurrentAnimSpeed(float speed);
 
+	void SetBlendTime(float value);
+
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGANIMATIONS_H__

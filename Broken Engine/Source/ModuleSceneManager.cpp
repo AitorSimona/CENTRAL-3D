@@ -57,7 +57,7 @@ void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
 		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
 		{
 			ComponentButton* button = (ComponentButton*)obj->HasComponent(Component::ComponentType::Button); //single component (change when able to have multiple components of same type)
-			if (button->script_obj->GetUID() == e.go->GetUID())
+			if (button->script_obj != nullptr && button->script_obj->GetUID() == e.go->GetUID())
 			{
 				button->SetNullptr();
 			}
@@ -767,7 +767,9 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 	//App->physics->DeleteActors(go);
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
+
 	delete go;
+	go = nullptr;
 	this->go_count--;
 }
 

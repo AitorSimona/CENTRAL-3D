@@ -48,21 +48,30 @@ void ModuleTimeManager::PrepareUpdate() {
 			break;
 
 		case AppState::PLAY:
-			//App->scene_manager->SetSelectedGameObject(nullptr);
-			game_dt *= Time_scale;
-			gametime_passed += game_dt;
+			if (gamePaused) 
+			{
+				time -= realtime_dt;
+				game_dt = 0.0f;
+			}
+			else 
+			{
+				//App->scene_manager->SetSelectedGameObject(nullptr);
+				game_dt *= Time_scale;
+				gametime_passed += game_dt;
+			}
+
 			break;
 
-	case AppState::TO_PAUSE:
-		App->GetAppState() = AppState::PAUSE;
-		ENGINE_CONSOLE_LOG("APP STATE PAUSE");
+		case AppState::TO_PAUSE:
+			App->GetAppState() = AppState::PAUSE;
+			ENGINE_CONSOLE_LOG("APP STATE PAUSE");
 
 		break;
 
-	case AppState::PAUSE:
-		time -= realtime_dt;
-		game_dt = 0.0f;
-		break;
+		case AppState::PAUSE:
+			time -= realtime_dt;
+			game_dt = 0.0f;
+			break;
 
 		case AppState::TO_EDITOR:
 			App->physics->DeleteActors();
