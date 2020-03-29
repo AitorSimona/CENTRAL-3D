@@ -19,6 +19,7 @@
 #include "PhysX_3.4/Include/foundation/PxAllocatorCallback.h"
 #include "PhysX_3.4/Include/PxQueryReport.h"
 #include "PhysX_3.4/Include/PxVolumeCache.h"
+#include "PhysX_3.4/Include/PxQueryFiltering.h"
 
 #ifndef _DEBUG
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CHECKED_x86.lib")
@@ -183,7 +184,6 @@ bool ModulePhysics::Init(json& config)
 	//PlaneCollider(0, 0, 0);
 
 	cache = mScene->createVolumeCache(32, 8);
-	cache->setMaxNbStaticShapes(64); cache->setMaxNbDynamicShapes(16);
 
 	return true;
 }
@@ -366,19 +366,51 @@ void ModulePhysics::DeleteActors(GameObject* go)
 
 void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer)
 {
-	physx::PxOverlapHit hit[MAX_HITS];
-	physx::PxOverlapBuffer hit_buffer(hit, MAX_HITS);       // [out] Overlap results
+	std::vector<GameObject*> objects;
+	detected_objects = &objects;
+
+	physx::PxOverlapHit hit[100];
+	physx::PxOverlapBuffer hit_buffer(hit,100);       // [out] Overlap results
 	const physx::PxSphereGeometry overlapShape(radius);			// [in] shape to test for overlaps
 	const physx::PxTransform shapePose = physx::PxTransform(position.x, position.y, position.z);    // [in] initial shape pose (at distance=0)
 
+	cache->fill(overlapShape, shapePose);
+
 	physx::PxQueryFilterData filterData;
-	filterData.data.word0 = layer_list.at(0).LayerGroup;
+	filterData.data.word0 = App->physics->layer_list.at((int)layer).LayerGroup;
+	filterData.flags |= physx::PxQueryFlag::eNO_BLOCK;
 
-	bool status = cache->overlap(overlapShape, shapePose, hit_buffer);
+	bool status = cache->overlap(overlapShape, shapePose, hit_buffer, filterData);
 
-	if (status) {
-		ENGINE_CONSOLE_LOG("Inside: %i", hit_buffer.getNbTouches());
+	if (cache->getNbCachedShapes() > 0) {//DETECT CCT
+		iter.layer = layer;
+		cache->forEach((physx::PxVolumeCache::Iterator&)iter);
 	}
 
+	ENGINE_CONSOLE_LOG("DETECETED: %i", detected_objects->size());
+	detected_objects = nullptr;
+}
 
+void UserIterator::processShapes(physx::PxU32 count, const physx::PxActorShape* actorShapePairs)
+{
+	int i = 0;
+	for (physx::PxU32 i = 0; i < count; i++) {
+		physx::PxRigidActor* actor = actorShapePairs[i].shape->getActor();
+
+		if (!actor) {
+			actor = actorShapePairs[i].actor;
+			if (!actor) {
+				continue;
+			}
+		}
+
+		GameObject* GO = App->physics->actors[actor];
+		if (GO) {
+			if (layer == GO->layer) {
+				if(App->physics->detected_objects)
+					App->physics->detected_objects->push_back(GO);
+			}
+		}
+
+	}
 }

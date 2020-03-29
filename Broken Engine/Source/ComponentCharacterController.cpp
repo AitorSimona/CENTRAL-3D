@@ -38,11 +38,8 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	desc = &capsuleDesc;
 	
 	controller = App->physics->mControllerManager->createController(*desc);
-
-	/*physx::PxTransform pose(controller->getPosition().x, controller->getPosition().y, controller->getPosition().z);
-	App->physics->cache->fill(physx::PxCapsuleGeometry(capsuleDesc.radius, capsuleDesc.height / 2), pose);*/
 	
-	App->physics->mScene->addActor(*controller->getActor());
+	App->physics->addActor(controller->getActor(),GO);
 	initialPosition = capsuleDesc.position;
 
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCharacterController");
@@ -156,8 +153,12 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 	vel.z = velZ;
 
 	physx::PxFilterData filterData;
-	filterData.word0 = App->physics->layer_list.at(GO->layer).LayerGroup; // layers that will collide
-	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), physx::PxControllerFilters(&filterData,0,0));
+	filterData.word0 = App->physics->layer_list.at((int)GO->layer).LayerGroup; // layers that will collide
+	
+	physx::PxControllerFilters controllerFilter(&filterData, 0, 0);
+
+	
+	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), controllerFilter);
 }
 
 void ComponentCharacterController::Delete()
@@ -333,3 +334,4 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 {
 	return physx::PxControllerBehaviorFlags(0);
 }
+

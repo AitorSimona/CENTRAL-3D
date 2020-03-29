@@ -1,8 +1,10 @@
 #ifndef MODULE_PHYSICS_H_
 #define MODULE_PHYSICS_H_
 #include "Module.h"
+#include "PhysX_3.4/Include/PxVolumeCache.h"
 
 #include "Math.h"
+
 namespace physx
 {
 	class PxPvd;
@@ -16,8 +18,10 @@ namespace physx
 	class PxRigidActor;
 	class PxVolumeCache;
 	class PxSimulationEventCallback;
-	typedef uint32_t PxU32;
+	class PxActorShape;
+	class PxQueryFilterCallback;
 
+	typedef uint32_t PxU32;
 	const float fixed_dt = (1.0f / 60.0f);
 };
 
@@ -52,8 +56,16 @@ struct Layer {
 				ID |= (1 << i);
 		}
 		LayerGroup = ID;
+		
 	}
 
+};
+
+struct BROKEN_API UserIterator : physx::PxVolumeCache::Iterator
+{
+	virtual void processShapes(physx::PxU32 count, const physx::PxActorShape* actorShapePairs);
+
+	LayerMask layer; 
 };
 
 BE_BEGIN_NAMESPACE
@@ -106,11 +118,12 @@ public:
 	physx::PxRigidStatic* plane = nullptr;
 	std::vector<Layer> layer_list;
 	std::map<physx::PxRigidActor*, GameObject*> actors;
+	std::vector<GameObject*>* detected_objects;
 
 	physx::PxVolumeCache* cache;
+	UserIterator iter;
 
 private:
-
 	PhysxSimulationEvents* simulationEventsCallback = nullptr;
 	float physAccumulatedTime = 0.0f;
 };
