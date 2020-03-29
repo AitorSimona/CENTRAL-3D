@@ -55,6 +55,8 @@ public:
 
 	void ClearSelection();
 
+	bool ComponentCanBePasted();
+
 	const std::vector<GameObject*>* GetSelected() const { return &selection; }
 
 	// Component management
@@ -64,9 +66,11 @@ public:
 
 	void PasteComponentValuesToSelected();
 
+	void DeleteComponentToSelected();
 
 
 private:
+
 
 	void Select(GameObject* gameobject);
 

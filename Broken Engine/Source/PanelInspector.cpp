@@ -76,34 +76,36 @@ bool PanelInspector::Draw()
 						a = "ComponentOptions"; 
 						ImGui::SameLine();
 						if (ImGui::SmallButton("..."))
-						{
-
 							ImGui::OpenPopup("Component options");
-						}
-						//ImGui::SetNextItemOpen(true);
+
 						if (ImGui::BeginPopup("Component options")) 
 						{
-							/*if ( ImGui::BeginMenu( "Component Options Menu" )   )
-							{*/
+							bool dummy = false;
+							if (ImGui::MenuItem("Delete component")) 
+							{
+								(*it)->to_delete = true;
+							}
+							if (ImGui::MenuItem("Copy values"))
+							{
+								EngineApp->selection->CopyComponentValues((*it));
+							}
+							if (ImGui::MenuItem("Paste values","",&dummy,EngineApp->selection->ComponentCanBePasted()))
+							{
+								EngineApp->selection->PasteComponentValues((*it));
+							}
+							if (ImGui::MenuItem("Paste values to all selected", "", &dummy, EngineApp->selection->ComponentCanBePasted()))
+							{
+								EngineApp->selection->PasteComponentValuesToSelected();
+							}
+							if (ImGui::BeginMenu("Delete component to all selected"))
+							{
+								if (ImGui::MenuItem("Confirm delete")) 
+								{
+									EngineApp->selection->DeleteComponentToSelected();
 
-								if (ImGui::MenuItem("Delete component")) 
-								{
-									(*it)->to_delete = true;
 								}
-								if (ImGui::MenuItem("Copy values"))
-								{
-									EngineApp->selection->CopyComponentValues((*it));
-								}
-								if (ImGui::MenuItem("Paste values"))
-								{
-									EngineApp->selection->PasteComponentValues((*it));
-								}
-								if (ImGui::MenuItem("Paste values to all selected"))
-								{
-									EngineApp->selection->PasteComponentValuesToSelected();
-								}
-								//ImGui::EndMenu();
-							//}
+								ImGui::EndMenu();
+							}
 							ImGui::EndPopup();
 						}
 						

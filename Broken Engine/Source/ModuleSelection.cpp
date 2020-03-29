@@ -175,7 +175,10 @@ void ModuleSelection::ClearSelection()
 	}
 	selection.clear();
 }
-
+bool ModuleSelection::ComponentCanBePasted()
+{
+	return (component_type != Component::ComponentType::Unknown);
+}
 void ModuleSelection::CopyComponentValues(Component* component)
 {
 	component_type = component->GetType();
@@ -198,6 +201,15 @@ void ModuleSelection::PasteComponentValuesToSelected()
 	}
 }
 
+void ModuleSelection::DeleteComponentToSelected()
+{
+	for (GameObject* obj : selection)
+	{
+		if (Component * component = obj->HasComponent(component_type))
+			component->to_delete = true;
+	}
+
+}
 void ModuleSelection::Select(GameObject* gameobject)
 {
 	if (gameobject == nullptr)
