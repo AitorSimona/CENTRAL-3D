@@ -754,6 +754,11 @@ void ComponentParticleEmitter::Play()
 	spawnClock = emisionStart;
 }
 
+void ComponentParticleEmitter::Stop()
+{
+	emisionActive = false;
+}
+
 void ComponentParticleEmitter::SetLooping(bool active)
 {
 	loop = active;

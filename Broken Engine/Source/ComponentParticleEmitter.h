@@ -39,6 +39,7 @@ public:
 
 	//Scripting functions
 	void Play();
+	void Stop();
 	void SetEmisionRate(float ms);
 	void SetParticlesPerCreation(int particlesAmount);
 	void SetExternalAcceleration(float x, float y, float z);
