@@ -39,7 +39,7 @@ Resource* ImporterShader::Import(ImportData& IData) const
 		IMeta->Save(meta);
 
 
-	shader->ReloadAndCompileShader();
+	shader->LoadInMemory();
 	Save(shader);
 
 	return shader;
