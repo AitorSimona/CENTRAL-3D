@@ -67,13 +67,8 @@ void ComponentButton::Draw()
 	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D*0.01f, 1.0f));
 
 	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->defaultShader->ID);
-
-	// color tint
-	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, 1);
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+	uint shaderID = App->renderer3D->defaultShader->ID;
+	glUseProgram(shaderID);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
@@ -94,14 +89,24 @@ void ComponentButton::Draw()
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
+	// --- Color & Texturing ---
+	GLint vertexColorLocation = glGetUniformLocation(shaderID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+
+	int TextureLocation = glGetUniformLocation(shaderID, "Texture");
+	glUniform1i(TextureLocation, 1);
+
+	glUniform1i(glGetUniformLocation(shaderID, "ourTexture"), 1);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
-
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 	 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
+	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 

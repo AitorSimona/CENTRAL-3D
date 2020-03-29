@@ -67,14 +67,6 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
-	// color tint
-	
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
-
-	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, -1);
-
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
@@ -89,16 +81,24 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-
 	// --- Draw plane with given texture ---
-	glBindVertexArray(App->scene_manager->plane->VAO);
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
-	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID()); //***Change if you want to have a custom texture
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, 0);
+
+	glUniform1i(glGetUniformLocation(App->renderer3D->defaultShader->ID, "ourTexture"), 1);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+
+	//Draw
+	glBindVertexArray(App->scene_manager->plane->VAO);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
@@ -108,7 +108,7 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	
 	// --- Set uniforms back to defaults ---
 	glUniform1i(TextureLocation, 0);
-	glUniform3f(vertexColorLocation, 255, 255, 255);
+	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
 }
 
 json ComponentProgressBar::Save() const

@@ -57,17 +57,13 @@ void ComponentImage::Draw()
 	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	uint shaderID = App->renderer3D->defaultShader->ID;
+	glUseProgram(shaderID);
 
-	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, 1);
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
-
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(shaderID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(shaderID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
@@ -78,19 +74,28 @@ void ComponentImage::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(shaderID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+	// --- Color & Texturing ---
+	int TextureLocation = glGetUniformLocation(shaderID, "Texture");
+	glUniform1i(TextureLocation, 1);
+	GLint vertexColorLocation = glGetUniformLocation(shaderID, "Color");
+	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+
+	glUniform1i(glGetUniformLocation(shaderID, "ourTexture"), 1);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
 
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
+	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 }
