@@ -15,6 +15,7 @@ class PanelShaderEditor;
 class PanelResources;
 class PanelBuild;
 class PanelPhysics;
+class PanelRendering;
 
 
 
@@ -48,6 +49,7 @@ public:
 	PanelResources*		panelResources = nullptr;
 	PanelBuild*			panelBuild = nullptr;
 	PanelPhysics*		panelPhysics = nullptr;
+	PanelRendering*		panelRendering = nullptr;
 
 private:
 	std::vector<Broken::Panel*> panels;

@@ -33,6 +33,9 @@ bool ModuleEditorUI::Init(Broken::json& file) {
 	panelInspector = new PanelInspector("Inspector");
 	panels.push_back(panelInspector);
 
+	panelRendering = new PanelRendering("Rendering");
+	panels.push_back(panelRendering);
+
 	panelHierarchy = new PanelHierarchy("Hierarchy");
 	panels.push_back(panelHierarchy);
 
@@ -169,6 +172,33 @@ update_status ModuleEditorUI::Update(float dt) {
 				}
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Lights"))
+			{
+				if (ImGui::MenuItem("Directional"))
+				{
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
+					light->SetLightType(Broken::LightType::DIRECTIONAL);
+				}
+
+				if (ImGui::MenuItem("Pointlight"))
+				{
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
+					light->SetLightType(Broken::LightType::POINTLIGHT);
+				}
+
+				if (ImGui::MenuItem("Spotlight"))
+				{
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
+					light->SetLightType(Broken::LightType::SPOTLIGHT);
+				}
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenu();
 		}
 
@@ -183,6 +213,10 @@ update_status ModuleEditorUI::Update(float dt) {
 
 			if (ImGui::MenuItem("Inspector")) {
 				panelInspector->OnOff();
+			}
+
+			if (ImGui::MenuItem("Rendering")) {
+				panelRendering->OnOff();
 			}
 
 			if (ImGui::MenuItem("Hierarchy")) {
@@ -269,6 +303,7 @@ bool ModuleEditorUI::CleanUp() {
 	panelAbout = nullptr;
 	panelConsole = nullptr;
 	panelInspector = nullptr;
+	panelRendering = nullptr;
 	panelHierarchy = nullptr;
 	panelScene = nullptr;
 	panelToolbar = nullptr;

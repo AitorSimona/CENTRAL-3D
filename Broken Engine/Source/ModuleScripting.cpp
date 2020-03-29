@@ -228,6 +228,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addConstructor<void(*) (void)>()
 
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
+		.addFunction("GetParent", &ScriptingGameobject::GetScriptGOParent)
+		.addFunction("GetGameObjectParent", &ScriptingGameobject::GetGOParentFromUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
 		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
@@ -238,6 +240,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetComponent", &ScriptingGameobject::GetComponentFromGO)
 		.addFunction("GetPositionInFrustum", &ScriptingGameobject::GetPosInFrustum)
+		.addFunction("GetFrustumPlanesIntersection", &ScriptingGameobject::GetFrustumPlanesIntersection) //For the referenced LuaState passed: Top (x), Bottom (y), Left (z), Right (w) will be 1 if in positive plane side (inside frustum), 0 (outside frustum) if not
 		.addFunction("GetScript", &ScriptingGameobject::GetScript)
 		.endClass()
 

@@ -1,5 +1,4 @@
 #include "ModuleSceneManager.h"
-#include "OpenGL.h"
 #include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
@@ -41,13 +40,13 @@
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
-void ModuleSceneManager::ONResourceSelected(const Event& e) 
+void ModuleSceneManager::ONResourceSelected(const Event& e)
 {
 	if (App->scene_manager->SelectedGameObject)
 		App->scene_manager->SetSelectedGameObject(nullptr);
 }
 
-void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
+void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
 {
 	// If destroyed GameObject is selected, put to nullptr
 	if (e.go->GetUID() == App->scene_manager->SelectedGameObject->GetUID())
@@ -68,7 +67,7 @@ void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
 
 // -------------------------------
 
-ModuleSceneManager::ModuleSceneManager(bool start_enabled) 
+ModuleSceneManager::ModuleSceneManager(bool start_enabled)
 {
 	name = "Scene Manager";
 }
@@ -77,7 +76,7 @@ ModuleSceneManager::~ModuleSceneManager()
 {
 }
 
-bool ModuleSceneManager::Init(json& file) 
+bool ModuleSceneManager::Init(json& file)
 {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
@@ -94,7 +93,7 @@ bool ModuleSceneManager::Init(json& file)
 	return true;
 }
 
-bool ModuleSceneManager::Start() 
+bool ModuleSceneManager::Start()
 {
 	// --- Create primitives ---
 	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
@@ -114,13 +113,6 @@ bool ModuleSceneManager::Start()
 	capsule->LoadToMemory();
 	plane->LoadToMemory();
 	cylinder->LoadToMemory();
-
-	// --- Create adaptive grid ---
-	glGenVertexArrays(1, &Grid_VAO);
-	glGenBuffers(1, &Grid_VBO);
-	CreateGrid(10.0f);
-
-	glGenVertexArrays(1, &PointLineVAO);
 
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
@@ -148,7 +140,7 @@ update_status ModuleSceneManager::PreUpdate(float dt)
 
 update_status ModuleSceneManager::Update(float dt)
 {
-	
+
 	root->Update(dt);
 
 	if (update_tree)
@@ -171,129 +163,10 @@ bool ModuleSceneManager::CleanUp()
 	delete root;
 	root = nullptr;
 
-	glDeleteVertexArrays(1, &PointLineVAO);
-	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
-	glDeleteVertexArrays(1, &Grid_VAO);
+	// MYTODO: Move this to renderer
+
 
 	return true;
-}
-
-void ModuleSceneManager::DrawGrid(bool drawAxis, float size)
-{
-	// -------------------------------------------------------------------------------------------------------
-	// -------------------------------------------------------------------------------------------------------
-	//									BY NOW, DONE IN DIRECT MODE
-
-	//Set polygon draw mode and appropiated matrices for OGL
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glPushMatrix();
-	glMultMatrixf(float4x4::identity.Transposed().ptr());
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());
-
-	float colorIntensity = 0.65f;
-
-	//Axis draw
-	if (drawAxis) 
-	{
-		glLineWidth(3.0f);
-		glBegin(GL_LINES);
-
-		glColor4f(colorIntensity, 0.0f, 0.0f, 1.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-		glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-
-		glColor4f(0.0f, colorIntensity, 0.0f, 1.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-		glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-		glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-
-		glColor4f(0.0f, 0.0f, colorIntensity, 1.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-		glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-		glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-
-		glEnd();
-	}
-
-	//Plane draw
-	glLineWidth(1.5f);
-	glColor4f(colorIntensity, colorIntensity, colorIntensity, 1.0f);
-	glBegin(GL_LINES);
-
-	float d = size;
-	for (float i = -d; i <= d; i += 1.0f) 
-	{
-		//if ((int)i % 3 == 0)
-		//	continue;
-
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
-	}
-
-	glEnd();
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glLineWidth(1.0f);
-
-	//Set again Identity for OGL Matrices & Polygon draw to fill again
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glPopMatrix();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	// -------------------------------------------------------------------------------------------------------
-	// -------------------------------------------------------------------------------------------------------
-	//									THIS IS HOW IT WAS PREVIOUSLY DONE
-	// Is nice to keep this, since it was rendered in function of camera position, moving the grid with it.
-	// However, as the grid doesn't has an "infinite" sensation, it was weird, so that should be fixed in order
-	// for this to look good.
-
-		/*App->renderer3D->defaultShader->use();
-
-		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-		float gridColor = 0.8f;
-		int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-		glVertexAttrib3f(vertexColorLocation, gridColor, gridColor, gridColor);
-
-		int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-		glUniform1i(TextureSupportLocation, -1);
-
-		glLineWidth(1.7f);
-		glBindVertexArray(Grid_VAO);
-		glDrawArrays(GL_LINES, 0, 84);
-		glBindVertexArray(0);
-		glLineWidth(1.0f);
-
-		glUniform1i(TextureSupportLocation, 0);*/
-}
-
-void ModuleSceneManager::Draw()
-{
-	// --- Draw Grid ---
-	if (display_grid)
-		DrawGrid(true, 75.0f);
-
-	// --- Activate wireframe mode ---
-	if (App->renderer3D->wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	// --- Draw Game Object Meshes ---
-	DrawScene();
-
-	// --- DeActivate wireframe mode ---
-	if (App->renderer3D->wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void ModuleSceneManager::DrawScene()
@@ -317,23 +190,8 @@ void ModuleSceneManager::DrawScene()
 
 				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
-					// --- Search for Renderer Component ---
-					ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
-
-						if (SelectedGameObject == (*it).second)
-						{
-							glStencilFunc(GL_ALWAYS, 1, 0xFF);
-								glStencilMask(0xFF);
-						}
-
-					// --- If Found, draw the mesh ---
-					if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
-						MeshRenderer->Draw();
-
-					if (SelectedGameObject == (*it).second)
-					{
-						glStencilMask(0x00);
-					}
+					// --- Issue render order ---
+					(*it).second->Draw();
 				}
 			}
 		}
@@ -342,27 +200,8 @@ void ModuleSceneManager::DrawScene()
 
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
-			// --- Search for Renderer Component ---
-			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
-
-			if (SelectedGameObject == (*it))
-			{
-				glStencilFunc(GL_ALWAYS, 1, 0xFF);
-				glStencilMask(0xFF);
-			}
-
-			// --- If Found, draw the mesh ---
-			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
-				MeshRenderer->Draw();
-
-			ComponentBone* C_Bone = (*it)->GetComponent<ComponentBone>();
-			if (C_Bone)
-				C_Bone->DebugDrawBones();
-
-			if (SelectedGameObject == (*it))
-			{
-				glStencilMask(0x00);
-			}
+			// --- Issue render order ---
+			(*it)->Draw();
 		}
 	}
 
@@ -371,11 +210,6 @@ void ModuleSceneManager::DrawScene()
 GameObject* ModuleSceneManager::GetRootGO() const
 {
 	return root;
-}
-
-uint ModuleSceneManager::GetPointLineVAO() const
-{
-	return PointLineVAO;
 }
 
 void ModuleSceneManager::RedoOctree()
@@ -424,7 +258,7 @@ void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChild
 		{
 			std::vector<GameObject*> children;
 			go->GetAllChilds(children);
-			
+
 			//start the loop from 1, because the GO in the index 0 is the parent GO
 			for (int i = 1; i < children.size(); ++i)
 			{
@@ -469,7 +303,7 @@ void ModuleSceneManager::SetStatic(GameObject * go,bool setStatic, bool setChild
 	}
 }
 
-void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const 
+void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 {
 	if (!node->IsLeaf()) {
 		for (uint i = 0; i < 8; ++i) {
@@ -478,10 +312,10 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 	}
 
 	if (node->IsLeaf())
-		DrawWire(node->box, Red, GetPointLineVAO());
+		App->renderer3D->DrawAABB(node->box, Red);
 }
 
-void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
+void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 	if (currentScene)
@@ -553,7 +387,7 @@ void ModuleSceneManager::LoadGame(const json & file)
 				scene = (*it).second;
 
 		}
-		
+
 		if (scene != nullptr)
 		{
 			SetActiveScene(scene);
@@ -580,7 +414,7 @@ void ModuleSceneManager::LoadGame(const json & file)
 				ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main camera for game.", );
 		}
 	}
-	else 
+	else
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find main scene for game.", );
 }
 
@@ -761,99 +595,6 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_
 	par_shapes_free_mesh(mesh);
 }
 
-void ModuleSceneManager::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
-	float3 vertices[24] =
-	{
-		//Between-planes right
-		corners[1],
-		corners[5],
-		corners[7],
-		corners[3],
-
-		//Between-planes left
-		corners[4],
-		corners[0],
-		corners[2],
-		corners[6],
-
-		// Far plane horizontal
-		corners[5],
-		corners[4],
-		corners[6],
-		corners[7],
-
-		//Near plane horizontal
-		corners[0],
-		corners[1],
-		corners[3],
-		corners[2],
-
-		//Near plane vertical
-		corners[1],
-		corners[3],
-		corners[0],
-		corners[2],
-
-		//Far plane vertical
-		corners[5],
-		corners[7],
-		corners[4],
-		corners[6]
-	};
-
-	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->linepointShader->ID);
-
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
-
-	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
-	float4x4 proj_RH(
-		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-		0.0f, f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, nearp, 0.0f);
-
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, color.r, color.g, color.b);
-
-	// --- Create VAO, VBO ---
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
-	// --- Draw lines ---
-
-	glLineWidth(3.0f);
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_LINES, 0, 24);
-	glBindVertexArray(0);
-	glLineWidth(1.0f);
-
-	// --- Delete VBO ---
-	glDeleteBuffers(1, &VBO);
-
-	glUseProgram(App->renderer3D->defaultShader->ID);
-}
-
 void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh) {
 	// --- Generating 6 planes and merging them to create a cube, since par shapes cube
 	// does not have uvs / normals
@@ -983,48 +724,6 @@ void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh*
 	}
 }
 
-void ModuleSceneManager::CreateGrid(float target_distance)
-{
-	// --- Fill vertex data ---
-
-	float distance = target_distance / 4;
-
-	if (distance < 1)
-		distance = 1;
-
-	float3 vertices[84];
-
-	uint i = 0;
-	int lines = -10;
-
-	for (i = 0; i < 20; i++) {
-		vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
-		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
-		vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
-		vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
-
-		lines++;
-	}
-
-	vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
-	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
-	vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
-	vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
-
-	// --- Configure vertex attributes ---
-
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(Grid_VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, Grid_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-
 GameObject * ModuleSceneManager::LoadCube()
 {
 	return LoadPrimitiveObject(cube->GetUID());
@@ -1074,7 +773,7 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 	this->go_count--;
 }
 
-void ModuleSceneManager::SendToDelete(GameObject* go) 
+void ModuleSceneManager::SendToDelete(GameObject* go)
 {
 	Event e(Event::EventType::GameObject_destroyed);
 	e.go = go;

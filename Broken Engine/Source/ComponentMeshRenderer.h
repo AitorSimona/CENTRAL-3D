@@ -20,7 +20,8 @@ public:
 
 	void Update() override;
 
-	void Draw(bool outline = false) const;
+	void DrawComponent() override;
+	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 
 	// --- Save & Load ---
 	json Save() const override;
@@ -33,7 +34,6 @@ public:
 private:
 	// --- Draw Functiions accessed by main Draw ---
 	void DrawMesh(ResourceMesh& mesh) const;
-	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 	bool unuse_material = false;
 
 public:

@@ -174,6 +174,28 @@ void PanelProject::CreateResourceHandlingPopup()
 				IMat->Save((Broken::ResourceMaterial*)new_material);
 			}
 
+			if (ImGui::MenuItem("Shader"))
+			{
+				std::string resource_name;
+				resource_name = *(EngineApp->resources->GetNewUniqueName(Broken::Resource::ResourceType::SHADER));
+
+				Broken::Resource* new_shader = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::SHADER, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
+				Broken::ImporterShader* IShader = EngineApp->resources->GetImporter<Broken::ImporterShader>();
+				Broken::ResourceShader* shader = (Broken::ResourceShader*)new_shader;
+				shader->ReloadAndCompileShader();
+
+				EngineApp->resources->AddResourceToFolder(new_shader);
+
+				// --- Create meta ---
+				Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
+				Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, new_shader->GetOriginalFile(), new_shader->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IShader->Save((Broken::ResourceShader*)new_shader);
+			}
+
 			if (ImGui::MenuItem("Script"))
 			{
 				createScript = true;
