@@ -39,3 +39,13 @@ void ScriptingAnimations::SetAnimSpeed(const char* name, float speed)
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
+
+void ScriptingAnimations::SetBlendTime(float value)
+{
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+
+	if (anim)
+		anim->ChangeBlendTime(value);
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}

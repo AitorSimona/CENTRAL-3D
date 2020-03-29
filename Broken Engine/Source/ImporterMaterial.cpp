@@ -99,10 +99,14 @@ Resource* ImporterMaterial::Load(const char* path) const
 {
 	ResourceMaterial* mat = nullptr;
 	ResourceTexture* diffuse = nullptr;
+	ResourceTexture* specular = nullptr;
+	float3 matColor = float3(1.0f);
+	float matShine = 32.0f;
 
 	json file = App->GetJLoader()->Load(path);
 
-	std::string texture_path = file["ResourceDiffuse"].is_null() ? "NaN" : file["ResourceDiffuse"].get<std::string>();
+	std::string diffuse_texture_path = file["ResourceDiffuse"].is_null() ? "NaN" : file["ResourceDiffuse"].get<std::string>();
+	std::string specular_texture_path = file["ResourceSpecular"].is_null() ? "NaN" : file["ResourceSpecular"].get<std::string>();
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
@@ -120,15 +124,27 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 	if (!file.is_null())
 	{
-		Importer::ImportData IData(texture_path.c_str());
-		diffuse = (ResourceTexture*)App->resources->ImportAssets(IData);
+		if (!file["AmbientColor"].is_null())
+			matColor = float3(file["AmbientColor"]["R"].get<float>(), file["AmbientColor"]["G"].get<float>(), file["AmbientColor"]["B"].get<float>());
+
+		if (!file["MaterialShininess"].is_null())
+			matShine = file["MaterialShininess"].get<float>();
+		//file["AmbientColor"]["R"] = mat->m_AmbientColor.x;
+		//file["AmbientColor"]["G"] = mat->m_AmbientColor.y;
+		//file["AmbientColor"]["B"] = mat->m_AmbientColor.z;
+
+		Importer::ImportData IDataDiff(diffuse_texture_path.c_str());
+		diffuse = (ResourceTexture*)App->resources->ImportAssets(IDataDiff);
+
+		Importer::ImportData IDataSpec(specular_texture_path.c_str());
+		specular = (ResourceTexture*)App->resources->ImportAssets(IDataSpec);
 
 		// --- Load Shader and Uniforms ---
 		std::string shader_path = file["shader"]["ResourceShader"].is_null() ? "NONE" : file["shader"]["ResourceShader"].get<std::string>();
-		Importer::ImportData IData2(shader_path.c_str());
+		Importer::ImportData IDataShader(shader_path.c_str());
 
 		if(shader_path != "NONE")
-			mat->shader = (ResourceShader*)App->resources->ImportAssets(IData2);
+			mat->shader = (ResourceShader*)App->resources->ImportAssets(IDataShader);
 
 		json uniforms_node = file["shader"]["uniforms"];
 
@@ -223,11 +239,14 @@ Resource* ImporterMaterial::Load(const char* path) const
 		}
 	}
 
+	mat->m_AmbientColor = matColor;
+	mat->m_Shininess = matShine;
+
 	if (diffuse)
-	{
-		mat->resource_diffuse = diffuse;
-		//mat->resource_diffuse->SetParent(mat);
-	}
+		mat->m_DiffuseResTexture = diffuse;	//mat->resource_diffuse->SetParent(mat);
+		
+	if (specular)
+		mat->m_SpecularResTexture = specular;	//mat->resource_diffuse->SetParent(mat);
 
 	return mat;
 }
@@ -238,6 +257,8 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 
 	file[mat->GetName()];
 	file["ResourceDiffuse"];
+	file["ResourceSpecular"];
+	file["AmbientColor"];
 
 	// --- Save Shader and Uniforms ---
 	file["shader"];
@@ -320,9 +341,15 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 		delete[] tmpi;
 	}
 
+	file["AmbientColor"]["R"] = mat->m_AmbientColor.x;
+	file["AmbientColor"]["G"] = mat->m_AmbientColor.y;
+	file["AmbientColor"]["B"] = mat->m_AmbientColor.z;
+	file["MaterialShininess"] = mat->m_Shininess;
 
-	if (mat->resource_diffuse)
-		file["ResourceDiffuse"] = mat->resource_diffuse->GetOriginalFile();
+	if (mat->m_DiffuseResTexture)
+		file["ResourceDiffuse"] = mat->m_DiffuseResTexture->GetOriginalFile();
+	if (mat->m_SpecularResTexture)
+		file["ResourceSpecular"] = mat->m_SpecularResTexture->GetOriginalFile();
 
 	// --- Serialize JSON to string ---
 	std::string data;

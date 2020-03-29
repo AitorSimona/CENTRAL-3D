@@ -48,6 +48,7 @@
 #include "ComponentImage.h"
 #include "ComponentText.h"
 #include "ComponentProgressBar.h"
+#include "ComponentLight.h"
 // --------------------------------
 
 // ---Importers and Resources------

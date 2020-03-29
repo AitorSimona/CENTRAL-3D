@@ -12,6 +12,7 @@ class ComponentCamera;
 class ResourceShader;
 class ResourceMesh;
 class ResourceMaterial;
+class ComponentLight;
 class math::float4x4;
 
 typedef int RenderMeshFlags;
@@ -28,12 +29,12 @@ enum BROKEN_API RenderMeshFlags_
 
 struct BROKEN_API RenderMesh
 {
-	RenderMesh(float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const RenderMeshFlags flags = 0, const Color& color = White) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags), color(color) {}
+	RenderMesh(float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const RenderMeshFlags flags = 0/*, const Color& color = White*/) : transform(transform), resource_mesh(mesh), mat(mat), flags(flags)/*, color(color)*/ {}
 
 	float4x4 transform;
 	const ResourceMesh* resource_mesh = nullptr;
 	ResourceMaterial* mat = nullptr;
-	Color color; // force a color draw, useful if no texture is given
+//	Color color; // force a color draw, useful if no texture is given
 	
 
 	// temporal!
@@ -86,6 +87,12 @@ public:
 
 	// --- Getters ---
 	bool GetVSync() const;
+
+	// --- To Add Lights ---
+	void AddLight(ComponentLight* light);
+	void PopLight(ComponentLight* light);
+	const float GetGammaCorrection() const { return m_GammaCorrection; }
+	void SetGammaCorrection(float gammaCorr) { m_GammaCorrection = gammaCorr; }
 
 	// --- Render orders --- // Deformable mesh is Temporal!
 	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
@@ -159,6 +166,10 @@ private:
 	std::vector<RenderBox<AABB>> render_aabbs;
 	std::vector<RenderBox<Frustum>> render_frustums;
 	std::vector<RenderLine> render_lines;
+
+	//Lights vector
+	std::vector<ComponentLight*> m_LightsVec;
+	float m_GammaCorrection = 1.0f;
 
 	uint fbo = 0;
 	uint depthbuffer = 0;

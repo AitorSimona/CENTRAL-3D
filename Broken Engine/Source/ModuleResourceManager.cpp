@@ -73,8 +73,10 @@ bool ModuleResourceManager::Start()
 
 	// --- Create default material ---
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
-	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
-	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
+	DefaultMaterial->m_DiffuseResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultDiffTexture");
+	DefaultMaterial->m_DiffuseResTexture->SetTextureID(App->textures->GetDefaultTextureID());
+	DefaultMaterial->m_SpecularResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultSpecTexture");
+	DefaultMaterial->m_SpecularResTexture->SetTextureID(App->textures->GetDefaultTextureID());
 
 	// --- Create default font ---
 	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
@@ -1279,8 +1281,11 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		// --- Tell mats ---
 		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
-				(*it).second->resource_diffuse = nullptr;
+			if ((*it).second->m_DiffuseResTexture && (*it).second->m_DiffuseResTexture->GetUID() == resource->GetUID())
+				(*it).second->m_DiffuseResTexture = nullptr;
+
+			if ((*it).second->m_SpecularResTexture && (*it).second->m_SpecularResTexture->GetUID() == resource->GetUID())
+				(*it).second->m_SpecularResTexture = nullptr;
 		}
 
 		break;
