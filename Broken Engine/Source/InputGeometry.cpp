@@ -67,7 +67,7 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 			m_mesh = true;
 		}
 
-		if ((*it)->navigationArea != 0) {
+		if ((*it)->navigationArea != 0 && m_volumeCount < MAX_VOLUMES) {
 			//Create convex hull for later flagging polys
 			Polyhedron convexhull = t_obb.ToPolyhedron();
 
@@ -78,7 +78,11 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 			m_volumes[m_volumeCount].hmin = aabb.MinY();
 			m_volumes[m_volumeCount].nverts = convexhull.NumVertices();
 			if (m_volumes[m_volumeCount].nverts < MAX_CONVEXVOL_PTS * 3) {
-				memcpy(m_volumes[m_volumeCount].verts, convexhull.VertexArrayPtr()->ptr(), m_volumes[m_volumeCount].nverts * sizeof(float));
+				for (int i = 0; i < m_volumes[m_volumeCount].nverts; ++i) {
+					m_volumes[m_volumeCount].verts[i * 3] = convexhull.Vertex(i).x;
+					m_volumes[m_volumeCount].verts[i * 3 + 1] = convexhull.Vertex(i).y;
+					m_volumes[m_volumeCount].verts[i * 3 + 2] = convexhull.Vertex(i).z;
+				}
 				m_volumeCount++;
 			}
 			else {

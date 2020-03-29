@@ -61,9 +61,6 @@
     <Filter Include="Sources\3rd party\RecastNavigation\detour">
       <UniqueIdentifier>{abbcbaca-0a41-40ee-a7e8-d829685c3de9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\3rd party\RecastNavigation\debugutils">
-      <UniqueIdentifier>{675cb03c-4a24-44c5-bb04-f8bf649a3b08}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VSresource.h">
@@ -646,15 +643,6 @@
     </ClCompile>
     <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp">
       <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
-    </ClCompile>
-    <ClCompile Include="RecastNavigation\DebugUtils\Source\DebugDraw.cpp">
-      <Filter>Sources\3rd party\RecastNavigation\debugutils</Filter>
-    </ClCompile>
-    <ClCompile Include="RecastNavigation\DebugUtils\Source\RecastDebugDraw.cpp">
-      <Filter>Sources\3rd party\RecastNavigation\debugutils</Filter>
-    </ClCompile>
-    <ClCompile Include="RecastNavigation\DebugUtils\Source\RecastDump.cpp">
-      <Filter>Sources\3rd party\RecastNavigation\debugutils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

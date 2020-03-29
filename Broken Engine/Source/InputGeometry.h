@@ -10,7 +10,7 @@ struct ConvexVolume {
 	float verts[MAX_CONVEXVOL_PTS * 3];
 	float hmin, hmax;
 	int nverts;
-	int area;
+	unsigned char area;
 };
 
 struct RecastMesh {

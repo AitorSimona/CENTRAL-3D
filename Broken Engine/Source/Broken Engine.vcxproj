@@ -257,9 +257,6 @@
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
-    <ClCompile Include="RecastNavigation\DebugUtils\Source\DebugDraw.cpp" />
-    <ClCompile Include="RecastNavigation\DebugUtils\Source\RecastDebugDraw.cpp" />
-    <ClCompile Include="RecastNavigation\DebugUtils\Source\RecastDump.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp" />

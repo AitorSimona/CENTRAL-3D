@@ -253,8 +253,13 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 	INavMesh->Save(navMeshResource);
 
 	//If we are in the editor we need to create the draw meshes
-	if (!App->isGame)
+	if (!App->isGame) {
+		for (int i = 0; i < renderMeshes.size(); ++i)
+			delete renderMeshes[i];
+		renderMeshes.clear();
+
 		createRenderMeshes();
+	}
 
 	//We save the scene so that it stores the NavMesh
 	App->scene_manager->SaveScene(App->scene_manager->currentScene);

@@ -26,15 +26,6 @@ bool ModuleRecast::Init(Broken::json& config) {
 	return true;
 }
 
-update_status ModuleRecast::PostUpdate(float dt) {
-	if (m_pmesh != nullptr) {
-		duDebugDrawPolyMesh((duDebugDraw*)EngineApp->detour->m_dd, *m_pmesh);
-		duDebugDrawPolyMeshDetail((duDebugDraw*)EngineApp->detour->m_dd, * m_dmesh);
-	}
-
-	return UPDATE_CONTINUE;
-}
-
 void ModuleRecast::AddGO(Broken::GameObject* go) {
 	if (go->navigationStatic)
 		NavigationGameObjects.push_back(go);
@@ -329,6 +320,13 @@ bool ModuleRecast::BuildNavMesh() {
 	}
 
 	delete m_geom;
+	if (m_pmesh)
+		rcFreePolyMesh(m_pmesh);
+	m_pmesh = nullptr;
+
+	if (m_dmesh)
+		rcFreePolyMeshDetail(m_dmesh);
+	m_dmesh = nullptr;
 	return true;
 
 }
