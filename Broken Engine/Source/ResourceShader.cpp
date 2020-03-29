@@ -109,7 +109,7 @@ bool ResourceShader::LoadInMemory()
 					uint FragmentLoc = ShaderCode.find(ftag);
 
 					vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
-					fShaderCode = std::string("#version 440 core").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
+					fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
 				}
 			}
 		}
