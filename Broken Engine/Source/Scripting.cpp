@@ -251,13 +251,13 @@
 //	trs->Rotate(Quat(x, y, z, w), local);
 //}
 //
-//void Scripting::SetQuatRotation(float x, float y, float z, float w, bool local)
-//{
-//	ComponentTransform* trs = (ComponentTransform*)App->scripting->current_script->my_component->my_go->GetComponent(COMPONENT_TYPE::TRANSFORM);
-//	trs->SetRotation(Quat(x, y, z, w), local);
-//}
-//
-//// Others
+void Scripting::getColliderTrigger(GO my_gameobject)
+{
+	
+	return mygameobjwect.getlasttriggercollider;
+}
+
+// Others
 
 //void Scripting::LookTo(float dirX, float dirY, float dirZ, bool local)
 //{

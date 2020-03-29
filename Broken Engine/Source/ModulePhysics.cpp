@@ -161,7 +161,7 @@ bool ModulePhysics::Init(json& config)
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.filterShader = customFilterShader;
-	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS | physx::PxSceneFlag::eDEPRECATED_TRIGGER_TRIGGER_REPORTS;
 	sceneDesc.simulationEventCallback = simulationEventsCallback;
 	mScene = mPhysics->createScene(sceneDesc);
 
@@ -348,8 +348,9 @@ void ModulePhysics::DeleteActors(GameObject* go)
 				col->Delete();
 			}
 
-			if ((*it)->GetComponent<ComponentCharacterController>() != nullptr)
+			if ((*it)->GetComponent<ComponentCharacterController>() != nullptr) {
 				(*it)->GetComponent<ComponentCharacterController>()->Delete();
+			}
 		}
 	}
 }
@@ -384,14 +385,7 @@ void UserIterator::processShapes(physx::PxU32 count, const physx::PxActorShape* 
 {
 	int i = 0;
 	for (physx::PxU32 i = 0; i < count; i++) {
-		physx::PxRigidActor* actor = actorShapePairs[i].shape->getActor();
-
-		if (!actor) {
-			actor = actorShapePairs[i].actor;
-			if (!actor) {
-				continue;
-			}
-		}
+		physx::PxRigidActor* actor = (physx::PxRigidActor * )actorShapePairs[i].actor;
 
 		GameObject* GO = App->physics->actors[actor];
 		if (GO) {
@@ -416,3 +410,32 @@ physx::PxQueryHitType::Enum FilterCallback::postFilter(const physx::PxFilterData
 {
 	return physx::PxQueryHitType::Enum();
 }
+
+//const Broken::json& ModulePhysics::SaveStatus() const {
+//	//MYTODO: Added exception for Build because Build should never be enabled at start
+//	//maybe we should call SaveStatus on every panel
+//	static Broken::json config;
+//	for (uint i = 0; i < layer_list.size(); ++i) {
+//		if (panels[i]->GetName() == "Build")
+//			config[panels[i]->GetName()] = false;
+//		else
+//			config[panels[i]->GetName()] = panels[i]->IsEnabled();
+//	}
+//	return config;
+//};
+//
+//void ModulePhysics::LoadStatus(const Broken::json& file) {
+//
+//	if (file[name].find(panels[i]->GetName()) != file[name].end()) {
+//		panels[i]->SetOnOff(file[name][panels[i]->GetName()]);
+//	}
+//
+//	for (uint i = 0; i < panels.size(); ++i) {
+//
+//		if (file[name].find(panels[i]->GetName()) != file[name].end()) {
+//			panels[i]->SetOnOff(file[name][panels[i]->GetName()]);
+//		}
+//		else
+//			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
+//	}
+//}

@@ -367,6 +367,7 @@ void ComponentCollider::Load(json& node)
 	lastIndex = 0;
 
 	int tmp = std::stoi(colliderEnum);
+	colliderType = tmp;
 	switch (tmp)
 	{
 	case 0:
@@ -404,25 +405,21 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) {
 
-			/*switch (colliderType)
+			switch (colliderType)
 			{
 			case 0:
 				type = ComponentCollider::COLLIDER_TYPE::NONE;
-				CreateCollider(type);
 				break;
 			case 1:
 				type = ComponentCollider::COLLIDER_TYPE::BOX;
-				CreateCollider(type);
 				break;
 			case 2:
 				type = ComponentCollider::COLLIDER_TYPE::SPHERE;
-				CreateCollider(type);
 				break;
 			case 3:
 				type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
-				CreateCollider(type);
 				break;
-			}*/
+			}
 			editCollider = true;
 		}
 

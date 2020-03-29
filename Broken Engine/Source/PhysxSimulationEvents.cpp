@@ -15,5 +15,6 @@ void PhysxSimulationEvents::onContact(const physx::PxContactPairHeader& pairHead
 
 void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 {
-	int a = 0;
+	collider;
 }
+
