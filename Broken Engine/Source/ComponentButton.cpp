@@ -71,7 +71,7 @@ void ComponentButton::Draw()
 
 	// color tint
 	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, -1);
+	glUniform1i(TextureLocation, 1);
 	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
 	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
@@ -93,8 +93,6 @@ void ComponentButton::Draw()
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-
-	glUniform1i(TextureLocation, 0); //reset texture location
 
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
