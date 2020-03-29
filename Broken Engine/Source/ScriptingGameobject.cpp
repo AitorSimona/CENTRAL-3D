@@ -248,22 +248,27 @@ int ScriptingGameobject::GetPosInFrustum(float x, float y, float z, float fovrat
 	return camlevel;
 }
 
-int ScriptingGameobject::GetFrustumPlanesIntersection(float x, float y, float z, lua_State* luaSt)
+int ScriptingGameobject::GetFrustumPlanesIntersection(float x, float y, float z, float fovratio, lua_State* luaSt)
 {
 	ComponentCamera* cam = App->renderer3D->active_camera;
+
 	if (cam)
 	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio, cam->frustum.AspectRatio());
+
 		float3 pos = { x, y, z };
 		int T, B, L, R;		//Top, Bottom, Left, Right
 		T = B = L = R = 1;	//Considered to be inside the frustum (at planes' negative side) by default
 
-		if (cam->frustum.TopPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+		if (sub1.TopPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
 			T = 0;
-		if (cam->frustum.BottomPlane().IsOnPositiveSide(pos))
+		if (sub1.BottomPlane().IsOnPositiveSide(pos))
 			B = 0;
-		if (cam->frustum.LeftPlane().IsOnPositiveSide(pos))
+		if (sub1.LeftPlane().IsOnPositiveSide(pos))
 			L = 0;
-		if (cam->frustum.RightPlane().IsOnPositiveSide(pos))
+		if (sub1.RightPlane().IsOnPositiveSide(pos))
 			R = 0;
 
 		lua_pushnumber(luaSt, T);
