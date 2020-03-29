@@ -35,6 +35,37 @@ uint ScriptingGameobject::FindGameObject(const char* go_name)
 	return ret;
 }
 
+uint ScriptingGameobject::GetScriptGOParent()
+{
+	uint ret = 0;
+	GameObject* go = App->scripting->current_script->my_component->GetContainerGameObject()->parent;
+
+	if (go && go->GetName() != App->scene_manager->GetName())
+		ret = go->GetUID();
+	else 
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject has no parent! 0 will be returned");
+
+	return ret;
+}
+
+uint ScriptingGameobject::GetGOParentFromUID(uint go_UUID)
+{
+	uint ret = 0;
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
+
+	if (go && go->GetName() != App->scene_manager->GetName()) 
+	{
+		if (go->parent)
+			ret = go->parent->GetUID();
+		else
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID has no parent! 0 will be returned", go_UUID);
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID was not found! 0 will be returned", go_UUID);
+
+	return ret;
+}
+
 void ScriptingGameobject::DestroyGOFromScript(uint gameobject_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
