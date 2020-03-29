@@ -98,7 +98,6 @@ void ImporterShader::Save(ResourceShader* shader) const
 			{
 				// --- Build shader code and save to file---
 				//file << std::setw(5) << "#if VERTEX_SHADER" << std::endl;
-
 				file << std::setw(5) << shader->vShaderCode << std::endl;
 
 				//file << std::setw(5) << "#elseif FRAGMENT_SHADER" << std::endl;
@@ -110,7 +109,7 @@ void ImporterShader::Save(ResourceShader* shader) const
 					tmp = tmp.substr(loc, tmp.size());
 				}
 
-				file << std::setw(5) << tmp << std::endl;
+				file << std::setw(5) << tmp ;
 
 				//file << std::setw(5) << "#endif" << std::endl;
 
@@ -120,7 +119,6 @@ void ImporterShader::Save(ResourceShader* shader) const
 				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(shader->GetOriginalFile());
 				jsonfile["FORMAT"] = format;
-				jsonfile["SIZE"] = buffer_size;
 
 				// --- Create Meta ---
 				if (!meta)
