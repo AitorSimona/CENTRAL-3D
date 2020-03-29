@@ -750,7 +750,8 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 void ComponentParticleEmitter::Play()
 {
 	emisionActive = true;
-	emisionStart = SDL_GetTicks();
+	emisionStart = App->time->GetGameplayTimePassed() * 1000;
+	spawnClock = emisionStart;
 }
 
 void ComponentParticleEmitter::SetLooping(bool active)
