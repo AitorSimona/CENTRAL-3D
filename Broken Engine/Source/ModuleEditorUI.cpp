@@ -33,6 +33,9 @@ bool ModuleEditorUI::Init(Broken::json& file) {
 	panelInspector = new PanelInspector("Inspector");
 	panels.push_back(panelInspector);
 
+	panelRendering = new PanelRendering("Rendering");
+	panels.push_back(panelRendering);
+
 	panelHierarchy = new PanelHierarchy("Hierarchy");
 	panels.push_back(panelHierarchy);
 
@@ -212,6 +215,10 @@ update_status ModuleEditorUI::Update(float dt) {
 				panelInspector->OnOff();
 			}
 
+			if (ImGui::MenuItem("Rendering")) {
+				panelRendering->OnOff();
+			}
+
 			if (ImGui::MenuItem("Hierarchy")) {
 				panelHierarchy->OnOff();
 			}
@@ -296,6 +303,7 @@ bool ModuleEditorUI::CleanUp() {
 	panelAbout = nullptr;
 	panelConsole = nullptr;
 	panelInspector = nullptr;
+	panelRendering = nullptr;
 	panelHierarchy = nullptr;
 	panelScene = nullptr;
 	panelToolbar = nullptr;
