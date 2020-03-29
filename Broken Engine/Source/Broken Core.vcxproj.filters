@@ -696,6 +696,9 @@
     <ClInclude Include="ImporterNavMesh.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentLight.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1180,6 +1183,9 @@
     </ClCompile>
     <ClCompile Include="ImporterNavMesh.cpp">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentLight.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

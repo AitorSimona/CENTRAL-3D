@@ -378,6 +378,9 @@
     <ClInclude Include="PanelNavigation.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
+	<ClInclude Include="PanelRendering.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
     <ClInclude Include="ModuleRecast.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -582,6 +585,9 @@
       <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="PanelNavigation.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+	<ClCompile Include="PanelRendering.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="ModuleRecast.cpp">

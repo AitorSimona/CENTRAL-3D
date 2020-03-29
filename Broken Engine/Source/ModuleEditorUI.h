@@ -16,7 +16,7 @@ class PanelResources;
 class PanelBuild;
 class PanelPhysics;
 class PanelNavigation;
-
+class PanelRendering;
 
 
 class ModuleEditorUI : public Broken::Module
@@ -50,6 +50,7 @@ public:
 	PanelBuild*			panelBuild = nullptr;
 	PanelPhysics*		panelPhysics = nullptr;
 	PanelNavigation*	panelNavigation = nullptr;
+	PanelRendering*		panelRendering = nullptr;
 
 private:
 	std::vector<Broken::Panel*> panels;

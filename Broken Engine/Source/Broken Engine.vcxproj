@@ -180,6 +180,7 @@
     <ClInclude Include="PanelNavigation.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
+    <ClInclude Include="PanelRendering.h" />
     <ClInclude Include="PanelResources.h" />
     <ClInclude Include="Panels.h" />
     <ClInclude Include="PanelScene.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="PanelNavigation.cpp" />
     <ClCompile Include="PanelPhysics.cpp" />
     <ClCompile Include="PanelProject.cpp" />
+    <ClCompile Include="PanelRendering.cpp" />
     <ClCompile Include="PanelResources.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PanelSettings.cpp" />
