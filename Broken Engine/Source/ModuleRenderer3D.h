@@ -14,6 +14,7 @@ class ResourceMesh;
 class ResourceMaterial;
 class ComponentLight;
 class math::float4x4;
+class ComponentParticleEmitter;
 
 typedef int RenderMeshFlags;
 
@@ -140,6 +141,8 @@ public:
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
+
+	std::vector<ComponentParticleEmitter*> particleEmitters;
 
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
