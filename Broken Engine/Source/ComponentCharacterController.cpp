@@ -155,8 +155,7 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 	physx::PxFilterData filterData;
 	filterData.word0 = App->physics->layer_list.at((int)GO->layer).LayerGroup; // layers that will collide
 	
-	physx::PxControllerFilters controllerFilter(&filterData, 0, 0);
-
+	physx::PxControllerFilters controllerFilter(&filterData, &App->physics->filterCallback, 0);
 	
 	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), controllerFilter);
 }
@@ -334,4 +333,3 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 {
 	return physx::PxControllerBehaviorFlags(0);
 }
-

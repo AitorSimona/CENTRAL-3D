@@ -68,6 +68,13 @@ struct BROKEN_API UserIterator : physx::PxVolumeCache::Iterator
 	LayerMask layer; 
 };
 
+struct BROKEN_API FilterCallback : physx::PxQueryFilterCallback {
+	virtual physx::PxQueryHitType::Enum preFilter(
+		const physx::PxFilterData& filterData, const physx::PxShape* shape, const physx::PxRigidActor* actor, physx::PxHitFlags& queryFlags);
+
+	virtual physx::PxQueryHitType::Enum postFilter(const physx::PxFilterData& filterData, const physx::PxQueryHit& hit);
+};
+
 BE_BEGIN_NAMESPACE
 class GameObject;
 class PhysxSimulationEvents;
@@ -119,9 +126,10 @@ public:
 	std::vector<Layer> layer_list;
 	std::map<physx::PxRigidActor*, GameObject*> actors;
 	std::vector<GameObject*>* detected_objects;
-
 	physx::PxVolumeCache* cache;
 	UserIterator iter;
+
+	FilterCallback filterCallback;
 
 private:
 	PhysxSimulationEvents* simulationEventsCallback = nullptr;

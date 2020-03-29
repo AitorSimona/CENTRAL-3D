@@ -31,8 +31,9 @@ ComponentCollider::~ComponentCollider()
 
 void ComponentCollider::Update()
 {
-	if (editCollider)
+	if (editCollider) {
 		CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
+	}
 
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
@@ -265,6 +266,7 @@ json ComponentCollider::Save() const
 	}
 
 	node["colliderType"] = std::to_string(colliderType);
+	node["isTrigger"] = std::to_string(isTrigger);
 
 	node["localPositionx"] = std::to_string(centerPosition.x);
 	node["localPositiony"] = std::to_string(centerPosition.y);
@@ -352,6 +354,8 @@ void ComponentCollider::Load(json& node)
 
 	std::string colliderType_ = node["colliderType"].is_null() ? "0" : node["colliderType"];
 
+	std::string isTrigger_ = node["isTrigger"].is_null() ? "0" : node["isTrigger"];
+
 	std::string tmpScalex = node["tmpScalex"].is_null() ? "0" : node["tmpScalex"];
 	std::string tmpScaley = node["tmpScaley"].is_null() ? "0" : node["tmpScaley"];
 	std::string tmpScalez = node["tmpScalez"].is_null() ? "0" : node["tmpScalez"];
@@ -378,6 +382,7 @@ void ComponentCollider::Load(json& node)
 	height = std::stof(height_);
 	lastIndex = std::stoi(lastIndex_);
 	colliderType = std::stoi(colliderType_);
+	isTrigger = std::stoi(isTrigger_);
 
 	//tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
 	tmpScale = float3(0.f, 0.f, 0.f);
@@ -421,13 +426,14 @@ void ComponentCollider::CreateInspectorNode()
 {
 	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		
+		bool createAgain = false;
+
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
 
 		if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) {
 
-			switch (colliderType)
+			/*switch (colliderType)
 			{
 			case 0:
 				type = ComponentCollider::COLLIDER_TYPE::NONE;
@@ -445,7 +451,8 @@ void ComponentCollider::CreateInspectorNode()
 				type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
 				CreateCollider(type);
 				break;
-			}
+			}*/
+			editCollider = true;
 		}
 
 		if (shape)
@@ -454,7 +461,7 @@ void ComponentCollider::CreateInspectorNode()
 			ImGui::SameLine();
 			if (ImGui::Checkbox("##T", &isTrigger))
 			{
-				if (isTrigger)
+				/*if (isTrigger)
 				{
 					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
 					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
@@ -463,7 +470,8 @@ void ComponentCollider::CreateInspectorNode()
 				{
 					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, true);
 					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, false);
-				}
+				}*/
+				editCollider = true;
 			}
 
 			float3* position = &centerPosition;
@@ -591,13 +599,12 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 		{
 			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
-				App->physics->mScene->removeActor(*(physx::PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+				App->physics->DeleteActor(GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
 			if (createAgain && rigidStatic)
-				App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+				App->physics->DeleteActor(rigidStatic);
 		}
-
 		else
-			App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+			App->physics->DeleteActor(rigidStatic);
 
 
 		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
@@ -646,27 +653,36 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 			boxGeometry = physx::PxBoxGeometry(physx::PxVec3(originalSize.x * scale.x * colliderSize.x * 0.5, originalSize.y * scale.y * colliderSize.y * 0.5, originalSize.z * scale.z * colliderSize.z * 0.5));
 			
+			physx::PxTransform position(physx::PxVec3(center.x, center.y, center.z));
+
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
 			
-			physx::PxTransform position(physx::PxVec3(center.x, center.y, center.z));
-			
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
+				if(rigidStatic)
+					App->physics->DeleteActor(rigidStatic);
+				
 				physx::PxFilterData filterData;
 				filterData.word0 = (1 << GO->layer); // word0 = own ID
 				filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
-				shape->setSimulationFilterData(filterData);
-				shape->setQueryFilterData(filterData);
 
-				if(rigidStatic)
-					App->physics->DeleteActor(rigidStatic);
+				if (isTrigger) {
+					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+				}
+				else {
+					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+				}
+
+				shape->setSimulationFilterData(filterData);
+				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+				shape->setQueryFilterData(filterData);
 
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
 				App->physics->addActor(rigidStatic, GO);
-
-				//App->physics->mScene->addActor(*rigidStatic);
 			}
 
 			
@@ -775,6 +791,18 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 		globalMatrix.Decompose(position, rot, scale);
 
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
+
+		physx::PxShape* shape;
+		dynamicRB->rigidBody->getShapes(&shape, 1);
+
+		if (isTrigger) {
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+		}
+		else {
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+		}
 
 		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup); //Setup filtering Layers
 

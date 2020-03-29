@@ -63,21 +63,24 @@ ModulePhysics::~ModulePhysics()
 
 void ModulePhysics::setupFiltering(physx::PxRigidActor* actor, physx::PxU32 LayerMask, physx::PxU32 filterMask)
 {
-	physx::PxFilterData filterData;
-	filterData.word0 = LayerMask; // word0 = own ID
-	filterData.word1 = filterMask;	// word1 = ID mask to filter pairs that trigger a contact callback;
+	if (actor) {
+		physx::PxFilterData filterData;
+		filterData.word0 = LayerMask; // word0 = own ID
+		filterData.word1 = filterMask;	// word1 = ID mask to filter pairs that trigger a contact callback;
 
-	const physx::PxU32 numShapes = actor->getNbShapes();
-	physx::PxShape** shapes = (physx::PxShape**)malloc(sizeof(physx::PxShape*) * numShapes);
-	actor->getShapes(shapes, numShapes);
-	for (physx::PxU32 i = 0; i < numShapes; i++)
-	{
-		physx::PxShape* shape = shapes[i];
-		shape->setSimulationFilterData(filterData);
-		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-		shape->setQueryFilterData(filterData);
+		const physx::PxU32 numShapes = actor->getNbShapes();
+		physx::PxShape** shapes = (physx::PxShape**)malloc(sizeof(physx::PxShape*) * numShapes);
+		actor->getShapes(shapes, numShapes);
+		for (physx::PxU32 i = 0; i < numShapes; i++)
+		{
+			physx::PxShape* shape = shapes[i];
+
+			shape->setSimulationFilterData(filterData);
+
+			shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+			shape->setQueryFilterData(filterData);
+		}
 	}
-	free(shapes);
 }
 
 physx::PxFilterFlags customFilterShader(
@@ -207,8 +210,6 @@ update_status ModulePhysics::Update(float dt)
 
 			mScene->simulate(physx::fixed_dt);
 			mScene->fetchResults(true);
-
-			OverlapSphere(float3::zero, 5.0f, LayerMask::LAYER_0);
 		}
 	}
 
@@ -274,24 +275,17 @@ void ModulePhysics::addActor(physx::PxRigidActor* actor, GameObject* gameObject)
 }
 
 void ModulePhysics::UpdateActor(physx::PxRigidActor* actor, LayerMask* Layermask) {
-	//DeleteActor(actor);
-	const physx::PxU32 numShapes = actor->getNbShapes();
-	physx::PxShape** shapes = (physx::PxShape**)malloc(sizeof(physx::PxShape*) * numShapes);
-	actor->getShapes(shapes, numShapes);
-	for (physx::PxU32 i = 0; i < numShapes; i++)
-	{
-		physx::PxShape* shape = shapes[i];
+	physx::PxShape* shape;
+	actor->getShapes(&shape, 1);
 
-		physx::PxFilterData filterData;
-		filterData = shape->getSimulationFilterData();
-		filterData.word0 = (1 << *Layermask);
+	physx::PxFilterData filterData;
+	filterData = shape->getSimulationFilterData();
+	filterData.word0 = (1 << *Layermask);
 
-		shape->setSimulationFilterData(filterData);
-		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-		shape->setQueryFilterData(filterData);
-	}
-	//addActor(actor, Layermask);
-	free(shapes);
+	shape->setSimulationFilterData(filterData);
+
+	shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	shape->setQueryFilterData(filterData);
 }
 
 void ModulePhysics::UpdateActors(LayerMask* updateLayer)
@@ -306,20 +300,16 @@ void ModulePhysics::UpdateActors(LayerMask* updateLayer)
 		if (layer1 == layer2) {
 			physx::PxFilterData filterData;
 
-			const physx::PxU32 numShapes = (*it).first->getNbShapes();
-			physx::PxShape** shapes = (physx::PxShape**)malloc(sizeof(physx::PxShape*) * numShapes);
-			(*it).first->getShapes(shapes, numShapes);
-			for (physx::PxU32 i = 0; i < numShapes; i++)
-			{
-				physx::PxShape* shape = shapes[i];
-				filterData = shape->getSimulationFilterData();
-				filterData.word1 = layer_list.at(layer2).LayerGroup;
+			physx::PxShape* shape;
+			(*it).first->getShapes(&shape, 1);
 
-				shape->setSimulationFilterData(filterData);
-				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-				shape->setQueryFilterData(filterData);
-			}
-			free(shapes);
+			filterData = shape->getSimulationFilterData();
+			filterData.word1 = layer_list.at(layer2).LayerGroup;
+
+			shape->setSimulationFilterData(filterData);
+			
+			shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+			shape->setQueryFilterData(filterData);
 			break;
 		}
 	}
@@ -387,7 +377,6 @@ void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer
 		cache->forEach((physx::PxVolumeCache::Iterator&)iter);
 	}
 
-	ENGINE_CONSOLE_LOG("DETECETED: %i", detected_objects->size());
 	detected_objects = nullptr;
 }
 
@@ -411,6 +400,15 @@ void UserIterator::processShapes(physx::PxU32 count, const physx::PxActorShape* 
 					App->physics->detected_objects->push_back(GO);
 			}
 		}
-
 	}
+}
+
+physx::PxQueryHitType::Enum FilterCallback::preFilter(const physx::PxFilterData& filterData, const physx::PxShape* shape, const physx::PxRigidActor* actor, physx::PxHitFlags& queryFlags)
+{
+	return physx::PxQueryHitType::Enum();
+}
+
+physx::PxQueryHitType::Enum FilterCallback::postFilter(const physx::PxFilterData& filterData, const physx::PxQueryHit& hit)
+{
+	return physx::PxQueryHitType::Enum();
 }
