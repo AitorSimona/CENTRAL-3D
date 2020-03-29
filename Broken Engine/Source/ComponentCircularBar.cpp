@@ -66,7 +66,7 @@ void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 	else //y axis
 		new_size = float2(size2D.x, (size2D.y * _percentage) / 100);
 
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D * 0.01f, 1.0f));
+	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(new_size * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -182,7 +182,7 @@ void ComponentCircularBar::CreateInspectorNode()
 	ImGui::Checkbox("##ImageActive", &GetActive());
 	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Progress Bar"))
+	if (ImGui::TreeNode("Circular Bar"))
 	{
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
