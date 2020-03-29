@@ -9,7 +9,7 @@ ModuleGameManager::~ModuleGameManager() {
 }
 
 bool ModuleGameManager::Init(Broken::json& config) {
-	GameApp->scene_manager->display_grid = false;
+	GameApp->renderer3D->display_grid = false;
 	GameApp->renderer3D->renderfbo = false;
 
 	return true;

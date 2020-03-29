@@ -48,10 +48,14 @@ void ComponentAudioListener::Update()
 
 void ComponentAudioListener::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 }
 
 json ComponentAudioListener::Save() const
 {
 	json node;
+
+	node["Active"] = this->active;
+
 	return node;
 }

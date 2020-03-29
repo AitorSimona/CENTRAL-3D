@@ -15,7 +15,7 @@ public:
 	virtual ~ComponentBone();
 
 	void Update() override;
-	void DebugDrawBones();
+	void DrawComponent() override;
 
 	float4x4 GetBoneTransform() const;
 	float4x4 GetSkeletonTransform();

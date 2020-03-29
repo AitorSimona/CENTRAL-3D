@@ -36,9 +36,8 @@ void ComponentBone::Update()
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
-void ComponentBone::DebugDrawBones()
+void ComponentBone::DrawComponent()
 {
-
 	if (GO->parent != nullptr && GO->parent->GetComponent<ComponentBone>() != nullptr && GO->GetAnimGO(GetHipBone()->GO)
 		&& GO->GetAnimGO(GetHipBone()->GO)->GetComponent<ComponentAnimation>()->draw_bones)
 	{
@@ -47,17 +46,7 @@ void ComponentBone::DebugDrawBones()
 		float3 child_pos = float3(child_matrix.At(0, 3), child_matrix.At(1, 3), child_matrix.At(2, 3));
 		float3 parent_pos = float3(parent_matrix.At(0, 3), parent_matrix.At(1, 3), parent_matrix.At(2, 3));
 
-		glLineWidth(5.0f);
-		glBegin(GL_LINES);
-
-		glColor4f(1.0, 1.0, 0.0, 1.0);
-
-		glVertex3f(child_pos.x, child_pos.y, child_pos.z);
-		glVertex3f(parent_pos.x, parent_pos.y, parent_pos.z);
-
-
-		glEnd();
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		App->renderer3D->DrawLine(child_matrix, child_pos, parent_pos, White);
 	}
 	
 }
@@ -88,6 +77,8 @@ ComponentBone* ComponentBone::GetHipBone()
 json ComponentBone::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+
 	node["Resources"]["ResourceBone"];
 
 	// --- Store path to component file ---
@@ -100,6 +91,8 @@ json ComponentBone::Save() const
 
 void ComponentBone::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+
 	std::string path = node["Resources"]["ResourceBone"].is_null() ? "0" : node["Resources"]["ResourceBone"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));

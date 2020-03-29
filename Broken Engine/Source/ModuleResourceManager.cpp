@@ -64,14 +64,19 @@ bool ModuleResourceManager::Start()
 	// --- Import all resources in Assets at startup ---
 	App->gui->CreateIcons();
 
+	// --- Set engine's basic shaders ---
+	App->renderer3D->CreateDefaultShaders();
+
 	// --- Create default scene ---
 	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene", 1);
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
 
 	// --- Create default material ---
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
-	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
-	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
+	DefaultMaterial->m_DiffuseResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultDiffTexture");
+	DefaultMaterial->m_DiffuseResTexture->SetTextureID(App->textures->GetDefaultTextureID());
+	DefaultMaterial->m_SpecularResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultSpecTexture");
+	DefaultMaterial->m_SpecularResTexture->SetTextureID(App->textures->GetDefaultTextureID());
 
 	// --- Create default font ---
 	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
@@ -86,6 +91,8 @@ bool ModuleResourceManager::Start()
 	filters.push_back("ttf");
 	filters.push_back("otf");
 	filters.push_back("animator");
+	filters.push_back("glsl");
+
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -211,7 +218,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		break;
 
 	case Resource::ResourceType::SHADER:
-		resource = ImportShaderProgram(IData);
+		resource = ImportShader(IData);
 		break;
 
 	case Resource::ResourceType::TEXTURE:
@@ -232,10 +239,6 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::ANIMATOR:
 		resource = ImportAnimator(IData);
-		break;
-
-	case Resource::ResourceType::SHADER_OBJECT:
-		resource = ImportShaderObject(IData);
 		break;
 
 	case Resource::ResourceType::META:
@@ -367,23 +370,6 @@ Resource* ModuleResourceManager::ImportMaterial(Importer::ImportData& IData)
 	return material;
 }
 
-Resource* ModuleResourceManager::ImportShaderProgram(Importer::ImportData& IData)
-{
-	ResourceShaderProgram* shader = nullptr;
-
-	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(IData.path))
-	{
-		//Loadfromlib
-	}
-
-	// --- Else call relevant importer ---
-	else
-		// Import
-
-	return shader;
-}
-
 Resource* ModuleResourceManager::ImportMesh(Importer::ImportData& IData)
 {
 	Resource* mesh = nullptr;
@@ -479,21 +465,28 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 	return texture;
 }
 
-Resource* ModuleResourceManager::ImportShaderObject(Importer::ImportData& IData)
+Resource* ModuleResourceManager::ImportShader(Importer::ImportData& IData)
 {
-	ResourceShaderObject* shader_object = nullptr;
+	Resource* shader = nullptr;
+	ImporterShader* IShader = GetImporter<ImporterShader>();
 
 	// --- If the resource is already in library, load from there ---
 	if (IsFileImported(IData.path))
-	{
-		//Loadfromlib
-	}
+		shader = IShader->Load(IData.path);
 
 	// --- Else call relevant importer ---
 	else
-		// Import
+	{
+		std::string new_path = IData.path;
 
-	return shader_object;
+		if (IData.dropped)
+			new_path = DuplicateIntoGivenFolder(IData.path, currentDirectory->GetResourceFile());
+
+		IData.path = new_path.c_str();
+		shader = IShader->Import(IData);
+	}
+
+	return shader;
 }
 
 Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
@@ -507,7 +500,8 @@ Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
 		script = IScr->Load(IData.path);
 
 	// --- Else call relevant importer ---
-	else {
+	else 
+	{
 		std::string new_path = IData.path;
 
 		if (IData.dropped)
@@ -798,7 +792,6 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (animations.find(UID) == animations.end() ? resource : (*animations.find(UID)).second);
 	resource = resource ? resource : (anim_info.find(UID) == anim_info.end() ? resource : (*anim_info.find(UID)).second);
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
-	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
 	resource = resource ? resource : (fonts.find(UID) == fonts.end() ? resource : (*fonts.find(UID)).second);
 
@@ -871,13 +864,7 @@ Resource* ModuleResourceManager::CreateResource(Resource::ResourceType type, con
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
 
-	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject(App->GetRandom().Int(), source_file);
-		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
-		break;
-
 	case Resource::ResourceType::SCRIPT:
-		//MYTODO: D�dac fill code following Aitor's Guidelines
 		resource = (Resource*)new ResourceScript(App->GetRandom().Int(), source_file);
 		scripts[resource->GetUID()] = (ResourceScript*)resource;
 		break;
@@ -958,11 +945,6 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
 		break;
 
-	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject(UID, source_file);
-		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
-		break;
-
 	case Resource::ResourceType::META:
 		if (metas.find(UID) == metas.end())
 		{
@@ -1011,13 +993,12 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "scene" ? Resource::ResourceType::SCENE : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "fbx" || extension == "model" ? Resource::ResourceType::MODEL : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mat" ? Resource::ResourceType::MATERIAL : type) : type;
-	type = type == Resource::ResourceType::UNKNOWN ? (extension == "shader" ? Resource::ResourceType::SHADER : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "glsl" ? Resource::ResourceType::SHADER : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "dds" || extension == "png" || extension == "jpg" ? Resource::ResourceType::TEXTURE : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mesh"  ? Resource::ResourceType::MESH : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "bone" ? Resource::ResourceType::BONE : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "anim" ? Resource::ResourceType::ANIMATION : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "animator" ? Resource::ResourceType::ANIMATOR : type) : type;
-	type = type == Resource::ResourceType::UNKNOWN ? (extension == "vertex" || extension == "fragment" ? Resource::ResourceType::SHADER_OBJECT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "lua" ? Resource::ResourceType::SCRIPT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "ttf" || extension == "otf" ? Resource::ResourceType::FONT : type) : type;
@@ -1044,6 +1025,10 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 {
 	if (resource)
 	{
+		// --- Manage exceptions ---
+		if (resource->GetUID() == App->renderer3D->defaultShader->GetUID())
+			return;
+
 		std::string directory;
 		std::string original_file;
 
@@ -1096,8 +1081,13 @@ void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
 			std::string path = resource->GetOriginalFile();
 			directory = App->fs->GetDirectoryFromPath(path);
+
+			if(directory.size() > 0)
 			directory.pop_back();
+
 			original_file = (*it).second->GetOriginalFile();
+
+			if (original_file.size() > 0)
 			original_file.pop_back();
 
 			if (directory == original_file)
@@ -1180,6 +1170,22 @@ std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::R
 		}
 
 		unique_name.append(".mat");
+		break;
+
+	case Resource::ResourceType::SHADER:
+		unique_name = "New shader" + std::to_string(shaders.size());
+
+		for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end(); ++it)
+		{
+			if ((*it).second->GetName() == unique_name)
+			{
+				instance++;
+				unique_name = "New shader" + std::to_string(shaders.size() + instance);
+				it = shaders.begin();
+			}
+		}
+
+		unique_name.append(".glsl");
 		break;
 
 
@@ -1275,14 +1281,13 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		// --- Tell mats ---
 		for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			if ((*it).second->resource_diffuse && (*it).second->resource_diffuse->GetUID() == resource->GetUID())
-				(*it).second->resource_diffuse = nullptr;
+			if ((*it).second->m_DiffuseResTexture && (*it).second->m_DiffuseResTexture->GetUID() == resource->GetUID())
+				(*it).second->m_DiffuseResTexture = nullptr;
+
+			if ((*it).second->m_SpecularResTexture && (*it).second->m_SpecularResTexture->GetUID() == resource->GetUID())
+				(*it).second->m_SpecularResTexture = nullptr;
 		}
 
-		break;
-
-	case Resource::ResourceType::SHADER_OBJECT:
-		shader_objects.erase(resource->GetUID());
 		break;
 
 	case Resource::ResourceType::SCRIPT:
@@ -1418,15 +1423,6 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	textures.clear();
-
-	for (std::map<uint, ResourceShaderObject*>::iterator it = shader_objects.begin(); it != shader_objects.end();)
-	{
-		it->second->FreeMemory();
-		delete it->second;
-		it = shader_objects.erase(it);
-	}
-
-	shader_objects.clear();
 
 	for (std::map<uint, ResourceScript*>::iterator it = scripts.begin(); it != scripts.end();)
 	{

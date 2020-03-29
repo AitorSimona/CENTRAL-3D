@@ -41,7 +41,9 @@ public:
 	void Update() override;
 
 	Animation* GetDefaultAnimation() const;
+
 	void PlayAnimation(const char* name, float speed = 30);
+	void ChangeBlendTime(float value);
 	void SetAnimationSpeed(const char* name, float speed);
 	void SetCurrentAnimationSpeed(float speed);
 

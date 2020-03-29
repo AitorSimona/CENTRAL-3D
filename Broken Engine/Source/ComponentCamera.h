@@ -19,6 +19,7 @@ public:
 	float GetAspectRatio() const;
 	float4x4 GetOpenGLViewMatrix();
 	float4x4 GetOpenGLProjectionMatrix();
+	const float3 GetCameraPosition() const { return frustum.Pos(); }
 
 	// --- Setters ---
 	void SetNearPlane(float distance);
@@ -29,6 +30,7 @@ public:
 	void SetCameraValues(float4 values);
 
 	void Update() override;
+	void DrawComponent() override;
 
 	
 	// --- Utilities ---
