@@ -105,7 +105,7 @@ physx::PxFilterFlags customFilterShader(
 		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
 	}
 
-	return physx::PxFilterFlag::eDEFAULT;
+	return physx::PxFilterFlags();
 }
 
 bool ModulePhysics::Init(json& config)
@@ -160,8 +160,8 @@ bool ModulePhysics::Init(json& config)
 	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2;
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-	sceneDesc.filterShader = customFilterShader;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
+	sceneDesc.filterShader = customFilterShader;
 	sceneDesc.simulationEventCallback = simulationEventsCallback;
 	mScene = mPhysics->createScene(sceneDesc);
 

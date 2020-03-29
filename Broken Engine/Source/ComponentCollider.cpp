@@ -639,8 +639,8 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
 
 				if (isTrigger) {
-					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 				}
 				else {
 					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
@@ -767,12 +767,12 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 		dynamicRB->rigidBody->getShapes(&shape, 1);
 
 		if (isTrigger) {
-			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 		}
 		else {
-			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		}
 
 		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup); //Setup filtering Layers
