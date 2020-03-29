@@ -17,6 +17,7 @@ using namespace Broken;
 
 const std::string GetStringFromLightType(LightType type)
 {
+
 	std::string ret = "";
 	switch (type)
 	{
@@ -34,6 +35,7 @@ const std::string GetStringFromLightType(LightType type)
 
 ComponentLight::ComponentLight(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Light)
 {
+	name = "Light";
 	App->renderer3D->AddLight(this);
 }
 
@@ -199,82 +201,68 @@ void ComponentLight::Draw()
 // -------------------------------------------------------------------------------------------
 void ComponentLight::CreateInspectorNode()
 {
-	// --- Basic ---
-	ImGui::Checkbox("##Light Component", &GetActive());
+
+	// --- Type ---
+	ImGui::NewLine(); ImGui::Separator();
+	static ImGuiComboFlags flags = 0;
+
+	ImGui::Text("Light Type");
 	ImGui::SameLine();
 
-	// --- Tree Begin ---
-	if (ImGui::TreeNode("Light Component"))
+	std::string current_type = GetStringFromLightType(m_LightType);
+	if (ImGui::BeginCombo("##LightType", current_type.c_str(), flags))
 	{
-		// --- Delete ---
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
-		// --- Type ---
-		ImGui::NewLine(); ImGui::Separator();
-		static ImGuiComboFlags flags = 0;
-
-		ImGui::Text("Light Type");
-		ImGui::SameLine();
-
-		std::string current_type = GetStringFromLightType(m_LightType);
-		if (ImGui::BeginCombo("##LightType", current_type.c_str(), flags))
+		for (uint i = 0; i < (uint)LightType::MAX_LIGHT_TYPES; ++i)
 		{
-			for (uint i = 0; i < (uint)LightType::MAX_LIGHT_TYPES; ++i)
-			{
-				std::string selectable_type = GetStringFromLightType(LightType(i));
-				bool is_selected = (current_type == selectable_type);
+			std::string selectable_type = GetStringFromLightType(LightType(i));
+			bool is_selected = (current_type == selectable_type);
 
-				if (ImGui::Selectable(selectable_type.c_str(), is_selected))
-					SetLightType(LightType(i));
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
+			if (ImGui::Selectable(selectable_type.c_str(), is_selected))
+				SetLightType(LightType(i));
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
 		}
 
-		// --- Color ---
+		ImGui::EndCombo();
+	}
+
+	// --- Color ---
+	ImGui::Separator(); ImGui::NewLine();
+	ImGui::Text("Color");
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 37.0f);
+	ImGui::ColorEdit4("##LightColor", (float*)&m_Color, ImGuiColorEditFlags_NoInputs);		
+
+	// --- Intensity ---
+	ImGui::Text("Intensity");
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
+	ImGui::SetNextItemWidth(300.0f);
+	ImGui::SliderFloat("", &m_Intensity, 0.0f, 2.0f);
+	ImGui::NewLine();
+
+	if (m_LightType == LightType::SPOTLIGHT)
+	{
+		// --- Cutoff ---
 		ImGui::Separator(); ImGui::NewLine();
-		ImGui::Text("Color");
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 37.0f);
-		ImGui::ColorEdit4("##LightColor", (float*)&m_Color, ImGuiColorEditFlags_NoInputs);		
-
-		// --- Intensity ---
-		ImGui::Text("Intensity");
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
-		ImGui::SetNextItemWidth(300.0f);
-		ImGui::SliderFloat("", &m_Intensity, 0.0f, 2.0f);
+		ImGui::Text("Inner Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+		ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, m_InOutCutoffDegrees.y - 0.01f);
+		ImGui::Text("Outer Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+		ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.01f, m_InOutCutoffDegrees.x + 0.01f, 360.00f);
 		ImGui::NewLine();
+	}
 
-		if (m_LightType == LightType::SPOTLIGHT)
-		{
-			// --- Cutoff ---
-			ImGui::Separator(); ImGui::NewLine();
-			ImGui::Text("Inner Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-			ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, m_InOutCutoffDegrees.y - 0.01f);
-			ImGui::Text("Outer Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-			ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.01f, m_InOutCutoffDegrees.x + 0.01f, 360.00f);
-			ImGui::NewLine();
-		}
+	if (m_LightType == LightType::SPOTLIGHT || m_LightType == LightType::POINTLIGHT)
+	{
+		// --- Attenuation ---	
+		ImGui::Separator(); ImGui::NewLine();
+		ImGui::Text("Constant Attenuation Value (K):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+		ImGui::DragFloat("##AttK", &m_AttenuationKLQFactors.x, 0.001f, 0.000f, 2.0f);
+		ImGui::Text("Linear Attenuation Value (L):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+		ImGui::DragFloat("##AttL", &m_AttenuationKLQFactors.y, 0.001f, 0.000f, 2.0f);
+		ImGui::Text("Quadratic Attenuation Value (Q):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+		ImGui::DragFloat("##AttQ", &m_AttenuationKLQFactors.z, 0.00001f, 0.000000f, 2.0f, "%.5f");
 
-		if (m_LightType == LightType::SPOTLIGHT || m_LightType == LightType::POINTLIGHT)
-		{
-			// --- Attenuation ---	
-			ImGui::Separator(); ImGui::NewLine();
-			ImGui::Text("Constant Attenuation Value (K):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-			ImGui::DragFloat("##AttK", &m_AttenuationKLQFactors.x, 0.001f, 0.000f, 2.0f);
-			ImGui::Text("Linear Attenuation Value (L):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-			ImGui::DragFloat("##AttL", &m_AttenuationKLQFactors.y, 0.001f, 0.000f, 2.0f);
-			ImGui::Text("Quadratic Attenuation Value (Q):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-			ImGui::DragFloat("##AttQ", &m_AttenuationKLQFactors.z, 0.00001f, 0.000000f, 2.0f, "%.5f");
-
-			if (ImGui::Button("Default", { 57, 18 }))
-				m_AttenuationKLQFactors = float3(1.0f, 0.09f, 0.032f);
-		}
-
-		// --- Tree End ---
-		ImGui::TreePop();
+		if (ImGui::Button("Default", { 57, 18 }))
+			m_AttenuationKLQFactors = float3(1.0f, 0.09f, 0.032f);
 	}
 }
 

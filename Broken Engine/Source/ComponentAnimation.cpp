@@ -20,7 +20,7 @@ using namespace Broken;
 
 ComponentAnimation::ComponentAnimation(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Animation)
 {
-
+	name = "Animation";
 }
 
 ComponentAnimation::~ComponentAnimation()
@@ -283,95 +283,84 @@ void ComponentAnimation::ONResourceEvent(uint UID, Resource::ResourceNotificatio
 
 void ComponentAnimation::CreateInspectorNode()
 {
-	ImGui::Checkbox("##Animator", &GetActive());
-	ImGui::SameLine();
-
-	if (ImGui::TreeNode("Animation"))
+	if (res_anim)
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
-		if (res_anim)
-		{
-			ImGui::Text("Animation name: %s", res_anim->name.c_str());
-			ImGui::PushItemWidth(50); ImGui::InputFloat("Blend Duration", &blend_time_value);
-			ImGui::Checkbox("Draw Bones", &draw_bones);
-			if (ImGui::Button("Create New Animation"))
-				CreateAnimation("New Animation", 0, 0, false);
+		ImGui::Text("Animation name: %s", res_anim->name.c_str());
+		ImGui::PushItemWidth(50); ImGui::InputFloat("Blend Duration", &blend_time_value);
+		ImGui::Checkbox("Draw Bones", &draw_bones);
+		if (ImGui::Button("Create New Animation"))
+			CreateAnimation("New Animation", 0, 0, false);
 			
-			if (res_animator)
+		if (res_animator)
+		{
+			if (ImGui::Button("Save animation info"))
 			{
-				if (ImGui::Button("Save animation info"))
-				{
 					
-					res_animator->FreeMemory();
+				res_animator->FreeMemory();
 
-					for (auto iterator = animations.begin(); iterator != animations.end(); ++iterator)
-					{
-						Animation* anim = new Animation((*iterator)->name, (*iterator)->start, (*iterator)->end, (*iterator)->loop, (*iterator)->Default);
-						res_animator->animations.push_back(anim);
-					}
+				for (auto iterator = animations.begin(); iterator != animations.end(); ++iterator)
+				{
+					Animation* anim = new Animation((*iterator)->name, (*iterator)->start, (*iterator)->end, (*iterator)->loop, (*iterator)->Default);
+					res_animator->animations.push_back(anim);
+				}
 						
-					ImporterAnimator* IAnim = App->resources->GetImporter<ImporterAnimator>();
-					IAnim->Save(res_animator);
-				}
-			}
-			else
-				ImGui::Text("No Animator applied");
-		
-
-			ImGui::SameLine();
-			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-
-			// --- Handle drag & drop ---
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-				{
-					uint UID = *(const uint*)payload->Data;
-					Resource* resource = App->resources->GetResource(UID, false);
-
-					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR) 
-					{
-						LoadAnimator(true, UID);
-					}
-				}
-
-				ImGui::EndDragDropTarget();
-			}
-
-			for (int i = 0; i < animations.size(); i++)
-			{
-				ImGui::Separator();
-				// --- Game Object Name Setter ---
-				char Anim_name[100] = "";
-				strcpy_s(Anim_name, 100, animations[i]->name.c_str());
-				std::string str = "Animation ";
-				ImGui::PushItemWidth(200); if (ImGui::InputText(str.append(std::to_string(i + 1)).c_str(), Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-					animations[i]->name = Anim_name;
-
-				ImGui::Text("Animation Frames: %i", (animations[i]->end - animations[i]->start));
-				std::string Start = animations[i]->name;
-				ImGui::PushItemWidth(100); ImGui::InputInt(Start.append(" Start").c_str(), &animations[i]->start, 1, 0);
-				std::string End = animations[i]->name;
-				ImGui::PushItemWidth(100); ImGui::InputInt(End.append(" End").c_str(), &animations[i]->end, 1, 0);
-				std::string Speed = animations[i]->name;
-				ImGui::PushItemWidth(100); ImGui::InputFloat(Speed.append(" Speed").c_str(), &animations[i]->speed, 1, 0);
-				std::string Loop = animations[i]->name;
-				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
-
-				std::string name1 = animations[i]->name;
-				std::string Delete = "Delete ";
-				std::string button = Delete.append(name1);
-				if (ImGui::Button(button.c_str()))
-				{
-					delete animations[i];
-					animations.erase(animations.begin() + i);
-				}
+				ImporterAnimator* IAnim = App->resources->GetImporter<ImporterAnimator>();
+				IAnim->Save(res_animator);
 			}
 		}
+		else
+			ImGui::Text("No Animator applied");
+		
 
-		ImGui::TreePop();
+		ImGui::SameLine();
+		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+		// --- Handle drag & drop ---
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+			{
+				uint UID = *(const uint*)payload->Data;
+				Resource* resource = App->resources->GetResource(UID, false);
+
+				if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR) 
+				{
+					LoadAnimator(true, UID);
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		for (int i = 0; i < animations.size(); i++)
+		{
+			ImGui::Separator();
+			// --- Game Object Name Setter ---
+			char Anim_name[100] = "";
+			strcpy_s(Anim_name, 100, animations[i]->name.c_str());
+			std::string str = "Animation ";
+			ImGui::PushItemWidth(200); if (ImGui::InputText(str.append(std::to_string(i + 1)).c_str(), Anim_name, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				animations[i]->name = Anim_name;
+
+			ImGui::Text("Animation Frames: %i", (animations[i]->end - animations[i]->start));
+			std::string Start = animations[i]->name;
+			ImGui::PushItemWidth(100); ImGui::InputInt(Start.append(" Start").c_str(), &animations[i]->start, 1, 0);
+			std::string End = animations[i]->name;
+			ImGui::PushItemWidth(100); ImGui::InputInt(End.append(" End").c_str(), &animations[i]->end, 1, 0);
+			std::string Speed = animations[i]->name;
+			ImGui::PushItemWidth(100); ImGui::InputFloat(Speed.append(" Speed").c_str(), &animations[i]->speed, 1, 0);
+			std::string Loop = animations[i]->name;
+			ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
+
+			std::string name1 = animations[i]->name;
+			std::string Delete = "Delete ";
+			std::string button = Delete.append(name1);
+			if (ImGui::Button(button.c_str()))
+			{
+				delete animations[i];
+				animations.erase(animations.begin() + i);
+			}
+		}
 	}
 }
 

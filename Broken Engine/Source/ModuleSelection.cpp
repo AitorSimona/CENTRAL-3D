@@ -74,13 +74,13 @@ update_status ModuleSelection::Update(float dt)
 	if (App->gui->isSceneHovered && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 	{
 		aabb_selection = true;
-		aabb = AABB({0,0,0 }, { 1,1,1 });
+		aabb = AABB({0,0,0 }, { 50,50,50 });
 	}
 
 	else if (aabb_selection)
 	{
-		SelectIfIntersects();
-		aabb.maxPoint = {};
+		//SelectIfIntersects();
+		//aabb.maxPoint = {};
 	}
 
 	if (aabb_selection && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
@@ -118,7 +118,8 @@ void ModuleSelection::SelectIfIntersects()
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
-	//App->renderer3D->DrawAABB(aabb);
+	//App->renderer3D->DrawAABB(aabb, { 1,0,0,1 });
+
 	return UPDATE_CONTINUE;
 }
 
@@ -173,6 +174,28 @@ void ModuleSelection::ClearSelection()
 		go->node_flags &= ~1;
 	}
 	selection.clear();
+}
+
+void ModuleSelection::CopyComponentValues(Component* component)
+{
+	component_type = component->GetType();
+	if (component_type != Component::ComponentType::Unknown)
+		component_node = component->Save();
+}
+
+void ModuleSelection::PasteComponentValues(Component* component)
+{
+	if (component_type != Component::ComponentType::Unknown)
+		component->Load(component_node);
+}
+
+void ModuleSelection::PasteComponentValuesToSelected()
+{
+	for (GameObject* obj : selection)
+	{
+		if (Component* component = obj->HasComponent(component_type))
+			component->Load(component_node);
+	}
 }
 
 void ModuleSelection::Select(GameObject* gameobject)

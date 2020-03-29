@@ -22,6 +22,7 @@ using namespace Broken;
 
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
+	name = "Particle Emitter";
 	Enable();
 
 	App->particles->AddEmitter(this);

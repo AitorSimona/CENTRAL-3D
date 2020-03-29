@@ -32,6 +32,7 @@
 using namespace Broken;
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::MeshRenderer) 
 {
+	name = "Mesh Renderer";
 	material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 }
 
@@ -192,23 +193,12 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 
 void ComponentMeshRenderer::CreateInspectorNode() 
 {
-	ImGui::Checkbox("##RenActive", &GetActive());
+	ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
 	ImGui::SameLine();
+	ImGui::Checkbox("Face Normals  ", &draw_facenormals);
+	ImGui::SameLine();
+	ImGui::Checkbox("Checkers", &checkers);
 
-	if (ImGui::TreeNode("Mesh Renderer")) 
-	{
-
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
-		ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
-		ImGui::SameLine();
-		ImGui::Checkbox("Face Normals  ", &draw_facenormals);
-		ImGui::SameLine();
-		ImGui::Checkbox("Checkers", &checkers);
-
-		ImGui::TreePop();
-	}
 
 	ImGui::NewLine();
 	ImGui::Separator();

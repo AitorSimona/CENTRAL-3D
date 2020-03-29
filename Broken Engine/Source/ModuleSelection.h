@@ -14,15 +14,16 @@
 
 /* CHANGE LIST
 	- Added ModuleSelection to manage selection
-	- Selection can be:
+	- Selection can be both on hierarchy and scene:
 		- Single -> mouse left click
 		- Additive/Substractive -> mouse left click + CTRL
-		- Multiple -> mouse left click + SHIFT if there's at least one selected and from up to down
+		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected and from up to down
 	- Selected gameobjects can now:
 		- Change parent to the dragged one (WORKING ON IT)
 		- Add same component
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
+		- Paste previously copied components 
 
 */
 
@@ -57,7 +58,17 @@ public:
 
 	const std::vector<GameObject*>* GetSelected() const { return &selection; }
 
+	// Component management
+
+	void CopyComponentValues(Component* component);
+	void PasteComponentValues(Component* component);
+
+	void PasteComponentValuesToSelected();
+
+
+
 private:
+
 
 	void Select(GameObject* gameobject);
 
@@ -84,6 +95,9 @@ private:
 	//ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 	//ImGuiTreeNodeFlags node_flags = base_flags;
 	
+	// Component copy and paste
+	json component_node;
+	Component::ComponentType component_type = Component::ComponentType::Unknown;
 };
 
 BE_END_NAMESPACE

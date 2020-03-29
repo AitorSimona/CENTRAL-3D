@@ -63,8 +63,55 @@ bool PanelInspector::Draw()
 				if (Startup)
 					ImGui::SetNextItemOpen(true);
 
+				// SELECTED TODO -> Change script name
 				if (*it)
-					(*it)->CreateInspectorNode();
+				{
+					std::string a = "##Active";
+					ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
+					ImGui::SameLine();
+					
+					
+					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+					{
+						a = "ComponentOptions"; 
+						ImGui::SameLine();
+						if (ImGui::SmallButton("..."))
+						{
+
+							ImGui::OpenPopup("Component options");
+						}
+						//ImGui::SetNextItemOpen(true);
+						if (ImGui::BeginPopup("Component options")) 
+						{
+							/*if ( ImGui::BeginMenu( "Component Options Menu" )   )
+							{*/
+
+								if (ImGui::MenuItem("Delete component")) 
+								{
+									(*it)->to_delete = true;
+								}
+								if (ImGui::MenuItem("Copy values"))
+								{
+									EngineApp->selection->CopyComponentValues((*it));
+								}
+								if (ImGui::MenuItem("Paste values"))
+								{
+									EngineApp->selection->PasteComponentValues((*it));
+								}
+								if (ImGui::MenuItem("Paste values to all selected"))
+								{
+									EngineApp->selection->PasteComponentValuesToSelected();
+								}
+								//ImGui::EndMenu();
+							//}
+							ImGui::EndPopup();
+						}
+						
+						(*it)->CreateInspectorNode();
+
+						ImGui::TreePop();
+					}
+				}
 
 				ImGui::NewLine();
 				ImGui::Separator();
