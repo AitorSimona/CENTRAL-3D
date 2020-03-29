@@ -77,6 +77,8 @@ bool ModuleResourceManager::Start()
 	DefaultMaterial->m_DiffuseResTexture->SetTextureID(App->textures->GetDefaultTextureID());
 	DefaultMaterial->m_SpecularResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultSpecTexture");
 	DefaultMaterial->m_SpecularResTexture->SetTextureID(App->textures->GetDefaultTextureID());
+	DefaultMaterial->m_NormalResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultNormalMapTexture");
+	DefaultMaterial->m_NormalResTexture->SetTextureID(App->textures->GetDefaultTextureID());
 
 	// --- Create default font ---
 	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
@@ -1286,6 +1288,9 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 			if ((*it).second->m_SpecularResTexture && (*it).second->m_SpecularResTexture->GetUID() == resource->GetUID())
 				(*it).second->m_SpecularResTexture = nullptr;
+
+			if ((*it).second->m_NormalResTexture && (*it).second->m_NormalResTexture->GetUID() == resource->GetUID())
+				(*it).second->m_NormalResTexture = nullptr;
 		}
 
 		break;

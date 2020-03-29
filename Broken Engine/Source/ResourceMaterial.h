@@ -26,6 +26,7 @@ public:
 	float3 m_AmbientColor = { 1.0f, 1.0f, 1.0f };
 	ResourceTexture* m_DiffuseResTexture = nullptr;
 	ResourceTexture* m_SpecularResTexture = nullptr;
+	ResourceTexture* m_NormalResTexture = nullptr;
 
 	bool m_UseTexture = true;
 

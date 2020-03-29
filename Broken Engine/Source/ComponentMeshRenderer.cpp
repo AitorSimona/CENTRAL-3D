@@ -390,6 +390,61 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				material->m_SpecularResTexture->Release();
 			}
 
+			
+			// --- Print Texture Width and Height (Normal) ---
+			textSizeX = textSizeY = 0;
+			ImGui::NewLine();
+			if (material->m_NormalResTexture)
+			{
+				textSizeX = material->m_NormalResTexture->Texture_width;
+				textSizeY = material->m_NormalResTexture->Texture_height;
+			}
+
+			ImGui::Text(std::to_string(textSizeX).c_str());
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(textSizeY).c_str());
+
+			if (material->m_NormalResTexture)
+				ImGui::ImageButton((void*)(uint)material->m_NormalResTexture->GetPreviewTexID(), ImVec2(20, 20));
+			else
+				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+			// --- Handle drag & drop (Specular Texture) ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					Resource* resource = App->resources->GetResource(UID, false);
+
+					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+					{
+						if (material->m_NormalResTexture)
+							material->m_NormalResTexture->Release();
+
+						material->m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+
+						// --- Save material so we update path to texture ---
+						ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+						if (IMat)
+							IMat->Save(material);
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::SameLine();
+			ImGui::Text("Normal Map");
+
+			ImGui::SameLine();
+			if (ImGui::Button("Unuse", { 43, 18 }) && material->m_NormalResTexture)
+			{
+				material->m_NormalResTexture->RemoveUser(GetContainerGameObject());
+				material->m_NormalResTexture->Release();
+			}
+
 			ImGui::TreePop();
 
 			if (ImGui::Button("Unuse Material"))

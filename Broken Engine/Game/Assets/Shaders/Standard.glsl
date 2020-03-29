@@ -54,9 +54,11 @@ in vec3 v_CamPos;
 
 //Uniforms
 uniform int Texture;
+uniform int u_HasNormalMap;
 uniform float u_Shininess;
 uniform sampler2D ourTexture;
 uniform sampler2D SpecText;
+uniform sampler2D u_NormalTexture;
 
 //Light Uniforms
 struct BrokenLight
@@ -156,6 +158,12 @@ void main()
 
 	//Light Calculations
 	vec3 normalVec = normalize(v_Normal);
+	if(u_HasNormalMap == 1)
+	{
+		//normalVec = texture(u_NormalTexture, v_TexCoord).rgb;
+		//normalVec = normalize(normalVec * 2.0 - 1.0);
+	}
+
 	vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 
 	vec3 colorResult = vec3(0.0);
@@ -180,6 +188,17 @@ void main()
 } 
 
 #endif //FRAGMENT_SHADER
+
+
+
+
+
+
+
+
+
+
+
 
 
 

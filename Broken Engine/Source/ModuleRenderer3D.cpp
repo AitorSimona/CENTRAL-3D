@@ -918,6 +918,14 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 							glActiveTexture(GL_TEXTURE0 + 2);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
 						}
+
+						if (mesh->mat->m_NormalResTexture)
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 1);
+							glUniform1i(glGetUniformLocation(shader, "u_NormalTexture"), 3);
+							glActiveTexture(GL_TEXTURE0 + 3);
+							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_NormalResTexture->GetTexID());
+						}
 					}
 					else
 						glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());

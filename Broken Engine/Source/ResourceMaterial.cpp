@@ -216,6 +216,60 @@ void ResourceMaterial::CreateInspectorNode()
 	//	m_SpecularResTexture->Release();
 	//}
 
+	// --- Print Texture Width and Height (Normal)
+	textSizeX = textSizeY = 0;
+	ImGui::NewLine();
+	if (m_NormalResTexture)
+	{
+		textSizeX = m_NormalResTexture->Texture_width;
+		textSizeY = m_NormalResTexture->Texture_height;
+	}
+
+	ImGui::Text(std::to_string(textSizeX).c_str());
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(textSizeY).c_str());
+
+
+	if (m_NormalResTexture)
+		ImGui::ImageButton((void*)(uint)m_NormalResTexture->GetPreviewTexID(), ImVec2(20, 20));
+	else
+		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+	// --- Handle drag & drop (Normal Texture)
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+		{
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+			{
+				if (m_NormalResTexture)
+					m_NormalResTexture->Release();
+
+				m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+
+				// --- Save material so we update path to texture ---
+				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+				if (IMat)
+					IMat->Save(this);
+			}
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::SameLine();
+	ImGui::Text("Normal Map");
+
+	//ImGui::SameLine();
+	//if (ImGui::Button("Unuse", { 43, 18 }) && m_NormalResTexture)
+	//{
+	//	m_NormalResTexture->RemoveUser(GetContainerGameObject());
+	//	m_NormalResTexture->Release();
+	//}
 }
 
 void ResourceMaterial::UpdateUniforms() 
@@ -394,12 +448,16 @@ void ResourceMaterial::OnDelete() {
 
 	Resource* diffuse = m_DiffuseResTexture;
 	Resource* specular = m_SpecularResTexture;
+	Resource* normalMap = m_NormalResTexture;
 
 	if (diffuse)
 		diffuse->Release();
 
 	if (specular)
 		specular->Release();
+
+	if (normalMap)
+		normalMap->Release();
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);

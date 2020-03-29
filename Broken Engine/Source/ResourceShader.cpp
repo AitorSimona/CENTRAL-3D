@@ -282,6 +282,7 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 			|| strcmp(name, "u_Shininess") == 0
 			|| strcmp(name, "u_LightsNumber") == 0
 			|| strcmp(name, "u_CameraPosition") == 0
+			|| strcmp(name, "u_HasNormalMap") == 0
 			|| std::string(name).find("u_BkLights") != std::string::npos)
 			continue;
 
