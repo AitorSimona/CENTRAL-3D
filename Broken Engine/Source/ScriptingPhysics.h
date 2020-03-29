@@ -2,8 +2,10 @@
 #define __SCRIPTINGPHYSICS_H__
 
 #include "BrokenCore.h"
+#include "MathGeoLib/include/Math/float3.h"
 
 class lua_State;
+enum LayerMask;
 
 BE_BEGIN_NAMESPACE
 class BROKEN_API ScriptingPhysics {
@@ -25,6 +27,7 @@ public:
 
 	void SetKinematic(bool enable);
 	void UseGravity(bool enable);
+	void OverlapSphere(float3 position, float radius, LayerMask layer);
 
 };
 BE_END_NAMESPACE

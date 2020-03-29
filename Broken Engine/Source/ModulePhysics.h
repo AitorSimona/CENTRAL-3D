@@ -111,7 +111,7 @@ public:
 
 	void DeleteActors(GameObject* go = nullptr);
 
-	void OverlapSphere(float3 position, float radius, LayerMask layer);
+	void OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<GameObject*>& objects);
 
 public:
 

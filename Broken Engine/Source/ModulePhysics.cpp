@@ -354,9 +354,8 @@ void ModulePhysics::DeleteActors(GameObject* go)
 	}
 }
 
-void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer)
+void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<GameObject*>& objects)
 {
-	std::vector<GameObject*> objects;
 	detected_objects = &objects;
 
 	physx::PxOverlapHit hit[100];
