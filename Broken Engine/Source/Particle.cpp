@@ -121,16 +121,9 @@ void Particle::Draw()
 	if (Movement.IsFinite())
 		App->renderer3D->active_camera->frustum.SetPos(center - Movement);*/
 
-
-	
-
-		// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->defaultShader->ID);
-
-	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, 0);
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+	// --- Set Uniforms ---
+	uint def_shaderID = App->renderer3D->defaultShader->ID;
+	glUseProgram(def_shaderID);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
@@ -151,21 +144,28 @@ void Particle::Draw()
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	glUniform1i(TextureLocation, 0); //reset texture location
+	//Texturing & Color
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+
+	int TextureLocation = glGetUniformLocation(def_shaderID, "Texture");
+	glUniform1i(TextureLocation, (int)true);
+	//ourTexture
+	glUniform1i(glGetUniformLocation(def_shaderID, "ourTexture"), 1);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
 
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	//glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
+	glUniform1i(TextureLocation, 0); //reset texture location
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-
-	
-
 	// --- Set camera back to original position ---
 	//App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 
