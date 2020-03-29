@@ -259,6 +259,9 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 			if (is_default)
 			{
+				if (ImGui::Button("Unuse Material"))
+					unuse_material = true;
+
 				ImGui::PopID();
 				ImGui::TreePop();
 				return;
