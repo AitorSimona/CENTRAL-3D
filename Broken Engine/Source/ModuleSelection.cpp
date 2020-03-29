@@ -175,7 +175,7 @@ void ModuleSelection::ClearSelection()
 	}
 	selection.clear();
 }
-bool ModuleSelection::ComponentCanBePasted()
+bool ModuleSelection::ComponentCanBePasted() const
 {
 	return (component_type != Component::ComponentType::Unknown);
 }

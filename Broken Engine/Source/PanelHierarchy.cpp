@@ -198,6 +198,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
+			EngineApp->selection->Select(Go);
 			uint UID = Go->GetUID();
 			ImGui::SetDragDropPayload("GO", &UID, sizeof(uint));
 			dragged = Go;

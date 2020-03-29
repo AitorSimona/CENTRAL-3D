@@ -24,6 +24,11 @@
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
 		- Paste previously copied components 
+		- Delete same component
+	- TODO
+		- Visual scene rectangle selection
+		- Selection counter in inspector
+		- Guizmo transformation to all
 */
 
 
@@ -55,7 +60,7 @@ public:
 
 	void ClearSelection();
 
-	bool ComponentCanBePasted();
+	bool ComponentCanBePasted() const;
 
 	const std::vector<GameObject*>* GetSelected() const { return &selection; }
 
@@ -69,36 +74,36 @@ public:
 	void DeleteComponentToSelected();
 
 
+	void Select(GameObject* gameobject);
+
+	void UnSelect(GameObject* gameobject);
+
 private:
 
 
-	void Select(GameObject* gameobject);
 
 	void SelectLastTo(GameObject* gameobject);
 
 	void SelectRecursive(GameObject* gameobject, GameObject* from, GameObject* to);
 
-	void UnSelect(GameObject* gameobject);
 
 	bool ToggleSelect(GameObject* gameobject);
 
 	void SelectIfIntersects();
 
 private:
-	// Shift selection
-	bool start_selecting = false;
-	bool stop_selecting = false;
-	bool reverse_selecting = false;
-
-	bool aabb_selection = false;
 	std::vector<GameObject*> selection;
 	
 	GameObject* root = nullptr;
 
+	// Shift selection
+	bool start_selecting = false;
+	bool stop_selecting = false;
+	bool reverse_selecting = false;
+	
+	// Visual scene selection
+	bool aabb_selection = false;
 	AABB aabb;
-	// --- Set node flags ---
-	//ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-	//ImGuiTreeNodeFlags node_flags = base_flags;
 	
 	// Component copy and paste
 	json component_node;
