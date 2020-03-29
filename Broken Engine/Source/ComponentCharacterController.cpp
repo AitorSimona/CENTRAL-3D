@@ -37,9 +37,9 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	capsuleDesc.behaviorCallback = this;
 
 	desc = &capsuleDesc;
-	
+
 	controller = App->physics->mControllerManager->createController(*desc);
-	
+
 	App->physics->addActor(controller->getActor(),GO);
 	initialPosition = capsuleDesc.position;
 
@@ -78,7 +78,7 @@ void ComponentCharacterController::Update()
 		float3 pos = cTransform->GetGlobalPosition();
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
-		
+
 	Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
@@ -155,9 +155,10 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 
 	physx::PxFilterData filterData;
 	filterData.word0 = App->physics->layer_list.at((int)GO->layer).LayerGroup; // layers that will collide
-	
-	physx::PxControllerFilters controllerFilter(&filterData, 0, 0);
-	
+
+	physx::PxControllerFilters controllerFilter;
+	controllerFilter.mFilterData = &filterData;
+
 	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), controllerFilter);
 }
 
@@ -169,6 +170,13 @@ void ComponentCharacterController::Delete()
 	shape->release();
 
 	App->physics->mScene->removeActor(*controller->getActor());
+
+	physx::PxShape* shape;
+	controller->getActor()->getShapes(&shape, 1);
+	shape->release();
+
+	App->physics->DeleteActor(controller->getActor());
+	//controller->release();
 }
 
 json ComponentCharacterController::Save() const
@@ -222,9 +230,9 @@ void ComponentCharacterController::Load(json& node)
 	SetSlopeLimit(slopeLimit);
 	SetRadius(radius);
 	SetHeight(height);
-	
+
 	if (std::stof(nonWalkableMode) == 0)
-	{		
+	{
 		controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
 		sliding = false;
 	}
@@ -248,14 +256,14 @@ void ComponentCharacterController::CreateInspectorNode()
 		{
 			if (mesh && mesh->IsInMemory())
 				mesh->Release();
-			
+
 			SetRadius(radius);
 		}
 
 		if (ImGui::DragFloat("Height", &height, 0.005f))
 		{
 			if (mesh && mesh->IsInMemory())
-				mesh->Release();	
+				mesh->Release();
 
 			SetHeight(height);
 		}
@@ -289,11 +297,11 @@ void ComponentCharacterController::CreateInspectorNode()
 		{
 			if (sliding)
 				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
-			
+
 			else
 				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
 		}
-		
+
 		ImGui::TreePop();
 	}
 }
@@ -320,7 +328,7 @@ void ComponentCharacterController::SetRadius(float radius)
 
 void ComponentCharacterController::SetHeight(float height)
 {
-	
+
 	static_cast<physx::PxCapsuleController*>(controller)->resize(height);
 	//static_cast<physx::PxCapsuleController*>(controller)->setHeight(height);
 }

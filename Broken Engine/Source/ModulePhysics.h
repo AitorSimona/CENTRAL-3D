@@ -58,7 +58,6 @@ struct Layer {
 		LayerGroup = ID;
 		
 	}
-
 };
 
 struct BROKEN_API UserIterator : physx::PxVolumeCache::Iterator
@@ -112,6 +111,10 @@ public:
 	void DeleteActors(GameObject* go = nullptr);
 
 	void OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<GameObject*>& objects);
+
+	const Broken::json& SaveStatus() const;
+
+	void LoadStatus(const Broken::json& file);
 
 public:
 

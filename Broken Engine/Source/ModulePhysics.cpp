@@ -307,7 +307,7 @@ void ModulePhysics::UpdateActors(LayerMask* updateLayer)
 			filterData.word1 = layer_list.at(layer2).LayerGroup;
 
 			shape->setSimulationFilterData(filterData);
-			
+
 			shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 			shape->setQueryFilterData(filterData);
 			break;
@@ -348,8 +348,9 @@ void ModulePhysics::DeleteActors(GameObject* go)
 				col->Delete();
 			}
 
-			if ((*it)->GetComponent<ComponentCharacterController>() != nullptr)
+			if ((*it)->GetComponent<ComponentCharacterController>() != nullptr) {
 				(*it)->GetComponent<ComponentCharacterController>()->Delete();
+			}
 		}
 	}
 }
@@ -383,14 +384,7 @@ void UserIterator::processShapes(physx::PxU32 count, const physx::PxActorShape* 
 {
 	int i = 0;
 	for (physx::PxU32 i = 0; i < count; i++) {
-		physx::PxRigidActor* actor = actorShapePairs[i].shape->getActor();
-
-		if (!actor) {
-			actor = actorShapePairs[i].actor;
-			if (!actor) {
-				continue;
-			}
-		}
+		physx::PxRigidActor* actor = (physx::PxRigidActor * )actorShapePairs[i].actor;
 
 		GameObject* GO = App->physics->actors[actor];
 		if (GO) {
@@ -404,10 +398,43 @@ void UserIterator::processShapes(physx::PxU32 count, const physx::PxActorShape* 
 
 physx::PxQueryHitType::Enum FilterCallback::preFilter(const physx::PxFilterData& filterData, const physx::PxShape* shape, const physx::PxRigidActor* actor, physx::PxHitFlags& queryFlags)
 {
-	return physx::PxQueryHitType::Enum();
+	// PT: ignore triggers
+	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
+		return physx::PxQueryHitType::eNONE;
+
+	return physx::PxQueryHitType::eBLOCK;
 }
 
 physx::PxQueryHitType::Enum FilterCallback::postFilter(const physx::PxFilterData& filterData, const physx::PxQueryHit& hit)
 {
 	return physx::PxQueryHitType::Enum();
 }
+
+//const Broken::json& ModulePhysics::SaveStatus() const {
+//	//MYTODO: Added exception for Build because Build should never be enabled at start
+//	//maybe we should call SaveStatus on every panel
+//	static Broken::json config;
+//	for (uint i = 0; i < layer_list.size(); ++i) {
+//		if (panels[i]->GetName() == "Build")
+//			config[panels[i]->GetName()] = false;
+//		else
+//			config[panels[i]->GetName()] = panels[i]->IsEnabled();
+//	}
+//	return config;
+//};
+//
+//void ModulePhysics::LoadStatus(const Broken::json& file) {
+//
+//	if (file[name].find(panels[i]->GetName()) != file[name].end()) {
+//		panels[i]->SetOnOff(file[name][panels[i]->GetName()]);
+//	}
+//
+//	for (uint i = 0; i < panels.size(); ++i) {
+//
+//		if (file[name].find(panels[i]->GetName()) != file[name].end()) {
+//			panels[i]->SetOnOff(file[name][panels[i]->GetName()]);
+//		}
+//		else
+//			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
+//	}
+//}
