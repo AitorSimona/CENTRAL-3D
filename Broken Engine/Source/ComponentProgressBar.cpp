@@ -131,6 +131,8 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 json ComponentProgressBar::Save() const
 {
 	json node;
+	node["Active"] = this->active;
+	node["visible"] = std::to_string(visible);
 
 	node["Resources"]["ResourceTexture"];
 
@@ -158,6 +160,10 @@ json ComponentProgressBar::Save() const
 
 void ComponentProgressBar::Load(json& node)
 {
+	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
+	visible = bool(std::stoi(visible_str));
+
 	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));

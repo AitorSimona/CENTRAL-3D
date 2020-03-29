@@ -1,16 +1,13 @@
-#ifndef __SCRIPTINGDEBUG_H__
-#define __SCRIPTINGDEBUG_H__
-#include "ModuleInput.h"
+#ifndef __SCRIPTINGSYSTEM_H__
+#define __SCRIPTINGSYSTEM_H__
 
 #include "BrokenCore.h"
 
-class lua_State;
-
 BE_BEGIN_NAMESPACE
-class BROKEN_API ScriptingDebug {
+class BROKEN_API ScriptingSystem {
 public:
-	ScriptingDebug();
-	~ScriptingDebug();
+	ScriptingSystem();
+	~ScriptingSystem();
 
 public:
 
@@ -18,10 +15,12 @@ public:
 	float GetRealDT() const;
 	float GetDT() const;
 	float GameTime();
+	void PauseGame();
+	void ResumeGame();
 
 	// Maths
 	int FloatNumsAreEqual(float a, float b);
 	int DoubleNumsAreEqual(double a, double b);
 };
 BE_END_NAMESPACE
-#endif // __SCRIPTINGDEBUG_H__
+#endif // __SCRIPTINGSYSTEM_H__

@@ -44,4 +44,4 @@ public:
 
 };
 BE_END_NAMESPACE
-#endif // !__SCRIPTINGINPUTS_H__
+#endif // __SCRIPTINGINPUTS_H__

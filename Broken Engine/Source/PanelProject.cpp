@@ -9,6 +9,8 @@
 
 //#include "ResourceFolder.h"
 //#include "ResourceModel.h"
+#include <iostream>
+#include <fstream>
 #include <memory>
 #include "mmgr/nommgr.h"
 
@@ -172,24 +174,31 @@ void PanelProject::CreateResourceHandlingPopup()
 				IMat->Save((Broken::ResourceMaterial*)new_material);
 			}
 
-			if (ImGui::MenuItem("Script"))
+			if (ImGui::MenuItem("Shader"))
 			{
 				std::string resource_name;
-				resource_name = *(EngineApp->resources->GetNewUniqueName(Broken::Resource::ResourceType::SCRIPT));
+				resource_name = *(EngineApp->resources->GetNewUniqueName(Broken::Resource::ResourceType::SHADER));
 
-				Broken::Resource* new_script = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::SCRIPT, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
-				Broken::ImporterScript* IScript = EngineApp->resources->GetImporter<Broken::ImporterScript>();
+				Broken::Resource* new_shader = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::SHADER, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
+				Broken::ImporterShader* IShader = EngineApp->resources->GetImporter<Broken::ImporterShader>();
+				Broken::ResourceShader* shader = (Broken::ResourceShader*)new_shader;
+				shader->ReloadAndCompileShader();
 
-				EngineApp->resources->AddResourceToFolder(new_script);
+				EngineApp->resources->AddResourceToFolder(new_shader);
 
 				// --- Create meta ---
 				Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
-				Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, new_script->GetResourceFile(), new_script->GetUID());
+				Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, new_shader->GetOriginalFile(), new_shader->GetUID());
 
 				if (meta)
 					IMeta->Save(meta);
 
-				IScript->Save((Broken::ResourceScript*)new_script);
+				IShader->Save((Broken::ResourceShader*)new_shader);
+			}
+
+			if (ImGui::MenuItem("Script"))
+			{
+				createScript = true;
 			}
 
 			if (ImGui::MenuItem("Scene"))
@@ -212,20 +221,67 @@ void PanelProject::CreateResourceHandlingPopup()
 				IScene->SaveSceneToFile((Broken::ResourceScene*)new_scene);
 			}
 
-			//if (ImGui::BeginMenu("More.."))
-			//{
-			//	ImGui::MenuItem("Hello");
-			//	ImGui::MenuItem("Sailor");
-			//	if (ImGui::BeginMenu("Recurse.."))
-			//	{
-			//		ShowExampleMenuFile();
-			//		ImGui::EndMenu();
-			//	}
-			//	ImGui::EndMenu();
-			//}
 			ImGui::EndMenu();
 		}
+		ImGui::EndPopup();
+	}
 
+	if (createScript)
+		ImGui::OpenPopup("Create new script");
+
+	if (ImGui::BeginPopupModal("Create new script", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+		static char script_name[50] = "NewScript";
+		if (ImGui::InputText("Script name", script_name, 50, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll)) {
+			
+			Broken::Resource* new_script = EngineApp->resources->CreateResource(Broken::Resource::ResourceType::SCRIPT, std::string(currentDirectory->GetResourceFile()).append(script_name).append(".lua").c_str());
+			Broken::ImporterScript* IScript = EngineApp->resources->GetImporter<Broken::ImporterScript>();
+
+			EngineApp->resources->AddResourceToFolder(new_script);
+
+			// --- Create meta ---
+			Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
+			Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, new_script->GetResourceFile(), new_script->GetUID());
+
+			if (meta)
+				IMeta->Save(meta);
+
+			IScript->Save((Broken::ResourceScript*)new_script);
+
+			// Initializate script
+			std::string full_path = new_script->GetResourceFile();
+			std::string s_name = script_name;
+
+			std::ofstream file;
+			file.open(full_path);
+			file << "function GetTable" + s_name + "()\n";
+			file << "local lua_table = {}\n";
+			file << "lua_table.System = Scripting.System()\n\n";
+
+			file << "function lua_table:Awake()\n";
+			file << "end\n\n";
+
+			file << "function lua_table:Start()\n";
+			file << "end\n\n";
+
+			file << "function lua_table:Update()\n";
+			file << "end\n\n";
+
+			file << "return lua_table\n";
+			file << "end";
+			file.close();
+
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SetItemDefaultFocus();
+		ImGui::NewLine();
+		ImGui::Separator();
+
+		if (ImGui::Button("Close", ImVec2(300, 0)))
+			ImGui::CloseCurrentPopup();
+
+		createScript = false;
 		ImGui::EndPopup();
 	}
 }

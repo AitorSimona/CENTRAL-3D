@@ -20,7 +20,6 @@ class ResourceBone;
 class ResourceAnimation;
 class ResourceAnimator;
 class ResourceTexture;
-class ResourceShaderObject;
 class ResourceMeta;
 class ResourceScript;
 class ResourceFont;
@@ -38,9 +37,11 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterFolder;
 	friend class ImporterScript;
 	friend class ImporterFont;
+	friend class ImporterShader;
 	friend class PanelResources;
 	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
+	friend class ResourceMaterial;
 	friend class ModuleSceneManager;
 public:
 
@@ -64,16 +65,14 @@ public:
 	Resource* ImportScene(Importer::ImportData& IData);
 	Resource* ImportModel(Importer::ImportData& IData);
 	Resource* ImportMaterial(Importer::ImportData& IData);
-	Resource* ImportShaderProgram(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
 	Resource* ImportBone(Importer::ImportData& IData);
 	Resource* ImportAnimation(Importer::ImportData& IData);
 	Resource* ImportAnimator(Importer::ImportData& IData);
 	Resource* ImportTexture(Importer::ImportData& IData);
-	Resource* ImportShaderObject(Importer::ImportData& IData);
+	Resource* ImportShader(Importer::ImportData& IData);
 	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
-	//
 	Resource* ImportFont(Importer::ImportData& IData);
 
 	void HandleFsChanges();
@@ -92,7 +91,7 @@ public:
 	}
 
 	// --- Resource Handling ---
-	Resource* GetResource(uint UID, bool loadinmemory = true);
+	Resource* GetResource(uint UID, bool loadinmemory = true); 
 	void AddResourceToFolder(Resource* resource);
 	void RemoveResourceFromFolder(Resource* resource);
 	Resource* CreateResource(Resource::ResourceType type, const char* source_file);
@@ -127,7 +126,7 @@ private:
 	// Use this pointers only for read ops! If you want to get the resource use GetResource function
 	ResourceFolder* AssetsFolder = nullptr;
 	ResourceMaterial* DefaultMaterial = nullptr;
-	//MYTODO Temporary public for resource panel
+
 	// --- Available resources ---
 	std::map<uint, ResourceFolder*> folders;
 	std::map<uint, ResourceScene*> scenes;
@@ -139,7 +138,6 @@ private:
 	std::map<uint, ResourceAnimation*> animations;
 	std::map<uint, ResourceAnimator*> anim_info;
 	std::map<uint, ResourceTexture*> textures;
-	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 	std::map<uint, ResourceFont*> fonts;

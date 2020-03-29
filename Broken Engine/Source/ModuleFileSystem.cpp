@@ -62,7 +62,7 @@ bool ModuleFileSystem::Init(json& file) {
 	const char* dirs[] = {
 		SETTINGS_FOLDER, ASSETS_FOLDER, LIBRARY_FOLDER, MODELS_FOLDER,
 		MESHES_FOLDER, BONES_FOLDER, ANIMATIONS_FOLDER, ANIMATOR_FOLDER, TEXTURES_FOLDER,
-		SCENES_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER
+		SCENES_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER, SHADERS_ASSETS_FOLDER
 	};
 
 	for (uint i = 0; i < sizeof(dirs) / sizeof(const char*); ++i) {
@@ -187,6 +187,23 @@ std::string ModuleFileSystem::GetDirectoryFromPath(std::string& path) {
 	directory = path.substr(0, count + 1);
 
 	return directory;
+}
+
+std::string ModuleFileSystem::GetNameFromPath(std::string path, bool withExtension)
+{
+	std::string full_name;
+
+	App->fs->NormalizePath(path);
+	full_name = path.substr(path.find_last_of("//") + 1);
+
+	if (withExtension)
+		return full_name;
+	else {
+		std::string::size_type const p(full_name.find_last_of('.'));
+		std::string file_name = full_name.substr(0, p);
+
+		return file_name;
+	}
 }
 
 void ModuleFileSystem::DiscoverFiles(const char* directory, std::vector<std::string>& file_list) const {

@@ -489,12 +489,6 @@
     <ClInclude Include="ResourceShader.h">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceShaderObject.h">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceShaderProgram.h">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceTexture.h">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
@@ -636,16 +630,28 @@
     <ClInclude Include="ScriptingInputs.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptingDebug.h">
-      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
-    </ClInclude>
     <ClInclude Include="Scripting.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptingSystems.h">
+    <ClInclude Include="ScriptingSystem.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptingElements.h">
+    <ClInclude Include="ScriptingTransform.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingGameobject.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingPhysics.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingParticles.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingAudio.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingAnimations.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
     <ClInclude Include="ResourceFont.h">
@@ -660,14 +666,20 @@
     <ClInclude Include="ComponentCharacterController.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptingInterface.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingScenes.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
     <ClInclude Include="ComponentProgressBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="PhysxSimulationEvents.h">
       <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentLight.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -932,12 +944,6 @@
     <ClCompile Include="ResourceShader.cpp">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceShaderObject.cpp">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShaderProgram.cpp">
-      <Filter>Sources\BrokenEngine\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceTexture.cpp">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClCompile>
@@ -1076,16 +1082,28 @@
     <ClCompile Include="ScriptingInputs.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptingDebug.cpp">
-      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
-    </ClCompile>
     <ClCompile Include="Scripting.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptingSystems.cpp">
+    <ClCompile Include="ScriptingSystem.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptingElements.cpp">
+    <ClCompile Include="ScriptingTransform.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingGameobject.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingPhysics.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingParticles.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingAudio.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingAnimations.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
     <ClCompile Include="ResourceFont.cpp">
@@ -1100,11 +1118,20 @@
     <ClCompile Include="ComponentCharacterController.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptingInterface.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingScenes.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
     <ClCompile Include="ComponentProgressBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
     <ClCompile Include="PhysxSimulationEvents.cpp">
       <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentLight.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

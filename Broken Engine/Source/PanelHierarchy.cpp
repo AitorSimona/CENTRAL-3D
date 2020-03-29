@@ -84,18 +84,49 @@ bool PanelHierarchy::Draw()
 					Broken::GameObject* text_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::Text);
 				}
-				if (ImGui::MenuItem("Button", false, false, false)) {
+				if (ImGui::MenuItem("Button")) {
 					Broken::GameObject* button_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentText* button = (Broken::ComponentText*)button_go->AddComponent(Broken::Component::ComponentType::Button);
 				}
-				if (ImGui::MenuItem("Checkbox", false, false, false)) {
+				if (ImGui::MenuItem("Checkbox")) {
+
 				}
-				if (ImGui::MenuItem("Input Text", false, false, false)) {
+				if (ImGui::MenuItem("Input Text")) {
+
 				}
-				if (ImGui::MenuItem("Progress Bar", false, false, false)) {
+				if (ImGui::MenuItem("Progress Bar")) {
+					Broken::GameObject* bar_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentProgressBar* bar = (Broken::ComponentProgressBar*)bar_go->AddComponent(Broken::Component::ComponentType::ProgressBar);
 				}
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Lights"))
+			{
+				if (ImGui::MenuItem("Directional"))
+				{
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
+					light->SetLightType(Broken::LightType::DIRECTIONAL);
+				}
+
+				if (ImGui::MenuItem("Pointlight"))
+				{
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
+					light->SetLightType(Broken::LightType::POINTLIGHT);
+				}
+
+				if (ImGui::MenuItem("Spotlight"))
+				{
+					Broken::GameObject* lightGObj = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentLight* light = (Broken::ComponentLight*)lightGObj->AddComponent(Broken::Component::ComponentType::Light);
+					light->SetLightType(Broken::LightType::SPOTLIGHT);
+				}
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndPopup();
 		}			
 	}
@@ -110,12 +141,6 @@ bool PanelHierarchy::Draw()
 		end_drag = false;
 		dragged = nullptr;
 		target = nullptr;
-	}
-	if (to_destroy)
-	{
-		EngineApp->scene_manager->DestroyGameObject(to_destroy);
-		to_destroy = nullptr;
-		EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 	}
 
 	return true;
@@ -185,11 +210,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		{
 			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
-			to_destroy = Go;
-			Broken::Event e(Broken::Event::EventType::GameObject_destroyed);
-			e.go = Go;
-			EngineApp->event_manager->PushEvent(e);
-
+			EngineApp->scene_manager->SendToDelete(Go);
 		}
 
 		// --- Handle selection ---

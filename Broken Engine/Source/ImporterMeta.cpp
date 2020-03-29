@@ -35,6 +35,7 @@ Resource* ImporterMeta::Load(const char* path) const
 	json source_file = file["SOURCE"];
 	json Date = file["DATE"];
 	json fileFormatVersion = file["fileFormatVersion"];
+	json resourceData = file["ResourceData"];
 
 	// --- Check for nulls ---
 	if (source_file.is_null() || UID_node.is_null() || Date.is_null())
@@ -57,7 +58,15 @@ Resource* ImporterMeta::Load(const char* path) const
 
 	// --- Fill meta ---
 	if (resource)
+	{
 		resource->fileFormatVersion = fileFormatv;
+
+		// --- Retrieve Resource Data ---
+		if (!resourceData.is_null())
+		{
+			resource->ResourceData = resourceData;
+		}
+	}
 
 	// --- A folder has been renamed ---
 	if (!App->fs->Exists(source_file.get<std::string>().c_str()))
@@ -76,10 +85,11 @@ void ImporterMeta::Save(ResourceMeta* meta) const {
 	jsonmeta["DATE"] = meta->Date;
 	jsonmeta["SOURCE"] = meta->GetOriginalFile();
 	jsonmeta["fileFormatVersion"] = App->resources->fileFormatVersion; // make sure resources have saved in newest version
+	jsonmeta["ResourceData"] = meta->ResourceData;
+
 	App->GetJLoader()->Serialize(jsonmeta, jsondata);
 	meta_buffer = (char*)jsondata.c_str();
 
 	App->fs->Save(meta->GetResourceFile(), meta_buffer, jsondata.length());
-
 }
 

@@ -24,6 +24,7 @@ public:
 	void Disable();
 	void Update(float dt);
 	void PostUpdate();
+	void Draw();
 
 	// --- Getters ---
 	uint			GetUID();
@@ -49,10 +50,12 @@ public:
 		return nullptr;
 	}
 
+
 	Component*		AddComponent(Component::ComponentType type, int index = -1);
 	void			RemoveComponent(Component* comp);
 	Component*		HasComponent(Component::ComponentType type) const;
 	std::vector<Component*>& GetComponents();
+	Component* GetComponentWithUID(uint UUID);
 
 	// --- Setters ---
 	void			SetName(const char* name);

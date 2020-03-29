@@ -77,7 +77,7 @@ bool PanelInspector::Draw()
 
 			static ImGuiComboFlags flags = 0;
 
-			const char* items[] = { "Default", "Mesh", "Mesh Renderer", "Dynamic RigidBody", "Collider", "Character Controller", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
+			const char* items[] = { "Default", "Dynamic RigidBody", "Collider", "Character Controller", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
 			static const char* item_current = items[0];
 
 			ImGui::NewLine();
@@ -121,16 +121,6 @@ bool PanelInspector::Draw()
 
 			// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
 
-			if (item_current == "Mesh")
-			{
-				Selected->AddComponent(Broken::Component::ComponentType::Mesh);
-			}
-
-			if (item_current == "Mesh Renderer")
-			{
-				Selected->AddComponent(Broken::Component::ComponentType::MeshRenderer);
-			}
-
 			if (item_current == "UI Canvas")
 			{
 				Selected->AddComponent(Broken::Component::ComponentType::Canvas);
@@ -160,7 +150,7 @@ bool PanelInspector::Draw()
 			{
 				Selected->AddComponent(Broken::Component::ComponentType::Collider);
 			}
-			
+
 			if (item_current == "Character Controller")
 			{
 				Selected->AddComponent(Broken::Component::ComponentType::CharacterController);
@@ -183,14 +173,19 @@ bool PanelInspector::Draw()
 
 		// --- Display Resource Information ---
 		else if (SelectedRes)
-		{	
+		{
 			ImGui::BeginChild("res", ImVec2(0, 35), true);
 
 			ImGui::Text(SelectedRes->GetName());
 
+			ImGui::EndChild();
+
+			ImGui::BeginChild("resdata", ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), false);
+
 			SelectedRes->CreateInspectorNode();
 
 			ImGui::EndChild();
+
 		}
 	}
 
@@ -239,12 +234,12 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 			ImGui::Indent(30);
 			ImGui::Text("You are about to make this object non-static.");
 			ImGui::Spacing();
-			
+
 			ImGui::Unindent(10);
 			ImGui::Text("Do you want its children to be non-static aswell?");
-			
+
 			ImGui::Spacing();
-			
+
 			ImGui::Indent(130);
 			if (ImGui::Button("Yes")) {
 				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
@@ -267,8 +262,8 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 
 			ImGui::Spacing();
 
-			ImGui::Indent(130); 
-			
+			ImGui::Indent(130);
+
 			if (ImGui::Button("Yes")) {
 				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
 				ImGui::CloseCurrentPopup();

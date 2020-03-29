@@ -36,7 +36,7 @@ public:
 
 	void Update() override;
 
-	void Draw();
+	void DrawComponent() override;
 
 	void UpdateLocalMatrix();
 
