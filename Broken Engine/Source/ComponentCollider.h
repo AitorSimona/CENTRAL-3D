@@ -14,7 +14,7 @@ class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
 
-class BROKEN_API ComponentCollider : public Component//, public physx::PxSimulationEventCallback
+class BROKEN_API ComponentCollider : public Component
 {
 
 public:
@@ -58,11 +58,6 @@ public:
 	void									UpdateActor(LayerMask* layerMask);
 	void									Delete();
 
-	//virtual void							onConstraintBreak(physx::PxConstraintInfo*, physx::PxU32) {}
-	//virtual void							onWake(physx::PxActor**, physx::PxU32) {}
-	//virtual void							onSleep(physx::PxActor**, physx::PxU32) {}
-	//virtual void							onAdvance(const physx::PxRigidBody* const*, const physx::PxTransform*, const physx::PxU32) {}
-
 private:
 	template <class Geometry>
 	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
@@ -90,14 +85,6 @@ private:
 	bool firstCreation = false;
 	bool toPlay = false;
 	bool isTrigger = false;
-};
-
-
-class BROKEN_API Callbacks : public physx::PxSimulationEventCallback, public ComponentCollider
-{
-	// Implements PxSimulationEventCallback
-	virtual void							onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs);
-	virtual void							onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count);
 };
 
 

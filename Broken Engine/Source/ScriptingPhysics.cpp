@@ -143,3 +143,10 @@ void ScriptingPhysics::UseGravity(bool enable)
 	else
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
+
+void ScriptingPhysics::OverlapSphere(float3 position, float radius, LayerMask layer)
+{
+	std::vector<GameObject*> objects;
+	App->physics->OverlapSphere(position, radius, layer, objects);
+	//std::
+}

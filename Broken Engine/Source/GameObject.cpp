@@ -32,6 +32,8 @@ GameObject::GameObject(const char* name) {
 	UpdateAABB();
 	layer = LAYER_0;
 
+	collisions.resize(2, nullptr);
+
 	Enable();
 }
 
@@ -42,6 +44,8 @@ GameObject::GameObject(const char* name, uint UID)
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
+
+	collisions.resize(2, nullptr);
 
 	Enable();
 }

@@ -32,7 +32,27 @@ public:
 	bool CheckEverythingCompiles();
 	void CallbackScriptFunction(ComponentScript* script_component, const ScriptFunc& function_to_call);
 
-public:
+	/*template <typename T, typename U>
+	void as_table(lua_State* L, T begin, U end) {
+		lua_newtable(L);
+		for (size_t i = 0; begin != end; ++begin, ++i) {
+			lua_pushinteger(L, i + 1);
+			lua_pushnumber(L, *begin);
+			lua_settable(L, -3);
+		}
+	}
+
+	template <typename T, typename U>
+	void from_table(lua_State* L, T begin, U end) {
+		assert(lua_istable(L, -1));
+		for (size_t i = 0; begin != end; ++begin, ++i) {
+			lua_pushinteger(L, i + 1);
+			lua_gettable(L, -2);
+			*begin = lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	}*/
+
 	bool Init(json& file) override;
 	bool Start();
 	bool CleanUp();

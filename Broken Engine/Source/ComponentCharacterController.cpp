@@ -34,11 +34,12 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	capsuleDesc.nonWalkableMode = physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING;
 	capsuleDesc.upDirection = physx::PxVec3(0, 1, 0);
 	capsuleDesc.material = App->physics->mMaterial;
+	capsuleDesc.behaviorCallback = this;
 
 	desc = &capsuleDesc;
-	
+
 	controller = App->physics->mControllerManager->createController(*desc);
-	
+
 	App->physics->addActor(controller->getActor(),GO);
 	initialPosition = capsuleDesc.position;
 
@@ -77,7 +78,7 @@ void ComponentCharacterController::Update()
 		float3 pos = cTransform->GetGlobalPosition();
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
-		
+
 	Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
@@ -154,15 +155,20 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 
 	physx::PxFilterData filterData;
 	filterData.word0 = App->physics->layer_list.at((int)GO->layer).LayerGroup; // layers that will collide
-	
+
 	physx::PxControllerFilters controllerFilter;
 	controllerFilter.mFilterData = &filterData;
-	
+
 	controller->move(vel * App->time->GetGameDt(), minDist, App->time->GetGameDt(), controllerFilter);
 }
 
 void ComponentCharacterController::Delete()
 {
+	physx::PxShape* shape;
+	controller->getActor()->getShapes(&shape, 1);
+
+	shape->release();
+
 	App->physics->mScene->removeActor(*controller->getActor());
 
 	physx::PxShape* shape;
@@ -224,9 +230,9 @@ void ComponentCharacterController::Load(json& node)
 	SetSlopeLimit(slopeLimit);
 	SetRadius(radius);
 	SetHeight(height);
-	
+
 	if (std::stof(nonWalkableMode) == 0)
-	{		
+	{
 		controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
 		sliding = false;
 	}
@@ -250,14 +256,14 @@ void ComponentCharacterController::CreateInspectorNode()
 		{
 			if (mesh && mesh->IsInMemory())
 				mesh->Release();
-			
+
 			SetRadius(radius);
 		}
 
 		if (ImGui::DragFloat("Height", &height, 0.005f))
 		{
 			if (mesh && mesh->IsInMemory())
-				mesh->Release();	
+				mesh->Release();
 
 			SetHeight(height);
 		}
@@ -291,11 +297,11 @@ void ComponentCharacterController::CreateInspectorNode()
 		{
 			if (sliding)
 				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
-			
+
 			else
 				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
 		}
-		
+
 		ImGui::TreePop();
 	}
 }
@@ -322,22 +328,63 @@ void ComponentCharacterController::SetRadius(float radius)
 
 void ComponentCharacterController::SetHeight(float height)
 {
-	
+
 	static_cast<physx::PxCapsuleController*>(controller)->resize(height);
 	//static_cast<physx::PxCapsuleController*>(controller)->setHeight(height);
 }
 
-physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxShape&, const physx::PxActor&)
+physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor)
 {
-	return physx::PxControllerBehaviorFlag::eCCT_SLIDE;
+	physx::PxGeometryHolder a = shape.getGeometry();
+
+	if (shape.getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
+	{
+		GameObject* go = App->physics->actors[(physx::PxRigidActor*) & actor];
+		if (go)
+		{
+			int a = 0; //set callback onTrigger
+		}
+	}
+	else
+	{
+		GameObject* go = App->physics->actors[(physx::PxRigidActor*) & actor];
+		if (go)
+		{
+			int a = 0; //set callback onContact
+		}
+	}
+
+	return physx::PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
 }
 
-physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxController&)
+physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxController& controller)
 {
-	return physx::PxControllerBehaviorFlag::eCCT_SLIDE;
+
+	physx::PxShape* shape;
+	controller.getActor()->getShapes(&shape, 1);
+	physx::PxGeometryHolder a = shape->getGeometry();
+
+	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
+	{
+		GameObject* go = App->physics->actors[shape->getActor()];
+		if (go)
+		{
+			int a = 0; //set callback ontrigger
+		}
+	}
+	else
+	{
+		GameObject* go = App->physics->actors[shape->getActor()];
+		if (go)
+		{
+			int a = 0; //set callback onContact
+		}
+	}
+
+	return physx::PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
 }
 
-physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxObstacle&)
+physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxObstacle& obstacle)
 {
-	return physx::PxControllerBehaviorFlags(0);
+	return physx::PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
 }

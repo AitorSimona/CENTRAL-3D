@@ -77,6 +77,7 @@ public:
 public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childs;
+	std::vector<GameObject*> collisions;
 	bool Static = false;
 	ResourceModel* model = nullptr;
 	LayerMask layer;
