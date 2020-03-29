@@ -220,6 +220,7 @@ void ModuleSelection::SelectLastTo(GameObject* gameobject)
 	if (from != nullptr && gameobject != nullptr) {
 		start_selecting = false;
 		stop_selecting = false;
+		reverse_selecting = false;
 
 		SelectRecursive(App->scene_manager->GetRootGO(), from, gameobject);
 	}
@@ -242,11 +243,20 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 
 	else
 	{
+		// Start selecting
 		if (gameobject == from) start_selecting = true;
+		// End selecting without even start (search from bot to top)
+		if (gameobject == to && !start_selecting) {
+			start_selecting = true;
+			reverse_selecting = true;
+		}
 
 		if (start_selecting) Select(gameobject);
 
-		if (gameobject == to) stop_selecting = true;
+		if (reverse_selecting) {
+			if (gameobject == from) stop_selecting = true;
+		}
+		else if (gameobject == to) stop_selecting = true;
 
 		if (gameobject->childs.size() > 0)
 		{

@@ -17,14 +17,13 @@
 	- Selection can be both on hierarchy and scene:
 		- Single -> mouse left click
 		- Additive/Substractive -> mouse left click + CTRL
-		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected and from up to down
+		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected
 	- Selected gameobjects can now:
 		- Change parent to the dragged one (WORKING ON IT)
 		- Add same component
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
 		- Paste previously copied components 
-
 */
 
 
@@ -43,8 +42,8 @@ public:
 	bool CleanUp();
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
-	void SelectIfIntersects();
 	update_status PostUpdate(float dt);
+
 
 public:
 
@@ -59,8 +58,8 @@ public:
 	const std::vector<GameObject*>* GetSelected() const { return &selection; }
 
 	// Component management
-
 	void CopyComponentValues(Component* component);
+
 	void PasteComponentValues(Component* component);
 
 	void PasteComponentValuesToSelected();
@@ -68,7 +67,6 @@ public:
 
 
 private:
-
 
 	void Select(GameObject* gameobject);
 
@@ -80,10 +78,13 @@ private:
 
 	bool ToggleSelect(GameObject* gameobject);
 
+	void SelectIfIntersects();
 
 private:
+	// Shift selection
 	bool start_selecting = false;
 	bool stop_selecting = false;
+	bool reverse_selecting = false;
 
 	bool aabb_selection = false;
 	std::vector<GameObject*> selection;
