@@ -358,12 +358,12 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
 
-			// --- Search for Character Controller Component ---
-			ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+			//// --- Search for Character Controller Component ---
+			//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
 
-			// --- If Found, draw Character Controller shape ---
-			if (cct && cct->IsEnabled())
-				cct->Draw();
+			//// --- If Found, draw Character Controller shape ---
+			//if (cct && cct->IsEnabled())
+			//	cct->Draw();
 		
 			render_meshes[mesh->GetUID()].push_back(rmesh);
 		}

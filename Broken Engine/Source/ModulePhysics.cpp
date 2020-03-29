@@ -405,7 +405,11 @@ void UserIterator::processShapes(physx::PxU32 count, const physx::PxActorShape* 
 
 physx::PxQueryHitType::Enum FilterCallback::preFilter(const physx::PxFilterData& filterData, const physx::PxShape* shape, const physx::PxRigidActor* actor, physx::PxHitFlags& queryFlags)
 {
-	return physx::PxQueryHitType::Enum();
+	// PT: ignore triggers
+	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
+		return physx::PxQueryHitType::eNONE;
+
+	return physx::PxQueryHitType::eBLOCK;
 }
 
 physx::PxQueryHitType::Enum FilterCallback::postFilter(const physx::PxFilterData& filterData, const physx::PxQueryHit& hit)
