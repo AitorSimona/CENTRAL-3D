@@ -16,6 +16,8 @@
 #include "ResourceMeta.h"
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
+#include "ModuleCamera3D.h"
+#include "ComponentCamera.h"
 
 using namespace Broken;
 
@@ -81,13 +83,21 @@ public:
 
 	void begin(duDebugDrawPrimitives prim, float size) {
 		//Set polygon draw mode and appropiated matrices for OGL
+
+		//float f = 1.0f / tan(App->camera->camera->GetFOV() * DEGTORAD / 2.0f);
+		//float4x4 proj_RH(
+		//	f / App->camera->camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		//	0.0f, f, 0.0f, 0.0f,
+		//	0.0f, 0.0f, 0.0f, -1.0f,
+		//	0.0f, 0.0f, App->camera->camera->GetNearPlane(), 0.0f);
+
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		/*glPushMatrix();
-		glMultMatrixf(float4x4::identity.Transposed().ptr());
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(App->camera->camera->GetOpenGLProjectionMatrix().Transposed().ptr());
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().Transposed().ptr());*/
+		//glPushMatrix();
+		//glMultMatrixf(float4x4::identity.Transposed().ptr());
+		//glMatrixMode(GL_PROJECTION);
+		//glLoadMatrixf(proj_RH.ptr());
+		//glMatrixMode(GL_MODELVIEW);
+		//glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().ptr());
 
 
 		switch (prim) {
@@ -183,12 +193,15 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 	int navDataSize = 0;
 
 	dtNavMesh* m_navMesh = nullptr;
-	if (navMeshResource != nullptr)
+	if (navMeshResource != nullptr) {
 		m_navMesh = navMeshResource->navMesh;
+		navMeshResource->navMesh = nullptr;
+	}
 
 	if (m_navMesh != nullptr)
 		dtFreeNavMesh(m_navMesh);
 	m_navMesh = nullptr;
+
 
 	if (!dtCreateNavMeshData(params, &navData, &navDataSize)) {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("Could not build Detour navmesh.");
@@ -198,6 +211,7 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 	m_navMesh = dtAllocNavMesh();
 	if (!m_navMesh) {
 		dtFree(navData);
+		m_navMesh = nullptr;
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("Could not create Detour navmesh");
 		return false;
 	}
@@ -300,9 +314,9 @@ bool ModuleDetour::CleanUp() {
 
 void ModuleDetour::Draw() const {
 	if (debugDraw && navMeshResource != nullptr && navMeshResource->navMesh != nullptr) {
-
 		for (int i = 0; i < renderMeshes.size(); ++i)
 			App->renderer3D->DrawMesh(float4x4::identity, renderMeshes[i]->rmesh, mat, nullptr, 0, renderMeshes[i]->color);
+
 	}
 }
 
@@ -398,6 +412,7 @@ void ModuleDetour::processTile(const dtMeshTile* tile) {
 		navpol->rmesh->vertices = new Vertex[navpol->rmesh->VerticesSize];
 		navpol->rmesh->IndicesSize = poly_d->triCount * 3;
 		navpol->rmesh->Indices = new uint[navpol->rmesh->IndicesSize];
+
 
 		// We copy the vertices
 		for (int j = 0; j < navpol->rmesh->VerticesSize; ++j) {

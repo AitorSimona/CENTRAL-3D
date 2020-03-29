@@ -27,7 +27,10 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 	for (std::vector<Broken::GameObject*>::const_iterator it = srcMeshes.cbegin(); it != srcMeshes.cend(); ++it) {
 		r_mesh = (*it)->GetComponent<Broken::ComponentMesh>()->resource_mesh;
 		transform = (*it)->GetComponent<Broken::ComponentTransform>()->GetGlobalTransform();
-		const AABB& aabb = r_mesh->aabb;
+		r_mesh->CreateOBB();
+		OBB t_obb = r_mesh->obb;
+		t_obb.Transform(transform);
+		AABB aabb = t_obb.MinimalEnclosingAABB();
 
 		// If it is non-walkable we don't need to add its geometry
 		if ((*it)->navigationArea != 1) {
@@ -66,10 +69,6 @@ InputGeom::InputGeom(const std::vector<Broken::GameObject*>& srcMeshes) :
 
 		if ((*it)->navigationArea != 0) {
 			//Create convex hull for later flagging polys
-			r_mesh->CreateOBB();
-			OBB t_obb = r_mesh->obb;
-			t_obb.Transform(transform);
-
 			Polyhedron convexhull = t_obb.ToPolyhedron();
 
 			m_volumes[m_volumeCount].area = (*it)->navigationArea;
@@ -143,22 +142,17 @@ bool InputGeom::hasMesh() {
 }
 
 void InputGeom::ApplyTransform(const Broken::Vertex& vertex, const float4x4& transform, float ret[3]) {
-	float3 v;
-	v.x = vertex.position[0];
-	v.y = vertex.position[1];
-	v.z = vertex.position[2];
+	math::float3 original;
+	memcpy(original.ptr(), vertex.position, sizeof(float) * 3);
+	math::float3 globalVert = (transform * math::float4(vertex.position[0],
+		vertex.position[1],
+		vertex.position[2],
+		1)).xyz();
+	size_t a = sizeof(math::float3);
 
-	v = transform.MulPos(v);
-	memcpy(ret, v.ptr(), sizeof(float) * 3);
-
-	// We keep this other method for reference
-	//math::float3 v = (transform * math::float4(vertex.position[0],
-	//	vertex.position[1],
-	//	vertex.position[2],
-	//	1)).xyz();
-
-	//memcpy(ret, v.ptr(), sizeof(float) * 3);
-
+	ret[0] = globalVert[0];
+	ret[1] = globalVert[1];
+	ret[2] = globalVert[2];
 }
 
 RecastMesh::~RecastMesh() {

@@ -81,9 +81,11 @@ public:
 	char areaNames[BE_DETOUR_TOTAL_AREAS][100];
 	int areaCosts[BE_DETOUR_TOTAL_AREAS];
 
+public:
+	class DebugDrawGL* m_dd = nullptr;
+
 private:
 	bool debugDraw = false;
-	class DebugDrawGL* m_dd = nullptr;
 	ResourceNavMesh* navMeshResource = nullptr;
 	dtNavMeshQuery* m_navQuery = nullptr;
 	dtQueryFilter* m_filterQuery = nullptr;

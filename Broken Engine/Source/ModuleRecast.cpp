@@ -3,6 +3,10 @@
 #include "InputGeometry.h"
 #include "mmgr/mmgr.h"
 #include "DetourNavMeshBuilder.h"
+#include "ResourceMesh.h"
+#include "ModuleRenderer3D.h"
+#include "ResourceMaterial.h"
+#include "RecastDebugDraw.h"
 
 
 ModuleRecast::ModuleRecast(bool start_enabled) : Broken::Module(start_enabled) {
@@ -20,6 +24,15 @@ bool ModuleRecast::Init(Broken::json& config) {
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::Scene_unloaded, ONSceneUnloaded);
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_destroyed, ONGameObjectDeleted);
 	return true;
+}
+
+update_status ModuleRecast::PostUpdate(float dt) {
+	if (m_pmesh != nullptr) {
+		duDebugDrawPolyMesh((duDebugDraw*)EngineApp->detour->m_dd, *m_pmesh);
+		duDebugDrawPolyMeshDetail((duDebugDraw*)EngineApp->detour->m_dd, * m_dmesh);
+	}
+
+	return UPDATE_CONTINUE;
 }
 
 void ModuleRecast::AddGO(Broken::GameObject* go) {
@@ -61,7 +74,6 @@ bool ModuleRecast::CleanUp() {
 	if (m_dmesh != nullptr)
 		rcFreePolyMeshDetail(m_dmesh);
 	m_dmesh = nullptr;
-
 	return true;
 }
 
@@ -278,7 +290,6 @@ bool ModuleRecast::BuildNavMesh() {
 			if (m_pmesh->areas[i] == RC_WALKABLE_AREA) 
 				m_pmesh->flags[i] = Broken::PolyFlags::POLYFLAGS_WALK;
 		}
-
 
 		dtNavMeshCreateParams params;
 		memset(&params, 0, sizeof(params));

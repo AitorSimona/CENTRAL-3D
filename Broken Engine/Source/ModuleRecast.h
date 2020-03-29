@@ -16,6 +16,8 @@ public:
 
 	bool Init(Broken::json& config) override;
 
+	update_status PostUpdate(float dt) override;
+
 	void AddGO(Broken::GameObject* go);
 	void DeleteGO(Broken::GameObject* go);
 

@@ -41,10 +41,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -257,6 +257,9 @@
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\DebugDraw.cpp" />
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\RecastDebugDraw.cpp" />
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\RecastDump.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp" />
