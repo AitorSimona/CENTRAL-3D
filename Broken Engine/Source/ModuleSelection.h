@@ -54,6 +54,8 @@ public:
 
 public:
 
+	void ApplyOBBTransformation();
+
 	bool IsSelected(GameObject* gameobject);
 
 	void HandleSelection(GameObject* gameobject);
@@ -80,6 +82,8 @@ public:
 
 	void UnSelect(GameObject* gameobject);
 
+	void SceneRectangleSelect(float3 start);
+
 private:
 
 
@@ -104,9 +108,10 @@ private:
 	bool reverse_selecting = false;
 	
 	// Visual scene selection
-	bool aabb_selection = false;
 	OBB aabb;
-	
+	bool aabb_selection = false;
+	float3 aabb_start = float3::zero;
+	float3 aabb_end = float3::zero;
 	// Component copy and paste
 	json component_node;
 	Component::ComponentType component_type = Component::ComponentType::Unknown;
