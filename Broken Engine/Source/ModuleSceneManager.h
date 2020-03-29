@@ -110,6 +110,7 @@ public:
 	ResourceScene* currentScene = nullptr;
 
 	ResourceMesh* plane = nullptr;
+	ResourceMesh* sphere = nullptr;
 
 	// do not destroy
 	ResourceScene* defaultScene = nullptr;
@@ -121,7 +122,6 @@ private:
 
 	// --- Do not modify, just use ---
 	ResourceMesh* cube = nullptr;
-	ResourceMesh* sphere = nullptr;
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* cylinder = nullptr;
 	ResourceMesh* disk = nullptr;

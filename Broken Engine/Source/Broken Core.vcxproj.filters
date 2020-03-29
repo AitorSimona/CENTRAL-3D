@@ -677,6 +677,9 @@
     </ClInclude>
     <ClInclude Include="ComponentCircularBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+	</ClInclude>
+    <ClInclude Include="ComponentLight.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1123,6 +1126,9 @@
     </ClCompile>
     <ClCompile Include="ComponentCircularBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentLight.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

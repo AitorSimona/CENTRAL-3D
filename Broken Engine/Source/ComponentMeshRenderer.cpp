@@ -214,8 +214,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	ImGui::Separator();
 	ImGui::PushID("Material");
 
-	
-
 	// --- Material node ---
 	if (material)
 	{	
@@ -269,7 +267,13 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			ImGui::Separator();
 			ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs);
 			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-			ImGui::Text("MatAmbientColor");
+			ImGui::Text("Ambient Color");
+
+			//Shininess
+			ImGui::Text("Shininess");
+			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
+			ImGui::SetNextItemWidth(300.0f);
+			ImGui::SliderFloat("", &material->m_Shininess, 0.01f, 500.00f);
 
 			//ImGui::Text("Shader Uniforms");
 
@@ -277,13 +281,17 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			//ImGui::TreePop();
 
 			// --- Print Texture Width and Height (Diffuse) ---
+			uint textSizeX = 0, textSizeY = 0;
 			ImGui::NewLine();
 			if (material->m_DiffuseResTexture)
-			{				
-				ImGui::Text(std::to_string(material->m_DiffuseResTexture->Texture_width).c_str());
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(material->m_DiffuseResTexture->Texture_height).c_str());
+			{
+				textSizeX = material->m_DiffuseResTexture->Texture_width;
+				textSizeY = material->m_DiffuseResTexture->Texture_height;
 			}
+
+			ImGui::Text(std::to_string(textSizeX).c_str());
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(textSizeY).c_str());
 
 			// --- Texture Preview ---
 			if (material->m_DiffuseResTexture)
@@ -320,16 +328,26 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			ImGui::SameLine();
 			ImGui::Text("Albedo");
 
+			ImGui::SameLine();
+			if (ImGui::Button("Unuse", { 43, 18 }) && material->m_DiffuseResTexture)
+			{
+				material->m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
+				material->m_DiffuseResTexture->Release();
+			}
+
 
 			// --- Print Texture Width and Height (Specular) ---
+			textSizeX = textSizeY = 0;
 			ImGui::NewLine();
 			if (material->m_SpecularResTexture)
 			{
-
-				ImGui::Text(std::to_string(material->m_SpecularResTexture->Texture_width).c_str());
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(material->m_SpecularResTexture->Texture_height).c_str());
+				textSizeX = material->m_SpecularResTexture->Texture_width;
+				textSizeY = material->m_SpecularResTexture->Texture_height;
 			}
+
+			ImGui::Text(std::to_string(textSizeX).c_str());
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(textSizeY).c_str());
 
 			if (material->m_SpecularResTexture)
 				ImGui::ImageButton((void*)(uint)material->m_SpecularResTexture->GetPreviewTexID(), ImVec2(20, 20));
@@ -364,6 +382,13 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 			ImGui::SameLine();
 			ImGui::Text("Specular");
+
+			ImGui::SameLine();
+			if (ImGui::Button("Unuse", { 43, 18 }) && material->m_SpecularResTexture)
+			{
+				material->m_SpecularResTexture->RemoveUser(GetContainerGameObject());
+				material->m_SpecularResTexture->Release();
+			}
 
 			ImGui::TreePop();
 

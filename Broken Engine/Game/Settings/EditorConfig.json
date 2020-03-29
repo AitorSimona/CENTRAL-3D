@@ -11,6 +11,7 @@
         "Inspector": true,
         "Physics": true,
         "Project": true,
+        "Rendering": true,
         "Resources": true,
         "Scene": true,
         "Settings": false,
