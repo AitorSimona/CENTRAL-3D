@@ -19,7 +19,7 @@
 		- Additive/Substractive -> mouse left click + CTRL
 		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected
 	- Selected gameobjects can now:
-		- Change parent to the dragged one (WORKING ON IT)
+		- Change parent to the dragged one (only from bot to top, weird, bug)
 		- Add same component
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
@@ -29,6 +29,8 @@
 		- Visual scene rectangle selection
 		- Selection counter in inspector
 		- Guizmo transformation to all
+		- Parenting bug to reparent from top to bot
+		- Script name in component title (Ask Didac)
 */
 
 
@@ -103,7 +105,7 @@ private:
 	
 	// Visual scene selection
 	bool aabb_selection = false;
-	AABB aabb;
+	OBB aabb;
 	
 	// Component copy and paste
 	json component_node;

@@ -382,7 +382,11 @@ void ModuleRenderer3D::DrawAABB(const AABB& box, const Color& color)
 	if (box.IsFinite())
 		render_aabbs.push_back(RenderBox<AABB>(&box, color));
 }
-
+void ModuleRenderer3D::DrawOBB(const OBB& box, const Color& color)
+{
+	if (box.IsFinite())
+		render_obbs.push_back(RenderBox<OBB>(&box, color));
+}
 void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 {
 	if (box.IsFinite())
@@ -1059,6 +1063,10 @@ void ModuleRenderer3D::DrawRenderLines()
 
 void ModuleRenderer3D::DrawRenderBoxes()
 {
+	for (uint i = 0; i < render_obbs.size(); ++i)
+	{
+		DrawWire(*render_obbs[i].box, render_obbs[i].color, PointLineVAO);
+	}
 	for (uint i = 0; i < render_aabbs.size(); ++i)
 	{
 		DrawWire(*render_aabbs[i].box, render_aabbs[i].color, PointLineVAO);

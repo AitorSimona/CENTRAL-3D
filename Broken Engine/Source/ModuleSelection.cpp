@@ -74,7 +74,36 @@ update_status ModuleSelection::Update(float dt)
 	if (App->gui->isSceneHovered && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 	{
 		aabb_selection = true;
-		aabb = AABB({0,0,0 }, { 50,50,50 });
+		math::vec v = App->camera->camera->frustum.Pos();
+
+		aabb = AABB({v.x,v.y,0 }, { v.x+25,v.y+25,75 });
+		// --- Update transform and rotation to face camera ---
+		float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
+		float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
+
+		// --- Frame image with camera ---
+		float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+			App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+			float3(1,1, 1));
+
+		float3 Movement = App->renderer3D->active_camera->frustum.Front();
+		float3 camera_pos = frustum_pos;
+
+		/*if (Movement.IsFinite())
+			App->renderer3D->active_camera->frustum.SetPos(center - Movement);*/
+
+		float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+		// right handed projection matrix
+		float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+		float4x4 proj_RH(
+			f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+			0.0f, f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, -1.0f,
+			10 * 0.01f, 10 * 0.01f, nearp, 0.0f);
+
+		aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
+
 	}
 
 	else if (aabb_selection)
@@ -118,7 +147,7 @@ void ModuleSelection::SelectIfIntersects()
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
-	//App->renderer3D->DrawAABB(aabb, { 1,0,0,1 });
+	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
 
 	return UPDATE_CONTINUE;
 }
