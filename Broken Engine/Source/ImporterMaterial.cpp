@@ -253,6 +253,9 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 void ImporterMaterial::Save(ResourceMaterial* mat) const 
 {
+	if (mat->GetUID() == App->resources->DefaultMaterial->GetUID())
+		return;
+
 	json file;
 
 	file[mat->GetName()];

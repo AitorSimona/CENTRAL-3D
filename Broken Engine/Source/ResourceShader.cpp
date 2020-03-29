@@ -64,6 +64,7 @@ bool ResourceShader::LoadInMemory()
 			}
 			else
 			{
+
 				// --- Retrieve data from meta ---
 				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(original_file.c_str());
@@ -71,12 +72,18 @@ bool ResourceShader::LoadInMemory()
 				if (meta)
 				{
 					uint format = meta->ResourceData["FORMAT"].is_null() ? 0 : meta->ResourceData["FORMAT"].get<uint>();
-					uint size = meta->ResourceData["SIZE"].is_null() ? 0 : meta->ResourceData["SIZE"].get<uint>();
+
+					char* buffer = nullptr;
+
+					uint size = App->fs->Load(resource_file.c_str(), &buffer);
 
 					// --- Load binary program ---
-					glProgramBinary(ID, (GLenum)format, (void*)ShaderCode.c_str(), (GLint)size);
+					glProgramBinary(ID, (GLenum)format, (void*)buffer, (GLint)size);
 
+					if(buffer)
+						delete[] buffer;
 				}
+
 
 				// --- Print linking errors if any ---
 				glGetProgramiv(ID, GL_LINK_STATUS, &success);
@@ -102,7 +109,7 @@ bool ResourceShader::LoadInMemory()
 					uint FragmentLoc = ShaderCode.find(ftag);
 
 					vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
-					fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
+					fShaderCode = std::string("#version 440 core").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
 				}
 			}
 		}
@@ -123,8 +130,8 @@ bool ResourceShader::LoadInMemory()
 			uint FragmentLoc = ShaderCode.find(ftag);
 
 			vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
-			fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
-	
+			fShaderCode = std::string("#version 440 core").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
+
 			// --- Compile shaders ---
 			int success = 0;
 			char infoLog[512];
