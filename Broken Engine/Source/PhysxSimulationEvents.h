@@ -7,7 +7,6 @@
 BE_BEGIN_NAMESPACE
 
 class ModulePhysics;
-
 class BROKEN_API PhysxSimulationEvents : public physx::PxSimulationEventCallback
 {
 public:

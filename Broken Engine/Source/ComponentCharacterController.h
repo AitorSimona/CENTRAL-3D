@@ -11,7 +11,7 @@ class ResourceMesh;
 
 
 
-class BROKEN_API ComponentCharacterController : public Component
+class BROKEN_API ComponentCharacterController : public Component, public physx::PxControllerBehaviorCallback
 {
 public:
 	ComponentCharacterController(GameObject* ContainerGO);
@@ -39,7 +39,7 @@ public:
 	void SetRadius(float radius);
 	void SetHeight(float height);
 
-	virtual physx::PxControllerBehaviorFlags		getBehaviorFlags(const physx::PxShape&, const physx::PxActor&);
+	virtual physx::PxControllerBehaviorFlags		getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor);
 	virtual physx::PxControllerBehaviorFlags		getBehaviorFlags(const physx::PxController&);
 	virtual physx::PxControllerBehaviorFlags		getBehaviorFlags(const physx::PxObstacle&);
 
