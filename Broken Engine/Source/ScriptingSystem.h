@@ -17,6 +17,7 @@ public:
 	float GameTime();
 	void PauseGame();
 	void ResumeGame();
+	const char* GetDebuggingPath();
 
 	// Maths
 	int FloatNumsAreEqual(float a, float b);

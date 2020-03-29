@@ -46,6 +46,7 @@ public:
 public:
 	ScriptInstance* current_script;
 	update_status game_update = UPDATE_CONTINUE;
+	std::string debug_path = "null";
 
 private:
 	// L is our Lua Virtual Machine, it's called L because its the common name it receives, so all programers can understand what this var is

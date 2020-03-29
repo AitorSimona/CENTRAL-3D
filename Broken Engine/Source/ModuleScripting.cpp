@@ -188,6 +188,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GameTime", &ScriptingSystem::GameTime)
 		.addFunction("PauseGame", &ScriptingSystem::PauseGame)
 		.addFunction("ResumeGame", &ScriptingSystem::ResumeGame)
+		.addFunction("GetDebuggingPath", &ScriptingSystem::GetDebuggingPath)
 
 		// Maths
 		.addFunction("CompareFloats", &ScriptingSystem::FloatNumsAreEqual)
@@ -569,6 +570,50 @@ bool ModuleScripting::Init(json& file) {
 	L = luaL_newstate();
 	luaL_openlibs(L);
 
+	
+
+	std::string abs_path = App->fs->GetBasePath();
+	App->fs->NormalizePath(abs_path);
+
+	std::size_t d_pos = 0;
+	d_pos = abs_path.find("Debug");
+	std::size_t r_pos = 0;
+	r_pos = abs_path.find("Release");
+
+	if (d_pos != 4294967295)  // If we are in DEBUG
+	{
+		abs_path = abs_path.substr(0, d_pos);
+		abs_path += "Game/";
+	}
+	else if (r_pos != 4294967295) // If we are in RELEASE
+	{
+		abs_path = abs_path.substr(0, r_pos);
+		abs_path += "Game/";
+	}
+
+	abs_path += "Lua_Debug";
+
+	debug_path = abs_path;
+
+	luabridge::getGlobalNamespace(L)
+		.beginNamespace("Scripting")
+		.beginClass <ScriptingSystem>("System")
+		.addConstructor<void(*) (void)>()
+		.addFunction("GetDebuggingPath", &ScriptingSystem::GetDebuggingPath)
+		.endClass()
+		.endNamespace();
+
+	std::string test = debug_path + "/IDE_Debugger.lua";
+	bool compiled = luaL_dofile(L, test.c_str());
+
+	if (compiled == LUA_OK) {
+		//We don't need to do nothing here, LOG something at most
+		ENGINE_CONSOLE_LOG("Compiled %s successfully!", test.c_str());
+	}
+	else {
+		std::string error = lua_tostring(L, -1);
+		ENGINE_CONSOLE_LOG("%s", error.data());
+	}
 	return true;
 }
 
