@@ -151,8 +151,8 @@ void Particle::Draw()
 	int TextureLocation = glGetUniformLocation(def_shaderID, "Texture");
 	glUniform1i(TextureLocation, (int)true);
 	//ourTexture
-	glUniform1i(glGetUniformLocation(def_shaderID, "ourTexture"), 1);
-	glActiveTexture(GL_TEXTURE0 + 1);
+	glUniform1i(glGetUniformLocation(def_shaderID, "ourTexture"), 0);
+	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
 	// --- Draw plane with given texture ---

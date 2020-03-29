@@ -107,10 +107,10 @@ void ComponentParticleEmitter::Disable()
 void ComponentParticleEmitter::UpdateParticles(float dt)
 {
 	//Create particle depending on the time
-	if (loop || emisionActive) {
-		if (SDL_GetTicks() - spawnClock > emisionRate)
+	if ((loop || emisionActive)&& App->GetAppState() == AppState::PLAY) {
+		if (App->time->GetGameplayTimePassed()*1000 - spawnClock > emisionRate)
 		{
-			uint newParticlesAmount = (SDL_GetTicks() - spawnClock) / emisionRate;
+			uint newParticlesAmount = (App->time->GetGameplayTimePassed() * 1000 - spawnClock) / emisionRate;
 
 			CreateParticles(newParticlesAmount*particlesPerCreation);
 
@@ -152,7 +152,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 
 		if (emisionActive)
 		{
-			if (SDL_GetTicks() - emisionStart > duration)
+			if ((App->time->GetGameplayTimePassed() * 1000) - emisionStart > duration)
 				emisionActive = false;
 		}
 	}
@@ -174,7 +174,7 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 				if (*flagsIt & physx::PxParticleFlag::eVALID)
 				{
 					//Check if particle should die
-					if (SDL_GetTicks() - particles[i]->spawnTime > particles[i]->lifeTime) {
+					if (App->time->GetGameplayTimePassed()*1000 - particles[i]->spawnTime > particles[i]->lifeTime) {
 						indicesToErease.push_back(i);
 						particlesToRelease++;
 						continue;
@@ -189,15 +189,13 @@ void ComponentParticleEmitter::UpdateParticles(float dt)
 			// return ownership of the buffers back to the SDK
 			rd->unlock();
 		}
-
-		
+	
 		if (particlesToRelease > 0) {
 
 			particleSystem->releaseParticles(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
 			validParticles -= particlesToRelease;
 			indexPool->freeIndices(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
 		}
-
 
 	SortParticles();
 		
@@ -412,6 +410,7 @@ void ComponentParticleEmitter::Load(json& node)
 	externalAcceleration.x = std::stof(LexternalAccelerationx);
 	externalAcceleration.y = std::stof(LexternalAccelerationy);
 	externalAcceleration.z = std::stof(LexternalAccelerationz);
+	particleSystem->setExternalAcceleration(externalAcceleration);
 
 	particlesVelocity.x = std::stof(LparticlesVelocityx);
 	particlesVelocity.y = std::stof(LparticlesVelocityy);
@@ -691,7 +690,7 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 			particlesToCreate = maxParticles - validParticles;
 
 		validParticles += particlesToCreate;
-		spawnClock = SDL_GetTicks();
+		spawnClock = App->time->GetGameplayTimePassed()*1000;
 
 		physx::PxParticleCreationData creationData;
 
@@ -728,7 +727,7 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 											globalPosition.z + GetRandomValue(-size.z,size.z)) };
 
 			particles[index[i]]->lifeTime = particlesLifeTime;
-			particles[index[i]]->spawnTime = SDL_GetTicks();
+			particles[index[i]]->spawnTime = spawnClock;
 			particles[index[i]]->color = particlesColor / 255.0f;
 			particles[index[i]]->texture = texture;
 			float randomScaleValue = GetRandomValue(1, particlesScaleRandomFactor);
