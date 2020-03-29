@@ -91,6 +91,8 @@ public:
 	// --- To Add Lights ---
 	void AddLight(ComponentLight* light);
 	void PopLight(ComponentLight* light);
+	const float GetGammaCorrection() const { return m_GammaCorrection; }
+	void SetGammaCorrection(float gammaCorr) { m_GammaCorrection = gammaCorr; }
 
 	// --- Render orders --- // Deformable mesh is Temporal!
 	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
@@ -167,6 +169,7 @@ private:
 
 	//Lights vector
 	std::vector<ComponentLight*> m_LightsVec;
+	float m_GammaCorrection = 1.0f;
 
 	uint fbo = 0;
 	uint depthbuffer = 0;
