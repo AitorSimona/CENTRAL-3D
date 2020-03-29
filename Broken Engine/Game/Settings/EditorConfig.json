@@ -11,7 +11,7 @@
         "Inspector": true,
         "Physics": true,
         "Project": true,
-        "Rendering": true,
+        "Rendering": false,
         "Resources": true,
         "Scene": true,
         "Settings": false,
@@ -22,8 +22,8 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 648,
+        "height": 1080,
         "resizable": true,
-        "width": 1152
+        "width": 1920
     }
 }

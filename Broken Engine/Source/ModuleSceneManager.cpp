@@ -723,7 +723,7 @@ void ModuleSceneManager::CreateDisk(float radius, ResourceMesh* rmesh)
 
 	if (ParshapeMesh)
 	{
-		par_shapes_scale(ParshapeMesh, radius / 2, 0.5, radius / 2);
+		par_shapes_scale(ParshapeMesh, radius / 2, 0.5, 0);
 		LoadParMesh(ParshapeMesh, rmesh);
 	}
 }
