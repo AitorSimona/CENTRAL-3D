@@ -43,7 +43,7 @@ void ScriptingPhysics::SetAngularVelocity(float x, float y, float z, uint gameob
 		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 	else
 		go = App->scripting->current_script->my_component->GetContainerGameObject();
-	
+
 	if (go) {
 		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
 		ComponentCollider* coll = go->GetComponent<ComponentCollider>();
@@ -249,5 +249,89 @@ void ScriptingPhysics::UseGravity(bool enable, uint gameobject_UUID)
 			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+}
+
+void ScriptingPhysics::OverlapSphere(float3 position, float radius, LayerMask layer, lua_State* L)
+{
+	std::vector<GameObject*> objects;
+	App->physics->OverlapSphere(position, radius, layer, objects);
+	//std::
+}
+
+int ScriptingPhysics::OnTriggerEnter(uint UID, lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONTRIGGER_ENTER);
+		if (other) {
+			ret = other->GetUID();
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnTriggerStay(uint UID, lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONTRIGGER_STAY);
+		if (other) {
+			ret = other->GetUID();
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnTriggerExit(uint UID, lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONTRIGGER_EXIT);
+		if (other) {
+			ret = other->GetUID();
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnCollisionEnter(uint id, lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONCOLLISION_ENTER);
+		if (other) {
+			ret = other->GetUID();
+		}
+	}
+	return ret;
+}
+int ScriptingPhysics::OnCollisionStay(uint UID, lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONCOLLISION_STAY);
+		if (other) {
+			ret = other->GetUID();
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnCollisionExit(uint UID, lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONCOLLISION_EXIT);
+		if (other) {
+			ret = other->GetUID();
+		}
+	}
+	return ret;
 }

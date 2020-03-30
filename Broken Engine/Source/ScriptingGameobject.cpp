@@ -35,6 +35,13 @@ uint ScriptingGameobject::FindGameObject(const char* go_name)
 	return ret;
 }
 
+uint ScriptingGameobject::GetMyUID()
+{
+	uint UID = App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
+
+	return UID;
+}
+
 uint ScriptingGameobject::GetScriptGOParent()
 {
 	uint ret = 0;
@@ -42,7 +49,7 @@ uint ScriptingGameobject::GetScriptGOParent()
 
 	if (go && go->GetName() != App->scene_manager->GetName())
 		ret = go->GetUID();
-	else 
+	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject has no parent! 0 will be returned");
 
 	return ret;
@@ -58,7 +65,7 @@ uint ScriptingGameobject::GetGOParentFromUID(uint gameobject_UUID)
 	uint ret = 0;
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
-	if (go && go->GetName() != App->scene_manager->GetName()) 
+	if (go && go->GetName() != App->scene_manager->GetName())
 	{
 		if (go->parent)
 			ret = go->parent->GetUID();
@@ -343,6 +350,18 @@ luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State
 		ScriptInstance* script = App->scripting->GetScriptInstanceFromComponent(component_script);
 
 		ret = script->my_table_class;
+	}
+	return ret;
+}
+
+
+int ScriptingGameobject::GetLayer(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		lua_pushnumber(L, body->GetLayer());
+		ret = 1;
 	}
 	return ret;
 }

@@ -109,6 +109,7 @@
     <ClInclude Include="ComponentAudioSource.h" />
     <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentCamera.h" />
+    <ClInclude Include="ComponentCharacterController.h" />
     <ClInclude Include="ComponentCircularBar.h" />
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
@@ -258,6 +259,7 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="par\par_shapes.h" />
     <ClInclude Include="PerfTimer.h" />
+    <ClInclude Include="PhysxSimulationEvents.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Resource.h" />
@@ -308,6 +310,7 @@
     <ClCompile Include="ComponentAudioSource.cpp" />
     <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
+    <ClCompile Include="ComponentCharacterController.cpp" />
     <ClCompile Include="ComponentCircularBar.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
@@ -412,6 +415,7 @@
     <ClCompile Include="Panel.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PerfTimer.cpp" />
+    <ClCompile Include="PhysxSimulationEvents.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Resource.cpp" />

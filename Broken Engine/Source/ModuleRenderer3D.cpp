@@ -13,6 +13,8 @@
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
+#include "ResourceShader.h"
 #include "ComponentAudioListener.h"
 #include "ComponentLight.h"
 #include "Component.h"
@@ -283,7 +285,7 @@ void ModuleRenderer3D::PopLight(ComponentLight* light)
 
 		if(it != m_LightsVec.end())
 			m_LightsVec.erase(it);
-	}		
+	}
 }
 
 const int ModuleRenderer3D::GetLightIndex(ComponentLight* light)
@@ -381,6 +383,13 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 		{
 			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+
+			//// --- Search for Character Controller Component ---
+			//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+
+			//// --- If Found, draw Character Controller shape ---
+			//if (cct && cct->IsEnabled())
+			//	cct->Draw();
 
 			render_meshes[mesh->GetUID()].push_back(rmesh);
 		}

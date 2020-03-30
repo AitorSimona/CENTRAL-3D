@@ -1,9 +1,15 @@
 #include "PanelInspector.h"
 #include "Imgui/imgui.h"
-
+#include "Application.h"
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
 #include "PanelProject.h"
+#include "ModulePhysics.h"
+#include "ComponentCollider.h"
+
+#include "PhysX_3.4/Include/PxPhysicsAPI.h"
+
+using namespace Broken;
 //#include "ModuleSceneManager.h"
 //#include "ModuleRenderer3D.h"
 //#include "ModuleResourceManager.h"
@@ -69,19 +75,19 @@ bool PanelInspector::Draw()
 					std::string a = "##Active";
 					ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
 					ImGui::SameLine();
-					
-					
+
+
 					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						a = "ComponentOptions"; 
+						a = "ComponentOptions";
 						ImGui::SameLine();
 						if (ImGui::SmallButton("..."))
 							ImGui::OpenPopup("Component options");
 
-						if (ImGui::BeginPopup("Component options")) 
+						if (ImGui::BeginPopup("Component options"))
 						{
 							bool dummy = false;
-							if (ImGui::MenuItem("Delete component")) 
+							if (ImGui::MenuItem("Delete component"))
 							{
 								(*it)->to_delete = true;
 							}
@@ -99,7 +105,7 @@ bool PanelInspector::Draw()
 							}
 							if (ImGui::BeginMenu("Delete component to all selected"))
 							{
-								if (ImGui::MenuItem("Confirm delete")) 
+								if (ImGui::MenuItem("Confirm delete"))
 								{
 									EngineApp->selection->DeleteComponentToSelected();
 
@@ -108,7 +114,7 @@ bool PanelInspector::Draw()
 							}
 							ImGui::EndPopup();
 						}
-						
+
 						(*it)->CreateInspectorNode();
 
 						ImGui::TreePop();
@@ -121,7 +127,7 @@ bool PanelInspector::Draw()
 
 			static ImGuiComboFlags flags = 0;
 
-			const char* items[] = { "Default", "Dynamic RigidBody", "Collider", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
+			const char* items[] = { "Default", "Dynamic RigidBody", "Collider", "Character Controller", "Audio Source", "Particle Emitter", "UI Canvas", "UI Image", "UI Text", "UI Button" };
 			static const char* item_current = items[0];
 
 			ImGui::NewLine();
@@ -153,7 +159,7 @@ bool PanelInspector::Draw()
 					{
 						resource = EngineApp->resources->GetResource(UID);
 
-						for (Broken::GameObject* obj : *EngineApp->selection->GetSelected()) 
+						for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
 						{
 							Broken::ComponentScript* script = (Broken::ComponentScript*)obj->AddComponent(Broken::Component::ComponentType::Script);
 							// SELECTED TODO - It is necessary to assign all the scripts? (move the line below out of the for loop)
@@ -211,6 +217,10 @@ bool PanelInspector::Draw()
 			{
 				type = Broken::Component::ComponentType::Collider;
 			}
+			else if (item_current == "Character Controller")
+			{
+				type = Broken::Component::ComponentType::CharacterController;
+			}
 			else if (item_current == "Particle Emitter")
 			{
 				type = Broken::Component::ComponentType::ParticleEmitter;
@@ -235,7 +245,7 @@ bool PanelInspector::Draw()
 
 		// --- Display Resource Information ---
 		else if (SelectedRes)
-		{	
+		{
 			ImGui::BeginChild("res", ImVec2(0, 35), true);
 
 			ImGui::Text(SelectedRes->GetName());
@@ -247,19 +257,17 @@ bool PanelInspector::Draw()
 			SelectedRes->CreateInspectorNode();
 
 			ImGui::EndChild();
-
 		}
 	}
 
 	ImGui::End();
-
 
 	return true;
 }
 
 void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 {
-	ImGui::BeginChild("child", ImVec2(0, 35), true);
+	ImGui::BeginChild("child", ImVec2(0, 70), true);
 
 	if (ImGui::Checkbox("##GOActive", &Selected.GetActive()))
 	{
@@ -296,12 +304,12 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 			ImGui::Indent(30);
 			ImGui::Text("You are about to make this object non-static.");
 			ImGui::Spacing();
-			
+
 			ImGui::Unindent(10);
 			ImGui::Text("Do you want its children to be non-static aswell?");
-			
+
 			ImGui::Spacing();
-			
+
 			ImGui::Indent(130);
 			if (ImGui::Button("Yes")) {
 				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
@@ -324,8 +332,8 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 
 			ImGui::Spacing();
 
-			ImGui::Indent(130); 
-			
+			ImGui::Indent(130);
+
 			if (ImGui::Button("Yes")) {
 				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
 				ImGui::CloseCurrentPopup();
@@ -340,5 +348,38 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 
 		ImGui::EndPopup();
 	}
+
+	std::vector<Layer>* layers = &App->physics->layer_list;
+
+	static ImGuiComboFlags flags = 0;
+
+	const char* item_current = layers->at(Selected.layer).name.c_str();
+	ImGui::Text("Layer: ");
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("##Layer:", item_current, flags))
+	{
+		for (int n = 0; n < layers->size(); n++)
+		{
+			bool is_selected = (item_current == layers->at(n).name.c_str());
+			if (ImGui::Selectable(layers->at(n).name.c_str(), is_selected)) {
+				item_current = layers->at(n).name.c_str();
+				Selected.layer = layers->at(n).layer;
+
+				ComponentCollider* col = Selected.GetComponent<ComponentCollider>();
+
+				if(col)
+					col->UpdateActorLayer(&layers->at(n).layer);
+			}
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+	else {
+		//Selected.layer = layers->at(Selected.layer >> 1).layer;
+		//UpdateFilter
+	}
+
 	ImGui::EndChild();
 }

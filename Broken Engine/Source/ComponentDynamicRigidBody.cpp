@@ -14,7 +14,7 @@ using namespace Broken;
 ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::DynamicRigidBody)
 {
 	name = "Dynamic RigidBody";
-	if (rigidBody != nullptr) 
+	if (rigidBody != nullptr)
 	{
 		SetMass(mass);
 		SetDensity(density);
@@ -137,62 +137,66 @@ void ComponentDynamicRigidBody::Load(json& node)
 
 void ComponentDynamicRigidBody::CreateInspectorNode()
 {
-	//ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
 
-	ImGui::Text("Mass:"); ImGui::SameLine(); 
-	if (ImGui::DragFloat("##M", &mass,1.0f, 0.0f, 100000.0f)) 
+	ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
+
+	if (ImGui::Button("Delete component"))
+		to_delete = true;
+
+	ImGui::Text("Mass:"); ImGui::SameLine();
+	if (ImGui::DragFloat("##M", &mass,1.0f, 0.0f, 100000.0f))
 		SetMass(mass);
 
-	ImGui::Text("Density:"); ImGui::SameLine(); 
+	ImGui::Text("Density:"); ImGui::SameLine();
 	if (ImGui::DragFloat("##D", &density, 1.0f, 0.0f, 100000.0f))
 		SetDensity(density);
 
-	ImGui::Text("Gravity:"); ImGui::SameLine(); 
+	ImGui::Text("Gravity:"); ImGui::SameLine();
 	if (ImGui::Checkbox("##G", &use_gravity))
 		UseGravity(use_gravity);
 
-	ImGui::Text("Kinematic:"); ImGui::SameLine(); 
+	ImGui::Text("Kinematic:"); ImGui::SameLine();
 	if (ImGui::Checkbox("##K", &is_kinematic))
 		SetKinematic(is_kinematic);
 
-	ImGui::Text("Linear Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50); 
+	ImGui::Text("Linear Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50);
 	if (ImGui::DragFloat("##LVX", &linear_vel.x))
 		SetLinearVelocity(linear_vel);
 
-		ImGui::SameLine(); 
+		ImGui::SameLine();
 	if (ImGui::DragFloat("##LVY", &linear_vel.y))
 		SetLinearVelocity(linear_vel);
 
-	ImGui::SameLine(); 
-	
+	ImGui::SameLine();
+
 	if(ImGui::DragFloat("##LVZ", &linear_vel.z))
 		SetLinearVelocity(linear_vel);
-			
+
 	ImGui::PopItemWidth();
 
-	ImGui::Text("Angular Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50); 
-	
+	ImGui::Text("Angular Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50);
+
 	if (ImGui::DragFloat("##AVX", &angular_vel.x))
 		SetAngularVelocity(angular_vel);
-	
-	ImGui::SameLine(); 
-	
+
+	ImGui::SameLine();
+
 	if (ImGui::DragFloat("##AVY", &angular_vel.y))
 		SetAngularVelocity(angular_vel);
-	
-	ImGui::SameLine(); 
+
+	ImGui::SameLine();
 	if (ImGui::DragFloat("##AVZ", &angular_vel.z))
 		SetAngularVelocity(angular_vel);
-	
+
 	ImGui::PopItemWidth();
-	
-	ImGui::Text("Linear Damping:"); ImGui::SameLine(); 
-	
+
+	ImGui::Text("Linear Damping:"); ImGui::SameLine();
+
 	if (ImGui::DragFloat("##LD", &linear_damping))
 		SetLinearDamping(linear_damping);
 
-	ImGui::Text("Angular Damping:"); ImGui::SameLine(); 
-	
+	ImGui::Text("Angular Damping:"); ImGui::SameLine();
+
 	if (ImGui::DragFloat("##AD", &angular_damping))
 		SetAngularDamping(angular_damping);
 

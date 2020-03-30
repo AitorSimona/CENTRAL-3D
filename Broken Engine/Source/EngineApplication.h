@@ -12,6 +12,8 @@ public:
 	EngineApplication();
 	~EngineApplication();
 
+	void SaveForBuild(const Broken::json& reference, const char* path) const;
+
 public:
 	ModuleEditorUI* editorui;
 	

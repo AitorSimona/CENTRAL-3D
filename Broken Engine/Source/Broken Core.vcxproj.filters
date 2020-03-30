@@ -456,9 +456,6 @@
     <ClInclude Include="Timer.h">
       <Filter>Sources\BrokenEngine\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="gpudetect\DeviceId.h">
       <Filter>Sources\BrokenEngine\Tools\DeviceID</Filter>
     </ClInclude>
@@ -666,6 +663,9 @@
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentCharacterController.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
     <ClInclude Include="ScriptingInterface.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
@@ -675,14 +675,18 @@
     <ClInclude Include="ComponentProgressBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentCircularBar.h">
-      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
-	</ClInclude>
-    <ClInclude Include="ModuleSelection.h">
-      <Filter>Sources\BrokenEngine\Modules</Filter>
+    <ClInclude Include="PhysxSimulationEvents.h">
+      <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="ComponentLight.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="ComponentCircularBar.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleSelection.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1118,6 +1122,9 @@
     <ClCompile Include="ImporterAnimator.cpp">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClCompile>
+    <ClCompile Include="ComponentCharacterController.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
     <ClCompile Include="ScriptingInterface.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
@@ -1127,14 +1134,17 @@
     <ClCompile Include="ComponentProgressBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="PhysxSimulationEvents.cpp">
+      <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentLight.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
+    </ClCompile>
     <ClCompile Include="ComponentCircularBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
     <ClCompile Include="ModuleSelection.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentLight.cpp">
-      <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
