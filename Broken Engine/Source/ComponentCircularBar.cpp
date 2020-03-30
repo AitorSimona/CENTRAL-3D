@@ -140,6 +140,8 @@ json ComponentCircularBar::Save() const
 	node["Color2_B"] = std::to_string(colorP2.b);
 	node["Color2_A"] = std::to_string(colorP2.a);
 
+	node["Percentage"] = percentage;
+
 	return node;
 }
 
@@ -173,6 +175,10 @@ void ComponentCircularBar::Load(json& node)
 	std::string Color2_B = node["Color2_B"].is_null() ? "0" : node["Color2_B"];
 	std::string Color2_A = node["Color2_A"].is_null() ? "0" : node["Color2_A"];
 
+	percentage = node["Percentage"].is_null() ? 100 : (float)node["Percentage"];
+
+
+
 	colorP1 = { std::stof(Color1_R),std::stof(Color1_G), std::stof(Color1_B), std::stof(Color1_A) };
 	colorP2 = { std::stof(Color2_R),std::stof(Color2_G), std::stof(Color2_B), std::stof(Color2_A) };
 }
@@ -184,7 +190,7 @@ void ComponentCircularBar::CreateInspectorNode()
 	ImGui::Separator();
 
 	// Percentage (test)
-	ImGui::Text("Percentage (test):");
+	ImGui::Text("Percentage:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
 	ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
