@@ -31,6 +31,8 @@ public:
 	void NotifyHotReloading();
 	bool CheckEverythingCompiles();
 	void CallbackScriptFunction(ComponentScript* script_component, const ScriptFunc& function_to_call);
+	void CompileDebugging();
+	void StopDebugging();
 
 public:
 	bool Init(json& file) override;
@@ -58,6 +60,8 @@ private:
 	_AppState previous_AppState = (_AppState)2; // we use the EDITOR value of the script (can't include application.h because it would slow down compilation time)
 
 	void CleanUpInstances();
+
+	ScriptInstance* debug_instance = nullptr;
 
 	std::vector<ScriptInstance*> recompiled_instances;
 	std::vector<ScriptInstance*> class_instances;

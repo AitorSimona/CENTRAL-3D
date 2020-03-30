@@ -4,6 +4,7 @@
 #include "ModuleSceneManager.h"
 #include "ModulePhysics.h"
 #include "ModuleFileSystem.h"
+#include "ModuleScripting.h"
 
 #include "ResourceScene.h"
 
@@ -37,6 +38,7 @@ void ModuleTimeManager::PrepareUpdate() {
 	switch (App->GetAppState())
 	{
 		case AppState::TO_PLAY:
+			App->scripting->CompileDebugging();
 			App->GetAppState() = AppState::PLAY;
 
 			// --- Create temporal directory/scene ---
@@ -74,6 +76,7 @@ void ModuleTimeManager::PrepareUpdate() {
 			break;
 
 		case AppState::TO_EDITOR:
+			App->scripting->StopDebugging();
 			App->physics->DeleteActors();
 
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);

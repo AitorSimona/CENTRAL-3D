@@ -567,14 +567,8 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 	}
 }
 
-
-bool ModuleScripting::Init(json& file) {
-	// Create the Virtual Machine
-	L = luaL_newstate();
-	luaL_openlibs(L);
-
-	
-
+void ModuleScripting::CompileDebugging()
+{
 	std::string abs_path = App->fs->GetBasePath();
 	App->fs->NormalizePath(abs_path);
 
@@ -617,6 +611,27 @@ bool ModuleScripting::Init(json& file) {
 		std::string error = lua_tostring(L, -1);
 		ENGINE_CONSOLE_LOG("%s", error.data());
 	}
+
+	//debug_instance->my_table_class = luabridge::getGlobal(L, "GetTableDebug");
+}
+
+void ModuleScripting::StopDebugging()
+{
+	if (debug_instance != nullptr)
+	{
+			std::string path = debug_path + "/Debugger_Close.lua";
+			luaL_dofile(L, path.c_str());
+	}
+}
+
+
+bool ModuleScripting::Init(json& file) {
+	// Create the Virtual Machine
+	L = luaL_newstate();
+	luaL_openlibs(L);
+
+	debug_instance = new ScriptInstance;
+
 	return true;
 }
 
@@ -626,6 +641,12 @@ bool ModuleScripting::Start() {
 
 bool ModuleScripting::CleanUp() {
 	CleanUpInstances();
+
+	if (debug_instance != nullptr)
+	{
+		delete debug_instance;
+		debug_instance = nullptr;
+	}
 
 	return true;
 }
@@ -645,7 +666,6 @@ update_status ModuleScripting::Update(float realDT) {
 			(*it)->started = false;
 		}
 	}
-
 	// Carles to Didac
 	// 1. You can use the "IsWhatever" functions of App to check the current game state.
 	// 2. "App->IsGameFirstFrame()" marks the first frame a GameUpdate() will happen, if you want to do anything right before the game plays in preparation
@@ -660,6 +680,7 @@ update_status ModuleScripting::Update(float realDT) {
 
 update_status ModuleScripting::GameUpdate(float gameDT)
 {
+	
 	if (cannot_start == false && App->GetAppState() == AppState::PLAY)
 	{
 		const uint origSize = class_instances.size();	// This avoids messing the iteration with newly Instantiated scripts
@@ -728,6 +749,8 @@ void ModuleScripting::CleanUpInstances() {
 		if ((*it) != nullptr)
 			delete (*it);
 	}
+
+	//debug_instance->my_table_class = 0;
 
 	class_instances.clear();
 }
