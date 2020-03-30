@@ -38,7 +38,9 @@ void ModuleTimeManager::PrepareUpdate() {
 	switch (App->GetAppState())
 	{
 		case AppState::TO_PLAY:
+			if (App->isGame == false)
 			App->scripting->CompileDebugging();
+
 			App->GetAppState() = AppState::PLAY;
 
 			// --- Create temporal directory/scene ---
@@ -76,7 +78,9 @@ void ModuleTimeManager::PrepareUpdate() {
 			break;
 
 		case AppState::TO_EDITOR:
+			if (App->isGame == false)
 			App->scripting->StopDebugging();
+
 			App->physics->DeleteActors();
 
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);

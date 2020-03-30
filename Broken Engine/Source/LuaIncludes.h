@@ -13,6 +13,7 @@ extern "C"
 
 //LUABRIDGE MUST BE INCLUDED AFTER LUA
 #include "LuaBridge-241/include/luabridge.h"
+#include "LuaBridge-241/include/Vector.h"
 
 #endif // __LUAINCLUDES_H__
 
