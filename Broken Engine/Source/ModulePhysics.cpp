@@ -110,19 +110,25 @@ physx::PxFilterFlags customFilterShader(
 
 bool ModulePhysics::Init(json& config)
 {
-	layer_list.push_back(Layer{ "Default", LayerMask::LAYER_0 });
-	layer_list.push_back(Layer{ "Player", LayerMask::LAYER_1 });
-	layer_list.push_back(Layer{ "Enemy", LayerMask::LAYER_2 });
-	layer_list.push_back(Layer{ "UI", LayerMask::LAYER_3 });
-	layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+	LoadStatus(config);
 
-	for (int i = 0; i < layer_list.size(); ++i) {
-		layer_list.at(i).active_layers.resize(layer_list.size(), true);
-		if (i == 0)
-			layer_list.at(i).UpdateLayerGroup();
-		else
-			layer_list.at(i).LayerGroup = layer_list.at(0).LayerGroup;
+	if (!loaded) {
+		layer_list.push_back(Layer{ "Default", LayerMask::LAYER_0 });
+		layer_list.push_back(Layer{ "Player", LayerMask::LAYER_1 });
+		layer_list.push_back(Layer{ "Enemy", LayerMask::LAYER_2 });
+		layer_list.push_back(Layer{ "UI", LayerMask::LAYER_3 });
+		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+
+		for (int i = 0; i < layer_list.size(); ++i) {
+			layer_list.at(i).active_layers.resize(layer_list.size(), true);
+			if (i == 0)
+				layer_list.at(i).UpdateLayerGroup();
+			else
+				layer_list.at(i).LayerGroup = layer_list.at(0).LayerGroup;
+		}
 	}
+
+	
 
 	static physx::PxDefaultErrorCallback gDefaultErrorCallback;
 	static physx::PxDefaultAllocator gDefaultAllocatorCallback;
@@ -274,21 +280,21 @@ void ModulePhysics::addActor(physx::PxRigidActor* actor, GameObject* gameObject)
 	mScene->addActor(*actor);
 }
 
-void ModulePhysics::UpdateActor(physx::PxRigidActor* actor, LayerMask* Layermask) {
+void ModulePhysics::UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* Layermask) {
 	physx::PxShape* shape;
 	actor->getShapes(&shape, 1);
 
-	physx::PxFilterData filterData;
-	filterData = shape->getSimulationFilterData();
-	filterData.word0 = (1 << *Layermask);
+	physx::PxFilterData* filterData;
+	filterData = &shape->getSimulationFilterData();
+	filterData->word0 = (1 << *Layermask);
 
-	shape->setSimulationFilterData(filterData);
+	shape->setSimulationFilterData(*filterData);
 
 	shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-	shape->setQueryFilterData(filterData);
+	shape->setQueryFilterData(*filterData);
 }
 
-void ModulePhysics::UpdateActors(LayerMask* updateLayer)
+void ModulePhysics::UpdateActorsGroupFilter(LayerMask* updateLayer)
 {
 	if (actors.size() == 0)
 		return;
@@ -298,18 +304,18 @@ void ModulePhysics::UpdateActors(LayerMask* updateLayer)
 		LayerMask layer1 = (*it).second->layer;
 		LayerMask layer2 = *updateLayer;
 		if (layer1 == layer2) {
-			physx::PxFilterData filterData;
 
 			physx::PxShape* shape;
 			(*it).first->getShapes(&shape, 1);
 
-			filterData = shape->getSimulationFilterData();
-			filterData.word1 = layer_list.at(layer2).LayerGroup;
+			physx::PxFilterData* filterData;
+			filterData = &shape->getSimulationFilterData();
+			filterData->word1 = layer_list.at(layer2).LayerGroup;
 
-			shape->setSimulationFilterData(filterData);
+			shape->setSimulationFilterData(*filterData);
 
 			shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-			shape->setQueryFilterData(filterData);
+			shape->setQueryFilterData(*filterData);
 			break;
 		}
 	}
@@ -410,31 +416,50 @@ physx::PxQueryHitType::Enum FilterCallback::postFilter(const physx::PxFilterData
 	return physx::PxQueryHitType::Enum();
 }
 
-//const Broken::json& ModulePhysics::SaveStatus() const {
-//	//MYTODO: Added exception for Build because Build should never be enabled at start
-//	//maybe we should call SaveStatus on every panel
-//	static Broken::json config;
-//	for (uint i = 0; i < layer_list.size(); ++i) {
-//		if (panels[i]->GetName() == "Build")
-//			config[panels[i]->GetName()] = false;
-//		else
-//			config[panels[i]->GetName()] = panels[i]->IsEnabled();
-//	}
-//	return config;
-//};
-//
-//void ModulePhysics::LoadStatus(const Broken::json& file) {
-//
-//	if (file[name].find(panels[i]->GetName()) != file[name].end()) {
-//		panels[i]->SetOnOff(file[name][panels[i]->GetName()]);
-//	}
-//
-//	for (uint i = 0; i < panels.size(); ++i) {
-//
-//		if (file[name].find(panels[i]->GetName()) != file[name].end()) {
-//			panels[i]->SetOnOff(file[name][panels[i]->GetName()]);
-//		}
-//		else
-//			EX_ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
-//	}
-//}
+const Broken::json& ModulePhysics::SaveStatus() const {
+	//MYTODO: Added exception for Build because Build should never be enabled at start
+	//maybe we should call SaveStatus on every panel
+	static Broken::json config;
+
+	config["count"] = layer_list.size();
+
+	for (uint i = 0; i < layer_list.size(); ++i) {
+		Layer layer = layer_list.at(i);
+		config["Layer" + std::to_string(i)]["Name"] = layer.name;
+		config["Layer" + std::to_string(i)]["Layer"] = layer.layer;
+		config["Layer" + std::to_string(i)]["Group"] = layer.LayerGroup;
+		config["Layer" + std::to_string(i)]["GroupSize"] = layer.active_layers.size();
+		for (int j = 0; j < layer.active_layers.size(); ++j) {
+			bool active = layer.active_layers.at(j);
+			config["Layer" + std::to_string(i)][std::to_string(j)] = active;
+		}
+
+	}
+	return config;
+};
+
+void ModulePhysics::LoadStatus(const Broken::json& file) {
+	
+	int count = file[name]["count"];
+
+	for (uint i = 0; i < count; ++i) {
+		Layer layer;
+		if (file[name].find("Layer" + std::to_string(i)) != file[name].end()) {
+			layer.name = file[name]["Layer" + std::to_string(i)]["Name"].get<std::string>();
+			layer.layer = (LayerMask)file[name]["Layer" + std::to_string(i)]["Layer"];
+			layer.LayerGroup = (physx::PxU32) file[name]["Layer" + std::to_string(i)]["Group"];
+
+			int size = file[name]["Layer" + std::to_string(i)]["GroupSize"];
+			layer.active_layers.resize(size, true);
+			for (int j = 0; j < size; ++j) {
+				if (file[name]["Layer" + std::to_string(i)].find(std::to_string(j)) != file[name]["Layer" + std::to_string(i)].end()) {
+					layer.active_layers.at(j) = file[name]["Layer" + std::to_string(i)][std::to_string(j)];
+				}
+			}
+		}
+		layer_list.push_back(layer);
+	}
+
+	if (count != 0)
+		loaded = true;
+}

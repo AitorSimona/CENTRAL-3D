@@ -2,7 +2,6 @@
 #define MODULE_PHYSICS_H_
 #include "Module.h"
 #include "PhysX_3.4/Include/PxVolumeCache.h"
-
 #include "Math.h"
 
 namespace physx
@@ -78,7 +77,7 @@ BE_BEGIN_NAMESPACE
 class GameObject;
 class PhysxSimulationEvents;
 
-class BROKEN_API ModulePhysics : public Module
+class BROKEN_API ModulePhysics : public Broken::Module
 {
 public:
 	ModulePhysics(bool start_enabled = true);
@@ -102,9 +101,9 @@ public:
 
 	void addActor(physx::PxRigidActor* actor, GameObject* gameObject);
 
-	void UpdateActor(physx::PxRigidActor* actor, LayerMask* LayerMask);
+	void UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* LayerMask);
 
-	void UpdateActors(LayerMask* updateLayer);
+	void UpdateActorsGroupFilter(LayerMask* updateLayer);
 
 	void DeleteActor(physx::PxRigidActor* actor);
 
@@ -112,9 +111,9 @@ public:
 
 	void OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<GameObject*>& objects);
 
-	const Broken::json& SaveStatus() const;
+	const Broken::json& SaveStatus() const override;
 
-	void LoadStatus(const Broken::json& file);
+	void LoadStatus(const Broken::json& file) override;
 
 public:
 
@@ -137,6 +136,7 @@ public:
 private:
 	PhysxSimulationEvents* simulationEventsCallback = nullptr;
 	float physAccumulatedTime = 0.0f;
+	bool loaded = false;
 };
 
 BE_END_NAMESPACE

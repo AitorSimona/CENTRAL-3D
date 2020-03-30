@@ -126,6 +126,8 @@ void ComponentTransform::OnUpdateTransform(const float4x4& ParentGlobal) {
 json ComponentTransform::Save() const {
 	json node;
 
+	node["layer"] = std::to_string(GO->layer);
+
 	node["positionx"] = std::to_string(position.x);
 	node["positiony"] = std::to_string(position.y);
 	node["positionz"] = std::to_string(position.z);
@@ -144,6 +146,7 @@ json ComponentTransform::Save() const {
 
 void ComponentTransform::Load(json& node)
 {
+	std::string layer = node["layer"].is_null() ? "0" : node["layer"];
 	std::string posx = node["positionx"].is_null() ? "0" : node["positionx"];
 	std::string posy = node["positiony"].is_null() ? "0" : node["positiony"];
 	std::string posz = node["positionz"].is_null() ? "0" : node["positionz"];
@@ -156,6 +159,8 @@ void ComponentTransform::Load(json& node)
 	std::string scalex = node["scalex"].is_null() ? "0" : node["scalex"];
 	std::string scaley = node["scaley"].is_null() ? "0" : node["scaley"];
 	std::string scalez = node["scalez"].is_null() ? "0" : node["scalez"];
+
+	GO->layer = (LayerMask)int(std::stof(layer));
 
 	float3 pos = float3(std::stof(posx), std::stof(posy), std::stof(posz));
 

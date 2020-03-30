@@ -298,7 +298,7 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 				ComponentCollider* col = Selected.GetComponent<ComponentCollider>();
 
 				if(col)
-					col->UpdateActor(&layers->at(n).layer);
+					col->UpdateActorLayer(&layers->at(n).layer);
 			}
 			if (is_selected) {
 				ImGui::SetItemDefaultFocus();

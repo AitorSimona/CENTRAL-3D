@@ -494,6 +494,10 @@ bool& GameObject::GetActive()
 	return active;
 }
 
+int GameObject::GetLayer(){
+	return layer;
+}
+
 bool GameObject::IsEnabled() const {
 	return active;
 }

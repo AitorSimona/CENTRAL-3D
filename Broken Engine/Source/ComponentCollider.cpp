@@ -32,11 +32,15 @@ ComponentCollider::~ComponentCollider()
 void ComponentCollider::Update()
 {
 	if (editCollider) {
-		CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
+		UpdateCollider();
 	}
 
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
+}
+
+void ComponentCollider::UpdateCollider() {
+	CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
 }
 
 void ComponentCollider::DrawComponent()
@@ -804,11 +808,11 @@ physx::PxRigidActor* ComponentCollider::GetActor() {
 		return rigidStatic;
 }
 
-void ComponentCollider::UpdateActor(LayerMask* layerMask) {
+void ComponentCollider::UpdateActorLayer(LayerMask* layerMask) {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 
 	if (dynamicRB != nullptr)
-		App->physics->UpdateActor(dynamicRB->rigidBody, layerMask);
+		App->physics->UpdateActorLayer(dynamicRB->rigidBody, layerMask);
 	else
-		App->physics->UpdateActor(rigidStatic, layerMask);
+		App->physics->UpdateActorLayer(rigidStatic, layerMask);
 }

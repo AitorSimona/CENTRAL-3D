@@ -34,6 +34,7 @@ public:
 	const OBB&      GetOBB() const;
 
 	bool& GetActive();
+	int GetLayer();
 	bool			IsEnabled() const;
 
 	// --- Components ---

@@ -18,11 +18,14 @@ void PhysxSimulationEvents::onContact(const physx::PxContactPairHeader& pairHead
 
 		if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			GameObject* go1 = App->physics->actors[pairHeader.actors[0]];
-			GameObject* go2 = App->physics->actors[pairHeader.actors[1]];
-
-			go1->collisions.at(0) = go2;
-			go2->collisions.at(0) = go1;
+			GameObject* go1 = nullptr;
+			GameObject* go2 = nullptr;
+			go1 = App->physics->actors[pairHeader.actors[0]];
+			go2 = App->physics->actors[pairHeader.actors[1]];
+			if (go1 && go2) {
+				go1->collisions.at(0) = go2;
+				go2->collisions.at(0) = go1;
+			}
 		}
 	}
 }
@@ -35,10 +38,14 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
 
-		GameObject* go1 = App->physics->actors[pairs->triggerActor];
-		GameObject* go2 = App->physics->actors[pairs->otherActor];
+		GameObject* go1 = nullptr;
+		GameObject* go2 = nullptr;
+		go1 = App->physics->actors[pairs->triggerActor];
+		go2 = App->physics->actors[pairs->otherActor];
 
-		go1->collisions.at(1) = go2;
+		if (go1 && go2) {
+			go1->collisions.at(1) = go2;
+		}
 	}
 }
 

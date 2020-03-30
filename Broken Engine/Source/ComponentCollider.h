@@ -36,6 +36,8 @@ public:
 
 	void Update() override;
 
+	void UpdateCollider();
+
 	void DrawComponent() override;
 
 	void UpdateLocalMatrix();
@@ -55,7 +57,7 @@ public:
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
 	physx::PxRigidActor*					GetActor();
-	void									UpdateActor(LayerMask* layerMask);
+	void									UpdateActorLayer(LayerMask* layerMask);
 	void									Delete();
 
 private:
