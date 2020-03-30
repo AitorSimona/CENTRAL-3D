@@ -3,8 +3,6 @@
 
 #include "BrokenCore.h"
 
-class lua_State;
-
 BE_BEGIN_NAMESPACE
 class BROKEN_API ScriptingParticles {
 public:

@@ -106,16 +106,13 @@ float ScriptingPhysics::GetMass(uint gameobject_UUID)
 	}
 }
 
-int ScriptingPhysics::GetLinearVelocity(lua_State* L, uint gameobject_UUID)
+int ScriptingPhysics::GetLinearVelocity(uint gameobject_UUID, lua_State* L)
 {
 	int ret = 0;
-	float3 vel = float3(0.0f);
-	GameObject* go = nullptr;
+	float3 vel = float3(0.0f); 
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
 		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
@@ -128,7 +125,8 @@ int ScriptingPhysics::GetLinearVelocity(lua_State* L, uint gameobject_UUID)
 		}
 		else
 			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
-	}else
+	}
+	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 
 	lua_pushnumber(L, vel.x);
@@ -137,16 +135,13 @@ int ScriptingPhysics::GetLinearVelocity(lua_State* L, uint gameobject_UUID)
 	return ret;
 }
 
-int ScriptingPhysics::GetAngularVelocity(lua_State* L, uint gameobject_UUID)
+int ScriptingPhysics::GetAngularVelocity(uint gameobject_UUID, lua_State* L)
 {
 	int ret = 0;
 	float3 vel = float3(0.0f);
-	GameObject* go = nullptr;
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
 		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
