@@ -225,4 +225,6 @@ void ComponentProgressBar::CreateInspectorNode()
 	ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
 	ImGui::Text("Bar color");
+
+	ImGui::Separator();
 }

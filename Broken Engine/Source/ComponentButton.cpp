@@ -303,10 +303,6 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Checkbox("Draggable", &draggable);
 	ImGui::Separator();
 
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-	ImGui::Checkbox("Draggable", &draggable);
-	ImGui::Separator();
-
 	// Size
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();

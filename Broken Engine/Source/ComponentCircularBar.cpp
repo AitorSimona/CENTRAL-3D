@@ -179,64 +179,52 @@ void ComponentCircularBar::Load(json& node)
 
 void ComponentCircularBar::CreateInspectorNode()
 {
-	ImGui::Checkbox("##ImageActive", &GetActive());
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
+	ImGui::Separator();
+
+	// Percentage (test)
+	ImGui::Text("Percentage (test):");
 	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
 
-	if (ImGui::TreeNode("Circular Bar"))
-	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
+	// Axis
+	ImGui::Checkbox("Vertical Axis", &axis);
 
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-		ImGui::Separator();
+	// Position
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##imageposition", &position2D.x);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##imageposition", &position2D.y);
 
-		// Percentage (test)
-		ImGui::Text("Percentage (test):");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
+	// Size Planes
+	ImGui::Text("Bar Size:  ");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
 
-		// Axis
-		ImGui::Checkbox("Vertical Axis", &axis);
+	// Rotation
+	ImGui::Text("Rotation:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##imagerotation", &rotation2D);
 
-		// Position
-		ImGui::Text("Position:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imageposition", &position2D.x);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imageposition", &position2D.y);
+	// Planes Colors
+	ImGui::Separator();
+	ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("BG color");
 
-		// Size Planes
-		ImGui::Text("Bar Size:  ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
+	ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("Bar color");
 
-		// Rotation
-		ImGui::Text("Rotation:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##imagerotation", &rotation2D);
-
-		// Planes Colors
-		ImGui::Separator();
-		ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("BG color");
-
-		ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("Bar color");
-
-
-		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::TreePop();
-	}
+	ImGui::Separator();
 }

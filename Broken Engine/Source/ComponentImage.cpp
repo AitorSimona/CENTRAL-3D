@@ -154,97 +154,83 @@ void ComponentImage::CreateInspectorNode()
 	ImGui::Checkbox("Visible", &visible);
 	ImGui::Separator();
 
-	if (ImGui::TreeNode("Image"))
+	// Size
+	ImGui::Text("Size:    ");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	if (ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f) && resize)
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-		ImGui::Separator();
-
-		// Size
-		ImGui::Text("Size:    ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		if (ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f) && resize)
+		if (texture->Texture_height != 0 && texture->Texture_width != 0)
 		{
-			if (texture->Texture_height != 0 && texture->Texture_width != 0)
-			{
-				if (texture->Texture_width <= texture->Texture_height)
-					size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
-				else
-					size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
-			}
+			if (texture->Texture_width <= texture->Texture_height)
+				size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+			else
+				size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
 		}
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		if (ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f) && resize)
-		{
-			if (texture->Texture_height != 0 && texture->Texture_width != 0)
-			{
-				if (texture->Texture_width >= texture->Texture_height)
-					size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
-				else
-					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
-			}
-		}
-
-		// Position
-		ImGui::Text("Position:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
-
-		// Rotation
-		ImGui::Text("Rotation:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##imagerotation", &rotation2D);
-
-		// ------------------------------------------
-
-		// Image
-		ImGui::Separator();
-		ImGui::Text("Image");
-
-		if (texture == nullptr)
-			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
-		else
-			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
-
-		//drag and drop
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-			{
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
-
-				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
-				{
-					if (texture)
-						texture->Release();
-
-					texture = (ResourceTexture*)App->resources->GetResource(UID);
-
-					if (resize && texture)
-						size2D = float2(texture->Texture_width, texture->Texture_height);
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-
-		// Aspect Ratio
-		ImGui::Checkbox("Maintain Aspect Ratio", &resize);
-
-		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::TreePop();
 	}
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	if (ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f) && resize)
+	{
+		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		{
+			if (texture->Texture_width >= texture->Texture_height)
+				size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+			else
+				size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+		}
+	}
+
+	// Position
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
+
+	// Rotation
+	ImGui::Text("Rotation:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##imagerotation", &rotation2D);
+
+	// ------------------------------------------
+
+	// Image
+	ImGui::Separator();
+	ImGui::Text("Image");
+
+	if (texture == nullptr)
+		ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
+	else
+		ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
+
+	//drag and drop
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+		{
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+			{
+				if (texture)
+					texture->Release();
+
+				texture = (ResourceTexture*)App->resources->GetResource(UID);
+
+				if (resize && texture)
+					size2D = float2(texture->Texture_width, texture->Texture_height);
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	// Aspect Ratio
+	ImGui::Checkbox("Maintain Aspect Ratio", &resize);
 
 	ImGui::Separator();
 }
