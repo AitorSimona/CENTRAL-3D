@@ -71,19 +71,29 @@ update_status ModuleSelection::PreUpdate(float dt)
 
 update_status ModuleSelection::Update(float dt)
 {
-	if (false/*App->gui->isSceneHovered && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN*/)
-	{
-		
+	// SELECTED TODO -> stuck at offset
+	return UPDATE_CONTINUE;
 
-	}
-
-	else if (aabb_selection)
+	if (aabb_selection)
 	{
-		//SelectIfIntersects();
 		aabb_end.x += App->input->GetMouseXMotion();
 		aabb_end.y -= App->input->GetMouseYMotion();
-		aabb = AABB({ aabb_start.x,aabb_start.y,aabb_start.z }, { aabb_end.x*.5f,aabb_end.y * .5f,aabb_end.z * .5f });
-		ApplyOBBTransformation();
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			aabb_end.z += 10;
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			aabb_end.z += 10;
+
+		aabb = AABB( { aabb_start.x,aabb_start.y,aabb_start.z },{ aabb_end.x,aabb_end.y,aabb_end.z });
+
+		float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos() ;
+		float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, frustum_pos.z),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+		float3(1,1, 1));
+
+		aabb.Transform(transform);
+		ClearSelection();
+		SelectIfIntersects();
+		//ApplyOBBTransformation();
 
 	}
 
@@ -94,9 +104,16 @@ update_status ModuleSelection::Update(float dt)
 	}
 	return UPDATE_CONTINUE;
 }
+update_status ModuleSelection::PostUpdate(float dt)
+{
+	return UPDATE_CONTINUE;
+	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
+
+}
 
 void ModuleSelection::SceneRectangleSelect(float3 start)
 {
+	return;
 	aabb = AABB({ start.x,start.y,start.z }, { start.x,start.y,start.z });
 	aabb_selection = true;
 	aabb_start = start;
@@ -115,7 +132,7 @@ void ModuleSelection::SelectIfIntersects()
 
 				if (goaabb.IsFinite() && aabb.Intersects(goaabb))
 				{
-					
+					Select((*it).second);
 				}
 			}
 		}
@@ -124,16 +141,19 @@ void ModuleSelection::SelectIfIntersects()
 
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
-			
+			if ((*it)->GetUID() != root->GetUID())
+			{
+				const AABB goaabb = (*it)->GetAABB();
+
+				if (goaabb.IsFinite() && aabb.Intersects(goaabb))
+				{
+					Select((*it));
+				}
+			}
 		}
 	}
 }
-update_status ModuleSelection::PostUpdate(float dt)
-{
-	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
 
-	return UPDATE_CONTINUE;
-}
 
 void ModuleSelection::ApplyOBBTransformation()
 {
@@ -163,6 +183,7 @@ void ModuleSelection::ApplyOBBTransformation()
 		aabb_start.x * 0.01f, aabb_start.y * 0.01f, nearp, 0.0f);
 
 	aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
+	//aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
 }
 bool ModuleSelection::IsSelected(GameObject* gameobject)
 {

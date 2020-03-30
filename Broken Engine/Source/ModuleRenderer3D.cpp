@@ -401,6 +401,7 @@ void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 void ModuleRenderer3D::ClearRenderOrders()
 {
 	render_meshes.clear();
+	render_obbs.clear();
 	render_aabbs.clear();
 	render_frustums.clear();
 	render_lines.clear();
