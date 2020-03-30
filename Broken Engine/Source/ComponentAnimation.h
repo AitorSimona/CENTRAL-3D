@@ -82,6 +82,7 @@ public:
 	float blend_time_value = 0.3f;
 
 	bool draw_bones = false;
+	bool use_default_animation = false;
 
 private:
 	std::vector<Link> links;
