@@ -490,91 +490,91 @@ void ComponentCollider::CreateInspectorNode()
 
 			switch (shape->getGeometryType())
 			{
-				case physx::PxGeometryType::eSPHERE:
-				{
-					float prevRadius = radius;
+			case physx::PxGeometryType::eSPHERE:
+			{
+				float prevRadius = radius;
 
-					ImGui::Text("Radius");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##R", &radius, 0.005f);
+				ImGui::Text("Radius");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::DragFloat("##R", &radius, 0.005f);
 
-					colliderSize.x = radius;
-					colliderSize.y = radius;
-					colliderSize.z = radius;
+				colliderSize.x = radius;
+				colliderSize.y = radius;
+				colliderSize.z = radius;
 
-					if (prevRadius != radius || editCollider) {
-						editCollider = true;
-						colliderType = (int)COLLIDER_TYPE::SPHERE;
-					}
-
-					break;
+				if (prevRadius != radius || editCollider) {
+					editCollider = true;
+					colliderType = (int)COLLIDER_TYPE::SPHERE;
 				}
 
-				case physx::PxGeometryType::eBOX:
-				{
-					float3 prevScale = colliderSize;
-					ImGui::Text("Size");
-					ImGui::Text("X");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				break;
+			}
 
-					ImGui::DragFloat("##SX", &colliderSize.x, 0.005f, 0.01f, 1000.0f);
+			case physx::PxGeometryType::eBOX:
+			{
+				float3 prevScale = colliderSize;
+				ImGui::Text("Size");
+				ImGui::Text("X");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::SameLine();
+				ImGui::DragFloat("##SX", &colliderSize.x, 0.005f, 0.01f, 1000.0f);
 
-					ImGui::Text("Y");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::SameLine();
 
-					ImGui::DragFloat("##SY", &colliderSize.y, 0.005f, 0.01f, 1000.0f);
+				ImGui::Text("Y");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::SameLine();
+				ImGui::DragFloat("##SY", &colliderSize.y, 0.005f, 0.01f, 1000.0f);
 
-					ImGui::Text("Z");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::SameLine();
 
-					ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
+				ImGui::Text("Z");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
-						editCollider = true;
-						colliderType = (int)COLLIDER_TYPE::BOX;
-					}
+				ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
 
-					break;
+				if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
+					editCollider = true;
+					colliderType = (int)COLLIDER_TYPE::BOX;
 				}
 
-				case physx::PxGeometryType::eCAPSULE:
-				{
-					float prevRadius = radius;
-					float prevheight = height;
+				break;
+			}
 
-					ImGui::Text("Radius");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##R", &radius, 0.005f);
+			case physx::PxGeometryType::eCAPSULE:
+			{
+				float prevRadius = radius;
+				float prevheight = height;
 
-					ImGui::Text("Height");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##H", &height, 0.005f);
+				ImGui::Text("Radius");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::DragFloat("##R", &radius, 0.005f);
 
-					colliderSize.x = radius;
-					colliderSize.y = height;
-					colliderSize.z = radius;
+				ImGui::Text("Height");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::DragFloat("##H", &height, 0.005f);
 
-					if (prevRadius != radius || prevheight != height || editCollider) {
-						editCollider = true;
-						colliderType = (int)COLLIDER_TYPE::CAPSULE;
-					}
+				colliderSize.x = radius;
+				colliderSize.y = height;
+				colliderSize.z = radius;
 
-					break;
+				if (prevRadius != radius || prevheight != height || editCollider) {
+					editCollider = true;
+					colliderType = (int)COLLIDER_TYPE::CAPSULE;
 				}
+
+				break;
+			}
 
 			}
 		}
-
+	}
 }
 
 
