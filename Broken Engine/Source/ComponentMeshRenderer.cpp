@@ -207,6 +207,8 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	// --- Material node ---
 	if (material)
 	{	
+		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
+
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
@@ -223,22 +225,36 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				const char* item_current = material->shader->GetName();
 				if (ImGui::BeginCombo("##Shader", item_current, flags))
 				{
-					for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+					if (!is_default)
 					{
-						bool is_selected = (item_current == it->second->GetName());
-
-						if (ImGui::Selectable(it->second->GetName(), is_selected))
+					
+						for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
 						{
-							item_current = it->second->GetName();
-							material->shader = it->second;
-							material->shader->GetAllUniforms(material->uniforms);
+							bool is_selected = (item_current == it->second->GetName());
+
+							if (ImGui::Selectable(it->second->GetName(), is_selected))
+							{
+								item_current = it->second->GetName();
+								material->shader = it->second;
+								material->shader->GetAllUniforms(material->uniforms);
+							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
 						}
-						if (is_selected)
-							ImGui::SetItemDefaultFocus();
 					}
 
 					ImGui::EndCombo();
 				}
+			}
+
+			if (is_default)
+			{
+				if (ImGui::Button("Unuse Material"))
+					unuse_material = true;
+
+				ImGui::PopID();
+				ImGui::TreePop();
+				return;
 			}
 
 			// --- Print Texture Path ---

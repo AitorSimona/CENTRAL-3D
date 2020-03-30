@@ -41,7 +41,7 @@ bool ResourceShader::LoadInMemory()
 	bool ret = true;
 
 	// --- Load from binary file ---
-	if (App->fs->Exists(resource_file.c_str()))
+	if (!ret/*App->fs->Exists(resource_file.c_str())*/)
 	{
 		int success;
 		char infoLog[512];
@@ -52,6 +52,7 @@ bool ResourceShader::LoadInMemory()
 		{
 			// --- Create empty program ---
 			DeleteShaderProgram();
+
 			success = CreateShaderProgram();
 
 			if (!success)
@@ -63,6 +64,7 @@ bool ResourceShader::LoadInMemory()
 			}
 			else
 			{
+
 				// --- Retrieve data from meta ---
 				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(original_file.c_str());
@@ -70,12 +72,18 @@ bool ResourceShader::LoadInMemory()
 				if (meta)
 				{
 					uint format = meta->ResourceData["FORMAT"].is_null() ? 0 : meta->ResourceData["FORMAT"].get<uint>();
-					uint size = meta->ResourceData["SIZE"].is_null() ? 0 : meta->ResourceData["SIZE"].get<uint>();
+
+					char* buffer = nullptr;
+
+					uint size = App->fs->Load(resource_file.c_str(), &buffer);
 
 					// --- Load binary program ---
-					glProgramBinary(ID, (GLenum)format, (void*)ShaderCode.c_str(), (GLint)size);
+					glProgramBinary(ID, (GLenum)format, (void*)buffer, (GLint)size);
 
+					if(buffer)
+						delete[] buffer;
 				}
+
 
 				// --- Print linking errors if any ---
 				glGetProgramiv(ID, GL_LINK_STATUS, &success);
@@ -115,14 +123,16 @@ bool ResourceShader::LoadInMemory()
 		// --- If no fs failure occurred... ---
 		if (ret) 
 		{
+			DeleteShaderProgram();
+
 			// --- Separate vertex and fragment ---
 			std::string ftag = "#define FRAGMENT_SHADER";
 			uint FragmentLoc = ShaderCode.find(ftag);
 
 			vShaderCode = ShaderCode.substr(0, FragmentLoc - 1);
 			fShaderCode = std::string("#version 440 core\n").append(ShaderCode.substr(FragmentLoc, ShaderCode.size()));
-	
-			//--- Compile shaders ---
+
+			// --- Compile shaders ---
 			int success = 0;
 			char infoLog[512];
 	

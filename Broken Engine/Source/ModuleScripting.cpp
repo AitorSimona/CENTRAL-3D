@@ -227,6 +227,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addConstructor<void(*) (void)>()
 
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
+		.addFunction("GetParent", &ScriptingGameobject::GetScriptGOParent)
+		.addFunction("GetGameObjectParent", &ScriptingGameobject::GetGOParentFromUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
 		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
