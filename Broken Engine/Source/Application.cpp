@@ -18,6 +18,7 @@
 #include "ModulePhysics.h"
 #include "ModuleParticles.h"
 #include "ModuleAudio.h"
+#include "ModuleSelection.h"
 
 #include "mmgr/mmgr.h"
 
@@ -57,6 +58,7 @@ Application::Application() {
 	physics = new ModulePhysics(true);
 	particles = new ModuleParticles(true);
 	audio = new ModuleAudio(true);
+	selection = new ModuleSelection(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order

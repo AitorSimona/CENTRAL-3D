@@ -11,6 +11,7 @@
 using namespace Broken;
 
 ComponentTransform::ComponentTransform(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Transform) {
+	name = "Transform";
 }
 
 ComponentTransform::~ComponentTransform() {

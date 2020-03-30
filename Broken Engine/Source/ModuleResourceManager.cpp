@@ -75,13 +75,14 @@ bool ModuleResourceManager::Start()
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
 
 	// --- Create default font ---
-	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
+	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Assets/Fonts/arial.ttf",7);
 	DefaultFont->Init();
 
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
+	filters.push_back("jpg");
 	filters.push_back("lua");
 	filters.push_back("scene");
 	filters.push_back("ttf");

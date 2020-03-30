@@ -54,7 +54,7 @@ public:
 	ComponentAudioListener* listener = nullptr;
 	LineSegment last_ray;
 
-	float4 m_CustomDefaultCameraValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
+	float4 m_CustomDefaultCameraValues = float4(60.0f, 0.1f, 1000.0f, 1.6f);
 
 private:
 
@@ -63,7 +63,7 @@ private:
 	float m_FinalSpeed = 0.0f;
 
 
-	float4 m_CameraDefaultValues = float4(60.0f, 0.03f, 1000.0f, 1.6f);
+	float4 m_CameraDefaultValues = float4(60.0f, 0.1f, 1000.0f, 1.6f);
 };
 
 BE_END_NAMESPACE

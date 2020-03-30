@@ -1,4 +1,4 @@
-#include "ComponentProgressBar.h"
+#include "ComponentCircularBar.h"
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
@@ -26,16 +26,15 @@
 
 using namespace Broken;
 
-ComponentProgressBar::ComponentProgressBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ProgressBar)
+ComponentCircularBar::ComponentCircularBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::CircularBar)
 {
-	name = "ProgressBar";
 	visible = true;
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	canvas->AddElement(this);
 }
 
-ComponentProgressBar::~ComponentProgressBar()
+ComponentCircularBar::~ComponentCircularBar()
 {
 	if (texture)
 	{
@@ -44,26 +43,30 @@ ComponentProgressBar::~ComponentProgressBar()
 	}
 }
 
-void ComponentProgressBar::Update()
+void ComponentCircularBar::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
 }
 
-void ComponentProgressBar::Draw()
+void ComponentCircularBar::Draw()
 {
-	//Plane 1
-	DrawPlane(colorP1);
-	//Plane 2
-	DrawPlane(colorP2, percentage);
+	DrawCircle(colorP1);
+	DrawCircle(colorP2, axis, percentage);
 }
 
-void ComponentProgressBar::DrawPlane(Color color, float _percentage)
+void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 {
 	// --- Frame image with camera ---
 	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), 
-		float3(float2((size2D.x * _percentage) / 100, size2D.y) * 0.01f, 1.0f));
+	float2 new_size;
+
+	if (axis == 0) //x axis
+		new_size = float2((size2D.x * _percentage) / 100, size2D.y);
+	else //y axis
+		new_size = float2(size2D.x, (size2D.y * _percentage) / 100);
+
+	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(new_size * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
@@ -82,12 +85,12 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp -0.05f, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	// --- Draw plane with given texture ---
+	// --- Texturing & Coloring ---
 	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
 	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
@@ -98,25 +101,23 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 
-	//Draw
-	glBindVertexArray(App->scene_manager->plane->VAO);
+	// --- Draw circle with given texture ---
+	glBindVertexArray(App->scene_manager->GetDiskMesh()->VAO);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
-	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->GetDiskMesh()->EBO);
+	glDrawElements(GL_TRIANGLES, App->scene_manager->GetDiskMesh()->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-	
+
 	// --- Set uniforms back to defaults ---
 	glUniform1i(TextureLocation, 0);
 	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
 }
 
-json ComponentProgressBar::Save() const
+json ComponentCircularBar::Save() const
 {
 	json node;
-	node["Active"] = this->active;
-	node["visible"] = std::to_string(visible);
 
 	node["Resources"]["ResourceTexture"];
 
@@ -144,12 +145,8 @@ json ComponentProgressBar::Save() const
 	return node;
 }
 
-void ComponentProgressBar::Load(json& node)
+void ComponentCircularBar::Load(json& node)
 {
-	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
-	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
-	visible = bool(std::stoi(visible_str));
-
 	std::string path = node["Resources"]["ResourceTexture"].is_null() ? "0" : node["Resources"]["ResourceTexture"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
@@ -158,7 +155,7 @@ void ComponentProgressBar::Load(json& node)
 
 	if (texture)
 		texture->AddUser(GO);
-		
+
 	std::string position2Dx = node["position2Dx"].is_null() ? "0" : node["position2Dx"];
 	std::string position2Dy = node["position2Dy"].is_null() ? "0" : node["position2Dy"];
 
@@ -178,13 +175,15 @@ void ComponentProgressBar::Load(json& node)
 	std::string Color2_B = node["Color2_B"].is_null() ? "0" : node["Color2_B"];
 	std::string Color2_A = node["Color2_A"].is_null() ? "0" : node["Color2_A"];
 
-	colorP1 = {std::stof(Color1_R),std::stof(Color1_G), std::stof(Color1_B), std::stof(Color1_A) };
-	colorP2 = { std::stof(Color2_R),std::stof(Color2_G), std::stof(Color2_B), std::stof(Color2_A) };
-
 	percentage = node["Percentage"].is_null() ? 100 : (float)node["Percentage"];
+
+
+
+	colorP1 = { std::stof(Color1_R),std::stof(Color1_G), std::stof(Color1_B), std::stof(Color1_A) };
+	colorP2 = { std::stof(Color2_R),std::stof(Color2_G), std::stof(Color2_B), std::stof(Color2_A) };
 }
 
-void ComponentProgressBar::CreateInspectorNode()
+void ComponentCircularBar::CreateInspectorNode()
 {
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 	ImGui::Checkbox("Visible", &visible);
@@ -195,6 +194,9 @@ void ComponentProgressBar::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
 	ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
+
+	// Axis
+	ImGui::Checkbox("Vertical Axis", &axis);
 
 	// Position
 	ImGui::Text("Position:");
