@@ -162,8 +162,8 @@ bool ModulePhysics::Init(json& config)
 	simulationEventsCallback = new PhysxSimulationEvents(this);
 
 	physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
-	sceneDesc.bounceThresholdVelocity = 9.8 * 0.2;
+	sceneDesc.gravity = physx::PxVec3(0.0f, -gravity, 0.0f);
+	sceneDesc.bounceThresholdVelocity = gravity * 0.2;
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	//sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS | physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
@@ -177,7 +177,7 @@ bool ModulePhysics::Init(json& config)
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);	//Enable visualization of actor's shape
 	mScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);	//Enable visualization of actor's axis
 
-	mMaterial = mPhysics->createMaterial(1.0f, 1.0f, 0.0f);
+	mMaterial = mPhysics->createMaterial(materialDesc.x, materialDesc.y, materialDesc.z);
 
 	mControllerManager = PxCreateControllerManager(*mScene);
 
@@ -421,6 +421,11 @@ const Broken::json& ModulePhysics::SaveStatus() const {
 	//maybe we should call SaveStatus on every panel
 	static Broken::json config;
 
+	config["gravity"] = gravity;
+	config["staticFriction"] = materialDesc.x;
+	config["dynamicFriction"] = materialDesc.y;
+	config["restitution"] = materialDesc.z;
+
 	config["count"] = layer_list.size();
 
 	for (uint i = 0; i < layer_list.size(); ++i) {
@@ -439,7 +444,12 @@ const Broken::json& ModulePhysics::SaveStatus() const {
 };
 
 void ModulePhysics::LoadStatus(const Broken::json& file) {
-	
+
+	gravity = file[name]["gravity"];
+	materialDesc.x = file[name]["staticFriction"];
+	materialDesc.y = file[name]["dynamicFriction"];
+	materialDesc.z = file[name]["restitution"];
+
 	int count = file[name]["count"];
 
 	for (uint i = 0; i < count; ++i) {

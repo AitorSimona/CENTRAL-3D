@@ -145,6 +145,8 @@ private:
 	PhysxSimulationEvents* simulationEventsCallback = nullptr;
 	float physAccumulatedTime = 0.0f;
 	bool loaded = false;
+	float3 materialDesc = float3(1.0f, 1.0f, 0.0f);
+	float gravity = 9.8;
 };
 
 BE_END_NAMESPACE
