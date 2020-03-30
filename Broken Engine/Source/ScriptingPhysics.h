@@ -16,7 +16,6 @@ public:
 public:
 	void SetMass(float mass);
 	float GetMass();
-	int myFunc(lua_State* L);
 
 	int GetLinearVelocity(lua_State* L);
 	int GetAngularVelocity(lua_State* L);
