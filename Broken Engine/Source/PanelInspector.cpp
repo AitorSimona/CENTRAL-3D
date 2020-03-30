@@ -217,10 +217,9 @@ bool PanelInspector::Draw()
 			{
 				type = Broken::Component::ComponentType::Collider;
 			}
-
 			else if (item_current == "Character Controller")
 			{
-				Selected->AddComponent(Broken::Component::ComponentType::CharacterController);
+				type = Broken::Component::ComponentType::CharacterController;
 			}
 			else if (item_current == "Particle Emitter")
 			{
@@ -258,12 +257,10 @@ bool PanelInspector::Draw()
 			SelectedRes->CreateInspectorNode();
 
 			ImGui::EndChild();
-
 		}
 	}
 
 	ImGui::End();
-
 
 	return true;
 }

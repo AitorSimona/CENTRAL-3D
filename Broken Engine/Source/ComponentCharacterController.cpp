@@ -45,6 +45,7 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 
 	initialPosition = capsuleDesc.position;
 
+	name = "Character Controller";
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCharacterController");
 }
 

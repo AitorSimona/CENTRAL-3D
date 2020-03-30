@@ -16,7 +16,6 @@
 
 #include "mmgr/mmgr.h"
 
-//using namespace physx;
 using namespace Broken;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
@@ -424,7 +423,8 @@ void ComponentCollider::CreateInspectorNode()
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
 
-		if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) {
+		if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) 
+		{
 
 			switch (colliderType)
 			{
@@ -574,6 +574,7 @@ void ComponentCollider::CreateInspectorNode()
 
 			}
 		}
+		ImGui::TreePop();
 	}
 }
 
