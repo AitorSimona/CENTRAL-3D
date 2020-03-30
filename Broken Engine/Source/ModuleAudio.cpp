@@ -125,7 +125,7 @@ void ModuleAudio::InitWwise()
 	AK::Comm::GetDefaultInitSettings(settingsComm);
 	if (AK::Comm::Init(settingsComm) != AK_Success)
 	{
-		assert(!"Cannot initialize music communication");
+		AKASSERT(!"Cannot initialize music communication");
 		return;
 }
 #endif // AK_OPTIMIZED
