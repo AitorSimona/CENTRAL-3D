@@ -246,6 +246,7 @@
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleSceneManager.h" />
     <ClInclude Include="ModuleScripting.h" />
+    <ClInclude Include="ModuleSelection.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleThreading.h" />
     <ClInclude Include="ModuleTimeManager.h" />
@@ -400,6 +401,7 @@
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleSceneManager.cpp" />
     <ClCompile Include="ModuleScripting.cpp" />
+    <ClCompile Include="ModuleSelection.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleThreading.cpp" />
     <ClCompile Include="ModuleTimeManager.cpp" />

@@ -13,6 +13,7 @@ using namespace Broken;
 
 ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::DynamicRigidBody)
 {
+	name = "Dynamic RigidBody";
 	if (rigidBody != nullptr) 
 	{
 		SetMass(mass);
@@ -136,10 +137,7 @@ void ComponentDynamicRigidBody::Load(json& node)
 
 void ComponentDynamicRigidBody::CreateInspectorNode()
 {
-	ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
-
-	if (ImGui::Button("Delete component"))
-		to_delete = true;
+	//ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
 
 	ImGui::Text("Mass:"); ImGui::SameLine(); 
 	if (ImGui::DragFloat("##M", &mass,1.0f, 0.0f, 100000.0f)) 

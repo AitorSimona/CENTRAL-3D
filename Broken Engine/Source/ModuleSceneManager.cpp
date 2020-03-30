@@ -15,6 +15,7 @@
 #include "ComponentCamera.h"
 #include "ComponentBone.h"
 #include "ModuleUI.h"
+#include "ModuleSelection.h"
 
 //#include "ModuleGui.h"
 
@@ -40,17 +41,28 @@
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
-void ModuleSceneManager::ONResourceSelected(const Event& e)
+// SELECTED TODO
+void ModuleSceneManager::ONResourceSelected(const Event& e) 
 {
-	if (App->scene_manager->SelectedGameObject)
-		App->scene_manager->SetSelectedGameObject(nullptr);
+	App->selection->ClearSelection();
+	/*if (App->scene_manager->SelectedGameObject)
+		App->scene_manager->SetSelectedGameObject(nullptr);*/
 }
 
-void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
+// SELECTED TODO
+void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
 {
-	// If destroyed GameObject is selected, put to nullptr
-	if (e.go->GetUID() == App->scene_manager->SelectedGameObject->GetUID())
-		App->scene_manager->SetSelectedGameObject(nullptr);
+	// If destroyed GameObject is selected, erase from selected
+	// MANAGED BY MODULE SELECTION
+	/*for (std::vector<GameObject*>::iterator it = App->selection->selected_gameobjects.begin(); it != App->scene_manager->selected_gameobjects.end();)
+	{
+		if (e.go->GetUID() == (*it)->GetUID()) {
+			App->scene_manager->selected_gameobjects.erase(it);
+			break;
+		}
+		it++;
+	}*/
+	
 
 	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
 	{
@@ -80,6 +92,7 @@ bool ModuleSceneManager::Init(json& file)
 {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
+	//root_selected = CreateRootSelectedGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
 	// --- Add Event Listeners ---
@@ -130,11 +143,7 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
-	for (int i = 0; i < go_to_delete.size(); ++i)
-		DestroyGameObject(go_to_delete[i]);
-
-	go_to_delete.clear();
-
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -315,7 +324,18 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 		App->renderer3D->DrawAABB(node->box, Red);
 }
 
-void ModuleSceneManager::SelectFromRay(LineSegment& ray)
+//bool ModuleSceneManager::IsSelected(GameObject* go)
+//{
+//	for (int i = 0; i < selected_gameobjects.size(); i++)
+//	{
+//		if (selected_gameobjects[i] == go)
+//			return true;
+//	}
+//
+//	return false;
+//}
+
+void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 	if (currentScene)
@@ -370,7 +390,9 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 
 		// --- Set Selected ---
 		//if (toSelect)
-		SetSelectedGameObject(toSelect);
+		// RAYCAST SELECTION
+		App->selection->HandleSelection(toSelect);
+		//SetSelectedGameObject(toSelect);
 	}
 }
 
@@ -445,7 +467,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 {
 	if (scene)
 	{
-		SelectedGameObject = nullptr;
+		App->selection->ClearSelection();
+		//SelectedGameObject = nullptr;
 
 		// --- Unload current scene ---
 		if (currentScene)
@@ -489,23 +512,39 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 
 }
 
+// SELECTED TODO
+//GameObject* ModuleSceneManager::GetSelectedGameObject() const
+//{
+//
+//	return selected_gameobjects.empty() ? nullptr : *selected_gameobjects.rbegin();
+//}
 
-GameObject* ModuleSceneManager::GetSelectedGameObject() const
-{
-	return SelectedGameObject;
-}
 
 
-void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
-	SelectedGameObject = go;
-
-	if (SelectedGameObject)
-	{
-		Event e(Event::EventType::GameObject_selected);
-		e.go = go;
-		App->event_manager->PushEvent(e);
-	}
-}
+// SELECTED TODO
+//void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
+//	
+//	if (go == nullptr)
+//	{
+//		App->scene_manager->selected_gameobjects.clear();
+//	}
+//	else {
+//
+//		App->scene_manager->selected_gameobjects.push_back(go);
+//		Event e(Event::EventType::GameObject_selected);
+//		e.go = go;
+//		App->event_manager->PushEvent(e);
+//	}
+//	
+//	/*SelectedGameObject = go;
+//
+//	if (SelectedGameObject)
+//	{
+//		Event e(Event::EventType::GameObject_selected);
+//		e.go = go;
+//		App->event_manager->PushEvent(e);
+//	}*/
+//}
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	// --- Create New Game Object Name ---
@@ -559,6 +598,17 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 
 	return new_object;
 }
+
+//GameObject* ModuleSceneManager::CreateRootSelectedGameObject()
+//{
+//	// --- Create New Game Object Name ---
+//	std::string Name = "rootSelected";
+//
+//	// --- Create empty Game object to be filled out ---
+//	GameObject* new_object = new GameObject(Name.c_str());
+//
+//	return new_object;
+//}
 
 void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const {
 	// --- Obtain data from par shapes mesh and load it into mesh ---

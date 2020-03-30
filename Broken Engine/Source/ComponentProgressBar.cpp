@@ -28,6 +28,7 @@ using namespace Broken;
 
 ComponentProgressBar::ComponentProgressBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ProgressBar)
 {
+	name = "ProgressBar";
 	visible = true;
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
@@ -198,63 +199,51 @@ void ComponentProgressBar::Load(json& node)
 
 void ComponentProgressBar::CreateInspectorNode()
 {
-	ImGui::Checkbox("##ImageActive", &GetActive());
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
+	ImGui::Separator();
+
+	// Percentage (test)
+	ImGui::Text("Health percentage (test):");
 	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
 
-	if (ImGui::TreeNode("Progress Bar"))
-	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
+	// Position
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##imageposition", &position2D.x);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##imageposition", &position2D.y);
 
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-		ImGui::Separator();
+	// Size Planes
+	ImGui::Text("Bar Size:  ");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
 
-		// Percentage (test)
-		ImGui::Text("Health percentage (test):");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
+	// Rotation
+	ImGui::Text("Rotation:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##imagerotation", &rotation2D);
 
-		// Position
-		ImGui::Text("Position:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imageposition", &position2D.x);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imageposition", &position2D.y);
+	// Planes Colors
+	ImGui::Separator();
+	ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("BG color");
 
-		// Size Planes
-		ImGui::Text("Bar Size:  ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
-
-		// Rotation
-		ImGui::Text("Rotation:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##imagerotation", &rotation2D);
-
-		// Planes Colors
-		ImGui::Separator();
-		ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("BG color");
-
-		ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("Bar color");
+	ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("Bar color");
 
 
-		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::TreePop();
-	}
-
+	ImGui::Separator();
 
 }
