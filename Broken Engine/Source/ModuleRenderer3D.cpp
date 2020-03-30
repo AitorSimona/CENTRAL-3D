@@ -203,11 +203,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 
 	glDisable(GL_BLEND);
 
-	App->ui_system->Draw();
-
 	std::vector<ComponentLight*>::iterator LightIterator = m_LightsVec.begin();
 	for (; LightIterator != m_LightsVec.end(); ++LightIterator)
 		(*LightIterator)->Draw();
+
+	App->ui_system->Draw();
+
 
 	// --- Selected Object Outlining ---
 	//#ifndef BE_GAME_BUILD

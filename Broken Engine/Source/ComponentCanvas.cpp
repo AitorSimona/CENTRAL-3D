@@ -12,7 +12,8 @@
 #include "ComponentButton.h"
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
-//#include "ComponentProgressBar.h"
+#include "ComponentProgressBar.h"
+#include "ComponentCircularBar.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
@@ -92,11 +93,58 @@ void ComponentCanvas::Draw() const
 					bar->Draw();
 				continue;
 			}
+			else if (elements[i]->GetType() == Component::ComponentType::Text)
+			{
+				ComponentText* text = (ComponentText*)elements[i];
+				if (text->visible)
+					text->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Image)
+			{
+				ComponentImage* image = (ComponentImage*)elements[i];
+				if (image->visible)
+					image->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Button)
+			{
+				ComponentButton* button = (ComponentButton*)elements[i];
+				if (button->visible)
+					button->Draw();
+			}
+			//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
+			//{
+			//	CheckBox* elem = (CheckBox*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			//else if (elements[i]->GetType() == Component::ComponentType::InputText)
+			//{
+			//	InputText* elem = (InputText*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
+			{
+				ComponentProgressBar* progressbar = (ComponentProgressBar*)elements[i];
+				if (progressbar->visible)
+					progressbar->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::CircularBar)
+			{
+				ComponentCircularBar* circularbar = (ComponentCircularBar*)elements[i];
+				if (circularbar->visible)
+					circularbar->Draw();
+				continue;
+			}
 			else
 				continue;
 		}
 	}
-	
 }
 
 json ComponentCanvas::Save() const

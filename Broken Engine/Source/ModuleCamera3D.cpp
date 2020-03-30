@@ -46,6 +46,7 @@ bool ModuleCamera3D::Start() {
 	reference = camera->frustum.Pos();
 	camera->Look({ 0.0f, 0.0f, 0.0f });
 	FrameObject({ 0.0f, 0.0f, 0.0f });
+	camera->SetCameraValues(m_CustomDefaultCameraValues);
 
 	return ret;
 }

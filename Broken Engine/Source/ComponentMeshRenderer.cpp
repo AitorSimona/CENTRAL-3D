@@ -225,8 +225,8 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				const char* item_current = material->shader->GetName();
 				if (ImGui::BeginCombo("##Shader", item_current, flags))
 				{
-					if (!is_default)
-					{
+					//if (!is_default)
+					//{
 					
 						for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
 						{
@@ -241,7 +241,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							if (is_selected)
 								ImGui::SetItemDefaultFocus();
 						}
-					}
+					//}
 
 					ImGui::EndCombo();
 				}
