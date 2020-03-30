@@ -13,7 +13,7 @@ using namespace Broken;
 
 ComponentAudioListener::ComponentAudioListener(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::AudioListener)
 {
-	name = "Audio Listener";
+
 	float3 position;
 	position.x = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().x;
 	position.y = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().y;
@@ -26,6 +26,11 @@ ComponentAudioListener::~ComponentAudioListener() {}
 
 void ComponentAudioListener::CreateInspectorNode()
 {
+	if (ImGui::CollapsingHeader("Audio Listener", ImGuiTreeNodeFlags_Leaf))
+	{
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+	}
 }
 
 void ComponentAudioListener::Update()

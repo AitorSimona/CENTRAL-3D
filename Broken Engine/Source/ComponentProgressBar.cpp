@@ -28,7 +28,6 @@ using namespace Broken;
 
 ComponentProgressBar::ComponentProgressBar(GameObject* gameObject) : Component(gameObject, Component::ComponentType::ProgressBar)
 {
-	name = "ProgressBar";
 	visible = true;
 	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
@@ -60,13 +59,33 @@ void ComponentProgressBar::Draw()
 
 void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 {
+	// --- Update transform and rotation to face camera ---
+	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
+
+	float2 new_size = float2((size2D.x * _percentage) / 100, size2D.y);
+
 	// --- Frame image with camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), 
-		float3(float2((size2D.x * _percentage) / 100, size2D.y) * 0.01f, 1.0f));
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+		float3(new_size, 1));
+
+	float3 Movement = App->renderer3D->active_camera->frustum.Front();
+	float3 camera_pos = frustum_pos;
+
+	if (Movement.IsFinite())
+		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
 
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
+
+	// color tint
+	
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, -1);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
@@ -82,24 +101,16 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
+
 	// --- Draw plane with given texture ---
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
-
-	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, 0);
-
-	glUniform1i(glGetUniformLocation(App->renderer3D->defaultShader->ID, "ourTexture"), 1);
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
-
-	//Draw
 	glBindVertexArray(App->scene_manager->plane->VAO);
+
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
@@ -109,8 +120,13 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	
 	// --- Set uniforms back to defaults ---
 	glUniform1i(TextureLocation, 0);
-	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+	glUniform3f(vertexColorLocation, 255, 255, 255);
+
+	// --- Set camera back to original position ---
+	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
+
+
 
 json ComponentProgressBar::Save() const
 {
@@ -182,49 +198,63 @@ void ComponentProgressBar::Load(json& node)
 
 void ComponentProgressBar::CreateInspectorNode()
 {
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-	ImGui::Checkbox("Visible", &visible);
-	ImGui::Separator();
-
-	// Percentage (test)
-	ImGui::Text("Health percentage (test):");
+	ImGui::Checkbox("##ImageActive", &GetActive());
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
 
-	// Position
-	ImGui::Text("Position:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imageposition", &position2D.x);
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imageposition", &position2D.y);
+	if (ImGui::TreeNode("Progress Bar"))
+	{
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
 
-	// Size Planes
-	ImGui::Text("Bar Size:  ");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+		ImGui::Checkbox("Visible", &visible);
+		ImGui::Separator();
 
-	// Rotation
-	ImGui::Text("Rotation:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("##imagerotation", &rotation2D);
+		// Percentage (test)
+		ImGui::Text("Health percentage (test):");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("##percentage", &percentage, 0.1f, 0.0f, 100.0f);
 
-	// Planes Colors
-	ImGui::Separator();
-	ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
-	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-	ImGui::Text("BG color");
+		// Position
+		ImGui::Text("Position:");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("x##imageposition", &position2D.x);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("y##imageposition", &position2D.y);
 
-	ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
-	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-	ImGui::Text("Bar color");
+		// Size Planes
+		ImGui::Text("Bar Size:  ");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
 
-	ImGui::Separator();
+		// Rotation
+		ImGui::Text("Rotation:");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("##imagerotation", &rotation2D);
+
+		// Planes Colors
+		ImGui::Separator();
+		ImGui::ColorEdit4("##ColorP1", (float*)&colorP1, ImGuiColorEditFlags_NoInputs);
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		ImGui::Text("BG color");
+
+		ImGui::ColorEdit4("##ColorP2", (float*)&colorP2, ImGuiColorEditFlags_NoInputs);
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+		ImGui::Text("Bar color");
+
+
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::TreePop();
+	}
+
+
 }

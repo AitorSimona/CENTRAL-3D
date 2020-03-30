@@ -28,7 +28,6 @@ using namespace Broken;
 
 ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
 {
-	name = "Image";
 	visible = true;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
@@ -54,17 +53,32 @@ void ComponentImage::Update()
 void ComponentImage::Draw()
 {
 	// --- Update transform and rotation to face camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D * 0.01f, 1.0f));
+	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
+
+	// --- Frame image with camera ---
+	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
+		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
+		float3(size2D, 1));
+		
+	float3 Movement = App->renderer3D->active_camera->frustum.Front();
+	float3 camera_pos = frustum_pos;
+	
+	if (Movement.IsFinite())
+		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
 
 	// --- Set Uniforms ---
-	uint shaderID = App->renderer3D->defaultShader->ID;
-	glUseProgram(shaderID);
+	glUseProgram(App->renderer3D->defaultShader->ID);
 
-	GLint modelLoc = glGetUniformLocation(shaderID, "model_matrix");
+	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	glUniform1i(TextureLocation, -1);
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(shaderID, "view");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
@@ -75,32 +89,27 @@ void ComponentImage::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(shaderID, "projection");
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	// --- Color & Texturing ---
-	int TextureLocation = glGetUniformLocation(shaderID, "Texture");
-	glUniform1i(TextureLocation, 1);
-	GLint vertexColorLocation = glGetUniformLocation(shaderID, "Color");
-	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
-
-	glUniform1i(glGetUniformLocation(shaderID, "ourTexture"), 1);
-	glActiveTexture(GL_TEXTURE0 + 1);
-
-	if(texture)
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	glUniform1i(TextureLocation, 0); //reset texture location
 
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
 
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
-	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+
+
+	// --- Set camera back to original position ---
+	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
 
 json ComponentImage::Save() const
@@ -150,87 +159,76 @@ void ComponentImage::Load(json& node)
 
 void ComponentImage::CreateInspectorNode()
 {
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-	ImGui::Checkbox("Visible", &visible);
-	ImGui::Separator();
-
-	// Size
-	ImGui::Text("Size:    ");
+	ImGui::Checkbox("##ImageActive", &GetActive());
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f) && resize)
+
+	if (ImGui::TreeNode("Image"))
 	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+		ImGui::Checkbox("Visible", &visible);
+		ImGui::Separator();
+
+		// Size
+		ImGui::Text("Size:    ");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f);
+
+		// Position
+		ImGui::Text("Position:");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("x##imageposition", &position2D.x);
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("y##imageposition", &position2D.y);
+
+		// Rotation
+		ImGui::Text("Rotation:");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(60);
+		ImGui::DragFloat("##imagerotation", &rotation2D);
+
+		// ------------------------------------------
+
+		// Image
+		ImGui::Separator();
+		ImGui::Text("Image");
+
+		if (texture == nullptr)
+			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
+		else
+			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
+		 
+		//drag and drop
+		if (ImGui::BeginDragDropTarget())
 		{
-			if (texture->Texture_width <= texture->Texture_height)
-				size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
-		}
-	}
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f) && resize)
-	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
-		{
-			if (texture->Texture_width >= texture->Texture_height)
-				size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
-		}
-	}
-
-	// Position
-	ImGui::Text("Position:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
-
-	// Rotation
-	ImGui::Text("Rotation:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("##imagerotation", &rotation2D);
-
-	// ------------------------------------------
-
-	// Image
-	ImGui::Separator();
-	ImGui::Text("Image");
-
-	if (texture == nullptr)
-		ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
-	else
-		ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
-
-	//drag and drop
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-		{
-			uint UID = *(const uint*)payload->Data;
-			Resource* resource = App->resources->GetResource(UID, false);
-
-			if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 			{
-				if (texture)
-					texture->Release();
+				uint UID = *(const uint*)payload->Data;
+				Resource* resource = App->resources->GetResource(UID, false);
 
-				texture = (ResourceTexture*)App->resources->GetResource(UID);
+				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+				{
+					if (texture)
+						texture->Release();
 
-				if (resize && texture)
-					size2D = float2(texture->Texture_width, texture->Texture_height);
+					texture = (ResourceTexture*)App->resources->GetResource(UID);
+				}
 			}
+			ImGui::EndDragDropTarget();
 		}
-		ImGui::EndDragDropTarget();
+
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::TreePop();
 	}
 
-	// Aspect Ratio
-	ImGui::Checkbox("Maintain Aspect Ratio", &resize);
-
-	ImGui::Separator();
+	
 }

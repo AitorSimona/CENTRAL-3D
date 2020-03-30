@@ -17,7 +17,6 @@ using namespace Broken;
 
 const std::string GetStringFromLightType(LightType type)
 {
-
 	std::string ret = "";
 	switch (type)
 	{
@@ -35,14 +34,11 @@ const std::string GetStringFromLightType(LightType type)
 
 ComponentLight::ComponentLight(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Light)
 {
-	name = "Light";
 	App->renderer3D->AddLight(this);
 }
 
 ComponentLight::~ComponentLight()
 {
-	Disable();
-	SendUniforms(App->renderer3D->defaultShader->ID, App->renderer3D->GetLightIndex(this));
 	App->renderer3D->PopLight(this);
 }
 
@@ -155,9 +151,6 @@ const std::string ComponentLight::GetLightUniform(uint lightIndex, const char* u
 // -------------------------------------------------------------------------------------------
 void ComponentLight::Draw()
 {
-	if (!m_DrawMesh)
-		return;
-
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
@@ -206,73 +199,82 @@ void ComponentLight::Draw()
 // -------------------------------------------------------------------------------------------
 void ComponentLight::CreateInspectorNode()
 {
-
-	// --- Type ---
-	ImGui::NewLine(); ImGui::Separator();
-	static ImGuiComboFlags flags = 0;
-
-	ImGui::Text("Light Type");
+	// --- Basic ---
+	ImGui::Checkbox("##Light Component", &GetActive());
 	ImGui::SameLine();
 
-	std::string current_type = GetStringFromLightType(m_LightType);
-	if (ImGui::BeginCombo("##LightType", current_type.c_str(), flags))
+	// --- Tree Begin ---
+	if (ImGui::TreeNode("Light Component"))
 	{
-		for (uint i = 0; i < (uint)LightType::MAX_LIGHT_TYPES; ++i)
-		{
-			std::string selectable_type = GetStringFromLightType(LightType(i));
-			bool is_selected = (current_type == selectable_type);
+		// --- Delete ---
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
 
-			if (ImGui::Selectable(selectable_type.c_str(), is_selected))
-				SetLightType(LightType(i));
-			if (is_selected)
-				ImGui::SetItemDefaultFocus();
+		// --- Type ---
+		ImGui::NewLine(); ImGui::Separator();
+		static ImGuiComboFlags flags = 0;
+
+		ImGui::Text("Light Type");
+		ImGui::SameLine();
+
+		std::string current_type = GetStringFromLightType(m_LightType);
+		if (ImGui::BeginCombo("##LightType", current_type.c_str(), flags))
+		{
+			for (uint i = 0; i < (uint)LightType::MAX_LIGHT_TYPES; ++i)
+			{
+				std::string selectable_type = GetStringFromLightType(LightType(i));
+				bool is_selected = (current_type == selectable_type);
+
+				if (ImGui::Selectable(selectable_type.c_str(), is_selected))
+					SetLightType(LightType(i));
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
 		}
 
-		ImGui::EndCombo();
-	}
-
-	// --- Draw Mesh ---
-	ImGui::Text("Draw Mesh");
-	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 11.0f);
-	ImGui::Checkbox("##DrawMesh", &m_DrawMesh);
-
-	// --- Color ---
-	ImGui::Separator(); ImGui::NewLine();
-	ImGui::Text("Color");
-	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 37.0f);
-	ImGui::ColorEdit4("##LightColor", (float*)&m_Color, ImGuiColorEditFlags_NoInputs);		
-
-	// --- Intensity ---
-	ImGui::Text("Intensity");
-	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
-	ImGui::SetNextItemWidth(300.0f);
-	ImGui::SliderFloat("", &m_Intensity, 0.0f, 2.0f);
-	ImGui::NewLine();
-
-	if (m_LightType == LightType::SPOTLIGHT)
-	{
-		// --- Cutoff ---
+		// --- Color ---
 		ImGui::Separator(); ImGui::NewLine();
-		ImGui::Text("Inner Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, m_InOutCutoffDegrees.y - 0.01f);
-		ImGui::Text("Outer Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.01f, m_InOutCutoffDegrees.x + 0.01f, 360.00f);
+		ImGui::Text("Color");
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 37.0f);
+		ImGui::ColorEdit4("##LightColor", (float*)&m_Color, ImGuiColorEditFlags_NoInputs);		
+
+		// --- Intensity ---
+		ImGui::Text("Intensity");
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
+		ImGui::SetNextItemWidth(300.0f);
+		ImGui::SliderFloat("", &m_Intensity, 0.0f, 2.0f);
 		ImGui::NewLine();
-	}
 
-	if (m_LightType == LightType::SPOTLIGHT || m_LightType == LightType::POINTLIGHT)
-	{
-		// --- Attenuation ---	
-		ImGui::Separator(); ImGui::NewLine();
-		ImGui::Text("Constant Attenuation Value (K):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##AttK", &m_AttenuationKLQFactors.x, 0.001f, 0.000f, 2.0f);
-		ImGui::Text("Linear Attenuation Value (L):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##AttL", &m_AttenuationKLQFactors.y, 0.001f, 0.000f, 2.0f);
-		ImGui::Text("Quadratic Attenuation Value (Q):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
-		ImGui::DragFloat("##AttQ", &m_AttenuationKLQFactors.z, 0.00001f, 0.000000f, 2.0f, "%.5f");
+		if (m_LightType == LightType::SPOTLIGHT)
+		{
+			// --- Cutoff ---
+			ImGui::Separator(); ImGui::NewLine();
+			ImGui::Text("Inner Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##InCut", &m_InOutCutoffDegrees.x, 0.1f, 0.00f, m_InOutCutoffDegrees.y - 0.01f);
+			ImGui::Text("Outer Cutoff:"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##OutCut", &m_InOutCutoffDegrees.y, 0.01f, m_InOutCutoffDegrees.x + 0.01f, 360.00f);
+			ImGui::NewLine();
+		}
 
-		if (ImGui::Button("Default", { 57, 18 }))
-			m_AttenuationKLQFactors = float3(1.0f, 0.09f, 0.032f);
+		if (m_LightType == LightType::SPOTLIGHT || m_LightType == LightType::POINTLIGHT)
+		{
+			// --- Attenuation ---	
+			ImGui::Separator(); ImGui::NewLine();
+			ImGui::Text("Constant Attenuation Value (K):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##AttK", &m_AttenuationKLQFactors.x, 0.001f, 0.000f, 2.0f);
+			ImGui::Text("Linear Attenuation Value (L):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##AttL", &m_AttenuationKLQFactors.y, 0.001f, 0.000f, 2.0f);
+			ImGui::Text("Quadratic Attenuation Value (Q):"); ImGui::SameLine(); ImGui::SetNextItemWidth(65.0f);
+			ImGui::DragFloat("##AttQ", &m_AttenuationKLQFactors.z, 0.00001f, 0.000000f, 2.0f, "%.5f");
+
+			if (ImGui::Button("Default", { 57, 18 }))
+				m_AttenuationKLQFactors = float3(1.0f, 0.09f, 0.032f);
+		}
+
+		// --- Tree End ---
+		ImGui::TreePop();
 	}
 }
 
@@ -285,7 +287,6 @@ json ComponentLight::Save() const
 	json node;
 
 	node["Active"] = this->active;
-	node["DrawMesh"] = m_DrawMesh;
 
 	node["DirectionX"] = std::to_string(m_Direction.x);
 	node["DirectionY"] = std::to_string(m_Direction.y);
@@ -305,14 +306,12 @@ json ComponentLight::Save() const
 	node["Intensity"] = std::to_string(m_Intensity);
 	node["LightType"] = std::to_string((int)m_LightType);
 
-
 	return node;
 }
 
 void ComponentLight::Load(json& node)
 {
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
-	m_DrawMesh = node["DrawMesh"].is_null() ? true : (bool)node["DrawMesh"];
 
 	// --- Load Strings ---
 	std::string str_dirX = node["DirectionX"].is_null() ? "0" : node["DirectionX"];

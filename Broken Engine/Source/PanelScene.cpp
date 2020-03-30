@@ -105,8 +105,7 @@ bool PanelScene::Draw()
 	}
 
 	// --- Handle Guizmo operations ---
-	// SELECTED TODO
-	if(EngineApp->selection->GetLastSelected() != nullptr)
+	if(EngineApp->scene_manager->GetSelectedGameObject() != nullptr)
 		HandleGuizmo();
 
 	// --- Update editor camera ---
@@ -155,7 +154,7 @@ void PanelScene::HandleGuizmo()
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
-	Broken::GameObject* selectedGO = EngineApp->selection->GetLastSelected();
+	Broken::GameObject* selectedGO = EngineApp->scene_manager->GetSelectedGameObject();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();

@@ -46,7 +46,6 @@ class ModuleUI;
 class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
-class ModuleSelection;
 
 class BROKEN_API Application {
 public:
@@ -88,7 +87,6 @@ public:
 	ModulePhysics* physics = nullptr;
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
-	ModuleSelection* selection = nullptr;
 
 
 	bool isGame = false;

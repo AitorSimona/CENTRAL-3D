@@ -15,7 +15,6 @@ using namespace Broken;
 
 ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Script)
 {
-	name = "Script";
 	type = ComponentType::Script;
 }
 
@@ -46,80 +45,88 @@ void ComponentScript::Disable() {
 }
 
 void ComponentScript::CreateInspectorNode() {
-	//ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth;
+	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-	//std::string name = this->script_name + " (Script)";
-	//ImGui::Checkbox("Active", &active); ImGui::SameLine();
+	std::string name = this->script_name + " (Script)";
+	ImGui::Checkbox("Active", &active); ImGui::SameLine();
 
-	if (this->script != nullptr)
+	if (ImGui::TreeNodeEx(name.data(), base_flags))
 	{
-		if (ImGui::Button("Open Script File")) {
-			App->gui->RequestBrowser(std::string(script->absolute_path).data());
-		}
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
 
-		// Display public variables
-		for (int i = 0; i < script_variables.size(); ++i)
+		if (this->script != nullptr)
 		{
-			std::string auxName = script_variables[i].name.c_str();
-			ImGui::Text(auxName.c_str()); ImGui::SameLine(200.f); ImGui::SetNextItemWidth(ImGui::GetWindowWidth() / 7.0f);
-			auxName.assign("##Var" + auxName);
+			if (ImGui::Button("Open Script File")) {
+				App->gui->RequestBrowser(std::string(script->absolute_path).data());
+			}
 
-			VarType type = script_variables[i].type;
-			if (type == VarType::DOUBLE)
+			// Display public variables
+			for (int i = 0; i < script_variables.size(); ++i)
 			{
-				float auxVal(script_variables[i].editor_value.as_double);
+				std::string auxName = script_variables[i].name.c_str();
+				ImGui::Text(auxName.c_str()); ImGui::SameLine(200.f); ImGui::SetNextItemWidth(ImGui::GetWindowWidth() / 7.0f);
+				auxName.assign("##Var" + auxName);
 
-				// Handle drag & drop of resources and GameObjects
-				if (ImGui::BeginDragDropTarget())
+				VarType type = script_variables[i].type;
+				if (type == VarType::DOUBLE)
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-					{
-						uint UID = *(const uint*)payload->Data;
-						Broken::Resource* resource = App->resources->GetResource(UID, false);
+					float auxVal(script_variables[i].editor_value.as_double);
 
-						if (resource && resource->GetType() == Broken::Resource::ResourceType::SCENE)
+					// Handle drag & drop of resources and GameObjects
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 						{
-							script_variables[i].editor_value.as_double = UID;
-							script_variables[i].object_name = resource->GetName();
-							script_variables[i].display_object_name = true;
+							uint UID = *(const uint*)payload->Data;
+							Broken::Resource* resource = App->resources->GetResource(UID, false);
+
+							if (resource && resource->GetType() == Broken::Resource::ResourceType::SCENE)
+							{
+								script_variables[i].editor_value.as_double = UID;
+								script_variables[i].object_name = resource->GetName();
+								script_variables[i].display_object_name = true;
+								script_variables[i].changed_value = true;
+							}
+						}
+
+						ImGui::EndDragDropTarget();
+					}
+
+					if (script_variables[i].display_object_name) {						
+						char string[256];
+						strcpy(string, script_variables[i].object_name.c_str());
+						ImGui::InputText(auxName.c_str(), string, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+					}
+					else {
+						if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f, 0.0f, 0.0f, "%.2f", 1.0f)) {
+							script_variables[i].editor_value.as_double = auxVal;
 							script_variables[i].changed_value = true;
 						}
 					}
 
-					ImGui::EndDragDropTarget();
 				}
-
-				if (script_variables[i].display_object_name) {						
+				else if (type == VarType::BOOLEAN)
+				{
+					if (ImGui::Checkbox(auxName.c_str(), &script_variables[i].editor_value.as_boolean))
+						script_variables[i].changed_value = true;
+				}
+				else if (type == VarType::STRING)
+				{
 					char string[256];
-					strcpy(string, script_variables[i].object_name.c_str());
+					strcpy(string, script_variables[i].editor_value.as_string);
+
 					ImGui::InputText(auxName.c_str(), string, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-				}
-				else {
-					if (ImGui::DragFloat(auxName.c_str(), &auxVal, 0.05f, 0.0f, 0.0f, "%.2f", 1.0f)) {
-						script_variables[i].editor_value.as_double = auxVal;
+
+					if (strcmp(script_variables[i].editor_value.as_string, string) != 0) {
+						strcpy(script_variables[i].editor_value.as_string, string);
 						script_variables[i].changed_value = true;
 					}
 				}
-
-			}
-			else if (type == VarType::BOOLEAN)
-			{
-				if (ImGui::Checkbox(auxName.c_str(), &script_variables[i].editor_value.as_boolean))
-					script_variables[i].changed_value = true;
-			}
-			else if (type == VarType::STRING)
-			{
-				char string[256];
-				strcpy(string, script_variables[i].editor_value.as_string);
-
-				ImGui::InputText(auxName.c_str(), string, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-
-				if (strcmp(script_variables[i].editor_value.as_string, string) != 0) {
-					strcpy(script_variables[i].editor_value.as_string, string);
-					script_variables[i].changed_value = true;
-				}
 			}
 		}
+
+		ImGui::TreePop();
 	}
 }
 

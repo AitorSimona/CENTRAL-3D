@@ -16,7 +16,6 @@
 
 using namespace Broken;
 ComponentMesh::ComponentMesh(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Mesh) {
-	name = "Mesh";
 }
 
 ComponentMesh::~ComponentMesh() {
@@ -96,9 +95,13 @@ void ComponentMesh::ONResourceEvent(uint UID, Resource::ResourceNotificationType
 }
 
 void ComponentMesh::CreateInspectorNode() {
+	ImGui::Checkbox("##MeshActive", &GetActive());
+	ImGui::SameLine();
 
-	if (resource_mesh) {
+	if (resource_mesh && ImGui::TreeNode("Mesh")) {
 
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
 
 		std::string Triangle_count = "Triangles   ";
 		Triangle_count.append(std::to_string(resource_mesh->IndicesSize / 3));
@@ -107,6 +110,8 @@ void ComponentMesh::CreateInspectorNode() {
 		//ImGui::Text("Instances:");
 		//ImGui::SameLine();
 		//ImGui::Text(std::to_string(mesh->resource_mesh->instances).data());
+
+		ImGui::TreePop();
 	}
 
 	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);

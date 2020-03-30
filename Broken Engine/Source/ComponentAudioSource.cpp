@@ -9,7 +9,7 @@ using namespace Broken;
 
 ComponentAudioSource::ComponentAudioSource( GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::AudioSource)
 {
-	name = "Audio Source";
+
 	float3 position;
 	position.x = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().x;
 	position.y = ContainerGO->GetComponent<ComponentTransform>()->GetPosition().y;
@@ -28,57 +28,64 @@ ComponentAudioSource::~ComponentAudioSource() {
 
 void ComponentAudioSource::CreateInspectorNode()
 {
-	if (id != 0)
+	if (ImGui::CollapsingHeader("Audio Source", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		std::string state = "Pause";
 
-		if (ImGui::ArrowButton("Play", ImGuiDir_Right))
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
+		if (id != 0)
 		{
-			if (!isPlaying)
+			std::string state = "Pause";
+
+			if (ImGui::ArrowButton("Play", ImGuiDir_Right))
 			{
-				wwiseGO->PlayEvent(id);
-				isPlaying = true;
+				if (!isPlaying)
+				{
+					wwiseGO->PlayEvent(id);
+					isPlaying = true;
+				}
+				isPaused = false;
 			}
-			isPaused = false;
-		}
 
-		ImGui::SameLine();
+			ImGui::SameLine();
 
 
-		if (isPaused)
-			state = "Resume";
+			if (isPaused)
+				state = "Resume";
 
-		else
-			state = "Pause";
+			else
+				state = "Pause";
 
-		if (ImGui::Button(state.c_str()))
-		{
-			if (isPlaying)
+			if (ImGui::Button(state.c_str()))
+			{
+				if (isPlaying)
+				{
+					isPlaying = false;
+					isPaused = true;
+					wwiseGO->PauseEvent(id);
+				}
+				else if (isPaused)
+				{
+					isPlaying = true;
+					isPaused = false;
+					wwiseGO->ResumeEvent(id);
+				}
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("STOP"))
 			{
 				isPlaying = false;
-				isPaused = true;
-				wwiseGO->PauseEvent(id);
-			}
-			else if (isPaused)
-			{
-				isPlaying = true;
 				isPaused = false;
-				wwiseGO->ResumeEvent(id);
+				wwiseGO->StopEvent(id);
 			}
-		}
 
-		ImGui::SameLine();
-
-		if (ImGui::Button("STOP"))
-		{
-			isPlaying = false;
-			isPaused = false;
-			wwiseGO->StopEvent(id);
-		}
-
-		if (ImGui::SliderFloat("Volume", &wwiseGO->volume, 0, 10))
-		{
-			wwiseGO->SetVolume(id, wwiseGO->volume);
+			if (ImGui::SliderFloat("Volume", &wwiseGO->volume, 0, 10))
+			{
+				wwiseGO->SetVolume(id, wwiseGO->volume);
+			}
 		}
 	}
 }

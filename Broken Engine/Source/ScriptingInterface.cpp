@@ -5,7 +5,6 @@
 #include "ResourceScene.h"
 #include "ScriptData.h"
 #include "ComponentProgressBar.h"
-#include "ComponentCircularBar.h"
 #include "ComponentText.h"
 #include "ComponentImage.h"
 #include "ComponentButton.h"
@@ -21,7 +20,7 @@ void ScriptingInterface::MakeUIComponentVisible(uint go_UUID, const char* comp_t
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
 	if (go) {
-
+		
 		std::string name = comp_type;
 		if (name.compare("Bar") == 0) {
 			ComponentProgressBar* comp_bar = go->GetComponent<ComponentProgressBar>();
@@ -80,29 +79,13 @@ void ScriptingInterface::SetBarPercentage(uint go_UUID, float percentage)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
-	if (go)
-	{
+	if (go) {
 		ComponentProgressBar* bar = go->GetComponent<ComponentProgressBar>();
+
 		if (bar)
 			bar->SetPercentage(percentage);
 		else
 			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! ProgressBar component is NULL");
-	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
-}
-
-void ScriptingInterface::SetCircularBarPercentage(uint go_UUID, float percentage)
-{
-	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
-
-	if (go)
-	{
-		ComponentCircularBar* bar = go->GetComponent<ComponentCircularBar>();
-		if (bar)
-			bar->SetPercentage(percentage);
-		else
-			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! CircularProgressBar component is NULL");
 	}
 	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
@@ -141,7 +124,7 @@ void ScriptingInterface::SetUITextAndNumber(uint go_UUID, const char* text, floa
 		else
 			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Text Component or text passed is NULL");
 	}
-	else
+	else 
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 

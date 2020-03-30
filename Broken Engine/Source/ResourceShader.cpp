@@ -41,7 +41,7 @@ bool ResourceShader::LoadInMemory()
 	bool ret = true;
 
 	// --- Load from binary file ---
-	if (!ret/*App->fs->Exists(resource_file.c_str())*/)
+	if (App->fs->Exists(resource_file.c_str()))
 	{
 		int success;
 		char infoLog[512];

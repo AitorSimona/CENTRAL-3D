@@ -15,7 +15,6 @@
 #include "ComponentCamera.h"
 #include "ComponentBone.h"
 #include "ModuleUI.h"
-#include "ModuleSelection.h"
 
 //#include "ModuleGui.h"
 
@@ -41,28 +40,17 @@
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
-// SELECTED TODO
-void ModuleSceneManager::ONResourceSelected(const Event& e) 
+void ModuleSceneManager::ONResourceSelected(const Event& e)
 {
-	App->selection->ClearSelection();
-	/*if (App->scene_manager->SelectedGameObject)
-		App->scene_manager->SetSelectedGameObject(nullptr);*/
+	if (App->scene_manager->SelectedGameObject)
+		App->scene_manager->SetSelectedGameObject(nullptr);
 }
 
-// SELECTED TODO
-void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
+void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
 {
-	// If destroyed GameObject is selected, erase from selected
-	// MANAGED BY MODULE SELECTION
-	/*for (std::vector<GameObject*>::iterator it = App->selection->selected_gameobjects.begin(); it != App->scene_manager->selected_gameobjects.end();)
-	{
-		if (e.go->GetUID() == (*it)->GetUID()) {
-			App->scene_manager->selected_gameobjects.erase(it);
-			break;
-		}
-		it++;
-	}*/
-	
+	// If destroyed GameObject is selected, put to nullptr
+	if (e.go->GetUID() == App->scene_manager->SelectedGameObject->GetUID())
+		App->scene_manager->SetSelectedGameObject(nullptr);
 
 	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
 	{
@@ -92,7 +80,6 @@ bool ModuleSceneManager::Init(json& file)
 {
 	// --- Create Root GO ---
 	root = CreateRootGameObject();
-	//root_selected = CreateRootSelectedGameObject();
 	tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
 	// --- Add Event Listeners ---
@@ -114,21 +101,18 @@ bool ModuleSceneManager::Start()
 	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
 	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
 	cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 6);
-	disk = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultDisk", 13);
 
 	CreateCube(1, 1, 1, cube);
 	CreateSphere(1.0f, 25, 25, sphere);
 	CreateCapsule(1, 1, capsule);
 	CreatePlane(1, 1, 1, plane);
 	CreateCylinder(1, 1, cylinder);
-	CreateDisk(1, disk);
 
 	cube->LoadToMemory();
 	sphere->LoadToMemory();
 	capsule->LoadToMemory();
 	plane->LoadToMemory();
 	cylinder->LoadToMemory();
-	disk->LoadToMemory();
 
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
@@ -146,7 +130,11 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
-	
+	for (int i = 0; i < go_to_delete.size(); ++i)
+		DestroyGameObject(go_to_delete[i]);
+
+	go_to_delete.clear();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -327,18 +315,7 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 		App->renderer3D->DrawAABB(node->box, Red);
 }
 
-//bool ModuleSceneManager::IsSelected(GameObject* go)
-//{
-//	for (int i = 0; i < selected_gameobjects.size(); i++)
-//	{
-//		if (selected_gameobjects[i] == go)
-//			return true;
-//	}
-//
-//	return false;
-//}
-
-void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
+void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
 	if (currentScene)
@@ -393,9 +370,7 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 
 		// --- Set Selected ---
 		//if (toSelect)
-		// RAYCAST SELECTION
-		App->selection->HandleSelection(toSelect);
-		//SetSelectedGameObject(toSelect);
+		SetSelectedGameObject(toSelect);
 	}
 }
 
@@ -470,8 +445,7 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 {
 	if (scene)
 	{
-		App->selection->ClearSelection();
-		//SelectedGameObject = nullptr;
+		SelectedGameObject = nullptr;
 
 		// --- Unload current scene ---
 		if (currentScene)
@@ -515,39 +489,23 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 
 }
 
-// SELECTED TODO
-//GameObject* ModuleSceneManager::GetSelectedGameObject() const
-//{
-//
-//	return selected_gameobjects.empty() ? nullptr : *selected_gameobjects.rbegin();
-//}
+
+GameObject* ModuleSceneManager::GetSelectedGameObject() const
+{
+	return SelectedGameObject;
+}
 
 
+void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
+	SelectedGameObject = go;
 
-// SELECTED TODO
-//void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
-//	
-//	if (go == nullptr)
-//	{
-//		App->scene_manager->selected_gameobjects.clear();
-//	}
-//	else {
-//
-//		App->scene_manager->selected_gameobjects.push_back(go);
-//		Event e(Event::EventType::GameObject_selected);
-//		e.go = go;
-//		App->event_manager->PushEvent(e);
-//	}
-//	
-//	/*SelectedGameObject = go;
-//
-//	if (SelectedGameObject)
-//	{
-//		Event e(Event::EventType::GameObject_selected);
-//		e.go = go;
-//		App->event_manager->PushEvent(e);
-//	}*/
-//}
+	if (SelectedGameObject)
+	{
+		Event e(Event::EventType::GameObject_selected);
+		e.go = go;
+		App->event_manager->PushEvent(e);
+	}
+}
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	// --- Create New Game Object Name ---
@@ -601,17 +559,6 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 
 	return new_object;
 }
-
-//GameObject* ModuleSceneManager::CreateRootSelectedGameObject()
-//{
-//	// --- Create New Game Object Name ---
-//	std::string Name = "rootSelected";
-//
-//	// --- Create empty Game object to be filled out ---
-//	GameObject* new_object = new GameObject(Name.c_str());
-//
-//	return new_object;
-//}
 
 void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const {
 	// --- Obtain data from par shapes mesh and load it into mesh ---
@@ -744,40 +691,6 @@ void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, Reso
 	}
 }
 
-void ModuleSceneManager::CreateDisk(float radius, ResourceMesh* rmesh)
-{
-	// --- Create par shapes cylinder ---
-		//First, create a normal cylinder and put it at (0,0,0)
-	par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(25, 25);
-	par_shapes_translate(Cyl_PrShM, 0, 0, 0);
-	par_shapes_scale(Cyl_PrShM, radius / 2, 0.5, radius / 2);
-
-	//Now create 2 disks around the cylinder (since x, y and z are the same, we can just pick x)
-	float normal[3] = { 0, 0, 1 };
-	float center_axis[3] = { 0, 0, radius };
-	float center_axis2[3] = { 0, 0, 1 };
-	par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(radius / 2, 25, center_axis, normal);
-	par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(radius / 2, 25, center_axis2, normal);
-
-	//Rotate one of the disks (to make it see outside the cylinder)
-	float RotAxis[3] = { 1, 0, 0 };
-	par_shapes_rotate(Disk2_PrShM, PI, RotAxis);
-	par_shapes_translate(Disk2_PrShM, 0, 0, 1);
-	par_shapes_translate(Disk_PrShM, 0, 0, -0.5f);
-
-	//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
-	par_shapes_mesh* ParshapeMesh = par_shapes_create_empty();
-	par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
-	par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
-	par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
-
-	if (ParshapeMesh)
-	{
-		par_shapes_scale(ParshapeMesh, radius / 2, 0.5, 0);
-		LoadParMesh(ParshapeMesh, rmesh);
-	}
-}
-
 void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh* rmesh)
 {
 
@@ -829,11 +742,6 @@ GameObject* ModuleSceneManager::LoadSphere()
 GameObject* ModuleSceneManager::LoadCylinder()
 {
 	return LoadPrimitiveObject(cylinder->GetUID());
-}
-
-GameObject* ModuleSceneManager::LoadDisk()
-{
-	return LoadPrimitiveObject(disk->GetUID());
 }
 
 GameObject* ModuleSceneManager::LoadCapsule()

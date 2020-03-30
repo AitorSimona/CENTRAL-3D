@@ -346,8 +346,6 @@ Broken Engine/Game/Assets/*.*
 Broken Engine/Game/Assets/*/*
 !Broken Engine/Game/Assets/Sounds/WWise_IDs.h
 !Broken Engine/Game/Assets/Sounds/Init.*
-!Broken Engine/Game/Assets/Fonts/
-!Broken Engine/Game/Assets/Fonts/*.ttf
 
 # Shaders
 !Broken Engine/Game/Assets/Shaders/*.glsl
@@ -357,7 +355,6 @@ Broken Engine/Game/imgui.ini
 
 # Engine temp files
 Broken Engine/Game/Temp/
-Broken Engine/Game/Broken Engine Game
 
 # Engine dlls and exes
 Broken Engine/Game/BrokenCore_DEBUG.dll

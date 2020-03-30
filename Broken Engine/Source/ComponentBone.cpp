@@ -18,7 +18,7 @@ using namespace Broken;
 
 ComponentBone::ComponentBone(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Bone)
 {
-	name = "Bone";
+
 }
 
 ComponentBone::~ComponentBone()
@@ -129,10 +129,21 @@ void ComponentBone::ONResourceEvent(uint UID, Resource::ResourceNotificationType
 
 void ComponentBone::CreateInspectorNode()
 {
+	ImGui::Checkbox("##Bone", &GetActive());
+	ImGui::SameLine();
 
-	if (res_bone)
+	if (ImGui::TreeNode("Bone"))
 	{
-		ImGui::Text("Name: %s", res_bone->GetName());
-	}
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
 
+		if (res_bone)
+		{
+			ImGui::Text("Name: %s", res_bone->GetName());
+		}
+			
+
+
+		ImGui::TreePop();
+	}
 }

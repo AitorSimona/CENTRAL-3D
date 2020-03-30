@@ -21,7 +21,6 @@ using namespace Broken;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {
-	name = "Collider";
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultColliderMesh");
 }
 
@@ -558,6 +557,9 @@ void ComponentCollider::CreateInspectorNode()
 
 			}
 		}
+
+		ImGui::TreePop();
+	}
 
 }
 

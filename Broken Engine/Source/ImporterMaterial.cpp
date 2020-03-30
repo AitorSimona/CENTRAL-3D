@@ -105,8 +105,8 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 	json file = App->GetJLoader()->Load(path);
 
-	std::string diffuse_texture_path = file["ResourceDiffuse"].is_null() ? "NaN.dds" : file["ResourceDiffuse"].get<std::string>();
-	std::string specular_texture_path = file["ResourceSpecular"].is_null() ? "NaN.dds" : file["ResourceSpecular"].get<std::string>();
+	std::string diffuse_texture_path = file["ResourceDiffuse"].is_null() ? "NaN" : file["ResourceDiffuse"].get<std::string>();
+	std::string specular_texture_path = file["ResourceSpecular"].is_null() ? "NaN" : file["ResourceSpecular"].get<std::string>();
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
@@ -150,8 +150,6 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 		if (mat->shader && !uniforms_node.is_null())
 		{
-			App->resources->GetResource(mat->shader->GetUID());
-
 			// --- Delete all uniforms ---
 			mat->FreeMemory();
 

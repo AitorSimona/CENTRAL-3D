@@ -83,9 +83,6 @@ public:
 	ResourceModel* model = nullptr;
 	LayerMask layer;
 
-	// to avoid including ImGui header, it's hardcoded the ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth flags (128 and 2048 respectively)
-	int node_flags = 2176;
-
 private:
 	// Unique Identifier
 	uint UID = 0;

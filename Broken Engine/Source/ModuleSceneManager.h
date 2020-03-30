@@ -20,7 +20,6 @@ struct Event;
 class BROKEN_API ModuleSceneManager : public Module 
 {
 public:
-	friend class ModuleSelection;
 
 	ModuleSceneManager(bool start_enabled = true);
 	~ModuleSceneManager();
@@ -44,26 +43,21 @@ public:
 	GameObject* LoadCapsule();
 	GameObject* LoadPlane();
 	GameObject* LoadCylinder();
-	GameObject* LoadDisk();
-
 
 	void DestroyGameObject(GameObject* go);
 
 	// --- Getters ---
-
-	// Returns the last selected gameobject
-	//GameObject* GetSelectedGameObject() const;
+	GameObject* GetSelectedGameObject() const;
 	GameObject* GetRootGO() const;
 
 	// --- Setters ---
-	//void SetSelectedGameObject(GameObject* go);
+	void SetSelectedGameObject(GameObject* go);
 
 	// --- Utilities ---
 	void RedoOctree();
 	void RedoOctree(AABB aabb);
 	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
 	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
-	//bool IsSelected(GameObject* go);
 	void SelectFromRay(LineSegment& ray);
 
 	// --- Save/Load ----
@@ -78,15 +72,12 @@ public:
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
-	void CreateDisk(float radius, ResourceMesh* rmesh);
 
 	const ResourceMesh* GetCubeMesh()const { return cube; }
 	const ResourceMesh* GetSphereMesh() const { return sphere; }
 	const ResourceMesh* GetCapsuleMesh() const { return capsule; }
 	const ResourceMesh* GetPlaneMesh() const { return plane; }
 	const ResourceMesh* GetCylinderMesh() const { return cylinder; }
-	const ResourceMesh* GetDiskMesh() const { return disk; }
-
 
 	void SendToDelete(GameObject* go);
 
@@ -107,7 +98,7 @@ public:
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	bool display_tree = false;
+	bool display_tree = true;
 
 	bool update_tree=false;
 	uint treeUpdateTimer = 0;
@@ -128,16 +119,11 @@ private:
 	ResourceMesh* cube = nullptr;
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* cylinder = nullptr;
-	ResourceMesh* disk = nullptr;
 
 	uint go_count = 0;
 	GameObject* root = nullptr;
-	//GameObject* root_selected = nullptr;
-	//GameObject* SelectedGameObject = nullptr;
+	GameObject* SelectedGameObject = nullptr;
 	GameObject* music = nullptr;
-public:
-
-	//std::vector<GameObject*> selected_gameobjects;
 };
 
 BE_END_NAMESPACE

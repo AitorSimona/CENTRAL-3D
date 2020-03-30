@@ -36,12 +36,11 @@ public:
 
 	//Scripting function
 	void SetPercentage(float p) { percentage = p; }
-	float GetPercentage() { return percentage; }
 
 public:
 	bool visible = true;
 
-	float2 size2D = { 2.5,0.5 };
+	float2 size2D = { 0.3,0.1 };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 
@@ -49,6 +48,7 @@ private:
 	Color colorP1 = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Color colorP2 = { 1.0f, 1.0f, 1.0f, 1.0f };
 	float percentage = 100.0f;
+	
 
 public:
 	ComponentCanvas* canvas = nullptr;

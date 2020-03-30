@@ -14,7 +14,6 @@ class ResourceMesh;
 class ResourceMaterial;
 class ComponentLight;
 class math::float4x4;
-class ComponentParticleEmitter;
 
 typedef int RenderMeshFlags;
 
@@ -92,7 +91,6 @@ public:
 	// --- To Add Lights ---
 	void AddLight(ComponentLight* light);
 	void PopLight(ComponentLight* light);
-	const int GetLightIndex(ComponentLight* light);
 	const float GetGammaCorrection() const { return m_GammaCorrection; }
 	void SetGammaCorrection(float gammaCorr) { m_GammaCorrection = gammaCorr; }
 
@@ -100,7 +98,6 @@ public:
 	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
 	void DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color);
 	void DrawAABB(const AABB& box, const Color& color);
-	void DrawOBB(const OBB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
 
 private:
@@ -144,8 +141,6 @@ public:
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
 
-	std::vector<ComponentParticleEmitter*> particleEmitters;
-
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
 
@@ -169,7 +164,6 @@ private:
 	std::map<uint, std::vector<RenderMesh>> render_meshes;
 
 	std::vector<RenderBox<AABB>> render_aabbs;
-	std::vector<RenderBox<OBB>> render_obbs;
 	std::vector<RenderBox<Frustum>> render_frustums;
 	std::vector<RenderLine> render_lines;
 

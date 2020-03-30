@@ -48,8 +48,7 @@ bool PanelInspector::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		Broken::GameObject* Selected = EngineApp->selection->GetLastSelected();
-		const std::vector<Broken::GameObject*>* GosSelected = EngineApp->selection->GetSelected();
+		Broken::GameObject* Selected = EngineApp->scene_manager->GetSelectedGameObject();
 		Broken::Resource* SelectedRes = EngineApp->editorui->panelProject->GetSelected();
 
 		if (Selected != nullptr)
@@ -69,57 +68,8 @@ bool PanelInspector::Draw()
 				if (Startup)
 					ImGui::SetNextItemOpen(true);
 
-				// SELECTED TODO -> Change script name
 				if (*it)
-				{
-					std::string a = "##Active";
-					ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
-					ImGui::SameLine();
-
-
-					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-					{
-						a = "ComponentOptions";
-						ImGui::SameLine();
-						if (ImGui::SmallButton("..."))
-							ImGui::OpenPopup("Component options");
-
-						if (ImGui::BeginPopup("Component options"))
-						{
-							bool dummy = false;
-							if (ImGui::MenuItem("Delete component"))
-							{
-								(*it)->to_delete = true;
-							}
-							if (ImGui::MenuItem("Copy values"))
-							{
-								EngineApp->selection->CopyComponentValues((*it));
-							}
-							if (ImGui::MenuItem("Paste values", EngineApp->selection->component_name.c_str(),&dummy,EngineApp->selection->ComponentCanBePasted()))
-							{
-								EngineApp->selection->PasteComponentValues((*it));
-							}
-							if (ImGui::MenuItem("Paste values to all selected", EngineApp->selection->component_name.c_str(), &dummy, EngineApp->selection->ComponentCanBePasted()))
-							{
-								EngineApp->selection->PasteComponentValuesToSelected();
-							}
-							if (ImGui::BeginMenu("Delete component to all selected"))
-							{
-								if (ImGui::MenuItem("Confirm delete"))
-								{
-									EngineApp->selection->DeleteComponentToSelected();
-
-								}
-								ImGui::EndMenu();
-							}
-							ImGui::EndPopup();
-						}
-
-						(*it)->CreateInspectorNode();
-
-						ImGui::TreePop();
-					}
-				}
+					(*it)->CreateInspectorNode();
 
 				ImGui::NewLine();
 				ImGui::Separator();
@@ -158,13 +108,8 @@ bool PanelInspector::Draw()
 					if (resource && resource->GetType() == Broken::Resource::ResourceType::SCRIPT)
 					{
 						resource = EngineApp->resources->GetResource(UID);
-
-						for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
-						{
-							Broken::ComponentScript* script = (Broken::ComponentScript*)obj->AddComponent(Broken::Component::ComponentType::Script);
-							// SELECTED TODO - It is necessary to assign all the scripts? (move the line below out of the for loop)
-							script->AssignScript((Broken::ResourceScript*)resource);
-						}
+						Broken::ComponentScript* script = (Broken::ComponentScript*)Selected->AddComponent(Broken::Component::ComponentType::Script);
+						script->AssignScript((Broken::ResourceScript*)resource);
 
 					}
 				}
@@ -176,68 +121,50 @@ bool PanelInspector::Draw()
 
 			// MYTODO: Note currently you can not add the same type of component to a go (to be changed)
 
-			Broken::Component::ComponentType type = Broken::Component::ComponentType::Unknown;
-
-			if (item_current == "Mesh")
+			if (item_current == "UI Canvas")
 			{
-				type = Broken::Component::ComponentType::Mesh;
+				Selected->AddComponent(Broken::Component::ComponentType::Canvas);
 			}
 
-			else if (item_current == "Mesh Renderer")
+			if (item_current == "UI Image")
 			{
-				type = Broken::Component::ComponentType::MeshRenderer;
+				Selected->AddComponent(Broken::Component::ComponentType::Image);
 			}
 
-			else if (item_current == "UI Canvas")
+			if (item_current == "UI Text")
 			{
-				type = Broken::Component::ComponentType::Canvas;
+				Selected->AddComponent(Broken::Component::ComponentType::Text);
 			}
 
-			else if (item_current == "UI Image")
+			if (item_current == "UI Button")
 			{
-				type = Broken::Component::ComponentType::Image;
+				Selected->AddComponent(Broken::Component::ComponentType::Button);
 			}
 
-			else if (item_current == "UI Text")
+			if (item_current == "Dynamic RigidBody")
 			{
-				type = Broken::Component::ComponentType::Text;
+				Selected->AddComponent(Broken::Component::ComponentType::DynamicRigidBody);
 			}
 
-			else if (item_current == "UI Button")
+			if (item_current == "Collider")
 			{
-				type = Broken::Component::ComponentType::Button;
+				Selected->AddComponent(Broken::Component::ComponentType::Collider);
 			}
 
-			else if (item_current == "Dynamic RigidBody")
-			{
-				type = Broken::Component::ComponentType::DynamicRigidBody;
-			}
-
-			else if (item_current == "Collider")
-			{
-				type = Broken::Component::ComponentType::Collider;
-			}
-
-			else if (item_current == "Character Controller")
+			if (item_current == "Character Controller")
 			{
 				Selected->AddComponent(Broken::Component::ComponentType::CharacterController);
 			}
-			else if (item_current == "Particle Emitter")
+
+			if (item_current == "Particle Emitter")
 			{
-				type = Broken::Component::ComponentType::ParticleEmitter;
+				Selected->AddComponent(Broken::Component::ComponentType::ParticleEmitter);
 			}
-			else if (item_current == "Audio Source")
+			if (item_current == "Audio Source")
 			{
-				type = Broken::Component::ComponentType::AudioSource;
+				Selected->AddComponent(Broken::Component::ComponentType::AudioSource);
 			}
 
-			if (type != Broken::Component::ComponentType::Unknown)
-			{
-				for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
-				{
-					obj->AddComponent(type);
-				}
-			}
 			item_current = items[0];
 
 			if (Startup)
