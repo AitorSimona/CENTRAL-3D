@@ -250,6 +250,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
 		.addFunction("GetMyUID", &ScriptingGameobject::GetMyUID)
 		.addFunction("GetParent", &ScriptingGameobject::GetScriptGOParent)
+		.addFunction("GetScriptGOUID", &ScriptingGameobject::GetScriptGOUID)
 		.addFunction("GetGameObjectParent", &ScriptingGameobject::GetGOParentFromUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
@@ -306,8 +307,24 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.beginClass <ScriptingParticles>("Particles")
 		.addConstructor<void(*) (void)>()
 
-		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticlesEmission)
-		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticlesEmission)
+		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
+		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
+
+		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
+		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
+		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
+		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
+
+		.addFunction("SetExternalAcceleration", &ScriptingParticles::SetParticleAcceleration)
+		.addFunction("SetParticlesVelocity", &ScriptingParticles::SetParticleVelocityFromScript)
+		.addFunction("SetRandomParticlesVelocity", &ScriptingParticles::SetRandomParticleVelocity)
+
+		.addFunction("SetParticlesLooping", &ScriptingParticles::SetParticleLooping)
+		.addFunction("SetParticlesDuration", &ScriptingParticles::SetParticleDuration)
+		.addFunction("SetParticlesLifeTime", &ScriptingParticles::SetParticleLifeTime)
+
+		.addFunction("SetParticlesScale", &ScriptingParticles::SetParticleScaleFromScript)
+		.addFunction("SetRandomParticlesScale", &ScriptingParticles::SetRandomParticleScale)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

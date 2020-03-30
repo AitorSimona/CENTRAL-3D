@@ -459,12 +459,13 @@ const Broken::json& ModulePhysics::SaveStatus() const {
 
 void ModulePhysics::LoadStatus(const Broken::json& file) {
 
-	gravity = file[name]["gravity"];
-	materialDesc.x = file[name]["staticFriction"];
-	materialDesc.y = file[name]["dynamicFriction"];
-	materialDesc.z = file[name]["restitution"];
 
-	int count = file[name]["count"];
+	gravity = file[name]["gravity"].is_null() ? gravity : (float)file[name]["gravity"];
+	materialDesc.x = file[name]["staticFriction"].is_null() ? materialDesc.x : (float)file[name]["staticFriction"];
+	materialDesc.y = file[name]["dynamicFriction"].is_null() ? materialDesc.y : (float)file[name]["dynamicFriction"];
+	materialDesc.z = file[name]["restitution"].is_null() ? materialDesc.z : (float)file[name]["restitution"];;
+
+	int count = file[name]["count"].is_null() ? 0 : (int)file[name]["count"];
 
 	for (uint i = 0; i < count; ++i) {
 		Layer layer;
