@@ -282,8 +282,21 @@ void ModuleRenderer3D::PopLight(ComponentLight* light)
 
 		if(it != m_LightsVec.end())
 			m_LightsVec.erase(it);
+	}		
+}
+
+const int ModuleRenderer3D::GetLightIndex(ComponentLight* light)
+{
+	if (light)
+	{
+		for (int i = 0; i < m_LightsVec.size(); ++i)
+		{
+			if (m_LightsVec[i] == light)
+				return i;
+		}
 	}
-		
+
+	return -1;
 }
 
 bool ModuleRenderer3D::SetVSync(bool _vsync)

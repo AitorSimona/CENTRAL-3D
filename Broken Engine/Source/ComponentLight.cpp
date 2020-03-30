@@ -39,6 +39,8 @@ ComponentLight::ComponentLight(GameObject* ContainerGO) : Component(ContainerGO,
 
 ComponentLight::~ComponentLight()
 {
+	Disable();
+	SendUniforms(App->renderer3D->defaultShader->ID, App->renderer3D->GetLightIndex(this));
 	App->renderer3D->PopLight(this);
 }
 

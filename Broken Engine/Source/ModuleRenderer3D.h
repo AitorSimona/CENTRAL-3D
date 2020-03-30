@@ -92,6 +92,7 @@ public:
 	// --- To Add Lights ---
 	void AddLight(ComponentLight* light);
 	void PopLight(ComponentLight* light);
+	const int GetLightIndex(ComponentLight* light);
 	const float GetGammaCorrection() const { return m_GammaCorrection; }
 	void SetGammaCorrection(float gammaCorr) { m_GammaCorrection = gammaCorr; }
 
