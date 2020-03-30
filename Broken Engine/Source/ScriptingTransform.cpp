@@ -83,17 +83,13 @@ float ScriptingTransform::GetPositionZ(uint gameobject_UUID) const
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-int ScriptingTransform::GetPosition(lua_State* L, uint gameobject_UUID)
+int ScriptingTransform::GetPosition(uint gameobject_UUID, lua_State* L)
 {
 	int ret = 0;
 	float3 rot = float3(0.0f);
 
 	GameObject* go = nullptr;
-
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);	
 
 	if (go) {
 		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
@@ -259,9 +255,7 @@ void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool loca
 			Quat rot;
 
 			m.Decompose(pos, rot, scale);
-
 			rot = rot.Inverted();
-
 
 			if (rb && collider)
 			{
@@ -284,16 +278,13 @@ void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool loca
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-int ScriptingTransform::GetRotation(lua_State* L, uint gameobject_UUID) const
+int ScriptingTransform::GetRotation(uint gameobject_UUID, lua_State* L) const
 {
 	int ret = 0;
 	float3 rot = float3(0.0f);
-	GameObject* go = nullptr;
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
 		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
