@@ -299,3 +299,15 @@ luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State
 	}
 	return ret;
 }
+
+
+int ScriptingGameobject::GetLayer(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		lua_pushnumber(L, body->GetLayer());
+		ret = 1;
+	}
+	return ret;
+}

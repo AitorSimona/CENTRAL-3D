@@ -150,3 +150,87 @@ void ScriptingPhysics::OverlapSphere(float3 position, float radius, LayerMask la
 	App->physics->OverlapSphere(position, radius, layer, objects);
 	//std::
 }
+
+int ScriptingPhysics::OnTriggerEnter(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONTRIGGER_ENTER);
+		if (other) {
+			lua_pushnumber(L, other->GetUID());
+			ret = 1;
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnTriggerStay(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONTRIGGER_STAY);
+		if (other) {
+			lua_pushnumber(L, other->GetUID());
+			ret = 1;
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnTriggerExit(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONTRIGGER_EXIT);
+		if (other) {
+			lua_pushnumber(L, other->GetUID());
+			ret = 1;
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnCollisionEnter(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONCOLLISION_ENTER);
+		if (other) {
+			lua_pushnumber(L, other->GetUID());
+			ret = 1;
+		}
+	}
+	return ret;
+}
+int ScriptingPhysics::OnCollisionStay(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONCOLLISION_STAY);
+		if (other) {
+			lua_pushnumber(L, other->GetUID());
+			ret = 1;
+		}
+	}
+	return ret;
+}
+
+int ScriptingPhysics::OnCollisionExit(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		GameObject* other = body->collisions.at(ONCOLLISION_EXIT);
+		if (other) {
+			lua_pushnumber(L, other->GetUID());
+			ret = 1;
+		}
+	}
+	return ret;
+}
+

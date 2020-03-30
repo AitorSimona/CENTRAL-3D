@@ -229,6 +229,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
+		.addFunction("GetLayer", &ScriptingGameobject::GetLayer)
 		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
 		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
 		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
@@ -261,6 +262,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
 		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
 
+
+		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerEnter)
+		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerStay)
+		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerExit)
+
+		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnCollisionEnter)
+		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnCollisionStay)
+		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnCollisionExit)
 
 		.endClass()
 

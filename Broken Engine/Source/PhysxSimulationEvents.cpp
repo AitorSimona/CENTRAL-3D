@@ -23,8 +23,8 @@ void PhysxSimulationEvents::onContact(const physx::PxContactPairHeader& pairHead
 			go1 = App->physics->actors[pairHeader.actors[0]];
 			go2 = App->physics->actors[pairHeader.actors[1]];
 			if (go1 && go2) {
-				go1->collisions.at(0) = go2;
-				go2->collisions.at(0) = go1;
+				go1->collisions.at(ONCOLLISION_ENTER) = go2;
+				go2->collisions.at(ONCOLLISION_ENTER) = go1;
 			}
 		}
 	}
@@ -44,7 +44,7 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 		go2 = App->physics->actors[pairs->otherActor];
 
 		if (go1 && go2) {
-			go1->collisions.at(1) = go2;
+			go1->collisions.at(ONTRIGGER_ENTER) = go2;
 		}
 	}
 }

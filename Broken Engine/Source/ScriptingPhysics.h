@@ -29,6 +29,14 @@ public:
 	void UseGravity(bool enable);
 	void OverlapSphere(float3 position, float radius, LayerMask layer);
 
+	int OnTriggerEnter(lua_State* L);
+	int OnTriggerStay(lua_State* L);
+	int OnTriggerExit(lua_State* L);
+
+	int OnCollisionEnter(lua_State* L);
+	int OnCollisionStay(lua_State* L);
+	int OnCollisionExit(lua_State* L);
+
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGPHYSICS_H__

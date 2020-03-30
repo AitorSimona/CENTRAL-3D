@@ -35,6 +35,7 @@ public:
 
 	// Get a script file
 	luabridge::LuaRef GetScript(uint gameobject_UUID, lua_State* L);
+	int GetLayer(lua_State* L);
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGGAMEOBJECT_H__
