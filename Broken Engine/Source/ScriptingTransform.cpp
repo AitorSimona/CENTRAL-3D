@@ -325,7 +325,7 @@ float ScriptingTransform::GetRotationX(uint gameobject_UUID) const
 		go = App->scripting->current_script->my_component->GetContainerGameObject();
 
 	if (go) {
-		ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
 
 		if (transform)
 			return transform->GetRotation().x;
@@ -349,7 +349,7 @@ float ScriptingTransform::GetRotationY(uint gameobject_UUID) const
 		go = App->scripting->current_script->my_component->GetContainerGameObject();
 
 	if (go) {
-		ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
 
 		if (transform)
 			return transform->GetRotation().y;
@@ -364,8 +364,7 @@ float ScriptingTransform::GetRotationY(uint gameobject_UUID) const
 }
 
 float ScriptingTransform::GetRotationZ(uint gameobject_UUID) const
-{
-	
+{	
 	GameObject* go = nullptr;
 
 	if (gameobject_UUID != -1)
@@ -374,7 +373,7 @@ float ScriptingTransform::GetRotationZ(uint gameobject_UUID) const
 		go = App->scripting->current_script->my_component->GetContainerGameObject();
 
 	if (go) {
-		ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
 
 		if (transform)
 			return transform->GetRotation().z;

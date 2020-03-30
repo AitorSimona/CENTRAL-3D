@@ -106,20 +106,30 @@ float ScriptingPhysics::GetMass(uint gameobject_UUID)
 	}
 }
 
-int ScriptingPhysics::GetLinearVelocity(lua_State* L)
+int ScriptingPhysics::GetLinearVelocity(lua_State* L, uint gameobject_UUID)
 {
 	int ret = 0;
 	float3 vel = float3(0.0f);
-	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
-	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	GameObject* go = nullptr;
 
-	if (body && coll)
-	{
-		vel = body->GetLinearVelocity();
-		ret = 3;
-	}
+	if (gameobject_UUID != -1)
+		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 	else
-		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+		go = App->scripting->current_script->my_component->GetContainerGameObject();
+
+	if (go) {
+		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
+		ComponentCollider* coll = go->GetComponent<ComponentCollider>();
+
+		if (body && coll)
+		{
+			vel = body->GetLinearVelocity();
+			ret = 3;
+		}
+		else
+			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+	}else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 
 	lua_pushnumber(L, vel.x);
 	lua_pushnumber(L, vel.y);
@@ -127,20 +137,31 @@ int ScriptingPhysics::GetLinearVelocity(lua_State* L)
 	return ret;
 }
 
-int ScriptingPhysics::GetAngularVelocity(lua_State* L)
+int ScriptingPhysics::GetAngularVelocity(lua_State* L, uint gameobject_UUID)
 {
 	int ret = 0;
 	float3 vel = float3(0.0f);
-	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
-	ComponentCollider* coll = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	GameObject* go = nullptr;
 
-	if (body && coll)
-	{
-		vel = body->GetAngularVelocity();
-		ret = 3;
+	if (gameobject_UUID != -1)
+		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	else
+		go = App->scripting->current_script->my_component->GetContainerGameObject();
+
+	if (go) {
+		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
+		ComponentCollider* coll = go->GetComponent<ComponentCollider>();
+
+		if (body && coll)
+		{
+			vel = body->GetAngularVelocity();
+			ret = 3;
+		}
+		else
+			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 	}
 	else
-		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 
 	lua_pushnumber(L, vel.x);
 	lua_pushnumber(L, vel.y);

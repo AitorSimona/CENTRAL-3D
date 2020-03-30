@@ -15,8 +15,8 @@ public:
 	void SetMass(float mass, uint gameobject_UUID = -1);
 	float GetMass(uint gameobject_UUID = -1);
 
-	int GetLinearVelocity(lua_State* L);
-	int GetAngularVelocity(lua_State* L);
+	int GetLinearVelocity(lua_State* L, uint gameobject_UUID = -1);
+	int GetAngularVelocity(lua_State* L, uint gameobject_UUID = -1);
 	void SetLinearVelocity(float x, float y, float z, uint gameobject_UUID = -1);
 	void SetAngularVelocity(float x, float y, float z, uint gameobject_UUID = -1);
 
