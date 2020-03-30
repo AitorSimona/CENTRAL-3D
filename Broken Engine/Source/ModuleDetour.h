@@ -12,13 +12,45 @@ class dtQueryFilter;
 class dtMeshTile;
 
 BE_BEGIN_NAMESPACE
+
 #define BE_DETOUR_TOTAL_AREAS 31
+#define BE_DETOUR_MAX_PATHSLOT 128 // how many paths we can store
+#define BE_DETOUR_MAX_PATHPOLY 256 // max number of polygons in a path
+#define BE_DETOUR_MAX_PATHVERT 512 // most verts in a path 
+
 enum PolyFlags {
 	POLYFLAGS_AREA_WALKABLE = 0x01,		
 	POLYFLAGS_AREA_JUMP = 0x02,        
-	POLYFLAGS_AREA_USER1 = 0x04,        
-	POLYFLAGS_DISABLED = 0x10,		// Disabled polygon
-	POLYFLAGS_ALL = 0xffff      // All abilities.
+	POLYFLAGS_AREA_DISABLED = 0x04,        
+	POLYFLAGS_AREA_USER3 = 0x06,        
+	POLYFLAGS_AREA_USER4 = 0x08,        
+	POLYFLAGS_AREA_USER5 = 0x10,        
+	POLYFLAGS_AREA_USER6 = 0x20,        
+	POLYFLAGS_AREA_USER7 = 0x40,        
+	POLYFLAGS_AREA_USER8 = 0x60,        
+	POLYFLAGS_AREA_USER9 = 0x80,        
+	POLYFLAGS_AREA_USER10 = 0x100,        
+	POLYFLAGS_AREA_USER11 = 0x200,        
+	POLYFLAGS_AREA_USER12 = 0x400,        
+	POLYFLAGS_AREA_USER13 = 0x600,        
+	POLYFLAGS_AREA_USER14 = 0x800,        
+	POLYFLAGS_AREA_USER15 = 0x1000,        
+	POLYFLAGS_AREA_USER16 = 0x2000,        
+	POLYFLAGS_AREA_USER17 = 0x4000,        
+	POLYFLAGS_AREA_USER18 = 0x6000,        
+	POLYFLAGS_AREA_USER19 = 0x8000,        
+	POLYFLAGS_AREA_USER20 = 0x10000,        
+	POLYFLAGS_AREA_USER21 = 0x20000,        
+	POLYFLAGS_AREA_USER22 = 0x40000,        
+	POLYFLAGS_AREA_USER23 = 0x60000,        
+	POLYFLAGS_AREA_USER24 = 0x80000,        
+	POLYFLAGS_AREA_USER25 = 0x100000,        
+	POLYFLAGS_AREA_USER26 = 0x200000,        
+	POLYFLAGS_AREA_USER27 = 0x400000,        
+	POLYFLAGS_AREA_USER28 = 0x600000,        
+	POLYFLAGS_AREA_USER29 = 0x800000,        
+	POLYFLAGS_AREA_USER30 = 0x900000,             
+	POLYFLAGS_ALL = 0xffffff      // All abilities.
 };
 
 class ResourceNavMesh;
@@ -50,12 +82,21 @@ public:
 	void deleteNavMesh();
 	void clearNavMesh();
 
+	// Functions for scripting
+	int getAreaCost(uint areaIndex) const;
+	void setAreaCost(uint areaIndex, float areaCost);
+	int getAreaFromName(const char* name) const;
+	static int allAreas() { return POLYFLAGS_ALL; }
+	// Will write the path to variable path, return number of verts
+	int calculatePath(float3 sourcePosition, float3 destination, int areaMask, std::vector<float3>& path);
+
 	void setDefaultValues();
 	void setDefaultBakeValues();
 	const ResourceNavMesh* getNavMeshResource() const;
 
 private:
 	void createRenderMeshes();
+	void setAreaCosts();
 	void processTile(const dtMeshTile* tile);
 
 	//Copy of Detour duIntToCol but without transforming to unsigned int
@@ -78,10 +119,7 @@ public:
 	float detailSampleMaxError = 1.0f;
 
 	char areaNames[BE_DETOUR_TOTAL_AREAS][100];
-	int areaCosts[BE_DETOUR_TOTAL_AREAS];
-
-public:
-	class DebugDrawGL* m_dd = nullptr;
+	float areaCosts[BE_DETOUR_TOTAL_AREAS];
 
 private:
 	bool debugDraw = false;
@@ -90,6 +128,7 @@ private:
 	dtQueryFilter* m_filterQuery = nullptr;
 	std::vector<navigationPoly*> renderMeshes;
 	ResourceMaterial* mat = nullptr;
+	float m_Extents[3];
 
 };
 

@@ -283,8 +283,8 @@ bool ModuleRecast::BuildNavMesh() {
 		for (int i = 0; i < m_pmesh->npolys; ++i) {
 			if (m_pmesh->areas[i] == RC_WALKABLE_AREA) {
 				m_pmesh->areas[i] = 0; // Id of the walkable area
-				m_pmesh->flags[i] = Broken::PolyFlags::POLYFLAGS_AREA_WALKABLE;
 			}
+			m_pmesh->flags[i] = 1 << m_pmesh->areas[i];
 		}
 
 		dtNavMeshCreateParams params;

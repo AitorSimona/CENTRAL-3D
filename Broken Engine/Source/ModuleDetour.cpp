@@ -21,137 +21,6 @@
 
 using namespace Broken;
 
-//Debug drawing functions
-
-class GLCheckerTexture {
-	unsigned int m_texId;
-public:
-	GLCheckerTexture() : m_texId(0) {
-	}
-
-	~GLCheckerTexture() {
-		if (m_texId != 0)
-			glDeleteTextures(1, &m_texId);
-	}
-	void bind() {
-		if (m_texId == 0) {
-			// Create checker pattern.
-			const unsigned int col0 = duRGBA(215, 215, 215, 255);
-			const unsigned int col1 = duRGBA(255, 255, 255, 255);
-			static const int TSIZE = 64;
-			unsigned int data[TSIZE * TSIZE];
-
-			glGenTextures(1, &m_texId);
-			glBindTexture(GL_TEXTURE_2D, m_texId);
-
-			int level = 0;
-			int size = TSIZE;
-			while (size > 0) {
-				for (int y = 0; y < size; ++y)
-					for (int x = 0; x < size; ++x)
-						data[x + y * size] = (x == 0 || y == 0) ? col0 : col1;
-				glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, size, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-				size /= 2;
-				level++;
-			}
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else {
-			glBindTexture(GL_TEXTURE_2D, m_texId);
-		}
-	}
-};
-GLCheckerTexture g_tex;
-
-BE_BEGIN_NAMESPACE
-class DebugDrawGL : public duDebugDraw {
-public:
-	void depthMask(bool state) {
-		glDepthMask(state ? GL_TRUE : GL_FALSE);
-	}
-	void texture(bool state) {
-		if (state) {
-			glEnable(GL_TEXTURE_2D);
-			g_tex.bind();
-		}
-		else {
-			glDisable(GL_TEXTURE_2D);
-		}
-	}
-
-	void begin(duDebugDrawPrimitives prim, float size) {
-		//Set polygon draw mode and appropiated matrices for OGL
-
-		//float f = 1.0f / tan(App->camera->camera->GetFOV() * DEGTORAD / 2.0f);
-		//float4x4 proj_RH(
-		//	f / App->camera->camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-		//	0.0f, f, 0.0f, 0.0f,
-		//	0.0f, 0.0f, 0.0f, -1.0f,
-		//	0.0f, 0.0f, App->camera->camera->GetNearPlane(), 0.0f);
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//glPushMatrix();
-		//glMultMatrixf(float4x4::identity.Transposed().ptr());
-		//glMatrixMode(GL_PROJECTION);
-		//glLoadMatrixf(proj_RH.ptr());
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadMatrixf(App->camera->camera->GetOpenGLViewMatrix().ptr());
-
-
-		switch (prim) {
-
-		case DU_DRAW_POINTS:
-			glPointSize(size);
-			glBegin(GL_POINTS);
-			break;
-		case DU_DRAW_LINES:
-			glLineWidth(size);
-			glBegin(GL_LINES);
-			break;
-		case DU_DRAW_TRIS:
-			glBegin(GL_TRIANGLES);
-			break;
-		case DU_DRAW_QUADS:
-			glBegin(GL_QUADS);
-			break;
-		};
-	}
-	void vertex(const float* pos, unsigned int color) {
-		glColor4ubv((GLubyte*)&color);
-		glVertex3fv(pos);
-	}	
-	void vertex(const float x, const float y, const float z, unsigned int color) {
-		glColor4ubv((GLubyte*)&color);
-		glVertex3f(x, y, z);
-	}
-
-	void vertex(const float* pos, unsigned int color, const float* uv) {
-		glColor4ubv((GLubyte*)&color);
-		glTexCoord2fv(uv);
-		glVertex3fv(pos);
-	}
-
-	void vertex(const float x, const float y, const float z, unsigned int color, const float u, const float v) {
-		glColor4ubv((GLubyte*)&color);
-		glTexCoord2f(u, v);
-		glVertex3f(x, y, z);
-	}
-
-	void end() {
-		glEnd();
-		glLineWidth(1.0f);
-		glPointSize(1.0f);
-	}
-};
-
-
-BE_END_NAMESPACE
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 ModuleDetour::ModuleDetour(bool start_enabled) : Module(start_enabled){
 	name = "Detour";
 }
@@ -181,7 +50,9 @@ bool ModuleDetour::Init(json& config) {
 
 	m_navQuery = dtAllocNavMeshQuery();
 	m_filterQuery = new dtQueryFilter();
-	m_dd = new DebugDrawGL();
+
+	// Set default size of box around points to look for nav polygons
+	m_Extents[0] = 32.0f; m_Extents[1] = 32.0f; m_Extents[2] = 32.0f;
 
 	return true;
 }
@@ -261,6 +132,8 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 		createRenderMeshes();
 	}
 
+	setAreaCosts();
+
 	//We save the scene so that it stores the NavMesh
 	App->scene_manager->SaveScene(App->scene_manager->currentScene);
 
@@ -287,6 +160,8 @@ void ModuleDetour::loadNavMeshFile(uint UID) {
 				renderMeshes.clear();
 				createRenderMeshes();
 			}
+
+			setAreaCosts();
 		}
 	}
 }
@@ -302,11 +177,6 @@ bool ModuleDetour::CleanUp() {
 
 	dtFreeNavMeshQuery(m_navQuery);
 	m_navQuery = nullptr;
-
-	if (m_dd != nullptr)
-		delete m_dd;
-
-	m_dd = nullptr;
 
 	if (m_filterQuery != nullptr)
 		delete m_filterQuery;
@@ -352,6 +222,67 @@ void ModuleDetour::clearNavMesh() {
 	renderMeshes.clear();
 }
 
+int ModuleDetour::getAreaCost(uint areaIndex) const {
+	if (areaIndex < BE_DETOUR_TOTAL_AREAS)
+		return areaCosts[areaIndex];
+	else return -1;
+}
+
+void ModuleDetour::setAreaCost(uint areaIndex, float areaCost) {
+	if (areaIndex < BE_DETOUR_TOTAL_AREAS) {
+		areaCosts[areaIndex] = areaCost;
+		m_filterQuery->setAreaCost(areaIndex, areaCost);
+	}
+}
+
+int ModuleDetour::getAreaFromName(const char* name) const {
+	int ret = -1;
+	std::string areaName = name;
+	for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+		if (areaName == areaNames[i]) {
+			ret = i;
+			break;
+		}
+	}
+
+	return ret;
+}
+
+int ModuleDetour::calculatePath(float3 sourcePosition, float3 destination, int areaMask, std::vector<float3>& path) {
+	m_filterQuery->setIncludeFlags(areaMask);
+	dtStatus status;
+	dtPolyRef StartPoly;
+	float StartNearest[3];
+	dtPolyRef EndPoly;
+	float EndNearest[3];
+	dtPolyRef PolyPath[BE_DETOUR_MAX_PATHPOLY ];
+	int nPathCount = 0;
+	float StraightPath[BE_DETOUR_MAX_PATHVERT * 3];
+	int nVertCount = 0;
+
+
+	// find the start polygon
+	status = m_navQuery->findNearestPoly(sourcePosition.ptr(), m_Extents, m_filterQuery, &StartPoly, StartNearest);
+	if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -1; // couldn't find a polygon
+
+	// find the end polygon
+	status = m_navQuery->findNearestPoly(destination.ptr(), m_Extents, m_filterQuery, &EndPoly, EndNearest);
+	if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -2; // couldn't find a polygon
+
+	status = m_navQuery->findPath(StartPoly, EndPoly, StartNearest, EndNearest, m_filterQuery, PolyPath, &nPathCount, BE_DETOUR_MAX_PATHPOLY);
+	if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -3; // couldn't create a path
+	if (nPathCount == 0) return -4; // couldn't find a path
+
+	status = m_navQuery->findStraightPath(StartNearest, EndNearest, PolyPath, nPathCount, StraightPath, NULL, NULL, &nVertCount, BE_DETOUR_MAX_PATHVERT);
+	if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -5; // couldn't create a path
+	if (nVertCount == 0) return -6; // couldn't find a path
+
+	path.resize(nVertCount);
+	memcpy(path.data(), StraightPath, sizeof(float) * nVertCount * 3);
+
+	return nVertCount;
+}
+
 void ModuleDetour::setDefaultValues() {
 	for (int i = 3; i < BE_DETOUR_TOTAL_AREAS; ++i) {
 		sprintf_s(areaNames[i], "");
@@ -367,6 +298,7 @@ void ModuleDetour::setDefaultValues() {
 	areaCosts[2] = 2;
 
 	setDefaultBakeValues();
+	setAreaCosts();
 }
 
 void ModuleDetour::setDefaultBakeValues() {
@@ -400,6 +332,14 @@ void ModuleDetour::createRenderMeshes() {
 		}
 		if (mat == nullptr)
 			mat = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), true);
+	}
+}
+
+void ModuleDetour::setAreaCosts() {
+	if (m_filterQuery != nullptr) {
+		m_filterQuery->setAreaCost(0, areaCosts[0]);
+		for (int i = 2; i < BE_DETOUR_TOTAL_AREAS; ++i)
+			m_filterQuery->setAreaCost(i, areaCosts[i]);
 	}
 }
 
