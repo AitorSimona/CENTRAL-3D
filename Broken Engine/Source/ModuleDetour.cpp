@@ -320,8 +320,7 @@ bool ModuleDetour::CleanUp() {
 void ModuleDetour::Draw() const {
 	if (debugDraw && navMeshResource != nullptr && navMeshResource->navMesh != nullptr) {
 		for (int i = 0; i < renderMeshes.size(); ++i)
-			App->renderer3D->DrawMesh(float4x4::identity, renderMeshes[i]->rmesh, mat, nullptr, 0, renderMeshes[i]->color);
-
+			App->renderer3D->DrawMesh(float4x4::identity, renderMeshes[i]->rmesh, mat, nullptr, RenderMeshFlags_::color, renderMeshes[i]->color);
 	}
 }
 
@@ -458,11 +457,15 @@ inline int bit(int a, int b) {
 }
 
 Color ModuleDetour::areaToColor(uint area) const {
-	int	r = (bit(area, 1) + bit(area, 3) * 2 + 1);
-	int	g = (bit(area, 2) + bit(area, 4) * 2 + 1);
-	int	b = (bit(area, 0) + bit(area, 5) * 2 + 1);
+	if (area == 0)
+		return Color(0, 192, 255, 255);
+	else {
+		int	r = bit(area, 1) + bit(area, 3) * 2 + 1;
+		int	g = bit(area, 2) + bit(area, 4) * 2 + 1;
+		int	b = bit(area, 0) + bit(area, 5) * 2 + 1;
 
-	return Color(r, g, b, 255);
+		return Color(r * 63, g * 63, b * 63, 255);
+	}
 }
 
 navigationPoly::navigationPoly() {

@@ -28,6 +28,9 @@ public:
 	static void ONSceneUnloaded(const Broken::Event& e);
 	static void ONGameObjectDeleted(const Broken::Event& e);
 
+private:
+	void MarkOBBArea(const math::OBB& obb, unsigned char areaId, rcCompactHeightfield& chf);
+
 public:
 	bool filterLowHangingObstacles = true;
 	bool filterLedgeSpans = true;

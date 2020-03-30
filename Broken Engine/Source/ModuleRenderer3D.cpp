@@ -380,7 +380,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 		{
 			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
-
+			rmesh.color = color;
 			render_meshes[mesh->GetUID()].push_back(rmesh);
 		}
 		else
@@ -390,6 +390,7 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 
 			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
 			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+			rmesh.color = color;
 
 			new_vec.push_back(rmesh);
 			render_meshes[mesh->GetUID()] = new_vec;
@@ -947,6 +948,10 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 					else
 						glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 				}
+			}
+			else if (mesh->flags & color) {
+				glUniform3f(vertexColorLocation, mesh->color.r/255, mesh->color.g/255, mesh->color.b/255);
+				glUniform1i(TextureSupportLocation, (int)false);
 			}
 			else
 				glUniform1i(TextureSupportLocation, (int)false);

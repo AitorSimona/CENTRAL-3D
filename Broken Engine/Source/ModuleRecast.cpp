@@ -148,7 +148,8 @@ bool ModuleRecast::BuildNavMesh() {
 	// the are type for each of the meshes and rasterize them.
 	for (int i = 0; i < m_geom->getMeshes().size(); ++i) {
 		memset(m_triareas, 0, m_geom->getMaxTris() * sizeof(unsigned char));
-		rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, m_geom->getMeshes()[i].verts, m_geom->getMeshes()[i].nverts, m_geom->getMeshes()[i].tris, m_geom->getMeshes()[i].ntris, m_triareas);
+		// Modified to set the area of the mesh directly instead of having to mark it later
+		rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, m_geom->getMeshes()[i].verts, m_geom->getMeshes()[i].nverts, m_geom->getMeshes()[i].tris, m_geom->getMeshes()[i].ntris, m_triareas, m_geom->getMeshes()[i].area);
 		rcRasterizeTriangles(m_ctx, m_geom->getMeshes()[i].verts, m_geom->getMeshes()[i].nverts, m_geom->getMeshes()[i].tris, m_triareas, m_geom->getMeshes()[i].ntris, *m_solid, m_cfg.walkableClimb);
 	}
 
@@ -197,8 +198,10 @@ bool ModuleRecast::BuildNavMesh() {
 
 	// (Optional) Mark areas.
 	const ConvexVolume* vols = m_geom->getConvexVolumes();
-	for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
-	   rcMarkConvexPolyArea(m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
+	for (int i = 0; i < m_geom->getConvexVolumeCount(); ++i)
+		MarkOBBArea(vols[i].obb, vols[i].area, *m_chf);
+	   /*rcMarkConvexPolyArea(m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, vols[i].area, *m_chf);*/
+
 
 	// Partition the heightfield so that we can use simple algorithm later to triangulate the walkable areas.
 	// Using Watershed partitioning
@@ -278,8 +281,10 @@ bool ModuleRecast::BuildNavMesh() {
 
 		// Update poly flags from areas.
 		for (int i = 0; i < m_pmesh->npolys; ++i) {
-			if (m_pmesh->areas[i] == RC_WALKABLE_AREA) 
-				m_pmesh->flags[i] = Broken::PolyFlags::POLYFLAGS_WALK;
+			if (m_pmesh->areas[i] == RC_WALKABLE_AREA) {
+				m_pmesh->areas[i] = 0; // Id of the walkable area
+				m_pmesh->flags[i] = Broken::PolyFlags::POLYFLAGS_AREA_WALKABLE;
+			}
 		}
 
 		dtNavMeshCreateParams params;
@@ -347,6 +352,50 @@ void ModuleRecast::ONGameObjectDeleted(const Broken::Event& e) {
 			if (*it == e.go) {
 				EngineApp->recast->NavigationGameObjects.erase(it);
 				break;
+			}
+		}
+	}
+}
+
+void ModuleRecast::MarkOBBArea(const math::OBB& obb, unsigned char areaId, rcCompactHeightfield& chf) {
+	float bmin[3], bmax[3];
+	AABB aabb = obb.MinimalEnclosingAABB();
+	rcVcopy(bmin, aabb.minPoint.ptr());
+	rcVcopy(bmax, aabb.maxPoint.ptr());
+
+	int minx = (int)((bmin[0] - chf.bmin[0]) / chf.cs);
+	int miny = (int)((bmin[1] - chf.bmin[1]) / chf.ch);
+	int minz = (int)((bmin[2] - chf.bmin[2]) / chf.cs);
+	int maxx = (int)((bmax[0] - chf.bmin[0]) / chf.cs);
+	int maxy = (int)((bmax[1] - chf.bmin[1]) / chf.ch);
+	int maxz = (int)((bmax[2] - chf.bmin[2]) / chf.cs);
+
+	if (maxx < 0) return;
+	if (minx >= chf.width) return;
+	if (maxz < 0) return;
+	if (minz >= chf.height) return;
+
+	if (minx < 0) minx = 0;
+	if (maxx >= chf.width) maxx = chf.width - 1;
+	if (minz < 0) minz = 0;
+	if (maxz >= chf.height) maxz = chf.height - 1;
+
+	for (int z = minz; z <= maxz; ++z) {
+		for (int x = minx; x <= maxx; ++x) {
+			const rcCompactCell& c = chf.cells[x + z * chf.width];
+			for (int i = (int)c.index, ni = (int)(c.index + c.count); i < ni; ++i) {
+				rcCompactSpan& s = chf.spans[i];
+				if (chf.areas[i] == RC_NULL_AREA)
+					continue;
+				if ((int)s.y >= miny && (int)s.y <= maxy) {
+					vec p;
+					p[0] = chf.bmin[0] + (x + 0.5f) * chf.cs;
+					p[1] = obb.CenterPoint().y;
+					p[2] = chf.bmin[2] + (z + 0.5f) * chf.cs;
+					if (obb.Contains(p)) {
+						chf.areas[i] = areaId;
+					}
+				}
 			}
 		}
 	}

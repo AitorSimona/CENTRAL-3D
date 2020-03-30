@@ -4,13 +4,15 @@
 
 #include "GameObject.h"
 #include "ResourceMesh.h"
+#include "Math.h"
 
-static const int MAX_CONVEXVOL_PTS = 90; // Recast has way fewer
+static const int MAX_CONVEXVOL_PTS = 9; // Recast has way fewer
 struct ConvexVolume {
 	float verts[MAX_CONVEXVOL_PTS * 3];
 	float hmin, hmax;
 	int nverts;
 	unsigned char area;
+	OBB obb;
 };
 
 struct RecastMesh {
@@ -20,6 +22,7 @@ struct RecastMesh {
 	int* tris = nullptr;
 	int nverts;
 	int ntris;
+	unsigned char area;
 };
 
 class InputGeom {

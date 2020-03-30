@@ -14,10 +14,9 @@ class dtMeshTile;
 BE_BEGIN_NAMESPACE
 #define BE_DETOUR_TOTAL_AREAS 31
 enum PolyFlags {
-	POLYFLAGS_WALK = 0x01,		// Ability to walk (ground, grass, road)
-	POLYFLAGS_SWIM = 0x02,      // Ability to swim (water).
-	POLYFLAGS_DOOR = 0x04,      // Ability to move through doors.
-	POLYFLAGS_JUMP = 0x08,      // Ability to jump.
+	POLYFLAGS_AREA_WALKABLE = 0x01,		
+	POLYFLAGS_AREA_JUMP = 0x02,        
+	POLYFLAGS_AREA_USER1 = 0x04,        
 	POLYFLAGS_DISABLED = 0x10,		// Disabled polygon
 	POLYFLAGS_ALL = 0xffff      // All abilities.
 };
