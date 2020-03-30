@@ -623,36 +623,11 @@ void ComponentParticleEmitter::CreateInspectorNode()
 				}
 				ImGui::EndDragDropTarget();
 			}
-			////Particles Color particlesColor
-			//ImGui::Text("Particles Color");
-			//bool colorChanged = false;
+			////Particles Color
 
-			////R
-			//ImGui::Text("R");
-			//ImGui::SameLine();
-			//ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			//if (ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
-			//	colorChanged = true;
-
-			//ImGui::SameLine();
-			////G
-			//ImGui::Text("G");
-			//ImGui::SameLine();
-			//ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			//if (ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
-			//	colorChanged = true;
-
-			////B
-			//ImGui::SameLine();
-			//ImGui::Text("B");
-			//ImGui::SameLine();
-			//ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			//if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
-			//	colorChanged = true;
-
-			ImGui::ColorEdit4("##Selected", (float*)&particlesColor, ImGuiColorEditFlags_NoInputs);
+			ImGui::ColorEdit4("##PEParticle Color", (float*)&particlesColor, ImGuiColorEditFlags_NoInputs);
 			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-			ImGui::Text("Selected");
+			ImGui::Text("Color");
 
 			ImGui::TreePop();
 		}
