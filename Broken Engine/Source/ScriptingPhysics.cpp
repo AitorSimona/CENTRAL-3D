@@ -1,11 +1,9 @@
 #include "ScriptingPhysics.h"
 #include "Application.h"
 #include "ModuleScripting.h"
-#include "ModuleSceneManager.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ScriptData.h"
-#include "ResourceScene.h"
 
 using namespace Broken;
 ScriptingPhysics::ScriptingPhysics() {}
@@ -58,6 +56,19 @@ float ScriptingPhysics::GetMass()
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 		return 0.0f;
 	}
+}
+
+int ScriptingPhysics::myFunc(lua_State* L) {
+	lua_getglobal(L, "myFunc");
+	lua_newtable(L);
+
+	std::vector<uint> test_uints;
+	App->scripting->ConvertVectorToTable(L, test_uints.begin(), test_uints.end());
+
+	/*if (lua_pcall(L, 1, 0, 0) != 0)
+		ENGINE_CONSOLE_LOG("Error: Failed to call myFunc");*/
+
+	return 0;
 }
 
 int ScriptingPhysics::GetLinearVelocity(lua_State* L)
@@ -195,10 +206,10 @@ int ScriptingPhysics::OnTriggerExit(lua_State* L)
 	return ret;
 }
 
-int ScriptingPhysics::OnCollisionEnter(uint id, lua_State* L)
+int ScriptingPhysics::OnCollisionEnter(lua_State* L)
 {
 	int ret = 0;
-	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(id);
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
 	if (body) {
 		GameObject* other = body->collisions.at(ONCOLLISION_ENTER);
 		if (other) {
