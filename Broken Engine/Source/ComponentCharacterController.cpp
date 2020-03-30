@@ -41,8 +41,8 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	desc = &capsuleDesc;
 
 	controller = App->physics->mControllerManager->createController(*desc);
+	App->physics->addActor(controller->getActor(), GO);
 
-	App->physics->addActor(controller->getActor(),GO);
 	initialPosition = capsuleDesc.position;
 
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultCharacterController");
@@ -55,8 +55,6 @@ ComponentCharacterController::~ComponentCharacterController()
 
 void ComponentCharacterController::Update()
 {
-
-
 	if (App->input->GetKey(SDL_SCANCODE_UP))
 		velocity.z = -10.0f;
 
@@ -95,6 +93,12 @@ void ComponentCharacterController::Update()
 	}
 
 	GO->GetComponent<ComponentTransform>()->SetPosition((float3)cctPos);
+
+	if (to_delete)
+	{
+		Delete();
+		this->GetContainerGameObject()->RemoveComponent(this);
+	}
 }
 
 void ComponentCharacterController::Draw()
@@ -109,6 +113,21 @@ void ComponentCharacterController::Draw()
 	// --- Render shape ---
 	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
 	{
+		if (!GetActive())
+		{
+			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+			physx::PxShape* shape;
+			controller->getActor()->getShapes(&shape, 1);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+		}
+
+		else
+		{
+			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+			physx::PxShape* shape;
+			controller->getActor()->getShapes(&shape, 1);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
 		// --- Use default shader ---
 		glUseProgram(App->renderer3D->defaultShader->ID);
 
@@ -166,12 +185,7 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 
 void ComponentCharacterController::Delete()
 {
-	physx::PxShape* shape;
-	controller->getActor()->getShapes(&shape, 1);
-	shape->release();
-
 	App->physics->DeleteActor(controller->getActor());
-	//controller->release();
 }
 
 json ComponentCharacterController::Save() const
@@ -210,6 +224,7 @@ void ComponentCharacterController::Load(json& node)
 	std::string positionY = node["positionY"].is_null() ? "0" : node["positionY"];
 	std::string positionZ = node["positionZ"].is_null() ? "0" : node["positionZ"];
 	std::string nonWalkableMode = node["nonWalkableMode"].is_null() ? "0" : node["nonWalkableMode"];
+	std::string firstTime_ = node["firstTime"].is_null() ? "0" : node["firstTime"];
 
 	contactOffset = std::stof(contactOffset_);
 	stepOffset = std::stof(stepOffset_);
@@ -245,8 +260,14 @@ void ComponentCharacterController::Load(json& node)
 
 void ComponentCharacterController::CreateInspectorNode()
 {
+	ImGui::Checkbox("##CharacterControllerActive", &GetActive());
+	ImGui::SameLine();
+
 	if (ImGui::TreeNodeEx("Character Controller", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		if (ImGui::Button("Delete component"))
+			to_delete = true;
+
 		if (ImGui::DragFloat("Radius", &radius, 0.005f))
 		{
 			if (mesh && mesh->IsInMemory())
@@ -369,10 +390,13 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 
 physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxController& controller)
 {
+	physx::PxShape* shape1;
+	this->controller->getActor()->getShapes(&shape1, 1);
+	physx::PxRigidActor* a = this->controller->getActor();
 
 	physx::PxShape* shape;
 	controller.getActor()->getShapes(&shape, 1);
-	physx::PxGeometryHolder a = shape->getGeometry();
+	physx::PxRigidActor* b = controller.getActor();
 
 	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
 	{

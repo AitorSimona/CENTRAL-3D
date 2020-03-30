@@ -14,6 +14,7 @@ public:
 	void MakeUIComponentInvisible(uint go_UUID, const char* comp_type);
 
 	void SetBarPercentage(uint go_UUID, float percentage);
+	void SetCircularBarPercentage(uint go_UUID, float percentage);
 	void SetUIText(uint go_UUID, const char* text);
 	void SetUITextAndNumber(uint go_UUID, const char* text, float number);
 	void SetUITextNumber(uint go_UUID, float number);

@@ -20,11 +20,11 @@ public:
 	~ModuleScripting();
 
 public:
-	template <typename T, typename U>
-	void ConvertVectorToTable(lua_State* L, T begin, U end);
+	//template <typename T, typename U>
+	//void ConvertVectorToTable(lua_State* L, T begin, U end);
 
-	template <typename T, typename U>
-	void ConvertTableToVector(lua_State* L, T begin, U end);
+	//template <typename T, typename U>
+	//void ConvertTableToVector(lua_State* L, T begin, U end);
 
 	bool DoHotReloading();
 	bool JustCompile(std::string absolute_path);

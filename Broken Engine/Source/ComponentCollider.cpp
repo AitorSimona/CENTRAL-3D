@@ -21,6 +21,7 @@ using namespace Broken;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {
+	name = "Collider";
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultColliderMesh");
 }
 
@@ -36,7 +37,10 @@ void ComponentCollider::Update()
 	}
 
 	if (to_delete)
+	{
+		Delete();
 		this->GetContainerGameObject()->RemoveComponent(this);
+	}
 }
 
 void ComponentCollider::UpdateCollider() {
@@ -47,6 +51,16 @@ void ComponentCollider::DrawComponent()
 {
 	if (shape)
 	{
+		if (GetActor() != nullptr)
+		{
+			if (!GetActive())
+				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+
+			else
+				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+		}
+
+
 		// --- Get shape's dimensions ---
 		physx::PxGeometryHolder holder = shape->getGeometry();
 		physx::PxGeometryType::Enum type = holder.getType();
@@ -400,6 +414,9 @@ void ComponentCollider::Load(json& node)
 
 void ComponentCollider::CreateInspectorNode()
 {
+	ImGui::Checkbox("##ColliderActive", &GetActive());
+	ImGui::SameLine();
+
 	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		bool createAgain = false;
@@ -557,9 +574,6 @@ void ComponentCollider::CreateInspectorNode()
 
 			}
 		}
-
-		ImGui::TreePop();
-	}
 
 }
 

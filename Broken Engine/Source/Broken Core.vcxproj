@@ -110,6 +110,7 @@
     <ClInclude Include="ComponentBone.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentCharacterController.h" />
+    <ClInclude Include="ComponentCircularBar.h" />
     <ClInclude Include="ComponentCollider.h" />
     <ClInclude Include="ComponentDynamicRigidBody.h" />
     <ClInclude Include="ComponentLight.h" />
@@ -247,6 +248,7 @@
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleSceneManager.h" />
     <ClInclude Include="ModuleScripting.h" />
+    <ClInclude Include="ModuleSelection.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleThreading.h" />
     <ClInclude Include="ModuleTimeManager.h" />
@@ -309,6 +311,7 @@
     <ClCompile Include="ComponentBone.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentCharacterController.cpp" />
+    <ClCompile Include="ComponentCircularBar.cpp" />
     <ClCompile Include="ComponentCollider.cpp" />
     <ClCompile Include="ComponentDynamicRigidBody.cpp" />
     <ClCompile Include="ComponentLight.cpp" />
@@ -403,6 +406,7 @@
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleSceneManager.cpp" />
     <ClCompile Include="ModuleScripting.cpp" />
+    <ClCompile Include="ModuleSelection.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleThreading.cpp" />
     <ClCompile Include="ModuleTimeManager.cpp" />

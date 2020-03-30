@@ -36,8 +36,10 @@ void PhysxSimulationEvents::onContact(const physx::PxContactPairHeader& pairHead
 				ComponentScript* script = go1->GetComponent<ComponentScript>();
 				ComponentScript* script2 = go2->GetComponent<ComponentScript>();
 
-				App->scripting->CallbackScriptFunctionParam(script, function, go2->GetUID());
-				App->scripting->CallbackScriptFunctionParam(script2, function, go1->GetUID());
+				if(script)
+					App->scripting->CallbackScriptFunction(script, function);
+				if (script2)
+					App->scripting->CallbackScriptFunction(script2, function);
 			}
 		}
 	}
@@ -59,13 +61,18 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 		if (go1 && go2) 
 		{
 			go1->collisions.at(ONTRIGGER_ENTER) = go2;
+			go2->collisions.at(ONTRIGGER_ENTER) = go1;
 
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
 			ComponentScript* script = go1->GetComponent<ComponentScript>();
+			ComponentScript* script2 = go2->GetComponent<ComponentScript>();
 
-			App->scripting->CallbackScriptFunction(script, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 }

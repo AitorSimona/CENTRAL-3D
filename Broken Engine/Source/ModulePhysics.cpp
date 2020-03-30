@@ -228,13 +228,13 @@ void ModulePhysics::FixedUpdate()
 }
 
 bool ModulePhysics::CleanUp()
-{
-	cache->release();
-	mControllerManager->release();
-	mScene->release();
-	mPhysics->release();
-	mPvd->release();
-	mFoundation->release();
+{	
+	cache->release();	//195
+	mControllerManager->release();//182
+	mScene->release(); //172
+	mPhysics->release(); //153
+	mPvd->release(); //149
+	mFoundation->release(); //136
 
 	mControllerManager = nullptr;
 	mPhysics = nullptr;
@@ -359,6 +359,19 @@ void ModulePhysics::DeleteActors(GameObject* go)
 			}
 		}
 	}
+
+	if (go->GetComponent<ComponentCollider>() != nullptr) {
+		ComponentCollider* col = go->GetComponent<ComponentCollider>();
+		physx::PxRigidActor* actor = col->GetActor();
+		actors.erase(actor);
+		col->Delete();
+	}
+
+	if (go->GetComponent<ComponentCharacterController>() != nullptr) {
+		go->GetComponent<ComponentCharacterController>()->Delete();
+	}
+
+	App->physics->mControllerManager->purgeControllers();
 }
 
 void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<GameObject*>& objects)
