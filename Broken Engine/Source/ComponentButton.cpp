@@ -27,6 +27,7 @@ using namespace Broken;
 
 ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Button)
 {
+	name = "Button";
 	visible = true;
 	interactable = true;
 	draggable = false;
@@ -292,250 +293,242 @@ void ComponentButton::Load(json& node)
 
 void ComponentButton::CreateInspectorNode()
 {
-	ImGui::Checkbox("##ImageActive", &GetActive());
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
+
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Interactable", &interactable);
+
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Draggable", &draggable);
+	ImGui::Separator();
+
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Draggable", &draggable);
+	ImGui::Separator();
+
+	// Size
+	ImGui::Text("Size:    ");
 	ImGui::SameLine();
-
-	if (ImGui::TreeNode("Button"))
+	ImGui::SetNextItemWidth(60);
+	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Interactable", &interactable);
-
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Draggable", &draggable);
-		ImGui::Separator();
-
-		// Size
-		ImGui::Text("Size:    ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
+		if (texture->Texture_height != 0 && texture->Texture_width != 0)
 		{
-			if (texture->Texture_height != 0 && texture->Texture_width != 0)
-			{
-				if (texture->Texture_width <= texture->Texture_height)
-					size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
-				else
-					size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
-			}
+			if (texture->Texture_width <= texture->Texture_height)
+				size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+			else
+				size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
 		}
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
-		{
-			if (texture->Texture_height != 0 && texture->Texture_width != 0)
-			{
-				if (texture->Texture_width >= texture->Texture_height)
-					size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
-				else
-					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
-			}
-		}
-
-		// Position
-		ImGui::Text("Position:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##buttonposition", &position2D.x, 0.1f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
-
-		// Rotation
-		ImGui::Text("Rotation:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##buttonrotation", &rotation2D);
-
-		// ------------------------------------------
-
-		// Collider
-		ImGui::Separator();
-		ImGui::Text("Collider"); 
-		ImGui::SameLine();
-		ImGui::Checkbox("Visible##2", &collider_visible);
-
-		// Position
-		ImGui::Text("Position:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragInt("x##buttoncolliderposition", &collider.x);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragInt("y##buttoncolliderposition", &collider.y);
-
-		// Size
-		ImGui::Text("Size:    ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragInt("x##buttoncollidersize", &collider.w);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragInt("y##buttoncollidersize", &collider.h);
-
-		// ------------------------------------------
-
-		// Image
-		ImGui::Separator();
-		ImGui::Text("Image");
-
-		if (texture == nullptr)
-			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
-		else
-			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
-
-		if (ImGui::BeginDragDropTarget()) //drag and drop
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
-			{
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
-
-				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
-				{
-					if (texture)
-						texture->Release();
-
-					texture = (ResourceTexture*)App->resources->GetResource(UID);
-
-					if (resize && texture)
-						size2D = float2(texture->Texture_width, texture->Texture_height);
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-
-		// Aspect Ratio
-		ImGui::Checkbox("Maintain Aspect Ratio", &resize);
-
-		// Script
-		ImGui::Separator();
-		ImGui::Text("Script");
-		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-		
-		if (ImGui::BeginDragDropTarget()) //drag and drop
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
-			{
-				uint UID = *(const uint*)payload->Data;
-				script_obj = App->scene_manager->currentScene->GetGOWithUID(UID);
-
-				if (script_obj != nullptr)
-					script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
-			}
-			ImGui::EndDragDropTarget();
-		}
-		ImGui::SameLine();
-		if (script_obj == nullptr)
-			ImGui::Text("No Script Loaded");
-		else
-			ImGui::Text("Name: %s", script_obj->GetName());
-
-		if (script != nullptr)
-		{
-			func_list.clear();
-			func_list.push_back("None");
-			for (uint i = 0; i < script->script_functions.size(); ++i)
-				func_list.push_back(script->script_functions[i].name.c_str());
-
-			ImGui::Text("OnClick");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(120.0f);
-			if (ImGui::BeginCombo("##OnClick", func_list[func_pos], 0))
-			{
-				for (int n = 0; n < func_list.size(); ++n)
-				{
-					bool is_selected = (func_name == func_list[n]);
-					if (ImGui::Selectable(func_list[n], is_selected))
-					{
-						func_name = func_list[n];
-						func_pos = n;
-					}
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndCombo();
-			}
-		}
-		else
-			ImGui::Text("GO has no ComponentScript");
-
-		// States (Colors)
-		ImGui::Separator();
-		ImGui::ColorEdit4("##Idle", (float*)&idle_color, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("Idle");
-
-		ImGui::ColorEdit4("##Hovered", (float*)&hovered_color, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("Hovered");
-
-		ImGui::ColorEdit4("##Selected", (float*)&selected_color, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("Selected");
-
-		ImGui::ColorEdit4("##Locked", (float*)&locked_color, ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-		ImGui::Text("Locked");
-
-		//// Text
-		//ImGui::Separator();
-		//if (ImGui::DragFloat("Font size", &font_size, 1.0f, 0.0f, 100.0f, "%.2f")) {
-
-		//	font.clean();
-		//	font.init(font.path, font_size);
-		//}
-		//if (ImGui::IsItemHovered())
-		//	ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
-		//if (ImGui::Button("Load font..."))
-		//	ImGui::OpenPopup("Load Font");
-
-		//if (ImGui::BeginPopup("Load Font"))
-		//{
-		//	if (ImGui::Selectable("Dukas")) {
-		//		font.clean();
-		//		font.init("Assets/Fonts/Dukas.ttf", font_size);
-		//		font.path = "Assets/Fonts/Dukas.ttf";
-		//	}
-		//	if (ImGui::Selectable("Wintersoul")) {
-		//		font.clean();
-		//		font.init("Assets/Fonts/Wintersoul.ttf", font_size);
-		//		font.path = "Assets/Fonts/Wintersoul.ttf";
-		//	}
-		//	if (ImGui::Selectable("EvilEmpire")) {
-		//		font.clean();
-		//		font.init("Assets/Fonts/EvilEmpire.otf", font_size);
-		//		font.path = "Assets/Fonts/EvilEmpire.otf";
-		//	}
-		//	if (ImGui::Selectable("Smack")) {
-		//		font.clean();
-		//		font.init("Assets/Fonts/Smack.otf", font_size);
-		//		font.path = "Assets/Fonts/Smack.otf";
-		//	}
-		//	ImGui::EndPopup();
-		//}
-		//ImGui::Text("Text");
-		//ImGui::InputText("##buttontext", text, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-		//ImGui::ColorEdit3("Color", (float*)&text_color);
-
-		//ImGui::Text("Position:");
-		//ImGui::SameLine();
-		//ImGui::SetNextItemWidth(60);
-		//ImGui::DragFloat("x##buttontextposition", &text_pos.x);
-		//ImGui::SameLine();
-		//ImGui::SetNextItemWidth(60);
-		//ImGui::DragFloat("y##buttontextposition", &text_pos.y);
-
-		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::TreePop();
 	}
-}
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
+	{
+		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		{
+			if (texture->Texture_width >= texture->Texture_height)
+				size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+			else
+				size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+		}
+	}
+
+	// Position
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##buttonposition", &position2D.x, 0.1f);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
+
+	// Rotation
+	ImGui::Text("Rotation:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##buttonrotation", &rotation2D);
+
+	// ------------------------------------------
+
+	// Collider
+	ImGui::Separator();
+	ImGui::Text("Collider");
+	ImGui::SameLine();
+	ImGui::Checkbox("Visible##2", &collider_visible);
+
+	// Position
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragInt("x##buttoncolliderposition", &collider.x);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragInt("y##buttoncolliderposition", &collider.y);
+
+	// Size
+	ImGui::Text("Size:    ");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragInt("x##buttoncollidersize", &collider.w);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragInt("y##buttoncollidersize", &collider.h);
+
+	// ------------------------------------------
+
+	// Image
+	ImGui::Separator();
+	ImGui::Text("Image");
+
+	if (texture == nullptr)
+		ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
+	else
+		ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
+
+	if (ImGui::BeginDragDropTarget()) //drag and drop
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+		{
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+			{
+				if (texture)
+					texture->Release();
+				texture = (ResourceTexture*)App->resources->GetResource(UID);
+
+				if (resize && texture)
+					size2D = float2(texture->Texture_width, texture->Texture_height);
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	// Aspect Ratio
+	ImGui::Checkbox("Maintain Aspect Ratio", &resize);
+
+	// Script
+	ImGui::Separator();
+	ImGui::Text("Script");
+	ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+	if (ImGui::BeginDragDropTarget()) //drag and drop
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
+		{
+			uint UID = *(const uint*)payload->Data;
+			script_obj = App->scene_manager->currentScene->GetGOWithUID(UID);
+
+			if (script_obj != nullptr)
+				script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
+		}
+		ImGui::EndDragDropTarget();
+	}
+	ImGui::SameLine();
+	if (script_obj == nullptr)
+		ImGui::Text("No Script Loaded");
+	else
+		ImGui::Text("Name: %s", script_obj->GetName());
+
+	if (script != nullptr)
+	{
+		func_list.clear();
+		func_list.push_back("None");
+		for (uint i = 0; i < script->script_functions.size(); ++i)
+			func_list.push_back(script->script_functions[i].name.c_str());
+
+		ImGui::Text("OnClick");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(120.0f);
+		if (ImGui::BeginCombo("##OnClick", func_list[func_pos], 0))
+		{
+			for (int n = 0; n < func_list.size(); ++n)
+			{
+				bool is_selected = (func_name == func_list[n]);
+				if (ImGui::Selectable(func_list[n], is_selected))
+				{
+					func_name = func_list[n];
+					func_pos = n;
+				}
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+	}
+	else
+		ImGui::Text("GO has no ComponentScript");
+
+	// States (Colors)
+	ImGui::Separator();
+	ImGui::ColorEdit4("##Idle", (float*)&idle_color, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("Idle");
+
+	ImGui::ColorEdit4("##Hovered", (float*)&hovered_color, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("Hovered");
+
+	ImGui::ColorEdit4("##Selected", (float*)&selected_color, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("Selected");
+
+	ImGui::ColorEdit4("##Locked", (float*)&locked_color, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("Locked");
+
+	//// Text
+	//ImGui::Separator();
+	//if (ImGui::DragFloat("Font size", &font_size, 1.0f, 0.0f, 100.0f, "%.2f")) {
+
+	//	font.clean();
+	//	font.init(font.path, font_size);
+	//}
+	//if (ImGui::IsItemHovered())
+	//	ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
+	//if (ImGui::Button("Load font..."))
+	//	ImGui::OpenPopup("Load Font");
+
+	//if (ImGui::BeginPopup("Load Font"))
+	//{
+	//	if (ImGui::Selectable("Dukas")) {
+	//		font.clean();
+	//		font.init("Assets/Fonts/Dukas.ttf", font_size);
+	//		font.path = "Assets/Fonts/Dukas.ttf";
+	//	}
+	//	if (ImGui::Selectable("Wintersoul")) {
+	//		font.clean();
+	//		font.init("Assets/Fonts/Wintersoul.ttf", font_size);
+	//		font.path = "Assets/Fonts/Wintersoul.ttf";
+	//	}
+	//	if (ImGui::Selectable("EvilEmpire")) {
+	//		font.clean();
+	//		font.init("Assets/Fonts/EvilEmpire.otf", font_size);
+	//		font.path = "Assets/Fonts/EvilEmpire.otf";
+	//	}
+	//	if (ImGui::Selectable("Smack")) {
+	//		font.clean();
+	//		font.init("Assets/Fonts/Smack.otf", font_size);
+	//		font.path = "Assets/Fonts/Smack.otf";
+	//	}
+	//	ImGui::EndPopup();
+	//}
+	//ImGui::Text("Text");
+	//ImGui::InputText("##buttontext", text, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+	//ImGui::ColorEdit3("Color", (float*)&text_color);
+
+	//ImGui::Text("Position:");
+	//ImGui::SameLine();
+	//ImGui::SetNextItemWidth(60);
+	//ImGui::DragFloat("x##buttontextposition", &text_pos.x);
+	//ImGui::SameLine();
+	//ImGui::SetNextItemWidth(60);
+	//ImGui::DragFloat("y##buttontextposition", &text_pos.y);
+
+	ImGui::Separator();
+}	
 
 void ComponentButton::UpdateState()
 {

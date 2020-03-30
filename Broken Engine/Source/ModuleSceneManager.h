@@ -20,6 +20,7 @@ struct Event;
 class BROKEN_API ModuleSceneManager : public Module 
 {
 public:
+	friend class ModuleSelection;
 
 	ModuleSceneManager(bool start_enabled = true);
 	~ModuleSceneManager();
@@ -49,17 +50,20 @@ public:
 	void DestroyGameObject(GameObject* go);
 
 	// --- Getters ---
-	GameObject* GetSelectedGameObject() const;
+
+	// Returns the last selected gameobject
+	//GameObject* GetSelectedGameObject() const;
 	GameObject* GetRootGO() const;
 
 	// --- Setters ---
-	void SetSelectedGameObject(GameObject* go);
+	//void SetSelectedGameObject(GameObject* go);
 
 	// --- Utilities ---
 	void RedoOctree();
 	void RedoOctree(AABB aabb);
 	void SetStatic(GameObject* go, bool setStatic, bool setChildren);
 	void RecursiveDrawQuadtree(QuadtreeNode* node) const;
+	//bool IsSelected(GameObject* go);
 	void SelectFromRay(LineSegment& ray);
 
 	// --- Save/Load ----
@@ -128,8 +132,12 @@ private:
 
 	uint go_count = 0;
 	GameObject* root = nullptr;
-	GameObject* SelectedGameObject = nullptr;
+	//GameObject* root_selected = nullptr;
+	//GameObject* SelectedGameObject = nullptr;
 	GameObject* music = nullptr;
+public:
+
+	//std::vector<GameObject*> selected_gameobjects;
 };
 
 BE_END_NAMESPACE

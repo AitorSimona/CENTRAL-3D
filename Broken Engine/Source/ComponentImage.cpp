@@ -28,6 +28,7 @@ using namespace Broken;
 
 ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
 {
+	name = "Image";
 	visible = true;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
@@ -149,8 +150,9 @@ void ComponentImage::Load(json& node)
 
 void ComponentImage::CreateInspectorNode()
 {
-	ImGui::Checkbox("##ImageActive", &GetActive());
-	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
+	ImGui::Separator();
 
 	if (ImGui::TreeNode("Image"))
 	{
@@ -187,7 +189,7 @@ void ComponentImage::CreateInspectorNode()
 					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
 			}
 		}
-		
+
 		// Position
 		ImGui::Text("Position:");
 		ImGui::SameLine();
@@ -213,7 +215,7 @@ void ComponentImage::CreateInspectorNode()
 			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
 		else
 			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
-		 
+
 		//drag and drop
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -243,4 +245,6 @@ void ComponentImage::CreateInspectorNode()
 		ImGui::Separator();
 		ImGui::TreePop();
 	}
+
+	ImGui::Separator();
 }

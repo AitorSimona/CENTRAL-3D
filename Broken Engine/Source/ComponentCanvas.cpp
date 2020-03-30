@@ -22,6 +22,7 @@ using namespace Broken;
 
 ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Canvas)
 {
+	name = "Canvas";
 	visible = true;
 	App->ui_system->AddCanvas(this);
 }
@@ -164,20 +165,10 @@ void ComponentCanvas::Load(json& node)
 
 void ComponentCanvas::CreateInspectorNode()
 {
-	ImGui::Checkbox("##CanvasActive", &GetActive());
-	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Canvas"))
-	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
 
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-
-		ImGui::Separator();
-		ImGui::Separator();
-
-		ImGui::TreePop();
-	}
+	ImGui::Separator();
+	
 }
