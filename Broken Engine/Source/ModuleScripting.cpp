@@ -270,8 +270,24 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.beginClass <ScriptingParticles>("Particles")
 		.addConstructor<void(*) (void)>()
 
-		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticlesEmission)
-		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticlesEmission)
+		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
+		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
+
+		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
+		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
+		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
+		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
+
+		.addFunction("SetExternalAcceleration", &ScriptingParticles::SetParticleAcceleration)
+		.addFunction("SetParticlesVelocity", &ScriptingParticles::SetParticleVelocityFromScript)
+		.addFunction("SetRandomParticlesVelocity", &ScriptingParticles::SetRandomParticleVelocity)
+
+		.addFunction("SetParticlesLooping", &ScriptingParticles::SetParticleLooping)
+		.addFunction("SetParticlesDuration", &ScriptingParticles::SetParticleDuration)
+		.addFunction("SetParticlesLifeTime", &ScriptingParticles::SetParticleLifeTime)
+
+		.addFunction("SetParticlesScale", &ScriptingParticles::SetParticleScaleFromScript)
+		.addFunction("SetRandomParticlesScale", &ScriptingParticles::SetRandomParticleScale)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

@@ -483,11 +483,13 @@ bool& GameObject::GetActive()
 	return active;
 }
 
-bool GameObject::IsEnabled() const {
+bool GameObject::IsEnabled() const 
+{
 	return active;
 }
 
-void GameObject::SetName(const char* name) {
+void GameObject::SetName(const char* name) 
+{
 	if (name && name != "root")
 		this->name = name;
 }
