@@ -346,6 +346,8 @@ Broken Engine/Game/Assets/*.*
 Broken Engine/Game/Assets/*/*
 !Broken Engine/Game/Assets/Sounds/WWise_IDs.h
 !Broken Engine/Game/Assets/Sounds/Init.*
+!Broken Engine/Game/Assets/Fonts/
+!Broken Engine/Game/Assets/Fonts/*.ttf
 
 # Shaders
 !Broken Engine/Game/Assets/Shaders/*.glsl
