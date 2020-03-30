@@ -324,6 +324,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("MakeElementInvisible", &ScriptingInterface::MakeUIComponentInvisible)
 
 		.addFunction("SetUIBarPercentage", &ScriptingInterface::SetBarPercentage)
+		.addFunction("SetUICircularBarPercentage", &ScriptingInterface::SetCircularBarPercentage)
 		.addFunction("SetText", &ScriptingInterface::SetUIText)
 		.addFunction("SetTextAndNumber", &ScriptingInterface::SetUITextAndNumber)
 		.addFunction("SetTextNumber", &ScriptingInterface::SetUITextNumber)

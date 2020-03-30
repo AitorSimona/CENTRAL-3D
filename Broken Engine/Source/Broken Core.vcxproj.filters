@@ -675,6 +675,9 @@
     <ClInclude Include="ComponentProgressBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentCircularBar.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+	</ClInclude>
     <ClInclude Include="ModuleSelection.h">
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClInclude>
@@ -1124,9 +1127,12 @@
     <ClCompile Include="ComponentProgressBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="ComponentCircularBar.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
     <ClCompile Include="ModuleSelection.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>
-      </ClCompile>
+    </ClCompile>
     <ClCompile Include="ComponentLight.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>

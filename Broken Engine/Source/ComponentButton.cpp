@@ -65,18 +65,11 @@ void ComponentButton::Draw()
 {
 	// --- Frame image with camera ---
 	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float3 scale = float3(App->renderer3D->active_camera->frustum.NearPlaneWidth(), App->renderer3D->active_camera->frustum.NearPlaneHeight(), 1.0f);
-
 	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D*0.01f, 1.0f));
 
 	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->defaultShader->ID);
-
-	// color tint
-	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, -1);
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+	uint shaderID = App->renderer3D->defaultShader->ID;
+	glUseProgram(shaderID);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
@@ -97,16 +90,24 @@ void ComponentButton::Draw()
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	glUniform1i(TextureLocation, 0); //reset texture location
+	// --- Color & Texturing ---
+	GLint vertexColorLocation = glGetUniformLocation(shaderID, "Color");
+	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
+	int TextureLocation = glGetUniformLocation(shaderID, "Texture");
+	glUniform1i(TextureLocation, 1);
+
+	glUniform1i(glGetUniformLocation(shaderID, "ourTexture"), 1);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
-
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 	 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->scene_manager->plane->EBO);
 	glDrawElements(GL_TRIANGLES, App->scene_manager->plane->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
 
+	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
@@ -127,7 +128,6 @@ void ComponentButton::Draw()
 			ImVec2(App->gui->sceneX + collider.x + collider.w, App->gui->sceneY + collider.y + collider.h),
 			ImU32(ImColor(ImVec4(1.0f, 0.0f, 0.0f, 1.0f))), 0.0f, 0, 1.0f);
 	}
-
 }
 
 json ComponentButton::Save() const
@@ -159,6 +159,26 @@ json ComponentButton::Save() const
 		node["script"] = std::to_string(script_obj->GetUID());
 		node["function"] = std::string(func_name);
 	}
+
+	node["idle_color.r"] = std::to_string(idle_color.r);
+	node["idle_color.g"] = std::to_string(idle_color.g);
+	node["idle_color.b"] = std::to_string(idle_color.b);
+	node["idle_color.a"] = std::to_string(idle_color.a);
+
+	node["hovered_color.r"] = std::to_string(hovered_color.r);
+	node["hovered_color.g"] = std::to_string(hovered_color.g);
+	node["hovered_color.b"] = std::to_string(hovered_color.b);
+	node["hovered_color.a"] = std::to_string(hovered_color.a);
+
+	node["selected_color.r"] = std::to_string(selected_color.r);
+	node["selected_color.g"] = std::to_string(selected_color.g);
+	node["selected_color.b"] = std::to_string(selected_color.b);
+	node["selected_color.a"] = std::to_string(selected_color.a);
+
+	node["locked_color.r"] = std::to_string(locked_color.r);
+	node["locked_color.g"] = std::to_string(locked_color.g);
+	node["locked_color.b"] = std::to_string(locked_color.b);
+	node["locked_color.a"] = std::to_string(locked_color.a);
 
 	return node;
 }
@@ -193,6 +213,27 @@ void ComponentButton::Load(json& node)
 	std::string script_str = node["script"].is_null() ? "0" : node["script"];
 	std::string function_str = node["function"].is_null() ? "None" : node["function"];
 
+	std::string idle_color_r = node["idle_color.r"].is_null() ? "0" : node["idle_color.r"];
+	std::string idle_color_g = node["idle_color.g"].is_null() ? "0" : node["idle_color.g"];
+	std::string idle_color_b = node["idle_color.b"].is_null() ? "0" : node["idle_color.b"];
+	std::string idle_color_a = node["idle_color.a"].is_null() ? "0" : node["idle_color.a"];
+
+	std::string hovered_color_r = node["hovered_color.r"].is_null() ? "0" : node["hovered_color.r"];
+	std::string hovered_color_g = node["hovered_color.g"].is_null() ? "0" : node["hovered_color.g"];
+	std::string hovered_color_b = node["hovered_color.b"].is_null() ? "0" : node["hovered_color.b"];
+	std::string hovered_color_a = node["hovered_color.a"].is_null() ? "0" : node["hovered_color.a"];
+
+	std::string selected_color_r = node["selected_color.r"].is_null() ? "0" : node["selected_color.r"];
+	std::string selected_color_g = node["selected_color.g"].is_null() ? "0" : node["selected_color.g"];
+	std::string selected_color_b = node["selected_color.b"].is_null() ? "0" : node["selected_color.b"];
+	std::string selected_color_a = node["selected_color.a"].is_null() ? "0" : node["selected_color.a"];
+
+	std::string locked_color_r = node["locked_color.r"].is_null() ? "0" : node["locked_color.r"];
+	std::string locked_color_g = node["locked_color.g"].is_null() ? "0" : node["locked_color.g"];
+	std::string locked_color_b = node["locked_color.b"].is_null() ? "0" : node["locked_color.b"];
+	std::string locked_color_a = node["locked_color.a"].is_null() ? "0" : node["locked_color.a"];
+
+	//-------
 	visible = bool(std::stoi(visible_str));
 	draggable = bool(std::stoi(draggable_str));
 	interactable = bool(std::stoi(interactable_str));
@@ -209,21 +250,45 @@ void ComponentButton::Load(json& node)
 	if (script_obj)
 	{
 		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script);
-		func_name = function_str.c_str();
 
-		func_list.push_back("None");
-		for (uint i = 0; i < script->script_functions.size(); ++i)
-			func_list.push_back(script->script_functions[i].name.c_str());
-
-		for (uint i = 0; i < func_list.size(); ++i) //get function pos
+		if (script != nullptr)
 		{
-			if (strcmp(func_list[i], func_name) == 0)
+			func_name = function_str.c_str();
+
+			func_list.push_back("None");
+			for (uint i = 0; i < script->script_functions.size(); ++i)
+				func_list.push_back(script->script_functions[i].name.c_str());
+
+			for (uint i = 0; i < func_list.size(); ++i) //get function pos
 			{
-				func_pos = i;
-				break;
+				if (strcmp(func_list[i], func_name) == 0)
+				{
+					func_pos = i;
+					break;
+				}
 			}
 		}
 	}
+
+	idle_color.r = float(std::stof(idle_color_r));
+	idle_color.g = float(std::stof(idle_color_g));
+	idle_color.b = float(std::stof(idle_color_b));
+	idle_color.a = float(std::stof(idle_color_a));
+
+	hovered_color.r = float(std::stof(hovered_color_r));
+	hovered_color.g = float(std::stof(hovered_color_g));
+	hovered_color.b = float(std::stof(hovered_color_b));
+	hovered_color.a = float(std::stof(hovered_color_a));
+
+	selected_color.r = float(std::stof(selected_color_r));
+	selected_color.g = float(std::stof(selected_color_g));
+	selected_color.b = float(std::stof(selected_color_b));
+	selected_color.a = float(std::stof(selected_color_a));
+
+	locked_color.r = float(std::stof(locked_color_r));
+	locked_color.g = float(std::stof(locked_color_g));
+	locked_color.b = float(std::stof(locked_color_b));
+	locked_color.a = float(std::stof(locked_color_a));
 }
 
 void ComponentButton::CreateInspectorNode()
@@ -242,10 +307,28 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f);
+	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
+	{
+		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		{
+			if (texture->Texture_width <= texture->Texture_height)
+				size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+			else
+				size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+		}
+	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f);
+	if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
+	{
+		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		{
+			if (texture->Texture_width >= texture->Texture_height)
+				size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+			else
+				size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+		}
+	}
 
 	// Position
 	ImGui::Text("Position:");
@@ -266,7 +349,7 @@ void ComponentButton::CreateInspectorNode()
 
 	// Collider
 	ImGui::Separator();
-	ImGui::Text("Collider"); 
+	ImGui::Text("Collider");
 	ImGui::SameLine();
 	ImGui::Checkbox("Visible##2", &collider_visible);
 
@@ -310,18 +393,23 @@ void ComponentButton::CreateInspectorNode()
 			{
 				if (texture)
 					texture->Release();
-
 				texture = (ResourceTexture*)App->resources->GetResource(UID);
+
+				if (resize && texture)
+					size2D = float2(texture->Texture_width, texture->Texture_height);
 			}
 		}
 		ImGui::EndDragDropTarget();
 	}
 
+	// Aspect Ratio
+	ImGui::Checkbox("Maintain Aspect Ratio", &resize);
+
 	// Script
 	ImGui::Separator();
 	ImGui::Text("Script");
 	ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-		
+
 	if (ImGui::BeginDragDropTarget()) //drag and drop
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
@@ -436,8 +524,7 @@ void ComponentButton::CreateInspectorNode()
 	//ImGui::DragFloat("y##buttontextposition", &text_pos.y);
 
 	ImGui::Separator();
-	
-}
+}	
 
 void ComponentButton::UpdateState()
 {

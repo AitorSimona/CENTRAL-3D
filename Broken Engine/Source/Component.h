@@ -22,6 +22,7 @@ public:
 		CheckBox,
 		InputText,
 		ProgressBar,
+		CircularBar,
 		Script,
 		Bone,
 		Animation,
