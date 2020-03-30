@@ -16,6 +16,7 @@
 #include "ComponentAudioListener.h"
 #include "ComponentLight.h"
 #include "Component.h"
+#include "ComponentParticleEmitter.h"
 
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
@@ -193,6 +194,15 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	DrawRenderLines();
 	DrawRenderBoxes();
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// -- Draw particles ---
+	for (int i = 0; i < particleEmitters.size(); ++i)
+		particleEmitters[i]->DrawParticles();
+
+	glDisable(GL_BLEND);
+
 	std::vector<ComponentLight*>::iterator LightIterator = m_LightsVec.begin();
 	for (; LightIterator != m_LightsVec.end(); ++LightIterator)
 		(*LightIterator)->Draw();
@@ -214,6 +224,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 
 	// --- Draw GUI and swap buffers ---
 	App->gui->Draw();
+
 
 	// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
 	SDL_GL_MakeCurrent(App->window->window, context);
@@ -272,8 +283,21 @@ void ModuleRenderer3D::PopLight(ComponentLight* light)
 
 		if(it != m_LightsVec.end())
 			m_LightsVec.erase(it);
+	}		
+}
+
+const int ModuleRenderer3D::GetLightIndex(ComponentLight* light)
+{
+	if (light)
+	{
+		for (int i = 0; i < m_LightsVec.size(); ++i)
+		{
+			if (m_LightsVec[i] == light)
+				return i;
+		}
 	}
-		
+
+	return -1;
 }
 
 bool ModuleRenderer3D::SetVSync(bool _vsync)
@@ -1074,13 +1098,14 @@ void ModuleRenderer3D::DrawRenderBoxes()
 
 void ModuleRenderer3D::DrawGrid()
 {
-	App->renderer3D->defaultShader->use();
+	//App->renderer3D->defaultShader->use();
+	glUseProgram(App->renderer3D->defaultShader->ID);
 
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
 	float gridColor = 0.8f;
-	int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
 	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
 
 	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
@@ -1092,7 +1117,7 @@ void ModuleRenderer3D::DrawGrid()
 	glBindVertexArray(0);
 	glLineWidth(1.0f);
 
-	glUseProgram(0);
+	//glUseProgram(0);
 	glUniform1i(TextureSupportLocation, (int)false);
 }
 

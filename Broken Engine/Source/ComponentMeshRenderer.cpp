@@ -257,12 +257,15 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				}
 			}
 
-			//if (is_default)
-			//{
-			//	ImGui::PopID();
-			//	ImGui::TreePop();
-			//	return;
-			//}
+			if (is_default)
+			{
+				if (ImGui::Button("Unuse Material"))
+					unuse_material = true;
+
+				ImGui::PopID();
+				ImGui::TreePop();
+				return;
+			}
 
 			// --- Print Texture Path ---
 			//std::string Path = "Path: ";
