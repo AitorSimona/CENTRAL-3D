@@ -134,9 +134,13 @@ Resource* ImporterMaterial::Load(const char* path) const
 		//file["AmbientColor"]["B"] = mat->m_AmbientColor.z;
 
 		Importer::ImportData IDataDiff(diffuse_texture_path.c_str());
+
+		if(diffuse_texture_path != "NaN.dds")
 		diffuse = (ResourceTexture*)App->resources->ImportAssets(IDataDiff);
 
 		Importer::ImportData IDataSpec(specular_texture_path.c_str());
+
+		if (specular_texture_path != "NaN.dds")
 		specular = (ResourceTexture*)App->resources->ImportAssets(IDataSpec);
 
 		// --- Load Shader and Uniforms ---
