@@ -148,7 +148,7 @@ bool ModuleRecast::BuildNavMesh() {
 	// the are type for each of the meshes and rasterize them.
 	for (int i = 0; i < m_geom->getMeshes().size(); ++i) {
 		memset(m_triareas, 0, m_geom->getMaxTris() * sizeof(unsigned char));
-		// Modified to set the area of the mesh directly instead of having to mark it later
+		// Modified recast method to set the area of the mesh directly instead of having to mark it later
 		rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, m_geom->getMeshes()[i].verts, m_geom->getMeshes()[i].nverts, m_geom->getMeshes()[i].tris, m_geom->getMeshes()[i].ntris, m_triareas, m_geom->getMeshes()[i].area);
 		rcRasterizeTriangles(m_ctx, m_geom->getMeshes()[i].verts, m_geom->getMeshes()[i].nverts, m_geom->getMeshes()[i].tris, m_triareas, m_geom->getMeshes()[i].ntris, *m_solid, m_cfg.walkableClimb);
 	}

@@ -339,6 +339,9 @@ void rcMarkWalkableTriangles(rcContext* ctx, const float walkableSlopeAngle,
 {
 	rcIgnoreUnused(ctx);
 	rcIgnoreUnused(nv);
+
+	if (area == RC_NULL_AREA)
+		return;
 	
 	const float walkableThr = cosf(walkableSlopeAngle/180.0f*RC_PI);
 
