@@ -146,7 +146,7 @@ void Particle::Draw()
 
 	//Texturing & Color
 	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
-	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
+	glUniform3f(vertexColorLocation, color.x, color.y, color.z);
 
 	int TextureLocation = glGetUniformLocation(def_shaderID, "Texture");
 	glUniform1i(TextureLocation, (int)true);

@@ -91,7 +91,7 @@ private:
 	float particlesScaleRandomFactor = 1;
 	ResourceTexture* texture = nullptr;
 
-	float3 particlesColor = { 255, 255, 255 };
+	float3 particlesColor = {1.0f,1.0f, 1.0f };
 
 	float spawnClock=0.0f;
 };
