@@ -10,11 +10,11 @@ public:
 	~ScriptingAnimations();
 
 public:
-	void StartAnimation(const char* name, float speed);
-	void SetAnimSpeed(const char* name, float speed);
-	void SetCurrentAnimSpeed(float speed);
+	void StartAnimation(const char* name, float speed, uint gameobject_UUID = -1);
+	void SetAnimSpeed(const char* name, float speed, uint gameobject_UUID = -1);
+	void SetCurrentAnimSpeed(float speed, uint gameobject_UUID = -1);
 
-	void SetBlendTime(float value);
+	void SetBlendTime(float value, uint gameobject_UUID = -1);
 
 };
 BE_END_NAMESPACE
