@@ -93,7 +93,7 @@ void ScriptingGameobject::SetActiveGameObject(uint gameobject_UUID, bool active)
 
 float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
 {
-	float ret = 0;
+	float ret = 0.0f;
 	float3 rot = float3(0.0f);
 
 	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UUID)).second;
@@ -115,7 +115,7 @@ float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
 	lua_pushnumber(L, rot.x);
 	lua_pushnumber(L, rot.y);
 	lua_pushnumber(L, rot.z);
-	return 0.0f;
+	return ret;
 }
 
 float ScriptingGameobject::GetGameObjectPosX(uint gameobject_UUID)
