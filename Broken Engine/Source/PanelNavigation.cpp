@@ -43,7 +43,7 @@ bool PanelNavigation::Draw() {
 				ImGui::InputText("##name_bi0", EngineApp->detour->areaNames[0], 100, ImGuiInputTextFlags_ReadOnly);
 				ImGui::NextColumn();
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputInt("##cost_bi0", &EngineApp->detour->areaCosts[0]);
+				ImGui::InputFloat("##cost_bi0", &EngineApp->detour->areaCosts[0]);
 
 				ImGui::NextColumn();
 				ImGui::Text("Built-in 1");
@@ -63,7 +63,7 @@ bool PanelNavigation::Draw() {
 				ImGui::InputText("##name_bi2", EngineApp->detour->areaNames[2], 100, ImGuiInputTextFlags_ReadOnly);
 				ImGui::NextColumn();
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputInt("##cost_bi2", &EngineApp->detour->areaCosts[2]);
+				ImGui::InputFloat("##cost_bi2", &EngineApp->detour->areaCosts[2]);
 
 				std::string catname = "User ";
 				std::string namelabel = "##name_us";
@@ -77,7 +77,7 @@ bool PanelNavigation::Draw() {
 					ImGui::InputText((namelabel + std::to_string(i)).c_str(), EngineApp->detour->areaNames[i], 100);
 					ImGui::NextColumn();
 					ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-					ImGui::InputInt((costlabel + std::to_string(i)).c_str(), &EngineApp->detour->areaCosts[i]);
+					ImGui::InputFloat((costlabel + std::to_string(i)).c_str(), &EngineApp->detour->areaCosts[i]);
 				}
 
 
@@ -135,7 +135,7 @@ bool PanelNavigation::Draw() {
 			}
 			if (ImGui::BeginTabItem("Object")) {
 				//MYTODO this should probably be a MeshRenderer rather than a mesh, but Cameras GO have MeshRenderers
-				Broken::GameObject* selected = EngineApp->scene_manager->GetSelectedGameObject();
+				Broken::GameObject* selected = EngineApp->selection->GetLastSelected();
 				if (selected != nullptr &&  selected->GetComponent<Broken::ComponentMesh>() != nullptr) {
 					ImGui::Text(selected->GetName());
 					ImGui::Separator();

@@ -43,6 +43,27 @@ ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 
 ModuleScripting::~ModuleScripting() {}
 
+//template <typename T, typename U>
+//void ModuleScripting::ConvertVectorToTable(lua_State* L, T begin, U end) {
+//	lua_newtable(L);
+//	for (size_t i = 0; begin != end; ++begin, ++i) {
+//		lua_pushinteger(L, i + 1);
+//		lua_pushnumber(L, *begin);
+//		lua_settable(L, -3);
+//	}
+//}
+//
+//template <typename T, typename U>
+//void ModuleScripting::ConvertTableToVector(lua_State* L, T begin, U end) {
+//	assert(lua_istable(L, -1));
+//	for (size_t i = 0; begin != end; ++begin, ++i) {
+//		lua_pushinteger(L, i + 1);
+//		lua_gettable(L, -2);
+//		*begin = lua_tonumber(L, -1);
+//		lua_pop(L, 1);
+//	}
+//}
+
 bool ModuleScripting::DoHotReloading() {
 	bool ret = true;
 
@@ -113,7 +134,7 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 
 	luabridge::getGlobalNamespace(L)
 		.beginNamespace("Scripting")
-		
+
 		.beginClass <ScriptingSystem>("System")
 		.addConstructor<void(*) (void)>()
 		.endClass()
@@ -227,10 +248,13 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addConstructor<void(*) (void)>()
 
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
+		.addFunction("GetMyUID", &ScriptingGameobject::GetMyUID)
 		.addFunction("GetParent", &ScriptingGameobject::GetScriptGOParent)
+		.addFunction("GetScriptGOUID", &ScriptingGameobject::GetScriptGOUID)
 		.addFunction("GetGameObjectParent", &ScriptingGameobject::GetGOParentFromUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
+		.addFunction("GetLayer", &ScriptingGameobject::GetLayer)
 		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
 		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
 		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
@@ -262,6 +286,16 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
 		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
+
+
+		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerEnter)
+		.addFunction("OnTriggerStay", &ScriptingPhysics::OnTriggerStay)
+		.addFunction("OnTriggerExit", &ScriptingPhysics::OnTriggerExit)
+
+		.addFunction("OnCollisionEnter", &ScriptingPhysics::OnCollisionEnter)
+		.addFunction("OnCollisionStay", &ScriptingPhysics::OnCollisionStay)
+		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
+
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -270,8 +304,24 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.beginClass <ScriptingParticles>("Particles")
 		.addConstructor<void(*) (void)>()
 
-		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticlesEmission)
-		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticlesEmission)
+		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
+		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
+
+		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
+		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
+		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
+		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
+
+		.addFunction("SetExternalAcceleration", &ScriptingParticles::SetParticleAcceleration)
+		.addFunction("SetParticlesVelocity", &ScriptingParticles::SetParticleVelocityFromScript)
+		.addFunction("SetRandomParticlesVelocity", &ScriptingParticles::SetRandomParticleVelocity)
+
+		.addFunction("SetParticlesLooping", &ScriptingParticles::SetParticleLooping)
+		.addFunction("SetParticlesDuration", &ScriptingParticles::SetParticleDuration)
+		.addFunction("SetParticlesLifeTime", &ScriptingParticles::SetParticleLifeTime)
+
+		.addFunction("SetParticlesScale", &ScriptingParticles::SetParticleScaleFromScript)
+		.addFunction("SetRandomParticlesScale", &ScriptingParticles::SetRandomParticleScale)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -292,7 +342,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingAnimations>("Animations")
 		.addConstructor<void(*) (void)>()
-		
+
 		.addFunction("PlayAnimation", &ScriptingAnimations::StartAnimation)
 		.addFunction("SetAnimationSpeed", &ScriptingAnimations::SetAnimSpeed)
 		.addFunction("SetCurrentAnimationSpeed", &ScriptingAnimations::SetCurrentAnimSpeed)
@@ -304,10 +354,12 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.beginClass <ScriptingInterface>("Interface")
 		.addConstructor<void(*) (void)>()
 
+
 		.addFunction("MakeElementVisible", &ScriptingInterface::MakeUIComponentVisible)
 		.addFunction("MakeElementInvisible", &ScriptingInterface::MakeUIComponentInvisible)
 
 		.addFunction("SetUIBarPercentage", &ScriptingInterface::SetBarPercentage)
+		.addFunction("SetUICircularBarPercentage", &ScriptingInterface::SetCircularBarPercentage)
 		.addFunction("SetText", &ScriptingInterface::SetUIText)
 		.addFunction("SetTextAndNumber", &ScriptingInterface::SetUITextAndNumber)
 		.addFunction("SetTextNumber", &ScriptingInterface::SetUITextNumber)
@@ -566,6 +618,25 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 	}
 }
 
+void ModuleScripting::CallbackScriptFunctionParam(ComponentScript* script_component, const ScriptFunc& function_to_call, uint id)
+{
+	ScriptInstance* script = GetScriptInstanceFromComponent(script_component);
+
+	std::string aux_str = function_to_call.name;
+	if (script != nullptr)
+	{
+		if (App->GetAppState() == AppState::PLAY)
+		{
+			script->my_table_class[aux_str.c_str()](id); // call to Lua to execute the given function
+			ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+		}
+	}
+	else
+	{
+		ENGINE_CONSOLE_LOG("Can't callback %s since component has a null script instance", aux_str.c_str());
+	}
+}
+
 
 bool ModuleScripting::Init(json& file) {
 	// Create the Virtual Machine
@@ -674,7 +745,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 	}
 
 	previous_AppState = (_AppState)App->GetAppState();
-	
+
 	return game_update;
 }
 

@@ -10,6 +10,8 @@ public:
 	EngineApplication();
 	~EngineApplication();
 
+	void SaveForBuild(const Broken::json& reference, const char* path) const;
+
 public:
 	class ModuleEditorUI* editorui;
 	class ModuleRecast* recast;

@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "Resource.h"
+#include "ModulePhysics.h"
 
 BE_BEGIN_NAMESPACE
 
@@ -33,6 +34,7 @@ public:
 	const OBB&      GetOBB() const;
 
 	bool& GetActive();
+	int GetLayer();
 	bool			IsEnabled() const;
 
 	// --- Components ---
@@ -57,7 +59,7 @@ public:
 	Component* GetComponentWithUID(uint UUID);
 
 	// --- Setters ---
-	void			SetName(const char* name);
+	void SetName(const char* name);
 
 	// --- Utilities ---
 	void RecursiveDelete();
@@ -76,10 +78,15 @@ public:
 public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childs;
+	std::vector<GameObject*> collisions;
 	bool Static = false;
 	bool navigationStatic = false;
 	uint navigationArea = 0; 
 	ResourceModel* model = nullptr;
+	LayerMask layer;
+
+	// to avoid including ImGui header, it's hardcoded the ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth flags (128 and 2048 respectively)
+	int node_flags = 2176;
 
 private:
 	// Unique Identifier

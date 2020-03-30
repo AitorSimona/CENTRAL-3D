@@ -83,6 +83,7 @@ bool ModuleResourceManager::Start()
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
+	filters.push_back("jpg");
 	filters.push_back("lua");
 	filters.push_back("scene");
 	filters.push_back("ttf");

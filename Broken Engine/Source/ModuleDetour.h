@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "BrokenCore.h"
 #include "Color.h"
+#include "Math.h"
 
 class dtNavMeshCreateParams;
 class dtNavMesh;

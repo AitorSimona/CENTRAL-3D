@@ -19,6 +19,7 @@
 #include "ModuleParticles.h"
 #include "ModuleAudio.h"
 #include "ModuleDetour.h"
+#include "ModuleSelection.h"
 
 #include "mmgr/mmgr.h"
 
@@ -59,6 +60,7 @@ Application::Application() {
 	particles = new ModuleParticles(true);
 	audio = new ModuleAudio(true);
 	detour = new ModuleDetour(true);
+	selection = new ModuleSelection(true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order

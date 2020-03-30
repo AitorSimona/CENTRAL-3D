@@ -32,6 +32,7 @@ using namespace Broken;
 
 ComponentParticleEmitter::ComponentParticleEmitter(GameObject* ContainerGO):Component(ContainerGO, Component::ComponentType::ParticleEmitter)
 {
+	name = "Particle Emitter";
 	Enable();
 
 	App->particles->AddEmitter(this);
@@ -71,8 +72,6 @@ ComponentParticleEmitter::~ComponentParticleEmitter()
 			App->renderer3D->particleEmitters.erase(it);
 			break;
 		}
-
-	//App->renderer3D->particleEmitters.erase(this);
 }
 
 void ComponentParticleEmitter::Update()
@@ -393,7 +392,10 @@ void ComponentParticleEmitter::Load(json& node)
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
-	texture = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
+	ResourceTexture* auxText = (ResourceTexture*)App->resources->GetResource(std::stoi(path));
+	
+	if (auxText != nullptr)
+		texture = auxText;
 
 	if (texture)
 		texture->AddUser(GO);
@@ -436,16 +438,6 @@ void ComponentParticleEmitter::Load(json& node)
 
 void ComponentParticleEmitter::CreateInspectorNode()
 {
-	if (ImGui::Checkbox("##PEActive", &active)) {
-			if (active)
-				Enable();
-			else
-				Disable();
-		}
-
-	ImGui::SameLine();
-	if (ImGui::TreeNode("ParticleEmitter")) {
-
 		ImGui::Text("Loop");
 		ImGui::SameLine();
 		ImGui::Checkbox("##PELoop", &loop);
@@ -525,6 +517,8 @@ void ComponentParticleEmitter::CreateInspectorNode()
 		//Particles lifetime
 		ImGui::Text("Particles lifetime (ms)");
 		ImGui::DragInt("##SParticlesLifetime", &particlesLifeTime, 3.0f, 0.0f, 10000.0f);
+		
+		ImGui::Separator();
 
 		if (ImGui::TreeNode("Direction & velocity"))
 		{
@@ -573,6 +567,8 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			ImGui::TreePop();
 		}
 
+		ImGui::Separator();
+		
 		if (ImGui::TreeNode("Renderer"))
 		{
 			//Scale
@@ -597,8 +593,11 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 			ImGui::DragFloat("##SParticlesRandomScaleX", &particlesScaleRandomFactor, 0.05f, 1.0f, 50.0f);
 
+
+
+
+
 			// Image
-			ImGui::Separator();
 			ImGui::Text("Image");
 
 			if (texture == nullptr)
@@ -624,53 +623,14 @@ void ComponentParticleEmitter::CreateInspectorNode()
 				}
 				ImGui::EndDragDropTarget();
 			}
+			////Particles Color
 
-			ImGui::Separator();
-			ImGui::Separator();
+			ImGui::ColorEdit4("##PEParticle Color", (float*)&particlesColor, ImGuiColorEditFlags_NoInputs);
+			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+			ImGui::Text("Color");
 
 			ImGui::TreePop();
 		}
-
-		//if (ImGui::TreeNode("Visuals"))
-		//{
-
-		//	//Particles size
-		//	ImGui::Text("Particles size");
-		//	ImGui::DragFloat("##SParticlesSize", &particlesSize, 0.005f, 0.01f, 3.0f);
-
-		//	//Particles Color particlesColor
-		//	ImGui::Text("Particles Color");
-		//	bool colorChanged = false;
-
-		//	//R
-		//	ImGui::Text("R");
-		//	ImGui::SameLine();
-		//	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		//	if (ImGui::DragFloat("##ColorR", &particlesColor.x, 0.05f, 0.0f, 255.0f))
-		//		colorChanged = true;
-
-		//	ImGui::SameLine();
-		//	//G
-		//	ImGui::Text("G");
-		//	ImGui::SameLine();
-		//	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		//	if (ImGui::DragFloat("##ColorG", &particlesColor.y, 0.05f, 0.0f, 255.0f))
-		//		colorChanged = true;
-
-		//	//B
-		//	ImGui::SameLine();
-		//	ImGui::Text("B");
-		//	ImGui::SameLine();
-		//	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		//	if (ImGui::DragFloat("##ColorB", &particlesColor.z, 0.05f, 0.0f, 255.0f))
-		//		colorChanged = true;
-
-		//	ImGui::TreePop();
-		//}
-		//
-
-		ImGui::TreePop();
-	}
 }
 
 double ComponentParticleEmitter::GetRandomValue(double min,double max) //EREASE IN THE FUTURE
@@ -728,7 +688,7 @@ void ComponentParticleEmitter::CreateParticles(uint particlesAmount)
 
 			particles[index[i]]->lifeTime = particlesLifeTime;
 			particles[index[i]]->spawnTime = spawnClock;
-			particles[index[i]]->color = particlesColor / 255.0f;
+			particles[index[i]]->color = particlesColor;
 			particles[index[i]]->texture = texture;
 			float randomScaleValue = GetRandomValue(1, particlesScaleRandomFactor);
 			particles[index[i]]->scale.x = particlesScale.x *randomScaleValue;
