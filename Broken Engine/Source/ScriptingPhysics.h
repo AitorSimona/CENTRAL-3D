@@ -12,19 +12,19 @@ public:
 	~ScriptingPhysics();
 
 public:
-	void SetMass(float mass);
-	float GetMass();
+	void SetMass(float mass, uint gameobject_UUID = -1);
+	float GetMass(uint gameobject_UUID = -1);
 
-	int GetLinearVelocity(lua_State* L);
-	int GetAngularVelocity(lua_State* L);
-	void SetLinearVelocity(float x, float y, float z);
-	void SetAngularVelocity(float x, float y, float z);
+	int GetLinearVelocity(lua_State* L, uint gameobject_UUID = -1);
+	int GetAngularVelocity(lua_State* L, uint gameobject_UUID = -1);
+	void SetLinearVelocity(float x, float y, float z, uint gameobject_UUID = -1);
+	void SetAngularVelocity(float x, float y, float z, uint gameobject_UUID = -1);
 
-	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode);
-	void AddForce(float forceX, float forceY, float forceZ, int ForceMode);
+	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID = -1);
+	void AddForce(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID = -1);
 
-	void SetKinematic(bool enable);
-	void UseGravity(bool enable);
+	void SetKinematic(bool enable, uint gameobject_UUID = -1);
+	void UseGravity(bool enable, uint gameobject_UUID = -1);
 
 };
 BE_END_NAMESPACE

@@ -57,7 +57,7 @@ public:
 	Component* GetComponentWithUID(uint UUID);
 
 	// --- Setters ---
-	void			SetName(const char* name);
+	void SetName(const char* name);
 
 	// --- Utilities ---
 	void RecursiveDelete();

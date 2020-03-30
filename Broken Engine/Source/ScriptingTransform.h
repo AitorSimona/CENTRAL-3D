@@ -11,26 +11,25 @@ public:
 	ScriptingTransform();
 	~ScriptingTransform();
 
-public:
-	
+public:	
 	// Position
-	int GetPosition(lua_State* L);
-	float GetPositionX() const;
-	float GetPositionY() const;
-	float GetPositionZ() const;
+	int GetPosition(lua_State* L, uint gameobject_UUID = -1);
+	float GetPositionX(uint gameobject_UUID = -1) const;
+	float GetPositionY(uint gameobject_UUID = -1) const;
+	float GetPositionZ(uint gameobject_UUID = -1) const;
 
-	void Translate(float x, float y, float z, bool local);
-	void SetPosition(float x, float y, float z, bool local);
+	void Translate(float x, float y, float z, bool local, uint gameobject_UUID = -1);
+	void SetPosition(float x, float y, float z, bool local, uint gameobject_UUID = -1);
 
 	// Rotation
-	void RotateObject(float x, float y, float z);
-	void SetObjectRotation(float x, float y, float z);
-	void LookAt(float spotX, float spotY, float spotZ, bool local);
+	void RotateObject(float x, float y, float z, uint gameobject_UUID = -1);
+	void SetObjectRotation(float x, float y, float z, uint gameobject_UUID = -1);
+	void LookAt(float spotX, float spotY, float spotZ, bool local, uint gameobject_UUID = -1);
 
-	int GetRotation(bool local, lua_State* L) const;
-	float GetRotationX() const;
-	float GetRotationY() const;
-	float GetRotationZ() const;
+	int GetRotation(lua_State* L, uint gameobject_UUID = -1) const;
+	float GetRotationX(uint gameobject_UUID = -1) const;
+	float GetRotationY(uint gameobject_UUID = -1) const;
+	float GetRotationZ(uint gameobject_UUID = -1) const;
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGTRANSFORM_H__
