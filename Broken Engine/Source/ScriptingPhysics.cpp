@@ -1,9 +1,11 @@
 #include "ScriptingPhysics.h"
 #include "Application.h"
 #include "ModuleScripting.h"
+#include "ModuleSceneManager.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ScriptData.h"
+#include "ResourceScene.h"
 
 using namespace Broken;
 ScriptingPhysics::ScriptingPhysics() {}
@@ -193,10 +195,10 @@ int ScriptingPhysics::OnTriggerExit(lua_State* L)
 	return ret;
 }
 
-int ScriptingPhysics::OnCollisionEnter(lua_State* L)
+int ScriptingPhysics::OnCollisionEnter(uint id, lua_State* L)
 {
 	int ret = 0;
-	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(id);
 	if (body) {
 		GameObject* other = body->collisions.at(ONCOLLISION_ENTER);
 		if (other) {

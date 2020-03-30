@@ -33,7 +33,7 @@ public:
 	int OnTriggerStay(lua_State* L);
 	int OnTriggerExit(lua_State* L);
 
-	int OnCollisionEnter(lua_State* L);
+	int OnCollisionEnter(uint id, lua_State* L);
 	int OnCollisionStay(lua_State* L);
 	int OnCollisionExit(lua_State* L);
 

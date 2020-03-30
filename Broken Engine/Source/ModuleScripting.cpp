@@ -264,12 +264,12 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 
 		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerEnter)
-		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerStay)
-		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerExit)
+		.addFunction("OnTriggerStay", &ScriptingPhysics::OnTriggerStay)
+		.addFunction("OnTriggerExit", &ScriptingPhysics::OnTriggerExit)
 
-		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnCollisionEnter)
-		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnCollisionStay)
-		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnCollisionExit)
+		.addFunction("OnCollisionEnter", &ScriptingPhysics::OnCollisionEnter)
+		.addFunction("OnCollisionStay", &ScriptingPhysics::OnCollisionStay)
+		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
 		.endClass()
 
@@ -567,6 +567,25 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 		if (App->GetAppState() == AppState::PLAY)
 		{
 			script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
+			ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+		}
+	}
+	else
+	{
+		ENGINE_CONSOLE_LOG("Can't callback %s since component has a null script instance", aux_str.c_str());
+	}
+}
+
+void ModuleScripting::CallbackScriptFunctionParam(ComponentScript* script_component, const ScriptFunc& function_to_call, uint id)
+{
+	ScriptInstance* script = GetScriptInstanceFromComponent(script_component);
+
+	std::string aux_str = function_to_call.name;
+	if (script != nullptr)
+	{
+		if (App->GetAppState() == AppState::PLAY)
+		{
+			script->my_table_class[aux_str.c_str()](id); // call to Lua to execute the given function
 			ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
 		}
 	}

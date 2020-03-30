@@ -31,6 +31,7 @@ public:
 	void NotifyHotReloading();
 	bool CheckEverythingCompiles();
 	void CallbackScriptFunction(ComponentScript* script_component, const ScriptFunc& function_to_call);
+	void CallbackScriptFunctionParam(ComponentScript* script_component, const ScriptFunc& function_to_call, uint id);
 
 	/*template <typename T, typename U>
 	void as_table(lua_State* L, T begin, U end) {

@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "GameObject.h"
+#include "ComponentScript.h"
+#include "ModuleScripting.h"
 
 using namespace Broken;
 
@@ -22,9 +24,20 @@ void PhysxSimulationEvents::onContact(const physx::PxContactPairHeader& pairHead
 			GameObject* go2 = nullptr;
 			go1 = App->physics->actors[pairHeader.actors[0]];
 			go2 = App->physics->actors[pairHeader.actors[1]];
-			if (go1 && go2) {
+
+			if (go1 && go2) 
+			{
 				go1->collisions.at(ONCOLLISION_ENTER) = go2;
 				go2->collisions.at(ONCOLLISION_ENTER) = go1;
+				
+				ScriptFunc function;
+				function.name = "OnCollisionEnter";
+
+				ComponentScript* script = go1->GetComponent<ComponentScript>();
+				ComponentScript* script2 = go2->GetComponent<ComponentScript>();
+
+				App->scripting->CallbackScriptFunctionParam(script, function, go2->GetUID());
+				App->scripting->CallbackScriptFunctionParam(script2, function, go1->GetUID());
 			}
 		}
 	}
@@ -43,8 +56,16 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 		go1 = App->physics->actors[pairs->triggerActor];
 		go2 = App->physics->actors[pairs->otherActor];
 
-		if (go1 && go2) {
+		if (go1 && go2) 
+		{
 			go1->collisions.at(ONTRIGGER_ENTER) = go2;
+
+			ScriptFunc function;
+			function.name = "OnTriggerEnter";
+
+			ComponentScript* script = go1->GetComponent<ComponentScript>();
+
+			App->scripting->CallbackScriptFunction(script, function);
 		}
 	}
 }

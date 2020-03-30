@@ -20,12 +20,12 @@
     },
     "Physics": {
         "Layer0": {
-            "0": false,
+            "0": true,
             "1": true,
             "2": true,
             "3": true,
             "4": true,
-            "Group": 30,
+            "Group": 31,
             "GroupSize": 5,
             "Layer": 0,
             "Name": "Default"
@@ -80,8 +80,8 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 648,
+        "height": 810,
         "resizable": true,
-        "width": 1152
+        "width": 1440
     }
 }

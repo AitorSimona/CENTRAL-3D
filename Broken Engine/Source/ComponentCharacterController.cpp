@@ -7,11 +7,13 @@
 #include "ResourceShader.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleScripting.h"
 #include "ComponentTransform.h"
+#include "ComponentScript.h"
 #include "ModuleTimeManager.h"
 #include "ModuleGui.h"
 #include "ModuleInput.h"
-
+#include "ScriptVar.h"
 #include "PhysX_3.4/Include/characterkinematic/PxController.h"
 #include "PhysX_3.4/Include/characterkinematic/PxCapsuleController.h"
 
@@ -321,7 +323,6 @@ void ComponentCharacterController::SetRadius(float radius)
 
 void ComponentCharacterController::SetHeight(float height)
 {
-
 	static_cast<physx::PxCapsuleController*>(controller)->resize(height);
 	//static_cast<physx::PxCapsuleController*>(controller)->setHeight(height);
 }
@@ -335,7 +336,13 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 		GameObject* go = App->physics->actors[(physx::PxRigidActor*) & actor];
 		if (go)
 		{
-			int a = 0; //set callback onTrigger
+			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
+
+			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ScriptFunc function;
+			function.name = "OnTriggerEnter";
+
+			App->scripting->CallbackScriptFunction(script, function);
 		}
 	}
 	else
@@ -343,7 +350,17 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 		GameObject* go = App->physics->actors[(physx::PxRigidActor*) & actor];
 		if (go)
 		{
-			int a = 0; //set callback onContact
+			GO->collisions.at(Collision_Type::ONCOLLISION_ENTER) = go;
+			go->collisions.at(Collision_Type::ONCOLLISION_ENTER) = GO;
+
+			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
+
+			ScriptFunc function;
+			function.name = "OnCollisionEnter";
+
+			App->scripting->CallbackScriptFunction(script, function);
+			App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 
@@ -362,7 +379,13 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 		GameObject* go = App->physics->actors[shape->getActor()];
 		if (go)
 		{
-			int a = 0; //set callback ontrigger
+			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
+
+			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ScriptFunc function;
+			function.name = "OnTriggerEnter";
+
+			App->scripting->CallbackScriptFunction(script, function);
 		}
 	}
 	else
@@ -370,7 +393,17 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 		GameObject* go = App->physics->actors[shape->getActor()];
 		if (go)
 		{
-			int a = 0; //set callback onContact
+			GO->collisions.at(Collision_Type::ONCOLLISION_ENTER) = go;
+			go->collisions.at(Collision_Type::ONCOLLISION_ENTER) = GO;
+
+			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
+
+			ScriptFunc function;
+			function.name = "OnCollisionEnter";
+
+			App->scripting->CallbackScriptFunction(script, function);
+			App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 
