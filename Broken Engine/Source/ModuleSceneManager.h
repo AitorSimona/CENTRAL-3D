@@ -102,7 +102,7 @@ public:
 
 	// --- Actually this is an octree ---
 	Quadtree tree;
-	bool display_tree = true;
+	bool display_tree = false;
 
 	bool update_tree=false;
 	uint treeUpdateTimer = 0;
