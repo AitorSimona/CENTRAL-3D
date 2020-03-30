@@ -153,6 +153,9 @@ const std::string ComponentLight::GetLightUniform(uint lightIndex, const char* u
 // -------------------------------------------------------------------------------------------
 void ComponentLight::Draw()
 {
+	if (!m_DrawMesh)
+		return;
+
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
@@ -236,6 +239,11 @@ void ComponentLight::CreateInspectorNode()
 			ImGui::EndCombo();
 		}
 
+		// --- Draw Mesh ---
+		ImGui::Text("Draw Mesh");
+		ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 11.0f);
+		ImGui::Checkbox("##DrawMesh", &m_DrawMesh);
+
 		// --- Color ---
 		ImGui::Separator(); ImGui::NewLine();
 		ImGui::Text("Color");
@@ -289,6 +297,7 @@ json ComponentLight::Save() const
 	json node;
 
 	node["Active"] = this->active;
+	node["DrawMesh"] = m_DrawMesh;
 
 	node["DirectionX"] = std::to_string(m_Direction.x);
 	node["DirectionY"] = std::to_string(m_Direction.y);
@@ -308,12 +317,14 @@ json ComponentLight::Save() const
 	node["Intensity"] = std::to_string(m_Intensity);
 	node["LightType"] = std::to_string((int)m_LightType);
 
+
 	return node;
 }
 
 void ComponentLight::Load(json& node)
 {
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
+	m_DrawMesh = node["DrawMesh"].is_null() ? true : (bool)node["DrawMesh"];
 
 	// --- Load Strings ---
 	std::string str_dirX = node["DirectionX"].is_null() ? "0" : node["DirectionX"];
