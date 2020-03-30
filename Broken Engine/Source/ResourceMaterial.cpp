@@ -73,6 +73,7 @@ void ResourceMaterial::CreateInspectorNode()
 
 					if (ImGui::Selectable(it->second->GetName(), is_selected))
 					{
+
 						item_current = it->second->GetName();
 						shader = it->second;
 						shader->GetAllUniforms(uniforms);

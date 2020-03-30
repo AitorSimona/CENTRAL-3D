@@ -73,7 +73,8 @@ struct BrokenLight
 	int LightType;
 };
 
-uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS] = BrokenLight[MAX_SHADER_LIGHTS](BrokenLight(vec3(0.0), vec3(0.0), vec3(1.0), 0.5, vec3(1.0, 0.09, 0.032), vec2(12.5, 45.0), 2));
+uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS];
+// uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS] = BrokenLight[MAX_SHADER_LIGHTS](BrokenLight(vec3(0.0), vec3(0.0), vec3(1.0), 0.5, vec3(1.0, 0.09, 0.032), vec2(12.5, 45.0), 2));
 uniform int u_LightsNumber = 0;
 
 
@@ -176,7 +177,7 @@ void main()
 	if(Texture == 0)
 		out_color = vec4(colorResult + v_Color, 1.0);
 	else
-		out_color = vec4(colorResult + v_Color * texture(ourTexture, v_TexCoord).rgb, 1.0);
+		out_color = vec4(colorResult + v_Color * texture(ourTexture, v_TexCoord).rgb, texture(ourTexture, v_TexCoord).a);
 } 
 
 #endif //FRAGMENT_SHADER

@@ -677,6 +677,12 @@
     </ClInclude>
     <ClInclude Include="PhysxSimulationEvents.h">
       <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+      </ClInclude>
+    <ClInclude Include="ComponentCircularBar.h">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+	</ClInclude>
+    <ClInclude Include="ModuleSelection.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ComponentLight.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
@@ -1129,6 +1135,12 @@
     </ClCompile>
     <ClCompile Include="PhysxSimulationEvents.cpp">
       <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+      </ClInclude>
+    <ClCompile Include="ComponentCircularBar.cpp">
+      <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleSelection.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ComponentLight.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
