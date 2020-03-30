@@ -248,6 +248,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addConstructor<void(*) (void)>()
 
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
+		.addFunction("GetMyUID", &ScriptingGameobject::GetMyUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
 		.addFunction("GetLayer", &ScriptingGameobject::GetLayer)
