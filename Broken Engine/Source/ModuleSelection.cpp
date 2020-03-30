@@ -245,7 +245,10 @@ void ModuleSelection::CopyComponentValues(Component* component)
 {
 	component_type = component->GetType();
 	if (component_type != Component::ComponentType::Unknown)
+	{
 		component_node = component->Save();
+		component_name = component->name;
+	}
 }
 
 void ModuleSelection::PasteComponentValues(Component* component)

@@ -89,11 +89,11 @@ bool PanelInspector::Draw()
 							{
 								EngineApp->selection->CopyComponentValues((*it));
 							}
-							if (ImGui::MenuItem("Paste values","",&dummy,EngineApp->selection->ComponentCanBePasted()))
+							if (ImGui::MenuItem("Paste values", EngineApp->selection->component_name.c_str(),&dummy,EngineApp->selection->ComponentCanBePasted()))
 							{
 								EngineApp->selection->PasteComponentValues((*it));
 							}
-							if (ImGui::MenuItem("Paste values to all selected", "", &dummy, EngineApp->selection->ComponentCanBePasted()))
+							if (ImGui::MenuItem("Paste values to all selected", EngineApp->selection->component_name.c_str(), &dummy, EngineApp->selection->ComponentCanBePasted()))
 							{
 								EngineApp->selection->PasteComponentValuesToSelected();
 							}

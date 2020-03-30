@@ -77,6 +77,8 @@ public:
 
 	void DeleteComponentToSelected();
 
+	std::string component_name = "None";
+
 
 	void Select(GameObject* gameobject);
 
@@ -112,6 +114,7 @@ private:
 	bool aabb_selection = false;
 	float3 aabb_start = float3::zero;
 	float3 aabb_end = float3::zero;
+
 	// Component copy and paste
 	json component_node;
 	Component::ComponentType component_type = Component::ComponentType::Unknown;
