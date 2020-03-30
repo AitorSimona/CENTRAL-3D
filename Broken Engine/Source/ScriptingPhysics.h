@@ -25,8 +25,8 @@ public:
 	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID = -1);
 	void AddForce(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID = -1);
 
-	void SetKinematic(bool enable);
-	void UseGravity(bool enable);
+	void SetKinematic(bool enable, uint gameobject_UUID);
+	void UseGravity(bool enable, uint gameobject_UUID);
 	void OverlapSphere(float3 position, float radius, LayerMask layer, lua_State* L);
 
 	int OnTriggerEnter(uint UID, lua_State* L);

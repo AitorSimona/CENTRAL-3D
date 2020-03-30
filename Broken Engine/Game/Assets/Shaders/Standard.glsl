@@ -40,7 +40,7 @@ void main()
 #define FRAGMENT_SHADER 
 #ifdef FRAGMENT_SHADER 
 
-#define MAX_SHADER_LIGHTS 2
+#define MAX_SHADER_LIGHTS 20
 
 //Output Variables
 out vec4 out_color;
