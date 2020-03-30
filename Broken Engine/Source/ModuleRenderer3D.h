@@ -14,6 +14,7 @@ class ResourceMesh;
 class ResourceMaterial;
 class ComponentLight;
 class math::float4x4;
+class ComponentParticleEmitter;
 
 typedef int RenderMeshFlags;
 
@@ -91,6 +92,7 @@ public:
 	// --- To Add Lights ---
 	void AddLight(ComponentLight* light);
 	void PopLight(ComponentLight* light);
+	const int GetLightIndex(ComponentLight* light);
 	const float GetGammaCorrection() const { return m_GammaCorrection; }
 	void SetGammaCorrection(float gammaCorr) { m_GammaCorrection = gammaCorr; }
 
@@ -140,6 +142,8 @@ public:
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
+
+	std::vector<ComponentParticleEmitter*> particleEmitters;
 
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;

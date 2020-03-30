@@ -76,7 +76,7 @@ bool ModuleResourceManager::Start()
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
 
 	// --- Create default font ---
-	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
+	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Assets/Fonts/arial.ttf",7);
 	DefaultFont->Init();
 
 	// --- Add file filters, so we only search for relevant files ---
