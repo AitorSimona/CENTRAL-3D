@@ -87,6 +87,8 @@ void ComponentImage::Draw()
 
 	glUniform1i(glGetUniformLocation(shaderID, "ourTexture"), 1);
 	glActiveTexture(GL_TEXTURE0 + 1);
+
+	if(texture)
 	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
 
 	// --- Draw plane with given texture ---
