@@ -79,6 +79,7 @@ private:
 	//ResourceMesh* rmeshLight = nullptr;
 
 	bool m_SetToZero = false;
+	bool m_DrawMesh = true;
 };
 
 BE_END_NAMESPACE
