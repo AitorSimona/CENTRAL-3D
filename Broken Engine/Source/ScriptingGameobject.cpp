@@ -48,6 +48,11 @@ uint ScriptingGameobject::GetScriptGOParent()
 	return ret;
 }
 
+uint ScriptingGameobject::GetScriptGOUID()
+{
+	return App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
+}
+
 uint ScriptingGameobject::GetGOParentFromUID(uint gameobject_UUID)
 {
 	uint ret = 0;

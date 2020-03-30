@@ -13,7 +13,7 @@ public:
 
 public:	
 	// Position
-	int GetPosition(lua_State* L, uint gameobject_UUID = -1);
+	int GetPosition(uint gameobject_UUID, lua_State* L);
 	float GetPositionX(uint gameobject_UUID = -1) const;
 	float GetPositionY(uint gameobject_UUID = -1) const;
 	float GetPositionZ(uint gameobject_UUID = -1) const;
@@ -26,7 +26,7 @@ public:
 	void SetObjectRotation(float x, float y, float z, uint gameobject_UUID = -1);
 	void LookAt(float spotX, float spotY, float spotZ, bool local, uint gameobject_UUID = -1);
 
-	int GetRotation(lua_State* L, uint gameobject_UUID = -1) const;
+	int GetRotation(uint gameobject_UUID, lua_State* L) const;
 	float GetRotationX(uint gameobject_UUID = -1) const;
 	float GetRotationY(uint gameobject_UUID = -1) const;
 	float GetRotationZ(uint gameobject_UUID = -1) const;
