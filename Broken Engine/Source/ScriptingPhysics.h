@@ -27,7 +27,9 @@ public:
 
 	void SetKinematic(bool enable);
 	void UseGravity(bool enable);
-	void OverlapSphere(float3 position, float radius, LayerMask layer, lua_State* L);
+	void Move(float vel_x, float vel_y);
+	void OverlapSphere(lua_State* L);
+	int OverlapSphere2(float position_x, float position_y, float position_z, float radius, uint layer, lua_State* L);
 
 	int OnTriggerEnter(uint UID, lua_State* L);
 	int OnTriggerStay(uint UID, lua_State* L);

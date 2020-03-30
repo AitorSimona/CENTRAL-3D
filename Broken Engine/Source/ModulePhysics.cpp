@@ -374,7 +374,7 @@ void ModulePhysics::DeleteActors(GameObject* go)
 	App->physics->mControllerManager->purgeControllers();
 }
 
-void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<GameObject*>& objects)
+void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<uint>& objects)
 {
 	detected_objects = &objects;
 
@@ -408,8 +408,9 @@ void UserIterator::processShapes(physx::PxU32 count, const physx::PxActorShape* 
 		GameObject* GO = App->physics->actors[actor];
 		if (GO) {
 			if (layer == GO->layer) {
-				if(App->physics->detected_objects)
-					App->physics->detected_objects->push_back(GO);
+				if (App->physics->detected_objects) {
+					App->physics->detected_objects->push_back(GO->GetUID());
+				}
 			}
 		}
 	}

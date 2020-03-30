@@ -295,6 +295,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("OnCollisionStay", &ScriptingPhysics::OnCollisionStay)
 		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
+		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
+		.addFunction("Move", &ScriptingPhysics::Move)
+
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

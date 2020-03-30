@@ -4,6 +4,7 @@
 #include "ModuleSceneManager.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "ScriptData.h"
 #include "ResourceScene.h"
 
@@ -146,11 +147,47 @@ void ScriptingPhysics::UseGravity(bool enable)
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
 
-void ScriptingPhysics::OverlapSphere(float3 position, float radius, LayerMask layer, lua_State* L)
+void ScriptingPhysics::Move(float vel_x, float vel_y) {
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		character->Move(vel_x, vel_y);
+	}
+}
+void ScriptingPhysics::OverlapSphere(lua_State* L)
 {
-	std::vector<GameObject*> objects;
-	App->physics->OverlapSphere(position, radius, layer, objects);
-	//std::
+	int count = 1;
+	int posx = lua_tointeger(L, ++count);
+	int posy = lua_tointeger(L, ++count);
+	int posz = lua_tointeger(L, ++count);
+	int radius = lua_tointeger(L, ++count);
+	uint layer = lua_tointeger(L, ++count);
+
+	std::vector<uint> objects;
+	App->physics->OverlapSphere(float3(posx, posy, posz), radius, (LayerMask)layer, objects);
+
+	lua_getglobal(L, "getcollisions");
+	lua_newtable(L);
+	for (size_t i = 0; i < objects.size(); ++i) {
+		lua_pushinteger(L, i + 1);
+		lua_pushnumber(L, objects[i]);
+		lua_settable(L, -3);
+	}
+}
+int ScriptingPhysics::OverlapSphere2(float position_x, float position_y, float position_z, float radius, uint layer, lua_State* L)
+{
+	std::vector<uint> objects;
+	App->physics->OverlapSphere(float3(position_x, position_y, position_z), radius, (LayerMask)layer, objects);
+
+	//lua_newtable(L);
+
+	/*for (int i = 1; i <= objects.size(); i++) {
+		lua_pushnumber(L, 123456789.0f);
+			return 1;
+		lua_rawseti(L, -2, i); 
+	}	*/	
+	lua_pushnumber(L, 5);
+	return 1;
+
 }
 
 int ScriptingPhysics::OnTriggerEnter(uint UID, lua_State* L)
