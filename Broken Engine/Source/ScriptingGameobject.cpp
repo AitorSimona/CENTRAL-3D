@@ -55,20 +55,20 @@ uint ScriptingGameobject::GetScriptGOParent()
 	return ret;
 }
 
-uint ScriptingGameobject::GetGOParentFromUID(uint go_UUID)
+uint ScriptingGameobject::GetGOParentFromUID(uint gameobject_UUID)
 {
 	uint ret = 0;
-	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go && go->GetName() != App->scene_manager->GetName())
 	{
 		if (go->parent)
 			ret = go->parent->GetUID();
 		else
-			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID has no parent! 0 will be returned", go_UUID);
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID has no parent! 0 will be returned", gameobject_UUID);
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID was not found! 0 will be returned", go_UUID);
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID was not found! 0 will be returned", gameobject_UUID);
 
 	return ret;
 }
@@ -76,9 +76,21 @@ uint ScriptingGameobject::GetGOParentFromUID(uint go_UUID)
 void ScriptingGameobject::DestroyGOFromScript(uint gameobject_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	ENGINE_CONSOLE_LOG("Destroying: %s ...", go->GetName());
 
-	App->scene_manager->SendToDelete(go);
+	if (go)
+		App->scene_manager->SendToDelete(go);
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+}
+
+void ScriptingGameobject::SetActiveGameObject(uint gameobject_UUID, bool active)
+{
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go)
+		go->GetActive() = active;
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
 float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)

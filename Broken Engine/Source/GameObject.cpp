@@ -336,7 +336,7 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 		case Component::ComponentType::Button:
 			component = new ComponentButton(this);
 			break;
-		
+
 		case Component::ComponentType::CharacterController:
 			component = new ComponentCharacterController(this);
 			break;
@@ -507,7 +507,8 @@ bool GameObject::IsEnabled() const {
 	return active;
 }
 
-void GameObject::SetName(const char* name) {
+void GameObject::SetName(const char* name)
+{
 	if (name && name != "root")
 		this->name = name;
 }
