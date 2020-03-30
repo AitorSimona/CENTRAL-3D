@@ -40,6 +40,7 @@ EngineApplication::EngineApplication() {
 	
 	// Scenes
 	AddModule(scene_manager);
+	AddModule(selection);
 
 	//Physics and particles
 	AddModule(physics);

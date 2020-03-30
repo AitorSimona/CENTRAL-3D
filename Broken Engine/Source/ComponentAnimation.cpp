@@ -20,7 +20,7 @@ using namespace Broken;
 
 ComponentAnimation::ComponentAnimation(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Animation)
 {
-
+	name = "Animation";
 }
 
 ComponentAnimation::~ComponentAnimation()
@@ -287,11 +287,9 @@ void ComponentAnimation::ONResourceEvent(uint UID, Resource::ResourceNotificatio
 
 void ComponentAnimation::CreateInspectorNode()
 {
-	ImGui::Checkbox("##Animator", &GetActive());
-	ImGui::SameLine();
-
-	if (ImGui::TreeNode("Animation"))
+	if (res_anim)
 	{
+
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
 
@@ -304,12 +302,13 @@ void ComponentAnimation::CreateInspectorNode()
 
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);
-			
+
+
 			if (res_animator)
 			{
 				if (ImGui::Button("Save animation info"))
 				{
-					
+
 					res_animator->FreeMemory();
 
 					for (auto iterator = animations.begin(); iterator != animations.end(); ++iterator)
@@ -317,14 +316,14 @@ void ComponentAnimation::CreateInspectorNode()
 						Animation* anim = new Animation((*iterator)->name, (*iterator)->start, (*iterator)->end, (*iterator)->loop, (*iterator)->Default);
 						res_animator->animations.push_back(anim);
 					}
-						
+
 					ImporterAnimator* IAnim = App->resources->GetImporter<ImporterAnimator>();
 					IAnim->Save(res_animator);
 				}
 			}
 			else
 				ImGui::Text("No Animator applied");
-		
+
 
 			ImGui::SameLine();
 			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
@@ -337,7 +336,7 @@ void ComponentAnimation::CreateInspectorNode()
 					uint UID = *(const uint*)payload->Data;
 					Resource* resource = App->resources->GetResource(UID, false);
 
-					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR) 
+					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR)
 					{
 						LoadAnimator(true, UID);
 					}
@@ -376,8 +375,6 @@ void ComponentAnimation::CreateInspectorNode()
 				}
 			}
 		}
-
-		ImGui::TreePop();
 	}
 }
 

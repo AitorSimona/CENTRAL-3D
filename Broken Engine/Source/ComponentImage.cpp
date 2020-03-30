@@ -28,6 +28,7 @@ using namespace Broken;
 
 ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Image)
 {
+	name = "Image";
 	visible = true;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
@@ -159,76 +160,64 @@ void ComponentImage::Load(json& node)
 
 void ComponentImage::CreateInspectorNode()
 {
-	ImGui::Checkbox("##ImageActive", &GetActive());
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
+	ImGui::Separator();
+
+	// Size
+	ImGui::Text("Size:    ");
 	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f);
 
-	if (ImGui::TreeNode("Image"))
-	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
+	// Position
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##imageposition", &position2D.x);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##imageposition", &position2D.y);
 
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-		ImGui::Separator();
+	// Rotation
+	ImGui::Text("Rotation:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##imagerotation", &rotation2D);
 
-		// Size
-		ImGui::Text("Size:    ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f);
+	// ------------------------------------------
 
-		// Position
-		ImGui::Text("Position:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##imageposition", &position2D.x);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##imageposition", &position2D.y);
+	// Image
+	ImGui::Separator();
+	ImGui::Text("Image");
 
-		// Rotation
-		ImGui::Text("Rotation:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("##imagerotation", &rotation2D);
-
-		// ------------------------------------------
-
-		// Image
-		ImGui::Separator();
-		ImGui::Text("Image");
-
-		if (texture == nullptr)
-			ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
-		else
-			ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
+	if (texture == nullptr)
+		ImGui::Image((ImTextureID)App->textures->GetDefaultTextureID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //default texture
+	else
+		ImGui::Image((ImTextureID)texture->GetTexID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0)); //loaded texture
 		 
-		//drag and drop
-		if (ImGui::BeginDragDropTarget())
+	//drag and drop
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
 			{
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
+				if (texture)
+					texture->Release();
 
-				if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
-				{
-					if (texture)
-						texture->Release();
-
-					texture = (ResourceTexture*)App->resources->GetResource(UID);
-				}
+				texture = (ResourceTexture*)App->resources->GetResource(UID);
 			}
-			ImGui::EndDragDropTarget();
 		}
-
-		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::TreePop();
+		ImGui::EndDragDropTarget();
 	}
 
+	ImGui::Separator();
 	
 }
