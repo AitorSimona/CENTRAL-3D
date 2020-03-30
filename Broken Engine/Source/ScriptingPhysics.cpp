@@ -4,6 +4,7 @@
 #include "ModuleSceneManager.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "ScriptData.h"
 #include "ResourceScene.h"
 
@@ -252,11 +253,90 @@ void ScriptingPhysics::UseGravity(bool enable, uint gameobject_UUID)
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
 
-void ScriptingPhysics::OverlapSphere(float3 position, float radius, LayerMask layer, lua_State* L)
+int ScriptingPhysics::GetCharacterPosition(lua_State* L) {
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		physx::PxExtendedVec3 pos = character->controller->getFootPosition();
+
+		lua_pushnumber(L, pos.x);
+		lua_pushnumber(L, pos.y);
+		lua_pushnumber(L, pos.z);
+
+		return 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetCharacterPosition");
+
+	return 0;
+
+}
+void ScriptingPhysics::SetCharacterPosition(float posx, float posy, float posz) {
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		physx::PxExtendedVec3 pos(posx, posy, posz);
+
+		character->controller->setFootPosition(pos);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on SetCharacterPosition");
+}
+
+
+
+void ScriptingPhysics::Move(float vel_x, float vel_y) {
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		character->Move(vel_x, vel_y);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on Move");
+}
+
+int ScriptingPhysics::GetCharacterUpDirection(lua_State* L)
 {
-	std::vector<GameObject*> objects;
-	App->physics->OverlapSphere(position, radius, layer, objects);
-	//std::
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		physx::PxVec3 dir = character->controller->getUpDirection();
+
+		lua_pushnumber(L, dir.x);
+		lua_pushnumber(L, dir.y);
+		lua_pushnumber(L, dir.z);
+
+		return 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetUpDirection");
+
+	return 0;
+}
+
+void ScriptingPhysics::SetCharacterUpDirection(float rotx, float roty, float rotz, lua_State* L)
+{
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		physx::PxVec3 rot(rotx, roty, rotz);
+
+		character->controller->setUpDirection(rot);
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on SetUpDirection");
+}
+
+luabridge::LuaRef ScriptingPhysics::OverlapSphere(float position_x, float position_y, float position_z, float radius, uint layer, lua_State* L)
+{
+	std::vector<uint> objects;
+	App->physics->OverlapSphere(float3(position_x, position_y, position_z), radius, (LayerMask)layer, objects);
+
+	luabridge::LuaRef ret = 0;
+	luabridge::LuaRef uniforms(L, luabridge::newTable(L));
+	for (int i = 0; i < objects.size(); ++i)
+	{
+		uniforms.append(objects[i]);
+	}
+
+	ret = uniforms;
+
+	return ret;
 }
 
 int ScriptingPhysics::OnTriggerEnter(uint UID, lua_State* L)

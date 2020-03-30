@@ -296,6 +296,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("OnCollisionStay", &ScriptingPhysics::OnCollisionStay)
 		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
+		.addFunction("Move", &ScriptingPhysics::Move)
+		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
+		.addFunction("SetCharacterPosition", &ScriptingPhysics::SetCharacterPosition)
+		.addFunction("GetCharacterUpDirection", &ScriptingPhysics::GetCharacterUpDirection)
+		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
+
+		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
+
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
