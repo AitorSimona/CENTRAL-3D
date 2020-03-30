@@ -28,15 +28,15 @@ public:
 
 	void SetKinematic(bool enable);
 	void UseGravity(bool enable);
-	void OverlapSphere(float3 position, float radius, LayerMask layer);
+	void OverlapSphere(float3 position, float radius, LayerMask layer, lua_State* L);
 
-	int OnTriggerEnter(lua_State* L);
-	int OnTriggerStay(lua_State* L);
-	int OnTriggerExit(lua_State* L);
+	int OnTriggerEnter(uint UID, lua_State* L);
+	int OnTriggerStay(uint UID, lua_State* L);
+	int OnTriggerExit(uint UID, lua_State* L);
 
-	int OnCollisionEnter(lua_State* L);
-	int OnCollisionStay(lua_State* L);
-	int OnCollisionExit(lua_State* L);
+	int OnCollisionEnter(uint UID, lua_State* L);
+	int OnCollisionStay(uint UID, lua_State* L);
+	int OnCollisionExit(uint UID, lua_State* L);
 
 };
 BE_END_NAMESPACE

@@ -35,6 +35,13 @@ uint ScriptingGameobject::FindGameObject(const char* go_name)
 	return ret;
 }
 
+uint ScriptingGameobject::GetMyUID()
+{
+	uint UID = App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
+
+	return UID;
+}
+
 void ScriptingGameobject::DestroyGOFromScript(uint gameobject_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);

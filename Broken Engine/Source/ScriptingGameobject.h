@@ -19,6 +19,7 @@ public:
 
 	// GameObject-related functions
 	uint FindGameObject(const char* go_name);
+	uint GetMyUID();
 	void DestroyGOFromScript(uint gameobject_UUID);
 
 	float GetGameObjectPos(uint gameobject_UUID, lua_State* L);
