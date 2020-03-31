@@ -9,32 +9,29 @@
 
 using namespace Broken;
 
-ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled) 
-{
+ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled) {
 	name = "Window";
 	window = NULL;
 	screen_surface = NULL;
 }
 
 // Destructor
-ModuleWindow::~ModuleWindow() 
-{
+ModuleWindow::~ModuleWindow() {
 }
 
 // Called before render is available
-bool ModuleWindow::Init(json& file) 
-{
+bool ModuleWindow::Init(json& file) {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Init SDL window & surface");
 	bool ret = true;
-
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-	else 
-	{
+	else {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("SDL_Init Video success");
+
+		LoadStatus(file);
 
 		// --- Get Display Data ---
 		SDL_DisplayMode display;
@@ -42,21 +39,18 @@ bool ModuleWindow::Init(json& file)
 		display_Width = display.w;
 		display_Height = display.h;
 
-		if (App->isGame)
+		// --- Assign Display Specific values to code vars ---
+		if (!App->isGame)
 		{
-			resizable = false;
-			screen_width = 1024;
-			screen_height = 576;
-		}
-		else
-		{
-			// --- Assign Display Specific values to code vars ---
 			screen_width = uint(display.w * 0.75f);
 			screen_height = uint(display.h * 0.75f);
 		}
+		else
+		{
+			resizable = false;
+		}
 
 		RefreshRate = display.refresh_rate;
-
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 		//Use OpenGL 3.1
@@ -189,7 +183,8 @@ void ModuleWindow::GetWinMaxMinSize(uint& min_width, uint& min_height, uint& max
 	}
 }
 
-const json& ModuleWindow::SaveStatus() const{
+const json& ModuleWindow::SaveStatus() const
+{
 	
 	static json m_config;
 
@@ -199,13 +194,19 @@ const json& ModuleWindow::SaveStatus() const{
 	m_config["resizable"] = resizable;
 	m_config["height"] = screen_height;
 	m_config["width"] = screen_width;
-	
+	m_config["height"] = screen_height;
+	m_config["width"] = screen_width;
+	m_config["sceneY"] = 640;
+	m_config["sceneX"] = 480;
+
 	return m_config;
 
 }
 
-void ModuleWindow::LoadStatus(const json& file) {
-
+void ModuleWindow::LoadStatus(const json& file)
+{
+	screen_width = file["Window"]["sceneX"].is_null() ? 640 : file["Window"]["sceneX"].get<uint>();
+	screen_height = file["Window"]["sceneY"].is_null() ? 480 : file["Window"]["sceneY"].get<uint>();
 }
 
 void ModuleWindow::SetFullscreen(bool value) {

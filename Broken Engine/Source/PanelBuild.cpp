@@ -167,6 +167,9 @@ void PanelBuild::makeBuild() {
 	gameSettings["Application"]["Title"] = buildName;
 	gameSettings["SceneManager"]["MainScene"] = scenePath;
 	gameSettings["Camera3D"]["MainCamera"] = selectedCamera->GetName();
+	gameSettings["Window"]["sceneX"] = EngineApp->gui->sceneWidth;
+	gameSettings["Window"]["sceneY"] = EngineApp->gui->sceneHeight;
+
 	EngineApp->SaveForBuild(gameSettings, settingspath.c_str());
 
 	SetOnOff(false);

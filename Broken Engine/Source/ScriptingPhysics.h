@@ -36,8 +36,14 @@ public:
 
 	void Move(float vel_x, float vel_y);
 	int GetCharacterPosition(lua_State* L);
+	float GetCharacterPositionX();
+	float GetCharacterPositionY();
+	float GetCharacterPositionZ();
 	void SetCharacterPosition(float posx, float posy, float posz);
 	int GetCharacterUpDirection(lua_State* L);
+	float GetCharacterUpDirectionX();
+	float GetCharacterUpDirectionY();
+	float GetCharacterUpDirectionZ();
 	void SetCharacterUpDirection(float rotx, float roty, float rotz, lua_State* L);
 
 	int OnTriggerEnter(uint UID, lua_State* L);

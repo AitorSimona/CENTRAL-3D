@@ -168,22 +168,73 @@ void ScriptingPhysics::UseGravity(bool enable)
 }
 
 int ScriptingPhysics::GetCharacterPosition(lua_State* L) {
+	
+	int ret = 0;
+	float3 aux = float3(0.0f);
+
 	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
 	if (character) {
 		physx::PxExtendedVec3 pos = character->controller->getFootPosition();
-
-		lua_pushnumber(L, pos.x);
-		lua_pushnumber(L, pos.y);
-		lua_pushnumber(L, pos.z);
-
-		return 3;
+		aux.x = pos.x;
+		aux.y = pos.y;
+		aux.z = pos.z;
+		ret = 3;
 	}
 	else
 		ENGINE_CONSOLE_LOG("Character Controller is null on GetCharacterPosition");
 
-	return 0;
+	lua_pushnumber(L, aux.x);
+	lua_pushnumber(L, aux.y);
+	lua_pushnumber(L, aux.z);
+	return ret;
 
 }
+
+float ScriptingPhysics::GetCharacterPositionX()
+{
+	float ret = 0.0f;
+
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		physx::PxExtendedVec3 pos = character->controller->getFootPosition();
+		ret = pos.x;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetCharacterPosition");
+
+	return ret;
+}
+
+float ScriptingPhysics::GetCharacterPositionY()
+{
+	float ret = 0.0f;
+
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		physx::PxExtendedVec3 pos = character->controller->getFootPosition();
+		ret = pos.y;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetCharacterPosition");
+
+	return ret;
+}
+
+float ScriptingPhysics::GetCharacterPositionZ()
+{
+	float ret = 0.0f;
+
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	if (character) {
+		physx::PxExtendedVec3 pos = character->controller->getFootPosition();
+		ret = pos.z;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetCharacterPosition");
+
+	return ret;
+}
+
 void ScriptingPhysics::SetCharacterPosition(float posx, float posy, float posz) {
 	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
 	if (character) {
@@ -194,8 +245,6 @@ void ScriptingPhysics::SetCharacterPosition(float posx, float posy, float posz) 
 	else
 		ENGINE_CONSOLE_LOG("Character Controller is null on SetCharacterPosition");
 }
-
-
 
 void ScriptingPhysics::Move(float vel_x, float vel_y) {
 	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
@@ -217,6 +266,51 @@ int ScriptingPhysics::GetCharacterUpDirection(lua_State* L)
 		lua_pushnumber(L, dir.z);
 
 		return 3;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetUpDirection");
+
+	return 0;
+}
+
+float ScriptingPhysics::GetCharacterUpDirectionX()
+{
+	float ret = 0.0f;
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+	
+	if (character) {
+		physx::PxVec3 dir = character->controller->getUpDirection();
+		ret = dir.x;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetUpDirection");
+
+	return 0;
+}
+
+float ScriptingPhysics::GetCharacterUpDirectionY()
+{
+	float ret = 0.0f;
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+
+	if (character) {
+		physx::PxVec3 dir = character->controller->getUpDirection();
+		ret = dir.y;
+	}
+	else
+		ENGINE_CONSOLE_LOG("Character Controller is null on GetUpDirection");
+
+	return 0;
+}
+
+float ScriptingPhysics::GetCharacterUpDirectionZ()
+{
+	float ret = 0.0f;
+	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
+
+	if (character) {
+		physx::PxVec3 dir = character->controller->getUpDirection();
+		ret = dir.z;
 	}
 	else
 		ENGINE_CONSOLE_LOG("Character Controller is null on GetUpDirection");
