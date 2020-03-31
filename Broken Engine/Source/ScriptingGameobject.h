@@ -25,7 +25,7 @@ public:
 	void DestroyGOFromScript(uint gameobject_UUID);
 	void SetActiveGameObject(uint gameobject_UUID, bool active);
 
-	float GetGameObjectPos(uint gameobject_UUID, lua_State* L);
+	luabridge::LuaRef GetGameObjectPos(uint gameobject_UUID, lua_State* L);
 	float GetGameObjectPosX(uint gameobject_UUID);
 	float GetGameObjectPosY(uint gameobject_UUID);
 	float GetGameObjectPosZ(uint gameobject_UUID);
