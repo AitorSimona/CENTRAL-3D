@@ -277,7 +277,7 @@ int ModuleDetour::calculatePath(float3 sourcePosition, float3 destination, int a
 	if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -5; // couldn't create a path
 	if (nVertCount == 0) return -6; // couldn't find a path
 
-	path.resize(nVertCount * 3);
+	path.resize(nVertCount);
 	memcpy(path.data(), StraightPath, sizeof(float) * nVertCount * 3);
 
 	return nVertCount;
