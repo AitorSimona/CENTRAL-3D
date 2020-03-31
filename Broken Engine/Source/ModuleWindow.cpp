@@ -9,26 +9,31 @@
 
 using namespace Broken;
 
-ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled) {
+ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled) 
+{
 	name = "Window";
 	window = NULL;
 	screen_surface = NULL;
 }
 
 // Destructor
-ModuleWindow::~ModuleWindow() {
+ModuleWindow::~ModuleWindow() 
+{
 }
 
 // Called before render is available
-bool ModuleWindow::Init(json& file) {
+bool ModuleWindow::Init(json& file) 
+{
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Init SDL window & surface");
 	bool ret = true;
+
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-	else {
+	else 
+	{
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("SDL_Init Video success");
 
 		// --- Get Display Data ---
@@ -37,10 +42,21 @@ bool ModuleWindow::Init(json& file) {
 		display_Width = display.w;
 		display_Height = display.h;
 
-		// --- Assign Display Specific values to code vars ---
-		screen_width = uint(display.w * 0.75f);
-		screen_height = uint(display.h * 0.75f);
+		if (App->isGame)
+		{
+			resizable = false;
+			screen_width = 1024;
+			screen_height = 576;
+		}
+		else
+		{
+			// --- Assign Display Specific values to code vars ---
+			screen_width = uint(display.w * 0.75f);
+			screen_height = uint(display.h * 0.75f);
+		}
+
 		RefreshRate = display.refresh_rate;
+
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 		//Use OpenGL 3.1

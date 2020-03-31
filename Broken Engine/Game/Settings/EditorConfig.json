@@ -84,8 +84,8 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 648,
+        "height": 1080,
         "resizable": true,
-        "width": 1152
+        "width": 1920
     }
 }
