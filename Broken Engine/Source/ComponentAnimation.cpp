@@ -120,7 +120,8 @@ void ComponentAnimation::Update()
 Animation* ComponentAnimation::CreateAnimation(std::string name, uint start, uint end, bool loop, bool Default)
 {
 	Animation* anim = new Animation(name, start, end, loop, Default);
-	anim->speed = res_anim->ticksPerSecond;
+	if (res_anim != nullptr)
+		anim->speed = res_anim->ticksPerSecond;
 	animations.push_back(anim);
 
 	return anim;
