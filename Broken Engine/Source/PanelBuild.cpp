@@ -28,7 +28,7 @@ bool PanelBuild::Draw() {
 		ImGui::Separator();
 		ImGui::Text("Main scene:");
 		ImGui::Text("Currently multiple scenes are not supported, main scene is scene.");
-		scenePath = EngineApp->scene_manager->currentScene->GetResourceFile();
+		sceneName = EngineApp->scene_manager->currentScene->GetName();
 		//ResourceScene* selected_scene = EngineApp->resources->scenes[0];
 		//static ImGuiComboFlags flags = 0;
 		//if (ImGui::BeginCombo("##Scenes Combo", "Main Scene", flags)) // The second parameter is the label previewed before opening the combo.
@@ -162,10 +162,10 @@ void PanelBuild::makeBuild() {
 
 	std::string settingspath = buildName + "/Settings/GameConfig.json";
 	//We write our settings to gameSettings.
-	Broken::json gameSettings = EngineApp->GetConfigFile();
+	Broken::json gameSettings;
 	EngineApp->GetDefaultGameConfig(gameSettings);
 	gameSettings["Application"]["Title"] = buildName;
-	gameSettings["SceneManager"]["MainScene"] = scenePath;
+	gameSettings["SceneManager"]["MainScene"] = sceneName;
 	gameSettings["Camera3D"]["MainCamera"] = selectedCamera->GetName();
 	gameSettings["Window"]["sceneX"] = EngineApp->gui->sceneWidth;
 	gameSettings["Window"]["sceneY"] = EngineApp->gui->sceneHeight;
