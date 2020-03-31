@@ -117,7 +117,7 @@ public:
 
 	void DeleteActors(GameObject* go = nullptr);
 
-	void OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<GameObject*>& objects);
+	void OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<uint>& objects);
 
 	const Broken::json& SaveStatus() const override;
 
@@ -135,7 +135,7 @@ public:
 	physx::PxRigidStatic* plane = nullptr;
 	std::vector<Layer> layer_list;
 	std::map<physx::PxRigidActor*, GameObject*> actors;
-	std::vector<GameObject*>* detected_objects;
+	std::vector<uint>* detected_objects;
 	physx::PxVolumeCache* cache;
 	UserIterator iter;
 

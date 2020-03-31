@@ -45,12 +45,12 @@ public:
 
 public: 
 	ResourceMesh* mesh = nullptr;
+	physx::PxController* controller = nullptr;
+	physx::PxVec3 velocity = physx::PxVec3(0.0f, 0.0f, 0.0f);
 
 private:
 	physx::PxControllerDesc* desc = nullptr;
 	physx::PxCapsuleControllerDesc capsuleDesc;
-	physx::PxController* controller = nullptr;
-	physx::PxVec3 velocity = physx::PxVec3(0.0f, 0.0f, 0.0f);
 
 	float contactOffset = 0.01f;
 	float stepOffset = 0.3f;

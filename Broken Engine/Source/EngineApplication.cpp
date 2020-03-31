@@ -71,6 +71,10 @@ void EngineApplication::SaveForBuild(const Broken::json& reference, const char* 
 	for (std::list<Broken::Module*>::const_iterator item = list_modules.begin(); item != list_modules.end(); ++item) {
 		if ((*item) == editorui)
 			continue;
+
+		if ((*item) == window)
+			continue;
+
 		if ((*item)->isEnabled()) {
 			node = (*item)->SaveStatus();
 			if (node.begin() != node.end())

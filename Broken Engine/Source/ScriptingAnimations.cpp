@@ -12,86 +12,42 @@ ScriptingAnimations::ScriptingAnimations() {}
 
 ScriptingAnimations::~ScriptingAnimations() {}
 
-void ScriptingAnimations::StartAnimation(const char* name, float speed, uint gameobject_UUID)
-{
-	GameObject* go = nullptr;
+void ScriptingAnimations::StartAnimation(const char* name, float speed)
+{	
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (anim)
+		anim->PlayAnimation(name, speed);
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
-
-		if (anim)
-			anim->PlayAnimation(name, speed);
-		else
-			ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
-	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
-void ScriptingAnimations::SetCurrentAnimSpeed(float speed, uint gameobject_UUID)
+void ScriptingAnimations::SetCurrentAnimSpeed(float speed)
 {
-	GameObject* go = nullptr;
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (anim)
+		anim->SetCurrentAnimationSpeed(speed);
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
-
-		if (anim)
-			anim->SetCurrentAnimationSpeed(speed);
-		else
-			ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
-	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
-void ScriptingAnimations::SetAnimSpeed(const char* name, float speed, uint gameobject_UUID)
+void ScriptingAnimations::SetAnimSpeed(const char* name, float speed)
 {
-	GameObject* go = nullptr;
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (anim)
+		anim->SetAnimationSpeed(name, speed);
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
-
-		if (anim)
-			anim->SetAnimationSpeed(name, speed);
-		else
-			ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
-	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
-void ScriptingAnimations::SetBlendTime(float value, uint gameobject_UUID)
+void ScriptingAnimations::SetBlendTime(float value)
 {
-	GameObject* go = nullptr;
+	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (anim)
+		anim->ChangeBlendTime(value);
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
-
-		if (anim)
-			anim->ChangeBlendTime(value);
-		else
-			ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
-	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
