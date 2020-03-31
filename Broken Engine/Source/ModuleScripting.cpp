@@ -840,6 +840,11 @@ void ModuleScripting::CleanUpInstances() {
 			delete (*it);
 	}
 
+	for (std::vector<ScriptInstance*>::iterator it = recompiled_instances.begin(); it != recompiled_instances.end(); ++it) {
+		if ((*it) != nullptr)
+			delete (*it);
+	}
+
 	//debug_instance->my_table_class = 0;
 
 	class_instances.clear();
