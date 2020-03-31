@@ -91,9 +91,8 @@ void ScriptingGameobject::SetActiveGameObject(uint gameobject_UUID, bool active)
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
+luabridge::LuaRef ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
 {
-	float ret = 0.0f;
 	float3 rot = float3(0.0f);
 
 	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UUID)).second;
@@ -107,15 +106,16 @@ float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
 	if (go != nullptr && transform != nullptr)
 	{
 		rot = transform->GetPosition();
-		ret = 3;
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 
-	lua_pushnumber(L, rot.x);
-	lua_pushnumber(L, rot.y);
-	lua_pushnumber(L, rot.z);
-	return ret;
+	luabridge::LuaRef table = luabridge::newTable(L);
+	table.append(rot.x);
+	table.append(rot.y);
+	table.append(rot.z);
+
+	return table;
 }
 
 float ScriptingGameobject::GetGameObjectPosX(uint gameobject_UUID)
