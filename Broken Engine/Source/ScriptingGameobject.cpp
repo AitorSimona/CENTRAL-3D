@@ -37,9 +37,7 @@ uint ScriptingGameobject::FindGameObject(const char* go_name)
 
 uint ScriptingGameobject::GetMyUID()
 {
-	uint UID = App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
-
-	return UID;
+	return App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
 }
 
 uint ScriptingGameobject::GetScriptGOParent()
@@ -53,11 +51,6 @@ uint ScriptingGameobject::GetScriptGOParent()
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject has no parent! 0 will be returned");
 
 	return ret;
-}
-
-uint ScriptingGameobject::GetScriptGOUID()
-{
-	return App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
 }
 
 uint ScriptingGameobject::GetGOParentFromUID(uint gameobject_UUID)
@@ -207,15 +200,11 @@ void ScriptingGameobject::TranslateGameObject(uint gameobject_UUID, float x, flo
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Object or its transformation component are null");
 }
 
-uint ScriptingGameobject::GetComponentFromGO(const char* component_name, const char* go_name)
+uint ScriptingGameobject::GetComponentFromGO(uint gameobject_UUID, const char* component_name)
 {
 	uint ret = 0;
 	GameObject* go = nullptr;
-
-	if (go_name == "NO_NAME")
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-	else
-		go = App->scene_manager->currentScene->GetGOWithName(go_name);
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go != nullptr)
 	{
@@ -255,12 +244,12 @@ uint ScriptingGameobject::GetComponentFromGO(const char* component_name, const c
 		}
 		else
 		{
-			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Component %s was not found inside Gameobject %s! 0 will be returned", component_name, go_name);
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Component %s was not found inside Gameobject with UUID %d! 0 will be returned", component_name, gameobject_UUID);
 		}
 	}
 	else
 	{
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject %s was not found! 0 will be returned", go_name);
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with UUID %d was not found! 0 will be returned", gameobject_UUID);
 	}
 
 	return ret;
