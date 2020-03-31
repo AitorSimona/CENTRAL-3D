@@ -133,7 +133,7 @@ void ModuleAudio::InitWwise()
 	AkBankID bankID;
 	AKRESULT retValue;
 	retValue = SoundEngine::LoadBank(BANKNAME_INIT, AK_DEFAULT_POOL_ID, bankID);
-	assert(retValue == AK_Success);
+	//assert(retValue == AK_Success);
 }
 
 void ModuleAudio::TerminateWwise()
