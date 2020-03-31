@@ -16,11 +16,11 @@
 
 #include "mmgr/mmgr.h"
 
-//using namespace physx;
 using namespace Broken;
 
 ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Collider)
 {
+	name = "Collider";
 	mesh = (ResourceMesh*)App->resources->CreateResource(Resource::ResourceType::MESH, "DefaultColliderMesh");
 }
 
@@ -31,17 +31,35 @@ ComponentCollider::~ComponentCollider()
 
 void ComponentCollider::Update()
 {
-	if (editCollider)
-		CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
+	if (editCollider) {
+		UpdateCollider();
+	}
 
 	if (to_delete)
+	{
+		Delete();
 		this->GetContainerGameObject()->RemoveComponent(this);
+	}
 }
 
-void ComponentCollider::DrawComponent() 
+void ComponentCollider::UpdateCollider() {
+	CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
+}
+
+void ComponentCollider::DrawComponent()
 {
 	if (shape)
 	{
+		if (GetActor() != nullptr)
+		{
+			if (!GetActive())
+				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+
+			else
+				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+		}
+
+
 		// --- Get shape's dimensions ---
 		physx::PxGeometryHolder holder = shape->getGeometry();
 		physx::PxGeometryType::Enum type = holder.getType();
@@ -110,7 +128,7 @@ void ComponentCollider::DrawComponent()
 		RenderMeshFlags flags = wire;
 		App->renderer3D->DrawMesh(globalMatrix, mesh, (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), false), nullptr, flags, Color(125,125,125));
 	}
-	
+
 }
 
 void ComponentCollider::UpdateLocalMatrix() {
@@ -131,7 +149,7 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.scaleX = colliderSize.x * originalSize.x;
 	localMatrix.scaleY = colliderSize.y * originalSize.y;
 	localMatrix.scaleZ = colliderSize.z * originalSize.z;
-	
+
 	globalMatrix = gt * localMatrix;
 
 	//PHYSX DEBUG
@@ -141,9 +159,9 @@ void ComponentCollider::UpdateLocalMatrix() {
 
 	float threshold = 0.1f;
 
-	if (math::Abs(scale.x - tmpScale.x) > threshold
+	if ((math::Abs(scale.x - tmpScale.x) > threshold
 		|| math::Abs(scale.y - tmpScale.y) > threshold
-		|| math::Abs(scale.z - tmpScale.z) > threshold) 
+		|| math::Abs(scale.z - tmpScale.z) > threshold))
 	{
 		editCollider = true;
 		tmpScale = scale;
@@ -152,7 +170,7 @@ void ComponentCollider::UpdateLocalMatrix() {
 	physx::PxVec3 posi(pos.x, pos.y, pos.z);
 	physx::PxQuat quati(rot.x, rot.y, rot.z, rot.w);
 	physx::PxTransform transform(posi, quati);
-	
+
 
 	if (dynamicRB == nullptr)
 		rigidStatic->setGlobalPose(transform); //ON EDITOR
@@ -181,7 +199,7 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 	std::string name = GO->GetName();
 	transform = RB->rigidBody->getGlobalPose();
 	float x = transform.p.x - offset.x;
-	
+
 	bool isFalling = RB->rigidBody->getLinearVelocity().y != 0.0f;
 
 	if (isFalling)
@@ -234,6 +252,7 @@ json ComponentCollider::Save() const
 	}
 
 	node["colliderType"] = std::to_string(colliderType);
+	node["isTrigger"] = std::to_string(isTrigger);
 
 	node["localPositionx"] = std::to_string(centerPosition.x);
 	node["localPositiony"] = std::to_string(centerPosition.y);
@@ -287,7 +306,7 @@ void ComponentCollider::Load(json& node)
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 
 	ENGINE_CONSOLE_LOG("Load");
-	CreateCollider(COLLIDER_TYPE::NONE, true);
+	//CreateCollider(COLLIDER_TYPE::NONE, true);
 
 	std::string localPositionx = node["localPositionx"].is_null() ? "0" : node["localPositionx"];
 	std::string localPositiony = node["localPositiony"].is_null() ? "0" : node["localPositiony"];
@@ -323,6 +342,8 @@ void ComponentCollider::Load(json& node)
 
 	std::string colliderType_ = node["colliderType"].is_null() ? "0" : node["colliderType"];
 
+	std::string isTrigger_ = node["isTrigger"].is_null() ? "0" : node["isTrigger"];
+
 	std::string tmpScalex = node["tmpScalex"].is_null() ? "0" : node["tmpScalex"];
 	std::string tmpScaley = node["tmpScaley"].is_null() ? "0" : node["tmpScaley"];
 	std::string tmpScalez = node["tmpScalez"].is_null() ? "0" : node["tmpScalez"];
@@ -332,7 +353,7 @@ void ComponentCollider::Load(json& node)
 	centerPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
 	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
 	offset = float3(std::stof(offsetx), std::stof(offsety), std::stof(offsetz));
-	
+
 	localMatrix.x = std::stof(localMatrixx);
 	localMatrix.y = std::stof(localMatrixy);
 	localMatrix.z = std::stof(localMatrixz);
@@ -349,8 +370,10 @@ void ComponentCollider::Load(json& node)
 	height = std::stof(height_);
 	lastIndex = std::stoi(lastIndex_);
 	colliderType = std::stoi(colliderType_);
+	isTrigger = std::stoi(isTrigger_);
 
-	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
+	//tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
+	tmpScale = float3(0.f, 0.f, 0.f);
 
 	firstCreation = true;
 
@@ -361,6 +384,7 @@ void ComponentCollider::Load(json& node)
 	lastIndex = 0;
 
 	int tmp = std::stoi(colliderEnum);
+	colliderType = tmp;
 	switch (tmp)
 	{
 	case 0:
@@ -389,32 +413,35 @@ void ComponentCollider::Load(json& node)
 
 void ComponentCollider::CreateInspectorNode()
 {
+	ImGui::Checkbox("##ColliderActive", &GetActive());
+	ImGui::SameLine();
+
 	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		
+		bool createAgain = false;
+
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
 
-		ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0");
-
-		switch (colliderType)
+		if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) 
 		{
-		case 0:
-			type = ComponentCollider::COLLIDER_TYPE::NONE;
-			CreateCollider(type);
-			break;
-		case 1:
-			type = ComponentCollider::COLLIDER_TYPE::BOX;
-			CreateCollider(type);
-			break;
-		case 2:
-			type = ComponentCollider::COLLIDER_TYPE::SPHERE;
-			CreateCollider(type);
-			break;
-		case 3:
-			type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
-			CreateCollider(type);
-			break;
+
+			switch (colliderType)
+			{
+			case 0:
+				type = ComponentCollider::COLLIDER_TYPE::NONE;
+				break;
+			case 1:
+				type = ComponentCollider::COLLIDER_TYPE::BOX;
+				break;
+			case 2:
+				type = ComponentCollider::COLLIDER_TYPE::SPHERE;
+				break;
+			case 3:
+				type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
+				break;
+			}
+			editCollider = true;
 		}
 
 		if (shape)
@@ -423,7 +450,7 @@ void ComponentCollider::CreateInspectorNode()
 			ImGui::SameLine();
 			if (ImGui::Checkbox("##T", &isTrigger))
 			{
-				if (isTrigger)
+				/*if (isTrigger)
 				{
 					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
 					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
@@ -432,11 +459,12 @@ void ComponentCollider::CreateInspectorNode()
 				{
 					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, true);
 					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, false);
-				}
+				}*/
+				editCollider = true;
 			}
 
 			float3* position = &centerPosition;
-			
+
 			ImGui::Text("Center");
 			ImGui::Text("X");
 			ImGui::SameLine();
@@ -462,94 +490,92 @@ void ComponentCollider::CreateInspectorNode()
 
 			switch (shape->getGeometryType())
 			{
-				case physx::PxGeometryType::eSPHERE:
-				{
-					float prevRadius = radius;
-					
-					ImGui::Text("Radius");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##R", &radius, 0.005f);
-					
-					colliderSize.x = radius;
-					colliderSize.y = radius;
-					colliderSize.z = radius;
+			case physx::PxGeometryType::eSPHERE:
+			{
+				float prevRadius = radius;
 
-					if (prevRadius != radius || editCollider) {
-						editCollider = true;
-						colliderType = (int)COLLIDER_TYPE::SPHERE;
-					}
-								
-					break;
+				ImGui::Text("Radius");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::DragFloat("##R", &radius, 0.005f);
+
+				colliderSize.x = radius;
+				colliderSize.y = radius;
+				colliderSize.z = radius;
+
+				if (prevRadius != radius || editCollider) {
+					editCollider = true;
+					colliderType = (int)COLLIDER_TYPE::SPHERE;
 				}
 
-				case physx::PxGeometryType::eBOX:
-				{
-					float3 prevScale = colliderSize;
-					ImGui::Text("Size");
-					ImGui::Text("X");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				break;
+			}
 
-					ImGui::DragFloat("##SX", &colliderSize.x, 0.005f, 0.01f, 1000.0f);
+			case physx::PxGeometryType::eBOX:
+			{
+				float3 prevScale = colliderSize;
+				ImGui::Text("Size");
+				ImGui::Text("X");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::SameLine();
+				ImGui::DragFloat("##SX", &colliderSize.x, 0.005f, 0.01f, 1000.0f);
 
-					ImGui::Text("Y");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::SameLine();
 
-					ImGui::DragFloat("##SY", &colliderSize.y, 0.005f, 0.01f, 1000.0f);
+				ImGui::Text("Y");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					ImGui::SameLine();
+				ImGui::DragFloat("##SY", &colliderSize.y, 0.005f, 0.01f, 1000.0f);
 
-					ImGui::Text("Z");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::SameLine();
 
-					ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
+				ImGui::Text("Z");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-					if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
-						editCollider = true;
-						colliderType = (int)COLLIDER_TYPE::BOX;
-					}
+				ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
 
-					break;
+				if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
+					editCollider = true;
+					colliderType = (int)COLLIDER_TYPE::BOX;
 				}
 
-				case physx::PxGeometryType::eCAPSULE:
-				{
-					float prevRadius = radius;
-					float prevheight = height;
+				break;
+			}
 
-					ImGui::Text("Radius");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##R", &radius, 0.005f);
+			case physx::PxGeometryType::eCAPSULE:
+			{
+				float prevRadius = radius;
+				float prevheight = height;
 
-					ImGui::Text("Height");
-					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-					ImGui::DragFloat("##H", &height, 0.005f);
+				ImGui::Text("Radius");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::DragFloat("##R", &radius, 0.005f);
 
-					colliderSize.x = radius;
-					colliderSize.y = height;
-					colliderSize.z = radius;
+				ImGui::Text("Height");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+				ImGui::DragFloat("##H", &height, 0.005f);
 
-					if (prevRadius != radius || prevheight != height || editCollider) {
-						editCollider = true;
-						colliderType = (int)COLLIDER_TYPE::CAPSULE;
-					}
+				colliderSize.x = radius;
+				colliderSize.y = height;
+				colliderSize.z = radius;
 
-					break;
+				if (prevRadius != radius || prevheight != height || editCollider) {
+					editCollider = true;
+					colliderType = (int)COLLIDER_TYPE::CAPSULE;
 				}
+
+				break;
+			}
 
 			}
 		}
-
 		ImGui::TreePop();
 	}
-
 }
 
 
@@ -560,13 +586,12 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 		{
 			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
-				App->physics->mScene->removeActor(*(physx::PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+				App->physics->DeleteActor(GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
 			if (createAgain && rigidStatic)
-				App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+				App->physics->DeleteActor(rigidStatic);
 		}
-
 		else
-			App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+			App->physics->DeleteActor(rigidStatic);
 
 
 		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
@@ -590,7 +615,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 
 	switch (type) {
 		case ComponentCollider::COLLIDER_TYPE::BOX: {
-		
+
 			float3 center;
 
 			physx::PxBoxGeometry boxGeometry;
@@ -614,27 +639,48 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			}
 
 			boxGeometry = physx::PxBoxGeometry(physx::PxVec3(originalSize.x * scale.x * colliderSize.x * 0.5, originalSize.y * scale.y * colliderSize.y * 0.5, originalSize.z * scale.z * colliderSize.z * 0.5));
-			
+
+			physx::PxTransform position(physx::PxVec3(center.x, center.y, center.z));
+
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
 			shape->setGeometry(boxGeometry);
-			
-			physx::PxTransform position(physx::PxVec3(center.x, center.y, center.z));
-			
+
 			if (!HasDynamicRigidBody(boxGeometry, position))
 			{
+				if(rigidStatic)
+					App->physics->DeleteActor(rigidStatic);
+
+				physx::PxFilterData filterData;
+				filterData.word0 = (1 << GO->layer); // word0 = own ID
+				filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
+
+				if (isTrigger) {
+					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+				}
+				else {
+					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+				}
+
+				shape->setSimulationFilterData(filterData);
+				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+				shape->setQueryFilterData(filterData);
+
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
-				App->physics->mScene->addActor(*rigidStatic);
+
+				App->physics->addActor(rigidStatic, GO);
 			}
 
-			
+
 
 			if (!firstCreation)
 			{
 				transform->SetRotation(q); //RESET TO ORIGNAL ROTATION
 
 				GO->UpdateAABB();
-				firstCreation = true; 
-				
+				firstCreation = true;
+
 				center = GO->GetAABB().CenterPoint();
 				float3 dir = center - transform->GetGlobalPosition();
 				float3 dir2 = quat.Inverted().Mul(dir); // rotate it
@@ -656,7 +702,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(SphereGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->mScene->addActor(*rigidStatic);
+				App->physics->addActor(rigidStatic, GO);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::SPHERE;
@@ -670,7 +716,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(planeGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->mScene->addActor(*rigidStatic);
+				App->physics->addActor(rigidStatic, GO);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::PLANE;
@@ -684,7 +730,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			if (!HasDynamicRigidBody(CapsuleGeometry, localTransform))
 			{
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->mScene->addActor(*rigidStatic);
+				App->physics->addActor(rigidStatic, GO);
 			}
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
@@ -714,30 +760,74 @@ void ComponentCollider::Delete()
 			App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 	}
 
-	else
+	else if(rigidStatic)
 		App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
 }
-
 
 template <class Geometry>
 bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const
 {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
-	
+
 	if (dynamicRB != nullptr)
 	{
+
 		float3 position, scale = float3::zero;
 		Quat rot = Quat::identity;
 
 		globalMatrix.Decompose(position, rot, scale);
 
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
+
+		physx::PxShape* shape_;
+		dynamicRB->rigidBody->getShapes(&shape_, 1);
+		if (shape_) {
+			*shape = *shape_;
+			if (isTrigger) {
+				shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+				shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			}
+			else {
+				shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+				shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			}
+		}
+
+		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup); //Setup filtering Layers
+
 		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
-		App->physics->mScene->addActor(*dynamicRB->rigidBody);
+
+		if (rigidStatic) {
+			App->physics->DeleteActor(rigidStatic);
+		}
+		else if (dynamicRB->rigidBody) {
+			App->physics->DeleteActor(dynamicRB->rigidBody);
+		}
+
+		App->physics->addActor(dynamicRB->rigidBody, GO);
 
 		return true;
 	}
 
-	else
+	else {
 		return false;
+	}
+}
+
+physx::PxRigidActor* ComponentCollider::GetActor() {
+	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+
+	if (dynamicRB != nullptr)
+		return dynamicRB->rigidBody;
+	else
+		return rigidStatic;
+}
+
+void ComponentCollider::UpdateActorLayer(LayerMask* layerMask) {
+	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
+
+	if (dynamicRB != nullptr)
+		App->physics->UpdateActorLayer(dynamicRB->rigidBody, layerMask);
+	else
+		App->physics->UpdateActorLayer(rigidStatic, layerMask);
 }

@@ -12,7 +12,7 @@
 #include "ModuleTimeManager.h"
 #include "ModuleWindow.h"
 #include "ModuleResourceManager.h"
-
+#include "ModuleSelection.h"
 #include "ModuleFileSystem.h"
 
 #include "ResourceMesh.h"
@@ -32,6 +32,7 @@
 using namespace Broken;
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::MeshRenderer) 
 {
+	name = "Mesh Renderer";
 	material = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID());
 }
 
@@ -64,7 +65,7 @@ void ComponentMeshRenderer::DrawComponent()
 
 	ComponentMesh* cmesh = GO->GetComponent<ComponentMesh>();
 
-	if (App->scene_manager->GetSelectedGameObject() && App->scene_manager->GetSelectedGameObject()->GetUID() == GO->GetUID())
+	if (App->selection->IsSelected(GO))
 		flags |= selected;
 
 	if (checkers)
@@ -192,23 +193,12 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 
 void ComponentMeshRenderer::CreateInspectorNode() 
 {
-	ImGui::Checkbox("##RenActive", &GetActive());
+	ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
 	ImGui::SameLine();
+	ImGui::Checkbox("Face Normals  ", &draw_facenormals);
+	ImGui::SameLine();
+	ImGui::Checkbox("Checkers", &checkers);
 
-	if (ImGui::TreeNode("Mesh Renderer")) 
-	{
-
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
-		ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
-		ImGui::SameLine();
-		ImGui::Checkbox("Face Normals  ", &draw_facenormals);
-		ImGui::SameLine();
-		ImGui::Checkbox("Checkers", &checkers);
-
-		ImGui::TreePop();
-	}
 
 	ImGui::NewLine();
 	ImGui::Separator();
@@ -217,6 +207,8 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	// --- Material node ---
 	if (material)
 	{	
+		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
+
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
@@ -233,22 +225,36 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				const char* item_current = material->shader->GetName();
 				if (ImGui::BeginCombo("##Shader", item_current, flags))
 				{
-					for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
-					{
-						bool is_selected = (item_current == it->second->GetName());
-
-						if (ImGui::Selectable(it->second->GetName(), is_selected))
+					//if (!is_default)
+					//{
+					
+						for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
 						{
-							item_current = it->second->GetName();
-							material->shader = it->second;
-							material->shader->GetAllUniforms(material->uniforms);
+							bool is_selected = (item_current == it->second->GetName());
+
+							if (ImGui::Selectable(it->second->GetName(), is_selected))
+							{
+								item_current = it->second->GetName();
+								material->shader = it->second;
+								material->shader->GetAllUniforms(material->uniforms);
+							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
 						}
-						if (is_selected)
-							ImGui::SetItemDefaultFocus();
-					}
+					//}
 
 					ImGui::EndCombo();
 				}
+			}
+
+			if (is_default)
+			{
+				if (ImGui::Button("Unuse Material"))
+					unuse_material = true;
+
+				ImGui::PopID();
+				ImGui::TreePop();
+				return;
 			}
 
 			// --- Print Texture Path ---

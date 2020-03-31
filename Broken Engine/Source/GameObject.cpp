@@ -10,9 +10,12 @@
 #include "ComponentText.h"
 #include "ComponentImage.h"
 #include "ComponentButton.h"
+#include "ComponentCharacterController.h"
+
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
 #include "ComponentProgressBar.h"
+#include "ComponentCircularBar.h"
 #include "ComponentLight.h"
 
 #include "ResourceModel.h"
@@ -28,6 +31,9 @@ GameObject::GameObject(const char* name) {
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
+	layer = LAYER_0;
+
+	collisions.resize(2, nullptr);
 
 	Enable();
 }
@@ -39,6 +45,8 @@ GameObject::GameObject(const char* name, uint UID)
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
+
+	collisions.resize(2, nullptr);
 
 	Enable();
 }
@@ -258,7 +266,7 @@ GameObject* GameObject::GetAnimGO(GameObject* GO)
 
 Component * GameObject::AddComponent(Component::ComponentType type, int index)
 {
-	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 20, "Component Creation Switch needs to be updated");
+	BROKEN_ASSERT(static_cast<int>(Component::ComponentType::Unknown) == 21, "Component Creation Switch needs to be updated");
 	Component* component = nullptr;
 
 	// --- Check if there is already a component of the type given --- & if it can be repeated
@@ -329,6 +337,10 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 			component = new ComponentButton(this);
 			break;
 
+		case Component::ComponentType::CharacterController:
+			component = new ComponentCharacterController(this);
+			break;
+
 		//case Component::ComponentType::CheckBox:
 		//	component = new ComponentCheckBox(this);
 		//	break;
@@ -339,6 +351,10 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 
 		case Component::ComponentType::ProgressBar:
 			component = new ComponentProgressBar(this);
+			break;
+
+		case Component::ComponentType::CircularBar:
+			component = new ComponentCircularBar(this);
 			break;
 
 		//Lights
@@ -483,11 +499,16 @@ bool& GameObject::GetActive()
 	return active;
 }
 
+int GameObject::GetLayer(){
+	return layer;
+}
+
 bool GameObject::IsEnabled() const {
 	return active;
 }
 
-void GameObject::SetName(const char* name) {
+void GameObject::SetName(const char* name)
+{
 	if (name && name != "root")
 		this->name = name;
 }

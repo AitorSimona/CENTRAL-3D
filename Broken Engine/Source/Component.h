@@ -22,11 +22,13 @@ public:
 		CheckBox,
 		InputText,
 		ProgressBar,
+		CircularBar,
 		Script,
 		Bone,
 		Animation,
 		DynamicRigidBody,
 		Collider,
+		CharacterController,
 		ParticleEmitter,
 		AudioSource,
 		AudioListener,
@@ -58,10 +60,13 @@ public:
 	virtual void ONResourceEvent(uint UID, Resource::ResourceNotificationType type) {};
 	virtual void CreateInspectorNode() = 0;
 
+	//std::string GetName() { return name; }
+
+	bool to_delete = false;
+	std::string name = "Component";
 protected:
 
 	bool active = false;
-	bool to_delete = false;
 
 	GameObject* GO = nullptr;
 	ComponentType type = ComponentType::Unknown;

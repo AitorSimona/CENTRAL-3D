@@ -16,6 +16,7 @@ using namespace Broken;
 
 ComponentText::ComponentText(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Text)
 {
+	name = "Text";
 	visible = true;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
@@ -229,103 +230,93 @@ void ComponentText::ONResourceEvent(uint UID, Resource::ResourceNotificationType
 }
 void ComponentText::CreateInspectorNode()
 {
-	ImGui::Checkbox("##TextActive", &GetActive());
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
+	ImGui::Separator();
+
+	ImGui::ColorEdit3("Color", (float*)&color);
+
+	// Temporary disabled for usability and design consistency
+	/*if (ImGui::DragInt("Font size", &font->size, 1, 1, 200, "%.2f")) {
+
+		font->Init();
+	}
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
+	*/
+
+	ImGui::Text(text.c_str());
+
+	if (ImGui::InputTextWithHint("TextChange", text.c_str(), buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+	{
+		//strcpy_s(text, buffer);
+		text = buffer;
+	}
+
+	// Size
+	ImGui::Text("Size:    ");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##textsize", &size2D.x, 0.001f);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##textsize", &size2D.y, 0.001f);
+
+	// Position
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("x##textposition", &position2D.x, 0.05f);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("y##textposition", &position2D.y, 0.05f);
+
+	// Rotation
+	//ImGui::Text("Rotation:");
+	//ImGui::SameLine();
+	//ImGui::SetNextItemWidth(60);
+	//ImGui::DragFloat("##textrotation", &rotation2D);
+
+	// Image
+	ImGui::Separator();
+	ImGui::Text("Font: ");
 	ImGui::SameLine();
 
-	if (ImGui::TreeNodeEx("Text",ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
 
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-		ImGui::Separator();
-
-		ImGui::ColorEdit3("Color", (float*)&color);
-
-		// Temporary disabled for usability and design consistency
-		/*if (ImGui::DragInt("Font size", &font->size, 1, 1, 200, "%.2f")) {
-
-			font->Init();
-		}
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Use with caution, may temporary freeze the editor with large numbers. \n It is recommended to directly input the number with the keyboard");
-*/
-
-		ImGui::Text(text.c_str());
-
-		if (ImGui::InputTextWithHint("TextChange", text.c_str(), buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-		{
-			//strcpy_s(text, buffer);
-			text = buffer;
-		}
-
-		// Size
-		ImGui::Text("Size:    ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##textsize", &size2D.x, 0.001f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##textsize", &size2D.y, 0.001f);
-
-		// Position
-		ImGui::Text("Position:");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("x##textposition", &position2D.x, 0.05f);
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(60);
-		ImGui::DragFloat("y##textposition", &position2D.y, 0.05f);
-
-		// Rotation
-		//ImGui::Text("Rotation:");
-		//ImGui::SameLine();
-		//ImGui::SetNextItemWidth(60);
-		//ImGui::DragFloat("##textrotation", &rotation2D);
-
-		// Image
-		ImGui::Separator();
-		ImGui::Text("Font: ");
-		ImGui::SameLine();
-
-
-		// --- Texture Preview ---
-		if (font) {
-			ImGui::Text(font->GetName());
-			ImGui::ImageButton((void*)(uint)font->GetPreviewTexID(), ImVec2(20, 20));
-		}
-		else
-			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Drag and drop any font from your assets to change it");
-
-		// --- Handle drag & drop ---
-		if (ImGui::BeginDragDropTarget()) {
-			if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("resource")) {
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
-
-				if (resource && resource->GetType() == Resource::ResourceType::FONT) {
-					if (font && font->IsInMemory())
-					{
-						font->Release();
-						font->RemoveUser(GO);
-					}
-
-					font = (ResourceFont*)App->resources->GetResource(UID);
-
-					if (font)
-						font->AddUser(GO);
-				}
-			}
-
-			ImGui::EndDragDropTarget();
-		}
-
-		ImGui::Separator();
-		ImGui::TreePop();
+	// --- Texture Preview ---
+	if (font) {
+		ImGui::Text(font->GetName());
+		ImGui::ImageButton((void*)(uint)font->GetPreviewTexID(), ImVec2(20, 20));
 	}
+	else
+		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Drag and drop any font from your assets to change it");
+
+	// --- Handle drag & drop ---
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("resource")) {
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::FONT) {
+				if (font && font->IsInMemory())
+				{
+					font->Release();
+					font->RemoveUser(GO);
+				}
+
+				font = (ResourceFont*)App->resources->GetResource(UID);
+
+				if (font)
+					font->AddUser(GO);
+			}
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::Separator();
 
 }

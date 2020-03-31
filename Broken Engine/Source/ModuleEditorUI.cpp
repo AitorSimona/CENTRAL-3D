@@ -33,6 +33,9 @@ bool ModuleEditorUI::Init(Broken::json& file) {
 	panelInspector = new PanelInspector("Inspector");
 	panels.push_back(panelInspector);
 
+	panelRendering = new PanelRendering("Rendering");
+	panels.push_back(panelRendering);
+
 	panelHierarchy = new PanelHierarchy("Hierarchy");
 	panels.push_back(panelHierarchy);
 
@@ -118,6 +121,9 @@ update_status ModuleEditorUI::Update(float dt) {
 				if (ImGui::MenuItem("Cube"))
 					EngineApp->scene_manager->LoadCube();
 
+				if (ImGui::MenuItem("Disk"))
+					EngineApp->scene_manager->LoadDisk();
+
 				if (ImGui::MenuItem("Cylinder"))
 					EngineApp->scene_manager->LoadCylinder()->GetComponent<Broken::ComponentTransform>()->SetRotation({ -90, 0, 0 });
 
@@ -141,32 +147,45 @@ update_status ModuleEditorUI::Update(float dt) {
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("UI Elements")) {
-				if (ImGui::MenuItem("Canvas")) {
+			if (ImGui::BeginMenu("UI Elements")) 
+			{
+				if (ImGui::MenuItem("Canvas")) 
+				{
 					Broken::GameObject* canvas_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentCanvas* camera = (Broken::ComponentCanvas*)canvas_go->AddComponent(Broken::Component::ComponentType::Canvas);
 				}
-				if (ImGui::MenuItem("Image")) {
+				if (ImGui::MenuItem("Image")) 
+				{
 					Broken::GameObject* image_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentImage* image = (Broken::ComponentImage*)image_go->AddComponent(Broken::Component::ComponentType::Image);
 				}
-				if (ImGui::MenuItem("Text")) {
+				if (ImGui::MenuItem("Text")) 
+				{
 					Broken::GameObject* text_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentText* text = (Broken::ComponentText*)text_go->AddComponent(Broken::Component::ComponentType::Text);
 				}
-				if (ImGui::MenuItem("Button")) {
+				if (ImGui::MenuItem("Button")) 
+				{
 					Broken::GameObject* button_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentText* button = (Broken::ComponentText*)button_go->AddComponent(Broken::Component::ComponentType::Button);
 				}
-				if (ImGui::MenuItem("Checkbox")) {
+				if (ImGui::MenuItem("Checkbox")) 
+				{
 				}
-				if (ImGui::MenuItem("Input Text")) {
+				if (ImGui::MenuItem("Input Text")) 
+				{
 				}
 				if (ImGui::MenuItem("Progress Bar"))
 				{
 					Broken::GameObject* bar_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentProgressBar* bar = (Broken::ComponentProgressBar*)bar_go->AddComponent(Broken::Component::ComponentType::ProgressBar);
 				}
+				if (ImGui::MenuItem("Circular Bar"))
+				{
+					Broken::GameObject* cbar_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentProgressBar* cbar = (Broken::ComponentProgressBar*)cbar_go->AddComponent(Broken::Component::ComponentType::CircularBar);
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -210,6 +229,10 @@ update_status ModuleEditorUI::Update(float dt) {
 
 			if (ImGui::MenuItem("Inspector")) {
 				panelInspector->OnOff();
+			}
+
+			if (ImGui::MenuItem("Rendering")) {
+				panelRendering->OnOff();
 			}
 
 			if (ImGui::MenuItem("Hierarchy")) {
@@ -296,6 +319,7 @@ bool ModuleEditorUI::CleanUp() {
 	panelAbout = nullptr;
 	panelConsole = nullptr;
 	panelInspector = nullptr;
+	panelRendering = nullptr;
 	panelHierarchy = nullptr;
 	panelScene = nullptr;
 	panelToolbar = nullptr;

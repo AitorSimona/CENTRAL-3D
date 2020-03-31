@@ -49,6 +49,7 @@ public:
 	bool visible = true;
 	bool interactable = true;
 	bool draggable = false;
+	bool resize = true;
 
 	float2 size2D = { 1,1 };
 	float2 position2D = { 0,0 };

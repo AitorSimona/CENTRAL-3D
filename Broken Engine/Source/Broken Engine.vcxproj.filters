@@ -366,6 +366,9 @@
     <ClInclude Include="Imgui\imstb_truetype.h">
       <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
+    <ClInclude Include="PanelRendering.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineApplication.cpp">
@@ -562,6 +565,9 @@
     </ClCompile>
     <ClCompile Include="Imgui\imgui_widgets.cpp">
       <Filter>Sources\3rd party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelRendering.cpp">
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
