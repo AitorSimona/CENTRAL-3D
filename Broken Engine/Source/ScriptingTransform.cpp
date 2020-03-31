@@ -11,99 +11,59 @@ ScriptingTransform::ScriptingTransform() {}
 
 ScriptingTransform::~ScriptingTransform() {}
 
-float ScriptingTransform::GetPositionX(uint gameobject_UUID) const
+float ScriptingTransform::GetPositionX() const
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		return transform->GetPosition().x;
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-			return transform->GetPosition().x;
-		else
-		{
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-			return 0.0f;
-		}
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
 	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-float ScriptingTransform::GetPositionY(uint gameobject_UUID) const
+float ScriptingTransform::GetPositionY() const
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		return transform->GetPosition().y;
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-			return transform->GetPosition().y;
-		else
-		{
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-			return 0.0f;
-		}
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
 	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-float ScriptingTransform::GetPositionZ(uint gameobject_UUID) const
+float ScriptingTransform::GetPositionZ() const
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		return transform->GetPosition().z;
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-			return transform->GetPosition().z;
-		else
-		{
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-			return 0.0f;
-		}
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
 	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-int ScriptingTransform::GetPosition(uint gameobject_UUID, lua_State* L)
+int ScriptingTransform::GetPosition(lua_State* L)
 {
 	int ret = 0;
 	float3 rot = float3(0.0f);
 
-	GameObject* go = nullptr;
-	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);	
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-		{
-			rot = transform->GetPosition();
-			ret = 3;
-		}
-		else
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+	if (transform)
+	{
+		rot = transform->GetPosition();
+		ret = 3;
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 
 	lua_pushnumber(L, rot.x);
 	lua_pushnumber(L, rot.y);
@@ -111,194 +71,132 @@ int ScriptingTransform::GetPosition(uint gameobject_UUID, lua_State* L)
 	return ret;
 }
 
-void ScriptingTransform::Translate(float x, float y, float z, bool local, uint gameobject_UUID)
+void ScriptingTransform::Translate(float x, float y, float z, bool local)
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (transform)
+	{
+		float3 trans_pos = transform->GetPosition();
 
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
+		trans_pos.x += x;
+		trans_pos.y += y;
+		trans_pos.z += z;
 
-		if (transform)
-		{
-			float3 trans_pos = transform->GetPosition();
-
-			trans_pos.x += x;
-			trans_pos.y += y;
-			trans_pos.z += z;
-
-			transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
-		}
-		else
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
-void ScriptingTransform::SetPosition(float x, float y, float z, bool local, uint gameobject_UUID)
+void ScriptingTransform::SetPosition(float x, float y, float z, bool local)
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		transform->SetPosition(x, y, z);
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+}
 
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
+void ScriptingTransform::RotateObject(float x, float y, float z)
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+	ComponentCollider* collider = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	ComponentDynamicRigidBody* rb = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
 
-		if (transform)
-			transform->SetPosition(x, y, z);
-		else
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+	if (transform && rb && collider)
+	{
+		if (!rb->rigidBody)
+			return;
+
+		physx::PxTransform globalPos = rb->rigidBody->getGlobalPose();
+		Quat quaternion = Quat::FromEulerXYZ(DEGTORAD * x, DEGTORAD * y, DEGTORAD * z);
+		physx::PxQuat quat = physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+		globalPos = physx::PxTransform(globalPos.p, quat);
+
+		collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
+
+	}
+	else if (transform)
+	{
+		float3 rot = transform->GetRotation();
+		rot = float3(x, y, z);
+		transform->SetRotation(rot);
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
-void ScriptingTransform::RotateObject(float x, float y, float z, uint gameobject_UUID)
+void ScriptingTransform::SetObjectRotation(float x, float y, float z)
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		transform->SetRotation({ x, y, z });
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+}
 
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-		ComponentCollider* collider = go->GetComponent<ComponentCollider>();
-		ComponentDynamicRigidBody* rb = go->GetComponent<ComponentDynamicRigidBody>();
+void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool local)
+{
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+	ComponentCollider* collider = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
+	ComponentDynamicRigidBody* rb = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
 
-		if (transform && rb && collider)
+	if (transform)
+	{
+		float3 zaxis = float3(transform->GetGlobalPosition() - float3(spotX, spotY, spotZ)).Normalized();
+		float3 xaxis = float3(zaxis.Cross(float3(0, 1, 0))).Normalized();
+		float3 yaxis = xaxis.Cross(zaxis);
+		zaxis = zaxis.Neg();
+
+		float4x4 m = {
+		   float4(xaxis.x, xaxis.y, xaxis.z, -Dot(xaxis, transform->GetGlobalPosition())),
+		   float4(yaxis.x, yaxis.y, yaxis.z, -Dot(yaxis, transform->GetGlobalPosition())),
+		   float4(zaxis.x, zaxis.y, zaxis.z, -Dot(zaxis, transform->GetGlobalPosition())),
+		   float4(0, 0, 0, 1)
+		};
+		m.Transpose();
+
+		float3 pos, scale;
+		Quat rot;
+
+		m.Decompose(pos, rot, scale);
+		rot = rot.Inverted();
+
+		if (rb && collider)
 		{
 			if (!rb->rigidBody)
 				return;
 
 			physx::PxTransform globalPos = rb->rigidBody->getGlobalPose();
-			Quat quaternion = Quat::FromEulerXYZ(DEGTORAD * x, DEGTORAD * y, DEGTORAD * z);
-			physx::PxQuat quat = physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+			physx::PxQuat quat = physx::PxQuat(rot.x, rot.y, rot.z, rot.w);
 			globalPos = physx::PxTransform(globalPos.p, quat);
 
 			collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
-
 		}
-		else if (transform)
-		{
-			float3 rot = transform->GetRotation();
-			rot = float3(x, y, z);
+		else
 			transform->SetRotation(rot);
-		}
-		else
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
-void ScriptingTransform::SetObjectRotation(float x, float y, float z, uint gameobject_UUID)
-{
-	GameObject* go = nullptr;
-
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-			transform->SetRotation({ x, y, z });
-		else
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
-}
-
-void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool local, uint gameobject_UUID)
-{
-	GameObject* go = nullptr;
-
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-		ComponentCollider* collider = go->GetComponent<ComponentCollider>();
-		ComponentDynamicRigidBody* rb = go->GetComponent<ComponentDynamicRigidBody>();
-
-		if (transform)
-		{
-			float3 zaxis = float3(transform->GetGlobalPosition() - float3(spotX, spotY, spotZ)).Normalized();
-			float3 xaxis = float3(zaxis.Cross(float3(0, 1, 0))).Normalized();
-			float3 yaxis = xaxis.Cross(zaxis);
-			zaxis = zaxis.Neg();
-
-			float4x4 m = {
-			   float4(xaxis.x, xaxis.y, xaxis.z, -Dot(xaxis, transform->GetGlobalPosition())),
-			   float4(yaxis.x, yaxis.y, yaxis.z, -Dot(yaxis, transform->GetGlobalPosition())),
-			   float4(zaxis.x, zaxis.y, zaxis.z, -Dot(zaxis, transform->GetGlobalPosition())),
-			   float4(0, 0, 0, 1)
-			};
-			m.Transpose();
-
-			float3 pos, scale;
-			Quat rot;
-
-			m.Decompose(pos, rot, scale);
-			rot = rot.Inverted();
-
-			if (rb && collider)
-			{
-				if (!rb->rigidBody)
-					return;
-
-				physx::PxTransform globalPos = rb->rigidBody->getGlobalPose();
-				physx::PxQuat quat = physx::PxQuat(rot.x, rot.y, rot.z, rot.w);
-				globalPos = physx::PxTransform(globalPos.p, quat);
-
-				collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
-			}
-			else
-				transform->SetRotation(rot);
-		}
-		else
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
-}
-
-int ScriptingTransform::GetRotation(uint gameobject_UUID, lua_State* L) const
+int ScriptingTransform::GetRotation(bool local, lua_State* L) const
 {
 	int ret = 0;
 	float3 rot = float3(0.0f);
+	
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	GameObject* go = nullptr;
-	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-		{
-			rot = transform->GetRotation();
-			ret = 3;
-		}
-		else
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+	if (transform)
+	{
+		rot = transform->GetRotation();
+		ret = 3;
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 
 	lua_pushnumber(L, rot.x);
 	lua_pushnumber(L, rot.y);
@@ -306,74 +204,41 @@ int ScriptingTransform::GetRotation(uint gameobject_UUID, lua_State* L) const
 	return ret;
 }
 
-float ScriptingTransform::GetRotationX(uint gameobject_UUID) const
+float ScriptingTransform::GetRotationX() const
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		return transform->GetRotation().x;
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-			return transform->GetRotation().x;
-		else
-		{
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-			return 0.0f;
-		}
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
 	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-float ScriptingTransform::GetRotationY(uint gameobject_UUID) const
+float ScriptingTransform::GetRotationY() const
 {
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		return transform->GetRotation().y;
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-			return transform->GetRotation().y;
-		else
-		{
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-			return 0.0f;
-		}
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
 	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
-float ScriptingTransform::GetRotationZ(uint gameobject_UUID) const
+float ScriptingTransform::GetRotationZ() const
 {	
-	GameObject* go = nullptr;
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
-	if (gameobject_UUID != -1)
-		go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (transform)
+		return transform->GetRotation().z;
 	else
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-
-	if (go) {
-		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
-
-		if (transform)
-			return transform->GetRotation().z;
-		else
-		{
-			ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-			return 0.0f;
-		}
+	{
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		return 0.0f;
 	}
-	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
