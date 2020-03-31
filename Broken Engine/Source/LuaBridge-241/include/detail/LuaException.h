@@ -31,6 +31,7 @@
 
 #include <exception>
 #include <string>
+#include "../../../EngineLog.h"
 
 namespace luabridge {
 
@@ -86,7 +87,15 @@ public:
   template <class Exception>
   static void Throw (Exception e)
   {
-    throw e;
+      try
+      {
+          throw e;
+      }
+      catch (Exception e)
+      {
+          ENGINE_AND_SYSTEM_CONSOLE_LOG("LUA EXCEPTION THROWN: %s", e.what());
+      }
+  
   }
 
   //----------------------------------------------------------------------------
