@@ -406,7 +406,7 @@ int ScriptingGameobject::GetLeftFrustumIntersection(float x, float y, float z, f
 
 		float3 pos = { x, y, z };
 
-		if (sub1.BottomPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+		if (sub1.LeftPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
 			left = 0;
 	}
 
