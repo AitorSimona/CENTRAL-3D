@@ -67,7 +67,7 @@ void ScriptingAudio::StopAudioEvent(std::string event)
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void PauseAudioEvent(std::string event)
+void ScriptingAudio::PauseAudioEvent(std::string event)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
 
@@ -85,7 +85,7 @@ void PauseAudioEvent(std::string event)
 		ENGINE_CONSOLE_LOG("[Script]: Sound Emmiter component is NULL");
 }
 
-void ResumeAudioEvent(std::string event)
+void ScriptingAudio::ResumeAudioEvent(std::string event)
 {
 	ComponentAudioSource* sound = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAudioSource>();
 
@@ -95,7 +95,7 @@ void ResumeAudioEvent(std::string event)
 
 	if (sound)
 	{
-		sound->wwiseGO->PauseEvent(EventId);
+		sound->wwiseGO->ResumeEvent(EventId);
 		sound->isPlaying = true;
 		sound->isPaused = false;
 	}
