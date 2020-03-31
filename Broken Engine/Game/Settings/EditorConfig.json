@@ -14,7 +14,7 @@
         "Rendering": false,
         "Resources": false,
         "Scene": true,
-        "Settings": false,
+        "Settings": true,
         "ShaderEditor": false,
         "Toolbar": true
     },
@@ -84,10 +84,10 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 1080,
+        "height": 810,
         "resizable": true,
         "sceneX": 480,
         "sceneY": 640,
-        "width": 1920
+        "width": 1440
     }
 }
