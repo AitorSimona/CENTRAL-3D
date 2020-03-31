@@ -391,6 +391,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addConstructor<void(*) (void)>()
 
 		.addFunction("LoadScene", &ScriptingScenes::LoadSceneFromScript)
+		.addFunction("LoadSceneByName", &ScriptingScenes::LoadSceneByName)
 		.addFunction("QuitGame", &ScriptingScenes::QuitGame)
 		.endClass()
 
