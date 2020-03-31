@@ -25,15 +25,16 @@ ResourceMesh::~ResourceMesh() {
 void ResourceMesh::CreateAABB() {
 	aabb.SetNegativeInfinity();
 
-	for (uint i = 0; i < VerticesSize; ++i) {
+	for (uint i = 0; i < VerticesSize; ++i)
 		aabb.Enclose(float3(vertices[i].position));
-	}
 }
 
-bool ResourceMesh::LoadInMemory() {
+bool ResourceMesh::LoadInMemory()
+{
 	bool ret = true;
 
-	if (App->fs->Exists(resource_file.c_str())) {
+	if (App->fs->Exists(resource_file.c_str()))
+	{
 		// --- Load mesh data ---
 		char* buffer = nullptr;
 		App->fs->Load(resource_file.c_str(), &buffer);
@@ -54,6 +55,8 @@ bool ResourceMesh::LoadInMemory() {
 		unsigned char* Colors = new unsigned char[VerticesSize * 4];
 		float* TexCoords = new float[VerticesSize * 2];
 
+		float* Tangents = new float[VerticesSize * 3];
+		float* BiTangents = new float[VerticesSize * 3];
 
 		// --- Load indices ---
 		cursor += bytes;
@@ -81,9 +84,21 @@ bool ResourceMesh::LoadInMemory() {
 		bytes = sizeof(float) * 2 * VerticesSize;
 		memcpy(TexCoords, cursor, bytes);
 
+		// --- Load Tangents ---
+		cursor += bytes;
+		bytes = sizeof(float) * 3 * VerticesSize;
+		memcpy(Tangents, cursor, bytes);
+
+		// --- Load BiTangents ---
+		cursor += bytes;
+		bytes = sizeof(float) * 3 * VerticesSize;
+		memcpy(BiTangents, cursor, bytes);
+
+
 		// --- Fill Vertex array ---
 
-		for (uint i = 0; i < VerticesSize; ++i) {
+		for (uint i = 0; i < VerticesSize; ++i)
+		{
 			// --- Vertices ---
 			vertices[i].position[0] = Vertices[i * 3];
 			vertices[i].position[1] = Vertices[(i * 3) + 1];
@@ -103,10 +118,21 @@ bool ResourceMesh::LoadInMemory() {
 			// --- Texture Coordinates ---
 			vertices[i].texCoord[0] = TexCoords[i * 2];
 			vertices[i].texCoord[1] = TexCoords[(i * 2) + 1];
+
+			// --- Tangents ---
+			vertices[i].tangent[0] = Tangents[i * 3];
+			vertices[i].tangent[1] = Tangents[(i * 3) + 1];
+			vertices[i].tangent[2] = Tangents[(i * 3) + 2];
+
+			// --- Biitangents ---
+			vertices[i].biTangent[0] = BiTangents[i * 3];
+			vertices[i].biTangent[1] = BiTangents[(i * 3) + 1];
+			vertices[i].biTangent[2] = BiTangents[(i * 3) + 2];
 		}
 
 		// --- Delete buffer data ---
-		if (buffer) {
+		if (buffer)
+		{
 			delete[] buffer;
 			buffer = nullptr;
 			cursor = nullptr;
@@ -116,6 +142,8 @@ bool ResourceMesh::LoadInMemory() {
 		delete[] Normals;
 		delete[] Colors;
 		delete[] TexCoords;
+		delete[] Tangents;
+		delete[] BiTangents;
 	}
 
 	CreateAABB();
@@ -126,19 +154,21 @@ bool ResourceMesh::LoadInMemory() {
 	return ret;
 }
 
-void ResourceMesh::FreeMemory() {
-
+void ResourceMesh::FreeMemory()
+{
 	glDeleteBuffers(1, (GLuint*)&VBO);
 
 	glDeleteBuffers(1, (GLuint*)&EBO);
 	glDeleteVertexArrays(1, (GLuint*)&VAO);
 
-	if (vertices) {
+	if (vertices)
+	{
 		delete[] vertices;
 		vertices = nullptr;
 	}
 
-	if (Indices) {
+	if (Indices)
+	{
 		delete[] Indices;
 		Indices = nullptr;
 	}
@@ -148,8 +178,10 @@ void ResourceMesh::FreeMemory() {
 	VAO = 0;
 }
 
-void ResourceMesh::CreateVBO() {
-	if (vertices != nullptr) {
+void ResourceMesh::CreateVBO()
+{
+	if (vertices != nullptr)
+	{
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * VerticesSize, vertices, GL_STATIC_DRAW);
@@ -159,8 +191,10 @@ void ResourceMesh::CreateVBO() {
 		ENGINE_CONSOLE_LOG("|[error]: Could not create VBO, null vertices");
 }
 
-void ResourceMesh::CreateEBO() {
-	if (Indices != nullptr) {
+void ResourceMesh::CreateEBO()
+{
+	if (Indices != nullptr)
+	{
 		glGenBuffers(1, &EBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * IndicesSize, Indices, GL_STATIC_DRAW);
@@ -170,7 +204,8 @@ void ResourceMesh::CreateEBO() {
 		ENGINE_CONSOLE_LOG("|[error]: Could not create EBO, null indices");
 }
 
-void ResourceMesh::CreateVAO() {
+void ResourceMesh::CreateVAO()
+{
 	// --- Create a Vertex Array Object ---
 	glGenVertexArrays(1, &VAO);
 	// --- Bind it ---
@@ -196,6 +231,14 @@ void ResourceMesh::CreateVAO() {
 	// --- Vertex Texture coordinates ---
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, texCoord)));
 	glEnableVertexAttribArray(3);
+
+	// --- Vertex Tangents ---
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, tangent)));
+	glEnableVertexAttribArray(4);
+
+	// --- Vertex Bitangents ---
+	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, biTangent)));
+	glEnableVertexAttribArray(5);
 
 	// --- Unbind VAO and VBO ---
 	glBindVertexArray(0);
