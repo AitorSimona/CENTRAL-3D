@@ -3,9 +3,13 @@
 #pragma once
 
 #include "BrokenCore.h"
-#include "MathGeoLib/include/Math/float3.h"
 
 class lua_State;
+namespace luabridge
+{
+	class LuaRef;
+}
+
 
 BE_BEGIN_NAMESPACE
 
@@ -19,7 +23,7 @@ public:
 	int GetAreaCost(int areaIndex);
 	void SetAreaCost(int areaIndex, float areaCost);
 
-	int CalculatePath(float3 origin, float3 destination, int areaMask, lua_State* L);
+	luabridge::LuaRef CalculatePath(float origin_x, float origin_y, float origin_z, float dest_x, float dest_y, float dest_z , int areaMask, lua_State* L);
 };
 
 BE_END_NAMESPACE

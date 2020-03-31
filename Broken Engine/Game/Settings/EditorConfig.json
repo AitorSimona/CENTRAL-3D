@@ -10,10 +10,10 @@
         "Hierarchy": true,
         "Inspector": true,
         "Navigation": true,
-        "Physics": false,
+        "Physics": true,
         "Project": true,
         "Rendering": false,
-        "Resources": false,
+        "Resources": true,
         "Scene": true,
         "Settings": false,
         "ShaderEditor": false,
@@ -85,10 +85,10 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 1080,
+        "height": 810,
         "resizable": true,
         "sceneX": 480,
         "sceneY": 640,
-        "width": 1920
+        "width": 1440
     }
 }

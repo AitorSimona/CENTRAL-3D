@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleDetour.h"
 #include "ScriptData.h"
+#include "MathGeoLib/include/Math/float3.h"
 
 using namespace Broken;
 
@@ -25,18 +26,23 @@ void ScriptingNavigation::SetAreaCost(int areaIndex, float areaCost) {
 	App->detour->setAreaCost(areaIndex, areaCost);
 }
 
-int ScriptingNavigation::CalculatePath(float3 origin, float3 destination, int areaMask, lua_State* L) {
+luabridge::LuaRef ScriptingNavigation::CalculatePath(float origin_x, float origin_y, float origin_z, float dest_x, float dest_y, float dest_z, int areaMask, lua_State* L) {
 	std::vector<float3> path;
-	int ret = App->detour->calculatePath(origin, destination, areaMask, path);
-	if (ret > 0) {
+	float3 origin = { origin_x, origin_y, origin_z };
+	float3 destination = { dest_x, dest_y, dest_z };
+
+	luabridge::LuaRef ret = 0;
+	int success = App->detour->calculatePath(origin, destination, areaMask, path);
+	if (success > 0) {
+		ret.newTable(L);
 		for (int i = 0; i = path.size(); ++i) {
-			lua_pushnumber(L, path[i].x);
-			lua_pushnumber(L, path[i].y);
-			lua_pushnumber(L, path[i].z);
+			luabridge::LuaRef vector(L, luabridge::newTable(L));
+			vector.append(path[i].x);
+			vector.append(path[i].y);
+			vector.append(path[i].z);
+			ret.append(vector);
 		}
 	}
-	else
-		ret = 0;
 
 	return ret;
 }
