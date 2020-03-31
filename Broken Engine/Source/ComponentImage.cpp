@@ -61,10 +61,10 @@ void ComponentImage::Draw()
 	uint shaderID = App->renderer3D->defaultShader->ID;
 	glUseProgram(shaderID);
 
-	GLint modelLoc = glGetUniformLocation(shaderID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(shaderID, "view");
+	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
@@ -77,16 +77,16 @@ void ComponentImage::Draw()
 		0.0f, 0.0f, 0.0f, -1.0f,
 		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(shaderID, "projection");
+	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	// --- Color & Texturing ---
-	int TextureLocation = glGetUniformLocation(shaderID, "Texture");
+	int TextureLocation = glGetUniformLocation(shaderID, "u_HasTexture");
 	glUniform1i(TextureLocation, 1);
-	GLint vertexColorLocation = glGetUniformLocation(shaderID, "Color");
+	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
 
-	glUniform1i(glGetUniformLocation(shaderID, "ourTexture"), 1);
+	glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
 	glActiveTexture(GL_TEXTURE0 + 1);
 
 	if(texture)

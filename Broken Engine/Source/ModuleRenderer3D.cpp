@@ -149,9 +149,10 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 }
 
 // PostUpdate present buffer to screen
-update_status ModuleRenderer3D::PostUpdate(float dt) {
+update_status ModuleRenderer3D::PostUpdate(float dt)
+{
 	// --- Set Shader Matrices ---
-	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
@@ -164,10 +165,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 		0.0f, 0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(defaultShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(defaultShader->ID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
 
 	GLint camPosLoc = glGetUniformLocation(defaultShader->ID, "u_CameraPosition");
@@ -511,20 +512,20 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
-		"layout (location = 0) in vec3 position; \n"
-		"layout(location = 1) in vec3 normal; \n"
-		"layout(location = 2) in vec3 color; \n"
-		"layout (location = 3) in vec2 texCoord; \n"
-		"uniform vec3 Color; \n"
-		"out vec3 ourColor; \n"
-		"out vec2 TexCoord; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
+		"layout (location = 0) in vec3 a_Position; \n"
+		"layout(location = 1) in vec3 a_Normal; \n"
+		"layout(location = 2) in vec3 a_Color; \n"
+		"layout (location = 3) in vec2 a_TexCoord; \n"
+		"uniform vec3 u_Color; \n"
+		"uniform mat4 u_Model; \n"
+		"uniform mat4 u_View; \n"
+		"uniform mat4 u_Proj; \n"
+		"out vec3 v_Color; \n"
+		"out vec2 v_TexCoord; \n"
 		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
-		"ourColor = Color; \n"
-		"TexCoord = texCoord; \n"
+		"gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f); \n"
+		"v_Color = u_Color; \n"
+		"v_TexCoord = a_TexCoord; \n"
 		"}\n"
 		"#endif //VERTEX_SHADER\n"
 		;
@@ -533,15 +534,15 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
-		"uniform int Texture;\n"
-		"in vec3 ourColor; \n"
-		"in vec2 TexCoord; \n"
+		"uniform int u_HasTexture;\n"
+		"in vec3 v_Color; \n"
+		"in vec2 v_TexCoord; \n"
 		"out vec4 color; \n"
-		"uniform sampler2D ourTexture; \n"
+		"uniform sampler2D u_AlbedoTexture; \n"
 		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
-		"if(Texture == -1)\n"
-		"color = vec4(ourColor, 1);\n"
+		"color = texture(u_AlbedoTexture, v_TexCoord); \n"
+		"if(u_HasTexture == -1)\n"
+		"color = vec4(v_Color, 1);\n"
 		"} \n"
 		"#endif //FRAGMENT_SHADER\n"
 		;
@@ -555,12 +556,12 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
-		"layout (location = 0) in vec3 position; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
+		"layout (location = 0) in vec3 a_Position; \n"
+		"uniform mat4 u_Model; \n"
+		"uniform mat4 u_View; \n"
+		"uniform mat4 u_Proj; \n"
 		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
+		"gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0f); \n"
 		"}\n"
 		"#endif //VERTEX_SHADER\n"
 		;
@@ -569,7 +570,6 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
-		"in vec3 ourColor; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
 		"color = vec4(1.0,0.65,0.0, 1.0); \n"
@@ -591,15 +591,15 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
-		"layout (location = 0) in vec3 position; \n"
-		"out vec3 ourColor; \n"
-		"uniform vec3 Color; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
+		"layout (location = 0) in vec3 a_Position; \n"
+		"out vec3 v_Color; \n"
+		"uniform vec3 u_Color; \n"
+		"uniform mat4 u_Model; \n"
+		"uniform mat4 u_View; \n"
+		"uniform mat4 u_Proj; \n"
 		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"ourColor = Color; \n"
+		"gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0f); \n"
+		"v_Color = u_Color; \n"
 		"}\n"
 		"#endif //VERTEX_SHADER\n"
 		;
@@ -608,10 +608,10 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
-		"in vec3 ourColor; \n"
+		"in vec3 v_Color; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
-		"color = vec4(ourColor, 1.0); \n"
+		"color = vec4(v_Color, 1.0); \n"
 		"} \n"
 		"#endif //FRAGMENT_SHADER\n"
 		;
@@ -628,39 +628,51 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating z buffer shader drawer ---
 
 	const char* zdrawervertex =
-		"#version 440 core \n"
-		"#define VERTEX_SHADER \n"
-		"#ifdef VERTEX_SHADER \n"
-		"layout (location = 0) in vec3 position; \n"
-		"uniform vec2 nearfar; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"out mat4 _projection; \n"
-		"out vec2 nearfarfrag; \n"
-		"void main(){ \n"
-		"nearfarfrag = nearfar; \n"
-		"_projection = projection; \n"
-		"gl_Position = projection * view * model_matrix * vec4(position, 1.0f); \n"
-		"}\n"
-		"#endif //VERTEX_SHADER\n"
-		;
+		R"(#version 440 core 
+		#define VERTEX_SHADER 
+		#ifdef VERTEX_SHADER 
+		
+		layout (location = 0) in vec3 a_Position; 
+		
+		uniform vec2 nearfar; 
+		uniform mat4 u_Model; 
+		uniform mat4 u_View; 
+		uniform mat4 u_Proj; 
+		
+		out mat4 v_Projection; 
+		out vec2 v_NearFarPlanes; 
+		
+		void main()
+		{ 
+			v_NearFarPlanes = nearfar; 
+			v_Projection = u_Proj; 
+			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0); 
+		}
+		#endif //VERTEX_SHADER)";
 
 	const char* zdrawerfragment =
-		"#version 440 core \n"
-		"#define FRAGMENT_SHADER \n"
-		"#ifdef FRAGMENT_SHADER \n"
-		"out vec4 FragColor; \n"
-		"in vec2 nearfarfrag; \n"
-		"in mat4 _projection; \n"
-		"float LinearizeDepth(float depth){ \n"
-		"float z =  2.0*depth - 1.0; // back to NDC \n"
-		"return 2.0* nearfarfrag.x * nearfarfrag.y / (nearfarfrag.y + nearfarfrag.x - z * (nearfarfrag.y - nearfarfrag.x)); }\n"
-		"void main(){ \n"
-		"float depth = LinearizeDepth(gl_FragCoord.z) / nearfarfrag.y;  \n"
-		"FragColor = vec4(vec3(gl_FragCoord.z*nearfarfrag.y*nearfarfrag.x), 1.0); } \n"
-		"#endif //FRAGMENT_SHADER\n"
-		;
+		R"(#define FRAGMENT_SHADER 
+		#ifdef FRAGMENT_SHADER
+		
+			in vec2 v_NearFarPlanes;
+			in mat4 v_Projection;
+		
+			out vec4 color;
+		
+			float LinearizeDepth(float depth)
+			{
+				float z = 2.0 * depth - 1.0; // back to NDC 
+				return 2.0 * v_NearFarPlanes.x * v_NearFarPlanes.y / (v_NearFarPlanes.y + v_NearFarPlanes.x - z * (v_NearFarPlanes.y - v_NearFarPlanes.x));
+			}
+		
+			void main()
+			{
+				float depth = LinearizeDepth(gl_FragCoord.z) / v_NearFarPlanes.y;
+				color = vec4(vec3(gl_FragCoord.z * v_NearFarPlanes.y * v_NearFarPlanes.x), 1.0);
+			}
+		
+		#endif //FRAGMENT_SHADER)";
+
 	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z), just in case I need it again (doubt it though)
 
 	ZDrawerShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/ZDrawer.glsl", 10);
@@ -675,36 +687,46 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating text rendering shaders ---
 
 	const char* textVertShaderSrc =
-		"#version 440 core \n"
-		"#define VERTEX_SHADER \n"
-		"#ifdef VERTEX_SHADER \n"
-		"layout (location = 0) in vec3 position; \n"
-		"layout (location = 1) in vec2 texCoords; \n"
-		"out vec2 TexCoords; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
-		"TexCoords = texCoords; \n"
-		"}\n"
-		"#endif //VERTEX_SHADER\n"
-		;
+		R"(#version 440 core 
+		
+		#define VERTEX_SHADER 
+		#ifdef VERTEX_SHADER 
+		
+		layout (location = 0) in vec3 a_Position; 
+		layout (location = 1) in vec2 a_TexCoords;
+		
+		uniform mat4 u_Model; 
+		uniform mat4 u_View; 
+		uniform mat4 u_Proj; 
+		
+		out vec2 v_TexCoords; 
+		
+		void main()
+		{ 
+			gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f); 
+			v_TexCoords = a_TexCoords; 
+		}
+		
+		#endif //VERTEX_SHADER)";
 
 	const char* textFragShaderSrc =
-		"#version 440 core \n"
-		"#define FRAGMENT_SHADER \n"
-		"#ifdef FRAGMENT_SHADER \n"
-		"in vec2 TexCoords; \n"
-		"uniform sampler2D text; \n"
-		"uniform vec3 textColor; \n"
-		"out vec4 color; \n"
-		"void main(){ \n"
-		"vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r); \n"
-		"color = vec4(textColor, 1.0) * sampled; \n"
-		"} \n"
-		"#endif //FRAGMENT_SHADER\n"
-		;
+		R"(#define FRAGMENT_SHADER 
+		#ifdef FRAGMENT_SHADER 
+		
+		in vec2 v_TexCoords; 
+		
+		uniform sampler2D text; 
+		uniform vec3 textColor; 
+		
+		out vec4 color; 
+		
+		void main()
+		{ 
+			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r); 
+			color = vec4(textColor, 1.0) * sampled; 
+		} 
+		
+		#endif //FRAGMENT_SHADER)";
 
 	textShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TextShader.glsl", 11);
 	textShader->vShaderCode = textVertShaderSrc;
@@ -718,43 +740,50 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating Default Vertex and Fragment Shaders ---
 
 	const char* vertexShaderSource =
-		"#version 440 core \n"
-		"#define VERTEX_SHADER \n"
-		"#ifdef VERTEX_SHADER \n"
-		"layout (location = 0) in vec3 position; \n"
-		"layout(location = 1) in vec3 normal; \n"
-		"layout(location = 2) in vec3 color; \n"
-		"layout (location = 3) in vec2 texCoord; \n"
-		"uniform vec3 Color = vec3(1.0); \n"
-		"out vec3 ourColor; \n"
-		"out vec2 TexCoord; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
-		"ourColor = Color; \n"
-		"TexCoord = texCoord; \n"
-		"}\n"
-		"#endif //VERTEX_SHADER\n"
-		;
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
+		layout(location = 1) in vec3 a_Normal;
+		layout(location = 2) in vec3 a_Color;
+		layout (location = 3) in vec2 a_TexCoord;
+
+		uniform vec3 u_Color = vec3(1.0);
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out vec3 v_Color;
+		out vec2 v_TexCoord;
+
+		void main()
+		{
+			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0f);
+			v_Color = u_Color;
+			v_TexCoord = a_TexCoord;
+		}
+		#endif //VERTEX_SHADER)";
 
 	const char* fragmentShaderSource =
-		"#version 440 core \n"
-		"#define FRAGMENT_SHADER \n"
-		"#ifdef FRAGMENT_SHADER \n"
-		"uniform int Texture;\n"
-		"in vec3 ourColor; \n"
-		"in vec2 TexCoord; \n"
-		"out vec4 color; \n"
-		"uniform sampler2D ourTexture; \n"
-		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord) * vec4(ourColor, 1); \n"
-		"if(Texture == -1)\n"
-		"color = vec4(ourColor, 1);\n"
-		"} \n"
-		"#endif //FRAGMENT_SHADER\n"
-		;
+		R"(#version 440 core
+		#define FRAGMENT_SHADER
+		#ifdef FRAGMENT_SHADER
+
+		uniform int u_HasTexture;
+		uniform sampler2D u_AlbedoTexture;
+
+		in vec3 v_Color;
+		in vec2 v_TexCoord;
+		out vec4 color;
+
+		void main()
+		{
+			color = texture(u_AlbedoTexture, v_TexCoord) * vec4(v_Color, 1);
+			if(u_HasTexture == -1)
+				color = vec4(v_Color, 1);
+		}
+		#endif //FRAGMENT_SHADER)";
 
 	defaultShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/Standard.glsl", 12);
 	defaultShader->vShaderCode = vertexShaderSource;
@@ -896,10 +925,10 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		}
 		
 		// --- Set general uniforms ---
-		GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
+		GLint modelLoc = glGetUniformLocation(shader, "u_Model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr()); // model matrix
 
-		GLint viewLoc = glGetUniformLocation(shader, "view");
+		GLint viewLoc = glGetUniformLocation(shader, "u_View");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, active_camera->GetOpenGLViewMatrix().ptr());
 
 		GLint timeLoc = glGetUniformLocation(shader, "time");
@@ -914,12 +943,12 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			0.0f, 0.0f, 0.0f, -1.0f,
 			0.0f, 0.0f, nearp, 0.0f);
 
-		GLint projectLoc = glGetUniformLocation(shader, "projection");
+		GLint projectLoc = glGetUniformLocation(shader, "u_Proj");
 		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 		// --- General Drawing Uniforms ---
-		int TextureSupportLocation = glGetUniformLocation(shader, "Texture"); // as of now, this is only on DefaultShader!
-		int vertexColorLocation = glGetUniformLocation(shader, "Color");
+		int TextureSupportLocation = glGetUniformLocation(shader, "u_HasTexture"); // as of now, this is only on DefaultShader!
+		int vertexColorLocation = glGetUniformLocation(shader, "u_Color");
 
 		// --- Set Normal Mapping Draw
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping"), (int)m_Draw_normalMapping);
@@ -955,13 +984,13 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 						glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
 						glUniform1i(TextureSupportLocation, (int)mesh->mat->m_UseTexture);
 
-						glUniform1i(glGetUniformLocation(shader, "ourTexture"), 1);
+						glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 1);
 						glActiveTexture(GL_TEXTURE0 + 1);
 						glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
 
 						if (mesh->mat->m_SpecularResTexture)
 						{
-							glUniform1i(glGetUniformLocation(shader, "SpecText"), 2);
+							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 2);
 							glActiveTexture(GL_TEXTURE0 + 2);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
 						}
@@ -1049,10 +1078,10 @@ void ModuleRenderer3D::DrawRenderLines()
 	glUseProgram(App->renderer3D->linepointShader->ID);
 
 	// --- Get Uniform locations ---
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
-	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_Model");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_View");
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_Color");
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_Proj");
 
 	// --- Set Right handed projection matrix ---
 
@@ -1132,16 +1161,17 @@ void ModuleRenderer3D::DrawRenderBoxes()
 void ModuleRenderer3D::DrawGrid()
 {
 	//App->renderer3D->defaultShader->use();
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	uint shaderID = App->renderer3D->defaultShader->ID;
+	glUseProgram(shaderID);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
 	float gridColor = 0.8f;
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
 
-	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
+	int TextureSupportLocation = glGetUniformLocation(shaderID, "u_HasTexture");
 	glUniform1i(TextureSupportLocation, (int)false);
 
 	glLineWidth(1.7f);
@@ -1207,16 +1237,16 @@ void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, 
 		0.0f, 0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, nearp, 0.0f);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "Color");
+	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_Color");
 	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
 	// --- Create VAO, VBO ---

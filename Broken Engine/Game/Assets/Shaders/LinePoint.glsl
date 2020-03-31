@@ -1,23 +1,32 @@
 #version 440 core 
 #define VERTEX_SHADER 
 #ifdef VERTEX_SHADER 
-layout (location = 0) in vec3 position; 
-out vec3 ourColor; 
-uniform vec3 Color; 
-uniform mat4 model_matrix; 
-uniform mat4 view; 
-uniform mat4 projection; 
-void main(){ 
-gl_Position = projection * view * model_matrix * vec4(position, 1.0f); 
-ourColor = Color; 
+
+layout (location = 0) in vec3 a_Position; 
+
+uniform vec3 u_Color; 
+uniform mat4 u_Model; 
+uniform mat4 u_View; 
+uniform mat4 u_Proj; 
+
+out vec3 v_Color; 
+
+void main()
+{ 
+	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0); 
+	v_Color = u_Color; 
 }
 #endif //VERTEX_SHADER
 
 #define FRAGMENT_SHADER 
 #ifdef FRAGMENT_SHADER 
-in vec3 ourColor; 
+
+in vec3 v_Color; 
 out vec4 color; 
-void main(){ 
-color = vec4(ourColor, 1.0); 
+
+void main()
+{ 
+	color = vec4(ourColor, 1.0); 
 } 
+
 #endif //FRAGMENT_SHADER

@@ -283,12 +283,13 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 	{
 		glGetActiveUniform(ID, i, 128, nullptr, &size, &type, name);
 
-		if (strcmp(name, "model_matrix") == 0
-			|| strcmp(name, "view") == 0
-			|| strcmp(name, "projection") == 0
+		if (strcmp(name, "u_Model") == 0
+			|| strcmp(name, "u_View") == 0
+			|| strcmp(name, "u_Proj") == 0
 			|| strcmp(name, "time") == 0
-			|| strcmp(name, "Color") == 0
-			|| strcmp(name, "Texture") == 0
+			|| strcmp(name, "u_Color") == 0
+			|| strcmp(name, "u_HasTexture") == 0
+			|| strcmp(name, "u_DrawNormalMapping") == 0
 			|| strcmp(name, "u_Shininess") == 0
 			|| strcmp(name, "u_LightsNumber") == 0
 			|| strcmp(name, "u_CameraPosition") == 0

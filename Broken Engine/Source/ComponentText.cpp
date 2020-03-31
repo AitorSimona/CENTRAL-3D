@@ -74,10 +74,10 @@ void ComponentText::Draw()
 	// --- Set Uniforms ---
 	glUseProgram(App->renderer3D->textShader->ID);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
@@ -90,7 +90,7 @@ void ComponentText::Draw()
 		0.0f, 0.0f, 0.0f, -1.0f,
 		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	glUniform3f(glGetUniformLocation(App->renderer3D->textShader->ID, "textColor"), color.r, color.g, color.b);

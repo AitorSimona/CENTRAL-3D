@@ -4,18 +4,18 @@
 #ifdef VERTEX_SHADER
 
 //Layout Daya
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
-layout (location = 2) in vec3 color;
-layout (location = 3) in vec2 texCoord;
-layout (location = 4) in vec3 aTangent;
-layout (location = 5) in vec3 aBitangent;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec3 a_Normal;
+layout (location = 2) in vec3 a_Color;
+layout (location = 3) in vec2 a_TexCoord;
+layout (location = 4) in vec3 a_Tangent;
+layout (location = 5) in vec3 a_Bitangent;
 
 //Uniforms
-uniform vec3 Color = vec3(1.0);
-uniform mat4 model_matrix;
-uniform mat4 view;
-uniform mat4 projection;
+uniform vec3 u_Color = vec3(1.0); //Color
+uniform mat4 u_Model; //model_matrix
+uniform mat4 u_View; //view
+uniform mat4 u_Proj; //projection
 uniform vec3 u_CameraPosition;
 
 //Varyings
@@ -27,13 +27,14 @@ out vec3 v_CamPos;
 
 void main()
 {
-	gl_Position = projection * view * model_matrix * vec4(position.xyz, 1.0);
-
-	v_TexCoord = texCoord;
-	v_Color = Color;
-	v_FragPos = vec3(model_matrix * vec4(position.xyz, 1.0));
-	v_Normal = mat3(transpose(inverse(model_matrix))) * normal;
+	v_Color = u_Color;
+	v_TexCoord = a_TexCoord;
 	v_CamPos = u_CameraPosition;
+
+	v_FragPos = vec3(u_Model * vec4(a_Position, 1.0));
+	v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
+
+	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 }
 
 #endif //VERTEX_SHADER
@@ -55,12 +56,12 @@ in vec3 v_FragPos;
 in vec3 v_CamPos;
 
 //Uniforms
-uniform int Texture;
+uniform int u_HasTexture;
 uniform int u_HasNormalMap;
 uniform int u_DrawNormalMapping;
 uniform float u_Shininess;
-uniform sampler2D ourTexture;
-uniform sampler2D SpecText;
+uniform sampler2D u_AlbedoTexture;
+uniform sampler2D u_SpecularTexture;
 uniform sampler2D u_NormalTexture;
 
 //Light Uniforms
@@ -101,10 +102,10 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 	vec3 specular = LColor * specImpact;
 
 	//If we have textures, apply them
-	if(Texture == 1)
+	if(u_HasTexture == 1)
 	{
-		diffuse *= texture(ourTexture, v_TexCoord).rgb;
-		specular *= texture(SpecText, v_TexCoord).rgb;
+		diffuse *= texture(u_AlbedoTexture, v_TexCoord).rgb;
+		specular *= texture(u_SpecularTexture, v_TexCoord).rgb;
 	}
 
 	return (diffuse + specular);
@@ -185,10 +186,10 @@ void main()
 	}
 
 	//Resulting Color
-	if(Texture == 0)
+	if(u_HasTexture == 0)
 		out_color = vec4(colorResult + v_Color, 1.0);
 	else
-		out_color = vec4(colorResult + v_Color * texture(ourTexture, v_TexCoord).rgb, texture(ourTexture, v_TexCoord).a);
+		out_color = vec4(colorResult + v_Color * texture(u_AlbedoTexture, v_TexCoord).rgb, texture(u_AlbedoTexture, v_TexCoord).a);
 
 	//Draw Normal Mapping if we must
 	//if(u_DrawNormalMapping)
