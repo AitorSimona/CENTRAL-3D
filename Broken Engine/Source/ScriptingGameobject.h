@@ -32,8 +32,7 @@ public:
 	float GetGameObjectPosZ(uint gameobject_UUID);
 	void TranslateGameObject(uint gameobject_UUID, float x, float y, float z);
 
-	uint GetComponentFromGO(const char* component_type, const char* go_name = "NO_NAME");
-
+	uint GetComponentFromGO(uint gameobject_UUID, const char* component_name);
 
 	// Current Camera
 	int GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2);
