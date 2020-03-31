@@ -108,7 +108,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 
 	}
 
-	if (scene == App->scene_manager->currentScene) {
+	if (scene == App->scene_manager->currentScene || scene == App->scene_manager->temporalScene) {
 		json navdata = file["Navigation Data"];
 		// --- Navigation Data --
 		file["Navigation Data"]["agentRadius"] = App->detour->agentRadius;

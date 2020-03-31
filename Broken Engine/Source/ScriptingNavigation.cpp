@@ -31,11 +31,10 @@ luabridge::LuaRef ScriptingNavigation::CalculatePath(float origin_x, float origi
 	float3 origin = { origin_x, origin_y, origin_z };
 	float3 destination = { dest_x, dest_y, dest_z };
 
-	luabridge::LuaRef ret = 0;
+	luabridge::LuaRef ret(L, luabridge::newTable(L));
 	int success = App->detour->calculatePath(origin, destination, areaMask, path);
 	if (success > 0) {
-		ret.newTable(L);
-		for (int i = 0; i = path.size(); ++i) {
+		for (int i = 0; i < path.size(); ++i) {
 			luabridge::LuaRef vector(L, luabridge::newTable(L));
 			vector.append(path[i].x);
 			vector.append(path[i].y);
