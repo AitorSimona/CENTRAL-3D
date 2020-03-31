@@ -355,6 +355,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("PlayAnimation", &ScriptingAnimations::StartAnimation)
 		.addFunction("SetAnimationSpeed", &ScriptingAnimations::SetAnimSpeed)
 		.addFunction("SetCurrentAnimationSpeed", &ScriptingAnimations::SetCurrentAnimSpeed)
+		.addFunction("SetBlendTime", &ScriptingAnimations::SetBlendTime)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -362,7 +363,6 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingInterface>("Interface")
 		.addConstructor<void(*) (void)>()
-
 
 		.addFunction("MakeElementVisible", &ScriptingInterface::MakeUIComponentVisible)
 		.addFunction("MakeElementInvisible", &ScriptingInterface::MakeUIComponentInvisible)
