@@ -35,17 +35,65 @@ uint ScriptingGameobject::FindGameObject(const char* go_name)
 	return ret;
 }
 
+uint ScriptingGameobject::GetMyUID()
+{
+	return App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
+}
+
+uint ScriptingGameobject::GetScriptGOParent()
+{
+	uint ret = 0;
+	GameObject* go = App->scripting->current_script->my_component->GetContainerGameObject()->parent;
+
+	if (go && go->GetName() != App->scene_manager->GetName())
+		ret = go->GetUID();
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject has no parent! 0 will be returned");
+
+	return ret;
+}
+
+uint ScriptingGameobject::GetGOParentFromUID(uint gameobject_UUID)
+{
+	uint ret = 0;
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go && go->GetName() != App->scene_manager->GetName())
+	{
+		if (go->parent)
+			ret = go->parent->GetUID();
+		else
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID has no parent! 0 will be returned", gameobject_UUID);
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID was not found! 0 will be returned", gameobject_UUID);
+
+	return ret;
+}
+
 void ScriptingGameobject::DestroyGOFromScript(uint gameobject_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-	ENGINE_CONSOLE_LOG("Destroying: %s ...", go->GetName());	
 
-	App->scene_manager->SendToDelete(go); 
+	if (go)
+		App->scene_manager->SendToDelete(go);
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
+}
+
+void ScriptingGameobject::SetActiveGameObject(uint gameobject_UUID, bool active)
+{
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go)
+		go->GetActive() = active;
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
 
 float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
 {
-	float ret = 0;
+	float ret = 0.0f;
 	float3 rot = float3(0.0f);
 
 	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UUID)).second;
@@ -67,7 +115,7 @@ float ScriptingGameobject::GetGameObjectPos(uint gameobject_UUID, lua_State* L)
 	lua_pushnumber(L, rot.x);
 	lua_pushnumber(L, rot.y);
 	lua_pushnumber(L, rot.z);
-	return 0.0f;
+	return ret;
 }
 
 float ScriptingGameobject::GetGameObjectPosX(uint gameobject_UUID)
@@ -149,18 +197,14 @@ void ScriptingGameobject::TranslateGameObject(uint gameobject_UUID, float x, flo
 		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
 	}
 	else
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Object or its transformation component are null");
 }
 
-uint ScriptingGameobject::GetComponentFromGO(const char* component_name, const char* go_name)
+uint ScriptingGameobject::GetComponentFromGO(uint gameobject_UUID, const char* component_name)
 {
 	uint ret = 0;
 	GameObject* go = nullptr;
-
-	if (go_name == "NO_NAME")
-		go = App->scripting->current_script->my_component->GetContainerGameObject();
-	else
-		go = App->scene_manager->currentScene->GetGOWithName(go_name);
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go != nullptr)
 	{
@@ -200,12 +244,12 @@ uint ScriptingGameobject::GetComponentFromGO(const char* component_name, const c
 		}
 		else
 		{
-			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Component %s was not found inside Gameobject %s! 0 will be returned", component_name, go_name);
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Component %s was not found inside Gameobject with UUID %d! 0 will be returned", component_name, gameobject_UUID);
 		}
 	}
 	else
 	{
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject %s was not found! 0 will be returned", go_name);
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with UUID %d was not found! 0 will be returned", gameobject_UUID);
 	}
 
 	return ret;
@@ -243,41 +287,131 @@ int ScriptingGameobject::GetPosInFrustum(float x, float y, float z, float fovrat
 		}
 	}
 	else
-		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Current Active camera is NULL");
 
 	return camlevel;
 }
 
-int ScriptingGameobject::GetFrustumPlanesIntersection(float x, float y, float z, lua_State* luaSt)
+int ScriptingGameobject::GetFrustumPlanesIntersection(float x, float y, float z, float fovratio, lua_State* L)
 {
+	int ret = 0;
+
+	// Top, Bottom, Left, Right
+	double top = 1.0, bot = 1.0, left = 1.0, right = 1.0;	//Considered to be inside the frustum (at planes' negative side) by default
 	ComponentCamera* cam = App->renderer3D->active_camera;
+
 	if (cam)
 	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio, cam->frustum.AspectRatio());
+
 		float3 pos = { x, y, z };
-		int T, B, L, R;		//Top, Bottom, Left, Right
-		T = B = L = R = 1;	//Considered to be inside the frustum (at planes' negative side) by default
 
-		if (cam->frustum.TopPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
-			T = 0;
-		if (cam->frustum.BottomPlane().IsOnPositiveSide(pos))
-			B = 0;
-		if (cam->frustum.LeftPlane().IsOnPositiveSide(pos))
-			L = 0;
-		if (cam->frustum.RightPlane().IsOnPositiveSide(pos))
-			R = 0;
+		if (sub1.TopPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+			top = 0.0;
+		if (sub1.BottomPlane().IsOnPositiveSide(pos))
+			bot = 0.0;
+		if (sub1.LeftPlane().IsOnPositiveSide(pos))
+			left = 0.0;
+		if (sub1.RightPlane().IsOnPositiveSide(pos))
+			right = 0.0;
 
-		lua_pushnumber(luaSt, T);
-		lua_pushnumber(luaSt, B);
-		lua_pushnumber(luaSt, L);
-		lua_pushnumber(luaSt, R);
-		return 4;
+		ret = 4;
 	}
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Current Active camera is NULL");
 
-	return 0;
+	lua_pushnumber(L, top);
+	lua_pushnumber(L, bot);
+	lua_pushnumber(L, left);
+	lua_pushnumber(L, right);
+	return ret;
 }
 
+int ScriptingGameobject::GetTopFrustumIntersection(float x, float y, float z, float fovratio)
+{
+	// Top
+	int top = 1;	//Considered to be inside the frustum (at planes' negative side) by default
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	if (cam)
+	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio, cam->frustum.AspectRatio());
+
+		float3 pos = { x, y, z };
+
+		if (sub1.TopPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+			top = 0;
+	}
+
+	return top;
+}
+
+int ScriptingGameobject::GetBottomFrustumIntersection(float x, float y, float z, float fovratio)
+{
+	// Bot
+	int bot = 1;	//Considered to be inside the frustum (at planes' negative side) by default
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	if (cam)
+	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio, cam->frustum.AspectRatio());
+
+		float3 pos = { x, y, z };
+
+		if (sub1.BottomPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+			bot = 0;
+	}
+
+	return bot;
+}
+
+int ScriptingGameobject::GetRightFrustumIntersection(float x, float y, float z, float fovratio)
+{
+	// Right
+	int right = 1;	//Considered to be inside the frustum (at planes' negative side) by default
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	if (cam)
+	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio, cam->frustum.AspectRatio());
+
+		float3 pos = { x, y, z };
+
+		if (sub1.RightPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+			right = 0;
+	}
+
+	return right;
+}
+
+int ScriptingGameobject::GetLeftFrustumIntersection(float x, float y, float z, float fovratio)
+{
+	// Left
+	int left = 1;	//Considered to be inside the frustum (at planes' negative side) by default
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	if (cam)
+	{
+		// --- Create subdivisions of the frustum ---
+		Frustum sub1 = cam->frustum;
+		sub1.SetVerticalFovAndAspectRatio(cam->GetFOV() * DEGTORAD * fovratio, cam->frustum.AspectRatio());
+
+		float3 pos = { x, y, z };
+
+		if (sub1.BottomPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+			left = 0;
+	}
+
+	return left;
+}
 
 luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State* L)
 {
@@ -291,6 +425,18 @@ luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State
 		ScriptInstance* script = App->scripting->GetScriptInstanceFromComponent(component_script);
 
 		ret = script->my_table_class;
+	}
+	return ret;
+}
+
+
+int ScriptingGameobject::GetLayer(lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		lua_pushnumber(L, body->GetLayer());
+		ret = 1;
 	}
 	return ret;
 }

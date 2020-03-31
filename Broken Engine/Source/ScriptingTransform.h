@@ -11,8 +11,7 @@ public:
 	ScriptingTransform();
 	~ScriptingTransform();
 
-public:
-	
+public:	
 	// Position
 	int GetPosition(lua_State* L);
 	float GetPositionX() const;

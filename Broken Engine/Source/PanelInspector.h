@@ -3,6 +3,7 @@
 
 #include "BrokenEngine.h"
 
+
 class PanelInspector : public Broken::Panel
 {
 public:

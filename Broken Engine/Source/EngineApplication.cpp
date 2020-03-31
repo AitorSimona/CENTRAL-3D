@@ -40,6 +40,7 @@ EngineApplication::EngineApplication() {
 	
 	// Scenes
 	AddModule(scene_manager);
+	AddModule(selection);
 
 	//Physics and particles
 	AddModule(physics);
@@ -55,4 +56,25 @@ EngineApplication::EngineApplication() {
 }
 
 EngineApplication::~EngineApplication() {
+}
+
+void EngineApplication::SaveForBuild(const Broken::json& reference, const char* path) const {
+	static Broken::json config = reference;
+
+	Broken::json node;
+	for (std::list<Broken::Module*>::const_iterator item = list_modules.begin(); item != list_modules.end(); ++item) {
+		if ((*item) == editorui)
+			continue;
+
+		if ((*item) == window)
+			continue;
+
+		if ((*item)->isEnabled()) {
+			node = (*item)->SaveStatus();
+			if (node.begin() != node.end())
+				config[(*item)->GetName()] = node;
+		}
+	}
+
+	EngineApp->GetJLoader()->Save(path, config);
 }

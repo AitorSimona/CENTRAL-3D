@@ -1,8 +1,10 @@
 #include "ScriptingAnimations.h"
 #include "Application.h"
 #include "ModuleScripting.h"
+#include "ModuleSceneManager.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentAnimation.h"
+#include "ResourceScene.h"
 #include "ScriptData.h"
 
 using namespace Broken;
@@ -11,7 +13,7 @@ ScriptingAnimations::ScriptingAnimations() {}
 ScriptingAnimations::~ScriptingAnimations() {}
 
 void ScriptingAnimations::StartAnimation(const char* name, float speed)
-{
+{	
 	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
 
 	if (anim)

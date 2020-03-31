@@ -20,7 +20,7 @@ using namespace Broken;
 
 ComponentAnimation::ComponentAnimation(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Animation)
 {
-
+	name = "Animation";
 }
 
 ComponentAnimation::~ComponentAnimation()
@@ -71,7 +71,6 @@ void ComponentAnimation::Update()
 		has_skeleton = HasSkeleton(childs);
 
 		DoLink();
-		//playing_animation = CreateAnimation("Idle", 0, 0, true, true);
 	}
 
 	if (App->GetAppState() == AppState::PLAY)
@@ -91,13 +90,17 @@ void ComponentAnimation::Update()
 
 			if (has_skeleton)
 				UpdateMesh(GO);
+
+			//Debug purposes 
+			/*if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+			{
+				PlayAnimation("Walk");
+			}*/
 		}
 	}
 	else
 	{
 		time = 0;
-		if(animations.size()>0)
-			playing_animation = GetDefaultAnimation();
 	}
 
 	if (to_copy)
@@ -117,7 +120,8 @@ void ComponentAnimation::Update()
 Animation* ComponentAnimation::CreateAnimation(std::string name, uint start, uint end, bool loop, bool Default)
 {
 	Animation* anim = new Animation(name, start, end, loop, Default);
-	anim->speed = res_anim->ticksPerSecond;
+	if (res_anim != nullptr)
+		anim->speed = res_anim->ticksPerSecond;
 	animations.push_back(anim);
 
 	return anim;
@@ -134,8 +138,7 @@ Animation* ComponentAnimation::GetDefaultAnimation() const
 
 	}
 
-	//normally first one is idle ?
-	return animations[0];
+	return nullptr;
 }
 
 void ComponentAnimation::PlayAnimation(const char* name, float speed)
@@ -201,6 +204,7 @@ json ComponentAnimation::Save() const
 	// --- Saving animations ------------------
 	node["Animations"]["Size"] = std::to_string(animations.size());
 	node["Animations"]["BlendTime"] = std::to_string(blend_time_value);
+	node["Animations"]["UseDefault"] = use_default_animation;
 
 	for (int i = 0; i < animations.size(); ++i)
 	{
@@ -241,6 +245,7 @@ void ComponentAnimation::Load(json& node)
 	std::string blend_time = node ["Animations"]["BlendTime"].is_null() ? "0" : node["Animations"]["BlendTime"];
 	blend_time_value = std::stof(blend_time);
 
+	use_default_animation = node["Animations"]["UseDefault"].is_null() ? false : (bool)node["Animations"]["UseDefault"];
 
 	for (int i = 0; i < anim_size; ++i)
 	{
@@ -283,11 +288,9 @@ void ComponentAnimation::ONResourceEvent(uint UID, Resource::ResourceNotificatio
 
 void ComponentAnimation::CreateInspectorNode()
 {
-	ImGui::Checkbox("##Animator", &GetActive());
-	ImGui::SameLine();
-
-	if (ImGui::TreeNode("Animation"))
+	if (res_anim)
 	{
+
 		if (ImGui::Button("Delete component"))
 			to_delete = true;
 
@@ -296,14 +299,17 @@ void ComponentAnimation::CreateInspectorNode()
 			ImGui::Text("Animation name: %s", res_anim->name.c_str());
 			ImGui::PushItemWidth(50); ImGui::InputFloat("Blend Duration", &blend_time_value);
 			ImGui::Checkbox("Draw Bones", &draw_bones);
+			ImGui::Checkbox("Use Default Animation", &use_default_animation);
+
 			if (ImGui::Button("Create New Animation"))
 				CreateAnimation("New Animation", 0, 0, false);
-			
+
+
 			if (res_animator)
 			{
 				if (ImGui::Button("Save animation info"))
 				{
-					
+
 					res_animator->FreeMemory();
 
 					for (auto iterator = animations.begin(); iterator != animations.end(); ++iterator)
@@ -311,14 +317,14 @@ void ComponentAnimation::CreateInspectorNode()
 						Animation* anim = new Animation((*iterator)->name, (*iterator)->start, (*iterator)->end, (*iterator)->loop, (*iterator)->Default);
 						res_animator->animations.push_back(anim);
 					}
-						
+
 					ImporterAnimator* IAnim = App->resources->GetImporter<ImporterAnimator>();
 					IAnim->Save(res_animator);
 				}
 			}
 			else
 				ImGui::Text("No Animator applied");
-		
+
 
 			ImGui::SameLine();
 			ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
@@ -331,7 +337,7 @@ void ComponentAnimation::CreateInspectorNode()
 					uint UID = *(const uint*)payload->Data;
 					Resource* resource = App->resources->GetResource(UID, false);
 
-					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR) 
+					if (resource && resource->GetType() == Resource::ResourceType::ANIMATOR)
 					{
 						LoadAnimator(true, UID);
 					}
@@ -370,8 +376,6 @@ void ComponentAnimation::CreateInspectorNode()
 				}
 			}
 		}
-
-		ImGui::TreePop();
 	}
 }
 
@@ -429,96 +433,113 @@ void ComponentAnimation::DoBoneLink()
 
 void ComponentAnimation::UpdateJointsTransform()
 {
+	
 	for (int i = 0; i < links.size() && playing_animation != nullptr; i++)
 	{
 		ComponentTransform* trans = links[i].gameObject->GetComponent<ComponentTransform>();
 
+		bool update_transforms = true;
 		// ----------------------- Frame count managment -----------------------------------
 		Frame = playing_animation->start + (time * playing_animation->speed);
 		if (Frame >= playing_animation->end)
 		{
-			if (!playing_animation->loop)
-				if (playing_animation->Default == false)
-				{
-					StartBlend(GetDefaultAnimation());
-				}
-			time = 0;
-		}
-		//-------------------------------------------------------------------------------------
-		// POSITION
-		float3 position = trans->GetPosition();
-		if (links[i].channel->PosHasKey())
-		{
-
-			std::map<double, float3>::iterator pos = links[i].channel->PositionKeys.find(Frame);
-			if (pos != links[i].channel->PositionKeys.end())
-				position = pos->second;
+			if (use_default_animation)
+			{
+				if (!playing_animation->loop)
+					if (playing_animation->Default == false)
+					{
+						StartBlend(GetDefaultAnimation());
+					}
+				time = 0;
+			}
 			else
 			{
-				//Blend prev with next
-				std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
-				std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
-
-				if (next == links[i].channel->PositionKeys.end())
-					next = prev;
+				if (playing_animation->loop)
+					time = 0;
 				else
-				{
-					float value = (Frame - prev->first) / (next->first - prev->first);
-					position = prev->second.Lerp(next->second, value);
-				}
+					update_transforms = false;
+
 			}
-			
 		}
-		trans->SetPosition(position);
-		//ROTATION
-		Quat rotation = trans->GetQuaternionRotation();
-		if (links[i].channel->RotHasKey())
+
+		if (update_transforms)
 		{
-			std::map<double, Quat>::iterator rot = links[i].channel->RotationKeys.find(Frame);
-			if (rot != links[i].channel->RotationKeys.end())
-				rotation = rot->second;
-			else
+			//-------------------------------------------------------------------------------------
+			// POSITION
+			float3 position = trans->GetPosition();
+			if (links[i].channel->PosHasKey())
 			{
-				//Blend prev with next
-				std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
-				std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
 
-				if (next == links[i].channel->RotationKeys.end())
-					next = prev;
+				std::map<double, float3>::iterator pos = links[i].channel->PositionKeys.find(Frame);
+				if (pos != links[i].channel->PositionKeys.end())
+					position = pos->second;
 				else
 				{
-					float value = (Frame - prev->first) / (next->first - prev->first);
-					rotation = prev->second.Slerp(next->second, value);
+					//Blend prev with next
+					std::map<double, float3>::iterator prev = links[i].channel->PrevPosition(Frame);
+					std::map<double, float3>::iterator next = links[i].channel->NextPosition(Frame);
+
+					if (next == links[i].channel->PositionKeys.end())
+						next = prev;
+					else
+					{
+						float value = (Frame - prev->first) / (next->first - prev->first);
+						position = prev->second.Lerp(next->second, value);
+					}
 				}
+
 			}
-		}
-		trans->SetQuatRotation(rotation);
-
-		//SCALE
-		float3 scale = trans->GetScale();
-		if (links[i].channel->ScaleHasKey())
-		{
-			std::map<double, float3>::iterator sca = links[i].channel->ScaleKeys.find(Frame);
-			if (sca != links[i].channel->ScaleKeys.end())
-				scale = sca->second;
-			else
+			trans->SetPosition(position);
+			//ROTATION
+			Quat rotation = trans->GetQuaternionRotation();
+			if (links[i].channel->RotHasKey())
 			{
-				//Blend prev with next
-				std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
-				std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
-
-				if (next == links[i].channel->ScaleKeys.end())
-					next = prev;
+				std::map<double, Quat>::iterator rot = links[i].channel->RotationKeys.find(Frame);
+				if (rot != links[i].channel->RotationKeys.end())
+					rotation = rot->second;
 				else
 				{
-					float value = (Frame - prev->first) / (next->first - prev->first);
-					scale = prev->second.Lerp(next->second, value);
+					//Blend prev with next
+					std::map<double, Quat>::iterator prev = links[i].channel->PrevRotation(Frame);
+					std::map<double, Quat>::iterator next = links[i].channel->NextRotation(Frame);
+
+					if (next == links[i].channel->RotationKeys.end())
+						next = prev;
+					else
+					{
+						float value = (Frame - prev->first) / (next->first - prev->first);
+						rotation = prev->second.Slerp(next->second, value);
+					}
 				}
 			}
-		}
-		trans->Scale(scale.x, scale.y, scale.z);
+			trans->SetQuatRotation(rotation);
 
-	}
+			//SCALE
+			float3 scale = trans->GetScale();
+			if (links[i].channel->ScaleHasKey())
+			{
+				std::map<double, float3>::iterator sca = links[i].channel->ScaleKeys.find(Frame);
+				if (sca != links[i].channel->ScaleKeys.end())
+					scale = sca->second;
+				else
+				{
+					//Blend prev with next
+					std::map<double, float3>::iterator prev = links[i].channel->PrevScale(Frame);
+					std::map<double, float3>::iterator next = links[i].channel->NextScale(Frame);
+
+					if (next == links[i].channel->ScaleKeys.end())
+						next = prev;
+					else
+					{
+						float value = (Frame - prev->first) / (next->first - prev->first);
+						scale = prev->second.Lerp(next->second, value);
+					}
+				}
+			}
+			trans->Scale(scale.x, scale.y, scale.z);
+
+		}
+	}	
 }
 
 void ComponentAnimation::StartBlend(Animation* anim)

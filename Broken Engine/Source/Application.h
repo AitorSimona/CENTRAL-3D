@@ -46,6 +46,7 @@ class ModuleUI;
 class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
+class ModuleSelection;
 
 class BROKEN_API Application {
 public:
@@ -87,6 +88,7 @@ public:
 	ModulePhysics* physics = nullptr;
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
+	ModuleSelection* selection = nullptr;
 
 
 	bool isGame = false;
@@ -94,10 +96,10 @@ public:
 	//Random Number Generator
 	RNGen RandomNumberGenerator;
 
-private:
-
+protected:
 	std::list<Module*> list_modules;
 
+private:
 	JSONLoader			JLoader;
 	std::string			appName;
 	std::string			orgName;

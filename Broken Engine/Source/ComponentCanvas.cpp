@@ -12,7 +12,8 @@
 #include "ComponentButton.h"
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
-//#include "ComponentProgressBar.h"
+#include "ComponentProgressBar.h"
+#include "ComponentCircularBar.h"
 
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
@@ -21,6 +22,7 @@ using namespace Broken;
 
 ComponentCanvas::ComponentCanvas(GameObject* gameObject) : Component(gameObject, Component::ComponentType::Canvas)
 {
+	name = "Canvas";
 	visible = true;
 	App->ui_system->AddCanvas(this);
 }
@@ -91,11 +93,58 @@ void ComponentCanvas::Draw() const
 					bar->Draw();
 				continue;
 			}
+			else if (elements[i]->GetType() == Component::ComponentType::Text)
+			{
+				ComponentText* text = (ComponentText*)elements[i];
+				if (text->visible)
+					text->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Image)
+			{
+				ComponentImage* image = (ComponentImage*)elements[i];
+				if (image->visible)
+					image->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::Button)
+			{
+				ComponentButton* button = (ComponentButton*)elements[i];
+				if (button->visible)
+					button->Draw();
+			}
+			//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
+			//{
+			//	CheckBox* elem = (CheckBox*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			//else if (elements[i]->GetType() == Component::ComponentType::InputText)
+			//{
+			//	InputText* elem = (InputText*)elements[i];
+			//	if (elem->visible) 
+			//		elem->Draw();
+			//	continue;
+			//}
+			else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
+			{
+				ComponentProgressBar* progressbar = (ComponentProgressBar*)elements[i];
+				if (progressbar->visible)
+					progressbar->Draw();
+				continue;
+			}
+			else if (elements[i]->GetType() == Component::ComponentType::CircularBar)
+			{
+				ComponentCircularBar* circularbar = (ComponentCircularBar*)elements[i];
+				if (circularbar->visible)
+					circularbar->Draw();
+				continue;
+			}
 			else
 				continue;
 		}
 	}
-	
 }
 
 json ComponentCanvas::Save() const
@@ -116,20 +165,10 @@ void ComponentCanvas::Load(json& node)
 
 void ComponentCanvas::CreateInspectorNode()
 {
-	ImGui::Checkbox("##CanvasActive", &GetActive());
-	ImGui::SameLine();
 
-	if (ImGui::TreeNode("Canvas"))
-	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	ImGui::Checkbox("Visible", &visible);
 
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		ImGui::Checkbox("Visible", &visible);
-
-		ImGui::Separator();
-		ImGui::Separator();
-
-		ImGui::TreePop();
-	}
+	ImGui::Separator();
+	
 }

@@ -13,11 +13,14 @@ public:
 
 	bool Draw();
 
+	void CreateLayerFilterGrid();
+
 private:
 	physx::PxVec3 gravity;
 	float staticFriction, dynamicFriction, restitution;
 
 	physx::PxVec3 tmpGravity;
 	float tmpStaticFriction, tmpDynamicFriction, tmpRestitution;
+
 };
 #endif

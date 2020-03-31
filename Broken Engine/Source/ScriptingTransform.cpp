@@ -4,6 +4,7 @@
 #include "ModuleSceneManager.h"
 #include "Components.h"
 #include "ScriptData.h"
+#include "ResourceScene.h"
 
 using namespace Broken;
 ScriptingTransform::ScriptingTransform() {}
@@ -54,8 +55,9 @@ int ScriptingTransform::GetPosition(lua_State* L)
 	int ret = 0;
 	float3 rot = float3(0.0f);
 
-	ComponentTransform* transform;
-	if ((transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>()))
+	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
+
+	if (transform)
 	{
 		rot = transform->GetPosition();
 		ret = 3;
@@ -161,9 +163,7 @@ void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool loca
 		Quat rot;
 
 		m.Decompose(pos, rot, scale);
-
 		rot = rot.Inverted();
-
 
 		if (rb && collider)
 		{
@@ -178,7 +178,6 @@ void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool loca
 		}
 		else
 			transform->SetRotation(rot);
-
 	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
@@ -188,6 +187,7 @@ int ScriptingTransform::GetRotation(bool local, lua_State* L) const
 {
 	int ret = 0;
 	float3 rot = float3(0.0f);
+	
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
 	if (transform)
@@ -231,7 +231,7 @@ float ScriptingTransform::GetRotationY() const
 }
 
 float ScriptingTransform::GetRotationZ() const
-{
+{	
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
 	if (transform)

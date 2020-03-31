@@ -73,21 +73,16 @@ bool ModuleResourceManager::Start()
 
 	// --- Create default material ---
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
-	DefaultMaterial->m_DiffuseResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultDiffTexture");
-	DefaultMaterial->m_DiffuseResTexture->SetTextureID(App->textures->GetDefaultTextureID());
-	DefaultMaterial->m_SpecularResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultSpecTexture");
-	DefaultMaterial->m_SpecularResTexture->SetTextureID(App->textures->GetDefaultTextureID());
-	DefaultMaterial->m_NormalResTexture = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultNormalMapTexture");
-	DefaultMaterial->m_NormalResTexture->SetTextureID(App->textures->GetDefaultTextureID());
 
 	// --- Create default font ---
-	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Settings/EditorResources/arial.ttf",7);
+	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Assets/Fonts/arial.ttf",7);
 	DefaultFont->Init();
 
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
+	filters.push_back("jpg");
 	filters.push_back("lua");
 	filters.push_back("scene");
 	filters.push_back("ttf");
@@ -502,7 +497,7 @@ Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
 		script = IScr->Load(IData.path);
 
 	// --- Else call relevant importer ---
-	else 
+	else
 	{
 		std::string new_path = IData.path;
 
@@ -543,7 +538,7 @@ Resource* ModuleResourceManager::ImportFont(Importer::ImportData& IData)
 
 	if (IsFileImported(IData.path))
 		font = IFont->Load(IData.path);
-	else 
+	else
 	{
 		font = IFont->Import(IData);
 	}
@@ -1469,4 +1464,3 @@ bool ModuleResourceManager::CleanUp()
 
 	return true;
 }
-
