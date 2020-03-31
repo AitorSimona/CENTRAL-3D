@@ -130,12 +130,12 @@ bool ModuleSceneManager::Start()
 
 	treeUpdateTimer = SDL_GetTicks();
 
-	music = LoadCube();
-	music->AddComponent(Component::ComponentType::AudioSource);
-	ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();//GetComponent(Component::ComponentType::AudioSource);
-	musicSource->SetID(AK::EVENTS::MUSIC);
-	musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
-	musicSource->isPlaying = true;
+	//music = LoadCube();
+	//music->AddComponent(Component::ComponentType::AudioSource);
+	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();//GetComponent(Component::ComponentType::AudioSource);
+	//musicSource->SetID(AK::EVENTS::MUSIC);
+	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->isPlaying = true;
 
 	return true;
 }

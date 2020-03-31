@@ -1,0 +1,8 @@
+Event	ID	Name			Wwise Object Path	Notes
+	3409726414	Spikeroog			\Default Work Unit\Spikeroog	
+	3882315704	Silver_for_Monsters			\Default Work Unit\Silver_for_Monsters	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	355726328	Spikeroog	C:\Users\Jacobo_G\Desktop\ThisIsTheProject\.cache\Windows\SFX\Spikeroog_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\Spikeroog		33001536
+	752959848	Silver for Monsters	C:\Users\Jacobo_G\Desktop\ThisIsTheProject\.cache\Windows\SFX\Silver for Monsters_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\Silver for Monsters		25063488
+
