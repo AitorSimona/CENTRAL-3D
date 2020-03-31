@@ -21,7 +21,6 @@ public:
 	uint FindGameObject(const char* go_name);
 	uint GetMyUID();
 	uint GetScriptGOParent();
-	uint GetScriptGOUID();
 	uint GetGOParentFromUID(uint gameobject_UUID);
 	void DestroyGOFromScript(uint gameobject_UUID);
 	void SetActiveGameObject(uint gameobject_UUID, bool active);

@@ -250,7 +250,6 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
 		.addFunction("GetMyUID", &ScriptingGameobject::GetMyUID)
 		.addFunction("GetParent", &ScriptingGameobject::GetScriptGOParent)
-		.addFunction("GetScriptGOUID", &ScriptingGameobject::GetScriptGOUID)
 		.addFunction("GetGameObjectParent", &ScriptingGameobject::GetGOParentFromUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
@@ -283,10 +282,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
 		.addFunction("AddForce", &ScriptingPhysics::AddForce)
+		.addFunction("AddForce_GO", &ScriptingPhysics::AddForceGO)
 
 		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
 		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
-
 
 		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerEnter)
 		.addFunction("OnTriggerStay", &ScriptingPhysics::OnTriggerStay)
@@ -314,6 +313,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
 		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
+		.addFunction("ActivateParticlesEmission_GO", &ScriptingParticles::ActivateParticleEmitterGO)
+		.addFunction("DeactivateParticlesEmission_GO", &ScriptingParticles::DeactivateParticleEmitterGO)
 
 		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
 		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)

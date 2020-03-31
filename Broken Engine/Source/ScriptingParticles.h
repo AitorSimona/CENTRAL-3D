@@ -12,6 +12,8 @@ public:
 public:
 	void ActivateParticleEmitter() const;
 	void DeactivateParticleEmitter() const;
+	void ActivateParticleEmitterGO(uint gameobject_UUID) const;
+	void DeactivateParticleEmitterGO(uint gameobject_UUID) const;
 
 	void PlayParticleEmitter();
 	void StopParticleEmitter();

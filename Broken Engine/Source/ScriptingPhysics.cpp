@@ -116,6 +116,24 @@ void ScriptingPhysics::AddForce(float forceX, float forceY, float forceZ, int Fo
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
 
+void ScriptingPhysics::AddForceGO(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID)
+{
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go) {
+		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
+		ComponentCollider* coll = go->GetComponent<ComponentCollider>();
+
+		if (body && coll)
+			return body->AddForce({ forceX, forceY, forceZ }, (physx::PxForceMode::Enum)ForceMode);
+		else
+			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject with %d UUID was not found!", gameobject_UUID);
+}
+
 void ScriptingPhysics::AddTorque(float forceX, float forceY, float forceZ, int ForceMode)
 {
 	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();

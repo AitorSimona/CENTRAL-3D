@@ -28,6 +28,7 @@ public:
 
 	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode);
 	void AddForce(float forceX, float forceY, float forceZ, int ForceMode);
+	void AddForceGO(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID);
 
 	void SetKinematic(bool enable);
 	void UseGravity(bool enable);
