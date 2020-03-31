@@ -250,7 +250,6 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("FindGameObject", &ScriptingGameobject::FindGameObject)
 		.addFunction("GetMyUID", &ScriptingGameobject::GetMyUID)
 		.addFunction("GetParent", &ScriptingGameobject::GetScriptGOParent)
-		.addFunction("GetScriptGOUID", &ScriptingGameobject::GetScriptGOUID)
 		.addFunction("GetGameObjectParent", &ScriptingGameobject::GetGOParentFromUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
 
@@ -264,6 +263,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetComponent", &ScriptingGameobject::GetComponentFromGO)
 		.addFunction("GetPositionInFrustum", &ScriptingGameobject::GetPosInFrustum)
 		.addFunction("GetFrustumPlanesIntersection", &ScriptingGameobject::GetFrustumPlanesIntersection) //For the referenced LuaState passed: Top (x), Bottom (y), Left (z), Right (w) will be 1 if in positive plane side (inside frustum), 0 (outside frustum) if not
+		.addFunction("GetTopFrustumIntersection", &ScriptingGameobject::GetTopFrustumIntersection)
+		.addFunction("GetBottomFrustumIntersection", &ScriptingGameobject::GetBottomFrustumIntersection)
+		.addFunction("GetLeftFrustumIntersection", &ScriptingGameobject::GetLeftFrustumIntersection)
+		.addFunction("GetRightFrustumIntersection", &ScriptingGameobject::GetRightFrustumIntersection)
 		.addFunction("GetScript", &ScriptingGameobject::GetScript)
 		.endClass()
 
@@ -283,10 +286,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
 		.addFunction("AddForce", &ScriptingPhysics::AddForce)
+		.addFunction("AddForce_GO", &ScriptingPhysics::AddForceGO)
 
 		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
 		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
-
 
 		.addFunction("OnTriggerEnter", &ScriptingPhysics::OnTriggerEnter)
 		.addFunction("OnTriggerStay", &ScriptingPhysics::OnTriggerStay)
@@ -298,8 +301,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("Move", &ScriptingPhysics::Move)
 		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
+		.addFunction("GetCharacterPositionX", &ScriptingPhysics::GetCharacterPositionX)
+		.addFunction("GetCharacterPositionY", &ScriptingPhysics::GetCharacterPositionY)
+		.addFunction("GetCharacterPositionZ", &ScriptingPhysics::GetCharacterPositionZ)
 		.addFunction("SetCharacterPosition", &ScriptingPhysics::SetCharacterPosition)
 		.addFunction("GetCharacterUpDirection", &ScriptingPhysics::GetCharacterUpDirection)
+		.addFunction("GetCharacterUpDirectionX", &ScriptingPhysics::GetCharacterUpDirectionX)
+		.addFunction("GetCharacterUpDirectionY", &ScriptingPhysics::GetCharacterUpDirectionY)
+		.addFunction("GetCharacterUpDirectionZ", &ScriptingPhysics::GetCharacterUpDirectionZ)
 		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
 
 		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
@@ -314,6 +323,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
 		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
+		.addFunction("ActivateParticlesEmission_GO", &ScriptingParticles::ActivateParticleEmitterGO)
+		.addFunction("DeactivateParticlesEmission_GO", &ScriptingParticles::DeactivateParticleEmitterGO)
 
 		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
 		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
@@ -354,6 +365,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("PlayAnimation", &ScriptingAnimations::StartAnimation)
 		.addFunction("SetAnimationSpeed", &ScriptingAnimations::SetAnimSpeed)
 		.addFunction("SetCurrentAnimationSpeed", &ScriptingAnimations::SetCurrentAnimSpeed)
+		.addFunction("SetBlendTime", &ScriptingAnimations::SetBlendTime)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -361,7 +373,6 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// ----------------------------------------------------------------------------------
 		.beginClass <ScriptingInterface>("Interface")
 		.addConstructor<void(*) (void)>()
-
 
 		.addFunction("MakeElementVisible", &ScriptingInterface::MakeUIComponentVisible)
 		.addFunction("MakeElementInvisible", &ScriptingInterface::MakeUIComponentInvisible)
