@@ -162,13 +162,12 @@ void PanelBuild::makeBuild() {
 
 	std::string settingspath = buildName + "/Settings/GameConfig.json";
 	//We write our settings to gameSettings.
-	Broken::json& gameSettings = EngineApp->GetConfigFile();
+	Broken::json gameSettings = EngineApp->GetConfigFile();
 	EngineApp->GetDefaultGameConfig(gameSettings);
 	gameSettings["Application"]["Title"] = buildName;
 	gameSettings["SceneManager"]["MainScene"] = scenePath;
 	gameSettings["Camera3D"]["MainCamera"] = selectedCamera->GetName();
-
-	EngineApp->GetJLoader()->Save(settingspath.c_str(), gameSettings);
+	EngineApp->SaveForBuild(gameSettings, settingspath.c_str());
 
 	SetOnOff(false);
 }

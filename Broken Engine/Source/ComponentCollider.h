@@ -3,17 +3,20 @@
 
 #include "Component.h"
 #include "Math.h"
-
+#include "ModulePhysics.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "PhysX_3.4/Include/PxSimulationEventCallback.h"
 
 BE_BEGIN_NAMESPACE
+
 
 class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
 
-class ComponentCollider : public Component
+class BROKEN_API ComponentCollider : public Component
 {
+
 public:
 	enum class COLLIDER_TYPE
 	{
@@ -26,10 +29,14 @@ public:
 
 public:
 
+	friend class Callbacks;
+
 	ComponentCollider(GameObject* ContainerGO);
 	virtual ~ComponentCollider();
 
 	void Update() override;
+
+	void UpdateCollider();
 
 	void DrawComponent() override;
 
@@ -49,7 +56,9 @@ public:
 
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
-	void Delete();
+	physx::PxRigidActor*					GetActor();
+	void									UpdateActorLayer(LayerMask* layerMask);
+	void									Delete();
 
 private:
 	template <class Geometry>
@@ -65,6 +74,7 @@ public:
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
 	int colliderType = 0;
+	
 
 private:
 	physx::PxShape* shape = nullptr;
@@ -78,6 +88,7 @@ private:
 	bool toPlay = false;
 	bool isTrigger = false;
 };
+
 
 BE_END_NAMESPACE
 #endif __COMPONENT_COLLIDER_H__

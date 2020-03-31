@@ -856,7 +856,7 @@ GameObject* ModuleSceneManager::LoadPrimitiveObject(uint PrimitiveMeshID)
 
 void ModuleSceneManager::DestroyGameObject(GameObject* go)
 {
-	//App->physics->DeleteActors(go);
+	App->physics->DeleteActors(go);
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
 

@@ -21,7 +21,7 @@ void ScriptingInterface::MakeUIComponentVisible(uint go_UUID, const char* comp_t
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
 	if (go) {
-		
+
 		std::string name = comp_type;
 		if (name.compare("Bar") == 0) {
 			ComponentProgressBar* comp_bar = go->GetComponent<ComponentProgressBar>();
@@ -141,7 +141,7 @@ void ScriptingInterface::SetUITextAndNumber(uint go_UUID, const char* text, floa
 		else
 			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Text Component or text passed is NULL");
 	}
-	else 
+	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 

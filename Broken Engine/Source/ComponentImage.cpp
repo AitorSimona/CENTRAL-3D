@@ -120,6 +120,8 @@ json ComponentImage::Save() const
 	node["size2Dx"] = std::to_string(size2D.x);
 	node["size2Dy"] = std::to_string(size2D.y);
 
+
+
 	return node;
 }
 

@@ -96,10 +96,10 @@ public:
 	//Random Number Generator
 	RNGen RandomNumberGenerator;
 
-private:
-
+protected:
 	std::list<Module*> list_modules;
 
+private:
 	JSONLoader			JLoader;
 	std::string			appName;
 	std::string			orgName;

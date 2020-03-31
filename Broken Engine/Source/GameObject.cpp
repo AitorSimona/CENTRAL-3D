@@ -10,6 +10,8 @@
 #include "ComponentText.h"
 #include "ComponentImage.h"
 #include "ComponentButton.h"
+#include "ComponentCharacterController.h"
+
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
 #include "ComponentProgressBar.h"
@@ -29,6 +31,9 @@ GameObject::GameObject(const char* name) {
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
+	layer = LAYER_0;
+
+	collisions.resize(2, nullptr);
 
 	Enable();
 }
@@ -40,6 +45,8 @@ GameObject::GameObject(const char* name, uint UID)
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
+
+	collisions.resize(2, nullptr);
 
 	Enable();
 }
@@ -330,6 +337,10 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 			component = new ComponentButton(this);
 			break;
 
+		case Component::ComponentType::CharacterController:
+			component = new ComponentCharacterController(this);
+			break;
+
 		//case Component::ComponentType::CheckBox:
 		//	component = new ComponentCheckBox(this);
 		//	break;
@@ -488,11 +499,16 @@ bool& GameObject::GetActive()
 	return active;
 }
 
+int GameObject::GetLayer(){
+	return layer;
+}
+
 bool GameObject::IsEnabled() const {
 	return active;
 }
 
-void GameObject::SetName(const char* name) {
+void GameObject::SetName(const char* name)
+{
 	if (name && name != "root")
 		this->name = name;
 }
