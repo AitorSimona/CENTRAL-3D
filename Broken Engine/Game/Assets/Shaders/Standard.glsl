@@ -57,6 +57,7 @@ in vec3 v_CamPos;
 //Uniforms
 uniform int Texture;
 uniform int u_HasNormalMap;
+uniform int u_DrawNormalMapping;
 uniform float u_Shininess;
 uniform sampler2D ourTexture;
 uniform sampler2D SpecText;
@@ -188,6 +189,10 @@ void main()
 		out_color = vec4(colorResult + v_Color, 1.0);
 	else
 		out_color = vec4(colorResult + v_Color * texture(ourTexture, v_TexCoord).rgb, texture(ourTexture, v_TexCoord).a);
+
+	//Draw Normal Mapping if we must
+	//if(u_DrawNormalMapping)
+	//	out_color = vec4(LightDirection_tangentspace);
 }
 
 #endif //FRAGMENT_SHADER

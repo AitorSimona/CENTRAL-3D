@@ -91,6 +91,7 @@ bool PanelScene::Draw()
 				ImGui::MenuItem("BOUNDING BOXES", NULL, &EngineApp->renderer3D->display_boundingboxes);
 				ImGui::MenuItem("OCTREE", NULL, &EngineApp->scene_manager->display_tree);
 				ImGui::MenuItem("ZDRAWER", NULL, &EngineApp->renderer3D->zdrawer);
+				ImGui::MenuItem("NORMAL MAPPING", NULL, &EngineApp->renderer3D->m_Draw_normalMapping);
 
 				ImGui::EndMenu();
 			}

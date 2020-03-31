@@ -876,10 +876,26 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			shader = mesh->mat->shader->ID;
 			mesh->mat->UpdateUniforms();
 		}
+		
+		// --- Draw Wireframe if we must ---
+		if (mesh->flags & RenderMeshFlags_::wire)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+		// --------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------ SHADER STUFF ------------------------------------------------
 		glUseProgram(shader);
 
-		// --- Set uniforms ---
+		// --- Give ZDrawer near and far camera frustum planes pos ---
+		float farp = active_camera->GetFarPlane();
+		float nearp = active_camera->GetNearPlane();
+
+		if (zdrawer)
+		{
+			int nearfarLoc = glGetUniformLocation(shader, "nearfar");
+			glUniform2f(nearfarLoc, nearp, farp);
+		}
+		
+		// --- Set general uniforms ---
 		GLint modelLoc = glGetUniformLocation(shader, "model_matrix");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr()); // model matrix
 
@@ -889,18 +905,6 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		GLint timeLoc = glGetUniformLocation(shader, "time");
 		glUniform1f(timeLoc, App->time->time);
 
-		int TextureSupportLocation = glGetUniformLocation(shader, "Texture"); // as of now, this is only on DefaultShader!
-		int vertexColorLocation = glGetUniformLocation(shader, "Color");
-
-		float farp = active_camera->GetFarPlane();
-		float nearp = active_camera->GetNearPlane();
-
-		// --- Give ZDrawer near and far camera frustum planes pos ---
-		if (zdrawer)
-		{
-			int nearfarLoc = glGetUniformLocation(shader, "nearfar");
-			glUniform2f(nearfarLoc, nearp, farp);
-		}
 
 		// right handed projection matrix
 		float f = 1.0f / tan(active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -913,19 +917,22 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		GLint projectLoc = glGetUniformLocation(shader, "projection");
 		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-		uint defshID = defaultShader->ID;
+		// --- General Drawing Uniforms ---
+		int TextureSupportLocation = glGetUniformLocation(shader, "Texture"); // as of now, this is only on DefaultShader!
+		int vertexColorLocation = glGetUniformLocation(shader, "Color");
 
-		//Send Color
+		// --- Set Normal Mapping Draw
+		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping"), (int)m_Draw_normalMapping);
+
+		// --- Send Color ---
 		glUniform3f(vertexColorLocation, colorToDraw.x, colorToDraw.y, colorToDraw.z);
 
-		//Send Lights
+		// --- Send Lights ---
 		glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), m_LightsVec.size());
 		for (uint i = 0; i < m_LightsVec.size(); ++i)
 			m_LightsVec[i]->SendUniforms(shader, i);
 
-		if (mesh->flags & RenderMeshFlags_::wire)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+		// --- Materials ---
 		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices)
 		{
 			const ResourceMesh* rmesh = mesh->resource_mesh;

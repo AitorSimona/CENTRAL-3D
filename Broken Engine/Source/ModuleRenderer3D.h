@@ -162,6 +162,7 @@ public:
 	bool renderfbo = true;
 	bool display_boundingboxes = false;
 	bool display_grid = true;
+	bool m_Draw_normalMapping = false;
 
 	uint rendertexture = 0;
 
