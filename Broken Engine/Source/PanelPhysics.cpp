@@ -77,6 +77,8 @@ bool PanelPhysics::Draw()
 		ImGui::DragFloat("##restitution", &tmpRestitution, 0.005f, 0.f, 1.f);
 
 		CreateLayerFilterGrid();
+
+		CreateLayerList();
 	}
 	ImGui::End();
 
@@ -133,8 +135,8 @@ void PanelPhysics::CreateLayerFilterGrid() {
 				layer->active_layers.at(j) = b;
 				aux_layer->active_layers.at(i) = layer->active_layers.at(j);
 				//UPDATE LAYERS
-				layer->UpdateLayerGroup();
-				aux_layer->UpdateLayerGroup();
+				layer->UpdateLayerGroup(App->physics->layer_list.size());
+				aux_layer->UpdateLayerGroup(App->physics->layer_list.size());
 				App->physics->UpdateActorsGroupFilter(&layer->layer);
 				App->physics->UpdateActorsGroupFilter(&aux_layer->layer);
 			}
@@ -150,6 +152,38 @@ void PanelPhysics::CreateLayerFilterGrid() {
 			ImGui::SameLine(25 * (App->physics->layer_list.size() - i));
 			ImGui::Text(" ");
 			ImGui::SameLine();
+		}
+	}
+}
+
+void PanelPhysics::CreateLayerList() {
+	ImGui::NewLine();
+	ImGui::Text("Layer List");
+	ImGui::Separator();
+	ImGui::NewLine();
+
+	uint count = App->physics->layer_list.size();
+	for (int i = 0; i < MAX_LAYERS; ++i) {
+		std::string name("Layer ");
+		name.append(std::to_string(i).c_str());
+		name.append(":");
+		ImGui::Text(name.c_str());
+
+		char buffer[MAX_TEXT_SIZE] = "";
+		if (i < count) {
+			ImGui::SameLine();
+			strcpy(buffer, App->physics->layer_list.at(i).name.c_str());
+			if (ImGui::InputTextWithHint(name.c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				App->physics->layer_list.at(i).name = buffer;
+			}
+		}
+		else {
+			ImGui::SameLine();
+			if (ImGui::InputTextWithHint(name.c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				App->physics->AddLayer(buffer);
+			}
 		}
 	}
 }

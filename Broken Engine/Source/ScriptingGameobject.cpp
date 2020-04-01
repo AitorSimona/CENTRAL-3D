@@ -430,10 +430,21 @@ luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State
 }
 
 
-int ScriptingGameobject::GetLayer(lua_State* L)
+uint ScriptingGameobject::GetMyLayer(lua_State* L)
 {
 	int ret = 0;
 	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
+	if (body) {
+		lua_pushnumber(L, body->GetLayer());
+		ret = 1;
+	}
+	return ret;
+}
+
+uint ScriptingGameobject::GetLayerByID(uint UID, lua_State* L)
+{
+	int ret = 0;
+	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(UID);
 	if (body) {
 		lua_pushnumber(L, body->GetLayer());
 		ret = 1;

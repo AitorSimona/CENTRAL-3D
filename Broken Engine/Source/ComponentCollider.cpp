@@ -413,8 +413,8 @@ void ComponentCollider::Load(json& node)
 
 void ComponentCollider::CreateInspectorNode()
 {
-	ImGui::Checkbox("##ColliderActive", &GetActive());
-	ImGui::SameLine();
+	/*ImGui::Checkbox("##ColliderActive", &GetActive());
+	ImGui::SameLine();*/
 
 	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -425,7 +425,6 @@ void ComponentCollider::CreateInspectorNode()
 
 		if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) 
 		{
-
 			switch (colliderType)
 			{
 			case 0:
@@ -662,10 +661,19 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 				}
+				physx::PxShapeFlags falgs =  shape->getFlags();
+
 
 				shape->setSimulationFilterData(filterData);
 				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 				shape->setQueryFilterData(filterData);
+
+
+				bool a;
+				a = falgs.isSet(physx::PxShapeFlag::ePARTICLE_DRAIN);
+				a = falgs.isSet(physx::PxShapeFlag::eSCENE_QUERY_SHAPE);
+				a = falgs.isSet(physx::PxShapeFlag::eSIMULATION_SHAPE);
+				a = falgs.isSet(physx::PxShapeFlag::eTRIGGER_SHAPE);
 
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
