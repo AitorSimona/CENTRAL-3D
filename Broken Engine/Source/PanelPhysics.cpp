@@ -112,8 +112,8 @@ void PanelPhysics::CreateLayerFilterGrid() {
 
 	for (int i = 0; i < App->physics->layer_list.size(); ++i) { //GET LARGEST TEXT
 		Layer* layer = &App->physics->layer_list.at(i);
-		size = ImGui::CalcTextSize(layer->name.c_str()).x;
-		if (size > padding.x) padding.x = size;
+		int size = ImGui::CalcTextSize(layer->name.c_str()).x;
+		if (size > padding.x) padding.x = size, sizeMax = size;
 	}
 
 	for (int i = 0; i < App->physics->layer_list.size(); ++i) { //HORIZONTAL
@@ -125,7 +125,7 @@ void PanelPhysics::CreateLayerFilterGrid() {
 			std::string st("##" + layer->name + aux_layer->name);
 
 			if(j == App->physics->layer_list.size() - 1)
-				ImGui::SameLine(-ImGui::GetCursorPosX() + padding.x + 20.f);
+				ImGui::SameLine(-ImGui::GetCursorPosX() + padding.x + 22.f);
 			else
 				ImGui::SameLine();
 			
@@ -149,13 +149,13 @@ void PanelPhysics::CreateLayerFilterGrid() {
 		ImGui::verticalText(layer.name.c_str(), &padding);
 
 		if (i != 0) {
-			ImGui::SameLine(25 * (App->physics->layer_list.size() - i));
+			ImGui::SameLine(26 * (App->physics->layer_list.size() - i));
 			ImGui::Text(" ");
 			ImGui::SameLine();
 		}
 	}
 
-	ImGui::Dummy({ 0,size });
+	ImGui::Dummy({ 0,sizeMax });
 }
 
 void PanelPhysics::CreateLayerList() {

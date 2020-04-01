@@ -23,7 +23,7 @@ private:
 
 	physx::PxVec3 tmpGravity;
 	float tmpStaticFriction, tmpDynamicFriction, tmpRestitution; 
-	float size = 0;
+	float sizeMax = 0;
 
 };
 #endif
