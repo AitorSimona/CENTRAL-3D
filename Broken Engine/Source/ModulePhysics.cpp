@@ -131,7 +131,7 @@ physx::PxFilterFlags customFilterShader(
 
 bool ModulePhysics::Init(json& config)
 {
-	//LoadStatus(config);
+	LoadStatus(config);
 
 	if (!loaded) {
 		layer_list.push_back(Layer{ "Default", LayerMask::LAYER_0, true });
