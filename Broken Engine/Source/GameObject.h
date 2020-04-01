@@ -32,6 +32,7 @@ public:
 	const char*		GetName() const;
 	const AABB&	    GetAABB();
 	const OBB&      GetOBB() const;
+	int GetChildGOIndex(GameObject* GO);
 
 	bool& GetActive();
 	int GetLayer();
@@ -85,6 +86,8 @@ public:
 
 	// to avoid including ImGui header, it's hardcoded the ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth flags (128 and 2048 respectively)
 	int node_flags = 2176;
+
+	int index = 0;
 
 private:
 	// Unique Identifier

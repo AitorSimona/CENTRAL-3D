@@ -57,6 +57,9 @@ bool ResourceScene::LoadInMemory() {
 				if (!file[it.key()]["Static"].is_null())
 					go->Static = file[it.key()]["Static"];
 
+				if (!file[it.key()]["Index"].is_null())
+					go->index = file[it.key()]["Index"];
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];				
 
@@ -96,6 +99,9 @@ bool ResourceScene::LoadInMemory() {
 				if (go->Static)
 					App->scene_manager->SetStatic(go, true, false);
 			}
+
+
+			// ---------------- SERGI MYTODO (if index == -1 just push back (or do not pass index as param)) modify addchildgo to mimick addcomponent -------------------------
 
 
 			// --- Parent Game Objects / Build Hierarchy ---

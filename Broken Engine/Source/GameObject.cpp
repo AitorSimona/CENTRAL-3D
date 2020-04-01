@@ -370,7 +370,7 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 			{
 				// --- Reserve needed space, note that we may leave empty spaces!!! ---
 				if(index+1 > components.size())
-				components.resize(index+1);
+												components.resize(index+1);
 
 
 				// --- Delete element at given index ---
@@ -492,6 +492,28 @@ const AABB& GameObject::GetAABB()
 const OBB& GameObject::GetOBB() const
 {
 	return obb;
+}
+
+int GameObject::GetChildGOIndex(GameObject* GO)
+{
+	// --- Look for given GO in child list and return its index ---
+	int ret = -1;
+	uint i = 0; 
+
+	if (childs.size() > 0) 
+	{
+		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) 
+		{
+			if ((*go)->GetUID() == GO->GetUID())
+			{
+				ret = i;
+			}
+
+			i++;
+		}
+	}
+
+	return ret;
 }
 
 bool& GameObject::GetActive()
