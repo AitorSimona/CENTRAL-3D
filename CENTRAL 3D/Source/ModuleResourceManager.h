@@ -13,7 +13,6 @@ class ResourceMaterial;
 class ResourceShader;
 class ResourceMesh;
 class ResourceTexture;
-class ResourceShaderObject;
 class ResourceMeta;
 
 class ModuleResourceManager : public Module
@@ -49,10 +48,8 @@ public:
 	Resource* ImportScene(Importer::ImportData& IData);
 	Resource* ImportModel(Importer::ImportData& IData);
 	Resource* ImportMaterial(Importer::ImportData& IData);
-	Resource* ImportShaderProgram(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
 	Resource* ImportTexture(Importer::ImportData& IData);
-	Resource* ImportShaderObject(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
 
 	void HandleFsChanges();
@@ -110,7 +107,6 @@ private:
 	std::map<uint, ResourceShader*> shaders;
 	std::map<uint, ResourceMesh*> meshes;
 	std::map<uint, ResourceTexture*> textures;
-	std::map<uint, ResourceShaderObject*> shader_objects;
 	std::map<uint, ResourceMeta*> metas;
 };
 

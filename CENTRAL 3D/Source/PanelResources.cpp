@@ -111,18 +111,6 @@ bool PanelResources::Draw()
 
 			ImGui::Separator();
 		}
-		if (ImGui::CollapsingHeader("Shader Objects"))
-		{
-			for (std::map<uint, ResourceShaderObject*>::const_iterator it = App->resources->shader_objects.begin(); it != App->resources->shader_objects.end(); ++it)
-			{
-				if ((*it).second)
-				{
-					DrawResourceNode((*it).second, instances_color);
-				}
-			}
-
-			ImGui::Separator();
-		}
 		if (ImGui::CollapsingHeader("Metas"))
 		{
 			for (std::map<uint, ResourceMeta*>::const_iterator it = App->resources->metas.begin(); it != App->resources->metas.end(); ++it)

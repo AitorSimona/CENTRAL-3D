@@ -459,12 +459,6 @@
     <ClInclude Include="ResourceScene.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceShaderProgram.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceShaderObject.h">
-      <Filter>Sources\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceFolder.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
@@ -804,12 +798,6 @@
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ResourceScene.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShaderProgram.cpp">
-      <Filter>Sources\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceShaderObject.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ResourceFolder.cpp">

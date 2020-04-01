@@ -193,20 +193,12 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 		resource = ImportMaterial(IData);
 		break;
 
-	case Resource::ResourceType::SHADER:
-		resource = ImportShaderProgram(IData);
-		break;
-
 	case Resource::ResourceType::TEXTURE:
 		resource = ImportTexture(IData);
 		break;
 
 	case Resource::ResourceType::MESH:
 		resource = ImportMesh(IData);
-		break;
-
-	case Resource::ResourceType::SHADER_OBJECT:
-		resource = ImportShaderObject(IData);
 		break;
 
 	case Resource::ResourceType::META:
@@ -329,22 +321,6 @@ Resource* ModuleResourceManager::ImportMaterial(Importer::ImportData& IData)
 	return material;
 }
 
-Resource* ModuleResourceManager::ImportShaderProgram(Importer::ImportData& IData)
-{
-	ResourceShaderProgram* shader = nullptr;
-
-	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(IData.path))
-	{
-		//Loadfromlib
-	}
-
-	// --- Else call relevant importer ---
-	else
-		// Import
-
-	return shader;
-}
 
 Resource* ModuleResourceManager::ImportMesh(Importer::ImportData& IData)
 {
@@ -386,22 +362,6 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 	return texture;
 }
 
-Resource* ModuleResourceManager::ImportShaderObject(Importer::ImportData& IData)
-{
-	ResourceShaderObject* shader_object = nullptr;
-
-	// --- If the resource is already in library, load from there ---
-	if (IsFileImported(IData.path))
-	{
-		//Loadfromlib
-	}
-
-	// --- Else call relevant importer ---
-	else
-		// Import
-
-	return shader_object;
-}
 
 Resource* ModuleResourceManager::ImportMeta(Importer::ImportData& IData)
 {
@@ -663,7 +623,6 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (shaders.find(UID) == shaders.end() ? resource : (*shaders.find(UID)).second);
 	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
-	resource = resource ? resource : (shader_objects.find(UID) == shader_objects.end() ? resource : (*shader_objects.find(UID)).second);
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
@@ -717,11 +676,6 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 	case Resource::ResourceType::TEXTURE:
 		resource = (Resource*)new ResourceTexture(App->GetRandom().Int(), source_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
-		break;
-
-	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject(App->GetRandom().Int(), source_file);
-		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -778,11 +732,6 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 	case Resource::ResourceType::TEXTURE:
 		resource = (Resource*)new ResourceTexture(UID, source_file);
 		textures[resource->GetUID()] = (ResourceTexture*)resource;
-		break;
-
-	case Resource::ResourceType::SHADER_OBJECT:
-		resource = (Resource*)new ResourceShaderObject(UID, source_file);
-		shader_objects[resource->GetUID()] = (ResourceShaderObject*)resource;
 		break;
 
 	case Resource::ResourceType::META:
@@ -1057,10 +1006,6 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 		break;
 
-	case Resource::ResourceType::SHADER_OBJECT:
-		shader_objects.erase(resource->GetUID());
-		break;
-
 	case Resource::ResourceType::META:
 		metas.erase(resource->GetUID());
 		break;
@@ -1151,15 +1096,6 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	textures.clear();
-
-	for (std::map<uint, ResourceShaderObject*>::iterator it = shader_objects.begin(); it != shader_objects.end();)
-	{
-		it->second->FreeMemory();
-		delete it->second;
-		it = shader_objects.erase(it);
-	}
-
-	shader_objects.clear();
 
 	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end();)
 	{

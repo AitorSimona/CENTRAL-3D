@@ -6,10 +6,8 @@
 #include "ResourceModel.h"
 #include "ResourceScene.h"
 #include "ResourceMaterial.h"
-#include "ResourceShaderProgram.h"
 #include "ResourceMesh.h"
 #include "ResourceTexture.h"
-#include "ResourceShaderObject.h"
 #include "ResourceShader.h"
 #include "ResourceMeta.h"
 
