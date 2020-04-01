@@ -41,6 +41,8 @@ public:
 	void StopDebugging();
 	void CallbackScriptFunctionParam(ComponentScript* script_component, const ScriptFunc& function_to_call, uint id);
 
+	void CleanUpInstances();
+
 	bool Init(json& file) override;
 	bool Start();
 	bool CleanUp();
@@ -64,8 +66,6 @@ private:
 	bool hot_reloading_waiting = false;
 
 	_AppState previous_AppState = (_AppState)2; // we use the EDITOR value of the script (can't include application.h because it would slow down compilation time)
-
-	void CleanUpInstances();
 
 	ScriptInstance* debug_instance = nullptr;
 

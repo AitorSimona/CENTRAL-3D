@@ -26,7 +26,7 @@ private:
 	std::vector<Broken::GameObject*> cameras;
 	std::string buildName;
 	Broken::GameObject* selectedCamera;
-	std::string scenePath;
+	std::string sceneName;
 	//std::string cameraName;
 
 };
