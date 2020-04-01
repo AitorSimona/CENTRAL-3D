@@ -354,7 +354,6 @@ void ComponentCharacterController::SetHeight(float height)
 
 physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor)
 {
-	physx::PxGeometryHolder a = shape.getGeometry();
 
 	if (shape.getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
 	{
@@ -362,12 +361,17 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 		if (go)
 		{
 			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
+			GO->collisions.at(Collision_Type::ONTRIGGER_ENTER) = go;
 
 			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 	else
@@ -384,8 +388,10 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 			ScriptFunc function;
 			function.name = "OnCollisionEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
-			App->scripting->CallbackScriptFunction(script2, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 
@@ -402,18 +408,23 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 	controller.getActor()->getShapes(&shape, 1);
 	physx::PxRigidActor* b = controller.getActor();
 
-	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
+	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE || shape1->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
 	{
 		GameObject* go = App->physics->actors[shape->getActor()];
 		if (go)
 		{
+			GO->collisions.at(Collision_Type::ONTRIGGER_ENTER) = go;
 			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
 
 			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 	else
