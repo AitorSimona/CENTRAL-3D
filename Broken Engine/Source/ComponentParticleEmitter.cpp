@@ -79,13 +79,6 @@ void ComponentParticleEmitter::Update()
 {
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
-
-	if (App->input->GetKey(SDL_SCANCODE_UP)) {
-		Play();
-	}
-	if (App->input->GetKey(SDL_SCANCODE_DOWN)) {
-		Stop();
-	}
 }
 
 void ComponentParticleEmitter::Enable()
