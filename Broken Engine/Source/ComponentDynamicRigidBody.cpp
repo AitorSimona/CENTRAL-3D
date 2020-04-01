@@ -144,61 +144,97 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		to_delete = true;
 
 	ImGui::Text("Mass:"); ImGui::SameLine();
-	if (ImGui::DragFloat("##M", &mass,1.0f, 0.0f, 100000.0f))
+	if (ImGui::DragFloat("##M", &mass, 1.0f, 0.0f, 100000.0f))
+	{
 		SetMass(mass);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::Text("Density:"); ImGui::SameLine();
 	if (ImGui::DragFloat("##D", &density, 1.0f, 0.0f, 100000.0f))
+	{
 		SetDensity(density);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::Text("Gravity:"); ImGui::SameLine();
 	if (ImGui::Checkbox("##G", &use_gravity))
+	{
 		UseGravity(use_gravity);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::Text("Kinematic:"); ImGui::SameLine();
 	if (ImGui::Checkbox("##K", &is_kinematic))
+	{
 		SetKinematic(is_kinematic);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::Text("Linear Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50);
 	if (ImGui::DragFloat("##LVX", &linear_vel.x))
+	{
 		SetLinearVelocity(linear_vel);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
-		ImGui::SameLine();
+	ImGui::SameLine();
 	if (ImGui::DragFloat("##LVY", &linear_vel.y))
+	{
 		SetLinearVelocity(linear_vel);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::SameLine();
 
-	if(ImGui::DragFloat("##LVZ", &linear_vel.z))
+	if (ImGui::DragFloat("##LVZ", &linear_vel.z))
+	{
 		SetLinearVelocity(linear_vel);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::PopItemWidth();
 
 	ImGui::Text("Angular Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50);
 
 	if (ImGui::DragFloat("##AVX", &angular_vel.x))
+	{
 		SetAngularVelocity(angular_vel);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::SameLine();
 
 	if (ImGui::DragFloat("##AVY", &angular_vel.y))
+	{
 		SetAngularVelocity(angular_vel);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::SameLine();
 	if (ImGui::DragFloat("##AVZ", &angular_vel.z))
+	{
 		SetAngularVelocity(angular_vel);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::PopItemWidth();
 
 	ImGui::Text("Linear Damping:"); ImGui::SameLine();
 
 	if (ImGui::DragFloat("##LD", &linear_damping))
+	{
 		SetLinearDamping(linear_damping);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 	ImGui::Text("Angular Damping:"); ImGui::SameLine();
 
 	if (ImGui::DragFloat("##AD", &angular_damping))
+	{
 		SetAngularDamping(angular_damping);
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+	}
 
 
 	if (ImGui::TreeNode("Constraints"))
@@ -206,6 +242,7 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		ImGui::Text("Freeze Position"); ImGui::SameLine(); ImGui::Checkbox("##FPX", &freezePosition_X); ImGui::SameLine(); ImGui::Checkbox("##FPY", &freezePosition_Y); ImGui::SameLine(); ImGui::Checkbox("##FPZ", &freezePosition_Z);
 		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); ImGui::Checkbox("##FRX", &freezeRotation_X); ImGui::SameLine(); ImGui::Checkbox("##FRY", &freezeRotation_Y); ImGui::SameLine(); ImGui::Checkbox("##FRZ", &freezeRotation_Z);
 		ImGui::TreePop();
+		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
 	}
 
 	if (rigidBody != nullptr) {
@@ -216,14 +253,6 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		FreezeRotation_Y(freezeRotation_Y);
 		FreezeRotation_Z(freezeRotation_Z);
 	}
-
-	//if (GO->GetComponent<ComponentCollider>() != nullptr)
-	//{
-	//	ComponentCollider* collider = GO->GetComponent<ComponentCollider>();
-	//	collider->CreateCollider(ComponentCollider::COLLIDER_TYPE::BOX);
-	//	collider->colliderType = 1;
-	//	//initialCollider = false;
-	//}
 
 	StaticToDynamicRigidBody();
 }
@@ -240,21 +269,10 @@ void ComponentDynamicRigidBody::StaticToDynamicRigidBody()
 void ComponentDynamicRigidBody::setRBValues() {
 	if (rigidBody != nullptr)
 	{
-		linear_vel = GetLinearVelocity();
+		if (linear_vel.x != 0.0f || linear_vel.y != 0.0f || linear_vel.z != 0.0f)
+			SetLinearVelocity(linear_vel);
 
-		SetMass(mass);
-		SetDensity(density);
-		UseGravity(use_gravity);
-		SetKinematic(is_kinematic);
-		SetLinearVelocity(linear_vel);
-		SetAngularVelocity(angular_vel);
-		SetLinearDamping(linear_damping);
-		SetAngularDamping(angular_damping);
-		FeezePosition_X(freezePosition_X);
-		FeezePosition_Y(freezePosition_Y);
-		FeezePosition_Z(freezePosition_Z);
-		FreezeRotation_X(freezeRotation_X);
-		FreezeRotation_Y(freezeRotation_Y);
-		FreezeRotation_Z(freezeRotation_Z);
+		if (angular_vel.x != 0.0f || angular_vel.y != 0.0f || angular_vel.z != 0.0f)	
+			SetAngularVelocity(angular_vel);		
 	}
 }

@@ -41,7 +41,10 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	desc = &capsuleDesc;
 
 	controller = App->physics->mControllerManager->createController(*desc);
-	App->physics->addActor(controller->getActor(), GO);
+
+	physx::PxShape* shape;
+	controller->getActor()->getShapes(&shape, 1);
+	App->physics->addActor(shape->getActor(), GO);
 
 	initialPosition = capsuleDesc.position;
 
@@ -56,7 +59,7 @@ ComponentCharacterController::~ComponentCharacterController()
 
 void ComponentCharacterController::Update()
 {
-	/*if (App->input->GetKey(SDL_SCANCODE_UP))
+	if (App->input->GetKey(SDL_SCANCODE_UP))
 		velocity.z = -10.0f;
 
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN))
@@ -70,7 +73,7 @@ void ComponentCharacterController::Update()
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT))
 		velocity.x = -10.0f;
 	else
-		velocity.x = 0.0f;*/
+		velocity.x = 0.0f;
 
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
 
@@ -80,7 +83,7 @@ void ComponentCharacterController::Update()
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
 
-	//Move(velocity.x, velocity.z);
+	Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
 	float3 cctPos(cctPosition.x, cctPosition.y, cctPosition.z);
@@ -351,7 +354,6 @@ void ComponentCharacterController::SetHeight(float height)
 
 physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor)
 {
-	physx::PxGeometryHolder a = shape.getGeometry();
 
 	if (shape.getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
 	{
@@ -359,12 +361,17 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 		if (go)
 		{
 			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
+			GO->collisions.at(Collision_Type::ONTRIGGER_ENTER) = go;
 
 			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 	else
@@ -381,8 +388,10 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 			ScriptFunc function;
 			function.name = "OnCollisionEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
-			App->scripting->CallbackScriptFunction(script2, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 
@@ -399,18 +408,23 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 	controller.getActor()->getShapes(&shape, 1);
 	physx::PxRigidActor* b = controller.getActor();
 
-	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
+	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE || shape1->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
 	{
 		GameObject* go = App->physics->actors[shape->getActor()];
 		if (go)
 		{
+			GO->collisions.at(Collision_Type::ONTRIGGER_ENTER) = go;
 			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
 
 			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 	else
@@ -427,8 +441,10 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 			ScriptFunc function;
 			function.name = "OnCollisionEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
-			App->scripting->CallbackScriptFunction(script2, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 
