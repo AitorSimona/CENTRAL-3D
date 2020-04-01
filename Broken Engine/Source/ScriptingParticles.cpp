@@ -49,7 +49,7 @@ void ScriptingParticles::ActivateParticleEmitterGO(uint gameobject_UUID) const
 	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
-		ComponentParticleEmitter* emitter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
 
 		if (emitter && !emitter->IsEnabled())
 		{
@@ -71,7 +71,7 @@ void ScriptingParticles::DeactivateParticleEmitterGO(uint gameobject_UUID) const
 	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
-		ComponentParticleEmitter* emitter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
 
 		if (emitter && emitter->IsEnabled())
 		{
@@ -112,7 +112,7 @@ void ScriptingParticles::PlayParticleEmitterGO(uint gameobject_UUID)
 	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
-		ComponentParticleEmitter* emitter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
 		if (emitter)
 			emitter->Play();
 		else
@@ -128,7 +128,7 @@ void ScriptingParticles::StopParticleEmitterGO(uint gameobject_UUID)
 	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
-		ComponentParticleEmitter* emitter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
 		if (emitter)
 			emitter->Stop();
 		else

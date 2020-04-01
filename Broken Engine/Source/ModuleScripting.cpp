@@ -43,27 +43,6 @@ ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 
 ModuleScripting::~ModuleScripting() {}
 
-//template <typename T, typename U>
-//void ModuleScripting::ConvertVectorToTable(lua_State* L, T begin, U end) {
-//	lua_newtable(L);
-//	for (size_t i = 0; begin != end; ++begin, ++i) {
-//		lua_pushinteger(L, i + 1);
-//		lua_pushnumber(L, *begin);
-//		lua_settable(L, -3);
-//	}
-//}
-//
-//template <typename T, typename U>
-//void ModuleScripting::ConvertTableToVector(lua_State* L, T begin, U end) {
-//	assert(lua_istable(L, -1));
-//	for (size_t i = 0; begin != end; ++begin, ++i) {
-//		lua_pushinteger(L, i + 1);
-//		lua_gettable(L, -2);
-//		*begin = lua_tonumber(L, -1);
-//		lua_pop(L, 1);
-//	}
-//}
-
 bool ModuleScripting::DoHotReloading() {
 	bool ret = true;
 
