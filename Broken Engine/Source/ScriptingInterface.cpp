@@ -27,6 +27,10 @@ void ScriptingInterface::MakeUIComponentVisible(uint go_UUID, const char* comp_t
 			ComponentProgressBar* comp_bar = go->GetComponent<ComponentProgressBar>();
 			comp_bar->visible = true;
 		}
+		if (name.compare("CiruclarBar") == 0) {
+			ComponentCircularBar* comp_bar = go->GetComponent<ComponentCircularBar>();
+			comp_bar->visible = true;
+		}
 		else if (name.compare("Text") == 0) {
 			ComponentText* comp_text = go->GetComponent<ComponentText>();
 			comp_text->visible = true;
@@ -55,6 +59,10 @@ void ScriptingInterface::MakeUIComponentInvisible(uint go_UUID, const char* comp
 		std::string name = comp_type;
 		if (name.compare("Bar") == 0) {
 			ComponentProgressBar* comp_bar = go->GetComponent<ComponentProgressBar>();
+			comp_bar->visible = false;
+		}
+		if (name.compare("CiruclarBar") == 0) {
+			ComponentCircularBar* comp_bar = go->GetComponent<ComponentCircularBar>();
 			comp_bar->visible = false;
 		}
 		else if (name.compare("Text") == 0) {

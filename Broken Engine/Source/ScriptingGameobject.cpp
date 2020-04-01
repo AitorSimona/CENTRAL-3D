@@ -179,25 +179,27 @@ void ScriptingGameobject::TranslateGameObject(uint gameobject_UUID, float x, flo
 {
 	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UUID)).second;
 	if (go == nullptr)
-	{
 		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UUID)).second;
-	}
 
-	ComponentTransform* transform;
-	transform = go->GetComponent<ComponentTransform>();
-
-	if (transform)
+	if (go)
 	{
-		float3 trans_pos = transform->GetPosition();
+		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
 
-		trans_pos.x += x;
-		trans_pos.y += y;
-		trans_pos.z += z;
+		if (transform)
+		{
+			float3 trans_pos = transform->GetPosition();
 
-		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
+			trans_pos.x += x;
+			trans_pos.y += y;
+			trans_pos.z += z;
+
+			transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
+		}
+		else
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Object or its transformation component are null");
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Object or its transformation component are null");
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Game Object not found!");
 }
 
 uint ScriptingGameobject::GetComponentFromGO(uint gameobject_UUID, const char* component_name)
@@ -406,7 +408,7 @@ int ScriptingGameobject::GetLeftFrustumIntersection(float x, float y, float z, f
 
 		float3 pos = { x, y, z };
 
-		if (sub1.BottomPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
+		if (sub1.LeftPlane().IsOnPositiveSide(pos))	//MathGeoLib Considers the positive side of the planes the part outside of the frustum (planes look towards outside the frustum)
 			left = 0;
 	}
 
@@ -430,13 +432,20 @@ luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State
 }
 
 
-int ScriptingGameobject::GetLayer(lua_State* L)
+int ScriptingGameobject::GetMyLayer()
 {
-	int ret = 0;
 	GameObject* body = App->scripting->current_script->my_component->GetContainerGameObject();
 	if (body) {
-		lua_pushnumber(L, body->GetLayer());
-		ret = 1;
+		return body->GetLayer();
 	}
-	return ret;
+	return -1;
+}
+
+int ScriptingGameobject::GetLayerByID(uint UID)
+{
+	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(UID);
+	if (body) {
+		return body->GetLayer();
+	}
+	return -1;
 }
