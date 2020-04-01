@@ -117,21 +117,6 @@ void ComponentCharacterController::Draw()
 	// --- Render shape ---
 	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
 	{
-		if (!GetActive())
-		{
-			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-			physx::PxShape* shape;
-			controller->getActor()->getShapes(&shape, 1);
-			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-		}
-
-		else
-		{
-			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
-			physx::PxShape* shape;
-			controller->getActor()->getShapes(&shape, 1);
-			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-		}
 		// --- Use default shader ---
 		glUseProgram(App->renderer3D->defaultShader->ID);
 
@@ -168,6 +153,38 @@ void ComponentCharacterController::Draw()
 		// --- Set uniforms back to defaults ---
 		glUniform1i(TextureSupportLocation, 0);
 		glUniform3f(vertexColorLocation, 255, 255, 255);
+	}
+}
+
+void ComponentCharacterController::DrawComponent()
+{
+	if (!GetActive())
+	{
+		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+		physx::PxShape* shape;
+		controller->getActor()->getShapes(&shape, 1);
+		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+
+		if (!hasBeenDeactivated)
+		{
+			Delete();
+			hasBeenDeactivated = true;
+		}
+	}
+
+	else
+	{
+		physx::PxShape* shape;
+		controller->getActor()->getShapes(&shape, 1);
+
+		if (hasBeenDeactivated)
+		{
+			App->physics->addActor(shape->getActor(), GO);
+			hasBeenDeactivated = false;
+		}
+
+		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 	}
 }
 
