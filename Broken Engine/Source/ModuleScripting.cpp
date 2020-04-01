@@ -302,6 +302,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
 		.addFunction("Move", &ScriptingPhysics::Move)
+		.addFunction("MoveGameObject", &ScriptingPhysics::MoveGameObject)
 		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
 		.addFunction("GetCharacterPositionX", &ScriptingPhysics::GetCharacterPositionX)
 		.addFunction("GetCharacterPositionY", &ScriptingPhysics::GetCharacterPositionY)

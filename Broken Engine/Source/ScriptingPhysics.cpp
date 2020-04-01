@@ -269,8 +269,6 @@ void ScriptingPhysics::MoveGameObject(uint GObj_UUID, float vel_x, float vel_y)
 	}
 	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING): MoveGameObject function (physics) - Game Object not Found");
-
-	
 }
 
 int ScriptingPhysics::GetCharacterUpDirection(lua_State* L)
