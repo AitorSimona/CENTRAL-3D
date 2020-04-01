@@ -312,6 +312,12 @@ json ComponentCollider::Save() const
 
 	node["firstCreation"] = std::to_string(firstCreation);
 
+	if (hasBeenDeactivated)
+		node["hasBeenDeactivated"] = std::to_string(1);
+	else
+		node["hasBeenDeactivated"] = std::to_string(0);
+
+
 	return node;
 }
 
@@ -364,6 +370,9 @@ void ComponentCollider::Load(json& node)
 
 	std::string firstCreation_ = node["firstCreation"].is_null() ? "0" : node["firstCreation"];
 
+	std::string hasBeenDeactivated_ = node["hasBeenDeactivated"].is_null() ? "0" : node["hasBeenDeactivated"];
+
+
 	centerPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
 	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
 	offset = float3(std::stof(offsetx), std::stof(offsety), std::stof(offsetz));
@@ -390,6 +399,11 @@ void ComponentCollider::Load(json& node)
 	tmpScale = float3(0.f, 0.f, 0.f);
 
 	firstCreation = true;
+
+	/*if (hasBeenDeactivated_ == "1")
+		hasBeenDeactivated = true;
+	else*/
+	//hasBeenDeactivated = true;
 
 	toPlay = false;
 
