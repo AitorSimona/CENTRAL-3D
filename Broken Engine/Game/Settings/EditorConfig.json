@@ -12,7 +12,7 @@
         "Physics": true,
         "Project": true,
         "Rendering": false,
-        "Resources": false,
+        "Resources": true,
         "Scene": true,
         "Settings": false,
         "ShaderEditor": false,
