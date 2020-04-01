@@ -48,6 +48,7 @@ public:
 	ResourceMesh* mesh = nullptr;
 	physx::PxController* controller = nullptr;
 	physx::PxVec3 velocity = physx::PxVec3(0.0f, 0.0f, 0.0f);
+	bool hasBeenDeactivated = false;
 
 private:
 	physx::PxControllerDesc* desc = nullptr;
@@ -64,7 +65,6 @@ private:
 	physx::PxExtendedVec3 initialPosition = physx::PxExtendedVec3(0.0f, 0.0f, 0.0f);
 
 	bool creation = false;
-	bool hasBeenDeactivated = false;
 };
 
 BE_END_NAMESPACE
