@@ -14,7 +14,7 @@ ScriptingScenes::~ScriptingScenes() {}
 
 void ScriptingScenes::LoadSceneFromScript(uint UUID)
 {
-	ResourceScene* scene = (ResourceScene*)App->resources->GetResource(UUID);
+	ResourceScene* scene = (ResourceScene*)App->resources->GetResource(UUID, false);
 	App->scene_manager->SetActiveScene(scene);
 }
 
