@@ -28,15 +28,15 @@ void ScriptingScenes::QuitGame()
 	}
 }
 
-void ScriptingScenes::LoadSceneByName(const char* name)
-{
-	ResourceScene* scene = nullptr;
-	for (std::map<uint, Broken::ResourceScene*>::const_iterator it = App->resources->scenes.begin(); it != App->resources->scenes.end() && scene == nullptr; ++it) {
-		if ((*it).second->GetName() == name)
-			scene = (*it).second;
-
-	}
-
-	App->scene_manager->SetActiveScene(scene);
-
-}
+//void ScriptingScenes::LoadSceneByName(const char* name)
+//{
+//	ResourceScene* scene = nullptr;
+//	for (std::map<uint, Broken::ResourceScene*>::const_iterator it = App->resources->scenes.begin(); it != App->resources->scenes.end() && scene == nullptr; ++it) {
+//		if ((*it).second->GetName() == name)
+//			scene = (*it).second;
+//
+//	}
+//
+//	App->scene_manager->SetActiveScene(scene);
+//
+//}
