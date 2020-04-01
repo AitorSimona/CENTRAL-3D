@@ -416,17 +416,20 @@ void ComponentButton::CreateInspectorNode()
 		{
 			uint UID = *(const uint*)payload->Data;
 			script_obj = App->scene_manager->currentScene->GetGOWithUID(UID);
-
-			if (script_obj != nullptr)
-				script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
 		}
 		ImGui::EndDragDropTarget();
 	}
 	ImGui::SameLine();
 	if (script_obj == nullptr)
+	{
 		ImGui::Text("No Script Loaded");
+		script = nullptr;
+	}
 	else
+	{
 		ImGui::Text("Name: %s", script_obj->GetName());
+		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
+	}
 
 	if (script != nullptr)
 	{
