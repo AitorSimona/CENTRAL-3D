@@ -137,9 +137,6 @@ void ComponentDynamicRigidBody::Load(json& node)
 
 void ComponentDynamicRigidBody::CreateInspectorNode()
 {
-
-	ImGui::Checkbox("##Dynamic RigidBody", &GetActive()); ImGui::SameLine(); ImGui::Text("Dynamic RigidBody");
-
 	if (ImGui::Button("Delete component"))
 		to_delete = true;
 
