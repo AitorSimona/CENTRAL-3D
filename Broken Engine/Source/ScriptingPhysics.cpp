@@ -246,13 +246,29 @@ void ScriptingPhysics::SetCharacterPosition(float posx, float posy, float posz) 
 		ENGINE_CONSOLE_LOG("Character Controller is null on SetCharacterPosition");
 }
 
-void ScriptingPhysics::Move(float vel_x, float vel_y) {
+void ScriptingPhysics::Move(float vel_x, float vel_y)
+{
 	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
-	if (character) {
+	if (character)
 		character->Move(vel_x, vel_y);
-	}
 	else
 		ENGINE_CONSOLE_LOG("Character Controller is null on Move");
+}
+
+void ScriptingPhysics::MoveGameObject(uint GObj_UUID, float vel_x, float vel_y)
+{
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(GObj_UUID);
+
+	if (GO != nullptr)
+	{
+		ComponentCharacterController* character = GO->GetComponent<ComponentCharacterController>();
+		if (character)
+			character->Move(vel_x, vel_y);
+		else
+			ENGINE_CONSOLE_LOG("Character Controller is null on Move");
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING): MoveGameObject function (physics) - Game Object not Found");
 }
 
 int ScriptingPhysics::GetCharacterUpDirection(lua_State* L)
