@@ -186,8 +186,11 @@ void GameObject::TransformGlobal(GameObject* GO)
 void GameObject::RemoveChildGO(GameObject* GO)
 {
 	// --- Remove given child from list ---
-	if (childs.size() > 0) {
+	if (GO != nullptr && childs.size() > 0) {
 		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
+			if (*go == nullptr)
+				continue;
+
 			if ((*go)->GetUID() == GO->GetUID()) {
 				childs.erase(go);
 				break;
@@ -206,19 +209,37 @@ Component* GameObject::GetComponentWithUID(uint UUID)
 	return nullptr;
 }
 
-void GameObject::AddChildGO(GameObject* GO)
-{
+void GameObject::AddChildGO(GameObject* GO, int index) {
 	// --- Add a child GO to a Game Object this ---
 	if (!FindChildGO(GO)) {
+
+		// --- If it has a parent we remove it from its parent --
 		if (GO->parent)
 			GO->parent->RemoveChildGO(GO);
 
 		GO->parent = this;
-		childs.push_back(GO);
-		//GO->GetComponent<ComponentTransform>()->SetGlobalTransform(GO->GetComponent<ComponentTransform>()->GetGlobalTransform()*GetComponent<ComponentTransform>()->GetGlobalTransform().Inverse());
 
-		//ComponentTransform* transform = GO->GetComponent<ComponentTransform>(Component::ComponentType::Transform);
-		//transform->SetGlobalTransform(this->GetComponent<ComponentTransform>(Component::ComponentType::Transform)->GetGlobalTransform());
+		// --- If index was specified, insert ---
+		if (index >= 0) {
+			// --- Reserve needed space, note that we may leave empty spaces!!! ---
+			if (index + 1 > childs.size())
+				childs.resize(index + 1);
+
+
+			// --- Delete element at given index ---
+			if (childs[index]) {
+				delete childs[index];
+				childs[index] = nullptr;
+			}
+
+			// --- Insert element at given index ---
+			childs[index] = GO;
+		}
+		// --- Else push back ---
+		else {
+			childs.push_back(GO);
+			GO->index = childs.size() - 1;
+		}
 	}
 }
 
@@ -231,7 +252,9 @@ bool GameObject::FindChildGO(GameObject* GO)
 		std::vector<GameObject*>::iterator go = childs.begin();
 
 		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
-			if ((*go)->GetUID() == GO->GetUID())
+			if (*go == nullptr)
+				continue;
+			else if ((*go)->GetUID() == GO->GetUID())
 				ret = true;
 		}
 	}
@@ -370,7 +393,7 @@ Component * GameObject::AddComponent(Component::ComponentType type, int index)
 			{
 				// --- Reserve needed space, note that we may leave empty spaces!!! ---
 				if(index+1 > components.size())
-				components.resize(index+1);
+												components.resize(index+1);
 
 
 				// --- Delete element at given index ---
@@ -492,6 +515,28 @@ const AABB& GameObject::GetAABB()
 const OBB& GameObject::GetOBB() const
 {
 	return obb;
+}
+
+int GameObject::GetChildGOIndex(GameObject* GO)
+{
+	// --- Look for given GO in child list and return its index ---
+	int ret = -1;
+	uint i = 0; 
+
+	if (childs.size() > 0) 
+	{
+		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) 
+		{
+			if ((*go)->GetUID() == GO->GetUID())
+			{
+				ret = i;
+			}
+
+			i++;
+		}
+	}
+
+	return ret;
 }
 
 bool& GameObject::GetActive()
