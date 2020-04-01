@@ -20,6 +20,7 @@ public:
 	void Update() override;
 
 	void Draw();
+	void DrawComponent() override;
 
 	void Move(float velX, float velZ, float minDist = 0.01f);
 
@@ -63,6 +64,7 @@ private:
 	physx::PxExtendedVec3 initialPosition = physx::PxExtendedVec3(0.0f, 0.0f, 0.0f);
 
 	bool creation = false;
+	bool hasBeenDeactivated = false;
 };
 
 BE_END_NAMESPACE

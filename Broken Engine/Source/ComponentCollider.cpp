@@ -53,10 +53,24 @@ void ComponentCollider::DrawComponent()
 		if (GetActor() != nullptr)
 		{
 			if (!GetActive())
+			{
 				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-
+				if (!hasBeenDeactivated)
+				{
+					App->physics->DeleteActor(GetActor());
+					hasBeenDeactivated = true;
+				}
+			}
 			else
+			{
+				if (hasBeenDeactivated)
+				{
+					CreateCollider(type, true);
+					hasBeenDeactivated = false;
+				}
+
 				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+			}
 		}
 
 

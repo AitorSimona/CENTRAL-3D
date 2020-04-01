@@ -87,6 +87,7 @@ private:
 	bool firstCreation = false;
 	bool toPlay = false;
 	bool isTrigger = false;
+	bool hasBeenDeactivated = false;
 };
 
 
