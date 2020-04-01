@@ -45,7 +45,7 @@ public:
 
 		for (uint i = 0; i < components.size(); ++i)
 		{
-			if (components[i] && components[i]->GetType() == TComponent::GetType())
+		if (components[i] && components[i]->GetType() == TComponent::GetType())
 				return ((TComponent*)(components[i]));
 		}
 
