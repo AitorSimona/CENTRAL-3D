@@ -867,6 +867,8 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 
 void ModuleSceneManager::SendToDelete(GameObject* go)
 {
+	App->physics->DeleteActors(go);
+
 	Event e(Event::EventType::GameObject_destroyed);
 	e.go = go;
 	App->event_manager->PushEvent(e);

@@ -8,6 +8,7 @@
 #include "Resource.h"
 #include "ModuleSceneManager.h"
 #include "ResourceScene.h"
+#include "ModuleEventManager.h"
 
 #include "ResourceScript.h"
 #include "ComponentScript.h"
@@ -565,7 +566,7 @@ void ModuleScripting::FillScriptInstanceComponentFuncs(ScriptInstance* script)
 void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript* script_component) {
 	for (int i = 0; i < class_instances.size(); ++i) {
 		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component) {
-			//delete class_instances[i];
+			delete class_instances[i];
 			class_instances.erase(class_instances.begin() + i);
 		}
 	}
@@ -614,8 +615,14 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 	{
 		if (App->GetAppState() == AppState::PLAY)
 		{
-			script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
-			ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+			for (int i = 0; i < script_component->script_functions.size(); ++i)
+			{
+				if (script_component->script_functions.at(i).name == aux_str)
+				{
+					script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
+					ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+				}
+			}
 		}
 	}
 	else
