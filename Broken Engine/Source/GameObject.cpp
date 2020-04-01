@@ -11,6 +11,7 @@
 #include "ComponentImage.h"
 #include "ComponentButton.h"
 #include "ComponentCharacterController.h"
+#include "ComponentCollider.h"
 
 //#include "ComponentCheckBox.h"
 //#include "ComponentInputText.h"
@@ -33,7 +34,7 @@ GameObject::GameObject(const char* name) {
 	UpdateAABB();
 	layer = LAYER_0;
 
-	collisions.resize(2, nullptr);
+	collisions.resize(6, nullptr);
 
 	Enable();
 }
@@ -46,7 +47,7 @@ GameObject::GameObject(const char* name, uint UID)
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
 
-	collisions.resize(2, nullptr);
+	collisions.resize(6, nullptr);
 
 	Enable();
 }
