@@ -49,7 +49,7 @@ void ScriptingParticles::ActivateParticleEmitterGO(uint gameobject_UUID) const
 	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
-		ComponentParticleEmitter* emitter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
 
 		if (emitter && !emitter->IsEnabled())
 		{
@@ -71,7 +71,7 @@ void ScriptingParticles::DeactivateParticleEmitterGO(uint gameobject_UUID) const
 	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
 	if (go) {
-		ComponentParticleEmitter* emitter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
 
 		if (emitter && emitter->IsEnabled())
 		{
@@ -91,7 +91,10 @@ void ScriptingParticles::DeactivateParticleEmitterGO(uint gameobject_UUID) const
 void ScriptingParticles::PlayParticleEmitter()
 {
 	ComponentParticleEmitter* emitter = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentParticleEmitter>();
-	emitter->Play();
+	if (emitter)
+		emitter->Play();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
 }
 
 void ScriptingParticles::StopParticleEmitter()
@@ -101,6 +104,38 @@ void ScriptingParticles::StopParticleEmitter()
 		emitter->Stop();
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+}
+
+void ScriptingParticles::PlayParticleEmitterGO(uint gameobject_UUID)
+{
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go) {
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
+		if (emitter)
+			emitter->Play();
+		else
+			ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: GameObject with UUID %d could not be found!", gameobject_UUID);
+}
+
+void ScriptingParticles::StopParticleEmitterGO(uint gameobject_UUID)
+{
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go) {
+		ComponentParticleEmitter* emitter = go->GetComponent<ComponentParticleEmitter>();
+		if (emitter)
+			emitter->Stop();
+		else
+			ENGINE_CONSOLE_LOG("[Script]: Particle Emmiter component is NULL");
+	}
+	else
+		ENGINE_CONSOLE_LOG("[Script]: GameObject with UUID %d could not be found!", gameobject_UUID);
 }
 
 void ScriptingParticles::SetEmissionRateFromScript(float ms)
