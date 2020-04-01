@@ -41,7 +41,10 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	desc = &capsuleDesc;
 
 	controller = App->physics->mControllerManager->createController(*desc);
-	App->physics->addActor(controller->getActor(), GO);
+
+	physx::PxShape* shape;
+	controller->getActor()->getShapes(&shape, 1);
+	App->physics->addActor(shape->getActor(), GO);
 
 	initialPosition = capsuleDesc.position;
 
