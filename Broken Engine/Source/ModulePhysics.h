@@ -29,6 +29,7 @@ namespace physx
 
 enum LayerMask
 {
+	LAYER_NONE = -1,
 	LAYER_0,
 	LAYER_1,
 	LAYER_2,
@@ -49,13 +50,12 @@ enum LayerMask
 struct Layer {
 	std::string name;
 	LayerMask layer;
+	bool active;
 	std::vector<bool> active_layers;
 	physx::PxU32 LayerGroup;
 
-	void UpdateLayerGroup(uint c) {
+	void UpdateLayerGroup() {
 		physx::PxU32 ID = 0;
-		if (c != active_layers.size())
-			active_layers.push_back(true);
 
 		for (int i = 0; i < active_layers.size(); ++i) //Return group of layers
 		{
@@ -133,8 +133,6 @@ public:
 	const Broken::json& SaveStatus() const override;
 
 	void LoadStatus(const Broken::json& file) override;
-
-	void AddLayer(std::string name);
 
 public:
 

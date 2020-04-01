@@ -360,6 +360,9 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 	{
 		for (int n = 0; n < layers->size(); n++)
 		{
+			if (!layers->at(n).active)
+				continue;
+
 			bool is_selected = (item_current == layers->at(n).name.c_str());
 			if (ImGui::Selectable(layers->at(n).name.c_str(), is_selected)) {
 				item_current = layers->at(n).name.c_str();
