@@ -15,6 +15,8 @@ public:
 
 	void CreateLayerFilterGrid();
 
+	void CreateLayerList();
+
 private:
 	physx::PxVec3 gravity;
 	float staticFriction, dynamicFriction, restitution;

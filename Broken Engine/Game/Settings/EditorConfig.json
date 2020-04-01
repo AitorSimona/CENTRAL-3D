@@ -14,7 +14,7 @@
         "Rendering": false,
         "Resources": false,
         "Scene": true,
-        "Settings": true,
+        "Settings": false,
         "ShaderEditor": false,
         "Toolbar": true
     },
@@ -24,8 +24,8 @@
             "1": true,
             "2": true,
             "3": true,
-            "4": true,
-            "Group": 31,
+            "4": false,
+            "Group": 15,
             "GroupSize": 5,
             "Layer": 0,
             "Name": "Default"
@@ -64,12 +64,12 @@
             "Name": "UI"
         },
         "Layer4": {
-            "0": true,
+            "0": false,
             "1": true,
             "2": true,
             "3": true,
             "4": true,
-            "Group": 31,
+            "Group": 30,
             "GroupSize": 5,
             "Layer": 4,
             "Name": "Ignore Raycast"
@@ -77,17 +77,17 @@
         "count": 5,
         "dynamicFriction": 1.0,
         "gravity": 9.800000190734863,
-        "restitution": 1.0,
+        "restitution": 0.0,
         "staticFriction": 1.0
     },
     "Window": {
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 810,
+        "height": 648,
         "resizable": true,
         "sceneX": 480,
         "sceneY": 640,
-        "width": 1440
+        "width": 1152
     }
 }

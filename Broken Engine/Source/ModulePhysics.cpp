@@ -1,4 +1,5 @@
 #include "ModulePhysics.h"
+#include "ModulePhysics.h"
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ComponentCollider.h"
@@ -88,13 +89,13 @@ physx::PxFilterFlags customFilterShader(
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
-	if ((filterData0.word0 != 0 || filterData1.word0 != 0) &&
-		!(filterData0.word0 & filterData1.word1 || filterData1.word0 & filterData0.word1))
-		return physx::PxFilterFlag::eSUPPRESS;
-
 	// Let triggers through
 	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
 		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+
+	if ((filterData0.word0 != 0 || filterData1.word0 != 0) &&
+		!(filterData0.word0 & filterData1.word1 || filterData1.word0 & filterData0.word1))
+		return physx::PxFilterFlag::eSUPPRESS;
 	else
 	{
 		// Generate contacts for all that were not filtered above
@@ -118,11 +119,15 @@ bool ModulePhysics::Init(json& config)
 		layer_list.push_back(Layer{ "Enemy", LayerMask::LAYER_2 });
 		layer_list.push_back(Layer{ "UI", LayerMask::LAYER_3 });
 		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
 
 		for (int i = 0; i < layer_list.size(); ++i) {
 			layer_list.at(i).active_layers.resize(layer_list.size(), true);
 			if (i == 0)
-				layer_list.at(i).UpdateLayerGroup();
+				layer_list.at(i).UpdateLayerGroup(layer_list.size());
 			else
 				layer_list.at(i).LayerGroup = layer_list.at(0).LayerGroup;
 		}
@@ -436,9 +441,9 @@ const Broken::json& ModulePhysics::SaveStatus() const {
 	static Broken::json config;
 
 	config["gravity"] = gravity;
-	config["staticFriction"] = materialDesc.x;
-	config["dynamicFriction"] = materialDesc.y;
-	config["restitution"] = materialDesc.z;
+	config["staticFriction"] = mMaterial->getStaticFriction();
+	config["dynamicFriction"] = mMaterial->getDynamicFriction();
+	config["restitution"] = mMaterial->getRestitution();
 
 	config["count"] = layer_list.size();
 
@@ -487,4 +492,16 @@ void ModulePhysics::LoadStatus(const Broken::json& file) {
 
 	if (count != 0)
 		loaded = true;
+}
+
+
+void ModulePhysics::AddLayer(std::string name)
+{
+	layer_list.push_back(Layer{ name, (LayerMask)layer_list.size() });
+
+	layer_list.back().active_layers.resize(layer_list.size() + 1, true);
+
+	for (int i = 0; i < layer_list.size(); ++i) {
+		layer_list.at(i).UpdateLayerGroup(layer_list.size());
+	}
 }
