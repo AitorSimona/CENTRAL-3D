@@ -179,25 +179,27 @@ void ScriptingGameobject::TranslateGameObject(uint gameobject_UUID, float x, flo
 {
 	GameObject* go = (*App->scene_manager->currentScene->NoStaticGameObjects.find(gameobject_UUID)).second;
 	if (go == nullptr)
-	{
 		go = (*App->scene_manager->currentScene->StaticGameObjects.find(gameobject_UUID)).second;
-	}
 
-	ComponentTransform* transform;
-	transform = go->GetComponent<ComponentTransform>();
-
-	if (transform)
+	if (go)
 	{
-		float3 trans_pos = transform->GetPosition();
+		ComponentTransform* transform = go->GetComponent<ComponentTransform>();
 
-		trans_pos.x += x;
-		trans_pos.y += y;
-		trans_pos.z += z;
+		if (transform)
+		{
+			float3 trans_pos = transform->GetPosition();
 
-		transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
+			trans_pos.x += x;
+			trans_pos.y += y;
+			trans_pos.z += z;
+
+			transform->SetPosition(trans_pos.x, trans_pos.y, trans_pos.z);
+		}
+		else
+			ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Object or its transformation component are null");
 	}
 	else
-		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Object or its transformation component are null");
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Game Object not found!");
 }
 
 uint ScriptingGameobject::GetComponentFromGO(uint gameobject_UUID, const char* component_name)
