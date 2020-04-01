@@ -70,11 +70,24 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Name"] = (*it).second->GetName();
 		file[string_uid]["Active"] = (*it).second->GetActive();
 		file[string_uid]["Static"] = (*it).second->Static;
-		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
 
-		if ((*it).second->parent)
+
+		if ((*it).second->parent != App->scene_manager->GetRootGO())
 		{
+			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
 			file[string_uid]["Index"] = (*it).second->parent->GetChildGOIndex((*it).second);
+		}
+		else 
+		{
+			file[string_uid]["Parent"] = std::to_string(-1);
+			GameObject* root = App->scene_manager->GetRootGO();
+			for (int i = 0; i < root->childs.size(); ++i) {
+				if (root->childs[i] == (*it).second) {
+					file[string_uid]["Index"] = i;
+					break;
+				}
+			}
+
 		}
 
 		file[string_uid]["Components"];
@@ -104,6 +117,17 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		{
 			file[string_uid]["Index"] = (*it).second->parent->GetChildGOIndex((*it).second);
 		}
+		else {
+			GameObject* root = App->scene_manager->GetRootGO();
+			for (int i = 0; i < root->childs.size(); ++i) {
+				if (root->childs[i] == (*it).second) {
+					file[string_uid]["Index"] = i;
+					break;
+				}
+			}
+
+		}
+
 
 		file[string_uid]["Components"];
 

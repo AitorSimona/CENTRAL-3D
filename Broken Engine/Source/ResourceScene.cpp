@@ -100,22 +100,29 @@ bool ResourceScene::LoadInMemory() {
 					App->scene_manager->SetStatic(go, true, false);
 			}
 
-
-			// ---------------- SERGI MYTODO (if index == -1 just push back (or do not pass index as param)) modify addchildgo to mimick addcomponent -------------------------
-
-
+			App->scene_manager->GetRootGO()->childs.clear();
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
 				std::string parent_uid_string = file[std::to_string(objects[i]->GetUID())]["Parent"];
-				uint parent_uid = std::stoi(parent_uid_string);
+				int parent_uid = std::stoi(parent_uid_string);
 
-				for (uint j = 0; j < objects.size(); ++j) {
-					if (parent_uid == objects[j]->GetUID()) {
-						objects[j]->AddChildGO(objects[i]);
-						break;
+				if (parent_uid > 0) 
+				{
+					bool saved = false;
+					for (uint j = 0; j < objects.size(); ++j) {
+						if (parent_uid == objects[j]->GetUID()) {
+							objects[j]->AddChildGO(objects[i], objects[i]->index);
+							saved = true;
+							break;
+						}
 					}
+					// This is for compatibility with old scenes, yes, FML - Sergi
+					if (!saved)
+						App->scene_manager->GetRootGO()->AddChildGO(objects[i]);
 				}
+				else 
+					App->scene_manager->GetRootGO()->AddChildGO(objects[i], objects[i]->index);
 			}
 		}
 	}
