@@ -85,8 +85,12 @@ void ScriptingGameobject::SetActiveGameObject(uint gameobject_UUID, bool active)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
-	if (go)
-		go->GetActive() = active;
+	if (go) {
+		if (active)
+			go->Enable();
+		else
+			go->Disable();
+	}
 	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Gameobject with %d UUID does not exist!", gameobject_UUID);
 }
