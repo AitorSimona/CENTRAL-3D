@@ -20,8 +20,8 @@ public:
 	// GameObject-related functions
 	uint FindGameObject(const char* go_name);
 	uint GetMyUID();
-	uint GetMyLayer(lua_State* L);
-	uint GetLayerByID(uint UID, lua_State* L);
+	int GetMyLayer();
+	int GetLayerByID(uint UID);
 	uint GetScriptGOParent();
 	uint GetGOParentFromUID(uint gameobject_UUID);
 	void DestroyGOFromScript(uint gameobject_UUID);

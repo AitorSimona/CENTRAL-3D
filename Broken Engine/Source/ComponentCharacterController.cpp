@@ -59,7 +59,7 @@ ComponentCharacterController::~ComponentCharacterController()
 
 void ComponentCharacterController::Update()
 {
-	if (App->input->GetKey(SDL_SCANCODE_UP))
+	/*if (App->input->GetKey(SDL_SCANCODE_UP))
 		velocity.z = -10.0f;
 
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN))
@@ -73,7 +73,7 @@ void ComponentCharacterController::Update()
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT))
 		velocity.x = -10.0f;
 	else
-		velocity.x = 0.0f;
+		velocity.x = 0.0f;*/
 
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
 
@@ -83,7 +83,7 @@ void ComponentCharacterController::Update()
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
 
-	Move(velocity.x, velocity.z);
+	//Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
 	float3 cctPos(cctPosition.x, cctPosition.y, cctPosition.z);
@@ -281,65 +281,57 @@ void ComponentCharacterController::Load(json& node)
 
 void ComponentCharacterController::CreateInspectorNode()
 {
-	ImGui::Checkbox("##CharacterControllerActive", &GetActive());
-	ImGui::SameLine();
+	if (ImGui::Button("Delete component"))
+		to_delete = true;
 
-	if (ImGui::TreeNodeEx("Character Controller", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::DragFloat("Radius", &radius, 0.005f))
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("Radius", &radius, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetRadius(radius);
+	}
 
-			SetRadius(radius);
-		}
+	if (ImGui::DragFloat("Height", &height, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("Height", &height, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetHeight(height);
+	}
 
-			SetHeight(height);
-		}
+	if (ImGui::DragFloat("contactOffset", &contactOffset, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("contactOffset", &contactOffset, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetContactOffset(contactOffset);
+	}
 
-			SetContactOffset(contactOffset);
-		}
+	if (ImGui::DragFloat("stepOffset", &stepOffset, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("stepOffset", &stepOffset, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetStepOffset(stepOffset);
+	}
 
-			SetStepOffset(stepOffset);
-		}
+	if (ImGui::DragFloat("slopeLimit", &slopeLimit, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("slopeLimit", &slopeLimit, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetSlopeLimit(slopeLimit);
+	}
 
-			SetSlopeLimit(slopeLimit);
-		}
+	ImGui::Text("Non Walkable Mode");
+	if (ImGui::Checkbox("##W", &sliding))
+	{
+		if (sliding)
+			controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
 
-		ImGui::Text("Non Walkable Mode");
-		if (ImGui::Checkbox("##W", &sliding))
-		{
-			if (sliding)
-				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
-
-			else
-				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
-		}
-
-		ImGui::TreePop();
+		else
+			controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
 	}
 }
 

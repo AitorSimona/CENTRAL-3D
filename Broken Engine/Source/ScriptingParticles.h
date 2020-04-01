@@ -17,6 +17,8 @@ public:
 
 	void PlayParticleEmitter();
 	void StopParticleEmitter();
+	void PlayParticleEmitterGO(uint gameobject_UUID);
+	void StopParticleEmitterGO(uint gameobject_UUID);
 	void SetEmissionRateFromScript(float ms);
 	void SetParticlesPerCreationFromScript(int particlesAmount);
 

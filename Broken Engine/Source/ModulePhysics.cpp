@@ -519,7 +519,7 @@ void ModulePhysics::AddLayer(std::string name)
 {
 	layer_list.push_back(Layer{ name, (LayerMask)layer_list.size() });
 
-	layer_list.back().active_layers.resize(layer_list.size() + 1, true);
+	layer_list.back().active_layers.resize(layer_list.size(), true);
 
 	for (int i = 0; i < layer_list.size(); ++i) {
 		layer_list.at(i).UpdateLayerGroup(layer_list.size());
