@@ -287,6 +287,13 @@ update_status ModuleEditorUI::Update(float dt) {
 				panelAbout->OnOff();
 			}
 
+			if(ImGui::MenuItem("DoGame"))
+				EngineApp->gui->RequestBrowser("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+			if (ImGui::MenuItem("DoFrozenGame"))
+				EngineApp->gui->RequestBrowser("https://www.youtube.com/watch?v=L0MK7qz13bU&feature=youtu.be&t=126");
+			if (ImGui::MenuItem("I Want to Commit Suicide"))
+				EngineApp->gui->RequestBrowser("https://drive.google.com/file/d/1alYVc1pEzjF6crE49_FW5FYaiuwmZ2yN/view?usp=sharing");
+
 			ImGui::EndMenu();
 		}
 
