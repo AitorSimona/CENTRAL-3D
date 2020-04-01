@@ -441,8 +441,10 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 			ScriptFunc function;
 			function.name = "OnCollisionEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
-			App->scripting->CallbackScriptFunction(script2, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 
