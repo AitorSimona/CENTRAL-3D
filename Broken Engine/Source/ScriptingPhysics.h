@@ -35,6 +35,7 @@ public:
 	luabridge::LuaRef OverlapSphere(float position_x, float position_y, float position_z, float radius, uint layer, lua_State* L);
 
 	void Move(float vel_x, float vel_y);
+	void MoveGameObject(uint GObj_UUID, float vel_x, float vel_y);
 	int GetCharacterPosition(lua_State* L);
 	float GetCharacterPositionX();
 	float GetCharacterPositionY();
