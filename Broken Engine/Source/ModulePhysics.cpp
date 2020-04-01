@@ -89,49 +89,49 @@ physx::PxFilterFlags customFilterShader(
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
-	// let triggers through
-	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
-	{
-		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
-		return physx::PxFilterFlag::eDEFAULT;
-	}
-	// generate contacts for all that were not filtered above
-	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-
-	// trigger the contact callback for pairs (A,B) where
-	// the filtermask of A contains the ID of B and vice versa.
-	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
-		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-
-	return physx::PxFilterFlag::eDEFAULT;
-
+	//if ((filterData0.word0 != 0 || filterData1.word0 != 0) &&
+	//	!(filterData0.word0 & filterData1.word1 || filterData1.word0 & filterData0.word1))
+	//	return physx::PxFilterFlag::eSUPPRESS;
 
 	//// Let triggers through
-	//if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)) {
+	//if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
 	//	pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+	//else
+	//{
+	//	// Generate contacts for all that were not filtered above
+	//	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+	//	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 	//}
-	//else {
 
-	//	if ((filterData0.word0 != 0 || filterData1.word0 != 0) &&
-	//		!(filterData0.word0 & filterData1.word1 || filterData1.word0 & filterData0.word1))
-	//		return physx::PxFilterFlag::eSUPPRESS;
-	//	else
-	//	{
-	//		// Generate contacts for all that were not filtered above
-	//		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-	//		pairFlags |= physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
-	//		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-	//		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
-	//		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
-	//	}
-	//}
+	//return physx::PxFilterFlag::eDEFAULT;
+
+
+	// Let triggers through
+	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)) {
+		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+	}
+	else {
+
+		if ((filterData0.word0 != 0 || filterData1.word0 != 0) &&
+			!(filterData0.word0 & filterData1.word1 || filterData1.word0 & filterData0.word1))
+			return physx::PxFilterFlag::eSUPPRESS;
+		else
+		{
+			// Generate contacts for all that were not filtered above
+			pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+			pairFlags |= physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+			pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+			pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
+			pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
+		}
+	}
 
 	return physx::PxFilterFlag::eDEFAULT;
 }
 
 bool ModulePhysics::Init(json& config)
 {
-	LoadStatus(config);
+	//LoadStatus(config);
 
 	if (!loaded) {
 		layer_list.push_back(Layer{ "Default", LayerMask::LAYER_0, true });
@@ -141,7 +141,7 @@ bool ModulePhysics::Init(json& config)
 		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4, true });
 
 		int count = layer_list.size();
-		for (int i = 0; i < MAX_LAYERS - count; ++i) {
+		for (int i = 0; i < 10 - count; ++i) {
 			layer_list.push_back(Layer{"", LayerMask::LAYER_NONE, false });
 		}
 
