@@ -283,10 +283,13 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetAngularVelocity", &ScriptingPhysics::GetAngularVelocity)
 		.addFunction("SetAngularVelocity", &ScriptingPhysics::SetAngularVelocity)
+		.addFunction("SetAngularVelocity_GO", &ScriptingPhysics::SetAngularVelocityGO)
 		.addFunction("GetLinearVelocity", &ScriptingPhysics::GetLinearVelocity)
 		.addFunction("SetLinearVelocity", &ScriptingPhysics::SetLinearVelocity)
+		.addFunction("SetLinearVelocity_GO", &ScriptingPhysics::SetLinearVelocityGO)
 
 		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
+		.addFunction("AddTorque_GO", &ScriptingPhysics::AddTorqueGO)
 		.addFunction("AddForce", &ScriptingPhysics::AddForce)
 		.addFunction("AddForce_GO", &ScriptingPhysics::AddForceGO)
 
@@ -331,6 +334,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
 		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
+		.addFunction("PlayParticleEmitter_GO", &ScriptingParticles::PlayParticleEmitterGO)
+		.addFunction("StopParticleEmitter_GO", &ScriptingParticles::StopParticleEmitterGO)
 		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
 		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
 

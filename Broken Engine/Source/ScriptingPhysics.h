@@ -25,8 +25,11 @@ public:
 	int GetAngularVelocity(lua_State* L);
 	void SetLinearVelocity(float x, float y, float z);
 	void SetAngularVelocity(float x, float y, float z);
+	void SetLinearVelocityGO(float x, float y, float z, uint gameobject_UUID);
+	void SetAngularVelocityGO(float x, float y, float z, uint gameobject_UUID);
 
 	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode);
+	void AddTorqueGO(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID);
 	void AddForce(float forceX, float forceY, float forceZ, int ForceMode);
 	void AddForceGO(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID);
 
@@ -35,7 +38,7 @@ public:
 	luabridge::LuaRef OverlapSphere(float position_x, float position_y, float position_z, float radius, uint layer, lua_State* L);
 
 	void Move(float vel_x, float vel_y);
-	void MoveGameObject(uint GObj_UUID, float vel_x, float vel_y);
+	void MoveGameObject(uint gameobject_UUID, float vel_x, float vel_y);
 	int GetCharacterPosition(lua_State* L);
 	float GetCharacterPositionX();
 	float GetCharacterPositionY();
