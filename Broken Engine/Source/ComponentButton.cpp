@@ -157,7 +157,7 @@ json ComponentButton::Save() const
 	if (script)
 	{
 		node["script"] = std::to_string(script_obj->GetUID());
-		node["function"] = std::string(func_name);
+		node["function"] = func_name;
 	}
 
 	node["idle_color.r"] = std::to_string(idle_color.r);
@@ -261,7 +261,7 @@ void ComponentButton::Load(json& node)
 
 			for (uint i = 0; i < func_list.size(); ++i) //get function pos
 			{
-				if (strcmp(func_list[i], func_name) == 0)
+				if (strcmp(func_list[i], func_name.c_str()) == 0)
 				{
 					func_pos = i;
 					break;
