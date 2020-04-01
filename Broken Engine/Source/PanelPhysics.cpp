@@ -112,7 +112,7 @@ void PanelPhysics::CreateLayerFilterGrid() {
 
 	for (int i = 0; i < App->physics->layer_list.size(); ++i) { //GET LARGEST TEXT
 		Layer* layer = &App->physics->layer_list.at(i);
-		float size = ImGui::CalcTextSize(layer->name.c_str()).x;
+		size = ImGui::CalcTextSize(layer->name.c_str()).x;
 		if (size > padding.x) padding.x = size;
 	}
 
@@ -154,6 +154,8 @@ void PanelPhysics::CreateLayerFilterGrid() {
 			ImGui::SameLine();
 		}
 	}
+
+	ImGui::Dummy({ 0,size });
 }
 
 void PanelPhysics::CreateLayerList() {
@@ -173,14 +175,14 @@ void PanelPhysics::CreateLayerList() {
 		if (i < count) {
 			ImGui::SameLine();
 			strcpy(buffer, App->physics->layer_list.at(i).name.c_str());
-			if (ImGui::InputTextWithHint(name.c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			if (ImGui::InputTextWithHint(std::string("##").append(std::to_string(i)).c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
 				App->physics->layer_list.at(i).name = buffer;
 			}
 		}
 		else {
 			ImGui::SameLine();
-			if (ImGui::InputTextWithHint(name.c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			if (ImGui::InputTextWithHint(std::string("##").append(std::to_string(i)).c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
 				App->physics->AddLayer(buffer);
 			}
