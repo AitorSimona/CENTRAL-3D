@@ -45,25 +45,6 @@ bool PanelHierarchy::Draw()
 
 	ImGui::End();
 
-	// MYTODO: Use uids for drag and drop!!!
-
-	// --- Manage Drag & Drop ---
-	if (end_drag)
-	{
-		if (!dragged->FindChildGO(target) && target != dragged)
-			target->AddChildGO(dragged);
-
-		end_drag = false;
-		dragged = nullptr;
-		target = nullptr;
-	}
-	if (to_destroy)
-	{
-		App->scene_manager->DestroyGameObject(to_destroy);
-		to_destroy = nullptr;
-		App->scene_manager->SetSelectedGameObject(nullptr);
-	}
-
 	return true;
 }
 
@@ -110,8 +91,9 @@ void PanelHierarchy::DrawRecursive(GameObject* Go)
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			ImGui::SetDragDropPayload("GO", Go, sizeof(GameObject));        // Set payload to carry the index of our item (could be anything)
-			dragged = Go;
+			uint UID = Go->GetUID();
+			ImGui::SetDragDropPayload("GO", &UID, sizeof(uint));
+			ImGui::Text(Go->GetName().c_str());
 			ImGui::EndDragDropSource();
 		}
 
@@ -119,11 +101,13 @@ void PanelHierarchy::DrawRecursive(GameObject* Go)
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
 			{
-				target = Go;
-				end_drag = true;
+				uint UID = *(const uint*)payload->Data;
+
+				GameObject* go = App->scene_manager->currentScene->GetGOWithUID(UID);
+
+				if (!go->FindChildGO(Go) && go->GetUID() != Go->GetUID())
+					Go->AddChildGO(go);
 			}
-
-
 			ImGui::EndDragDropTarget();
 		}
 
@@ -131,7 +115,7 @@ void PanelHierarchy::DrawRecursive(GameObject* Go)
 		if (ImGui::IsWindowFocused() && Go == App->scene_manager->GetSelectedGameObject() && App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 		{
 			CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
-			to_destroy = Go;
+			App->scene_manager->SendToDelete(Go);
 		}
 
 		// --- If node is clicked set Go as selected ---

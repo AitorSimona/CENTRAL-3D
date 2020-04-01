@@ -4,6 +4,7 @@
 #include "ModuleGui.h"
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "Importers.h"
 #include "Resources.h"
@@ -24,6 +25,7 @@ void MyAssimpCallback(const char* msg, char* userData)
 
 ModuleResourceManager::ModuleResourceManager(bool start_enabled)
 {
+	name = "Resource Manager";
 }
 
 ModuleResourceManager::~ModuleResourceManager()
@@ -68,7 +70,9 @@ bool ModuleResourceManager::Start()
 	filters.push_back("fbx");
 	filters.push_back("mat");
 	filters.push_back("png");
+	filters.push_back("jpg");
 	filters.push_back("scene");
+	filters.push_back("glsl");
 
 	// --- Import files and folders ---
 	AssetsFolder = SearchAssets(nullptr, ASSETS_FOLDER, filters);
@@ -360,6 +364,30 @@ Resource* ModuleResourceManager::ImportTexture(Importer::ImportData& IData)
 	}
 
 	return texture;
+}
+
+Resource* ModuleResourceManager::ImportShader(Importer::ImportData& IData)
+{
+	Resource* shader = nullptr;
+	ImporterShader* IShader = GetImporter<ImporterShader>();
+
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+		shader = IShader->Load(IData.path);
+
+	// --- Else call relevant importer ---
+	else
+	{
+		std::string new_path = IData.path;
+
+		if (IData.dropped)
+			new_path = DuplicateIntoGivenFolder(IData.path, App->gui->panelProject->GetcurrentDirectory()->GetResourceFile());
+
+		IData.path = new_path.c_str();
+		shader = IShader->Import(IData);
+	}
+
+	return shader;
 }
 
 
@@ -801,6 +829,10 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 {
 	if (resource)
 	{
+		// --- Manage exceptions ---
+		if (resource->GetUID() == App->renderer3D->defaultShader->GetUID())
+			return;
+
 		std::string directory;
 		std::string original_file;
 
@@ -850,10 +882,16 @@ void ModuleResourceManager::RemoveResourceFromFolder(Resource* resource)
 		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
 		{
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
-			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
-			directory.pop_back();
+			std::string path = resource->GetOriginalFile();
+			directory = App->fs->GetDirectoryFromPath(path);
+
+			if (directory.size() > 0)
+				directory.pop_back();
+
 			original_file = (*it).second->GetOriginalFile();
-			original_file.pop_back();
+
+			if (original_file.size() > 0)
+				original_file.pop_back();
 
 			if (directory == original_file)
 			{
@@ -935,6 +973,22 @@ std::string ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 		}
 
 		unique_name.append(".mat");
+		break;
+
+	case Resource::ResourceType::SHADER:
+		unique_name = "New shader" + std::to_string(shaders.size());
+
+		for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end(); ++it)
+		{
+			if ((*it).second->GetName() == unique_name)
+			{
+				instance++;
+				unique_name = "New shader" + std::to_string(shaders.size() + instance);
+				it = shaders.begin();
+			}
+		}
+
+		unique_name.append(".glsl");
 		break;
 
 	case Resource::ResourceType::UNKNOWN:

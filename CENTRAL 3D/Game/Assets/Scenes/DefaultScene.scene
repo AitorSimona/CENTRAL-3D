@@ -1,5 +1,5 @@
 {
-    "1356136926": {
+    "1314162062": {
         "Components": {
             "0": {
                 "index": 0,
@@ -16,7 +16,7 @@
             },
             "1": {
                 "Resources": {
-                    "ResourceMesh": "Library/Meshes/185471639.mesh"
+                    "ResourceMesh": "Library/Meshes/2087160845.mesh"
                 },
                 "index": 1
             },
@@ -28,9 +28,9 @@
             }
         },
         "Name": "Chimney",
-        "Parent": "1490384691"
+        "Parent": "1883621714"
     },
-    "1490384691": {
+    "1883621714": {
         "Components": {
             "0": {
                 "index": 0,
@@ -47,9 +47,9 @@
             }
         },
         "Name": "GameObject (0)",
-        "Parent": "1575714573"
+        "Parent": "2080273163"
     },
-    "1737013297": {
+    "580065557": {
         "Components": {
             "0": {
                 "index": 0,
@@ -66,7 +66,7 @@
             },
             "1": {
                 "Resources": {
-                    "ResourceMesh": "Library/Meshes/2049293055.mesh"
+                    "ResourceMesh": "Library/Meshes/744215490.mesh"
                 },
                 "index": 1
             },
@@ -78,6 +78,6 @@
             }
         },
         "Name": "Baker_house",
-        "Parent": "1490384691"
+        "Parent": "1883621714"
     }
 }

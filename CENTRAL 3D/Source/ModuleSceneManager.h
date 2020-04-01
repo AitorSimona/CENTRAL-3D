@@ -79,7 +79,10 @@ public:
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 
+	void SendToDelete(GameObject* go);
+
 private:
+
 	// --- Event Callbacks ---
 	static void ONResourceSelected(const Event& e);
 	static void ONGameObjectDestroyed(const Event& e);
@@ -100,11 +103,14 @@ public:
 	bool display_boundingboxes = false;
 	ResourceScene* currentScene = nullptr;
 
-
 	// do not destroy
 	ResourceScene* defaultScene = nullptr;
 	ResourceScene* temporalScene = nullptr;
+
 private:
+
+	// Game objects to be deleted
+	std::vector<GameObject*> go_to_delete;
 
 	// --- Do not modify, just use ---
 	ResourceMesh* cube = nullptr;

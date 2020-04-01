@@ -40,12 +40,15 @@ void ModuleSceneManager::ONResourceSelected(const Event& e)
 
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e)
 {
+	if (e.go->GetUID() == App->scene_manager->GetSelectedGameObject()->GetUID())
+		App->scene_manager->SetSelectedGameObject(nullptr);
 }
 
 // -------------------------------
 
 ModuleSceneManager::ModuleSceneManager(bool start_enabled)
 {
+	name = "Scene Manager";
 }
 
 ModuleSceneManager::~ModuleSceneManager()
@@ -103,7 +106,17 @@ bool ModuleSceneManager::Start()
 
 update_status ModuleSceneManager::PreUpdate(float dt)
 {
+	// --- Delete flagged game objects ---
+	if (!App->scene_manager->go_to_delete.empty())
+	{
+		for (uint i = 0; i < App->scene_manager->go_to_delete.size(); ++i)
+		{
+			DestroyGameObject(go_to_delete[i]);
+		}
 
+		App->scene_manager->go_count -= App->scene_manager->go_to_delete.size();
+		App->scene_manager->go_to_delete.clear();
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -687,6 +700,15 @@ void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, Reso
 	}
 }
 
+void ModuleSceneManager::SendToDelete(GameObject* go)
+{
+	Event e(Event::EventType::GameObject_destroyed);
+	e.go = go;
+	App->event_manager->PushEvent(e);
+
+	go_to_delete.push_back(go);
+}
+
 void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh* rmesh)
 {
 	// --- Create spheres and cylinder to build capsule ---
@@ -798,6 +820,7 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 	go->parent->RemoveChildGO(go);
 	go->RecursiveDelete();
 	delete go;
+	go = nullptr;
 	this->go_count--;
 }
 

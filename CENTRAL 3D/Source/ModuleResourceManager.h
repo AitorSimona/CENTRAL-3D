@@ -50,6 +50,7 @@ public:
 	Resource* ImportMaterial(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
 	Resource* ImportTexture(Importer::ImportData& IData);
+	Resource* ImportShader(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
 
 	void HandleFsChanges();
