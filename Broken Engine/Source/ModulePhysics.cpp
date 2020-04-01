@@ -102,6 +102,7 @@ physx::PxFilterFlags customFilterShader(
 	// the filtermask of A contains the ID of B and vice versa.
 	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
 		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+	
 
 	return physx::PxFilterFlag::eDEFAULT;
 
@@ -134,20 +135,21 @@ bool ModulePhysics::Init(json& config)
 	LoadStatus(config);
 
 	if (!loaded) {
-		layer_list.push_back(Layer{ "Default", LayerMask::LAYER_0 });
-		layer_list.push_back(Layer{ "Player", LayerMask::LAYER_1 });
-		layer_list.push_back(Layer{ "Enemy", LayerMask::LAYER_2 });
-		layer_list.push_back(Layer{ "UI", LayerMask::LAYER_3 });
-		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
-		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
-		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
-		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
-		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4 });
+		layer_list.push_back(Layer{ "Default", LayerMask::LAYER_0, true });
+		layer_list.push_back(Layer{ "Player", LayerMask::LAYER_1, true });
+		layer_list.push_back(Layer{ "Enemy", LayerMask::LAYER_2, true });
+		layer_list.push_back(Layer{ "UI", LayerMask::LAYER_3, true });
+		layer_list.push_back(Layer{ "Ignore Raycast", LayerMask::LAYER_4, true });
+
+		int count = layer_list.size();
+		for (int i = 0; i < MAX_LAYERS - count; ++i) {
+			layer_list.push_back(Layer{"", LayerMask::LAYER_NONE, false });
+		}
 
 		for (int i = 0; i < layer_list.size(); ++i) {
 			layer_list.at(i).active_layers.resize(layer_list.size(), true);
 			if (i == 0)
-				layer_list.at(i).UpdateLayerGroup(layer_list.size());
+				layer_list.at(i).UpdateLayerGroup();
 			else
 				layer_list.at(i).LayerGroup = layer_list.at(0).LayerGroup;
 		}
@@ -473,6 +475,7 @@ const Broken::json& ModulePhysics::SaveStatus() const {
 		config["Layer" + std::to_string(i)]["Layer"] = layer.layer;
 		config["Layer" + std::to_string(i)]["Group"] = layer.LayerGroup;
 		config["Layer" + std::to_string(i)]["GroupSize"] = layer.active_layers.size();
+		config["Layer" + std::to_string(i)]["Active"] = layer.active;
 		for (int j = 0; j < layer.active_layers.size(); ++j) {
 			bool active = layer.active_layers.at(j);
 			config["Layer" + std::to_string(i)][std::to_string(j)] = active;
@@ -484,7 +487,6 @@ const Broken::json& ModulePhysics::SaveStatus() const {
 
 void ModulePhysics::LoadStatus(const Broken::json& file) {
 
-
 	gravity = file[name]["gravity"].is_null() ? gravity : (float)file[name]["gravity"];
 	materialDesc.x = file[name]["staticFriction"].is_null() ? materialDesc.x : (float)file[name]["staticFriction"];
 	materialDesc.y = file[name]["dynamicFriction"].is_null() ? materialDesc.y : (float)file[name]["dynamicFriction"];
@@ -492,36 +494,25 @@ void ModulePhysics::LoadStatus(const Broken::json& file) {
 
 	int count = file[name]["count"].is_null() ? 0 : (int)file[name]["count"];
 
-	for (uint i = 0; i < count; ++i) {
-		Layer layer;
-		if (file[name].find("Layer" + std::to_string(i)) != file[name].end()) {
-			layer.name = file[name]["Layer" + std::to_string(i)]["Name"].get<std::string>();
-			layer.layer = (LayerMask)file[name]["Layer" + std::to_string(i)]["Layer"];
-			layer.LayerGroup = (physx::PxU32) file[name]["Layer" + std::to_string(i)]["Group"];
+	if (count != 0) {
+		for (uint i = 0; i < count; ++i) {
+			Layer layer;
+			if (file[name].find("Layer" + std::to_string(i)) != file[name].end()) {
+				layer.name = file[name]["Layer" + std::to_string(i)]["Name"].get<std::string>();
+				layer.layer = (LayerMask)file[name]["Layer" + std::to_string(i)]["Layer"];
+				layer.LayerGroup = (physx::PxU32) file[name]["Layer" + std::to_string(i)]["Group"];
+				layer.active = (physx::PxU32) file[name]["Layer" + std::to_string(i)]["Active"];
 
-			int size = file[name]["Layer" + std::to_string(i)]["GroupSize"];
-			layer.active_layers.resize(size, true);
-			for (int j = 0; j < size; ++j) {
-				if (file[name]["Layer" + std::to_string(i)].find(std::to_string(j)) != file[name]["Layer" + std::to_string(i)].end()) {
-					layer.active_layers.at(j) = file[name]["Layer" + std::to_string(i)][std::to_string(j)];
+				int size = file[name]["Layer" + std::to_string(i)]["GroupSize"];
+				layer.active_layers.resize(size, true);
+				for (int j = 0; j < size; ++j) {
+					if (file[name]["Layer" + std::to_string(i)].find(std::to_string(j)) != file[name]["Layer" + std::to_string(i)].end()) {
+						layer.active_layers.at(j) = file[name]["Layer" + std::to_string(i)][std::to_string(j)];
+					}
 				}
 			}
+			layer_list.push_back(layer);
 		}
-		layer_list.push_back(layer);
-	}
-
-	if (count != 0)
 		loaded = true;
-}
-
-
-void ModulePhysics::AddLayer(std::string name)
-{
-	layer_list.push_back(Layer{ name, (LayerMask)layer_list.size() });
-
-	layer_list.back().active_layers.resize(layer_list.size(), true);
-
-	for (int i = 0; i < layer_list.size(); ++i) {
-		layer_list.at(i).UpdateLayerGroup(layer_list.size());
 	}
 }

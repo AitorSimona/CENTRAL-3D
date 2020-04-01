@@ -615,8 +615,14 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 	{
 		if (App->GetAppState() == AppState::PLAY)
 		{
-			script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
-			ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+			for (int i = 0; i < script_component->script_functions.size(); ++i)
+			{
+				if (script_component->script_functions.at(i).name == aux_str)
+				{
+					script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
+					ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+				}
+			}
 		}
 	}
 	else
