@@ -56,6 +56,7 @@ bool ResourceScene::LoadInMemory() {
 				go->index = -1;
 				go->parent = nullptr;
 
+
 				std::string name = file[it.key()]["Name"];
 				go->SetName(name.c_str());
 

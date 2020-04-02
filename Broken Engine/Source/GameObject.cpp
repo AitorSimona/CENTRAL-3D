@@ -26,9 +26,9 @@
 
 using namespace Broken;
 
-GameObject::GameObject(const char* name) {
+GameObject::GameObject(const char* name) : name(name)
+{
 	UID = App->GetRandom().Int();
-	this->name = name;
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
@@ -39,10 +39,8 @@ GameObject::GameObject(const char* name) {
 	Enable();
 }
 
-GameObject::GameObject(const char* name, uint UID)
+GameObject::GameObject(const char* name, uint UID) : name(name), UID(UID)
 {
-	this->UID = UID;
-	this->name = name;
 	// --- Add transform ---
 	AddComponent(Component::ComponentType::Transform);
 	UpdateAABB();
