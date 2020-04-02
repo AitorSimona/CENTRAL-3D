@@ -48,6 +48,11 @@ bool ResourceScene::LoadInMemory() {
 				// --- Create a Game Object for each node ---
 				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
 
+				// --- We are setting their parents later so we erase anything related to it ---
+				go->index = -1;
+				go->parent = nullptr;
+
+
 				std::string name = file[it.key()]["Name"];
 				go->SetName(name.c_str());
 
