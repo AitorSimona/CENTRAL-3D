@@ -105,99 +105,62 @@ void ComponentParticleEmitter::Disable()
 
 void ComponentParticleEmitter::UpdateParticles(float dt)
 {
-	//Create particle depending on the time
-	if ((loop || emisionActive)&& App->GetAppState() == AppState::PLAY) {
+	// Create particle depending on the time
+	if (emisionActive && App->GetAppState() == AppState::PLAY) {
 		if (App->time->GetGameplayTimePassed()*1000 - spawnClock > emisionRate)
 		{
 			uint newParticlesAmount = (App->time->GetGameplayTimePassed() * 1000 - spawnClock) / emisionRate;
-
-			CreateParticles(newParticlesAmount*particlesPerCreation);
-
-			//if (validParticles < maxParticles)
-			//{
-			//	if (newParticlesAmount > maxParticles - validParticles)
-			//		newParticlesAmount = maxParticles - validParticles;
-			//	validParticles += newParticlesAmount;
-			//	spawnClock = SDL_GetTicks();
-			//	physx::PxParticleCreationData creationData;
-			//	//Create 1 particle each time
-			//	creationData.numParticles = newParticlesAmount;
-			//	physx::PxU32* index = new physx::PxU32[newParticlesAmount];
-			//	const physx::PxStrideIterator<physx::PxU32> indexBuffer(index);
-			//	indexPool->allocateIndices(newParticlesAmount, indexBuffer);
-			//	float3 globalPosition = GO->GetComponent<ComponentTransform>()->GetGlobalPosition();
-			//	physx::PxVec3* positionBuffer = new physx::PxVec3[newParticlesAmount];
-			//	physx::PxVec3* velocityBuffer = new physx::PxVec3[newParticlesAmount];
-			//	for (int i = 0; i < newParticlesAmount; ++i) {
-			//	velocityBuffer[i] = { physx::PxVec3(particlesVelocity.x + GetRandomValue(-velocityRandomFactor.x, velocityRandomFactor.x),
-			//									particlesVelocity.y + GetRandomValue(-velocityRandomFactor.y,velocityRandomFactor.y),
-			//									particlesVelocity.z + GetRandomValue(-velocityRandomFactor.z,velocityRandomFactor.z)) };
-			//	positionBuffer[i] = { physx::PxVec3(globalPosition.x + GetRandomValue(-size.x,size.x),
-			//									globalPosition.y + GetRandomValue(-size.y,size.y),
-			//									globalPosition.z + GetRandomValue(-size.z,size.z)) };
-			//	particles[index[i]]->lifeTime = particlesLifeTime;
-			//	particles[index[i]]->spawnTime = SDL_GetTicks();
-			//	particles[index[i]]->color = particlesColor/255.0f;
-			//	}
-			//	creationData.indexBuffer = indexBuffer;
-			//	creationData.positionBuffer = physx::PxStrideIterator<const physx::PxVec3>(positionBuffer);
-			//	creationData.velocityBuffer = physx::PxStrideIterator<const physx::PxVec3>(velocityBuffer);
-			//	bool succes = particleSystem->createParticles(creationData);
-			//	delete[] index;
-			//	delete[] positionBuffer;
-			//	delete[] velocityBuffer;
-			//}
+			CreateParticles(newParticlesAmount*particlesPerCreation);			
 		}
 
-		if (emisionActive)
+		if (emisionActive && !loop)
 		{
 			if ((App->time->GetGameplayTimePassed() * 1000) - emisionStart > duration)
 				emisionActive = false;
 		}
 	}
 		//Update particles
-		//lock SDK buffers of *PxParticleSystem* ps for reading
-		physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
+	//lock SDK buffers of *PxParticleSystem* ps for reading
+	physx::PxParticleReadData* rd = particleSystem->lockParticleReadData();
 
-		std::vector<physx::PxU32> indicesToErease;
-		uint particlesToRelease = 0;
+	std::vector<physx::PxU32> indicesToErease;
+	uint particlesToRelease = 0;
 
-		// access particle data from physx::PxParticleReadData
-		if (rd)
+	// access particle data from physx::PxParticleReadData
+	if (rd)
+	{
+		physx::PxStrideIterator<const physx::PxParticleFlags> flagsIt(rd->flagsBuffer);
+		physx::PxStrideIterator<const physx::PxVec3> positionIt(rd->positionBuffer);
+
+		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt, ++positionIt)
 		{
-			physx::PxStrideIterator<const physx::PxParticleFlags> flagsIt(rd->flagsBuffer);
-			physx::PxStrideIterator<const physx::PxVec3> positionIt(rd->positionBuffer);
-
-			for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt, ++positionIt)
+			if (*flagsIt & physx::PxParticleFlag::eVALID)
 			{
-				if (*flagsIt & physx::PxParticleFlag::eVALID)
-				{
-					//Check if particle should die
-					if (App->time->GetGameplayTimePassed()*1000 - particles[i]->spawnTime > particles[i]->lifeTime) {
-						indicesToErease.push_back(i);
-						particlesToRelease++;
-						continue;
-					}
-
-					//Update particle position
-					float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
-					particles[i]->position = newPosition;
-					particles[i]->diameter = particlesSize;
+				//Check if particle should die
+				if (App->time->GetGameplayTimePassed()*1000 - particles[i]->spawnTime > particles[i]->lifeTime) {
+					indicesToErease.push_back(i);
+					particlesToRelease++;
+					continue;
 				}
+
+				//Update particle position
+				float3 newPosition(positionIt->x, positionIt->y, positionIt->z);
+				particles[i]->position = newPosition;
+				particles[i]->diameter = particlesSize;
 			}
-			// return ownership of the buffers back to the SDK
-			rd->unlock();
 		}
+		// return ownership of the buffers back to the SDK
+		rd->unlock();
+	}
 	
-		if (particlesToRelease > 0) {
+	if (particlesToRelease > 0) {
 
-			particleSystem->releaseParticles(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
-			validParticles -= particlesToRelease;
-			indexPool->freeIndices(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
-		}
+		particleSystem->releaseParticles(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
+		validParticles -= particlesToRelease;
+		indexPool->freeIndices(particlesToRelease, physx::PxStrideIterator<physx::PxU32>(indicesToErease.data()));
+	}
 
-	SortParticles();
-		
+	SortParticles();		
 }
 
 void ComponentParticleEmitter::SortParticles()
@@ -440,7 +403,11 @@ void ComponentParticleEmitter::CreateInspectorNode()
 {
 		ImGui::Text("Loop");
 		ImGui::SameLine();
-		ImGui::Checkbox("##PELoop", &loop);
+
+		if (ImGui::Checkbox("##PELoop", &loop)) {
+			if (loop)
+				emisionActive = true;
+		}
 
 		ImGui::Text("Duration");
 		ImGui::SameLine();
@@ -592,10 +559,6 @@ void ComponentParticleEmitter::CreateInspectorNode()
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 			ImGui::DragFloat("##SParticlesRandomScaleX", &particlesScaleRandomFactor, 0.05f, 1.0f, 50.0f);
-
-
-
-
 
 			// Image
 			ImGui::Text("Image");

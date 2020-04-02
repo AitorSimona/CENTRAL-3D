@@ -53,10 +53,24 @@ void ComponentCollider::DrawComponent()
 		if (GetActor() != nullptr)
 		{
 			if (!GetActive())
+			{
 				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-
+				if (!hasBeenDeactivated)
+				{
+					App->physics->DeleteActor(GetActor());
+					hasBeenDeactivated = true;
+				}
+			}
 			else
+			{
+				if (hasBeenDeactivated)
+				{
+					CreateCollider(type, true);
+					hasBeenDeactivated = false;
+				}
+
 				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+			}
 		}
 
 
@@ -298,6 +312,12 @@ json ComponentCollider::Save() const
 
 	node["firstCreation"] = std::to_string(firstCreation);
 
+	if (hasBeenDeactivated)
+		node["hasBeenDeactivated"] = std::to_string(1);
+	else
+		node["hasBeenDeactivated"] = std::to_string(0);
+
+
 	return node;
 }
 
@@ -350,6 +370,9 @@ void ComponentCollider::Load(json& node)
 
 	std::string firstCreation_ = node["firstCreation"].is_null() ? "0" : node["firstCreation"];
 
+	std::string hasBeenDeactivated_ = node["hasBeenDeactivated"].is_null() ? "0" : node["hasBeenDeactivated"];
+
+
 	centerPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
 	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
 	offset = float3(std::stof(offsetx), std::stof(offsety), std::stof(offsetz));
@@ -376,6 +399,11 @@ void ComponentCollider::Load(json& node)
 	tmpScale = float3(0.f, 0.f, 0.f);
 
 	firstCreation = true;
+
+	/*if (hasBeenDeactivated_ == "1")
+		hasBeenDeactivated = true;
+	else*/
+	//hasBeenDeactivated = true;
 
 	toPlay = false;
 
@@ -413,64 +441,95 @@ void ComponentCollider::Load(json& node)
 
 void ComponentCollider::CreateInspectorNode()
 {
-	ImGui::Checkbox("##ColliderActive", &GetActive());
-	ImGui::SameLine();
+	bool createAgain = false;
 
-	if (ImGui::TreeNodeEx("Collider", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::Button("Delete component"))
+		to_delete = true;
+
+	if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) 
 	{
-		bool createAgain = false;
-
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
-
-		if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) 
+		switch (colliderType)
 		{
+		case 0:
+			type = ComponentCollider::COLLIDER_TYPE::NONE;
+			break;
+		case 1:
+			type = ComponentCollider::COLLIDER_TYPE::BOX;
+			break;
+		case 2:
+			type = ComponentCollider::COLLIDER_TYPE::SPHERE;
+			break;
+		case 3:
+			type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
+			break;
+		}
+		editCollider = true;
+	}
 
-			switch (colliderType)
-			{
-			case 0:
-				type = ComponentCollider::COLLIDER_TYPE::NONE;
-				break;
-			case 1:
-				type = ComponentCollider::COLLIDER_TYPE::BOX;
-				break;
-			case 2:
-				type = ComponentCollider::COLLIDER_TYPE::SPHERE;
-				break;
-			case 3:
-				type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
-				break;
-			}
+	if (shape)
+	{
+		ImGui::Text("Is Trigger");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##T", &isTrigger))
 			editCollider = true;
+
+		float3* position = &centerPosition;
+
+		ImGui::Text("Center");
+		ImGui::Text("X");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		ImGui::DragFloat("##PX", &position->x, 0.005f);
+
+		ImGui::SameLine();
+
+		ImGui::Text("Y");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		ImGui::DragFloat("##PY", &position->y, 0.005f);
+
+		ImGui::SameLine();
+
+		ImGui::Text("Z");
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+
+		ImGui::DragFloat("##PZ", &position->z, 0.005f);
+
+		switch (shape->getGeometryType())
+		{
+		case physx::PxGeometryType::eSPHERE:
+		{
+			float prevRadius = radius;
+
+			ImGui::Text("Radius");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##R", &radius, 0.005f);
+
+			colliderSize.x = radius;
+			colliderSize.y = radius;
+			colliderSize.z = radius;
+
+			if (prevRadius != radius || editCollider) {
+				editCollider = true;
+				colliderType = (int)COLLIDER_TYPE::SPHERE;
+			}
+
+			break;
 		}
 
-		if (shape)
+		case physx::PxGeometryType::eBOX:
 		{
-			ImGui::Text("Is Trigger");
-			ImGui::SameLine();
-			if (ImGui::Checkbox("##T", &isTrigger))
-			{
-				/*if (isTrigger)
-				{
-					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
-					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
-				}
-				else
-				{
-					shape->setFlag(physx::PxShapeFlag::Enum::eSIMULATION_SHAPE, true);
-					shape->setFlag(physx::PxShapeFlag::Enum::eTRIGGER_SHAPE, false);
-				}*/
-				editCollider = true;
-			}
-
-			float3* position = &centerPosition;
-
-			ImGui::Text("Center");
+			float3 prevScale = colliderSize;
+			ImGui::Text("Size");
 			ImGui::Text("X");
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-			ImGui::DragFloat("##PX", &position->x, 0.005f);
+			ImGui::DragFloat("##SX", &colliderSize.x, 0.005f, 0.01f, 1000.0f);
 
 			ImGui::SameLine();
 
@@ -478,7 +537,7 @@ void ComponentCollider::CreateInspectorNode()
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-			ImGui::DragFloat("##PY", &position->y, 0.005f);
+			ImGui::DragFloat("##SY", &colliderSize.y, 0.005f, 0.01f, 1000.0f);
 
 			ImGui::SameLine();
 
@@ -486,95 +545,44 @@ void ComponentCollider::CreateInspectorNode()
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-			ImGui::DragFloat("##PZ", &position->z, 0.005f);
+			ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
 
-			switch (shape->getGeometryType())
-			{
-			case physx::PxGeometryType::eSPHERE:
-			{
-				float prevRadius = radius;
-
-				ImGui::Text("Radius");
-				ImGui::SameLine();
-				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-				ImGui::DragFloat("##R", &radius, 0.005f);
-
-				colliderSize.x = radius;
-				colliderSize.y = radius;
-				colliderSize.z = radius;
-
-				if (prevRadius != radius || editCollider) {
-					editCollider = true;
-					colliderType = (int)COLLIDER_TYPE::SPHERE;
-				}
-
-				break;
+			if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
+				editCollider = true;
+				colliderType = (int)COLLIDER_TYPE::BOX;
 			}
 
-			case physx::PxGeometryType::eBOX:
-			{
-				float3 prevScale = colliderSize;
-				ImGui::Text("Size");
-				ImGui::Text("X");
-				ImGui::SameLine();
-				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-				ImGui::DragFloat("##SX", &colliderSize.x, 0.005f, 0.01f, 1000.0f);
-
-				ImGui::SameLine();
-
-				ImGui::Text("Y");
-				ImGui::SameLine();
-				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-				ImGui::DragFloat("##SY", &colliderSize.y, 0.005f, 0.01f, 1000.0f);
-
-				ImGui::SameLine();
-
-				ImGui::Text("Z");
-				ImGui::SameLine();
-				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-
-				ImGui::DragFloat("##SZ", &colliderSize.z, 0.005f, 0.01f, 1000.0f);
-
-				if (prevScale.x != colliderSize.x || prevScale.y != colliderSize.y || prevScale.z != colliderSize.z || editCollider) {
-					editCollider = true;
-					colliderType = (int)COLLIDER_TYPE::BOX;
-				}
-
-				break;
-			}
-
-			case physx::PxGeometryType::eCAPSULE:
-			{
-				float prevRadius = radius;
-				float prevheight = height;
-
-				ImGui::Text("Radius");
-				ImGui::SameLine();
-				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-				ImGui::DragFloat("##R", &radius, 0.005f);
-
-				ImGui::Text("Height");
-				ImGui::SameLine();
-				ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-				ImGui::DragFloat("##H", &height, 0.005f);
-
-				colliderSize.x = radius;
-				colliderSize.y = height;
-				colliderSize.z = radius;
-
-				if (prevRadius != radius || prevheight != height || editCollider) {
-					editCollider = true;
-					colliderType = (int)COLLIDER_TYPE::CAPSULE;
-				}
-
-				break;
-			}
-
-			}
+			break;
 		}
-		ImGui::TreePop();
+
+		case physx::PxGeometryType::eCAPSULE:
+		{
+			float prevRadius = radius;
+			float prevheight = height;
+
+			ImGui::Text("Radius");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##R", &radius, 0.005f);
+
+			ImGui::Text("Height");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+			ImGui::DragFloat("##H", &height, 0.005f);
+
+			colliderSize.x = radius;
+			colliderSize.y = height;
+			colliderSize.z = radius;
+
+			if (prevRadius != radius || prevheight != height || editCollider) {
+				editCollider = true;
+				colliderType = (int)COLLIDER_TYPE::CAPSULE;
+			}
+
+			break;
+		}
+
+		}
 	}
 }
 
@@ -662,10 +670,19 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 				}
+				physx::PxShapeFlags falgs =  shape->getFlags();
+
 
 				shape->setSimulationFilterData(filterData);
 				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 				shape->setQueryFilterData(filterData);
+
+
+				bool a;
+				a = falgs.isSet(physx::PxShapeFlag::ePARTICLE_DRAIN);
+				a = falgs.isSet(physx::PxShapeFlag::eSCENE_QUERY_SHAPE);
+				a = falgs.isSet(physx::PxShapeFlag::eSIMULATION_SHAPE);
+				a = falgs.isSet(physx::PxShapeFlag::eTRIGGER_SHAPE);
 
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 

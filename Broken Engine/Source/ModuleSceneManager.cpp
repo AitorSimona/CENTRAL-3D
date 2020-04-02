@@ -17,6 +17,7 @@
 #include "ModuleUI.h"
 #include "ModuleDetour.h"
 #include "ModuleSelection.h"
+#include "ModuleScripting.h"
 
 //#include "ModuleGui.h"
 
@@ -489,6 +490,7 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 
 			// --- Release current scene ---
 			currentScene->Release();
+			App->scripting->CleanUpInstances();
 
 			// --- Clear root ---
 			root->childs.clear();
@@ -875,6 +877,8 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 
 void ModuleSceneManager::SendToDelete(GameObject* go)
 {
+	App->physics->DeleteActors(go);
+
 	Event e(Event::EventType::GameObject_destroyed);
 	e.go = go;
 	App->event_manager->PushEvent(e);

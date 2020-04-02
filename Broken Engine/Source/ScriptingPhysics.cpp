@@ -36,6 +36,42 @@ void ScriptingPhysics::SetAngularVelocity(float x, float y, float z)
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
 
+void ScriptingPhysics::SetLinearVelocityGO(float x, float y, float z, uint gameobject_UUID)
+{
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go) {
+		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
+		ComponentCollider* coll = go->GetComponent<ComponentCollider>();
+
+		if (body && coll)
+			body->SetLinearVelocity({ x, y, z });
+		else
+			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject with %d UUID was not found!", gameobject_UUID);
+}
+
+void ScriptingPhysics::SetAngularVelocityGO(float x, float y, float z, uint gameobject_UUID)
+{
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go) {
+		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
+		ComponentCollider* coll = go->GetComponent<ComponentCollider>();
+
+		if (body && coll)
+			body->SetAngularVelocity({ x, y, z });
+		else
+			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject with %d UUID was not found!", gameobject_UUID);
+}
+
 void ScriptingPhysics::SetMass(float mass)
 {	
 	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
@@ -145,6 +181,24 @@ void ScriptingPhysics::AddTorque(float forceX, float forceY, float forceZ, int F
 		ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
 }
 
+void ScriptingPhysics::AddTorqueGO(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID)
+{
+	GameObject* go = nullptr;
+	go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (go) {
+		ComponentDynamicRigidBody* body = go->GetComponent<ComponentDynamicRigidBody>();
+		ComponentCollider* coll = go->GetComponent<ComponentCollider>();
+
+		if (body && coll)
+			return body->AddTorque({ forceX, forceY, forceZ }, (physx::PxForceMode::Enum)ForceMode);
+		else
+			ENGINE_CONSOLE_LOG("Object or its Dynamic Rigid Body component or its Collider are null");
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject with %d UUID was not found!", gameobject_UUID);
+}
+
 void ScriptingPhysics::SetKinematic(bool enable)
 {
 	ComponentDynamicRigidBody* body = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentDynamicRigidBody>();
@@ -246,13 +300,29 @@ void ScriptingPhysics::SetCharacterPosition(float posx, float posy, float posz) 
 		ENGINE_CONSOLE_LOG("Character Controller is null on SetCharacterPosition");
 }
 
-void ScriptingPhysics::Move(float vel_x, float vel_y) {
+void ScriptingPhysics::Move(float vel_x, float vel_y)
+{
 	ComponentCharacterController* character = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCharacterController>();
-	if (character) {
+	if (character)
 		character->Move(vel_x, vel_y);
-	}
 	else
 		ENGINE_CONSOLE_LOG("Character Controller is null on Move");
+}
+
+void ScriptingPhysics::MoveGameObject(uint gameobject_UUID, float vel_x, float vel_y)
+{
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+
+	if (GO != nullptr)
+	{
+		ComponentCharacterController* character = GO->GetComponent<ComponentCharacterController>();
+		if (character)
+			character->Move(vel_x, vel_y);
+		else
+			ENGINE_CONSOLE_LOG("Character Controller is null on Move");
+	}
+	else
+		ENGINE_CONSOLE_LOG("(SCRIPTING): MoveGameObject function (physics) - Game Object not Found");
 }
 
 int ScriptingPhysics::GetCharacterUpDirection(lua_State* L)

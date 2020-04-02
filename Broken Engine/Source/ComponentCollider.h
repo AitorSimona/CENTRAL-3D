@@ -74,7 +74,8 @@ public:
 	physx::PxRigidStatic* rigidStatic = nullptr;
 	float3 offset = float3::zero;
 	int colliderType = 0;
-	
+	bool hasBeenDeactivated = false;
+
 
 private:
 	physx::PxShape* shape = nullptr;
