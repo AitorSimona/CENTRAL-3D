@@ -16,6 +16,7 @@
 #include "ComponentBone.h"
 #include "ModuleUI.h"
 #include "ModuleSelection.h"
+#include "ModuleScripting.h"
 
 //#include "ModuleGui.h"
 
@@ -493,6 +494,7 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 
 			// --- Release current scene ---
 			currentScene->Release();
+			App->scripting->CleanUpInstances();
 
 			// --- Clear root ---
 			root->childs.clear();
