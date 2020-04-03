@@ -263,13 +263,13 @@ void GameObject::AddChildGO(GameObject* GO, int index) {
 
 void GameObject::InsertChildGO(GameObject* GO, int index) {
 	if (!FindChildGO(GO)) {
-		// --- If it has a parent we remove it from its parent --
-		if (GO->parent)
-			GO->parent->RemoveChildGO(GO);
-
-		GO->parent = this;
-
 		if (index >= 0 && index < childs.size()) {
+			// --- If it has a parent we remove it from its parent --
+			if (GO->parent)
+				GO->parent->RemoveChildGO(GO);
+
+			GO->parent = this;
+
 			// --- We accomodate for the new size ---
 			childs.resize(childs.size() + 1);
 
