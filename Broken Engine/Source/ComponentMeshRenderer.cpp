@@ -158,7 +158,7 @@ void ComponentMeshRenderer::Load(json& node)
 	{
 		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat_path.c_str());
 
-		if (material)
+		if (material && meta)
 			material->Release();
 
 		if (meta)
