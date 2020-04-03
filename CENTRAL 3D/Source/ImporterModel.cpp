@@ -89,7 +89,8 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		// --- Free everything ---
 		FreeSceneMaterials(&model_mats);
 		FreeSceneMeshes(&model_meshes);
-		rootnode->RecursiveDelete();
+
+		App->scene_manager->DestroyGameObject(rootnode);
 
 		// --- Free scene ---
 		aiReleaseImport(scene);
