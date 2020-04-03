@@ -67,7 +67,10 @@ public:
 	//void OnUpdateTransform();
 	void TransformGlobal(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
+	// If there is a GO at index, it will erase it and replace it
 	void AddChildGO(GameObject* GO, int index = -1);
+	// This will not erase the GO at index, just displace it and everything after it
+	void InsertChildGO(GameObject* GO, int index);
 	bool FindChildGO(GameObject* GO);
 	void GetAllChilds(std::vector<GameObject*>& collector);
 	GameObject* GetAnimGO(GameObject* GO);
