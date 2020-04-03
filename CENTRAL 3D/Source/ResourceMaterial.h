@@ -3,10 +3,11 @@
 
 #include "Resource.h"
 #include "Globals.h"
+#include "Color.h"
 
-#include "ResourceTexture.h"
-#include "ResourceShader.h"
-
+class ResourceTexture;
+class ResourceShader;
+struct Uniform;
 
 class ResourceMaterial : public Resource
 {
@@ -16,13 +17,16 @@ public:
 
 	bool LoadInMemory() override;
 	void FreeMemory() override;
+	void CreateInspectorNode() override;
 
 	void UpdateUniforms();
+	void DisplayAndUpdateUniforms();
 
 public:
 	ResourceTexture* resource_diffuse = nullptr;
 	ResourceShader* shader = nullptr;
 	std::vector<Uniform*> uniforms;
+	Color color = White;
 
 private:
 	void OnOverwrite() override;

@@ -35,6 +35,10 @@ void ResourceFolder::FreeMemory()
 {
 }
 
+void ResourceFolder::CreateInspectorNode()
+{
+}
+
 void ResourceFolder::AddResource(Resource* resource)
 {
 	if(!HasResource(resource))

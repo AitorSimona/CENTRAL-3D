@@ -54,6 +54,15 @@ bool ResourceScene::LoadInMemory()
 				std::string name = file[it.key()]["Name"];
 				go->SetName(name.c_str());
 
+				if (!file[it.key()]["Active"].is_null())
+					go->GetActive() = file[it.key()]["Active"];
+
+				if (!file[it.key()]["Static"].is_null())
+					go->Static = file[it.key()]["Static"];
+
+				if (!file[it.key()]["Index"].is_null())
+					go->index = file[it.key()]["Index"];
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
 
@@ -67,10 +76,13 @@ bool ResourceScene::LoadInMemory()
 
 					// --- and index ---
 					int c_index = -1;
-					json index = components[it2.key()]["index"];
+					bool active = false;
+	
+					if (!components[it2.key()]["Index"].is_null())
+						c_index = components[it2.key()]["Index"].get<uint>();
 
-					if (!index.is_null())
-						c_index = index.get<uint>();
+					if (!components[it2.key()]["Active"].is_null())
+						active = components[it2.key()]["Active"].get<bool>();
 
 					Component* component = nullptr;
 
@@ -79,7 +91,10 @@ bool ResourceScene::LoadInMemory()
 
 					// --- Load Component Data ---
 					if (component)
+					{
+						component->GetActive() = active;
 						component->Load(components[type_string]);
+					}
 
 				}
 
@@ -91,16 +106,21 @@ bool ResourceScene::LoadInMemory()
 			for (uint i = 0; i < objects.size(); ++i)
 			{
 				std::string parent_uid_string = file[std::to_string(objects[i]->GetUID())]["Parent"];
-				uint parent_uid = std::stoi(parent_uid_string);
+				int parent_uid = std::stoi(parent_uid_string);
 
-				for (uint j = 0; j < objects.size(); ++j)
+				if (parent_uid > 0)
 				{
-					if (parent_uid == objects[j]->GetUID())
+					for (uint j = 0; j < objects.size(); ++j) 
 					{
-						objects[j]->AddChildGO(objects[i]);
-						break;
+						if (parent_uid == objects[j]->GetUID())
+						{
+							objects[j]->AddChildGO(objects[i], objects[i]->index);
+							break;
+						}
 					}
 				}
+				else
+					App->scene_manager->GetRootGO()->AddChildGO(objects[i], objects[i]->index);
 			}
 		}
 	}
@@ -126,6 +146,10 @@ void ResourceScene::FreeMemory()
 	StaticGameObjects.clear();
 
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
+}
+
+void ResourceScene::CreateInspectorNode()
+{
 }
 
 // Created for on-play temporal scene 

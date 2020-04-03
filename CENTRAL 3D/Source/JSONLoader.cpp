@@ -79,10 +79,7 @@ bool JSONLoader::Save(const char * File, json jsonfile)
 	return ret;
 }
 
-std::string JSONLoader::Serialize(json jsonfile)
+void JSONLoader::Serialize(const json& jsonfile, std::string& jsonserialized)
 {
-	std::string data;
-	data = jsonfile.dump(4);
-
-	return data;
+	jsonserialized = jsonfile.dump(4);
 }

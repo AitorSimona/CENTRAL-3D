@@ -791,9 +791,6 @@
     <ClCompile Include="ImporterShader.cpp">
       <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
-    <ClCompile Include="PanelShaderEditor.cpp">
-      <Filter>Sources\EditorPanels</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceModel.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
@@ -877,6 +874,9 @@
     </ClCompile>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
       <Filter>Sources\3rd Party\device</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelShaderEditor.cpp">
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

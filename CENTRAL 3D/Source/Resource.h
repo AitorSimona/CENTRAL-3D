@@ -19,7 +19,6 @@ public:
 		SHADER,
 		MESH,
 		TEXTURE,
-		SHADER_OBJECT,
 		META,
 		UNKNOWN,
 	};
@@ -59,16 +58,17 @@ public:
 
 	virtual void OnOverwrite() = 0;
 	virtual void OnDelete() = 0;
+	virtual void CreateInspectorNode() {};
 
 	// to encapsulate model childs in panelproject
 	bool has_parent = false;
+
 protected:
+
 	// --- Utilities ---
 	virtual bool LoadInMemory() = 0;
 	virtual void FreeMemory() = 0;
 	virtual void Repath() {};
-
-
 
 protected:
 	uint instances = 0;

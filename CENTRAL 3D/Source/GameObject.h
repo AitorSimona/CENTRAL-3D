@@ -28,7 +28,6 @@ public:
 	std::string		GetName() const;
 	const AABB&	    GetAABB();
 	const OBB&      GetOBB() const;
-	int GetChildGOIndex(GameObject* GO);
 
 	bool&			GetActive();
 	bool			IsEnabled() const;
@@ -62,7 +61,8 @@ public:
 	void RecursiveDelete(bool target = true);
 	void OnUpdateTransform();
 	void RemoveChildGO(GameObject* GO);
-	void AddChildGO(GameObject* GO, int index = -1);
+	void AddChildGO(GameObject* GO, int index = -1); // note that specifying index will remove any go at index
+	void InsertChildGO(GameObject* GO, int index);
 	bool FindChildGO(GameObject* GO);
 
 	void UpdateAABB();

@@ -44,6 +44,10 @@ void ResourceModel::FreeMemory()
 
 }
 
+void ResourceModel::CreateInspectorNode()
+{
+}
+
 void ResourceModel::AddResource(Resource* resource)
 {
 	if (!HasResource(resource))

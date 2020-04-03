@@ -29,30 +29,30 @@ public:
 	update_status PreUpdate(float dt) override;
 	update_status Update(float dt) override;
 	bool CleanUp() override;
+	void DrawScene();
 
 	// --- Creators ---
 	GameObject* CreateEmptyGameObject();
 	GameObject* CreateEmptyGameObjectGivenUID(uint UID);
 
-	void CreateGrid(float target_distance);
+	//MYTODO: Move all resource stuff to RESOURCE MANAGER
 	GameObject* LoadSphere();
 	GameObject* LoadCube();
 	GameObject* LoadCapsule();
 	GameObject* LoadPlane();
+	GameObject* LoadCylinder();
+	GameObject* LoadDisk();
 
 	void DestroyGameObject(GameObject* go);
 
 	// --- Getters ---
 	GameObject* GetSelectedGameObject() const;
 	GameObject* GetRootGO() const;
-	uint GetPointLineVAO() const;
 
 	// --- Setters ---
 	void SetSelectedGameObject(GameObject* go);
 
 	// --- Utilities ---
-	void DrawGrid();
-	void Draw();
 	void RedoOctree();
 	void SetStatic(GameObject* go);
 	void RecursiveDrawQuadtree(QuadtreeNode * node) const;
@@ -64,20 +64,14 @@ public:
 	void SaveScene(ResourceScene* scene);
 	void SetActiveScene(ResourceScene* scene);
 
-	// --- Draw Wireframe using given vertices ---
-	template <typename Box>
-	static void DrawWire(const Box& box, Color color, uint VAO)
-	{
-		float3 corners[8];
-		box.GetCornerPoints(corners);
-		DrawWireFromVertices(corners, color, VAO);
-	};
 	// --- Primitives ---
 	GameObject* LoadPrimitive(uint UID);
 	void CreateCapsule(float radius, float height, ResourceMesh* rmesh);
+	void CreateCylinder(float radius, float height, ResourceMesh* rmesh);
 	void CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
 	void CreateSphere(float Radius, int slices, int slacks, ResourceMesh* rmesh);
 	void CreatePlane(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh);
+	void CreateDisk(float radius, ResourceMesh* rmesh);
 
 	void SendToDelete(GameObject* go);
 
@@ -90,17 +84,12 @@ private:
 private:
 
 	GameObject* CreateRootGameObject();
-	void DrawScene();
-
 	// --- Primitives ---
 	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
-	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
-
 public:
 	// --- Actually this is an octree ---
 	Quadtree tree;
 	bool display_tree = false;
-	bool display_boundingboxes = false;
 	ResourceScene* currentScene = nullptr;
 
 	// do not destroy
@@ -117,10 +106,9 @@ private:
 	ResourceMesh* sphere = nullptr;
 	ResourceMesh* capsule = nullptr;
 	ResourceMesh* plane = nullptr;
+	ResourceMesh* cylinder = nullptr;
+	ResourceMesh* disk = nullptr;
 
-	uint PointLineVAO = 0;
-	uint Grid_VAO = 0;
-	uint Grid_VBO = 0;
 	uint go_count = 0;
 	GameObject* root = nullptr;
 	GameObject* SelectedGameObject = nullptr;

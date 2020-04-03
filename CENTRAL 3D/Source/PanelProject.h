@@ -22,6 +22,7 @@ public:
 	bool Draw();
 	void SetSelected(Resource* new_selected);
 	const Resource* GetcurrentDirectory() const;
+	Resource* GetSelected();
 
 private:
 	static void ONGameObjectSelected(const Event& e);
@@ -43,7 +44,7 @@ private:
 	void DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor_pos, ImVec4& color, bool child = false);
 	void LimitText(std::string& text);
 
-	void RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters);
+	void RecursiveDirectoryDraw(ResourceFolder* folder);
 };
 
 #endif

@@ -17,10 +17,16 @@ ComponentCamera::ComponentCamera(GameObject* ContainerGO) : Component(ContainerG
 	frustum.SetViewPlaneDistances(0.1f, 2000.0f);
 	frustum.SetPerspective(1.0f, 1.0f);
 	SetAspectRatio(1.0f);
+
+	name = "Camera";
 }
 
 ComponentCamera::~ComponentCamera()
 {
+	if (active_camera)
+		App->renderer3D->SetActiveCamera(nullptr);
+	if (culling)
+		App->renderer3D->SetCullingCamera(nullptr);
 }
 
 float ComponentCamera::GetNearPlane() const
@@ -149,6 +155,8 @@ json ComponentCamera::Save() const
 	node["NEARPLANE"] = GetNearPlane();
 	node["FARPLANE"] = GetFarPlane();
 	node["ASPECTRATIO"] = GetAspectRatio();
+	node["ACTIVECAM"] = active_camera;
+	node["CULLINGCAM"] = culling;
 
 	return node;
 }
@@ -159,59 +167,62 @@ void ComponentCamera::Load(json& node)
 	SetNearPlane(node["NEARPLANE"].is_null() ? 0.1f : node["NEARPLANE"].get<float>());
 	SetFarPlane(node["FARPLANE"].is_null() ? 100.0f : node["FARPLANE"].get<float>());
 	SetAspectRatio(node["ASPECTRATIO"].is_null() ? 1.0f : node["ASPECTRATIO"].get<float>());
+	active_camera = node["ACTIVECAM"].is_null() ? false : node["ACTIVECAM"].get<bool>();
+	culling = node["CULLINGCAM"].is_null() ? false : node["CULLINGCAM"].get<bool>();
+
+	if (active_camera)
+		App->renderer3D->SetActiveCamera(this);
+
+	if (culling)
+		App->renderer3D->SetCullingCamera(this);
 }
 
 void ComponentCamera::CreateInspectorNode()
 {
-	if (ImGui::TreeNode("Camera"))
-	{
-		if (ImGui::Checkbox("Active Camera", &active_camera))
-			active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
+	if (ImGui::Checkbox("Active Camera", &active_camera))
+		active_camera ? App->renderer3D->SetActiveCamera(this) : App->renderer3D->SetActiveCamera(nullptr);
 
-		if (ImGui::Checkbox("Culling Camera", &culling))
-			culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
+	if (ImGui::Checkbox("Culling Camera", &culling))
+		culling ? App->renderer3D->SetCullingCamera(this) : App->renderer3D->SetCullingCamera(nullptr);
 
-		// --- Camera FOV ---
-		ImGui::Text("FOV");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	// --- Camera FOV ---
+	ImGui::Text("FOV");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
-		float fov = GetFOV();
-		ImGui::DragFloat("##FOV", &fov, 0.05f, 0.005f, 179.0f);
+	float fov = GetFOV();
+	ImGui::DragFloat("##FOV", &fov, 0.05f, 0.005f, 179.0f);
 
-		if (fov != GetFOV())
-			SetFOV(fov);
+	if (fov != GetFOV())
+		SetFOV(fov);
 
-		// --- Camera Planes ---
-		float nearPlane = GetNearPlane();
-		float farPlane = GetFarPlane();
+	// --- Camera Planes ---
+	float nearPlane = GetNearPlane();
+	float farPlane = GetFarPlane();
 
-		ImGui::Text("Camera Planes");
-		ImGui::SameLine();
+	ImGui::Text("Camera Planes");
+	ImGui::SameLine();
 
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		ImGui::DragFloat("##NearPlane", &nearPlane, 0.005f, 0.01f, farPlane - 0.01f);
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##NearPlane", &nearPlane, 0.005f, 0.01f, farPlane - 0.01f);
 
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		ImGui::DragFloat("##FarPlane", &farPlane, 0.005f, nearPlane + 0.01f, 10000.0f);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##FarPlane", &farPlane, 0.005f, nearPlane + 0.01f, 10000.0f);
 
-		if (nearPlane != GetNearPlane())
-			SetNearPlane(nearPlane);
-		if (farPlane != GetFarPlane())
-			SetFarPlane(farPlane);
+	if (nearPlane != GetNearPlane())
+		SetNearPlane(nearPlane);
+	if (farPlane != GetFarPlane())
+		SetFarPlane(farPlane);
 
-		// --- Camera Aspect Ratio ---
-		float aspectRatio = GetAspectRatio();
+	// --- Camera Aspect Ratio ---
+	float aspectRatio = GetAspectRatio();
 
-		ImGui::Text("Aspect Ratio");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
-		ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);
+	ImGui::Text("Aspect Ratio");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
+	ImGui::DragFloat("##AspectRatio", &aspectRatio, 0.005f, 1.0f, 4.0f);
 
-		if (aspectRatio != GetAspectRatio())
-			SetAspectRatio(aspectRatio);
-
-		ImGui::TreePop();
-	}
+	if (aspectRatio != GetAspectRatio())
+		SetAspectRatio(aspectRatio);	
 }

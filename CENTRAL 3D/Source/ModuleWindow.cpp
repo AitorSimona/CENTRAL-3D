@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleTimeManager.h"
 
 #include "mmgr/mmgr.h"
 
@@ -41,6 +42,7 @@ bool ModuleWindow::Init(json file)
 		screen_width = uint(display.w * 0.75f);
 		screen_height = uint(display.h * 0.75f);
 		RefreshRate = display.refresh_rate;
+		App->time->CapMs(1 / RefreshRate * 1000);
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 		//Use OpenGL 3.1

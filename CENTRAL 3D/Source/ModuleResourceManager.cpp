@@ -57,14 +57,15 @@ bool ModuleResourceManager::Start()
 	// --- Import all resources in Assets at startup ---
 	App->gui->CreateIcons();
 
+	// --- Set engine's basic shaders ---
+	App->renderer3D->CreateDefaultShaders();
+
 	// --- Create default scene ---
 	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene", 1);
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
 
 	// --- Create default material ---
 	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
-	DefaultMaterial->resource_diffuse = (ResourceTexture*)CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
-	DefaultMaterial->resource_diffuse->SetTextureID(App->textures->GetDefaultTextureID());
 
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
@@ -168,7 +169,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -195,6 +196,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::MATERIAL:
 		resource = ImportMaterial(IData);
+		break;
+
+	case Resource::ResourceType::SHADER:
+		resource = ImportShader(IData);
 		break;
 
 	case Resource::ResourceType::TEXTURE:
@@ -640,7 +645,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -665,7 +670,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -722,7 +727,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -788,7 +793,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -800,10 +805,9 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "scene" ? Resource::ResourceType::SCENE : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "fbx" || extension == "model" ? Resource::ResourceType::MODEL : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mat" ? Resource::ResourceType::MATERIAL : type) : type;
-	type = type == Resource::ResourceType::UNKNOWN ? (extension == "shader" ? Resource::ResourceType::SHADER : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "glsl" ? Resource::ResourceType::SHADER : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "dds" || extension == "png" || extension == "jpg" ? Resource::ResourceType::TEXTURE : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mesh" ? Resource::ResourceType::MESH : type) : type;
-	type = type == Resource::ResourceType::UNKNOWN ? (extension == "vertex" || extension == "fragment" ? Resource::ResourceType::SHADER_OBJECT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
 
 
@@ -1001,7 +1005,7 @@ std::string ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -1084,7 +1088,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)

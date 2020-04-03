@@ -39,6 +39,10 @@ void ResourceTexture::FreeMemory()
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
+void ResourceTexture::CreateInspectorNode()
+{
+}
+
 void ResourceTexture::SetTextureID(uint ID)
 {
 	buffer_id = previewTexID = ID;

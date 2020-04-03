@@ -2,6 +2,7 @@
 #define __RESOURCE_META_H__
 
 #include "Resource.h"
+#include "JSONLoader.h"
 
 class ResourceMeta : public Resource
 {
@@ -14,6 +15,7 @@ public:
 
 	uint Date = 0;
 	uint fileFormatVersion = 0;
+	json ResourceData;
 
 private:
 	void OnOverwrite() override;

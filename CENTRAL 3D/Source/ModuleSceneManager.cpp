@@ -88,13 +88,6 @@ bool ModuleSceneManager::Start()
 	capsule->LoadToMemory();
 	plane->LoadToMemory();
 
-	// --- Create adaptive grid ---
-	glGenVertexArrays(1, &Grid_VAO);
-	glGenBuffers(1, &Grid_VBO);
-	CreateGrid(10.0f);
-
-	glGenVertexArrays(1, &PointLineVAO);
-
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
 
@@ -133,54 +126,13 @@ bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
 
+	if (temporalScene != nullptr)
+		delete temporalScene;
+
 	delete root;
 	root = nullptr;
 
-	glDeleteVertexArrays(1, &PointLineVAO);
-	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
-	glDeleteVertexArrays(1, &Grid_VAO);
-
 	return true;
-}
-
-void ModuleSceneManager::DrawGrid()
-{
-	App->renderer3D->defaultShader->use();
-
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-	float gridColor = 0.8f;
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->defaultShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, gridColor, gridColor, gridColor);
-
-	int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureSupportLocation, -1);
-
-	glLineWidth(1.7f);
-	glBindVertexArray(Grid_VAO);
-	glDrawArrays(GL_LINES, 0, 84);
-	glBindVertexArray(0);
-	glLineWidth(1.0f);
-
-	glUniform1i(TextureSupportLocation, 0);
-}
-
-void ModuleSceneManager::Draw()
-{
-	// --- Draw Grid ---
-	DrawGrid();
-
-	// --- Activate wireframe mode ---
-	if (App->renderer3D->wireframe)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	// --- Draw Game Object Meshes ---
-	DrawScene();
-
-	// --- DeActivate wireframe mode ---
-	if (App->renderer3D->wireframe)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void ModuleSceneManager::DrawScene()
@@ -189,30 +141,22 @@ void ModuleSceneManager::DrawScene()
 		RecursiveDrawQuadtree(tree.root);
 
 	// MYTODO: Support multiple go selection and draw outline accordingly
-
 	if (currentScene)
 	{
-
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
 			if ((*it).second->GetUID() != root->GetUID())
 			{
-				// --- Search for Renderer Component ---
-				ComponentMeshRenderer* MeshRenderer = (*it).second->GetComponent<ComponentMeshRenderer>();
+				const AABB aabb = (*it).second->GetAABB();
 
-				if (SelectedGameObject == (*it).second)
+				// Careful! Some aabbs have NaN values inside, which triggers an assert in geolib's Intersects function
+
+				// MYTODO: Check why some aabbs have NaN values, found one with lots of them
+
+				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
-					glStencilFunc(GL_ALWAYS, 1, 0xFF);
-					glStencilMask(0xFF);
-				}
-
-				// --- If Found, draw the mesh ---
-				if (MeshRenderer && MeshRenderer->IsEnabled() && (*it).second->GetActive())
-					MeshRenderer->Draw();
-
-				if (SelectedGameObject == (*it).second)
-				{
-					glStencilMask(0x00);
+					// --- Issue render order ---
+					(*it).second->Draw();
 				}
 			}
 		}
@@ -221,39 +165,15 @@ void ModuleSceneManager::DrawScene()
 
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
-			// --- Search for Renderer Component ---
-			ComponentMeshRenderer* MeshRenderer = (*it)->GetComponent<ComponentMeshRenderer>();
-
-
-			if (SelectedGameObject == (*it))
-			{
-				glStencilFunc(GL_ALWAYS, 1, 0xFF);
-				glStencilMask(0xFF);
-			}
-
-
-			// --- If Found, draw the mesh ---
-			if (MeshRenderer && MeshRenderer->IsEnabled() && (*it)->GetActive())
-				MeshRenderer->Draw();
-
-
-			if (SelectedGameObject == (*it))
-			{
-				glStencilMask(0x00);
-			}
+			// --- Issue render order ---
+			(*it)->Draw();
 		}
-
 	}
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const
 {
 	return root;
-}
-
-uint ModuleSceneManager::GetPointLineVAO() const
-{
-	return PointLineVAO;
 }
 
 void ModuleSceneManager::RedoOctree()
@@ -294,7 +214,6 @@ void ModuleSceneManager::SetStatic(GameObject * go)
 
 void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 {
-
 	if (!node->IsLeaf())
 	{
 		for (uint i = 0; i < 8; ++i)
@@ -303,7 +222,8 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode * node) const
 		}
 	}
 
-	DrawWire(node->box, Red, GetPointLineVAO());
+	if (node->IsLeaf())
+		App->renderer3D->DrawAABB(node->box, Red);
 }
 
 void ModuleSceneManager::SelectFromRay(LineSegment & ray) 
@@ -540,99 +460,6 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s * mesh, ResourceMesh* new
 	par_shapes_free_mesh(mesh);
 }
 
-void ModuleSceneManager::DrawWireFromVertices(const float3 * corners, Color color, uint VAO)
-{
-	float3 vertices[24] =
-	{
-		//Between-planes right
-		corners[1],
-		corners[5],
-		corners[7],
-		corners[3],
-
-		//Between-planes left
-		corners[4],
-		corners[0],
-		corners[2],
-		corners[6],
-
-		// Far plane horizontal
-		corners[5],
-		corners[4],
-		corners[6],
-		corners[7],
-
-		//Near plane horizontal
-		corners[0],
-		corners[1],
-		corners[3],
-		corners[2],
-
-		//Near plane vertical
-		corners[1],
-		corners[3],
-		corners[0],
-		corners[2],
-
-		//Far plane vertical
-		corners[5],
-		corners[7],
-		corners[4],
-		corners[6]
-	};
-
-	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->linepointShader->ID);
-
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
-
-	// right handed projection matrix
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV()*DEGTORAD / 2.0f);
-	float4x4 proj_RH(
-		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-		0.0f, f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, nearp, 0.0f);
-
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.ptr());
-
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->linepointShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
-
-	int vertexColorLocation = glGetAttribLocation(App->renderer3D->linepointShader->ID, "color");
-	glVertexAttrib3f(vertexColorLocation, color.r, color.g, color.b);
-
-	// --- Create VAO, VBO ---
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
-	// --- Draw lines ---
-
-	glLineWidth(3.0f);
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_LINES, 0, 24);
-	glBindVertexArray(0);
-	glLineWidth(1.0f);
-
-	// --- Delete VBO ---
-	glDeleteBuffers(1, &VBO);
-
-	glUseProgram(App->renderer3D->defaultShader->ID);
-}
 
 void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, ResourceMesh* rmesh)
 {
@@ -700,6 +527,40 @@ void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, Reso
 	}
 }
 
+void ModuleSceneManager::CreateCylinder(float radius, float height, ResourceMesh* rmesh)
+{
+	// --- Create par shapes cylinder ---
+	//First, create a normal cylinder and put it at (0,0,0)
+	par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(25, 25);
+	par_shapes_translate(Cyl_PrShM, 0, 0, 0);
+	par_shapes_scale(Cyl_PrShM, radius / 2, height / 2, radius / 2);
+
+	//Now create 2 disks around the cylinder (since x, y and z are the same, we can just pick x)
+	float normal[3] = { 0, 0, 1 };
+	float center_axis[3] = { 0, 0, radius };
+	float center_axis2[3] = { 0, 0, 1 };
+	par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(radius / 2, 25, center_axis, normal);
+	par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(radius / 2, 25, center_axis2, normal);
+
+	//Rotate one of the disks (to make it see outside the cylinder)
+	float RotAxis[3] = { 1, 0, 0 };
+	par_shapes_rotate(Disk2_PrShM, math::pi, RotAxis);
+	par_shapes_translate(Disk2_PrShM, 0, 0, 1);
+	par_shapes_translate(Disk_PrShM, 0, 0, -0.5f);
+
+	//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
+	par_shapes_mesh* ParshapeMesh = par_shapes_create_empty();
+	par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
+
+	if (ParshapeMesh)
+	{
+		par_shapes_scale(ParshapeMesh, radius / 2, height / 2, radius / 2);
+		LoadParMesh(ParshapeMesh, rmesh);
+	}
+}
+
 void ModuleSceneManager::SendToDelete(GameObject* go)
 {
 	Event e(Event::EventType::GameObject_destroyed);
@@ -715,9 +576,10 @@ void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh*
 	par_shapes_mesh* top_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* bot_sphere = par_shapes_create_hemisphere(25, 25);
 	par_shapes_mesh* cylinder = par_shapes_create_cylinder(25, 25);
-	par_shapes_scale(top_sphere, radius / 2, radius / 2, radius / 2);
-	par_shapes_scale(bot_sphere, radius / 2, radius / 2, radius / 2);
-	par_shapes_scale(cylinder, radius / 2, height / 2, radius / 2);
+
+	par_shapes_scale(top_sphere, radius / 2, radius / 2 * 1 / height, radius / 2);
+	par_shapes_scale(bot_sphere, radius / 2, radius / 2 * 1 / height, radius / 2);
+	par_shapes_scale(cylinder, radius / 2, radius / 2, height / 2);
 
 	// --- Rotate and translate hemispheres ---
 	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
@@ -733,53 +595,43 @@ void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh*
 	par_shapes_rotate(top_sphere, float(PAR_PI * 0.5), (float*)&float3::unitX);
 	par_shapes_translate(top_sphere, 0, height / 4, 0);
 
+
 	if (top_sphere)
 	{
 		LoadParMesh(top_sphere, rmesh);
 	}
 }
 
-void ModuleSceneManager::CreateGrid(float target_distance)
+void ModuleSceneManager::CreateDisk(float radius, ResourceMesh* rmesh)
 {
-	// --- Fill vertex data ---
+	// --- Create cylinder ---
+	par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(25, 25);
+	par_shapes_translate(Cyl_PrShM, 0, 0, 0);
+	par_shapes_scale(Cyl_PrShM, radius / 2, 0.5, radius / 2);
 
-	float distance = target_distance/4;
+	// --- Create 2 disks around the cylinder ---
+	float normal[3] = { 0, 0, 1 };
+	float center_axis[3] = { 0, 0, radius };
+	float center_axis2[3] = { 0, 0, 1 };
+	par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(radius / 2, 25, center_axis, normal);
+	par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(radius / 2, 25, center_axis2, normal);
 
-	if (distance < 1)
-		distance = 1;
+	float RotAxis[3] = { 1, 0, 0 };
+	par_shapes_rotate(Disk2_PrShM, math::pi, RotAxis);
+	par_shapes_translate(Disk2_PrShM, 0, 0, 1);
+	par_shapes_translate(Disk_PrShM, 0, 0, -0.5f);
 
-	float3 vertices[84];
+	//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
+	par_shapes_mesh* ParshapeMesh = par_shapes_create_empty();
+	par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
+	par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
 
-	uint i = 0;
-	int lines = -10;
-
-	for (i = 0; i < 20; i++)
+	if (ParshapeMesh)
 	{
-		vertices[4 * i] = float3 (lines*-distance, 0.0f, 10*-distance);
-		vertices[4 * i + 1] = float3(lines*-distance, 0.0f, 10*distance);
-		vertices[4 * i + 2] = float3(10*-distance, 0.0f, lines*distance);
-		vertices[4 * i + 3] = float3(10*distance, 0.0f, lines*distance);
-
-		lines++;
+		par_shapes_scale(ParshapeMesh, radius / 2, 0.5, 0);
+		LoadParMesh(ParshapeMesh, rmesh);
 	}
-
-	vertices[4 * i] = float3(lines * -distance, 0.0f, 10 * -distance);
-	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 10 * distance);
-	vertices[4 * i + 2] = float3(10 * -distance, 0.0f, lines * distance);
-	vertices[4 * i + 3] = float3(10 * distance, 0.0f, lines * distance);
-
-	// --- Configure vertex attributes ---
-
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(Grid_VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, Grid_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 }
 
 GameObject* ModuleSceneManager::LoadCube()
@@ -795,6 +647,17 @@ GameObject* ModuleSceneManager::LoadPlane()
 GameObject* ModuleSceneManager::LoadSphere()
 {
 	return LoadPrimitive(sphere->GetUID());
+}
+
+
+GameObject* ModuleSceneManager::LoadCylinder()
+{
+	return LoadPrimitive(cylinder->GetUID());
+}
+
+GameObject* ModuleSceneManager::LoadDisk()
+{
+	return LoadPrimitive(disk->GetUID());
 }
 
 GameObject* ModuleSceneManager::LoadCapsule()

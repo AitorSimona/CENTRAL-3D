@@ -30,10 +30,12 @@ bool PanelHierarchy::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		ImGui::BeginMenuBar();
-		ImGui::Image((ImTextureID)App->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::SameLine();
-		ImGui::Text(App->scene_manager->currentScene->GetName());
+		if (ImGui::BeginMenuBar())
+		{
+			ImGui::Image((ImTextureID)App->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::SameLine();
+			ImGui::Text(App->scene_manager->currentScene->GetName());
+		}
 		ImGui::EndMenuBar();
 
 		DrawRecursive(App->scene_manager->GetRootGO());

@@ -103,7 +103,7 @@ bool PanelScene::Draw()
 				ImGui::MenuItem("LIGHTING", NULL, &App->renderer3D->lighting);
 				ImGui::MenuItem("COLOR MATERIAL", NULL, &App->renderer3D->color_material);
 				ImGui::MenuItem("WIREFRAME", NULL, &App->renderer3D->wireframe);
-				ImGui::MenuItem("BOUNDING BOXES", NULL, &App->scene_manager->display_boundingboxes);
+				ImGui::MenuItem("BOUNDING BOXES", NULL, &App->renderer3D->display_boundingboxes);
 				ImGui::MenuItem("OCTREE", NULL, &App->scene_manager->display_tree);
 				ImGui::MenuItem("ZDRAWER", NULL, &App->renderer3D->zdrawer);
 

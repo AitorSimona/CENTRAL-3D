@@ -17,7 +17,10 @@ public:
 	ComponentMeshRenderer(GameObject* ContainerGO);
 	virtual ~ComponentMeshRenderer();
 
-	void Draw(bool outline = false) const;
+	void Update() override;
+	void DrawComponent() override;
+
+	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 
 	// --- Save & Load ---
 	json Save() const override;
@@ -26,11 +29,6 @@ public:
 	void CreateInspectorNode() override;
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::MeshRenderer; };
-
-private:
-	// --- Draw Functiions accessed by main Draw ---
-	void DrawMesh(ResourceMesh& mesh) const;
-	void DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const;
 
 public:
 	bool draw_vertexnormals = false;

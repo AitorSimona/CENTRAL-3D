@@ -22,6 +22,7 @@ public:
 	float GetRealTimeDt()const;
 	uint GetMaxFramerate() const;
 	float GetTimeScale() const;
+	void CapMs(float ms);
 
 	// --- Setters ---
 	void SetMaxFramerate(uint maxFramerate);
@@ -34,15 +35,14 @@ private:
 	Timer				Gametime_clock;
 	float				Time_scale = 1.0f;
 
-
 	Timer				fps_timer;
 	float				game_dt = 0.0f;
 	float				realtime_dt = 0.0f;
 	Uint32				frame_count;
 	int					fps_counter;
 	int					last_fps;
-	uint				capped_ms;
-	uint				last_frame_ms;
+	float				capped_ms;
+	float				last_frame_ms;
 };
 
 #endif

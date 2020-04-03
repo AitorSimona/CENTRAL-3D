@@ -11,6 +11,7 @@
 
 ComponentMesh::ComponentMesh(GameObject* ContainerGO) : Component(ContainerGO,Component::ComponentType::Mesh)
 {
+	name = "Mesh";
 }
 
 ComponentMesh::~ComponentMesh()
@@ -80,23 +81,18 @@ void ComponentMesh::ONResourceEvent(uint UID, Resource::ResourceNotificationType
 
 void ComponentMesh::CreateInspectorNode()
 {
-	ImGui::Checkbox("##MeshActive", &GetActive());
-	ImGui::SameLine();
-
-	if (resource_mesh && ImGui::TreeNode("Mesh"))
+	if (resource_mesh)
 	{
 		std::string Triangle_count = "Triangles   ";
 		Triangle_count.append(std::to_string(resource_mesh->IndicesSize / 3));
 		ImGui::Text(Triangle_count.data());
-
-		ImGui::TreePop();
 	}
 
-	ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
+	//ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
 
-	ImGui::SameLine();
-	if (ImGui::Button("Delete")) {
-		GO->RemoveComponent(Component::ComponentType::Mesh);
-	}
+	//ImGui::SameLine();
+	//if (ImGui::Button("Delete")) {
+	//	GO->RemoveComponent(Component::ComponentType::Mesh);
+	//}
 }
 

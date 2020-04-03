@@ -5,12 +5,15 @@
 #include "ModuleResourceManager.h"
 
 #include "ResourceMaterial.h"
+#include "ResourceShader.h"
+#include "ResourceTexture.h"
 #include "ResourceFolder.h"
 
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
 
 #include "ImporterTexture.h"
+#include "OpenGL.h"
 
 #include "Assimp/include/scene.h"
 
@@ -100,12 +103,7 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 	json file = App->GetJLoader()->Load(path);
 
-	if (!file.is_null() && !file["ResourceDiffuse"].is_null())
-	{
-		std::string texture_path = file["ResourceDiffuse"];
-		Importer::ImportData IData(texture_path.c_str());
-		diffuse = (ResourceTexture*)App->resources->ImportAssets(IData);
-	}
+	std::string diffuse_texture_path = file["ResourceDiffuse"].is_null() ? "NaN.dds" : file["ResourceDiffuse"].get<std::string>();
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
@@ -121,28 +119,227 @@ Resource* ImporterMaterial::Load(const char* path) const
 		App->resources->AddResourceToFolder(mat);
 	}
 
-	if (diffuse)
+	if (!file.is_null())
 	{
-		mat->resource_diffuse = diffuse;
-		//mat->resource_diffuse->SetParent(mat);
+		if (!file["Color"].is_null())
+			mat->color = Color(file["Color"]["R"].get<float>(), file["Color"]["G"].get<float>(), file["Color"]["B"].get<float>());
+
+		Importer::ImportData IDataDiff(diffuse_texture_path.c_str());
+
+		if (diffuse_texture_path != "NaN.dds")
+			diffuse = (ResourceTexture*)App->resources->ImportAssets(IDataDiff);
+
+		// --- Load Shader and Uniforms ---
+		std::string shader_path = file["shader"]["ResourceShader"].is_null() ? "NONE" : file["shader"]["ResourceShader"].get<std::string>();
+		Importer::ImportData IDataShader(shader_path.c_str());
+
+		if (shader_path != "NONE")
+			mat->shader = (ResourceShader*)App->resources->ImportAssets(IDataShader);
+
+		json uniforms_node = file["shader"]["uniforms"];
+
+		if (mat->shader && !uniforms_node.is_null())
+		{
+			App->resources->GetResource(mat->shader->GetUID());
+
+			// --- Delete all uniforms ---
+			mat->FreeMemory();
+
+			float* tmpf = new float[4];
+			int* tmpi = new int[4];
+
+			for (json::iterator iterator = uniforms_node.begin(); iterator != uniforms_node.end(); ++iterator)
+			{
+				Uniform* uniform = new Uniform();
+				uniforms_node[iterator.key()];
+				uint unitype = uniforms_node[iterator.key()]["type"];
+				std::string name = iterator.key();
+
+				switch (unitype)
+				{
+				case GL_INT:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.intU = uniforms_node[iterator.key()]["x"].get<int>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::intU);
+					break;
+
+				case GL_FLOAT:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.intU = uniforms_node[iterator.key()]["x"].get<float>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::floatU);
+					break;
+
+				case GL_FLOAT_VEC2:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.vec2U.x = uniforms_node[iterator.key()]["x"].get<float>();
+					uniform->value.vec2U.y = uniforms_node[iterator.key()]["x"].get<float>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::vec2U);
+					break;
+
+				case GL_FLOAT_VEC3:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.vec3U.x = uniforms_node[iterator.key()]["x"].get<float>();
+					uniform->value.vec3U.y = uniforms_node[iterator.key()]["x"].get<float>();
+					uniform->value.vec3U.z = uniforms_node[iterator.key()]["z"].get<float>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::vec3U);
+					break;
+
+				case GL_FLOAT_VEC4:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.vec4U.x = uniforms_node[iterator.key()]["x"].get<float>();
+					uniform->value.vec4U.y = uniforms_node[iterator.key()]["x"].get<float>();
+					uniform->value.vec4U.z = uniforms_node[iterator.key()]["z"].get<float>();
+					uniform->value.vec4U.w = uniforms_node[iterator.key()]["w"].get<float>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::vec4U);
+					break;
+
+				case GL_INT_VEC2:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.vec2U.x = uniforms_node[iterator.key()]["x"].get<int>();
+					uniform->value.vec2U.y = uniforms_node[iterator.key()]["x"].get<int>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::vec2U);
+					break;
+
+				case GL_INT_VEC3:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.vec3U.x = uniforms_node[iterator.key()]["x"].get<int>();
+					uniform->value.vec3U.y = uniforms_node[iterator.key()]["x"].get<int>();
+					uniform->value.vec3U.z = uniforms_node[iterator.key()]["z"].get<int>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::vec3U);
+					break;
+
+				case GL_INT_VEC4:
+					mat->shader->FillUniform(uniform, name.c_str(), unitype);
+					uniform->value.vec4U.x = uniforms_node[iterator.key()]["x"].get<int>();
+					uniform->value.vec4U.y = uniforms_node[iterator.key()]["x"].get<int>();
+					uniform->value.vec4U.z = uniforms_node[iterator.key()]["z"].get<int>();
+					uniform->value.vec4U.w = uniforms_node[iterator.key()]["w"].get<int>();
+					mat->shader->setUniform(name.c_str(), uniform->value, UniformType::vec4U);
+					break;
+
+				default:
+					continue;
+					break;
+
+				}
+
+				mat->uniforms.push_back(uniform);
+			}
+
+			delete[] tmpf;
+			delete[] tmpi;
+		}
 	}
+
+	if (diffuse)
+		mat->resource_diffuse = diffuse;	
 
 	return mat;
 }
 
 void ImporterMaterial::Save(ResourceMaterial* mat) const
 {
+	if (mat->GetUID() == App->resources->DefaultMaterial->GetUID())
+		return;
+
 	json file;
 
 	file[mat->GetName()];
 	file["ResourceDiffuse"];
+	file["Color"];
+
+	// --- Save Shader and Uniforms ---
+	file["shader"];
+	file["shader"]["ResourceShader"] = mat->shader ? std::string(mat->shader->GetOriginalFile()) : "0";
+	file["shader"]["uniforms"];
+
+	if (mat->shader)
+	{
+		float* tmpf = new float[4];
+		int* tmpi = new int[4];
+
+		for (std::vector<Uniform*>::const_iterator iterator = mat->uniforms.begin(); iterator != mat->uniforms.end(); ++iterator)
+		{
+			file["shader"]["uniforms"][(*iterator)->name];
+			file["shader"]["uniforms"][(*iterator)->name]["type"] = (*iterator)->type;
+
+			switch ((*iterator)->type)
+			{
+			case GL_INT:
+				glGetUniformiv(mat->shader->ID, (*iterator)->location, tmpi);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpi[0];
+				break;
+
+			case GL_FLOAT:
+				glGetUniformfv(mat->shader->ID, (*iterator)->location, tmpf);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpf[0];
+				break;
+
+			case GL_FLOAT_VEC2:
+				glGetUniformfv(mat->shader->ID, (*iterator)->location, tmpf);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpf[0];
+				file["shader"]["uniforms"][(*iterator)->name]["y"] = tmpf[1];
+				break;
+
+			case GL_FLOAT_VEC3:
+				glGetUniformfv(mat->shader->ID, (*iterator)->location, tmpf);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpf[0];
+				file["shader"]["uniforms"][(*iterator)->name]["y"] = tmpf[1];
+				file["shader"]["uniforms"][(*iterator)->name]["z"] = tmpf[2];
+				break;
+
+			case GL_FLOAT_VEC4:
+				glGetUniformfv(mat->shader->ID, (*iterator)->location, tmpf);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpf[0];
+				file["shader"]["uniforms"][(*iterator)->name]["y"] = tmpf[1];
+				file["shader"]["uniforms"][(*iterator)->name]["z"] = tmpf[2];
+				file["shader"]["uniforms"][(*iterator)->name]["w"] = tmpf[3];
+				break;
+
+			case GL_INT_VEC2:
+				glGetUniformiv(mat->shader->ID, (*iterator)->location, tmpi);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpi[0];
+				file["shader"]["uniforms"][(*iterator)->name]["y"] = tmpi[1];
+				break;
+
+			case GL_INT_VEC3:
+				glGetUniformiv(mat->shader->ID, (*iterator)->location, tmpi);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpi[0];
+				file["shader"]["uniforms"][(*iterator)->name]["y"] = tmpi[1];
+				file["shader"]["uniforms"][(*iterator)->name]["z"] = tmpi[2];
+				break;
+
+			case GL_INT_VEC4:
+				glGetUniformiv(mat->shader->ID, (*iterator)->location, tmpi);
+				file["shader"]["uniforms"][(*iterator)->name]["x"] = tmpi[0];
+				file["shader"]["uniforms"][(*iterator)->name]["y"] = tmpi[1];
+				file["shader"]["uniforms"][(*iterator)->name]["z"] = tmpi[2];
+				file["shader"]["uniforms"][(*iterator)->name]["w"] = tmpi[3];
+				break;
+
+			default:
+				continue;
+				break;
+
+			}
+
+		}
+
+		delete[] tmpf;
+		delete[] tmpi;
+	}
+
+	file["Color"]["R"] = mat->color.r;
+	file["Color"]["G"] = mat->color.g;
+	file["Color"]["B"] = mat->color.b;
 
 	if (mat->resource_diffuse)
 		file["ResourceDiffuse"] = mat->resource_diffuse->GetOriginalFile();
 
+
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();

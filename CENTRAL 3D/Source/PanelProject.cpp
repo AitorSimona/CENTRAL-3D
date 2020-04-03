@@ -42,7 +42,6 @@ PanelProject::~PanelProject()
 	App->event_manager->RemoveListener(Event::EventType::Resource_destroyed, ONResourceDestroyed);
 }
 
-
 // MYTODO: Clean this up !!!!!!!!!
 
 bool PanelProject::Draw()
@@ -57,78 +56,76 @@ bool PanelProject::Draw()
 	{
 		static std::vector<std::string> filters;
 
+		// --- Create Resource Handling popup (now only resource creation) ---
 		CreateResourceHandlingPopup();
 
+		// --- Draw Menu Bar ---
 		ImGui::BeginMenuBar();
 		ImGui::EndMenuBar();
 
+		// --- Draw Directories Tree ---
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + 38));
 
-		// --- Draw Directories Tree ---
-		ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x * 0.1, ImGui::GetWindowSize().y));
-
-		RecursiveDirectoryDraw(ASSETS_FOLDER, filters);
+		if (ImGui::BeginChild("AssetsTree", ImVec2(ImGui::GetWindowSize().x * 0.1, ImGui::GetWindowSize().y)))
+			RecursiveDirectoryDraw(App->resources->GetAssetsFolder());
 
 		ImGui::EndChild();
 
 		// --- Draw Explorer ---
 		ImGui::SameLine();
 
-		ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowSize().y), true, projectFlags);
-
-		if (currentDirectory == nullptr)
-			currentDirectory = App->resources->GetAssetsFolder();
-
-		DrawFolder(currentDirectory);
-
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
-
-
-		// --- Item resizer and selected resource path display ---
-		ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
-		ImGui::BeginMenuBar();
-
-		if (selected)
-			ImGui::Text(selected->GetName());
-
-		ImGui::Spacing();
-
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
-
-		int imageSize_modifier = imageSize_px;
-		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x * 0.1f);
-		if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64))
+		if (ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowSize().y), true, projectFlags))
 		{
-			imageSize_px = imageSize_modifier;
+			if (currentDirectory == nullptr)
+				currentDirectory = App->resources->GetAssetsFolder();
+
+			DrawFolder(currentDirectory);
+
+			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
+
+			// --- Item resizer and selected resource path display ---
+			if (ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
+			{
+				if (ImGui::BeginMenuBar())
+				{
+					if (selected)
+						ImGui::Text(selected->GetName());
+
+					ImGui::Spacing();
+
+					ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowPos().y));
+
+					int imageSize_modifier = imageSize_px;
+					ImGui::SetNextItemWidth(ImGui::GetWindowSize().x * 0.1f);
+					if (ImGui::SliderInt("##itemresizer", &imageSize_modifier, 32, 64))
+					{
+						imageSize_px = imageSize_modifier;
+					}
+
+					ImGui::EndMenuBar();
+				}
+			}
+
+			ImGui::EndChild();
 		}
-
-		ImGui::EndMenuBar();
-		ImGui::EndChild();
-
 
 		ImGui::EndChild();
 	}
 
-	ImGui::PopStyleVar();
-
 	ImGui::End();
 
+	ImGui::PopStyleVar();
 
 	return true;
 }
 
 void PanelProject::CreateResourceHandlingPopup()
 {
-	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
 	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
 		ImGui::OpenPopup("Resources");
 
 	if (ImGui::BeginPopup("Resources"))
 	{
-		//ImGui::MenuItem("(dummy menu)", NULL, false, false);
-		//if (ImGui::MenuItem("New")) {}
-		//if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-
 		if (ImGui::BeginMenu("Create"))
 		{
 			if (ImGui::MenuItem("Folder"))
@@ -170,6 +167,26 @@ void PanelProject::CreateResourceHandlingPopup()
 				IMat->Save((ResourceMaterial*)new_material);
 			}
 
+			if (ImGui::MenuItem("Shader"))
+			{
+				std::string resource_name = App->resources->GetNewUniqueName(Resource::ResourceType::SHADER);
+
+				Resource* new_shader = App->resources->CreateResource(Resource::ResourceType::SHADER, std::string(currentDirectory->GetResourceFile()).append(resource_name).c_str());
+				ImporterShader* IShader = App->resources->GetImporter<ImporterShader>();
+				ResourceShader* shader = (ResourceShader*)new_shader;
+				shader->ReloadAndCompileShader();
+
+				App->resources->AddResourceToFolder(new_shader);
+
+				// --- Create meta ---
+				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+				ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_shader->GetOriginalFile(), new_shader->GetUID());
+
+				if (meta)
+					IMeta->Save(meta);
+
+				IShader->Save((ResourceShader*)new_shader);
+			}
 
 			if (ImGui::MenuItem("Scene"))
 			{
@@ -190,17 +207,6 @@ void PanelProject::CreateResourceHandlingPopup()
 				IScene->SaveSceneToFile((ResourceScene*)new_scene);
 			}
 
-			//if (ImGui::BeginMenu("More.."))
-			//{
-			//	ImGui::MenuItem("Hello");
-			//	ImGui::MenuItem("Sailor");
-			//	if (ImGui::BeginMenu("Recurse.."))
-			//	{
-			//		ShowExampleMenuFile();
-			//		ImGui::EndMenu();
-			//	}
-			//	ImGui::EndMenu();
-			//}
 			ImGui::EndMenu();
 		}
 
@@ -228,6 +234,10 @@ const Resource* PanelProject::GetcurrentDirectory() const
 	return currentDirectory;
 }
 
+Resource* PanelProject::GetSelected()
+{
+	return selected;
+}
 
 void PanelProject::DrawFolder(ResourceFolder* folder)
 {
@@ -489,22 +499,18 @@ void PanelProject::LimitText(std::string& text)
 	}
 }
 
-// MYTODO: To be substituted (folders/files are already loaded)
-void PanelProject::RecursiveDirectoryDraw(const char* directory, std::vector<std::string>& filters)
+void PanelProject::RecursiveDirectoryDraw(ResourceFolder* folder)
 {
-	std::vector<std::string> files;
-	std::vector<std::string> dirs;
+	std::vector<ResourceFolder*> childs = folder->GetChilds();
 
-	std::string dir((directory) ? directory : "");
-	dir += "/";
-
-	App->fs->DiscoverFiles(dir.c_str(), files, dirs);
-
-	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
+	for (std::vector<ResourceFolder*>::iterator it = childs.begin(); it != childs.end(); ++it) 
 	{
-		if (ImGui::TreeNodeEx((dir + (*it)).c_str(), 0, "%s/", (*it).c_str()))
+		std::string dir_name = folder->GetName();
+		std::string child_name = (*it)->GetName();
+
+		if (ImGui::TreeNodeEx((dir_name + child_name).c_str(), 0, "%s", child_name.c_str())) 
 		{
-			RecursiveDirectoryDraw((dir + (*it)).c_str(), filters);
+			RecursiveDirectoryDraw(*it);
 			ImGui::TreePop();
 		}
 	}

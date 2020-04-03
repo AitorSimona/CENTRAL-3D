@@ -156,19 +156,12 @@ void ImporterModel::LoadSceneMaterials(const aiScene* scene, std::map<uint, Reso
 		MatData.mat->Get(AI_MATKEY_NAME, material_name);
 
 		std::string material_destination = std::string(ASSETS_FOLDER).append(material_name.C_Str()).append(".mat");
-
 		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
 
-		if (App->fs->Exists(material_destination.c_str()))
-		{
-			scene_mats[i] = (ResourceMaterial*)IMat->Load(material_destination.c_str());
-		}
-		else
-		{
-			// --- Import material data ---
-			if (IMat)
-				scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
-		}
+		// --- Import material data ---
+		if (IMat)
+			scene_mats[i] = (ResourceMaterial*)IMat->Import(MatData);
+		 
 	}
 }
 
@@ -440,7 +433,7 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();

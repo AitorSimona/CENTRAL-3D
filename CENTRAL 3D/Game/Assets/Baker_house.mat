@@ -1,4 +1,13 @@
 {
     "Baker_house.mat": null,
-    "ResourceDiffuse": "Assets/Baker_house.png"
+    "Color": {
+        "B": 1.0,
+        "G": 1.0,
+        "R": 1.0
+    },
+    "ResourceDiffuse": null,
+    "shader": {
+        "ResourceShader": "Assets/Shaders/Standard.glsl",
+        "uniforms": null
+    }
 }

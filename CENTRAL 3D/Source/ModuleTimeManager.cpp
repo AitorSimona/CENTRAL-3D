@@ -123,6 +123,11 @@ float ModuleTimeManager::GetTimeScale() const
 	return Time_scale;
 }
 
+void ModuleTimeManager::CapMs(float ms)
+{
+	capped_ms = ms;
+}
+
 void ModuleTimeManager::SetMaxFramerate(uint maxFramerate)
 {
 	if (maxFramerate > 0)

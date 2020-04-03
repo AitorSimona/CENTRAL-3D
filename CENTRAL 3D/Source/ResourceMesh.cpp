@@ -157,6 +157,10 @@ void ResourceMesh::FreeMemory()
 	VAO = 0;
 }
 
+void ResourceMesh::CreateInspectorNode()
+{
+}
+
 void ResourceMesh::CreateVBO()
 {
 	if (vertices != nullptr)

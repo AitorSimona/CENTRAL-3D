@@ -34,14 +34,17 @@ enum update_status
 // Configuration -----------
 #define TITLE "CENTRAL 3D"
 #define VERSION "0.05"
-#define ASSETS_FOLDER "Assets/"
 #define SETTINGS_FOLDER "Settings/"
+#define ASSETS_FOLDER "Assets/"
+#define SHADERS_ASSETS_FOLDER "Assets/Shaders/"
+#define SCENES_FOLDER "Assets/Scenes/"
+
 #define LIBRARY_FOLDER "Library/"
 #define TEXTURES_FOLDER "Library/Textures/"
 #define MESHES_FOLDER "Library/Meshes/"
-#define SCENES_FOLDER "Assets/Scenes/"
 #define MODELS_FOLDER "Library/Models/"
 #define SHADERS_FOLDER "Library/Shaders/"
+
 
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096

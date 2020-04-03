@@ -68,39 +68,59 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		// --- Create GO Structure ---
 		file[string_uid];
 		file[string_uid]["Name"] = (*it).second->GetName();
-		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Active"] = (*it).second->GetActive();
+		file[string_uid]["Static"] = (*it).second->Static;
+		file[string_uid]["Index"] = (*it).second->index;
+
+		if ((*it).second->parent != App->scene_manager->GetRootGO())
+			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		else
+			file[string_uid]["Parent"] = "-1";
+
 		file[string_uid]["Components"];
+
 
 		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
 		{
 			// --- Save Components to file ---
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Index"] = i;
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Active"] = (*it).second->GetComponents()[i]->GetActive();
 		}
-
 	}
 
 	for (std::unordered_map<uint, GameObject*>::iterator it = scene->StaticGameObjects.begin(); it != scene->StaticGameObjects.end(); ++it)
 	{
 		std::string string_uid = std::to_string((*it).second->GetUID());
+
 		// --- Create GO Structure ---
 		file[string_uid];
 		file[string_uid]["Name"] = (*it).second->GetName();
+		file[string_uid]["Active"] = (*it).second->GetActive();
+		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Index"] = (*it).second->index;
+
+		if ((*it).second->parent != App->scene_manager->GetRootGO())
+			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		else
+			file[string_uid]["Parent"] = "-1";
+
+
 		file[string_uid]["Components"];
 
 		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
 		{
 			// --- Save Components to file ---
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Index"] = i;
+			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Active"] = (*it).second->GetComponents()[i]->GetActive();
 		}
-
 	}
 
 	// --- Serialize JSON to string ---
 	std::string data;
-	data = App->GetJLoader()->Serialize(file);
+	App->GetJLoader()->Serialize(file, data);
 
 	// --- Finally Save to file ---
 	char* buffer = (char*)data.data();

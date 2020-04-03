@@ -24,8 +24,10 @@ class ModuleResourceManager : public Module
 	friend class ImporterMaterial;
 	friend class ImporterFolder;
 	friend class ImporterScene;
+	friend class ImporterShader;
 	friend class PanelResources;
 	friend class ComponentMeshRenderer;
+	friend class ResourceMaterial;
 public:
 
 	// --- Basic ---
