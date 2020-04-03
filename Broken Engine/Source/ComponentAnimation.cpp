@@ -73,9 +73,8 @@ void ComponentAnimation::Update()
 		DoLink();
 	}
 
-	if (App->GetAppState() == AppState::PLAY)
+	if (App->GetAppState() == AppState::PLAY && !App->time->gamePaused)
 	{
-
 		if (linked_bones == false)
 			DoBoneLink();
 
