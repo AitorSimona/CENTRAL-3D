@@ -8,6 +8,7 @@
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
+#include "ComponentTransform.h"
 
 #include "Panels.h"
 
@@ -168,11 +169,16 @@ update_status ModuleGui::Update(float dt)
 				if (ImGui::BeginMenu("3D Object"))
 				{
 					if (ImGui::MenuItem("Empty Game Object"))
-						GameObject* go = App->scene_manager->CreateEmptyGameObject();
+						App->scene_manager->CreateEmptyGameObject();
 
 					if (ImGui::MenuItem("Plane"))
-						App->scene_manager->LoadPlane();
+					{
+						GameObject* go = App->scene_manager->LoadPlane();
 
+						// MYTODO: Move this to shape creation
+						go->GetComponent<ComponentTransform>()->SetRotation({ -90, 0, 0 });
+						go->GetComponent<ComponentTransform>()->Scale(10, 10, 10);
+					}
 					if (ImGui::MenuItem("Cube"))
 						App->scene_manager->LoadCube();
 

@@ -101,6 +101,7 @@ bool ResourceScene::LoadInMemory()
 				objects.push_back(go);
 			}
 
+			App->scene_manager->GetRootGO()->childs.clear();
 
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
