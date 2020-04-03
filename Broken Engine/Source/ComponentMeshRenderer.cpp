@@ -48,15 +48,7 @@ ComponentMeshRenderer::~ComponentMeshRenderer()
 void ComponentMeshRenderer::Update()
 {
 	if (to_delete)
-		this->GetContainerGameObject()->RemoveComponent(this);
-
-	if (unuse_material && material && material->IsInMemory())
-	{
-		material->Release();
-		material->RemoveUser(GO);
-		material = nullptr;
-	}
-		
+		this->GetContainerGameObject()->RemoveComponent(this);		
 }
 
 void ComponentMeshRenderer::DrawComponent() 
@@ -158,7 +150,7 @@ void ComponentMeshRenderer::Load(json& node)
 	{
 		ResourceMeta* meta = (ResourceMeta*)IMeta->Load(mat_path.c_str());
 
-		if (material)
+		if (material && meta)
 			material->Release();
 
 		if (meta)
@@ -247,159 +239,159 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				}
 			}
 
-			if (is_default)
+			if (!is_default)
 			{
-				if (ImGui::Button("Unuse Material"))
-					unuse_material = true;
+				// --- Print Texture Path ---
+				//std::string Path = "Path: ";
+				//Path.append(material->resource_diffuse->Texture_path);
+				//ImGui::Text(Path.data());			
 
-				ImGui::PopID();
-				ImGui::TreePop();
-				return;
-			}
+				// --- UNIFORMS ---
+				material->DisplayAndUpdateUniforms();
 
-			// --- Print Texture Path ---
-			//std::string Path = "Path: ";
-			//Path.append(material->resource_diffuse->Texture_path);
-			//ImGui::Text(Path.data());			
+				ImGui::Text("Use Textures");
+				ImGui::SameLine();
+				ImGui::Checkbox("##CB", &material->m_UseTexture);
 
-			// --- UNIFORMS ---
-			material->DisplayAndUpdateUniforms();
+				//Color
+				ImGui::Separator();
+				ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs);
+				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+				ImGui::Text("Ambient Color");
 
-			ImGui::Text("Use Textures");
-			ImGui::SameLine();
-			ImGui::Checkbox("##CB", &material->m_UseTexture);
+				//Shininess
+				ImGui::Text("Shininess");
+				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
+				ImGui::SetNextItemWidth(300.0f);
+				ImGui::SliderFloat("", &material->m_Shininess, 0.01f, 500.00f);
 
-			//Color
-			ImGui::Separator();
-			ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs);
-			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-			ImGui::Text("Ambient Color");
+				//ImGui::Text("Shader Uniforms");
 
-			//Shininess
-			ImGui::Text("Shininess");
-			ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
-			ImGui::SetNextItemWidth(300.0f);
-			ImGui::SliderFloat("", &material->m_Shininess, 0.01f, 500.00f);
+				//DisplayAndUpdateUniforms(material);
+				//ImGui::TreePop();
 
-			//ImGui::Text("Shader Uniforms");
-
-			//DisplayAndUpdateUniforms(material);
-			//ImGui::TreePop();
-
-			// --- Print Texture Width and Height (Diffuse) ---
-			uint textSizeX = 0, textSizeY = 0;
-			ImGui::NewLine();
-			if (material->m_DiffuseResTexture)
-			{
-				textSizeX = material->m_DiffuseResTexture->Texture_width;
-				textSizeY = material->m_DiffuseResTexture->Texture_height;
-			}
-
-			ImGui::Text(std::to_string(textSizeX).c_str());
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(textSizeY).c_str());
-
-			// --- Texture Preview ---
-			if (material->m_DiffuseResTexture)
-				ImGui::ImageButton((void*)(uint)material->m_DiffuseResTexture->GetPreviewTexID(), ImVec2(20, 20));
-			else
-				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-
-			// --- Handle drag & drop (Diffuse Texture) ---
-			if (ImGui::BeginDragDropTarget()) 
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) 
+				// --- Print Texture Width and Height (Diffuse) ---
+				uint textSizeX = 0, textSizeY = 0;
+				ImGui::NewLine();
+				if (material->m_DiffuseResTexture)
 				{
-					uint UID = *(const uint*)payload->Data;
-					Resource* resource = App->resources->GetResource(UID, false);
-
-					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE) 
-					{
-						if (material->m_DiffuseResTexture)
-							material->m_DiffuseResTexture->Release();
-
-						material->m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-						// --- Save material so we update path to texture ---
-						ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-						if(IMat)
-						IMat->Save(material);
-					}						
+					textSizeX = material->m_DiffuseResTexture->Texture_width;
+					textSizeY = material->m_DiffuseResTexture->Texture_height;
 				}
 
-				ImGui::EndDragDropTarget();
-			}
+				ImGui::Text(std::to_string(textSizeX).c_str());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(textSizeY).c_str());
 
-			ImGui::SameLine();
-			ImGui::Text("Albedo");
+				// --- Texture Preview ---
+				if (material->m_DiffuseResTexture)
+					ImGui::ImageButton((void*)(uint)material->m_DiffuseResTexture->GetPreviewTexID(), ImVec2(20, 20));
+				else
+					ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
 
-			ImGui::SameLine();
-			if (ImGui::Button("Unuse", { 43, 18 }) && material->m_DiffuseResTexture)
-			{
-				material->m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
-				material->m_DiffuseResTexture->Release();
-			}
-
-
-			// --- Print Texture Width and Height (Specular) ---
-			textSizeX = textSizeY = 0;
-			ImGui::NewLine();
-			if (material->m_SpecularResTexture)
-			{
-				textSizeX = material->m_SpecularResTexture->Texture_width;
-				textSizeY = material->m_SpecularResTexture->Texture_height;
-			}
-
-			ImGui::Text(std::to_string(textSizeX).c_str());
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(textSizeY).c_str());
-
-			if (material->m_SpecularResTexture)
-				ImGui::ImageButton((void*)(uint)material->m_SpecularResTexture->GetPreviewTexID(), ImVec2(20, 20));
-			else
-				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-
-			// --- Handle drag & drop (Specular Texture) ---
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				// --- Handle drag & drop (Diffuse Texture) ---
+				if (ImGui::BeginDragDropTarget())
 				{
-					uint UID = *(const uint*)payload->Data;
-					Resource* resource = App->resources->GetResource(UID, false);
-
-					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 					{
-						if (material->m_SpecularResTexture)
-							material->m_SpecularResTexture->Release();
+						uint UID = *(const uint*)payload->Data;
+						Resource* resource = App->resources->GetResource(UID, false);
 
-						material->m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+						if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+						{
+							if (material->m_DiffuseResTexture)
+								material->m_DiffuseResTexture->Release();
 
-						// --- Save material so we update path to texture ---
-						ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+							material->m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
-						if (IMat)
-							IMat->Save(material);
+							// --- Save material so we update path to texture ---
+							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+							if (IMat)
+								IMat->Save(material);
+						}
 					}
+
+					ImGui::EndDragDropTarget();
 				}
 
-				ImGui::EndDragDropTarget();
-			}
+				ImGui::SameLine();
+				ImGui::Text("Albedo");
 
-			ImGui::SameLine();
-			ImGui::Text("Specular");
+				ImGui::SameLine();
+				if (ImGui::Button("Unuse", { 43, 18 }) && material->m_DiffuseResTexture)
+				{
+					material->m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
+					material->m_DiffuseResTexture->Release();
+				}
 
-			ImGui::SameLine();
-			if (ImGui::Button("Unuse", { 43, 18 }) && material->m_SpecularResTexture)
-			{
-				material->m_SpecularResTexture->RemoveUser(GetContainerGameObject());
-				material->m_SpecularResTexture->Release();
+
+				// --- Print Texture Width and Height (Specular) ---
+				textSizeX = textSizeY = 0;
+				ImGui::NewLine();
+				if (material->m_SpecularResTexture)
+				{
+					textSizeX = material->m_SpecularResTexture->Texture_width;
+					textSizeY = material->m_SpecularResTexture->Texture_height;
+				}
+
+				ImGui::Text(std::to_string(textSizeX).c_str());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(textSizeY).c_str());
+
+				if (material->m_SpecularResTexture)
+					ImGui::ImageButton((void*)(uint)material->m_SpecularResTexture->GetPreviewTexID(), ImVec2(20, 20));
+				else
+					ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+				// --- Handle drag & drop (Specular Texture) ---
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+					{
+						uint UID = *(const uint*)payload->Data;
+						Resource* resource = App->resources->GetResource(UID, false);
+
+						if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+						{
+							if (material->m_SpecularResTexture)
+								material->m_SpecularResTexture->Release();
+
+							material->m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+
+							// --- Save material so we update path to texture ---
+							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+							if (IMat)
+								IMat->Save(material);
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::SameLine();
+				ImGui::Text("Specular");
+
+				ImGui::SameLine();
+				if (ImGui::Button("Unuse", { 43, 18 }) && material->m_SpecularResTexture)
+				{
+					material->m_SpecularResTexture->RemoveUser(GetContainerGameObject());
+					material->m_SpecularResTexture->Release();
+				}
 			}
 
 			ImGui::TreePop();
 
 			if (ImGui::Button("Unuse Material"))
-				unuse_material = true;
+			{
+				if (material && material->IsInMemory())
+				{
+					material->Release();
+					material->RemoveUser(GO);
+					material = nullptr;
+				}
+			}
 		}
 	}
 	else
@@ -415,11 +407,8 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				Resource* resource = App->resources->GetResource(UID, false);
 
 				if (resource && resource->GetType() == Resource::ResourceType::MATERIAL) 
-				{
-					
+				{			
 					material = (ResourceMaterial*)App->resources->GetResource(UID);
-					unuse_material = false;
-
 				}
 			}
 
