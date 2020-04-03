@@ -157,7 +157,7 @@ json ComponentButton::Save() const
 	if (script)
 	{
 		node["script"] = std::to_string(script_obj->GetUID());
-		node["function"] = std::string(func_name);
+		node["function"] = func_name;
 	}
 
 	node["idle_color.r"] = std::to_string(idle_color.r);
@@ -261,7 +261,7 @@ void ComponentButton::Load(json& node)
 
 			for (uint i = 0; i < func_list.size(); ++i) //get function pos
 			{
-				if (strcmp(func_list[i], func_name) == 0)
+				if (strcmp(func_list[i], func_name.c_str()) == 0)
 				{
 					func_pos = i;
 					break;
@@ -416,17 +416,20 @@ void ComponentButton::CreateInspectorNode()
 		{
 			uint UID = *(const uint*)payload->Data;
 			script_obj = App->scene_manager->currentScene->GetGOWithUID(UID);
-
-			if (script_obj != nullptr)
-				script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
 		}
 		ImGui::EndDragDropTarget();
 	}
 	ImGui::SameLine();
 	if (script_obj == nullptr)
+	{
 		ImGui::Text("No Script Loaded");
+		script = nullptr;
+	}
 	else
+	{
 		ImGui::Text("Name: %s", script_obj->GetName());
+		script = (ComponentScript*)script_obj->HasComponent(Component::ComponentType::Script); //get script component
+	}
 
 	if (script != nullptr)
 	{

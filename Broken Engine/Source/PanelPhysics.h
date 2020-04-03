@@ -15,12 +15,15 @@ public:
 
 	void CreateLayerFilterGrid();
 
+	void CreateLayerList();
+
 private:
 	physx::PxVec3 gravity;
 	float staticFriction, dynamicFriction, restitution;
 
 	physx::PxVec3 tmpGravity;
-	float tmpStaticFriction, tmpDynamicFriction, tmpRestitution;
+	float tmpStaticFriction, tmpDynamicFriction, tmpRestitution; 
+	float sizeMax = 0;
 
 };
 #endif

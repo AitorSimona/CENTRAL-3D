@@ -41,7 +41,10 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 	desc = &capsuleDesc;
 
 	controller = App->physics->mControllerManager->createController(*desc);
-	App->physics->addActor(controller->getActor(), GO);
+
+	physx::PxShape* shape;
+	controller->getActor()->getShapes(&shape, 1);
+	App->physics->addActor(shape->getActor(), GO);
 
 	initialPosition = capsuleDesc.position;
 
@@ -114,21 +117,6 @@ void ComponentCharacterController::Draw()
 	// --- Render shape ---
 	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
 	{
-		if (!GetActive())
-		{
-			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-			physx::PxShape* shape;
-			controller->getActor()->getShapes(&shape, 1);
-			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-		}
-
-		else
-		{
-			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
-			physx::PxShape* shape;
-			controller->getActor()->getShapes(&shape, 1);
-			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-		}
 		// --- Use default shader ---
 		uint shaderID = App->renderer3D->defaultShader->ID;
 		glUseProgram(shaderID);
@@ -166,6 +154,38 @@ void ComponentCharacterController::Draw()
 		// --- Set uniforms back to defaults ---
 		glUniform1i(TextureSupportLocation, 0);
 		glUniform3f(vertexColorLocation, 255, 255, 255);
+	}
+}
+
+void ComponentCharacterController::DrawComponent()
+{
+	if (!GetActive())
+	{
+		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+		physx::PxShape* shape;
+		controller->getActor()->getShapes(&shape, 1);
+		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+
+		if (!hasBeenDeactivated)
+		{
+			Delete();
+			hasBeenDeactivated = true;
+		}
+	}
+
+	else
+	{
+		physx::PxShape* shape;
+		controller->getActor()->getShapes(&shape, 1);
+
+		if (hasBeenDeactivated)
+		{
+			App->physics->addActor(shape->getActor(), GO);
+			hasBeenDeactivated = false;
+		}
+
+		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 	}
 }
 
@@ -262,65 +282,57 @@ void ComponentCharacterController::Load(json& node)
 
 void ComponentCharacterController::CreateInspectorNode()
 {
-	ImGui::Checkbox("##CharacterControllerActive", &GetActive());
-	ImGui::SameLine();
+	if (ImGui::Button("Delete component"))
+		to_delete = true;
 
-	if (ImGui::TreeNodeEx("Character Controller", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::DragFloat("Radius", &radius, 0.005f))
 	{
-		if (ImGui::Button("Delete component"))
-			to_delete = true;
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("Radius", &radius, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetRadius(radius);
+	}
 
-			SetRadius(radius);
-		}
+	if (ImGui::DragFloat("Height", &height, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("Height", &height, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetHeight(height);
+	}
 
-			SetHeight(height);
-		}
+	if (ImGui::DragFloat("contactOffset", &contactOffset, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("contactOffset", &contactOffset, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetContactOffset(contactOffset);
+	}
 
-			SetContactOffset(contactOffset);
-		}
+	if (ImGui::DragFloat("stepOffset", &stepOffset, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("stepOffset", &stepOffset, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetStepOffset(stepOffset);
+	}
 
-			SetStepOffset(stepOffset);
-		}
+	if (ImGui::DragFloat("slopeLimit", &slopeLimit, 0.005f))
+	{
+		if (mesh && mesh->IsInMemory())
+			mesh->Release();
 
-		if (ImGui::DragFloat("slopeLimit", &slopeLimit, 0.005f))
-		{
-			if (mesh && mesh->IsInMemory())
-				mesh->Release();
+		SetSlopeLimit(slopeLimit);
+	}
 
-			SetSlopeLimit(slopeLimit);
-		}
+	ImGui::Text("Non Walkable Mode");
+	if (ImGui::Checkbox("##W", &sliding))
+	{
+		if (sliding)
+			controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
 
-		ImGui::Text("Non Walkable Mode");
-		if (ImGui::Checkbox("##W", &sliding))
-		{
-			if (sliding)
-				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
-
-			else
-				controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
-		}
-
-		ImGui::TreePop();
+		else
+			controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
 	}
 }
 
@@ -352,7 +364,6 @@ void ComponentCharacterController::SetHeight(float height)
 
 physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor)
 {
-	physx::PxGeometryHolder a = shape.getGeometry();
 
 	if (shape.getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
 	{
@@ -360,12 +371,17 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 		if (go)
 		{
 			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
+			GO->collisions.at(Collision_Type::ONTRIGGER_ENTER) = go;
 
 			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 	else
@@ -382,8 +398,10 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 			ScriptFunc function;
 			function.name = "OnCollisionEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
-			App->scripting->CallbackScriptFunction(script2, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 
@@ -400,18 +418,23 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 	controller.getActor()->getShapes(&shape, 1);
 	physx::PxRigidActor* b = controller.getActor();
 
-	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
+	if (shape->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE || shape1->getFlags() & physx::PxShapeFlag::eTRIGGER_SHAPE)
 	{
 		GameObject* go = App->physics->actors[shape->getActor()];
 		if (go)
 		{
+			GO->collisions.at(Collision_Type::ONTRIGGER_ENTER) = go;
 			go->collisions.at(Collision_Type::ONTRIGGER_ENTER) = GO;
 
 			ComponentScript* script = go->GetComponent<ComponentScript>();
+			ComponentScript* script2 = GO->GetComponent<ComponentScript>();
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 	else
@@ -428,8 +451,10 @@ physx::PxControllerBehaviorFlags ComponentCharacterController::getBehaviorFlags(
 			ScriptFunc function;
 			function.name = "OnCollisionEnter";
 
-			App->scripting->CallbackScriptFunction(script, function);
-			App->scripting->CallbackScriptFunction(script2, function);
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
 		}
 	}
 

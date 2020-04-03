@@ -8,6 +8,7 @@
 #include "Resource.h"
 #include "ModuleSceneManager.h"
 #include "ResourceScene.h"
+#include "ModuleEventManager.h"
 
 #include "ResourceScript.h"
 #include "ComponentScript.h"
@@ -42,27 +43,6 @@ ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 }
 
 ModuleScripting::~ModuleScripting() {}
-
-//template <typename T, typename U>
-//void ModuleScripting::ConvertVectorToTable(lua_State* L, T begin, U end) {
-//	lua_newtable(L);
-//	for (size_t i = 0; begin != end; ++begin, ++i) {
-//		lua_pushinteger(L, i + 1);
-//		lua_pushnumber(L, *begin);
-//		lua_settable(L, -3);
-//	}
-//}
-//
-//template <typename T, typename U>
-//void ModuleScripting::ConvertTableToVector(lua_State* L, T begin, U end) {
-//	assert(lua_istable(L, -1));
-//	for (size_t i = 0; begin != end; ++begin, ++i) {
-//		lua_pushinteger(L, i + 1);
-//		lua_gettable(L, -2);
-//		*begin = lua_tonumber(L, -1);
-//		lua_pop(L, 1);
-//	}
-//}
 
 bool ModuleScripting::DoHotReloading() {
 	bool ret = true;
@@ -252,8 +232,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetParent", &ScriptingGameobject::GetScriptGOParent)
 		.addFunction("GetGameObjectParent", &ScriptingGameobject::GetGOParentFromUID)
 		.addFunction("DestroyGameObject", &ScriptingGameobject::DestroyGOFromScript)
+		.addFunction("SetActiveGameObject", &ScriptingGameobject::SetActiveGameObject)
 
-		.addFunction("GetLayer", &ScriptingGameobject::GetLayer)
+		.addFunction("GetMyLayer", &ScriptingGameobject::GetMyLayer)
+		.addFunction("GetLayerByID", &ScriptingGameobject::GetLayerByID)
 		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
 		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
 		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
@@ -281,10 +263,13 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetAngularVelocity", &ScriptingPhysics::GetAngularVelocity)
 		.addFunction("SetAngularVelocity", &ScriptingPhysics::SetAngularVelocity)
+		.addFunction("SetAngularVelocity_GO", &ScriptingPhysics::SetAngularVelocityGO)
 		.addFunction("GetLinearVelocity", &ScriptingPhysics::GetLinearVelocity)
 		.addFunction("SetLinearVelocity", &ScriptingPhysics::SetLinearVelocity)
+		.addFunction("SetLinearVelocity_GO", &ScriptingPhysics::SetLinearVelocityGO)
 
 		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
+		.addFunction("AddTorque_GO", &ScriptingPhysics::AddTorqueGO)
 		.addFunction("AddForce", &ScriptingPhysics::AddForce)
 		.addFunction("AddForce_GO", &ScriptingPhysics::AddForceGO)
 
@@ -300,6 +285,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
 		.addFunction("Move", &ScriptingPhysics::Move)
+		.addFunction("MoveGameObject", &ScriptingPhysics::MoveGameObject)
 		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
 		.addFunction("GetCharacterPositionX", &ScriptingPhysics::GetCharacterPositionX)
 		.addFunction("GetCharacterPositionY", &ScriptingPhysics::GetCharacterPositionY)
@@ -328,6 +314,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
 		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
+		.addFunction("PlayParticleEmitter_GO", &ScriptingParticles::PlayParticleEmitterGO)
+		.addFunction("StopParticleEmitter_GO", &ScriptingParticles::StopParticleEmitterGO)
 		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
 		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
 
@@ -578,7 +566,7 @@ void ModuleScripting::FillScriptInstanceComponentFuncs(ScriptInstance* script)
 void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript* script_component) {
 	for (int i = 0; i < class_instances.size(); ++i) {
 		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component) {
-			//delete class_instances[i];
+			delete class_instances[i];
 			class_instances.erase(class_instances.begin() + i);
 		}
 	}
@@ -627,8 +615,14 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 	{
 		if (App->GetAppState() == AppState::PLAY)
 		{
-			script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
-			ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+			for (int i = 0; i < script_component->script_functions.size(); ++i)
+			{
+				if (script_component->script_functions.at(i).name == aux_str)
+				{
+					script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
+					ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
+				}
+			}
 		}
 	}
 	else

@@ -70,7 +70,14 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Name"] = (*it).second->GetName();
 		file[string_uid]["Active"] = (*it).second->GetActive();
 		file[string_uid]["Static"] = (*it).second->Static;
-		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Index"] = (*it).second->index;
+
+		if ((*it).second->parent != App->scene_manager->GetRootGO())
+			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		else
+			file[string_uid]["Parent"] = "-1";
+
+
 		file[string_uid]["Components"];
 
 		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
@@ -85,12 +92,20 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 	for (std::unordered_map<uint, GameObject*>::iterator it = scene->StaticGameObjects.begin(); it != scene->StaticGameObjects.end(); ++it)
 	{
 		std::string string_uid = std::to_string((*it).second->GetUID());
+
 		// --- Create GO Structure ---
 		file[string_uid];
 		file[string_uid]["Name"] = (*it).second->GetName();
 		file[string_uid]["Active"] = (*it).second->GetActive();
 		file[string_uid]["Static"] = (*it).second->Static;
-		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		file[string_uid]["Index"] = (*it).second->index;
+
+		if ((*it).second->parent != App->scene_manager->GetRootGO())
+			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
+		else
+			file[string_uid]["Parent"] = "-1";
+
+
 		file[string_uid]["Components"];
 
 		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
@@ -99,6 +114,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
 		}
+
 
 	}
 
