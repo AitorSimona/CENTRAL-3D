@@ -43,6 +43,9 @@ public:
 	int GetRightFrustumIntersection(float x, float y, float z, float fovratio);
 	int GetLeftFrustumIntersection(float x, float y, float z, float fovratio);
 
+	luabridge::LuaRef WorldToScreen(float x, float y, float z, lua_State* L);
+	luabridge::LuaRef ScreenToWorld(float x, float y, float distance, lua_State* L);
+
 	// Get a script file
 	luabridge::LuaRef GetScript(uint gameobject_UUID, lua_State* L);
 };
