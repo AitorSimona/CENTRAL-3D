@@ -24,7 +24,9 @@ PanelInspector::~PanelInspector()
 bool PanelInspector::Draw()
 {
 	ImGuiWindowFlags settingsFlags = 0;
-	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
+	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing ;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
@@ -35,7 +37,13 @@ bool PanelInspector::Draw()
 		{
 
 			// --- Game Object ---
+			ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_FrameBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
+
+			ImGui::BeginChildFrame(Selected->GetUID(),ImVec2(ImGui::GetWindowWidth(),50), ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse);
 			CreateGameObjectNode(*Selected);
+			ImGui::EndChildFrame();
+
+			ImGui::PopStyleColor();
 
 			// --- Components ---
 
@@ -48,11 +56,13 @@ bool PanelInspector::Draw()
 
 				if (*it)
 				{
+
 					std::string a = "##Active";
 					ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
+					
 					ImGui::SameLine();
 
-					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanFullWidth))
 					{
 						(*it)->CreateInspectorNode();
 						ImGui::TreePop();
@@ -141,13 +151,13 @@ bool PanelInspector::Draw()
 
 	ImGui::End();
 
+	ImGui::PopStyleVar();
 
 	return true;
 }
 
 void PanelInspector::CreateGameObjectNode(GameObject& Selected) const
 {
-	ImGui::BeginChild("child", ImVec2(0, 35), true);
 
 	if (ImGui::Checkbox("##GOActive", &Selected.GetActive()))
 	{
@@ -170,5 +180,4 @@ void PanelInspector::CreateGameObjectNode(GameObject& Selected) const
 	if (ImGui::Checkbox("Static", &Selected.Static))
 		App->scene_manager->SetStatic(&Selected);
 
-	ImGui::EndChild();
 }

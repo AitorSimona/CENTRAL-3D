@@ -41,11 +41,13 @@ bool PanelScene::Draw()
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse;
 
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
 		// --- Set image size
-		width = ImGui::GetWindowWidth()*0.98;
-		height = ImGui::GetWindowHeight()*0.90;
+		width = ImGui::GetWindowWidth();
+		height = ImGui::GetWindowHeight()*0.94f;
 		ImVec2 size = ImVec2(width, height);
 
 		// --- Force Window Size ---
@@ -123,6 +125,8 @@ bool PanelScene::Draw()
 		App->camera->UpdateCamera();
 	
 	ImGui::End();
+
+	ImGui::PopStyleVar();
 
 	return true;
 }
