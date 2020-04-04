@@ -54,8 +54,6 @@ bool PanelProject::Draw()
 	// --- Draw project panel, Unity style ---
 	if (ImGui::Begin(name, &enabled, projectFlags))
 	{
-		static std::vector<std::string> filters;
-
 		// --- Create Resource Handling popup (now only resource creation) ---
 		CreateResourceHandlingPopup();
 
@@ -432,18 +430,6 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 	else
 		ImGui::Image((ImTextureID)resource->GetPreviewTexID(), ImVec2(imageSize_px, imageSize_px), ImVec2(0, 1), ImVec2(1, 0), color);
 
-	// --- Handle selection ---
-	if (selected && selected->GetUID() == resource->GetUID()
-		&& wasclicked && ImGui::IsMouseReleased(0))
-	{
-		if (ImGui::IsItemHovered())
-		{
-			SetSelected(resource);
-			wasclicked = false;
-		}
-		else
-			SetSelected(nullptr);
-	}
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 
@@ -459,16 +445,57 @@ void PanelProject::DrawFile(Resource* resource, uint i, uint row, ImVec2& cursor
 	}
 
 	// --- Handle selection ---
+	if (selected_uid == resource->GetUID() && wasclicked && ImGui::IsMouseReleased(0))
+	{
+		if (ImGui::IsItemHovered())
+		{
+			SetSelected(resource);
+			wasclicked = false;
+		}
+		else
+			SetSelected(nullptr);
+	}
+
 	if (ImGui::IsItemClicked())
 	{
-		selected = resource;
+		selected_uid = resource->GetUID();
 		wasclicked = true;
 	}
-	// --- IF resource is a scene, load it on double click! ---
+	// --- Handle resource double click ---
 	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 	{
+		// --- Load scene on double click ---
 		if (resource->GetType() == Resource::ResourceType::SCENE)
 			App->scene_manager->SetActiveScene((ResourceScene*)resource);
+
+		// --- Open the rest of resources with OS defined default program ---
+		else 
+		{
+			// MYTODO: Use win32 API to get the absolute path
+
+			// --- Build absolute path for ShellExecute function ---
+			std::string abs_path = App->fs->GetBasePath();
+
+			std::size_t d_pos = 0;
+			d_pos = abs_path.find("Debug");
+			std::size_t r_pos = 0;
+			r_pos = abs_path.find("Release");
+
+			if (d_pos != 4294967295)  // If we are in DEBUG
+			{
+				abs_path = abs_path.substr(0, d_pos);
+				abs_path += "Game/";
+			}
+			else if (r_pos != 4294967295) // If we are in RELEASE
+			{
+				abs_path = abs_path.substr(0, r_pos);
+				abs_path += "Game/";
+			}
+
+			abs_path += resource->GetOriginalFile();
+			App->fs->NormalizePath(abs_path);
+			App->gui->RequestBrowser(abs_path.c_str());
+		}
 	}
 
 	ImGui::PopStyleVar();
