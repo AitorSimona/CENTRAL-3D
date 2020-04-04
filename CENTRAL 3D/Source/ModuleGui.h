@@ -67,6 +67,7 @@ public:
 	uint prefabTexID = 0;
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
+	uint shaderTexID = 0;
 
 private:
 

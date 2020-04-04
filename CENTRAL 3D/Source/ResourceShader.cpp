@@ -27,7 +27,7 @@ ResourceShader::ResourceShader(uint UID, std::string source_file) : Resource(Res
 
 	CreateShaderProgram();
 
-	previewTexID = App->gui->defaultfileTexID;
+	previewTexID = App->gui->shaderTexID;
 }
 
 ResourceShader::~ResourceShader()
