@@ -254,6 +254,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GetBottomFrustumIntersection", &ScriptingGameobject::GetBottomFrustumIntersection)
 		.addFunction("GetLeftFrustumIntersection", &ScriptingGameobject::GetLeftFrustumIntersection)
 		.addFunction("GetRightFrustumIntersection", &ScriptingGameobject::GetRightFrustumIntersection)
+		.addFunction("WorldToScreen", &ScriptingGameobject::WorldToScreen)
+		.addFunction("ScreenToWorld", &ScriptingGameobject::ScreenToWorld)
 		.addFunction("GetScript", &ScriptingGameobject::GetScript)
 		.endClass()
 

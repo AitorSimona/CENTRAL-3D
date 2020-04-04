@@ -184,18 +184,36 @@ void GameObject::TransformGlobal(GameObject* GO)
 
 void GameObject::RemoveChildGO(GameObject* GO)
 {
-	// --- Remove given child from list ---
-	if (GO != nullptr && childs.size() > 0) {
-		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
-			if (*go == nullptr)
-				continue;
+	if (GO == nullptr)
+		return;
 
-			if ((*go)->GetUID() == GO->GetUID()) {
-				childs.erase(go);
-				break;
-			}
-		}
+	// --- Remove given child from list ---
+	if (GO->index >= 0 && GO->index < childs.size() && 
+		childs[GO->index] != nullptr && GO->GetUID() == childs[GO->index]->GetUID()) {
+		childs.erase(childs.begin() + GO->index);
+
+		// --- We update the indices of the rest of childs ---
+		for (int i = GO->index; i < childs.size(); ++i)
+			if (childs[i] != nullptr) childs[i]->index -= 1;
+
+		GO->index = -1;
 	}
+	//else {
+	//	for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
+	//		if (*go == nullptr)
+	//			continue;
+
+	//		if ((*go)->GetUID() == GO->GetUID()) {
+	//			go = childs.erase(go);
+	//			while (go != childs.end()) {
+	//				if (*go != nullptr) (*go)->index -= 1;
+	//				go++;
+	//			}
+
+	//			break;
+	//		}
+	//	}
+	//}
 }
 
 Component* GameObject::GetComponentWithUID(uint UUID)
@@ -213,7 +231,7 @@ void GameObject::AddChildGO(GameObject* GO, int index) {
 	if (!FindChildGO(GO)) {
 
 		// --- If it has a parent we remove it from its parent --
-		if (GO->parent)
+		if (GO->parent != nullptr)
 			GO->parent->RemoveChildGO(GO);
 
 		GO->parent = this;
@@ -233,6 +251,7 @@ void GameObject::AddChildGO(GameObject* GO, int index) {
 
 			// --- Insert element at given index ---
 			childs[index] = GO;
+			GO->index = index;
 		}
 		// --- Else push back ---
 		else {
@@ -242,19 +261,46 @@ void GameObject::AddChildGO(GameObject* GO, int index) {
 	}
 }
 
+void GameObject::InsertChildGO(GameObject* GO, int index) {
+	if (!FindChildGO(GO)) {
+		if (index >= 0 && index < childs.size()) {
+			// --- If it has a parent we remove it from its parent --
+			if (GO->parent)
+				GO->parent->RemoveChildGO(GO);
+
+			GO->parent = this;
+
+			// --- We accomodate for the new size ---
+			childs.resize(childs.size() + 1);
+
+			// --- We move all the GOs from index one position up ---
+			for (int i = childs.size() - 1; i > index; --i) {
+				childs[i] = childs[i - 1];
+				childs[i]->index = i;
+			}
+
+			// --- We insert the new child ---
+			childs[index] = GO;
+			GO->index = index;
+		}
+
+	}
+}
+
 bool GameObject::FindChildGO(GameObject* GO)
 {
 	// --- Look for given GO in child list and return true if found ---
 	bool ret = false;
 
-	if (childs.size() > 0) {
-		std::vector<GameObject*>::iterator go = childs.begin();
-
-		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
+	if (GO != nullptr) {
+		/*for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go) {
 			if (*go == nullptr)
 				continue;
 			else if ((*go)->GetUID() == GO->GetUID())
 				ret = true;
+		}*/
+		if (GO->index >= 0 && GO->index < childs.size() && childs[GO->index] != nullptr) {
+			ret = GO->GetUID() == childs[GO->index]->GetUID();
 		}
 	}
 
