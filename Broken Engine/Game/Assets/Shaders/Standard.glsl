@@ -24,6 +24,7 @@ out vec3 v_Color;
 out vec3 v_Normal;
 out vec3 v_FragPos;
 out vec3 v_CamPos;
+out mat3 v_TBN;
 
 void main()
 {
@@ -33,6 +34,12 @@ void main()
 
 	v_FragPos = vec3(u_Model * vec4(a_Position, 1.0));
 	v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
+
+	vec3 T = normalize(vec3(u_Model * vec4(a_Tangent, 0.0)));
+	vec3 B = normalize(vec3(u_Model * vec4(a_Bitangent, 0.0)));
+	vec3 N = normalize(vec3(u_Model * vec4(a_Normal, 0.0)));
+
+	v_TBN = transpose(mat3(T, B, N));
 
 	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 }
@@ -54,6 +61,7 @@ in vec3 v_Color;
 in vec3 v_Normal;
 in vec3 v_FragPos;
 in vec3 v_CamPos;
+in mat3 v_TBN;
 
 //Uniforms
 uniform int u_HasTexture;
@@ -122,6 +130,8 @@ vec3 CalculatePointlight(BrokenLight light, vec3 normal, vec3 viewDir)
 {
 	//Calculate light direction
 	vec3 direction = light.pos - v_FragPos;
+	if(u_HasNormalMap == 1)
+		direction = v_TBN * normalize(light.pos - v_FragPos);
 
 	//Attenuation Calculation
 	float d = length(light.pos - v_FragPos);
@@ -136,6 +146,8 @@ vec3 CalculateSpotlight(BrokenLight light, vec3 normal, vec3 viewDir)
 {
 	//Calculate light direction
 	vec3 direction = light.pos - v_FragPos;
+	if(u_HasNormalMap == 1)
+		direction = v_TBN * normalize(light.pos - v_FragPos);
 
 	//Attenuation Calculation
 	float d = length(light.pos - v_FragPos);
@@ -163,13 +175,16 @@ void main()
 
 	//Light Calculations
 	vec3 normalVec = normalize(v_Normal);
+	vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 	if(u_HasNormalMap == 1)
 	{
-		//normalVec = texture(u_NormalTexture, v_TexCoord).rgb;
-		//normalVec = normalize(normalVec * 2.0 - 1.0);
+		normalVec = texture(u_NormalTexture, v_TexCoord).rgb;
+		normalVec = normalVec * 2.0 - 1.0;
+		//normalVec = normalize(v_TBN * normalVec);
+		viewDirection = v_TBN * normalize(v_CamPos - v_FragPos);
 	}
 
-	vec3 viewDirection = normalize(v_CamPos - v_FragPos);
+	
 
 	vec3 colorResult = vec3(0.0);
 

@@ -54,7 +54,6 @@ void ComponentMeshRenderer::Update()
 void ComponentMeshRenderer::DrawComponent() 
 {
 	RenderMeshFlags flags = texture;
-
 	ComponentMesh* cmesh = GO->GetComponent<ComponentMesh>();
 
 	if (App->selection->IsSelected(GO))
@@ -72,7 +71,6 @@ void ComponentMeshRenderer::DrawComponent()
 
 void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const 
 {
-
 }
 
 void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
@@ -97,7 +95,6 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 	}
 
 	// --- Draw Face Normals ---
-
 	if (draw_facenormals)
 	{
 		Triangle face;
@@ -129,11 +126,9 @@ json ComponentMeshRenderer::Save() const
 {
 	json node;
 	node["Active"] = this->active;
-
 	node["Resources"]["ResourceMaterial"];
-
 	if(material)
-	node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
+		node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
 
 	return node;
 }
@@ -143,7 +138,6 @@ void ComponentMeshRenderer::Load(json& node)
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 
 	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
-
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
 	if (IMeta) 
@@ -168,18 +162,14 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 
 	switch (type) 
 	{
-	case Resource::ResourceNotificationType::Overwrite:
-		if (material && UID == material->GetUID())
-			material = (ResourceMaterial*)App->resources->GetResource(UID);
-		break;
-
-	case Resource::ResourceNotificationType::Deletion:
-		if (material && UID == material->GetUID())
-			material = nullptr;
-		break;
-
-	default:
-		break;
+		case Resource::ResourceNotificationType::Overwrite:
+			if (material && UID == material->GetUID()) material = (ResourceMaterial*)App->resources->GetResource(UID);
+			break;
+		case Resource::ResourceNotificationType::Deletion:
+			if (material && UID == material->GetUID()) material = nullptr;
+			break;
+		default:
+			break;
 	}
 }
 
@@ -190,7 +180,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	ImGui::Checkbox("Face Normals  ", &draw_facenormals);
 	ImGui::SameLine();
 	ImGui::Checkbox("Checkers", &checkers);
-
 
 	ImGui::NewLine();
 	ImGui::Separator();
@@ -204,7 +193,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
-
+		
 		if (ImGui::TreeNode(material->GetName()))
 		{
 			static ImGuiComboFlags flags = 0;
@@ -217,23 +206,19 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				const char* item_current = material->shader->GetName();
 				if (ImGui::BeginCombo("##Shader", item_current, flags))
 				{
-					//if (!is_default)
-					//{
-					
-						for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
-						{
-							bool is_selected = (item_current == it->second->GetName());
+					for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+					{
+						bool is_selected = (item_current == it->second->GetName());
 
-							if (ImGui::Selectable(it->second->GetName(), is_selected))
-							{
-								item_current = it->second->GetName();
-								material->shader = it->second;
-								material->shader->GetAllUniforms(material->uniforms);
-							}
-							if (is_selected)
-								ImGui::SetItemDefaultFocus();
+						if (ImGui::Selectable(it->second->GetName(), is_selected))
+						{
+							item_current = it->second->GetName();
+							material->shader = it->second;
+							material->shader->GetAllUniforms(material->uniforms);
 						}
-					//}
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
 
 					ImGui::EndCombo();
 				}
@@ -319,10 +304,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Albedo");
 
 				ImGui::SameLine();
-				if (ImGui::Button("Unuse", { 43, 18 }) && material->m_DiffuseResTexture)
+				if (ImGui::Button("UnuseDiff", { 77, 18 }) && material->m_DiffuseResTexture)
 				{
 					material->m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
 					material->m_DiffuseResTexture->Release();
+					material->m_DiffuseResTexture = nullptr;
 				}
 
 
@@ -374,66 +360,68 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Specular");
 
 				ImGui::SameLine();
-				if (ImGui::Button("Unuse", { 43, 18 }) && material->m_SpecularResTexture)
+				if (ImGui::Button("UnuseSpec", { 77, 18 }) && material->m_SpecularResTexture)
 				{
 					material->m_SpecularResTexture->RemoveUser(GetContainerGameObject());
 					material->m_SpecularResTexture->Release();
+					material->m_SpecularResTexture = nullptr;
 				}
-			}
 
-			
-			// --- Print Texture Width and Height (Normal) ---
-			textSizeX = textSizeY = 0;
-			ImGui::NewLine();
-			if (material->m_NormalResTexture)
-			{
-				textSizeX = material->m_NormalResTexture->Texture_width;
-				textSizeY = material->m_NormalResTexture->Texture_height;
-			}
 
-			ImGui::Text(std::to_string(textSizeX).c_str());
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(textSizeY).c_str());
-
-			if (material->m_NormalResTexture)
-				ImGui::ImageButton((void*)(uint)material->m_NormalResTexture->GetPreviewTexID(), ImVec2(20, 20));
-			else
-				ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-
-			// --- Handle drag & drop (Specular Texture) ---
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+				// --- Print Texture Width and Height (Normal) ---
+				textSizeX = textSizeY = 0;
+				ImGui::NewLine();
+				if (material->m_NormalResTexture)
 				{
-					uint UID = *(const uint*)payload->Data;
-					Resource* resource = App->resources->GetResource(UID, false);
-
-					if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
-					{
-						if (material->m_NormalResTexture)
-							material->m_NormalResTexture->Release();
-
-						material->m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-						// --- Save material so we update path to texture ---
-						ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-						if (IMat)
-							IMat->Save(material);
-					}
+					textSizeX = material->m_NormalResTexture->Texture_width;
+					textSizeY = material->m_NormalResTexture->Texture_height;
 				}
 
-				ImGui::EndDragDropTarget();
-			}
+				ImGui::Text(std::to_string(textSizeX).c_str());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(textSizeY).c_str());
 
-			ImGui::SameLine();
-			ImGui::Text("Normal Map");
+				if (material->m_NormalResTexture)
+					ImGui::ImageButton((void*)(uint)material->m_NormalResTexture->GetPreviewTexID(), ImVec2(20, 20));
+				else
+					ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
 
-			ImGui::SameLine();
-			if (ImGui::Button("Unuse", { 43, 18 }) && material->m_NormalResTexture)
-			{
-				material->m_NormalResTexture->RemoveUser(GetContainerGameObject());
-				material->m_NormalResTexture->Release();
+				// --- Handle drag & drop (Specular Texture) ---
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+					{
+						uint UID = *(const uint*)payload->Data;
+						Resource* resource = App->resources->GetResource(UID, false);
+
+						if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+						{
+							if (material->m_NormalResTexture)
+								material->m_NormalResTexture->Release();
+
+							material->m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+
+							// --- Save material so we update path to texture ---
+							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+
+							if (IMat)
+								IMat->Save(material);
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::SameLine();
+				ImGui::Text("Normal Map");
+
+				ImGui::SameLine();
+				if (ImGui::Button("UnuseNorm", { 77, 18 }) && material->m_NormalResTexture)
+				{
+					material->m_NormalResTexture->RemoveUser(GetContainerGameObject());
+					material->m_NormalResTexture->Release();
+					material->m_NormalResTexture = nullptr;
+				}
 			}
 
 			ImGui::TreePop();

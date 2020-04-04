@@ -43,7 +43,8 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 
 	// --- Import scene from path ---
 	if (App->fs->Exists(MData.path))
-		scene = aiImportFile(MData.path, aiProcessPreset_TargetRealtime_MaxQuality);
+		scene = aiImportFile(MData.path, aiProcessPreset_TargetRealtime_MaxQuality
+		| aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 
 	GameObject* rootnode = nullptr;
 

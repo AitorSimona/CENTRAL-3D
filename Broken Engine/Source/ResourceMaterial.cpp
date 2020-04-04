@@ -155,12 +155,13 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::Text("Albedo");
 
-	//ImGui::SameLine();
-	//if (ImGui::Button("Unuse", { 43, 18 }) && m_DiffuseResTexture)
-	//{
-	//	m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
-	//	m_DiffuseResTexture->Release();
-	//}
+	ImGui::SameLine();
+	if (ImGui::Button("UnuseDiff", { 77, 18 }) && m_DiffuseResTexture)
+	{
+		//m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
+		m_DiffuseResTexture->Release();
+		m_DiffuseResTexture = nullptr;
+	}
 
 
 	// --- Print Texture Width and Height (Specular)
@@ -211,12 +212,13 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::Text("Specular");
 
-	//ImGui::SameLine();
-	//if (ImGui::Button("Unuse", { 43, 18 }) && m_SpecularResTexture)
-	//{
-	//	m_SpecularResTexture->RemoveUser(GetContainerGameObject());
-	//	m_SpecularResTexture->Release();
-	//}
+	ImGui::SameLine();
+	if (ImGui::Button("UnuseSpec", { 77, 18 }) && m_SpecularResTexture)
+	{
+		//m_SpecularResTexture->RemoveUser(GetContainerGameObject());
+		m_SpecularResTexture->Release();
+		m_SpecularResTexture = nullptr;
+	}
 
 	// --- Print Texture Width and Height (Normal)
 	textSizeX = textSizeY = 0;
@@ -266,12 +268,13 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::Text("Normal Map");
 
-	//ImGui::SameLine();
-	//if (ImGui::Button("Unuse", { 43, 18 }) && m_NormalResTexture)
-	//{
-	//	m_NormalResTexture->RemoveUser(GetContainerGameObject());
-	//	m_NormalResTexture->Release();
-	//}
+	ImGui::SameLine();
+	if (ImGui::Button("UnuseNorm", { 77, 18 }) && m_NormalResTexture)
+	{
+		//m_NormalResTexture->RemoveUser(GetContainerGameObject());
+		m_NormalResTexture->Release();
+		m_NormalResTexture = nullptr;
+	}
 }
 
 void ResourceMaterial::UpdateUniforms() 
