@@ -38,6 +38,8 @@ public:
 	void OnUpdateTransform(const float4x4& global);
 
 	bool ContainsAABB(const AABB& ref);
+	float2 WorldToScreen(const float3& pos);
+	float3 ScreenToWorld(const float2& pos, float distance);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Camera; };
 
