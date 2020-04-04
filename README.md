@@ -81,10 +81,7 @@ You have just created your own shader!
 
 ## ASSET IMPORT
 
-Drop it inside window 2 times, first for importing, second for loading, you can also drag it from project window 
-to hierarchy (on the window title).
-
-In this specific release only shaders are imported at startup, default scene is loaded.
+Drop it inside window, then drag resource from project window to scene.
 
 ## DEBUG
 
