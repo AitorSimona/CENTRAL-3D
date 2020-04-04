@@ -4,6 +4,9 @@
 #include "ModuleSceneManager.h"
 #include "ModulePhysics.h"
 #include "ModuleFileSystem.h"
+#include "GameObject.h"
+#include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "ModuleScripting.h"
 
 #include "ResourceScene.h"
@@ -48,16 +51,17 @@ void ModuleTimeManager::PrepareUpdate() {
 			App->scene_manager->currentScene->CopyInto(App->scene_manager->temporalScene);
 			App->scene_manager->SaveScene(App->scene_manager->temporalScene);
 
+
 			ENGINE_CONSOLE_LOG("APP STATE PLAY");
 			break;
 
 		case AppState::PLAY:
-			if (gamePaused) 
+			if (gamePaused)
 			{
 				time -= realtime_dt;
 				game_dt = 0.0f;
 			}
-			else 
+			else
 			{
 				//App->scene_manager->SetSelectedGameObject(nullptr);
 				game_dt *= Time_scale;
@@ -80,6 +84,15 @@ void ModuleTimeManager::PrepareUpdate() {
 		case AppState::TO_EDITOR:
 			if (App->isGame == false)
 			App->scripting->StopDebugging();
+			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->NoStaticGameObjects.begin(); it != App->scene_manager->currentScene->NoStaticGameObjects.end(); ++it)
+			{
+				App->physics->DeleteActors((*it).second);
+			}
+
+			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->StaticGameObjects.begin(); it != App->scene_manager->currentScene->StaticGameObjects.end(); ++it)
+			{
+				App->physics->DeleteActors((*it).second);
+			}
 
 			App->physics->DeleteActors();
 

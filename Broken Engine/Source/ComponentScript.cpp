@@ -255,6 +255,7 @@ void ComponentScript::Load(json& node)
 	// Load the public variables of the script
 	char name[50];
 	uint cnt = node["Script variables"]["Count"];
+	script_variables.resize(cnt);
 
 	for (int i = 0; i < cnt; ++i) {
 

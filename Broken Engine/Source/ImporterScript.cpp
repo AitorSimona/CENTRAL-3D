@@ -27,6 +27,8 @@ Resource* ImporterScript::Import(ImportData& IData) const {
 	d_pos = abs_path.find("Debug");
 	std::size_t r_pos = 0;
 	r_pos = abs_path.find("Release");
+	std::size_t g_pos = 0;
+	g_pos = abs_path.find("Game");
 
 	if (d_pos != 4294967295)  // If we are in DEBUG
 	{
@@ -37,6 +39,10 @@ Resource* ImporterScript::Import(ImportData& IData) const {
 	{
 		abs_path = abs_path.substr(0,r_pos);
 		abs_path += "Game/";
+	}
+	else if (g_pos != 4294967295) // If we are in a EXE final build
+	{
+		abs_path = abs_path.substr(0, g_pos);
 	}
 	
 	abs_path += IData.path;
@@ -91,10 +97,10 @@ Resource* ImporterScript::Load(const char* path) const {
 		abs_path += "Game/";
 	}
 
-	//if (g_pos != 4294967295) // If we are in a EXE final build
-	//{
-	//	abs_path = abs_path.substr(0, g_pos);
-	//}
+	if (g_pos != 4294967295) // If we are in a EXE final build
+	{
+		abs_path = abs_path.substr(0, g_pos);
+	}
 	
 	abs_path += path;
 	App->fs->NormalizePath(abs_path);

@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "ComponentAudioListener.h"
+#include "ModuleGui.h"
 
 #include "Imgui/imgui.h"
 
@@ -133,6 +134,25 @@ bool ComponentCamera::ContainsAABB(const AABB& ref) {
 		return true;
 	// we must be partly in then otherwise
 	return true;
+}
+
+float2 ComponentCamera::WorldToScreen(const float3& pos) {
+	float2 ret;
+	float4x4 viewProjectionMatrix = frustum.ProjectionMatrix() * frustum.ViewMatrix();
+
+	float3 t_pos = viewProjectionMatrix.MulPos(pos);
+	ret.x = math::RoundInt(((t_pos.x + 1.0) / 2.0) * App->gui->sceneWidth);
+	ret.y = math::RoundInt(((1.0 - t_pos.y) / 2.0) * App->gui->sceneHeight);
+
+	return ret;
+}
+
+float3 ComponentCamera::ScreenToWorld(const float2& pos, float distance) {
+	float3 ret = { frustum.ScreenToViewportSpace(pos, App->gui->sceneWidth, App->gui->sceneHeight), 
+		           -distance };
+
+	ret = frustum.WorldMatrix().MulPos(ret);
+	return ret;
 }
 
 json ComponentCamera::Save() const {

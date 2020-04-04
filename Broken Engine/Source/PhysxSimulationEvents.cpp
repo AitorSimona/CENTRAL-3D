@@ -18,26 +18,53 @@ void PhysxSimulationEvents::onContact(const physx::PxContactPairHeader& pairHead
 	{
 		const physx::PxContactPair& cp = pairs[i];
 
-		//cp.event get if touching Enter/Stay/Exit
-		if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
-		{
-			GameObject* go1 = nullptr;
-			GameObject* go2 = nullptr;
-			go1 = App->physics->actors[pairHeader.actors[0]];
-			go2 = App->physics->actors[pairHeader.actors[1]];
+		GameObject* go1 = nullptr;
+		GameObject* go2 = nullptr;
+		go1 = App->physics->actors[pairHeader.actors[0]];
+		go2 = App->physics->actors[pairHeader.actors[1]];
 
-			if (go1 && go2)
-			{
+		if (go1 && go2)
+		{
+			ComponentScript* script = go1->GetComponent<ComponentScript>();
+			ComponentScript* script2 = go2->GetComponent<ComponentScript>();
+
+			if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+			{		
 				go1->collisions.at(ONCOLLISION_ENTER) = go2;
 				go2->collisions.at(ONCOLLISION_ENTER) = go1;
 				
 				ScriptFunc function;
 				function.name = "OnCollisionEnter";
 
-				ComponentScript* script = go1->GetComponent<ComponentScript>();
-				ComponentScript* script2 = go2->GetComponent<ComponentScript>();
-
 				if(script)
+					App->scripting->CallbackScriptFunction(script, function);
+				if (script2)
+					App->scripting->CallbackScriptFunction(script2, function);			
+			}
+
+			else if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+			{
+				go1->collisions.at(ONCOLLISION_STAY) = go2;
+				go2->collisions.at(ONCOLLISION_STAY) = go1;
+
+				ScriptFunc function;
+				function.name = "OnCollisionStay";
+
+				if (script)
+					App->scripting->CallbackScriptFunction(script, function);
+				if (script2)
+					App->scripting->CallbackScriptFunction(script2, function);
+			}
+
+			else if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
+			{
+				go1->collisions.at(ONCOLLISION_EXIT) = go2;
+				go2->collisions.at(ONCOLLISION_EXIT) = go1;
+
+				ScriptFunc function;
+				function.name = "OnCollisionExit";
+
+				if (script)
 					App->scripting->CallbackScriptFunction(script, function);
 				if (script2)
 					App->scripting->CallbackScriptFunction(script2, function);
@@ -59,7 +86,9 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 		go1 = App->physics->actors[pairs->triggerActor];
 		go2 = App->physics->actors[pairs->otherActor];
 
-		//pairs[i].status get if touching Enter/Stay/Exit
+		ComponentScript* script = go1->GetComponent<ComponentScript>();
+		ComponentScript* script2 = go2->GetComponent<ComponentScript>();
+
 		if (go1 && go2 && (pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND))
 		{
 			go1->collisions.at(ONTRIGGER_ENTER) = go2;
@@ -68,8 +97,19 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 			ScriptFunc function;
 			function.name = "OnTriggerEnter";
 
-			ComponentScript* script = go1->GetComponent<ComponentScript>();
-			ComponentScript* script2 = go2->GetComponent<ComponentScript>();
+			if (script)
+				App->scripting->CallbackScriptFunction(script, function);
+			if (script2)
+				App->scripting->CallbackScriptFunction(script2, function);
+		}
+		
+		else if (go1 && go2 && (pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST))
+		{
+			go1->collisions.at(ONTRIGGER_EXIT) = go2;
+			go2->collisions.at(ONTRIGGER_EXIT) = go1;
+
+			ScriptFunc function;
+			function.name = "OnTriggerExit";
 
 			if (script)
 				App->scripting->CallbackScriptFunction(script, function);
