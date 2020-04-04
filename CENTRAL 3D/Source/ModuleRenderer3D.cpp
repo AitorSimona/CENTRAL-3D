@@ -119,7 +119,7 @@ bool ModuleRenderer3D::Init(json file)
 
 	// --- Create camera to take model/meshes screenshots ---
 	screenshot_camera = new ComponentCamera(nullptr);
-	screenshot_camera->frustum.SetPos(float3(0.0f, 150.0f, -550.0f));
+	screenshot_camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
 	screenshot_camera->SetFOV(60.0f);
 	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
 
@@ -445,10 +445,6 @@ uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*> scene_gos, 
 	// --- Unbind fbo ---
 	if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	//// --- To prevent problems with viewports, disabled due to crashes and conflicts with docking, sets a window as current rendering context ---
-	//SDL_GL_MakeCurrent(App->window->window, context);
-	SDL_GL_SwapWindow(App->window->window);
 
 	// --- Clear render orders ---
 	ClearRenderOrders();
