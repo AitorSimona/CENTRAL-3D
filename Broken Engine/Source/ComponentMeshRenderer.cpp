@@ -173,7 +173,7 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 	}
 }
 
-void ComponentMeshRenderer::CreateInspectorNode() 
+void ComponentMeshRenderer::CreateInspectorNode()
 {
 	ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
 	ImGui::SameLine();
@@ -187,13 +187,13 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 	// --- Material node ---
 	if (material)
-	{	
+	{
 		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
 
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
-		
+
 		if (ImGui::TreeNode(material->GetName()))
 		{
 			static ImGuiComboFlags flags = 0;
@@ -437,29 +437,26 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			}
 		}
 	}
-	else
+
+	// --- Handle drag & drop ---
+	ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+	if (ImGui::BeginDragDropTarget())
 	{
-		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
-
-		// --- Handle drag & drop ---
-		if (ImGui::BeginDragDropTarget()) 
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) 
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::MATERIAL)
 			{
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
-
-				if (resource && resource->GetType() == Resource::ResourceType::MATERIAL) 
-				{			
-					material = (ResourceMaterial*)App->resources->GetResource(UID);
-				}
+				material = (ResourceMaterial*)App->resources->GetResource(UID);
 			}
-
-			ImGui::EndDragDropTarget();
 		}
-		ImGui::SameLine();
-		ImGui::Text("Drop Material");
+
+		ImGui::EndDragDropTarget();
 	}
+	ImGui::SameLine();
+	ImGui::Text("Drop Material");
 
 	ImGui::PopID();
 }
