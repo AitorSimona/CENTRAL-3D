@@ -261,20 +261,18 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 
 	json file;
 
-	if (mat->previewTexPath == "")
-	{
-		// --- Create preview Texture ---
-		std::vector<GameObject*> gos;
-		GameObject* tmpgo = App->scene_manager->LoadSphere();
-		gos.push_back(tmpgo);
-		tmpgo->GetComponent<ComponentMeshRenderer>()->material->Release();
-		tmpgo->GetComponent<ComponentMeshRenderer>()->material->RemoveUser(tmpgo);
-		tmpgo->GetComponent<ComponentMeshRenderer>()->material = (ResourceMaterial*)App->resources->GetResource(mat->GetUID());
+	// --- Create preview Texture ---
+	std::vector<GameObject*> gos;
+	GameObject* tmpgo = App->scene_manager->LoadSphere();
+	gos.push_back(tmpgo);
+	tmpgo->GetComponent<ComponentMeshRenderer>()->material->Release();
+	tmpgo->GetComponent<ComponentMeshRenderer>()->material->RemoveUser(tmpgo);
+	tmpgo->GetComponent<ComponentMeshRenderer>()->material = (ResourceMaterial*)App->resources->GetResource(mat->GetUID());
 
-		mat->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(gos, mat->previewTexPath));
+	mat->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(gos, mat->previewTexPath));
 
-		App->scene_manager->DestroyGameObject(tmpgo);
-	}
+	App->scene_manager->DestroyGameObject(tmpgo);
+	
 
 	file[mat->GetName()];
 	file["ResourceDiffuse"];
