@@ -193,6 +193,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// Maths
 		.addFunction("CompareFloats", &ScriptingSystem::FloatNumsAreEqual)
 		.addFunction("CompareDoubles", &ScriptingSystem::DoubleNumsAreEqual)
+		.addFunction("RandomNumber", &ScriptingSystem::RandomNumber)
+		.addFunction("RandomNumberInRange", &ScriptingSystem::RandomNumberInRange)
+		.addFunction("RandomNumberList", &ScriptingSystem::RandomNumberList)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -649,7 +652,6 @@ void ModuleScripting::CallbackScriptFunctionParam(ComponentScript* script_compon
 		ENGINE_CONSOLE_LOG("Can't callback %s since component has a null script instance", aux_str.c_str());
 	}
 }
-
 
 bool ModuleScripting::Init(json& file) {
 	// Create the Virtual Machine
