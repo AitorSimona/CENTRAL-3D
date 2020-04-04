@@ -378,29 +378,30 @@ uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*> scene_gos, 
 
 	AABB aabb;
 	aabb.SetNegativeInfinity();
-	float3* points = new float3[scene_gos.size()];
 
 	for (uint i = 0; i < scene_gos.size(); ++i)
 	{
 		scene_gos[i]->Draw();
-		points[i] = scene_gos[i]->GetAABB().CenterPoint();
+		aabb.Enclose(scene_gos[i]->GetAABB());
 	}
 
-	aabb.Enclose(points, scene_gos.size());
-
 	// --- Frame aabb ---
+	screenshot_camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
+	screenshot_camera->SetFOV(60.0f);
+	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
+
 	float3 center = aabb.CenterPoint();
 
 	ComponentCamera* previous_cam = active_camera;
 	SetActiveCamera(screenshot_camera);
 
-	float3 Movement = active_camera->frustum.Front() * (2 * aabb.Diagonal().Length());
+	float diagonal = aabb.Diagonal().Length()*0.75f;
+
+	float3 Movement = active_camera->frustum.Front() * (diagonal);
 
 	if (Movement.IsFinite())
 		screenshot_camera->frustum.SetPos(center - Movement);
 	
-	delete[] points;
-
 	PreUpdate(0.0f);
 
 	// --- Set Shader Matrices ---
@@ -433,8 +434,8 @@ uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*> scene_gos, 
 	// --- Do not write to the stencil buffer ---
 	glStencilMask(0x00);
 
-	// --- Draw Grid ---
-	DrawGrid();
+	//// --- Draw Grid ---
+	//DrawGrid();
 
 	// --- Draw ---
 	DrawRenderMeshes();

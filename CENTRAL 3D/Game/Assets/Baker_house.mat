@@ -5,6 +5,7 @@
         "G": 1.0,
         "R": 1.0
     },
+    "PreviewTexture": "Library/Textures/527618516.dds",
     "ResourceDiffuse": null,
     "shader": {
         "ResourceShader": "Assets/Shaders/Standard.glsl",

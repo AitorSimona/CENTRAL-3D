@@ -3,6 +3,8 @@
 #include "ModuleFileSystem.h"
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
+#include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "ResourceMaterial.h"
 #include "ResourceShader.h"
@@ -11,6 +13,9 @@
 
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
+
+#include "GameObject.h"
+#include "ComponentMeshRenderer.h"
 
 #include "ImporterTexture.h"
 #include "OpenGL.h"
@@ -121,6 +126,18 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 	if (!file.is_null())
 	{
+		// --- Load Tex preview ---
+		std::string previewTexpath = file["PreviewTexture"].is_null() ? "none" : file["PreviewTexture"];
+		uint width, height = 0;
+
+		if (previewTexpath != "none" && App->fs->Exists(previewTexpath.c_str()))
+		{
+			mat->previewTexPath = previewTexpath;
+			mat->SetPreviewTexID(App->textures->CreateTextureFromFile(mat->previewTexPath.c_str(), width, height));
+		}
+
+		//------
+
 		if (!file["Color"].is_null())
 			mat->color = Color(file["Color"]["R"].get<float>(), file["Color"]["G"].get<float>(), file["Color"]["B"].get<float>());
 
@@ -244,8 +261,24 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 
 	json file;
 
+	if (mat->previewTexPath == "")
+	{
+		// --- Create preview Texture ---
+		std::vector<GameObject*> gos;
+		GameObject* tmpgo = App->scene_manager->LoadSphere();
+		gos.push_back(tmpgo);
+		tmpgo->GetComponent<ComponentMeshRenderer>()->material->Release();
+		tmpgo->GetComponent<ComponentMeshRenderer>()->material->RemoveUser(tmpgo);
+		tmpgo->GetComponent<ComponentMeshRenderer>()->material = (ResourceMaterial*)App->resources->GetResource(mat->GetUID());
+
+		mat->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(gos, mat->previewTexPath));
+
+		App->scene_manager->DestroyGameObject(tmpgo);
+	}
+
 	file[mat->GetName()];
 	file["ResourceDiffuse"];
+	file["PreviewTexture"] = mat->previewTexPath;
 	file["Color"];
 
 	// --- Save Shader and Uniforms ---

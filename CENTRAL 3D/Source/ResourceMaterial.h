@@ -22,6 +22,7 @@ public:
 	void UpdateUniforms();
 	void DisplayAndUpdateUniforms();
 
+	std::string previewTexPath;
 public:
 	ResourceTexture* resource_diffuse = nullptr;
 	ResourceShader* shader = nullptr;

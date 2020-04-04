@@ -308,11 +308,14 @@ Resource* ImporterModel::Load(const char* path) const
 		std::string previewTexpath = file["PreviewTexture"].is_null() ? "none" : file["PreviewTexture"];
 		uint width, height = 0;
 
-		if (previewTexpath != "none" && App->fs->Exists(resource->previewTexPath.c_str()))
+		if (previewTexpath != "none" && App->fs->Exists(previewTexpath.c_str()))
 		{
 			resource->previewTexPath = previewTexpath;
 			resource->SetPreviewTexID(App->textures->CreateTextureFromFile(resource->previewTexPath.c_str(), width, height));
 		}
+
+		//------
+
 
 		// --- Iterate main nodes ---
 		for (json::iterator it = file.begin(); it != file.end(); ++it)

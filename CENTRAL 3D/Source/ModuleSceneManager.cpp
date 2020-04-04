@@ -72,27 +72,11 @@ bool ModuleSceneManager::Init(json file)
 
 bool ModuleSceneManager::Start()
 {
-	// --- Create primitives ---
-	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
-	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
-	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
-	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
-
-	CreateCube(1, 1, 1, cube);
-	CreateSphere(1.0f, 25, 25, sphere);
-	CreateCapsule(1, 1, capsule);
-	CreatePlane(1, 1, 1, plane);
-
-	cube->LoadToMemory();
-	sphere->LoadToMemory();
-	capsule->LoadToMemory();
-	plane->LoadToMemory();
-
 	// --- Always load default scene ---
-	defaultScene->LoadToMemory();
+	App->scene_manager->defaultScene->LoadToMemory();
 
 	// --- Create temporal scene for play/stop ---
-	temporalScene = (Resource*)new ResourceScene(App->GetRandom().Int(), "Temp/TemporalScene.scene");
+	App->scene_manager->temporalScene = (Resource*)new ResourceScene(App->GetRandom().Int(), "Temp/TemporalScene.scene");
 
 	return true;
 }
@@ -126,8 +110,8 @@ bool ModuleSceneManager::CleanUp()
 {
 	root->RecursiveDelete();
 
-	if (temporalScene != nullptr)
-		delete temporalScene;
+	if (App->scene_manager->temporalScene != nullptr)
+		delete App->scene_manager->temporalScene;
 
 	delete root;
 	root = nullptr;

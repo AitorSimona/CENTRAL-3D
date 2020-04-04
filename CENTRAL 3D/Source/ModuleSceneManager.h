@@ -92,6 +92,14 @@ public:
 	bool display_tree = false;
 	ResourceScene* currentScene = nullptr;
 
+	// --- Do not modify, just use ---
+	ResourceMesh* cube = nullptr;
+	ResourceMesh* sphere = nullptr;
+	ResourceMesh* capsule = nullptr;
+	ResourceMesh* plane = nullptr;
+	ResourceMesh* cylinder = nullptr;
+	ResourceMesh* disk = nullptr;
+
 	// do not destroy
 	ResourceScene* defaultScene = nullptr;
 	ResourceScene* temporalScene = nullptr;
@@ -100,14 +108,6 @@ private:
 
 	// Game objects to be deleted
 	std::vector<GameObject*> go_to_delete;
-
-	// --- Do not modify, just use ---
-	ResourceMesh* cube = nullptr;
-	ResourceMesh* sphere = nullptr;
-	ResourceMesh* capsule = nullptr;
-	ResourceMesh* plane = nullptr;
-	ResourceMesh* cylinder = nullptr;
-	ResourceMesh* disk = nullptr;
 
 	uint go_count = 0;
 	GameObject* root = nullptr;

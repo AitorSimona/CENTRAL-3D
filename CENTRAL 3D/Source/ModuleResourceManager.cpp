@@ -60,12 +60,28 @@ bool ModuleResourceManager::Start()
 	// --- Set engine's basic shaders ---
 	App->renderer3D->CreateDefaultShaders();
 
+	// --- Create default material ---
+	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
+
+	// --- Create primitives ---
+	App->scene_manager->cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
+	App->scene_manager->sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
+	App->scene_manager->capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
+	App->scene_manager->plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
+
+	App->scene_manager->CreateCube(1, 1, 1, App->scene_manager->cube);
+	App->scene_manager->CreateSphere(1.0f, 25, 25, App->scene_manager->sphere);
+	App->scene_manager->CreateCapsule(1, 1, App->scene_manager->capsule);
+	App->scene_manager->CreatePlane(1, 1, 1, App->scene_manager->plane);
+
+	App->scene_manager->cube->LoadToMemory();
+	App->scene_manager->sphere->LoadToMemory();
+	App->scene_manager->capsule->LoadToMemory();
+	App->scene_manager->plane->LoadToMemory();
+
 	// --- Create default scene ---
 	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene", 1);
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
-
-	// --- Create default material ---
-	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
 
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
@@ -83,6 +99,7 @@ bool ModuleResourceManager::Start()
 
 	// --- Tell Windows to notify us when changes to given directory and subtree occur ---
 	App->fs->WatchDirectory(ASSETS_FOLDER);
+
 
 	return true;
 }
