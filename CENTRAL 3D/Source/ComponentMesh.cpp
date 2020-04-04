@@ -34,25 +34,29 @@ const AABB & ComponentMesh::GetAABB() const
 json ComponentMesh::Save() const
 {
 	json node;
-	node["Resources"]["ResourceMesh"];
+	node["Resources"]["ResourceMesh"]["path"];
 
 	// --- Store path to component file ---
 	if (resource_mesh)
-		node["Resources"]["ResourceMesh"] = std::string(resource_mesh->GetResourceFile());
+	{
+		node["Resources"]["ResourceMesh"]["PreviewTexture"] = resource_mesh->previewTexPath; // for now we save this here 
+		node["Resources"]["ResourceMesh"]["path"] = std::string(resource_mesh->GetResourceFile());
+	}
 
 	return node;
 }
 
 void ComponentMesh::Load(json& node)
 {
-	std::string path = node["Resources"]["ResourceMesh"].is_null() ? "" : node["Resources"]["ResourceMesh"];
+	std::string path = node["Resources"]["ResourceMesh"]["path"].is_null() ? "-1" : node["Resources"]["ResourceMesh"]["path"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
 
 	if (resource_mesh)
 		resource_mesh->Release();
 
-	resource_mesh = (ResourceMesh*)App->resources->GetResource(std::stoi(path));
+	if(std::stoi(path) != -1)
+		resource_mesh = (ResourceMesh*)App->resources->GetResource(std::stoi(path));
 
 	// --- We want to be notified of any resource event ---
 	if (resource_mesh)

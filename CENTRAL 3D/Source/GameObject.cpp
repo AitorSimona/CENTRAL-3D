@@ -147,19 +147,22 @@ void GameObject::OnUpdateTransform()
 void GameObject::RemoveChildGO(GameObject * GO)
 {
 	// --- Remove given child from list ---
-	if (GO && childs.size() > 0)
+	if (GO 
+		&& GO->index >= 0 
+		&& GO->index < childs.size() 
+		&& childs[GO->index] != nullptr 
+		&& GO->GetUID() == childs[GO->index]->GetUID()) 
 	{
-		for (std::vector<GameObject*>::iterator go = childs.begin(); go != childs.end(); ++go)
-		{
-			if (*go == nullptr)
-				continue;
+		childs.erase(childs.begin() + GO->index);
 
-			if ((*go)->GetUID() == GO->GetUID())
-			{				
-				childs.erase(go);
-				break;
-			}
+		// --- We update the indices of the rest of childs ---
+		for (int i = GO->index; i < childs.size(); ++i)
+		{
+			if (childs[i] != nullptr) 
+				childs[i]->index -= 1;
 		}
+
+		GO->index = -1;
 	}
 }
 
@@ -172,6 +175,7 @@ void GameObject::AddChildGO(GameObject * GO, int index)
 		if (GO->parent != nullptr)
 			GO->parent->RemoveChildGO(GO);
 
+		// --- Update parent ---
 		GO->parent = this;
 
 		// --- If index was specified, insert ---
@@ -207,23 +211,23 @@ void GameObject::InsertChildGO(GameObject* GO, int index)
 	{
 		if (index >= 0 && index < childs.size())
 		{
-			// --- If it has a parent we remove it from its parent --
+			// --- Remove GO from current parent's childs, if it exists --
 			if (GO->parent)
 				GO->parent->RemoveChildGO(GO);
 
 			GO->parent = this;
 
-			// --- We accomodate for the new size ---
+			// --- Resize vector to fit new size ---
 			childs.resize(childs.size() + 1);
 
-			// --- We move all the GOs from index one position up ---
+			// --- Move all the GOs starting from index one position up ---
 			for (int i = childs.size() - 1; i > index; --i) 
 			{
 				childs[i] = childs[i - 1];
 				childs[i]->index = i;
 			}
 
-			// --- We insert the new child ---
+			// --- Insert new child ---
 			childs[index] = GO;
 			GO->index = index;
 		}
@@ -236,9 +240,9 @@ bool GameObject::FindChildGO(GameObject * GO)
 	// --- Look for given GO in child list and return true if found ---
 	bool ret = false;
 
-	if (GO != nullptr) 
+	if (GO) 
 	{
-		if (GO->index >= 0 && GO->index < childs.size() && childs[GO->index] != nullptr) 
+		if (GO->index >= 0 && GO->index < childs.size() && childs[GO->index]) 
 			ret = GO->GetUID() == childs[GO->index]->GetUID();	
 	}
 

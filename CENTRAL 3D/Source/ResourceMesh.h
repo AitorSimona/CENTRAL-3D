@@ -26,7 +26,7 @@ public:
 	void FreeMemory() override;
 	void CreateInspectorNode() override;
 
-
+	std::string previewTexPath;
 private:
 	void CreateVBO(); 
 	void CreateEBO(); 
