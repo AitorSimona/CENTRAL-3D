@@ -3,6 +3,8 @@
 #include "ModuleFileSystem.h"
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleTextures.h"
 
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
@@ -77,11 +79,15 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
 			model->AddResource(model_meshes[i]);
+			model_meshes[i]->LoadInMemory();
 		}
 		for (uint j = 0; j < model_mats.size(); ++j)
 		{
 			model->AddResource(model_mats[j]);
 		}
+
+		// --- Create preview Texture ---
+		model->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(model_gos, model->previewTexPath));
 
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
@@ -90,6 +96,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		FreeSceneMaterials(&model_mats);
 		FreeSceneMeshes(&model_meshes);
 
+		// --- Delete all go data ---
 		App->scene_manager->DestroyGameObject(rootnode);
 
 		// --- Free scene ---
@@ -289,9 +296,22 @@ Resource* ImporterModel::Load(const char* path) const
 
 	if (!file.is_null())
 	{
+		// --- Load Tex preview ---
+		std::string previewTexpath = file["PreviewTexture"].is_null() ? "none" : file["PreviewTexture"];
+		uint width, height = 0;
+
+		if (resource->previewTexPath != "none" && App->fs->Exists(resource->previewTexPath.c_str()))
+		{
+			resource->previewTexPath = previewTexpath;
+			resource->SetPreviewTexID(App->textures->CreateTextureFromFile(resource->previewTexPath.c_str(), width, height));
+		}
+
 		// --- Iterate main nodes ---
 		for (json::iterator it = file.begin(); it != file.end(); ++it)
 		{
+			if (it.key() == "PreviewTexture")
+				continue;
+
 			// --- Iterate components ---
 			json components = file[it.key()]["Components"];
 
@@ -343,6 +363,9 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			// --- Iterate main nodes ---
 			for (json::iterator it = file.begin(); it != file.end(); ++it)
 			{
+				if (it.key() == "PreviewTexture")
+					continue;
+
 				// --- Retrieve GO's UID ---
 				std::string uid = file[it.key()]["UID"];
 
@@ -415,6 +438,8 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 	// --- Save Model to file ---
 
 	json file;
+
+	file["PreviewTexture"] = model->previewTexPath;
 
 	for (int i = 0; i < model_gos.size(); ++i)
 	{

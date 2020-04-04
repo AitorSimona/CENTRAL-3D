@@ -47,6 +47,7 @@ public:
 	void SetResourceFile(const char* new_path); // for temporal scene 
 	void SetUID(uint UID);
 	void SetName(const char* name);
+	void SetPreviewTexID(uint ID);
 
 	bool IsInMemory() const;
 	bool LoadToMemory();

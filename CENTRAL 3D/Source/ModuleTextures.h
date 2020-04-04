@@ -24,6 +24,8 @@ public:
 	uint GetCheckerTextureID() const;
 	uint GetDefaultTextureID() const;
 
+	uint CreateAndSaveTextureFromPixels(uint UID, int internalFormat, uint width, uint height, uint format, const void* pixels, std::string& out_path);
+
 private:
 	uint LoadCheckImage() const;
 	uint LoadDefaultTexture() const;

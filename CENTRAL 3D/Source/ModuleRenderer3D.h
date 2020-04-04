@@ -13,6 +13,7 @@ class ResourceShader;
 class ResourceMesh;
 class ResourceMaterial;
 class math::float4x4;
+class GameObject;
 
 typedef int RenderMeshFlags;
 
@@ -88,6 +89,7 @@ public:
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawOBB(const OBB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
+	uint RenderSceneToTexture(std::vector<GameObject*> scene_gos, std::string & out_path);
 
 private:
 	// --- Utilities ---
@@ -132,6 +134,7 @@ public:
 
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
+	ComponentCamera* screenshot_camera = nullptr;
 
 	SDL_GLContext context;
 

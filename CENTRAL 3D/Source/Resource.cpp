@@ -153,4 +153,9 @@ void Resource::SetName(const char * name)
 	this->name = name;
 }
 
+void Resource::SetPreviewTexID(uint ID)
+{
+	previewTexID = ID;
+}
+
 

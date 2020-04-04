@@ -21,9 +21,11 @@ public:
 	std::vector<Resource*>* GetResources();
 
 	bool openInProject = false;
+	std::string previewTexPath;
 private:
 	std::vector<Resource*> resources;
 	bool HasResource(Resource* resource);
+	
 private:
 	void OnOverwrite() override;
 	void OnDelete() override;
