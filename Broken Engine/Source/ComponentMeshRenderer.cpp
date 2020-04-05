@@ -248,7 +248,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Shininess");
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 				ImGui::SetNextItemWidth(300.0f);
-				ImGui::SliderFloat("", &material->m_Shininess, 0.01f, 500.00f);
+				ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f);
 
 				//ImGui::Text("Shader Uniforms");
 
