@@ -90,12 +90,6 @@ void ComponentAnimation::Update()
 
 			if (has_skeleton)
 				UpdateMesh(GO);
-
-			//Debug purposes 
-			/*if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-			{
-				PlayAnimation("Walk");
-			}*/
 		}
 	}
 	else
@@ -389,6 +383,17 @@ void ComponentAnimation::CreateInspectorNode()
 				ImGui::Checkbox(Loop.append(" Loop").c_str(), &animations[i]->loop);
 
 				std::string name1 = animations[i]->name;
+				std::string Preview = "Preview ";
+				Preview = Preview.append(name1);
+				if (ImGui::Button(Preview.c_str()))
+				{
+					if (App->GetAppState() == AppState::PLAY)
+						PlayAnimation(name1.c_str(), animations[i]->speed);
+					else
+						ENGINE_CONSOLE_LOG("To preview an animation game has to be running!");
+				}
+
+
 				std::string Delete = "Delete ";
 				std::string button = Delete.append(name1);
 				if (ImGui::Button(button.c_str()))
