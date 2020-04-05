@@ -132,8 +132,8 @@ void ComponentCharacterController::Draw()
 		int vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 		glUniform3f(vertexColorLocation, 125, 125, 125);
 
-		int TextureSupportLocation = glGetUniformLocation(shaderID, "u_HasTexture");
-		glUniform1i(TextureSupportLocation, -1);
+		int TextureSupportLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+		glUniform1i(TextureSupportLocation, 0);
 
 		// --- Bind mesh's vao ---
 		glBindVertexArray(mesh->VAO);

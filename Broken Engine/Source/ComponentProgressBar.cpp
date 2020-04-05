@@ -30,7 +30,7 @@ ComponentProgressBar::ComponentProgressBar(GameObject* gameObject) : Component(g
 {
 	name = "ProgressBar";
 	visible = true;
-	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
 	canvas->AddElement(this);
 }
@@ -92,12 +92,16 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
-	int TextureLocation = glGetUniformLocation(shaderID, "u_HasTexture");
-	glUniform1i(TextureLocation, 0);
-
-	glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
+	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+	if (texture)
+	{
+		glUniform1i(TextureLocation, 1);
+		glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	}
+	else
+		glUniform1i(TextureLocation, 0);
 
 	//Draw
 	glBindVertexArray(App->scene_manager->plane->VAO);
@@ -201,10 +205,10 @@ void ComponentProgressBar::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imageposition", &position2D.x);
+	ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imageposition", &position2D.y);
+	ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
 
 	// Size Planes
 	ImGui::Text("Bar Size:  ");
@@ -216,10 +220,10 @@ void ComponentProgressBar::CreateInspectorNode()
 	ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
 
 	// Rotation
-	ImGui::Text("Rotation:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("##imagerotation", &rotation2D);
+	//ImGui::Text("Rotation:");
+	//ImGui::SameLine();
+	//ImGui::SetNextItemWidth(60);
+	//ImGui::DragFloat("##imagerotation", &rotation2D);
 
 	// Planes Colors
 	ImGui::Separator();

@@ -162,8 +162,8 @@ void ComponentLight::Draw()
 	uint shaderID = App->renderer3D->defaultShader->ID;
 	glUseProgram(shaderID);
 
-	int TextureLocation = glGetUniformLocation(shaderID, "u_HasTexture");
-	glUniform1i(TextureLocation, -1);
+	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+	glUniform1i(TextureLocation, 0);
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, m_Color.x, m_Color.y, m_Color.z);
 

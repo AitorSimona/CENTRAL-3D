@@ -534,14 +534,14 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
-		"uniform int u_HasTexture;\n"
+		"uniform int u_UseTextures;\n"
 		"in vec3 v_Color; \n"
 		"in vec2 v_TexCoord; \n"
 		"out vec4 color; \n"
 		"uniform sampler2D u_AlbedoTexture; \n"
 		"void main(){ \n"
 		"color = texture(u_AlbedoTexture, v_TexCoord); \n"
-		"if(u_HasTexture == -1)\n"
+		"if(u_UseTextures == -1)\n"
 		"color = vec4(v_Color, 1);\n"
 		"} \n"
 		"#endif //FRAGMENT_SHADER\n"
@@ -770,7 +770,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
 
-		uniform int u_HasTexture;
+		uniform int u_UseTextures;
 		uniform sampler2D u_AlbedoTexture;
 
 		in vec3 v_Color;
@@ -780,7 +780,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		void main()
 		{
 			color = texture(u_AlbedoTexture, v_TexCoord) * vec4(v_Color, 1);
-			if(u_HasTexture == -1)
+			if(u_UseTextures == -1)
 				color = vec4(v_Color, 1);
 		}
 		#endif //FRAGMENT_SHADER)";
@@ -957,11 +957,14 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 
 			if (mesh->mat)
 			{
-				glUniform1i(glGetUniformLocation(shader, "u_HasTexture"), 0);
-				glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
-				glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
 				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
 				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
+				
+				//Textures 
+				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);
+				glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
+				glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
+				glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
 				
 				if (mesh->flags & RenderMeshFlags_::texture)
 				{
@@ -969,28 +972,31 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 						glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
 					else
 					{
-						glUniform1i(glGetUniformLocation(shader, "u_HasTexture"), (int)mesh->mat->m_UseTexture);
+						if (!mesh->mat->m_DiffuseResTexture && !mesh->mat->m_SpecularResTexture && !mesh->mat->m_NormalResTexture)
+							glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), 0);
 
-						if (mesh->mat && mesh->mat->m_DiffuseResTexture)
+						if (mesh->mat->m_DiffuseResTexture)
 						{
+							glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 1);
+							
 							glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 1);
 							glActiveTexture(GL_TEXTURE0 + 1);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
 						}
-						else
-							glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 
-						if (mesh->mat && mesh->mat->m_SpecularResTexture)
+						if (mesh->mat->m_SpecularResTexture)
 						{
-							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 2);
 							glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 1);
+							
+							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 2);
 							glActiveTexture(GL_TEXTURE0 + 2);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
 						}
 
-						if (mesh->mat && mesh->mat->m_NormalResTexture)
+						if (mesh->mat->m_NormalResTexture)
 						{
 							glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 1);
+							
 							glUniform1i(glGetUniformLocation(shader, "u_NormalTexture"), 3);
 							glActiveTexture(GL_TEXTURE0 + 3);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_NormalResTexture->GetTexID());
@@ -1160,8 +1166,7 @@ void ModuleRenderer3D::DrawGrid()
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
 
-	int TextureSupportLocation = glGetUniformLocation(shaderID, "u_HasTexture");
-	glUniform1i(TextureSupportLocation, (int)false);
+	glUniform1i(glGetUniformLocation(shaderID, "u_UseTextures"), 0);
 
 	glLineWidth(1.7f);
 	glBindVertexArray(Grid_VAO);
@@ -1169,8 +1174,7 @@ void ModuleRenderer3D::DrawGrid()
 	glBindVertexArray(0);
 	glLineWidth(1.0f);
 
-	//glUseProgram(0);
-	glUniform1i(TextureSupportLocation, (int)false);
+	glUseProgram(0);
 }
 
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {

@@ -32,7 +32,7 @@ ComponentImage::ComponentImage(GameObject* gameObject) : Component(gameObject, C
 	visible = true;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 	canvas->AddElement(this);
 }
 
@@ -81,16 +81,18 @@ void ComponentImage::Draw()
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	// --- Color & Texturing ---
-	int TextureLocation = glGetUniformLocation(shaderID, "u_HasTexture");
-	glUniform1i(TextureLocation, 1);
-	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
-	glUniform3f(vertexColorLocation, 1.0f, 1.0f, 1.0f);
-
-	glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
-	glActiveTexture(GL_TEXTURE0 + 1);
-
-	if(texture)
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	glUniform3f(glGetUniformLocation(shaderID, "u_Color"), 1.0f, 1.0f, 1.0f);
+	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+	
+	if (texture)
+	{
+		glUniform1i(TextureLocation, 1);
+		glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	}
+	else
+		glUniform1i(TextureLocation, 0);
 
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
@@ -162,24 +164,30 @@ void ComponentImage::CreateInspectorNode()
 	ImGui::SetNextItemWidth(60);
 	if (ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f) && resize)
 	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		if (texture)
 		{
-			if (texture->Texture_width <= texture->Texture_height)
-				size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width <= texture->Texture_height)
+					size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
 		}
 	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
 	if (ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f) && resize)
 	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		if (texture)
 		{
-			if (texture->Texture_width >= texture->Texture_height)
-				size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width >= texture->Texture_height)
+					size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
 		}
 	}
 
@@ -193,10 +201,10 @@ void ComponentImage::CreateInspectorNode()
 	ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
 
 	// Rotation
-	ImGui::Text("Rotation:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("##imagerotation", &rotation2D);
+	//ImGui::Text("Rotation:");
+	//ImGui::SameLine();
+	//ImGui::SetNextItemWidth(60);
+	//ImGui::DragFloat("##imagerotation", &rotation2D);
 
 	// ------------------------------------------
 

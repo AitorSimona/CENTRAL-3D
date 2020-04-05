@@ -148,7 +148,7 @@ void Particle::Draw()
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, color.x, color.y, color.z);
 
-	int TextureLocation = glGetUniformLocation(shaderID, "u_HasTexture");
+	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
 	glUniform1i(TextureLocation, (int)true);
 	//ourTexture
 	glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 0);

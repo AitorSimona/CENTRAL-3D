@@ -12,10 +12,11 @@ layout (location = 4) in vec3 a_Tangent;
 layout (location = 5) in vec3 a_Bitangent;
 
 //Uniforms
-uniform vec3 u_Color = vec3(1.0); //Color
 uniform mat4 u_Model; //model_matrix
 uniform mat4 u_View; //view
 uniform mat4 u_Proj; //projection
+
+uniform vec3 u_Color = vec3(1.0); //Color
 uniform vec3 u_CameraPosition;
 
 //Varyings
@@ -64,11 +65,14 @@ in vec3 v_CamPos;
 in mat3 v_TBN;
 
 //Uniforms
-uniform int u_HasTexture = 0;
+uniform float u_Shininess = 32.0;
+uniform int u_UseTextures = 0;
+
+uniform int u_HasDiffuseTexture = 0;
 uniform int u_HasSpecularTexture = 0;
 uniform int u_HasNormalMap = 0;
 uniform int u_DrawNormalMapping = 0;
-uniform float u_Shininess = 32.0;
+
 uniform sampler2D u_AlbedoTexture;
 uniform sampler2D u_SpecularTexture;
 uniform sampler2D u_NormalTexture;
@@ -88,9 +92,9 @@ struct BrokenLight
 	int LightType;
 };
 
+uniform int u_LightsNumber = 0;
 uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS];
 // uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS] = BrokenLight[MAX_SHADER_LIGHTS](BrokenLight(vec3(0.0), vec3(0.0), vec3(1.0), 0.5, vec3(1.0, 0.09, 0.032), vec2(12.5, 45.0), 2));
-uniform int u_LightsNumber = 0;
 
 
 //Light Calculations Functions ---------------------------------------------------------------------------------------
@@ -111,7 +115,7 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 	vec3 specular = LColor * specImpact;
 
 	//If we have textures, apply them
-	if(u_HasTexture == 1)
+	if(u_HasDiffuseTexture == 1)
 		diffuse *= texture(u_AlbedoTexture, v_TexCoord).rgb;
 	if(u_HasSpecularTexture == 1)
 		specular *= texture(u_SpecularTexture, v_TexCoord).rgb;
@@ -199,7 +203,7 @@ void main()
 	}
 
 	//Resulting Color
-	if(u_HasTexture == 0)
+	if(u_UseTextures == 0)
 		out_color = vec4(colorResult + v_Color, 1.0);
 	else
 		out_color = vec4(colorResult + v_Color * texture(u_AlbedoTexture, v_TexCoord).rgb, texture(u_AlbedoTexture, v_TexCoord).a);

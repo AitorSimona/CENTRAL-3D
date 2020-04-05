@@ -36,7 +36,7 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 	color = idle_color;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 
 	//font.init("Assets/Fonts/Dukas.ttf", font_size);
 	//font.path = "Assets/Fonts/Dukas.ttf";
@@ -94,12 +94,18 @@ void ComponentButton::Draw()
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
-	int TextureLocation = glGetUniformLocation(shaderID, "u_HasTexture");
-	glUniform1i(TextureLocation, 1);
+	GameObject* gameObj = GetContainerGameObject();
 
-	glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+	if (texture)
+	{
+		glUniform1i(TextureLocation, 1);
+		glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	}
+	else
+		glUniform1i(TextureLocation, 0);
 	
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
@@ -309,24 +315,30 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::SetNextItemWidth(60);
 	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
 	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		if (texture)
 		{
-			if (texture->Texture_width <= texture->Texture_height)
-				size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width <= texture->Texture_height)
+					size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
 		}
 	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
 	if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
 	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		if (texture)
 		{
-			if (texture->Texture_width >= texture->Texture_height)
-				size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width >= texture->Texture_height)
+					size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
 		}
 	}
 
@@ -340,10 +352,10 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
 
 	// Rotation
-	ImGui::Text("Rotation:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("##buttonrotation", &rotation2D);
+	//ImGui::Text("Rotation:");
+	//ImGui::SameLine();
+	//ImGui::SetNextItemWidth(60);
+	//ImGui::DragFloat("##buttonrotation", &rotation2D);
 
 	// ------------------------------------------
 
