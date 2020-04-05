@@ -37,10 +37,10 @@ void main()
 	v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
 
 	vec3 T = normalize(vec3(u_Model * vec4(a_Tangent, 0.0)));
-	vec3 B = normalize(vec3(u_Model * vec4(a_Bitangent, 0.0)));
 	vec3 N = normalize(vec3(u_Model * vec4(a_Normal, 0.0)));
-
-	v_TBN = transpose(mat3(T, B, N));
+	T = normalize(T - dot(T, N) * N);
+	vec3 B = cross(N, T);
+	v_TBN = (mat3(T, B, N));
 
 	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 }
@@ -127,7 +127,7 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 vec3 CalculateDirectionalLight(BrokenLight light, vec3 normal, vec3 viewDir)
 {
 	if(u_HasNormalMap == 1)
-		return CalculateLightResult(light.color, (v_TBN * normalize(light.dir)), normal, viewDir) * light.intensity;
+		return CalculateLightResult(light.color, /*v_TBN * */normalize(light.dir), normal, viewDir) * light.intensity;
 	else
 		return CalculateLightResult(light.color, light.dir, normal, viewDir) * light.intensity;
 }
@@ -137,8 +137,8 @@ vec3 CalculatePointlight(BrokenLight light, vec3 normal, vec3 viewDir)
 {
 	//Calculate light direction
 	vec3 direction = light.pos - v_FragPos;
-	if(u_HasNormalMap == 1)
-		direction = v_TBN * normalize(direction);
+	//if(u_HasNormalMap == 1)
+	//	direction = v_TBN * normalize(direction);
 
 	//Attenuation Calculation
 	float d = length(light.pos - v_FragPos);
@@ -153,8 +153,8 @@ vec3 CalculateSpotlight(BrokenLight light, vec3 normal, vec3 viewDir)
 {
 	//Calculate light direction
 	vec3 direction = light.pos - v_FragPos;
-	if(u_HasNormalMap == 1)
-		direction = v_TBN * normalize(direction);
+	//if(u_HasNormalMap == 1)
+	//	direction = v_TBN * normalize(direction);
 
 	//Attenuation Calculation
 	float d = length(light.pos - v_FragPos);
@@ -174,11 +174,7 @@ vec3 CalculateSpotlight(BrokenLight light, vec3 normal, vec3 viewDir)
 //------------------------------------------------------------------------------------------------------------------
 void main()
 {
-	int lights_iterator = 0;
-	if(u_LightsNumber > MAX_SHADER_LIGHTS)
-		lights_iterator = MAX_SHADER_LIGHTS;
-	else if(u_LightsNumber > 0)
-		lights_iterator = u_LightsNumber;
+	int lights_iterator = (u_LightsNumber > MAX_SHADER_LIGHTS ? MAX_SHADER_LIGHTS : u_LightsNumber);
 
 	//Light Calculations
 	vec3 normalVec = normalize(v_Normal);
@@ -187,8 +183,8 @@ void main()
 	{
 		normalVec = texture(u_NormalTexture, v_TexCoord).rgb;
 		normalVec = normalize(normalVec * 2.0 - 1.0);
-		//normalVec = normalize(v_TBN * normalVec);
-		viewDirection = v_TBN * normalize(v_CamPos - v_FragPos);
+		normalVec = normalize(v_TBN * normalVec);
+		//viewDirection = v_TBN * normalize(v_CamPos - v_FragPos);
 	}
 
 	vec3 colorResult = vec3(0.0);
