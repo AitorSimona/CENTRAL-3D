@@ -20,6 +20,7 @@ public:
 	void Update() override;
 
 	void Draw();
+	void DrawComponent() override;
 
 	void Move(float velX, float velZ, float minDist = 0.01f);
 
@@ -47,6 +48,7 @@ public:
 	ResourceMesh* mesh = nullptr;
 	physx::PxController* controller = nullptr;
 	physx::PxVec3 velocity = physx::PxVec3(0.0f, 0.0f, 0.0f);
+	bool hasBeenDeactivated = false;
 
 private:
 	physx::PxControllerDesc* desc = nullptr;

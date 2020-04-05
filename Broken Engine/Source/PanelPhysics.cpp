@@ -77,6 +77,8 @@ bool PanelPhysics::Draw()
 		ImGui::DragFloat("##restitution", &tmpRestitution, 0.005f, 0.f, 1.f);
 
 		CreateLayerFilterGrid();
+
+		CreateLayerList();
 	}
 	ImGui::End();
 
@@ -108,22 +110,34 @@ void PanelPhysics::CreateLayerFilterGrid() {
 	ImGui::Separator();
 	ImGui::NewLine();
 
+	uint last = 0;
+	uint actives = 0;
+
 	for (int i = 0; i < App->physics->layer_list.size(); ++i) { //GET LARGEST TEXT
 		Layer* layer = &App->physics->layer_list.at(i);
-		float size = ImGui::CalcTextSize(layer->name.c_str()).x;
-		if (size > padding.x) padding.x = size;
+		int size = ImGui::CalcTextSize(layer->name.c_str()).x;
+		if (size > padding.x) padding.x = size, sizeMax = size;
+		if (layer->active) last = i, actives++;
 	}
 
 	for (int i = 0; i < App->physics->layer_list.size(); ++i) { //HORIZONTAL
 		Layer* layer = &App->physics->layer_list.at(i);
+
+		if (!layer->active)
+			continue;
+
 		ImGui::Text(layer->name.c_str());
 
 		for (int j = App->physics->layer_list.size() - 1; j - i <= App->physics->layer_list.size(); --j) { //VERTICAL
 			Layer* aux_layer = &App->physics->layer_list.at(j);
+
+			if (!aux_layer->active)
+				continue;
+
 			std::string st("##" + layer->name + aux_layer->name);
 
-			if(j == App->physics->layer_list.size() - 1)
-				ImGui::SameLine(-ImGui::GetCursorPosX() + padding.x + 20.f);
+			if(j == last)
+				ImGui::SameLine(-ImGui::GetCursorPosX() + padding.x + 22.f);
 			else
 				ImGui::SameLine();
 			
@@ -141,15 +155,52 @@ void PanelPhysics::CreateLayerFilterGrid() {
 
 		}
 	}
+	uint count = App->physics->layer_list.size() - 1;
+	uint c2 = actives - 1;
+	for (int i = count; i >= 0; --i) { //VERTICAL
+		Layer layer = App->physics->layer_list.at(i); 
+		if (!layer.active)
+			continue;
 
-	for (int i = App->physics->layer_list.size() - 1; i >= 0; --i) { //VERTICAL
-		Layer layer = App->physics->layer_list.at(i);
 		ImGui::verticalText(layer.name.c_str(), &padding);
 
 		if (i != 0) {
-			ImGui::SameLine(25 * (App->physics->layer_list.size() - i));
+			ImGui::SameLine(26 * (actives - c2--));
 			ImGui::Text(" ");
 			ImGui::SameLine();
+		}
+	}
+
+	ImGui::Dummy({ 0,sizeMax });
+}
+
+void PanelPhysics::CreateLayerList() {
+	ImGui::NewLine();
+	ImGui::Text("Layer List");
+	ImGui::Separator();
+	ImGui::NewLine();
+
+	uint count = App->physics->layer_list.size();
+	for (int i = 0; i < count; ++i) {
+		std::string name("Layer ");
+		name.append(std::to_string(i).c_str());
+		name.append(":");
+		ImGui::Text(name.c_str());
+
+		char buffer[MAX_TEXT_SIZE] = "";
+		if (i < count) {
+			ImGui::SameLine();
+			strcpy(buffer, App->physics->layer_list.at(i).name.c_str());
+			if (ImGui::InputTextWithHint(std::string("##").append(std::to_string(i)).c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			{
+				App->physics->layer_list.at(i).name = buffer;
+				if (std::strcmp(App->physics->layer_list.at(i).name.c_str(), "")) {
+					App->physics->layer_list.at(i).active = true;
+				}
+				else {
+					App->physics->layer_list.at(i).active = false;
+				}
+			}
 		}
 	}
 }

@@ -32,6 +32,7 @@ public:
 	const char*		GetName() const;
 	const AABB&	    GetAABB();
 	const OBB&      GetOBB() const;
+	int GetChildGOIndex(GameObject* GO);
 
 	bool& GetActive();
 	int GetLayer();
@@ -44,7 +45,7 @@ public:
 
 		for (uint i = 0; i < components.size(); ++i)
 		{
-			if (components[i] && components[i]->GetType() == TComponent::GetType())
+		if (components[i] && components[i]->GetType() == TComponent::GetType())
 				return ((TComponent*)(components[i]));
 		}
 
@@ -66,7 +67,10 @@ public:
 	//void OnUpdateTransform();
 	void TransformGlobal(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
-	void AddChildGO(GameObject* GO);
+	// If there is a GO at index, it will erase it and replace it
+	void AddChildGO(GameObject* GO, int index = -1);
+	// This will not erase the GO at index, just displace it and everything after it
+	void InsertChildGO(GameObject* GO, int index);
 	bool FindChildGO(GameObject* GO);
 	void GetAllChilds(std::vector<GameObject*>& collector);
 	GameObject* GetAnimGO(GameObject* GO);
@@ -85,6 +89,8 @@ public:
 
 	// to avoid including ImGui header, it's hardcoded the ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth flags (128 and 2048 respectively)
 	int node_flags = 2176;
+
+	int index = -1;
 
 private:
 	// Unique Identifier

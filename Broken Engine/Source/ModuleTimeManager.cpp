@@ -4,7 +4,9 @@
 #include "ModuleSceneManager.h"
 #include "ModulePhysics.h"
 #include "ModuleFileSystem.h"
-
+#include "GameObject.h"
+#include "ComponentCollider.h"
+#include "ComponentCharacterController.h"
 #include "ResourceScene.h"
 
 
@@ -44,6 +46,7 @@ void ModuleTimeManager::PrepareUpdate() {
 			App->scene_manager->currentScene->CopyInto(App->scene_manager->temporalScene);
 			App->scene_manager->SaveScene(App->scene_manager->temporalScene);
 
+
 			ENGINE_CONSOLE_LOG("APP STATE PLAY");
 			break;
 
@@ -74,6 +77,16 @@ void ModuleTimeManager::PrepareUpdate() {
 			break;
 
 		case AppState::TO_EDITOR:
+			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->NoStaticGameObjects.begin(); it != App->scene_manager->currentScene->NoStaticGameObjects.end(); ++it)
+			{
+				App->physics->DeleteActors((*it).second);
+			}
+
+			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->StaticGameObjects.begin(); it != App->scene_manager->currentScene->StaticGameObjects.end(); ++it)
+			{
+				App->physics->DeleteActors((*it).second);
+			}
+
 			App->physics->DeleteActors();
 
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);

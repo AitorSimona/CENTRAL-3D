@@ -25,37 +25,38 @@ namespace physx
 };
 
 #define MAX_HITS 256
+#define MAX_LAYERS 30
 
 enum LayerMask
 {
-	LAYER_0 /*= (1 << 0)*/,
-	LAYER_1 /*= (1 << 1)*/,
-	LAYER_2 /*= (1 << 2)*/,
-	LAYER_3 /*= (1 << 3)*/,
-	LAYER_4 /*= (1 << 4)*/,
-	LAYER_5 /*= (1 << 5)*/,
-	LAYER_6 /*= (1 << 6)*/,
-	LAYER_7 /*= (1 << 7)*/,
-	LAYER_8 /*= (1 << 8)*/,
-	LAYER_9 /*= (1 << 9)*/,
+	LAYER_NONE = -1,
+	LAYER_0,
+	LAYER_1,
+	LAYER_2,
+	LAYER_3,
+	LAYER_4,
+	LAYER_5,
+	LAYER_6,
+	LAYER_7,
+	LAYER_8,
+	LAYER_9
 };
-enum Collision_Type {
-	ONTRIGGER_ENTER,
-	ONCOLLISION_ENTER,
-	ONTRIGGER_STAY,
-	ONCOLLISION_STAY,
-	ONTRIGGER_EXIT,
-	ONCOLLISION_EXIT
-};
+
+//struct LayerM {
+//	uint layers[MAX_LAYERS];
+//};
+
 
 struct Layer {
 	std::string name;
 	LayerMask layer;
+	bool active;
 	std::vector<bool> active_layers;
 	physx::PxU32 LayerGroup;
 
 	void UpdateLayerGroup() {
 		physx::PxU32 ID = 0;
+
 		for (int i = 0; i < active_layers.size(); ++i) //Return group of layers
 		{
 			bool active = active_layers.at(i);
@@ -63,8 +64,16 @@ struct Layer {
 				ID |= (1 << i);
 		}
 		LayerGroup = ID;
-		
 	}
+};
+
+enum Collision_Type {
+	ONTRIGGER_ENTER,
+	ONCOLLISION_ENTER,
+	ONTRIGGER_STAY,
+	ONCOLLISION_STAY,
+	ONTRIGGER_EXIT,
+	ONCOLLISION_EXIT
 };
 
 struct BROKEN_API UserIterator : physx::PxVolumeCache::Iterator
@@ -88,6 +97,8 @@ class PhysxSimulationEvents;
 class BROKEN_API ModulePhysics : public Broken::Module
 {
 public:
+	friend struct Layer;
+
 	ModulePhysics(bool start_enabled = true);
 	~ModulePhysics();
 
@@ -148,6 +159,9 @@ private:
 	float3 materialDesc = float3(1.0f, 1.0f, 0.0f);
 	float gravity = 9.8;
 };
+
+
+
 
 BE_END_NAMESPACE
 #endif

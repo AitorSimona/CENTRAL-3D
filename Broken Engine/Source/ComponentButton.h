@@ -67,7 +67,7 @@ private:
 	SDL_Rect collider;
 	bool collider_visible = true;
 
-	const char* func_name;
+	std::string func_name;
 	std::vector<const char*> func_list;
 	uint func_pos = 0;
 
