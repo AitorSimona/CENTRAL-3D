@@ -201,20 +201,28 @@ json ComponentAnimation::Save() const
 	if (res_anim)
 		node["Resources"]["ResourceAnimation"] = std::string(res_anim->GetResourceFile());
 	
-	// --- Saving animations ------------------
-	node["Animations"]["Size"] = std::to_string(animations.size());
-	node["Animations"]["BlendTime"] = std::to_string(blend_time_value);
-	node["Animations"]["UseDefault"] = use_default_animation;
-
-	for (int i = 0; i < animations.size(); ++i)
+	if (!res_animator)
 	{
-		std::string iterator = std::to_string(i);
-		node["Animations"][iterator]["Name"] = animations[i]->name;
-		node["Animations"][iterator]["Start"] = std::to_string(animations[i]->start);
-		node["Animations"][iterator]["End"] = std::to_string(animations[i]->end);
-		node["Animations"][iterator]["Loop"] = animations[i]->loop;
-		node["Animations"][iterator]["Default"] = animations[i]->Default;
+		// --- Saving animations ------------------
+		node["Animations"]["Size"] = std::to_string(animations.size());
+		node["Animations"]["BlendTime"] = std::to_string(blend_time_value);
+		node["Animations"]["UseDefault"] = use_default_animation;
+
+		for (int i = 0; i < animations.size(); ++i)
+		{
+			std::string iterator = std::to_string(i);
+			node["Animations"][iterator]["Name"] = animations[i]->name;
+			node["Animations"][iterator]["Start"] = std::to_string(animations[i]->start);
+			node["Animations"][iterator]["End"] = std::to_string(animations[i]->end);
+			node["Animations"][iterator]["Loop"] = animations[i]->loop;
+			node["Animations"][iterator]["Default"] = animations[i]->Default;
+		}
 	}
+	else
+	{
+		node["Resources"]["ResourceAnimator"] = std::to_string(res_animator->GetUID());
+	}
+	
 
 	return node;
 }
@@ -223,6 +231,7 @@ void ComponentAnimation::Load(json& node)
 {
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 
+	// Load Animation resource ------------------------------------------------------------------------------------------
 	std::string path = node["Resources"]["ResourceAnimation"].is_null() ? "0" : node["Resources"]["ResourceAnimation"];
 	App->fs->SplitFilePath(path.c_str(), nullptr, &path);
 	path = path.substr(0, path.find_last_of("."));
@@ -235,30 +244,43 @@ void ComponentAnimation::Load(json& node)
 	// --- We want to be notified of any resource event ---
 	if (res_anim)
 		res_anim->AddUser(GO);
+	//-------------------------------------------------------------------------------------------------------------------
 
 
-	//--- Loading animations ---
+	// Load Animator resource -------------------------------------------------------------------------------------------
+	std::string res_uid = node["Resources"]["ResourceAnimator"].is_null() ? "0" : node["Resources"]["ResourceAnimator"];
+	int uid = std::stoi(res_uid);
 
-	std::string size = node["Animations"]["Size"].is_null() ? "0" : node["Animations"]["Size"];
-	int anim_size = std::stoi(size);
+	LoadAnimator(true, uid);
 
-	std::string blend_time = node ["Animations"]["BlendTime"].is_null() ? "0" : node["Animations"]["BlendTime"];
-	blend_time_value = std::stof(blend_time);
+	//--------------------------------------------------------------------------------------------------------------------
 
-	use_default_animation = node["Animations"]["UseDefault"].is_null() ? false : (bool)node["Animations"]["UseDefault"];
-
-	for (int i = 0; i < anim_size; ++i)
+	if (!res_animator)
 	{
-		std::string iterator = std::to_string(i);
-		std::string name = node["Animations"][iterator]["Name"].is_null() ? "" : node["Animations"][iterator]["Name"];
-		std::string start = node["Animations"][iterator]["Start"].is_null() ? "" : node["Animations"][iterator]["Start"];
-		std::string end = node["Animations"][iterator]["End"].is_null() ? "" : node["Animations"][iterator]["End"];
-		bool loop = node["Animations"][iterator]["Loop"].is_null() ? false : (bool) node["Animations"][iterator]["Loop"];
-		bool Default = node["Animations"][iterator]["Default"].is_null() ? false : (bool) node["Animations"][iterator]["Default"];
+		//--- Loading animations ---
 
-		CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
-		
+		std::string size = node["Animations"]["Size"].is_null() ? "0" : node["Animations"]["Size"];
+		int anim_size = std::stoi(size);
+
+		std::string blend_time = node["Animations"]["BlendTime"].is_null() ? "0" : node["Animations"]["BlendTime"];
+		blend_time_value = std::stof(blend_time);
+
+		use_default_animation = node["Animations"]["UseDefault"].is_null() ? false : (bool)node["Animations"]["UseDefault"];
+
+		for (int i = 0; i < anim_size; ++i)
+		{
+			std::string iterator = std::to_string(i);
+			std::string name = node["Animations"][iterator]["Name"].is_null() ? "" : node["Animations"][iterator]["Name"];
+			std::string start = node["Animations"][iterator]["Start"].is_null() ? "" : node["Animations"][iterator]["Start"];
+			std::string end = node["Animations"][iterator]["End"].is_null() ? "" : node["Animations"][iterator]["End"];
+			bool loop = node["Animations"][iterator]["Loop"].is_null() ? false : (bool)node["Animations"][iterator]["Loop"];
+			bool Default = node["Animations"][iterator]["Default"].is_null() ? false : (bool)node["Animations"][iterator]["Default"];
+
+			CreateAnimation(name, std::stoi(start), std::stoi(end), loop, Default);
+
+		}
 	}
+	
 
 }
 
@@ -692,12 +714,13 @@ void ComponentAnimation::LoadAnimator(bool drop, uint UID)
 	if (drop)
 	{
 		res_animator = (ResourceAnimator*)App->resources->GetResource(UID);
-		res_animator->AddUser(GO);
+		if(res_animator)
+			res_animator->AddUser(GO);
 	}
 	
-
-	for (auto it = res_animator->animations.begin(); it != res_animator->animations.end(); ++it)
-	{
-		CreateAnimation((*it)->name, (*it)->start, (*it)->end, (*it)->loop, (*it)->Default);
-	}
+	if(res_animator)
+		for (auto it = res_animator->animations.begin(); it != res_animator->animations.end(); ++it)
+		{
+			CreateAnimation((*it)->name, (*it)->start, (*it)->end, (*it)->loop, (*it)->Default);
+		}
 }
