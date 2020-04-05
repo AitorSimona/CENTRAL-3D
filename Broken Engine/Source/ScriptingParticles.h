@@ -10,28 +10,24 @@ public:
 	~ScriptingParticles();
 
 public:
-	void ActivateParticleEmitter() const;
-	void DeactivateParticleEmitter() const;
-	void ActivateParticleEmitterGO(uint gameobject_UUID) const;
-	void DeactivateParticleEmitterGO(uint gameobject_UUID) const;
+	void ActivateParticleEmitter(uint gameobject_UUID) const;
+	void DeactivateParticleEmitter(uint gameobject_UUID) const;
 
-	void PlayParticleEmitter();
-	void StopParticleEmitter();
-	void PlayParticleEmitterGO(uint gameobject_UUID);
-	void StopParticleEmitterGO(uint gameobject_UUID);
-	void SetEmissionRateFromScript(float ms);
-	void SetParticlesPerCreationFromScript(int particlesAmount);
+	void PlayParticleEmitter(uint gameobject_UUID);
+	void StopParticleEmitter(uint gameobject_UUID);
+	void SetEmissionRateFromScript(float ms, uint gameobject_UUID);
+	void SetParticlesPerCreationFromScript(int particlesAmount, uint gameobject_UUID);
 
-	void SetParticleAcceleration(float x, float y, float z);
-	void SetParticleVelocityFromScript(float x, float y, float z);
-	void SetRandomParticleVelocity(float x, float y, float z);
+	void SetParticleAcceleration(float x, float y, float z, uint gameobject_UUID);
+	void SetParticleVelocityFromScript(float x, float y, float z, uint gameobject_UUID);
+	void SetRandomParticleVelocity(float x, float y, float z, uint gameobject_UUID);
 
-	void SetParticleLooping(bool active);
-	void SetParticleDuration(int duration);
-	void SetParticleLifeTime(int ms);
+	void SetParticleLooping(bool active, uint gameobject_UUID);
+	void SetParticleDuration(int duration, uint gameobject_UUID);
+	void SetParticleLifeTime(int ms, uint gameobject_UUID);
 
-	void SetParticleScaleFromScript(float x, float y);
-	void SetRandomParticleScale(float randomFactor);
+	void SetParticleScaleFromScript(float x, float y, uint gameobject_UUID);
+	void SetRandomParticleScale(float randomFactor, uint gameobject_UUID);
 
 
 };

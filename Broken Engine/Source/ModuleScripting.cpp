@@ -249,16 +249,11 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetAngularVelocity", &ScriptingPhysics::GetAngularVelocity)
 		.addFunction("SetAngularVelocity", &ScriptingPhysics::SetAngularVelocity)
-		.addFunction("SetAngularVelocity_GO", &ScriptingPhysics::SetAngularVelocityGO)
 		.addFunction("GetLinearVelocity", &ScriptingPhysics::GetLinearVelocity)
 		.addFunction("SetLinearVelocity", &ScriptingPhysics::SetLinearVelocity)
-		.addFunction("SetLinearVelocity_GO", &ScriptingPhysics::SetLinearVelocityGO)
 
 		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
-		.addFunction("AddTorque_GO", &ScriptingPhysics::AddTorqueGO)
 		.addFunction("AddForce", &ScriptingPhysics::AddForce)
-		.addFunction("AddForce_GO", &ScriptingPhysics::AddForceGO)
-
 		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
 		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
 
@@ -271,14 +266,12 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
 		.addFunction("Move", &ScriptingPhysics::Move)
-		.addFunction("MoveGameObject", &ScriptingPhysics::MoveGameObject)
 		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
 		.addFunction("SetCharacterPosition", &ScriptingPhysics::SetCharacterPosition)
 		.addFunction("GetCharacterUpDirection", &ScriptingPhysics::GetCharacterUpDirection)
 		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
 
 		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
-
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -289,13 +282,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
 		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
-		.addFunction("ActivateParticlesEmission_GO", &ScriptingParticles::ActivateParticleEmitterGO)
-		.addFunction("DeactivateParticlesEmission_GO", &ScriptingParticles::DeactivateParticleEmitterGO)
-
+		
 		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
 		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
-		.addFunction("PlayParticleEmitter_GO", &ScriptingParticles::PlayParticleEmitterGO)
-		.addFunction("StopParticleEmitter_GO", &ScriptingParticles::StopParticleEmitterGO)
 		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
 		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
 

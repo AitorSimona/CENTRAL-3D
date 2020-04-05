@@ -22,8 +22,8 @@ public:
 	uint GetMyUID();
 	uint GetScriptGOParent();
 	uint GetGOParentFromUID(uint gameobject_UUID);
-	uint GetComponentFromGO(uint gameobject_UUID, const char* component_name);
-	void SetActiveGameObject(uint gameobject_UUID, bool active);
+	uint GetComponentFromGO(const char* component_name, uint gameobject_UUID);
+	void SetActiveGameObject(bool active, uint gameobject_UUID);
 	void DestroyGOFromScript(uint gameobject_UUID);
 
 	int GetMyLayer();
