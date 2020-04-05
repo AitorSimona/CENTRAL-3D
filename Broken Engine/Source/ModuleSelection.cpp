@@ -72,7 +72,6 @@ update_status ModuleSelection::PreUpdate(float dt)
 update_status ModuleSelection::Update(float dt)
 {
 	// SELECTED TODO -> stuck at offset
-	return UPDATE_CONTINUE;
 
 	if (aabb_selection)
 	{
@@ -106,14 +105,13 @@ update_status ModuleSelection::Update(float dt)
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
-	return UPDATE_CONTINUE;
 	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
+	return UPDATE_CONTINUE;
 
 }
 
 void ModuleSelection::SceneRectangleSelect(float3 start)
 {
-	return;
 	aabb = AABB({ start.x,start.y,start.z }, { start.x,start.y,start.z });
 	aabb_selection = true;
 	aabb_start = start;
