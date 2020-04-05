@@ -39,13 +39,13 @@ public:
 	luabridge::LuaRef GetCharacterUpDirection(uint gameobject_UUID, lua_State* L);
 	void SetCharacterUpDirection(float rotx, float roty, float rotz, uint gameobject_UUID, lua_State* L);
 
-	int OnTriggerEnter(uint gameobject_UUID, lua_State* L);
-	int OnTriggerStay(uint gameobject_UUID, lua_State* L);
-	int OnTriggerExit(uint gameobject_UUID, lua_State* L);
+	int OnTriggerEnter(uint gameobject_UUID);
+	int OnTriggerStay(uint gameobject_UUID);
+	int OnTriggerExit(uint gameobject_UUID);
 
-	int OnCollisionEnter(uint gameobject_UUID, lua_State* L);
-	int OnCollisionStay(uint gameobject_UUID, lua_State* L);
-	int OnCollisionExit(uint gameobject_UUID, lua_State* L);
+	int OnCollisionEnter(uint gameobject_UUID);
+	int OnCollisionStay(uint gameobject_UUID);
+	int OnCollisionExit(uint gameobject_UUID);
 
 };
 BE_END_NAMESPACE

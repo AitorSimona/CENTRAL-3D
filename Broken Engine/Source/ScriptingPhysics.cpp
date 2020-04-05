@@ -333,7 +333,7 @@ luabridge::LuaRef ScriptingPhysics::OverlapSphere(float position_x, float positi
 	return ret;
 }
 
-int ScriptingPhysics::OnTriggerEnter(uint gameobject_UUID, lua_State* L)
+int ScriptingPhysics::OnTriggerEnter(uint gameobject_UUID)
 {
 	int ret = 0;
 	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
@@ -348,7 +348,7 @@ int ScriptingPhysics::OnTriggerEnter(uint gameobject_UUID, lua_State* L)
 	return ret;
 }
 
-int ScriptingPhysics::OnTriggerStay(uint gameobject_UUID, lua_State* L)
+int ScriptingPhysics::OnTriggerStay(uint gameobject_UUID)
 {
 	int ret = 0;
 	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
@@ -363,7 +363,7 @@ int ScriptingPhysics::OnTriggerStay(uint gameobject_UUID, lua_State* L)
 	return ret;
 }
 
-int ScriptingPhysics::OnTriggerExit(uint gameobject_UUID, lua_State* L)
+int ScriptingPhysics::OnTriggerExit(uint gameobject_UUID)
 {
 	int ret = 0;
 	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
@@ -378,7 +378,7 @@ int ScriptingPhysics::OnTriggerExit(uint gameobject_UUID, lua_State* L)
 	return ret;
 }
 
-int ScriptingPhysics::OnCollisionEnter(uint gameobject_UUID, lua_State* L)
+int ScriptingPhysics::OnCollisionEnter(uint gameobject_UUID)
 {
 	int ret = 0;
 	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
@@ -392,7 +392,7 @@ int ScriptingPhysics::OnCollisionEnter(uint gameobject_UUID, lua_State* L)
 
 	return ret;
 }
-int ScriptingPhysics::OnCollisionStay(uint gameobject_UUID, lua_State* L)
+int ScriptingPhysics::OnCollisionStay(uint gameobject_UUID)
 {
 	int ret = 0;
 	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
@@ -407,7 +407,7 @@ int ScriptingPhysics::OnCollisionStay(uint gameobject_UUID, lua_State* L)
 	return ret;
 }
 
-int ScriptingPhysics::OnCollisionExit(uint gameobject_UUID, lua_State* L)
+int ScriptingPhysics::OnCollisionExit(uint gameobject_UUID)
 {
 	int ret = 0;
 	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
