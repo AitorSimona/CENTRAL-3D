@@ -21,8 +21,8 @@ public:
 	void SetMass(float mass);
 	float GetMass();
 
-	int GetLinearVelocity(lua_State* L);
-	int GetAngularVelocity(lua_State* L);
+	luabridge::LuaRef GetLinearVelocity(lua_State* L);
+	luabridge::LuaRef GetAngularVelocity(lua_State* L);
 	void SetLinearVelocity(float x, float y, float z);
 	void SetAngularVelocity(float x, float y, float z);
 	void SetLinearVelocityGO(float x, float y, float z, uint gameobject_UUID);
@@ -39,15 +39,9 @@ public:
 
 	void Move(float vel_x, float vel_y);
 	void MoveGameObject(uint gameobject_UUID, float vel_x, float vel_y);
-	int GetCharacterPosition(lua_State* L);
-	float GetCharacterPositionX();
-	float GetCharacterPositionY();
-	float GetCharacterPositionZ();
+	luabridge::LuaRef GetCharacterPosition(lua_State* L);
 	void SetCharacterPosition(float posx, float posy, float posz);
-	int GetCharacterUpDirection(lua_State* L);
-	float GetCharacterUpDirectionX();
-	float GetCharacterUpDirectionY();
-	float GetCharacterUpDirectionZ();
+	luabridge::LuaRef GetCharacterUpDirection(lua_State* L);
 	void SetCharacterUpDirection(float rotx, float roty, float rotz, lua_State* L);
 
 	int OnTriggerEnter(uint UID, lua_State* L);

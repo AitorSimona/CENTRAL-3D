@@ -11,67 +11,27 @@ ScriptingTransform::ScriptingTransform() {}
 
 ScriptingTransform::~ScriptingTransform() {}
 
-float ScriptingTransform::GetPositionX() const
+luabridge::LuaRef ScriptingTransform::GetPosition(lua_State* L)
 {
-	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-
-	if (transform)
-		return transform->GetPosition().x;
-	else
-	{
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-		return 0.0f;
-	}
-}
-
-float ScriptingTransform::GetPositionY() const
-{
-	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-
-	if (transform)
-		return transform->GetPosition().y;
-	else
-	{
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-		return 0.0f;
-	}
-}
-
-float ScriptingTransform::GetPositionZ() const
-{
-	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-
-	if (transform)
-		return transform->GetPosition().z;
-	else
-	{
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-		return 0.0f;
-	}
-}
-
-int ScriptingTransform::GetPosition(lua_State* L)
-{
-	int ret = 0;
-	float3 rot = float3(0.0f);
-
+	float3 pos = float3(0.0f);
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
 	if (transform)
 	{
-		rot = transform->GetPosition();
-		ret = 3;
+		pos = transform->GetPosition();
 	}
 	else
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
+		ENGINE_CONSOLE_LOG("Object or its transformation component are null");	
 
-	lua_pushnumber(L, rot.x);
-	lua_pushnumber(L, rot.y);
-	lua_pushnumber(L, rot.z);
-	return ret;
+	luabridge::LuaRef table = luabridge::newTable(L);
+	table.append(pos.x);
+	table.append(pos.y);
+	table.append(pos.z);
+
+	return table;
 }
 
-void ScriptingTransform::Translate(float x, float y, float z, bool local)
+void ScriptingTransform::Translate(float x, float y, float z)
 {
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
@@ -89,7 +49,7 @@ void ScriptingTransform::Translate(float x, float y, float z, bool local)
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
-void ScriptingTransform::SetPosition(float x, float y, float z, bool local)
+void ScriptingTransform::SetPosition(float x, float y, float z)
 {
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
@@ -138,7 +98,7 @@ void ScriptingTransform::SetObjectRotation(float x, float y, float z)
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
-void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool local)
+void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ)
 {
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 	ComponentCollider* collider = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentCollider>();
@@ -183,62 +143,20 @@ void ScriptingTransform::LookAt(float spotX, float spotY, float spotZ, bool loca
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 }
 
-int ScriptingTransform::GetRotation(bool local, lua_State* L) const
+luabridge::LuaRef ScriptingTransform::GetRotation(lua_State* L)
 {
-	int ret = 0;
-	float3 rot = float3(0.0f);
-	
+	float3 rot = float3(0.0f);	
 	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
 
 	if (transform)
-	{
 		rot = transform->GetRotation();
-		ret = 3;
-	}
 	else
 		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
 
-	lua_pushnumber(L, rot.x);
-	lua_pushnumber(L, rot.y);
-	lua_pushnumber(L, rot.z);
-	return ret;
-}
+	luabridge::LuaRef table = luabridge::newTable(L);
+	table.append(rot.x);
+	table.append(rot.y);
+	table.append(rot.z);
 
-float ScriptingTransform::GetRotationX() const
-{
-	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-
-	if (transform)
-		return transform->GetRotation().x;
-	else
-	{
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-		return 0.0f;
-	}
-}
-
-float ScriptingTransform::GetRotationY() const
-{
-	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-
-	if (transform)
-		return transform->GetRotation().y;
-	else
-	{
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-		return 0.0f;
-	}
-}
-
-float ScriptingTransform::GetRotationZ() const
-{	
-	ComponentTransform* transform = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentTransform>();
-
-	if (transform)
-		return transform->GetRotation().z;
-	else
-	{
-		ENGINE_CONSOLE_LOG("Object or its transformation component are null");
-		return 0.0f;
-	}
+	return table;
 }

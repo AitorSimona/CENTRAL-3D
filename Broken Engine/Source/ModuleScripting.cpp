@@ -206,22 +206,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		// Position
 		.addFunction("GetPosition", &ScriptingTransform::GetPosition)
-		.addFunction("GetPositionX", &ScriptingTransform::GetPositionX)
-		.addFunction("GetPositionY", &ScriptingTransform::GetPositionY)
-		.addFunction("GetPositionZ", &ScriptingTransform::GetPositionZ)
-
 		.addFunction("Translate", &ScriptingTransform::Translate)
 		.addFunction("SetPosition", &ScriptingTransform::SetPosition)
 
 		// Rotation
+		.addFunction("GetRotation", &ScriptingTransform::GetRotation)
 		.addFunction("RotateObject", &ScriptingTransform::RotateObject)
 		.addFunction("SetObjectRotation", &ScriptingTransform::SetObjectRotation)
 		.addFunction("LookAt", &ScriptingTransform::LookAt)
-
-		.addFunction("GetRotation", &ScriptingTransform::GetRotation)
-		.addFunction("GetRotationX", &ScriptingTransform::GetRotationX)
-		.addFunction("GetRotationY", &ScriptingTransform::GetRotationY)
-		.addFunction("GetRotationZ", &ScriptingTransform::GetRotationZ)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -239,19 +231,10 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetMyLayer", &ScriptingGameobject::GetMyLayer)
 		.addFunction("GetLayerByID", &ScriptingGameobject::GetLayerByID)
-		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
-		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
-		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
-		.addFunction("GetGameObjectPosZ", &ScriptingGameobject::GetGameObjectPosZ)
-		.addFunction("TranslateGameObject", &ScriptingGameobject::TranslateGameObject)
 
 		.addFunction("GetComponent", &ScriptingGameobject::GetComponentFromGO)
 		.addFunction("GetPositionInFrustum", &ScriptingGameobject::GetPosInFrustum)
-		.addFunction("GetFrustumPlanesIntersection", &ScriptingGameobject::GetFrustumPlanesIntersection) //For the referenced LuaState passed: Top (x), Bottom (y), Left (z), Right (w) will be 1 if in positive plane side (inside frustum), 0 (outside frustum) if not
-		.addFunction("GetTopFrustumIntersection", &ScriptingGameobject::GetTopFrustumIntersection)
-		.addFunction("GetBottomFrustumIntersection", &ScriptingGameobject::GetBottomFrustumIntersection)
-		.addFunction("GetLeftFrustumIntersection", &ScriptingGameobject::GetLeftFrustumIntersection)
-		.addFunction("GetRightFrustumIntersection", &ScriptingGameobject::GetRightFrustumIntersection)
+		.addFunction("GetFrustumPlanesIntersection", &ScriptingGameobject::GetFrustumPlanesIntersection)
 		.addFunction("GetScript", &ScriptingGameobject::GetScript)
 		.endClass()
 
@@ -290,14 +273,8 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("Move", &ScriptingPhysics::Move)
 		.addFunction("MoveGameObject", &ScriptingPhysics::MoveGameObject)
 		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
-		.addFunction("GetCharacterPositionX", &ScriptingPhysics::GetCharacterPositionX)
-		.addFunction("GetCharacterPositionY", &ScriptingPhysics::GetCharacterPositionY)
-		.addFunction("GetCharacterPositionZ", &ScriptingPhysics::GetCharacterPositionZ)
 		.addFunction("SetCharacterPosition", &ScriptingPhysics::SetCharacterPosition)
 		.addFunction("GetCharacterUpDirection", &ScriptingPhysics::GetCharacterUpDirection)
-		.addFunction("GetCharacterUpDirectionX", &ScriptingPhysics::GetCharacterUpDirectionX)
-		.addFunction("GetCharacterUpDirectionY", &ScriptingPhysics::GetCharacterUpDirectionY)
-		.addFunction("GetCharacterUpDirectionZ", &ScriptingPhysics::GetCharacterUpDirectionZ)
 		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
 
 		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
