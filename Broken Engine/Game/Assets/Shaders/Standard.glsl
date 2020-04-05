@@ -126,7 +126,10 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 //Dir Light Calculation
 vec3 CalculateDirectionalLight(BrokenLight light, vec3 normal, vec3 viewDir)
 {
-	return CalculateLightResult(light.color, light.dir, normal, viewDir) * light.intensity;
+	if(u_HasNormalMap == 1)
+		return CalculateLightResult(light.color, (v_TBN * normalize(light.dir)), normal, viewDir) * light.intensity;
+	else
+		return CalculateLightResult(light.color, light.dir, normal, viewDir) * light.intensity;
 }
 
 //Point Light Calculation
@@ -135,7 +138,7 @@ vec3 CalculatePointlight(BrokenLight light, vec3 normal, vec3 viewDir)
 	//Calculate light direction
 	vec3 direction = light.pos - v_FragPos;
 	if(u_HasNormalMap == 1)
-		direction = v_TBN * normalize(light.pos - v_FragPos);
+		direction = v_TBN * normalize(direction);
 
 	//Attenuation Calculation
 	float d = length(light.pos - v_FragPos);
@@ -151,7 +154,7 @@ vec3 CalculateSpotlight(BrokenLight light, vec3 normal, vec3 viewDir)
 	//Calculate light direction
 	vec3 direction = light.pos - v_FragPos;
 	if(u_HasNormalMap == 1)
-		direction = v_TBN * normalize(light.pos - v_FragPos);
+		direction = v_TBN * normalize(direction);
 
 	//Attenuation Calculation
 	float d = length(light.pos - v_FragPos);
@@ -183,7 +186,7 @@ void main()
 	if(u_HasNormalMap == 1)
 	{
 		normalVec = texture(u_NormalTexture, v_TexCoord).rgb;
-		normalVec = normalVec * 2.0 - 1.0;
+		normalVec = normalize(normalVec * 2.0 - 1.0);
 		//normalVec = normalize(v_TBN * normalVec);
 		viewDirection = v_TBN * normalize(v_CamPos - v_FragPos);
 	}
