@@ -240,7 +240,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// ----------------------------------------------------------------------------------
 		// CAMERA
 		// ----------------------------------------------------------------------------------
-		.beginClass <ScriptingGameobject>("GameObject")
+		.beginClass <ScriptingCamera>("Camera")
 		.addConstructor<void(*) (void)>()
 		.addFunction("GetPositionInFrustum", &ScriptingCamera::GetPosInFrustum)
 		.addFunction("GetFrustumPlanesIntersection", &ScriptingCamera::GetFrustumPlanesIntersection)

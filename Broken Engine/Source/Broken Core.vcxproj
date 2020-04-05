@@ -280,6 +280,7 @@
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
     <ClInclude Include="ScriptingAudio.h" />
+    <ClInclude Include="ScriptingCamera.h" />
     <ClInclude Include="ScriptingGameobject.h" />
     <ClInclude Include="ScriptingInterface.h" />
     <ClInclude Include="ScriptingParticles.h" />
@@ -434,6 +435,7 @@
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptingAudio.cpp" />
+    <ClCompile Include="ScriptingCamera.cpp" />
     <ClCompile Include="ScriptingGameobject.cpp" />
     <ClCompile Include="ScriptingInterface.cpp" />
     <ClCompile Include="ScriptingParticles.cpp" />
