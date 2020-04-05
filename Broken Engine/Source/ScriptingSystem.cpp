@@ -1,6 +1,7 @@
 #include "ScriptingSystem.h"
 #include "Application.h"
 #include "ModuleTimeManager.h"
+#include "ModuleScripting.h"
 #include "ModuleGui.h"
 #include "RandomGenerator.h"
 #include "ScriptData.h"
@@ -36,6 +37,11 @@ void ScriptingSystem::PauseGame()
 void ScriptingSystem::ResumeGame()
 {
 	App->time->gamePaused = false;
+}
+
+const char* ScriptingSystem::GetDebuggingPath()
+{
+	return App->scripting->debug_path.c_str();
 }
 
 // MATHS -------------------------------------------------------------

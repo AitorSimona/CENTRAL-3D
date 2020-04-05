@@ -7,6 +7,7 @@
 
 #include"LuaBridge-241/include/detail/Stack.h"
 
+
 #include <vector>
 
 namespace luabridge {

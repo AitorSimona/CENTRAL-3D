@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 /*
   https://github.com/vinniefalco/LuaBridge
-  
+
   Copyright 2012, Vinnie Falco <vinnie.falco@gmail.com>
   Copyright 2008, Nigel Atkinson <suprapilot+LuaCode@gmail.com>
 
@@ -35,7 +35,7 @@
 
 namespace luabridge {
 
-class LuaException : public std::exception 
+class LuaException : public std::exception
 {
 private:
   lua_State* m_L;
@@ -87,14 +87,15 @@ public:
   template <class Exception>
   static void Throw (Exception e)
   {
-	try
-	{
-	    throw e;
-	}
-	catch (Exception e)
-	{
-		ENGINE_CONSOLE_LOG("%s", e.what());
-	}
+      try
+      {
+          throw e;
+      }
+      catch (Exception e)
+      {
+          ENGINE_AND_SYSTEM_CONSOLE_LOG("LUA EXCEPTION THROWN: %s", e.what());
+      }
+
   }
 
   //----------------------------------------------------------------------------

@@ -221,6 +221,35 @@ luabridge::LuaRef ScriptingGameobject::GetFrustumPlanesIntersection(float x, flo
 	return table;
 }
 
+luabridge::LuaRef ScriptingGameobject::WorldToScreen(float x, float y, float z, lua_State* L) {
+	luabridge::LuaRef ret(L, luabridge::newTable(L));
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	if (cam) {
+		float2 sc_coords = cam->WorldToScreen(float3(x, y, z));
+
+		ret.append(sc_coords.x);
+		ret.append(sc_coords.y);
+	}
+
+	return ret;
+}
+
+luabridge::LuaRef ScriptingGameobject::ScreenToWorld(float x, float y, float distance, lua_State* L) {
+	luabridge::LuaRef ret(L, luabridge::newTable(L));
+	ComponentCamera* cam = App->renderer3D->active_camera;
+
+	if (cam) {
+		float3 wrld_coords = cam->ScreenToWorld(float2(x, y), distance);
+
+		ret.append(wrld_coords.x);
+		ret.append(wrld_coords.y);
+		ret.append(wrld_coords.z);
+	}
+
+	return ret;
+}
+
 luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State* L)
 {
 	luabridge::LuaRef ret = 0;

@@ -33,6 +33,9 @@ public:
 	int GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2);
 	luabridge::LuaRef GetFrustumPlanesIntersection(float x, float y, float z, float fovratio, lua_State* L);
 
+	luabridge::LuaRef WorldToScreen(float x, float y, float z, lua_State* L);
+	luabridge::LuaRef ScreenToWorld(float x, float y, float distance, lua_State* L);
+
 	// Get a script file
 	luabridge::LuaRef GetScript(uint gameobject_UUID, lua_State* L);
 };
