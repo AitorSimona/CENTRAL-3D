@@ -958,8 +958,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			if (mesh->mat)
 			{
 				glUniform1i(glGetUniformLocation(shader, "u_HasTexture"), 0);
+				glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
 				glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
-				int xddd = glGetUniformLocation(shader, "u_Shininess");
 				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
 				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
 				
@@ -983,6 +983,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 						if (mesh->mat && mesh->mat->m_SpecularResTexture)
 						{
 							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 2);
+							glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 1);
 							glActiveTexture(GL_TEXTURE0 + 2);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
 						}

@@ -65,6 +65,7 @@ in mat3 v_TBN;
 
 //Uniforms
 uniform int u_HasTexture = 0;
+uniform int u_HasSpecularTexture = 0;
 uniform int u_HasNormalMap = 0;
 uniform int u_DrawNormalMapping = 0;
 uniform float u_Shininess = 32.0;
@@ -111,10 +112,9 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 
 	//If we have textures, apply them
 	if(u_HasTexture == 1)
-	{
 		diffuse *= texture(u_AlbedoTexture, v_TexCoord).rgb;
+	if(u_HasSpecularTexture == 1)
 		specular *= texture(u_SpecularTexture, v_TexCoord).rgb;
-	}
 
 	return (diffuse + specular);
 }
