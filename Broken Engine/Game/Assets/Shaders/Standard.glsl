@@ -64,10 +64,10 @@ in vec3 v_CamPos;
 in mat3 v_TBN;
 
 //Uniforms
-uniform int u_HasTexture;
-uniform int u_HasNormalMap;
-uniform int u_DrawNormalMapping;
-uniform float u_Shininess;
+uniform int u_HasTexture = 0;
+uniform int u_HasNormalMap = 0;
+uniform int u_DrawNormalMapping = 0;
+uniform float u_Shininess = 32.0;
 uniform sampler2D u_AlbedoTexture;
 uniform sampler2D u_SpecularTexture;
 uniform sampler2D u_NormalTexture;
@@ -135,7 +135,7 @@ vec3 CalculatePointlight(BrokenLight light, vec3 normal, vec3 viewDir)
 
 	//Attenuation Calculation
 	float d = length(light.pos - v_FragPos);
-	float lightAttenuation = 1.0/ (light.attenuationKLQ.x + light.attenuationKLQ.y * d + light.attenuationKLQ.z *(d * d));
+	float lightAttenuation = 1.0/(light.attenuationKLQ.x + light.attenuationKLQ.y * d + light.attenuationKLQ.z *(d * d));
 
 	//Result
 	return CalculateLightResult(light.color, direction, normal, viewDir) * lightAttenuation * light.intensity;
@@ -183,8 +183,6 @@ void main()
 		//normalVec = normalize(v_TBN * normalVec);
 		viewDirection = v_TBN * normalize(v_CamPos - v_FragPos);
 	}
-
-	
 
 	vec3 colorResult = vec3(0.0);
 

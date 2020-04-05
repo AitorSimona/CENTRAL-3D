@@ -887,20 +887,16 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		{
 			shader = OutlineShader->ID;
 			colorToDraw = { 1.0f, 0.65f, 0.0f };
-			// --- Draw selected, pass scaled-up matrix to shader ---
 			float3 scale = float3(1.05f, 1.05f, 1.05f);
-
 			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
 		}
 
 		// --- Display Z buffer ---
 		if (zdrawer)
-		{
 			shader = ZDrawerShader->ID;
-		}
 
 		// --- Get Mesh Material ---
-		if (mesh->mat->shader)
+		if (mesh->mat->shader && shader != OutlineShader->ID && shader != ZDrawerShader->ID)
 		{
 			shader = mesh->mat->shader->ID;
 			mesh->mat->UpdateUniforms();
@@ -915,54 +911,42 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		glUseProgram(shader);
 
 		// --- Give ZDrawer near and far camera frustum planes pos ---
-		float farp = active_camera->GetFarPlane();
-		float nearp = active_camera->GetNearPlane();
-
 		if (zdrawer)
-		{
-			int nearfarLoc = glGetUniformLocation(shader, "nearfar");
-			glUniform2f(nearfarLoc, nearp, farp);
-		}
+			glUniform2f(glGetUniformLocation(shader, "nearfar"), active_camera->GetNearPlane(), active_camera->GetFarPlane());
 		
-		// --- Set general uniforms ---
-		GLint modelLoc = glGetUniformLocation(shader, "u_Model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.Transposed().ptr()); // model matrix
+		// --- Set Matrix Uniforms ---
+		glUniformMatrix4fv(glGetUniformLocation(shader, "u_Model"), 1, GL_FALSE, model.Transposed().ptr());
+		glUniformMatrix4fv(glGetUniformLocation(shader, "u_View"), 1, GL_FALSE, active_camera->GetOpenGLViewMatrix().ptr());
+		glUniform1f(glGetUniformLocation(shader, "time"), App->time->time);
 
-		GLint viewLoc = glGetUniformLocation(shader, "u_View");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, active_camera->GetOpenGLViewMatrix().ptr());
-
-		GLint timeLoc = glGetUniformLocation(shader, "time");
-		glUniform1f(timeLoc, App->time->time);
-
-
-		// right handed projection matrix
+		//// Right handed projection matrix
 		float f = 1.0f / tan(active_camera->GetFOV() * DEGTORAD / 2.0f);
 		float4x4 proj_RH(
 			f / active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 			0.0f, f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, -1.0f,
-			0.0f, 0.0f, nearp, 0.0f);
+			0.0f, 0.0f, active_camera->GetNearPlane(), 0.0f);
 
-		GLint projectLoc = glGetUniformLocation(shader, "u_Proj");
-		glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+		glUniformMatrix4fv(glGetUniformLocation(shader, "u_Proj"), 1, GL_FALSE, proj_RH.ptr());
 
-		// --- General Drawing Uniforms ---
-		int TextureSupportLocation = glGetUniformLocation(shader, "u_HasTexture"); // as of now, this is only on DefaultShader!
-		int vertexColorLocation = glGetUniformLocation(shader, "u_Color");
+		// --- Send Color ---
+		glUniform3f(glGetUniformLocation(shader, "u_Color"), colorToDraw.x, colorToDraw.y, colorToDraw.z);
 
 		// --- Set Normal Mapping Draw
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping"), (int)m_Draw_normalMapping);
 
-		// --- Send Color ---
-		glUniform3f(vertexColorLocation, colorToDraw.x, colorToDraw.y, colorToDraw.z);
-
 		// --- Send Lights ---
-		glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), m_LightsVec.size());
-		for (uint i = 0; i < m_LightsVec.size(); ++i)
-			m_LightsVec[i]->SendUniforms(shader, i);
+		if (shader != OutlineShader->ID)
+		{
+			glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), m_LightsVec.size());
+			for (uint i = 0; i < m_LightsVec.size(); ++i)
+				m_LightsVec[i]->SendUniforms(shader, i);
+		}
+		else
+			glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), 0);
 
-		// --- Materials ---
-		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices)
+		// --- General Rendering Uniforms (material - texture - color related) ---
+		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices) // if mesh to draw
 		{
 			const ResourceMesh* rmesh = mesh->resource_mesh;
 
@@ -971,31 +955,39 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 
 			glBindVertexArray(rmesh->VAO);
 
-			if (mesh->flags & RenderMeshFlags_::texture)
+			if (mesh->mat)
 			{
-				if (mesh->flags & RenderMeshFlags_::checkers)
-					glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-				else
+				glUniform1i(glGetUniformLocation(shader, "u_HasTexture"), 0);
+				glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
+				int xddd = glGetUniformLocation(shader, "u_Shininess");
+				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
+				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
+				
+				if (mesh->flags & RenderMeshFlags_::texture)
 				{
-					//glActiveTexture(GL_TEXTURE1);
-					if (mesh->mat && mesh->mat->m_DiffuseResTexture)
+					if (mesh->flags & RenderMeshFlags_::checkers)
+						glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+					else
 					{
-						glUniform3f(vertexColorLocation, mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
-						glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
-						glUniform1i(TextureSupportLocation, (int)mesh->mat->m_UseTexture);
+						glUniform1i(glGetUniformLocation(shader, "u_HasTexture"), (int)mesh->mat->m_UseTexture);
 
-						glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 1);
-						glActiveTexture(GL_TEXTURE0 + 1);
-						glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
+						if (mesh->mat && mesh->mat->m_DiffuseResTexture)
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 1);
+							glActiveTexture(GL_TEXTURE0 + 1);
+							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
+						}
+						else
+							glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 
-						if (mesh->mat->m_SpecularResTexture)
+						if (mesh->mat && mesh->mat->m_SpecularResTexture)
 						{
 							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 2);
 							glActiveTexture(GL_TEXTURE0 + 2);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
 						}
 
-						if (mesh->mat->m_NormalResTexture)
+						if (mesh->mat && mesh->mat->m_NormalResTexture)
 						{
 							glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 1);
 							glUniform1i(glGetUniformLocation(shader, "u_NormalTexture"), 3);
@@ -1003,18 +995,16 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_NormalResTexture->GetTexID());
 						}
 					}
-					else
-						glBindTexture(GL_TEXTURE_2D, App->textures->GetDefaultTextureID());
 				}
 			}
-			else
-				glUniform1i(TextureSupportLocation, (int)false);
-
+			
+			// --- Render ---
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
-			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); // render primitives from array data
+			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); //render from array data
 
+			// --- Unbind Buffers ---
 			glBindVertexArray(0);
-			glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 		// --- DeActivate wireframe mode ---
@@ -1026,13 +1016,11 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			glStencilMask(0x00);
 		}
 
-		// --- Set uniforms back to defaults ---
-		glUniform3f(vertexColorLocation, 255, 255, 255);
+		// --- Set color back to default ---
+		glUniform3f(glGetUniformLocation(shader, "u_Color"), 1.0f, 1.0f, 1.0f);
 	}
 
-
-
-	glUseProgram(defaultShader->ID);
+	glUseProgram(0);
 }
 
 void ModuleRenderer3D::HandleObjectOutlining()
