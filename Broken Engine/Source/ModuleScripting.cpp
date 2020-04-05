@@ -459,6 +459,11 @@ void ModuleScripting::SendScriptToModule(ComponentScript* script_component) {
 // Fill the ScriptVars of the component associated with this script
 void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 
+	if (script == nullptr)
+	{
+		ENGINE_CONSOLE_LOG("|[Error] The script sent to FillScriptInstanceComponentVars is NULLPTR, operation will be aborted");
+		return;
+	}
 	// Reset the type of all the variables
 	for (int i = 0; i < script->my_component->script_variables.size(); ++i)
 		script->my_component->script_variables[i].type = VarType::NONE;
@@ -569,6 +574,9 @@ void ModuleScripting::FillScriptInstanceComponentFuncs(ScriptInstance* script)
 void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript* script_component) {
 	for (int i = 0; i < class_instances.size(); ++i) {
 		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component) {
+			if (class_instances[i] == current_script)
+				current_script = nullptr;
+
 			delete class_instances[i];
 			class_instances.erase(class_instances.begin() + i);
 		}
@@ -620,7 +628,7 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 		{
 			for (int i = 0; i < script_component->script_functions.size(); ++i)
 			{
-				if (script_component->script_functions.at(i).name == aux_str)
+				if (script_component->script_functions[i].name == aux_str.c_str())
 				{
 					script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
 					ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
@@ -813,7 +821,9 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 						else
 						{
 							current_script->my_table_class["Update"]();	// Update is done on every iteration of the script as long as it remains active
-							FillScriptInstanceComponentVars(current_script); // Show variables at runtime
+							
+							if(current_script != nullptr)
+								FillScriptInstanceComponentVars(current_script); // Show variables at runtime
 						}
 					}
 				}
@@ -836,11 +846,7 @@ void ModuleScripting::CleanUpInstances() {
 			delete (*it);
 	}
 
-	for (std::vector<ScriptInstance*>::iterator it = recompiled_instances.begin(); it != recompiled_instances.end(); ++it) {
-		if ((*it) != nullptr)
-			delete (*it);
-	}
-
+	current_script = nullptr;
 	//debug_instance->my_table_class = 0;
 
 	class_instances.clear();

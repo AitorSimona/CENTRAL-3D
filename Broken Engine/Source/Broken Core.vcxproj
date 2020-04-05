@@ -45,12 +45,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath);$(ProjectDir)Freetype\include\freetype;$(ProjectDir)Freetype\include</IncludePath>
+    <IncludePath>C:\Users\didac\Documents\GitHub\Broken-Engine\Broken Engine\Source\Wwise;$(ProjectDir)/PhysX_3.4/Include;$(IncludePath);$(ProjectDir)Freetype\include\freetype;$(ProjectDir)Freetype\include</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(IncludePath);$(ProjectDir)Freetype\include\freetype;$(ProjectDir)Freetype\include</IncludePath>
+    <IncludePath>C:\Users\didac\Documents\GitHub\Broken-Engine\Broken Engine\Source\Wwise;$(ProjectDir)/PhysX_3.4/Include;$(IncludePath);$(ProjectDir)Freetype\include\freetype;$(ProjectDir)Freetype\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
