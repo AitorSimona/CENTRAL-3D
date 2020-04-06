@@ -1073,6 +1073,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			// --- Unbind Buffers ---
 			glBindVertexArray(0);
 			glBindTexture(GL_TEXTURE_2D, 0);
+			glActiveTexture(GL_TEXTURE0);
 		}
 
 		// --- DeActivate wireframe mode ---
@@ -1241,14 +1242,18 @@ void ModuleRenderer3D::DrawGrid()
 void ModuleRenderer3D::DrawFramebuffer() {
 	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
 	// clear all relevant buffers
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	screenShader->use();
+	glUseProgram(screenShader->ID);
 	glBindVertexArray(quadVAO);
 	glBindTexture(GL_TEXTURE_2D, rendertexture);	// use the color attachment texture as the texture of the quad plane
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	defaultShader->use();
+	// --- Unbind buffers ---
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
 }
 
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
