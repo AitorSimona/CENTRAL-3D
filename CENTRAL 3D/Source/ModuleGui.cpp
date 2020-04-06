@@ -169,7 +169,8 @@ update_status ModuleGui::Update(float dt)
 
 	if (ImGui::BeginMainMenuBar())
 	{
-		
+		ImGui::Image((ImTextureID)sceneTexID, ImVec2(18, 18), ImVec2(0, 1), ImVec2(1, 0));
+
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("Quit"))
@@ -376,6 +377,10 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &playbuttonTexID);
 	glDeleteTextures(1, &sceneTexID);
 	glDeleteTextures(1, &shaderTexID);
+	glDeleteTextures(1, &closebuttonTexID);
+	glDeleteTextures(1, &minimizebuttonTexID);
+	glDeleteTextures(1, &minimizesizebuttonTexID);
+	glDeleteTextures(1, &maximizesizebuttonTexID);
 
 	// --- ShutDown ImGui ---
 	ImGui_ImplOpenGL3_Shutdown();
@@ -479,6 +484,10 @@ void ModuleGui::CreateIcons()
 	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 	shaderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ShaderIcon.png", width, height, -1);
+	closebuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/CloseIcon.png", width, height, -1);
+	minimizebuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MinimizeIcon.png", width, height, -1);
+	minimizesizebuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MinimizeSizeIcon.png", width, height, -1);
+	maximizesizebuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MaximizeSizeIcon.png", width, height, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
 }

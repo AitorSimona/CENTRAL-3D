@@ -21,6 +21,7 @@ ResourceMesh::ResourceMesh(uint UID, std::string source_file) : Resource(Resourc
 
 ResourceMesh::~ResourceMesh()
 {
+	glDeleteTextures(1, (GLuint*)&previewTexID);
 }
 
 void ResourceMesh::CreateAABB()
@@ -233,6 +234,8 @@ void ResourceMesh::OnDelete()
 
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+	App->fs->Remove(previewTexPath.c_str());
+
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);

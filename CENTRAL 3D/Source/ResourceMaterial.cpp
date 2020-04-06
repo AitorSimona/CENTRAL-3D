@@ -26,7 +26,7 @@ ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource
 
 ResourceMaterial::~ResourceMaterial()
 {
-
+	glDeleteTextures(1, (GLuint*)&previewTexID);
 }
 
 bool ResourceMaterial::LoadInMemory()
@@ -320,6 +320,7 @@ void ResourceMaterial::OnDelete()
 
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+	App->fs->Remove(previewTexPath.c_str());
 
 	Resource* diffuse = resource_diffuse;
 

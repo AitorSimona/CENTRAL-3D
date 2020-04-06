@@ -68,6 +68,10 @@ public:
 	uint playbuttonTexID = 0;
 	uint sceneTexID = 0;
 	uint shaderTexID = 0;
+	uint closebuttonTexID = 0;
+	uint minimizebuttonTexID = 0;
+	uint minimizesizebuttonTexID = 0;
+	uint maximizesizebuttonTexID = 0;
 
 private:
 

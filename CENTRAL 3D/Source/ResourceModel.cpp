@@ -7,6 +7,7 @@
 #include "Importer.h"
 #include "ImporterModel.h"
 #include "ImporterMaterial.h"
+#include "OpenGL.h"
 
 #include "mmgr/mmgr.h"
 
@@ -22,6 +23,8 @@ ResourceModel::ResourceModel(uint UID, std::string source_file) : Resource(Resou
 ResourceModel::~ResourceModel()
 {
 	resources.clear();
+
+	glDeleteTextures(1, (GLuint*)&previewTexID);
 }
 
 bool ResourceModel::LoadInMemory()
@@ -134,6 +137,7 @@ void ResourceModel::OnDelete()
 	FreeMemory();
 
 	App->fs->Remove(resource_file.c_str());
+	App->fs->Remove(previewTexPath.c_str());
 
 	for (uint i = 0; i < resources.size(); ++i)
 	{
