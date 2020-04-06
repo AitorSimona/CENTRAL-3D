@@ -52,6 +52,9 @@ void ResourceMaterial::FreeMemory()
 
 void ResourceMaterial::CreateInspectorNode()
 {
+	static bool save_material = false;
+	static Timer material_save_time;
+
 	// --- Mat preview
 	ImGui::Image((void*)(uint)GetPreviewTexID(), ImVec2(30, 30));
 	ImGui::SameLine();
@@ -82,7 +85,7 @@ void ResourceMaterial::CreateInspectorNode()
 						ImGui::SetItemDefaultFocus();
 				}
 			
-
+			save_material = true;
 			ImGui::EndCombo();
 		}
 	}
@@ -93,11 +96,11 @@ void ResourceMaterial::CreateInspectorNode()
 
 	ImGui::Text("Use Textures");
 	ImGui::SameLine();
-	ImGui::Checkbox("##CB", &m_UseTexture);
+	if(ImGui::Checkbox("##CB", &m_UseTexture)) save_material = true;
 
 	// --- Color ---
 	ImGui::Separator();
-	ImGui::ColorEdit4("##AmbientColor", (float*)&m_AmbientColor, ImGuiColorEditFlags_NoInputs);
+	if(ImGui::ColorEdit4("##AmbientColor", (float*)&m_AmbientColor, ImGuiColorEditFlags_NoInputs)) save_material = true;
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
 	ImGui::Text("MatAmbientColor");
 
@@ -105,7 +108,7 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::Text("Shininess");
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 	ImGui::SetNextItemWidth(300.0f);
-	ImGui::SliderFloat("", &m_Shininess, 1.0f, 500.00f);
+	if(ImGui::SliderFloat("", &m_Shininess, 1.0f, 500.00f)) save_material = true;
 
 	// --- Print Texture Width and Height (Diffuse) ---
 	uint textSizeX = 0, textSizeY = 0;
@@ -142,10 +145,11 @@ void ResourceMaterial::CreateInspectorNode()
 				m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 				// --- Save material so we update path to texture ---
-				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-				if (IMat)
-					IMat->Save(this);
+				save_material = true;
+				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+				//
+				//if (IMat)
+				//	IMat->Save(this);
 			}
 		}
 
@@ -161,6 +165,7 @@ void ResourceMaterial::CreateInspectorNode()
 		//m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
 		m_DiffuseResTexture->Release();
 		m_DiffuseResTexture = nullptr;
+		save_material = true;
 	}
 
 
@@ -199,10 +204,11 @@ void ResourceMaterial::CreateInspectorNode()
 				m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 				// --- Save material so we update path to texture ---
-				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-				if (IMat)
-					IMat->Save(this);
+				save_material = true;
+				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+				//
+				//if (IMat)
+				//	IMat->Save(this);
 			}
 		}
 
@@ -218,6 +224,7 @@ void ResourceMaterial::CreateInspectorNode()
 		//m_SpecularResTexture->RemoveUser(GetContainerGameObject());
 		m_SpecularResTexture->Release();
 		m_SpecularResTexture = nullptr;
+		save_material = true;
 	}
 
 	// --- Print Texture Width and Height (Normal)
@@ -255,10 +262,11 @@ void ResourceMaterial::CreateInspectorNode()
 				m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 				// --- Save material so we update path to texture ---
-				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-				if (IMat)
-					IMat->Save(this);
+				save_material = true;
+				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+				//
+				//if (IMat)
+				//	IMat->Save(this);
 			}
 		}
 
@@ -274,6 +282,21 @@ void ResourceMaterial::CreateInspectorNode()
 		//m_NormalResTexture->RemoveUser(GetContainerGameObject());
 		m_NormalResTexture->Release();
 		m_NormalResTexture = nullptr;
+		save_material = true;
+	}
+
+	if (save_material && !material_save_time.IsRunning())
+		material_save_time.Start();
+
+	// --- Save material after some seconds ---
+	if (save_material && material_save_time.Read() > 8000.0f)
+	{
+		material_save_time.Stop();
+		save_material = false;
+
+		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+		if (IMat)
+			IMat->Save(this);
 	}
 }
 
