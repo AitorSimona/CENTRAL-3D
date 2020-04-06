@@ -1047,6 +1047,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 							glActiveTexture(GL_TEXTURE0 + 1);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
 						}
+						else
+							glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 0);
 
 						if (mesh->mat->m_SpecularResTexture)
 						{
@@ -1056,6 +1058,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 							glActiveTexture(GL_TEXTURE0 + 2);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
 						}
+						else
+							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 0);
 
 						if (mesh->mat->m_NormalResTexture)
 						{
@@ -1065,6 +1069,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 							glActiveTexture(GL_TEXTURE0 + 3);
 							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_NormalResTexture->GetTexID());
 						}
+						else
+							glUniform1i(glGetUniformLocation(shader, "u_NormalTexture"), 0);
 					}
 				}
 			}
