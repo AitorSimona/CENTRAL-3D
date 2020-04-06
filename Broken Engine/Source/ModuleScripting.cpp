@@ -18,6 +18,7 @@
 #include "ScriptingInputs.h"
 #include "ScriptingAnimations.h"
 #include "ScriptingAudio.h"
+#include "ScriptingCamera.h"
 #include "ScriptingGameobject.h"
 #include "ScriptingParticles.h"
 #include "ScriptingInterface.h"
@@ -194,6 +195,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		// Maths
 		.addFunction("CompareFloats", &ScriptingSystem::FloatNumsAreEqual)
 		.addFunction("CompareDoubles", &ScriptingSystem::DoubleNumsAreEqual)
+		.addFunction("RandomNumber", &ScriptingSystem::RandomNumber)
+		.addFunction("RandomNumberInRange", &ScriptingSystem::RandomNumberInRange)
+		.addFunction("RandomNumberList", &ScriptingSystem::RandomNumberList)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -204,22 +208,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		// Position
 		.addFunction("GetPosition", &ScriptingTransform::GetPosition)
-		.addFunction("GetPositionX", &ScriptingTransform::GetPositionX)
-		.addFunction("GetPositionY", &ScriptingTransform::GetPositionY)
-		.addFunction("GetPositionZ", &ScriptingTransform::GetPositionZ)
-
 		.addFunction("Translate", &ScriptingTransform::Translate)
 		.addFunction("SetPosition", &ScriptingTransform::SetPosition)
 
 		// Rotation
+		.addFunction("GetRotation", &ScriptingTransform::GetRotation)
 		.addFunction("RotateObject", &ScriptingTransform::RotateObject)
 		.addFunction("SetObjectRotation", &ScriptingTransform::SetObjectRotation)
 		.addFunction("LookAt", &ScriptingTransform::LookAt)
-
-		.addFunction("GetRotation", &ScriptingTransform::GetRotation)
-		.addFunction("GetRotationX", &ScriptingTransform::GetRotationX)
-		.addFunction("GetRotationY", &ScriptingTransform::GetRotationY)
-		.addFunction("GetRotationZ", &ScriptingTransform::GetRotationZ)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -237,22 +233,19 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetMyLayer", &ScriptingGameobject::GetMyLayer)
 		.addFunction("GetLayerByID", &ScriptingGameobject::GetLayerByID)
-		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
-		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
-		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
-		.addFunction("GetGameObjectPosZ", &ScriptingGameobject::GetGameObjectPosZ)
-		.addFunction("TranslateGameObject", &ScriptingGameobject::TranslateGameObject)
-
 		.addFunction("GetComponent", &ScriptingGameobject::GetComponentFromGO)
-		.addFunction("GetPositionInFrustum", &ScriptingGameobject::GetPosInFrustum)
-		.addFunction("GetFrustumPlanesIntersection", &ScriptingGameobject::GetFrustumPlanesIntersection) //For the referenced LuaState passed: Top (x), Bottom (y), Left (z), Right (w) will be 1 if in positive plane side (inside frustum), 0 (outside frustum) if not
-		.addFunction("GetTopFrustumIntersection", &ScriptingGameobject::GetTopFrustumIntersection)
-		.addFunction("GetBottomFrustumIntersection", &ScriptingGameobject::GetBottomFrustumIntersection)
-		.addFunction("GetLeftFrustumIntersection", &ScriptingGameobject::GetLeftFrustumIntersection)
-		.addFunction("GetRightFrustumIntersection", &ScriptingGameobject::GetRightFrustumIntersection)
-		.addFunction("WorldToScreen", &ScriptingGameobject::WorldToScreen)
-		.addFunction("ScreenToWorld", &ScriptingGameobject::ScreenToWorld)
 		.addFunction("GetScript", &ScriptingGameobject::GetScript)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// CAMERA
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingCamera>("Camera")
+		.addConstructor<void(*) (void)>()
+		.addFunction("GetPositionInFrustum", &ScriptingCamera::GetPosInFrustum)
+		.addFunction("GetFrustumPlanesIntersection", &ScriptingCamera::GetFrustumPlanesIntersection)
+		.addFunction("WorldToScreen", &ScriptingCamera::WorldToScreen)
+		.addFunction("ScreenToWorld", &ScriptingCamera::ScreenToWorld)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -266,16 +259,11 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetAngularVelocity", &ScriptingPhysics::GetAngularVelocity)
 		.addFunction("SetAngularVelocity", &ScriptingPhysics::SetAngularVelocity)
-		.addFunction("SetAngularVelocity_GO", &ScriptingPhysics::SetAngularVelocityGO)
 		.addFunction("GetLinearVelocity", &ScriptingPhysics::GetLinearVelocity)
 		.addFunction("SetLinearVelocity", &ScriptingPhysics::SetLinearVelocity)
-		.addFunction("SetLinearVelocity_GO", &ScriptingPhysics::SetLinearVelocityGO)
 
 		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
-		.addFunction("AddTorque_GO", &ScriptingPhysics::AddTorqueGO)
 		.addFunction("AddForce", &ScriptingPhysics::AddForce)
-		.addFunction("AddForce_GO", &ScriptingPhysics::AddForceGO)
-
 		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
 		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
 
@@ -288,20 +276,12 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
 		.addFunction("Move", &ScriptingPhysics::Move)
-		.addFunction("MoveGameObject", &ScriptingPhysics::MoveGameObject)
 		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
-		.addFunction("GetCharacterPositionX", &ScriptingPhysics::GetCharacterPositionX)
-		.addFunction("GetCharacterPositionY", &ScriptingPhysics::GetCharacterPositionY)
-		.addFunction("GetCharacterPositionZ", &ScriptingPhysics::GetCharacterPositionZ)
 		.addFunction("SetCharacterPosition", &ScriptingPhysics::SetCharacterPosition)
 		.addFunction("GetCharacterUpDirection", &ScriptingPhysics::GetCharacterUpDirection)
-		.addFunction("GetCharacterUpDirectionX", &ScriptingPhysics::GetCharacterUpDirectionX)
-		.addFunction("GetCharacterUpDirectionY", &ScriptingPhysics::GetCharacterUpDirectionY)
-		.addFunction("GetCharacterUpDirectionZ", &ScriptingPhysics::GetCharacterUpDirectionZ)
 		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
 
 		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
-
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -312,13 +292,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
 		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
-		.addFunction("ActivateParticlesEmission_GO", &ScriptingParticles::ActivateParticleEmitterGO)
-		.addFunction("DeactivateParticlesEmission_GO", &ScriptingParticles::DeactivateParticleEmitterGO)
-
+		
 		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
 		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
-		.addFunction("PlayParticleEmitter_GO", &ScriptingParticles::PlayParticleEmitterGO)
-		.addFunction("StopParticleEmitter_GO", &ScriptingParticles::StopParticleEmitterGO)
 		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
 		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
 
@@ -718,7 +694,6 @@ void ModuleScripting::CallbackScriptFunctionParam(ComponentScript* script_compon
 	}
 }
 
-
 bool ModuleScripting::Init(json& file) {
 	// Create the Virtual Machine
 	L = luaL_newstate();
@@ -804,8 +779,8 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 
 				if (current_script->awoken == false)
 				{
-					current_script->my_table_class["Awake"]();	// Awake is done first, regardless of the script being active or not
 					current_script->awoken = true;
+					current_script->my_table_class["Awake"]();	// Awake is done first, regardless of the script being active or not
 				}
 				else if (current_script->my_component->GetActive()) //Check if the script instance and it's object holding it are active
 				{
@@ -815,8 +790,8 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 					{
 						if (current_script->started == false)
 						{
-							current_script->my_table_class["Start"]();	// Start is done only once for the first time the script is active
 							current_script->started = true;
+							current_script->my_table_class["Start"]();	// Start is done only once for the first time the script is active
 						}
 						else
 						{

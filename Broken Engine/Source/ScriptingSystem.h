@@ -3,6 +3,12 @@
 
 #include "BrokenCore.h"
 
+class lua_State;
+
+namespace luabridge {
+	class LuaRef;
+}
+
 BE_BEGIN_NAMESPACE
 class BROKEN_API ScriptingSystem {
 public:
@@ -22,6 +28,9 @@ public:
 	// Maths
 	int FloatNumsAreEqual(float a, float b);
 	int DoubleNumsAreEqual(double a, double b);
+	double RandomNumber();
+	double RandomNumberInRange(double min, double max);
+	luabridge::LuaRef RandomNumberList(int listSize, double min, double max, lua_State* L);
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGSYSTEM_H__

@@ -268,7 +268,6 @@ void ComponentTransform::CreateInspectorNode()
 		if (!GetRotation().Equals(rotation))
 			SetRotation(rotation);
 	}
-
 }
 
 void ComponentTransform::UpdateTRS() {

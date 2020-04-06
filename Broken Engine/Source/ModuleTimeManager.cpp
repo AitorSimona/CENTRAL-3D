@@ -104,7 +104,7 @@ void ModuleTimeManager::PrepareUpdate() {
 			App->fs->Remove(App->scene_manager->temporalScene->GetResourceFile());
 			App->fs->Remove(std::string(App->scene_manager->temporalScene->GetResourceFile()).append(".meta").c_str());
 			App->fs->Remove("Temp/");
-
+			gamePaused = false;
 			App->GetAppState() = AppState::EDITOR;
 
 			ENGINE_CONSOLE_LOG("APP STATE EDITOR");

@@ -211,7 +211,7 @@ update_status ModulePhysics::Update(float dt)
 	//if (App->GetAppState() == AppState::PLAY)
 	//	SimulatePhysics(dt);
 
-	if (App->GetAppState() == AppState::PLAY)
+	if (App->GetAppState() == AppState::PLAY && !App->time->gamePaused)
 	{
 		// --- Step physics simulation ---
 		physAccumulatedTime += App->time->GetRealTimeDt();

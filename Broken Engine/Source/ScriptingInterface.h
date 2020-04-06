@@ -10,14 +10,14 @@ public:
 	~ScriptingInterface();
 
 public:
-	void MakeUIComponentVisible(uint go_UUID, const char* comp_type);
-	void MakeUIComponentInvisible(uint go_UUID, const char* comp_type);
+	void MakeUIComponentVisible(const char* comp_type, uint go_UUID);
+	void MakeUIComponentInvisible(const char* comp_type, uint go_UUID);
 
-	void SetBarPercentage(uint go_UUID, float percentage);
-	void SetCircularBarPercentage(uint go_UUID, float percentage);
-	void SetUIText(uint go_UUID, const char* text);
-	void SetUITextAndNumber(uint go_UUID, const char* text, float number);
-	void SetUITextNumber(uint go_UUID, float number);
+	void SetBarPercentage(float percentage, uint go_UUID);
+	void SetCircularBarPercentage(float percentage, uint go_UUID);
+	void SetUIText(const char* text, uint go_UUID);
+	void SetUITextAndNumber(const char* text, float number, uint go_UUID);
+	void SetUITextNumber(float number, uint go_UUID);
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGINTERFACE_H__

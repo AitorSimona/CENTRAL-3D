@@ -3,6 +3,8 @@
 #include "ModuleTimeManager.h"
 #include "ModuleScripting.h"
 #include "ModuleGui.h"
+#include "RandomGenerator.h"
+#include "ScriptData.h"
 
 using namespace Broken;
 ScriptingSystem::ScriptingSystem() {}
@@ -51,4 +53,30 @@ int ScriptingSystem::FloatNumsAreEqual(float a, float b)
 int ScriptingSystem::DoubleNumsAreEqual(double a, double b)
 {
 	return (fabs(a - b) < std::numeric_limits<double>::epsilon());
+}
+
+double ScriptingSystem::RandomNumber()
+{
+	return App->RandomNumberGenerator.GetDoubleRN();
+}
+
+double ScriptingSystem::RandomNumberInRange(double min, double max)
+{
+	return App->RandomNumberGenerator.GetDoubleRNinRange(min, max);
+}
+
+luabridge::LuaRef ScriptingSystem::RandomNumberList(int listSize, double min, double max, lua_State* L)
+{
+	std::vector<double> numbers = App->RandomNumberGenerator.GetDoubleRNVecinRange(listSize, min, max);
+
+	luabridge::LuaRef ret = 0;
+	luabridge::LuaRef uniforms(L, luabridge::newTable(L));
+	for (int i = 0; i < numbers.size(); ++i)
+	{
+		uniforms.append(numbers[i]);
+	}
+
+	ret = uniforms;
+
+	return ret;
 }

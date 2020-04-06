@@ -688,6 +688,9 @@
     <ClInclude Include="ModuleSelection.h">
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptingCamera.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1145,6 +1148,9 @@
     </ClCompile>
     <ClCompile Include="ModuleSelection.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingCamera.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
