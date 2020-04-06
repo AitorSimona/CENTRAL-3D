@@ -779,8 +779,8 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 
 				if (current_script->awoken == false)
 				{
-					current_script->my_table_class["Awake"]();	// Awake is done first, regardless of the script being active or not
 					current_script->awoken = true;
+					current_script->my_table_class["Awake"]();	// Awake is done first, regardless of the script being active or not
 				}
 				else if (current_script->my_component->GetActive()) //Check if the script instance and it's object holding it are active
 				{
@@ -790,8 +790,8 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 					{
 						if (current_script->started == false)
 						{
-							current_script->my_table_class["Start"]();	// Start is done only once for the first time the script is active
 							current_script->started = true;
+							current_script->my_table_class["Start"]();	// Start is done only once for the first time the script is active
 						}
 						else
 						{
