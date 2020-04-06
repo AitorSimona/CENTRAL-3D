@@ -95,6 +95,16 @@ bool ModuleRenderer3D::Init(json& file) {
 		 1.0f,  1.0f,  1.0f, 1.0f
 	};
 
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 	// --- Check if graphics driver supports shaders in binary format ---
 	//GLint formats = 0;
 	//glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
@@ -224,6 +234,10 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Unbind fbo ---
 	if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// -- Draw framebuffer texture ---
+	if (drawfb)
+		DrawFramebuffer();
 
 	// --- Draw GUI and swap buffers ---
 	App->gui->Draw();
@@ -794,6 +808,51 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader->ReloadAndCompileShader();
 	IShader->Save(defaultShader);
 
+	// ---Creating screen shader ---
+
+	const char* vertexScreenShader =
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec2 aPos;
+		layout (location = 1) in vec2 aTexCoords;
+
+		out vec2 TexCoords;
+
+		void main()
+		{
+			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+			TexCoords = aTexCoords;
+		} 
+		#endif //VERTEX_SHADER)";
+
+	const char* fragmentScreenShader =
+		R"(#version 440 core
+		#define FRAGMENT_SHADER
+		#ifdef FRAGMENT_SHADER
+
+		out vec4 FragColor;
+  
+		in vec2 TexCoords;
+
+		uniform sampler2D screenTexture;
+		
+		void main()
+		{ 
+		    FragColor = texture(screenTexture, TexCoords);
+		}
+		#endif //FRAGMENT_SHADER)";
+
+	screenShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/ScreenShader.glsl", 13);
+	screenShader->vShaderCode = vertexScreenShader;
+	screenShader->fShaderCode = fragmentScreenShader;
+	screenShader->ReloadAndCompileShader();
+	screenShader->SetName("Screen shader");
+	screenShader->LoadToMemory();
+	screenShader->ReloadAndCompileShader();
+	IShader->Save(screenShader);
+
 	defaultShader->use();
 }
 
@@ -1177,6 +1236,19 @@ void ModuleRenderer3D::DrawGrid()
 	glLineWidth(1.0f);
 
 	glUseProgram(0);
+}
+
+void ModuleRenderer3D::DrawFramebuffer() {
+	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+	// clear all relevant buffers
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	screenShader->use();
+	glBindVertexArray(quadVAO);
+	glBindTexture(GL_TEXTURE_2D, rendertexture);	// use the color attachment texture as the texture of the quad plane
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	defaultShader->use();
 }
 
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
