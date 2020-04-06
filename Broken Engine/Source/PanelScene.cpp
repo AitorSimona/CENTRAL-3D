@@ -91,7 +91,22 @@ bool PanelScene::Draw()
 				ImGui::MenuItem("BOUNDING BOXES", NULL, &EngineApp->renderer3D->display_boundingboxes);
 				ImGui::MenuItem("OCTREE", NULL, &EngineApp->scene_manager->display_tree);
 				ImGui::MenuItem("ZDRAWER", NULL, &EngineApp->renderer3D->zdrawer);
-				ImGui::MenuItem("NORMAL MAPPING", NULL, &EngineApp->renderer3D->m_Draw_normalMapping);
+
+				if (ImGui::MenuItem("NORMAL MAPPING", NULL, &EngineApp->renderer3D->m_Draw_normalMapping))
+				{
+					EngineApp->renderer3D->m_Draw_normalMapping_Lit = false;
+					EngineApp->renderer3D->m_Draw_normalMapping_Lit_Adv = false;
+				}
+				if (ImGui::MenuItem("LIT NORMAL MAPPING", NULL, &EngineApp->renderer3D->m_Draw_normalMapping_Lit))
+				{
+						EngineApp->renderer3D->m_Draw_normalMapping = false;
+						EngineApp->renderer3D->m_Draw_normalMapping_Lit_Adv = false;
+				}
+				if (ImGui::MenuItem("LIT NORMAL MAPPING ADVANCED", NULL, &EngineApp->renderer3D->m_Draw_normalMapping_Lit_Adv))
+				{
+					EngineApp->renderer3D->m_Draw_normalMapping_Lit = false;
+					EngineApp->renderer3D->m_Draw_normalMapping = false;
+				}
 
 				ImGui::EndMenu();
 			}

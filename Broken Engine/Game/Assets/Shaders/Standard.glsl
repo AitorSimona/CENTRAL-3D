@@ -71,7 +71,10 @@ uniform int u_UseTextures = 0;
 uniform int u_HasDiffuseTexture = 0;
 uniform int u_HasSpecularTexture = 0;
 uniform int u_HasNormalMap = 0;
+
 uniform int u_DrawNormalMapping = 0;
+uniform int u_DrawNormalMapping_Lit = 0;
+uniform int u_DrawNormalMapping_Lit_Adv = 0;
 
 uniform sampler2D u_AlbedoTexture;
 uniform sampler2D u_SpecularTexture;
@@ -191,25 +194,44 @@ void main()
 
 	for(int i = 0; i < lights_iterator; ++i)
 	{
-		if(u_BkLights[i].LightType == 0) //Directional
-			colorResult += CalculateDirectionalLight(u_BkLights[i], normalVec, viewDirection);
+		if(u_DrawNormalMapping_Lit_Adv == 0)
+		{
+			if(u_BkLights[i].LightType == 0) //Directional
+				colorResult += CalculateDirectionalLight(u_BkLights[i], normalVec, viewDirection);
 
-		else if(u_BkLights[i].LightType == 1) //Pointlight
-			colorResult += CalculatePointlight(u_BkLights[i], normalVec, viewDirection);
+			else if(u_BkLights[i].LightType == 1) //Pointlight
+				colorResult += CalculatePointlight(u_BkLights[i], normalVec, viewDirection);
 
-		else if(u_BkLights[i].LightType == 2) //Spotlight
-			colorResult += CalculateSpotlight(u_BkLights[i], normalVec, viewDirection);
+			else if(u_BkLights[i].LightType == 2) //Spotlight
+				colorResult += CalculateSpotlight(u_BkLights[i], normalVec, viewDirection);
+		}
+		else
+		{
+			if(u_BkLights[i].LightType == 0)
+				colorResult += v_TBN * normalize(u_BkLights[i].dir);
+			else
+				colorResult += v_TBN * normalize(u_BkLights[i].pos);
+		}
 	}
 
-	//Resulting Color
-	if(u_UseTextures == 0)
-		out_color = vec4(colorResult + v_Color, 1.0);
+	if(u_DrawNormalMapping_Lit == 0 && u_DrawNormalMapping == 0 && u_DrawNormalMapping_Lit_Adv == 0)
+	{
+		//Resulting Color
+		if(u_UseTextures == 0)
+			out_color = vec4(colorResult + v_Color, 1.0);
+		else
+			out_color = vec4(colorResult + v_Color * texture(u_AlbedoTexture, v_TexCoord).rgb, texture(u_AlbedoTexture, v_TexCoord).a);
+	}
 	else
-		out_color = vec4(colorResult + v_Color * texture(u_AlbedoTexture, v_TexCoord).rgb, texture(u_AlbedoTexture, v_TexCoord).a);
-
-	//Draw Normal Mapping if we must
-	//if(u_DrawNormalMapping)
-	//	out_color = vec4(LightDirection_tangentspace);
+	{
+		//Draw Normal Mapping if we must
+		if(u_DrawNormalMapping_Lit == 1)
+			out_color = vec4(colorResult * normalVec, 1.0);
+		else if(u_DrawNormalMapping == 1)
+			out_color = vec4(normalVec, 1.0);
+		else if(u_DrawNormalMapping_Lit_Adv == 1)
+			out_color = vec4(colorResult, 1.0);
+	}
 }
 
 #endif //FRAGMENT_SHADER
