@@ -47,7 +47,7 @@ bool PanelScene::Draw()
 	{
 		// --- Set image size
 		width = ImGui::GetWindowWidth();
-		height = ImGui::GetWindowHeight()*0.94f;
+		height = ImGui::GetWindowHeight();
 		ImVec2 size = ImVec2(width, height);
 
 		// --- Force Window Size ---
