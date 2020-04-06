@@ -167,6 +167,8 @@ update_status ModuleGui::Update(float dt)
 {
 	// --- Create Main Menu Bar ---
 
+	update_status status = UPDATE_CONTINUE;
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		ImGui::Image((ImTextureID)sceneTexID, ImVec2(18, 18), ImVec2(0, 1), ImVec2(1, 0));
@@ -321,6 +323,32 @@ update_status ModuleGui::Update(float dt)
 				ImGui::EndMenu();
 			}
 
+			// --- Manage Window through main menu bar Minimize/Maximize-Minimize Size/Close---
+
+			if (App->window->IsBorderless())
+			{
+				ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() - 70);
+
+				if (ImGui::ImageButton((ImTextureID)minimizebuttonTexID, ImVec2(14, 14), ImVec2(0, 1), ImVec2(1, 0)))
+					App->window->MinimizeWindow();
+
+				if (App->window->IsWindowMaximized())
+				{
+					if (ImGui::ImageButton((ImTextureID)minimizesizebuttonTexID, ImVec2(14, 14), ImVec2(0, 1), ImVec2(1, 0)))
+						App->window->RestoreWindow();
+				}
+				else
+				{
+					if (ImGui::ImageButton((ImTextureID)maximizesizebuttonTexID, ImVec2(14, 14), ImVec2(0, 1), ImVec2(1, 0)))
+						App->window->MaximizeWindow();
+				}
+
+				if (ImGui::ImageButton((ImTextureID)closebuttonTexID, ImVec2(14, 14), ImVec2(0, 1), ImVec2(1, 0)))
+					status = UPDATE_STOP;
+
+			}
+
+
 
 			ImGui::EndMainMenuBar();
 	}
@@ -329,7 +357,7 @@ update_status ModuleGui::Update(float dt)
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
 
-	return UPDATE_CONTINUE;
+	return status;
 }
 
 update_status ModuleGui::PostUpdate(float dt)

@@ -31,6 +31,10 @@ public:
 	void SetTitle(const char* title);
 	void SetWindowWidth(uint width);
 	void SetWindowHeight(uint height);
+	void MinimizeWindow();
+	void MaximizeWindow();
+	void RestoreWindow();
+	bool IsWindowMaximized();
 
 	// --- Only App should access this, through SetAppName ---
 	void SetWinTitle(const char* name);
@@ -39,6 +43,8 @@ public:
 	void GetWinMaxMinSize(uint & min_width, uint & min_height, uint & max_width, uint & max_height) const;
 	uint GetWindowWidth() const;
 	uint GetWindowHeight() const;
+	uint GetDisplayWidth() const;
+	uint GetDisplayHeight() const;
 	float GetWinBrightness() const;
 	uint GetDisplayRefreshRate();
 
@@ -70,8 +76,9 @@ private:
 	// --- Win Flags ---
 	bool fullscreen = false;
 	bool resizable = true;
-	bool borderless = false;
+	bool borderless = true;
 	bool fullscreen_desktop = false;
+	bool maximized = false;
 };
 
 #endif // __ModuleWindow_H__

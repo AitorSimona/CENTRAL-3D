@@ -45,7 +45,6 @@ bool ModuleWindow::Init(json file)
 		App->time->CapMs(1 / RefreshRate * 1000);
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-		//Use OpenGL 3.1
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE); // deprecated functions are disabled
@@ -144,6 +143,29 @@ void ModuleWindow::SetWindowHeight(uint height)
 		UpdateWindowSize();
 }
 
+void ModuleWindow::MinimizeWindow()
+{
+	SDL_MinimizeWindow(window);
+	maximized = false;
+}
+
+void ModuleWindow::MaximizeWindow()
+{
+	SDL_MaximizeWindow(window);
+	maximized = true;
+}
+
+void ModuleWindow::RestoreWindow()
+{
+	SDL_RestoreWindow(window);
+	maximized = false;
+}
+
+bool ModuleWindow::IsWindowMaximized()
+{
+	return maximized;
+}
+
 uint ModuleWindow::GetWindowWidth() const
 {
 	return screen_width;
@@ -152,6 +174,16 @@ uint ModuleWindow::GetWindowWidth() const
 uint ModuleWindow::GetWindowHeight() const
 {
 	return screen_height;
+}
+
+uint ModuleWindow::GetDisplayWidth() const
+{
+	return display_Width;
+}
+
+uint ModuleWindow::GetDisplayHeight() const
+{
+	return display_Height;
 }
 
 uint ModuleWindow::GetDisplayRefreshRate() 
