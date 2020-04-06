@@ -53,6 +53,7 @@ bool PanelInspector::Draw()
 			std::vector<Component*>* components = &Selected->GetComponents();
 			uint i = 1;
 
+			// MYTODO: Give components a uid and clean this
 
 			for (std::vector<Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
 			{
@@ -68,14 +69,30 @@ bool PanelInspector::Draw()
 						if (i == 1)
 							ImGui::PopStyleVar();
 						
-
 						ImGui::PushStyleVar(ImGuiStyleVar_::ImGuiStyleVar_FramePadding, ImVec2(ImGui::GetStyle().FramePadding.x, 1));
 
+						// --- Create arrow button to show/hide component data ---
+						ImGuiDir dir = ImGuiDir_::ImGuiDir_Right;
+
+						// --- Set arrow direction ---
+						if ((*it)->openinInspector)
+							dir = ImGuiDir_::ImGuiDir_Down;
+						
+						// --- Force new uid so imgui does not block all buttons after the first one ---
+						ImGui::PushID(Selected->GetUID() - i);
+
+						if(ImGui::ArrowButton("##arrow", dir))
+							(*it)->openinInspector = !(*it)->openinInspector;
+
+						ImGui::SameLine();
+
+						ImGui::PopID();
+
+						// --- Show component Active bool and component name ---
 						std::string a = "##Active";
 
 						if((*it)->name != "Transform")
 							ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
-
 
 						ImGui::SameLine();
 						ImGui::Text(((*it)->name).c_str());
@@ -88,9 +105,13 @@ bool PanelInspector::Draw()
 					
 					ImGui::SameLine();
 
+					// --- Finally, display component data ---
 					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanFullWidth))
 					{
-						(*it)->CreateInspectorNode();
+						if((*it)->openinInspector)
+							(*it)->CreateInspectorNode();
+
+
 						ImGui::TreePop();
 					}
 
@@ -98,10 +119,12 @@ bool PanelInspector::Draw()
 				}
 
 				ImGui::NewLine();
-				//ImGui::Separator();
 
 				i++;
 			}
+
+
+			// MYTODO: Improve this, it should be automatic
 
 			static ImGuiComboFlags flags = 0;
 

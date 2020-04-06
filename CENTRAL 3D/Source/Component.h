@@ -41,6 +41,7 @@ public:
 	virtual void DrawComponent() {};
 
 	std::string name;
+	bool openinInspector = true;
 protected:
 	bool active = false;
 	GameObject* GO = nullptr;
