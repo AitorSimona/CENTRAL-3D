@@ -100,7 +100,10 @@ private:
 	GameObject* CreateRootGameObject();
 
 	// --- Primitives ---
-	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
+	//For Broken Engine's sake, please put the bool to false if not cube or plane
+	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh, bool calculateTangents) const;
+	void CalculateTangentAndBitangent(ResourceMesh* mesh, uint index, float3& tangent, float3& bitangent) const;
+
 public:
 	//Components helper, check AddComponent function
 	std::vector<int> repeatable_components;

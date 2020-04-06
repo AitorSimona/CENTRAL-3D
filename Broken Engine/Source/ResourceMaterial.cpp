@@ -52,6 +52,9 @@ void ResourceMaterial::FreeMemory()
 
 void ResourceMaterial::CreateInspectorNode()
 {
+	static bool save_material = false;
+	static Timer material_save_time;
+
 	// --- Mat preview
 	ImGui::Image((void*)(uint)GetPreviewTexID(), ImVec2(30, 30));
 	ImGui::SameLine();
@@ -82,7 +85,7 @@ void ResourceMaterial::CreateInspectorNode()
 						ImGui::SetItemDefaultFocus();
 				}
 			
-
+			save_material = true;
 			ImGui::EndCombo();
 		}
 	}
@@ -93,11 +96,11 @@ void ResourceMaterial::CreateInspectorNode()
 
 	ImGui::Text("Use Textures");
 	ImGui::SameLine();
-	ImGui::Checkbox("##CB", &m_UseTexture);
+	if(ImGui::Checkbox("##CB", &m_UseTexture)) save_material = true;
 
 	// --- Color ---
 	ImGui::Separator();
-	ImGui::ColorEdit4("##AmbientColor", (float*)&m_AmbientColor, ImGuiColorEditFlags_NoInputs);
+	if(ImGui::ColorEdit4("##AmbientColor", (float*)&m_AmbientColor, ImGuiColorEditFlags_NoInputs)) save_material = true;
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
 	ImGui::Text("MatAmbientColor");
 
@@ -105,7 +108,7 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::Text("Shininess");
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 	ImGui::SetNextItemWidth(300.0f);
-	ImGui::SliderFloat("", &m_Shininess, 0.01f, 500.00f);
+	if(ImGui::SliderFloat("", &m_Shininess, 1.0f, 500.00f)) save_material = true;
 
 	// --- Print Texture Width and Height (Diffuse) ---
 	uint textSizeX = 0, textSizeY = 0;
@@ -142,10 +145,11 @@ void ResourceMaterial::CreateInspectorNode()
 				m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 				// --- Save material so we update path to texture ---
-				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-				if (IMat)
-					IMat->Save(this);
+				save_material = true;
+				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+				//
+				//if (IMat)
+				//	IMat->Save(this);
 			}
 		}
 
@@ -155,12 +159,14 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::Text("Albedo");
 
-	//ImGui::SameLine();
-	//if (ImGui::Button("Unuse", { 43, 18 }) && m_DiffuseResTexture)
-	//{
-	//	m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
-	//	m_DiffuseResTexture->Release();
-	//}
+	ImGui::SameLine();
+	if (ImGui::Button("UnuseDiff", { 77, 18 }) && m_DiffuseResTexture)
+	{
+		//m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
+		m_DiffuseResTexture->Release();
+		m_DiffuseResTexture = nullptr;
+		save_material = true;
+	}
 
 
 	// --- Print Texture Width and Height (Specular)
@@ -198,10 +204,11 @@ void ResourceMaterial::CreateInspectorNode()
 				m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 				// --- Save material so we update path to texture ---
-				ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-				if (IMat)
-					IMat->Save(this);
+				save_material = true;
+				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+				//
+				//if (IMat)
+				//	IMat->Save(this);
 			}
 		}
 
@@ -211,13 +218,86 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::Text("Specular");
 
-	//ImGui::SameLine();
-	//if (ImGui::Button("Unuse", { 43, 18 }) && m_SpecularResTexture)
-	//{
-	//	m_SpecularResTexture->RemoveUser(GetContainerGameObject());
-	//	m_SpecularResTexture->Release();
-	//}
+	ImGui::SameLine();
+	if (ImGui::Button("UnuseSpec", { 77, 18 }) && m_SpecularResTexture)
+	{
+		//m_SpecularResTexture->RemoveUser(GetContainerGameObject());
+		m_SpecularResTexture->Release();
+		m_SpecularResTexture = nullptr;
+		save_material = true;
+	}
 
+	// --- Print Texture Width and Height (Normal)
+	textSizeX = textSizeY = 0;
+	ImGui::NewLine();
+	if (m_NormalResTexture)
+	{
+		textSizeX = m_NormalResTexture->Texture_width;
+		textSizeY = m_NormalResTexture->Texture_height;
+	}
+
+	ImGui::Text(std::to_string(textSizeX).c_str());
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(textSizeY).c_str());
+
+
+	if (m_NormalResTexture)
+		ImGui::ImageButton((void*)(uint)m_NormalResTexture->GetPreviewTexID(), ImVec2(20, 20));
+	else
+		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+	// --- Handle drag & drop (Normal Texture)
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+		{
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+			{
+				if (m_NormalResTexture)
+					m_NormalResTexture->Release();
+
+				m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+
+				// --- Save material so we update path to texture ---
+				save_material = true;
+				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+				//
+				//if (IMat)
+				//	IMat->Save(this);
+			}
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::SameLine();
+	ImGui::Text("Normal Map");
+
+	ImGui::SameLine();
+	if (ImGui::Button("UnuseNorm", { 77, 18 }) && m_NormalResTexture)
+	{
+		//m_NormalResTexture->RemoveUser(GetContainerGameObject());
+		m_NormalResTexture->Release();
+		m_NormalResTexture = nullptr;
+		save_material = true;
+	}
+
+	if (save_material && !material_save_time.IsRunning())
+		material_save_time.Start();
+
+	// --- Save material after some seconds ---
+	if (save_material && material_save_time.Read() > 8000.0f)
+	{
+		material_save_time.Stop();
+		save_material = false;
+
+		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+		if (IMat)
+			IMat->Save(this);
+	}
 }
 
 void ResourceMaterial::UpdateUniforms() 
@@ -396,12 +476,16 @@ void ResourceMaterial::OnDelete() {
 
 	Resource* diffuse = m_DiffuseResTexture;
 	Resource* specular = m_SpecularResTexture;
+	Resource* normalMap = m_NormalResTexture;
 
 	if (diffuse)
 		diffuse->Release();
 
 	if (specular)
 		specular->Release();
+
+	if (normalMap)
+		normalMap->Release();
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
