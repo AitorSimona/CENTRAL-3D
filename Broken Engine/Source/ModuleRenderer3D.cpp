@@ -260,6 +260,9 @@ bool ModuleRenderer3D::CleanUp()
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
 
+	glDeleteBuffers(1, (GLuint*)&quadVBO);
+	glDeleteVertexArrays(1, &quadVAO);
+
 	glDeleteFramebuffers(1, &fbo);
 	SDL_GL_DeleteContext(context);
 
