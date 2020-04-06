@@ -41,6 +41,9 @@ bool PanelInspector::Draw()
 
 			ImGui::BeginChildFrame(Selected->GetUID(),ImVec2(ImGui::GetWindowWidth(),50), ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse);
 			CreateGameObjectNode(*Selected);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
 			ImGui::EndChildFrame();
 
 			ImGui::PopStyleColor();
@@ -48,6 +51,8 @@ bool PanelInspector::Draw()
 			// --- Components ---
 
 			std::vector<Component*>* components = &Selected->GetComponents();
+			uint i = 1;
+
 
 			for (std::vector<Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
 			{
@@ -56,9 +61,30 @@ bool PanelInspector::Draw()
 
 				if (*it)
 				{
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_FrameBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
+					
+					if (ImGui::BeginChildFrame(Selected->GetUID() + i, ImVec2(ImGui::GetWindowWidth(), 20), ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse))
+					{
+						if (i == 1)
+							ImGui::PopStyleVar();
+						
 
-					std::string a = "##Active";
-					ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
+						ImGui::PushStyleVar(ImGuiStyleVar_::ImGuiStyleVar_FramePadding, ImVec2(ImGui::GetStyle().FramePadding.x, 1));
+
+						std::string a = "##Active";
+
+						if((*it)->name != "Transform")
+							ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
+
+
+						ImGui::SameLine();
+						ImGui::Text(((*it)->name).c_str());
+
+						ImGui::PopStyleVar();
+
+						ImGui::EndChildFrame();
+		
+					}
 					
 					ImGui::SameLine();
 
@@ -67,10 +93,14 @@ bool PanelInspector::Draw()
 						(*it)->CreateInspectorNode();
 						ImGui::TreePop();
 					}
+
+					ImGui::PopStyleColor();
 				}
 
 				ImGui::NewLine();
-				ImGui::Separator();
+				//ImGui::Separator();
+
+				i++;
 			}
 
 			static ImGuiComboFlags flags = 0;
