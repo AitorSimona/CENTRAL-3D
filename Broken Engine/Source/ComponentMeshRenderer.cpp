@@ -189,6 +189,8 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	if (material)
 	{
 		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
+		static bool save_material = false;
+		static Timer material_save_time;
 
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
@@ -220,6 +222,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							ImGui::SetItemDefaultFocus();
 					}
 
+					save_material = true;
 					ImGui::EndCombo();
 				}
 			}
@@ -236,11 +239,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 				ImGui::Text("Use Textures");
 				ImGui::SameLine();
-				ImGui::Checkbox("##CB", &material->m_UseTexture);
+				if(ImGui::Checkbox("##CB", &material->m_UseTexture)) save_material = true;
 
 				//Color
 				ImGui::Separator();
-				ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs);
+				if(ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs)) save_material = true;
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
 				ImGui::Text("Ambient Color");
 
@@ -248,7 +251,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Shininess");
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 				ImGui::SetNextItemWidth(300.0f);
-				ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f);
+				if(ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f)) save_material = true;
 
 				//ImGui::Text("Shader Uniforms");
 
@@ -290,10 +293,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							material->m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 							// --- Save material so we update path to texture ---
-							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-							if (IMat)
-								IMat->Save(material);
+							save_material = true;
+							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+							//
+							//if (IMat)
+							//	IMat->Save(material);
 						}
 					}
 
@@ -309,6 +313,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 					material->m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
 					material->m_DiffuseResTexture->Release();
 					material->m_DiffuseResTexture = nullptr;
+					save_material = true;
 				}
 
 
@@ -346,10 +351,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							material->m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 							// --- Save material so we update path to texture ---
-							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-							if (IMat)
-								IMat->Save(material);
+							save_material = true;
+							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+							//
+							//if (IMat)
+							//	IMat->Save(material);
 						}
 					}
 
@@ -365,6 +371,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 					material->m_SpecularResTexture->RemoveUser(GetContainerGameObject());
 					material->m_SpecularResTexture->Release();
 					material->m_SpecularResTexture = nullptr;
+					save_material = true;
 				}
 
 
@@ -402,10 +409,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							material->m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 							// --- Save material so we update path to texture ---
-							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-							if (IMat)
-								IMat->Save(material);
+							save_material = true;
+							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+							//
+							//if (IMat)
+							//	IMat->Save(material);
 						}
 					}
 
@@ -421,6 +429,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 					material->m_NormalResTexture->RemoveUser(GetContainerGameObject());
 					material->m_NormalResTexture->Release();
 					material->m_NormalResTexture = nullptr;
+					save_material = true;
 				}
 			}
 
@@ -435,6 +444,23 @@ void ComponentMeshRenderer::CreateInspectorNode()
 					material = nullptr;
 				}
 			}
+		}
+
+		
+		if (material && save_material && !material_save_time.IsRunning())
+			material_save_time.Start();
+		else if (!material)
+			material_save_time.Stop();
+
+		// --- Save material after some seconds ---
+		if (material && save_material && material_save_time.Read() > 8000.0f)
+		{
+			material_save_time.Stop();
+			save_material = false;
+
+			ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+			if (IMat)
+				IMat->Save(material);
 		}
 	}
 
