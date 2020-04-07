@@ -547,9 +547,9 @@ void ComponentButton::UpdateState()
 	{
 		if (state != DRAGGING)
 		{
-			if (App->ui_system->CheckMousePos(this, collider)) //check if hovering
+			if (App->ui_system->CheckMousePos(collider)) //check if hovering
 			{
-				if (App->ui_system->CheckClick(this, draggable)) //if hovering check if click
+				if (App->ui_system->CheckClick(draggable)) //if hovering check if click
 				{
 					if (draggable == true && (App->ui_system->drag_start.x != App->ui_system->mouse_pos.x || App->ui_system->drag_start.y != App->ui_system->mouse_pos.y)) //if draggable and mouse moves
 					{
@@ -573,7 +573,7 @@ void ComponentButton::UpdateState()
 		}
 		else
 		{
-			if (!App->ui_system->CheckClick(this, draggable)) //if stop clicking
+			if (!App->ui_system->CheckClick(draggable)) //if stop clicking
 				ChangeStateTo(IDLE);
 		}
 	}

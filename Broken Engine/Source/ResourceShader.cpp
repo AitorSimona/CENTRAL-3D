@@ -294,6 +294,8 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 			|| strcmp(name, "u_HasSpecularTexture") == 0
 			|| strcmp(name, "u_HasNormalMap") == 0
 			|| strcmp(name, "u_DrawNormalMapping") == 0
+			|| strcmp(name, "u_DrawNormalMapping_Lit") == 0
+			|| strcmp(name, "u_DrawNormalMapping_Lit_Adv") == 0
 			|| strcmp(name, "u_LightsNumber") == 0
 			|| std::string(name).find("u_BkLights") != std::string::npos
 			|| strcmp(name, "time") == 0)
