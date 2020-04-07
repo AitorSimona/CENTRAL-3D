@@ -144,7 +144,7 @@ bool ModuleWindow::Init(json file)
 			if (borderless)
 			{
 				// --- Set hit test drag areas ---
-				drag_areas[0] = SDL_Rect{ 300,0,(int)screen_width - 500, 50 };
+				drag_areas[0] = SDL_Rect{ 300,0,(int)(screen_width - 400), 20 };
 
 				// --- Set SDL hit test callback ---
 				if (SDL_SetWindowHitTest(window, hitTest, NULL) == -1)
@@ -408,5 +408,5 @@ void ModuleWindow::UpdateWindowSize() const
 	App->renderer3D->OnResize(screen_width, screen_height);
 
 	// --- Set hit test drag areas ---
-	drag_areas[0] = SDL_Rect{ 300,0,(int)screen_width - 500, 50 };
+	drag_areas[0] = SDL_Rect{ 300,0,(int)(screen_width - 400), 20 };
 }
