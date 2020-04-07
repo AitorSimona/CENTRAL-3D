@@ -6,6 +6,15 @@
 * GitHub repository: [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 * GitHub website: [Website](https://aitorsimona.github.io/CENTRAL-3D/)
 
+## SPECIAL THANKS / REFERENCES
+[Unity](https://unity.com/)
+
+[EduGameEngine](https://github.com/d0n3val/Edu-Game-Engine) by [Ric](https://github.com/d0n3val) (Teacher)
+
+[ThorEngine](https://github.com/markitus18/Thor-Engine) by [Marc](https://github.com/markitus18) (Teacher)
+
+[NekoEngine](https://github.com/WickedNekomata/NekoEngine) by [Sandra](https://github.com/Sandruski) & [Guillem](https://github.com/DatBeQuiet) (Students 4rth - Terrassa)
+
 ## Expanding CENTRAL 3D
  - After 0.3, everything was done during my holidays/free time, twofold purpose:
 
