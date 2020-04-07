@@ -124,6 +124,12 @@ update_status ModuleInput::PreUpdate(float dt)
 					App->window->SetWindowHeight(e.window.data2);
 					App->window->UpdateWindowSize();
 				}
+
+				if (e.window.event == SDL_WINDOWEVENT_MAXIMIZED)
+				{
+					// force again to update bool
+					App->window->MaximizeWindow();
+				}
 			}
 			break;
 

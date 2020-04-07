@@ -137,6 +137,9 @@ bool ModuleWindow::Init(json file)
 		}
 		else
 		{
+			// --- Limit window to display resolution (MYTODO: we should we adapt to resoultion changes)
+			SDL_SetWindowMaximumSize(window, display_Width, display_Height);
+
 			CONSOLE_LOG("Successfully created Window: %s", App->GetAppName());
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
@@ -155,7 +158,6 @@ bool ModuleWindow::Init(json file)
 				}
 			}
 		}
-
 	}
 
 	return ret;
