@@ -2,6 +2,7 @@
 #define __MODULE_TEXTURES_H__
 
 #include "Module.h"
+#include "ResourceTexture.h"
 
 #define CHECKERS_HEIGHT 32
 #define CHECKERS_WIDTH 32
@@ -17,24 +18,29 @@ public:
 	bool Start() override;
 	bool CleanUp() override;
 
-	uint CreateTextureFromFile(const char* path, uint& width, uint& height, int UID = -1) const;
-	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
+	uint CreateTextureFromFile(const char* path, uint& width, uint& height, uint& originalFormat, int UID = -1) const;
 
-	uint GetCheckerTextureID() const;
-	uint GetDefaultTextureID() const;
+	uint GetCheckerTextureID() const { return CheckerTexID; }
+	uint GetDefaultTextureID() const { return DefaultTexture; }
+	const void* GetLastStoredData() const { return &m_LastStoredData; }
 
 private:
+
 	uint LoadCheckImage() const;
 	uint LoadDefaultTexture() const;
 
 	uint CheckerTexID = 0;
 	uint DefaultTexture = 0;
+	mutable void* m_LastStoredData = nullptr;
 
 private:
+
 	// --- Called by CreateTextureFromPixels to split code ---
 	void SetTextureParameters(bool CheckersTexture = false) const;
 
-	void CreateTextureFromImage(uint& TextureID, uint& width, uint& height, std::string& path) const;
+	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
+	void CreateTextureFromImage(uint& TextureID, uint& width, uint& height, std::string& path, uint& originalFormat) const;
 };
+
 BE_END_NAMESPACE
 #endif

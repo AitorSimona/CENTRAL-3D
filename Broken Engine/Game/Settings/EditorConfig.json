@@ -11,7 +11,7 @@
         "Inspector": true,
         "Physics": true,
         "Project": true,
-        "Rendering": false,
+        "Rendering": true,
         "Resources": true,
         "Scene": true,
         "Settings": false,
@@ -194,6 +194,9 @@
         "gravity": 9.800000190734863,
         "restitution": 0.0,
         "staticFriction": 1.0
+    },
+    "Renderer3D": {
+        "GammaCorrection": 3.5250000953674316
     },
     "Window": {
         "borderless": false,

@@ -19,41 +19,45 @@ ResourceTexture::ResourceTexture(uint UID, const char* source_file) : Resource(R
 	LoadToMemory();
 }
 
-ResourceTexture::~ResourceTexture() {
+ResourceTexture::~ResourceTexture()
+{
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-bool ResourceTexture::LoadInMemory() {
+bool ResourceTexture::LoadInMemory()
+{
 	if (App->resources->IsFileImported(original_file.c_str()) && App->fs->Exists(resource_file.c_str()))
-		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, -1));
+	{
+		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, m_OriginalFormat, -1));
+		m_TextureData = App->textures->GetLastStoredData();
+	}
 	else if (original_file != "DefaultTexture")
-		SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
+	{
+		SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, m_OriginalFormat, GetUID()));
+		m_TextureData = App->textures->GetLastStoredData();
+	}
 
 	return true;
 }
 
-void ResourceTexture::FreeMemory() {
+void ResourceTexture::FreeMemory()
+{
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-void ResourceTexture::SetTextureID(uint ID) {
-	buffer_id = previewTexID = ID;
-}
-
-uint ResourceTexture::GetTexID() {
-	return buffer_id;
-}
-
-void ResourceTexture::OnOverwrite() {
+void ResourceTexture::OnOverwrite()
+{
 	NotifyUsers(ResourceNotificationType::Overwrite);
 
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
-	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
+	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, m_OriginalFormat, GetUID()));
+	m_TextureData = App->textures->GetLastStoredData();
 }
 
-void ResourceTexture::OnDelete() {
+void ResourceTexture::OnDelete()
+{
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
@@ -61,4 +65,10 @@ void ResourceTexture::OnDelete() {
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
+}
+
+void ResourceTexture::ChangeTextureFormat(uint format) const
+{
+	glBindTexture(GL_TEXTURE_2D, buffer_id);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, Texture_width, Texture_height, 0, format, GL_UNSIGNED_BYTE, m_TextureData);
 }

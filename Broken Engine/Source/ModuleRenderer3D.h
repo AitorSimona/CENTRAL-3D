@@ -78,6 +78,9 @@ public:
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
+	virtual void LoadStatus(const json& file);
+	virtual const json& SaveStatus() const;
+
 
 	void OnResize(int width, int height);
 

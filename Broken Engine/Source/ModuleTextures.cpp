@@ -3,7 +3,6 @@
 #include "OpenGL.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
-#include "ResourceTexture.h"
 
 
 #include "DevIL/include/il.h"
@@ -99,14 +98,6 @@ uint ModuleTextures::LoadDefaultTexture() const {
 	return CreateTextureFromPixels(GL_RGBA, 1, 1, GL_RGBA, default_tex, true);
 }
 
-uint ModuleTextures::GetCheckerTextureID() const {
-	return CheckerTexID;
-}
-
-uint ModuleTextures::GetDefaultTextureID() const {
-	return DefaultTexture;
-}
-
 void ModuleTextures::SetTextureParameters(bool CheckersTexture) const {
 	// --- Set texture clamping method ---
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -159,7 +150,7 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
-void ModuleTextures::CreateTextureFromImage(uint& TextureID, uint& width, uint& height, std::string& path) const {
+void ModuleTextures::CreateTextureFromImage(uint& TextureID, uint& width, uint& height, std::string& path, uint& originalFormat) const {
 	// --- Attention!! If the image is flipped, we flip it back --- 
 	ILinfo imageInfo;
 	iluGetImageInfo(&imageInfo);
@@ -171,9 +162,12 @@ void ModuleTextures::CreateTextureFromImage(uint& TextureID, uint& width, uint& 
 		iluFlipImage();
 
 	// --- Convert the image into a suitable format to work with ---
-	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
+	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
+	{
 		// --- Create the texture ---
-		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
+		originalFormat = ilGetInteger(IL_IMAGE_FORMAT);
+		m_LastStoredData = ilGetData();
+		TextureID = CreateTextureFromPixels(originalFormat, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), originalFormat, m_LastStoredData);
 
 		if (path != "") {
 			iluFlipImage();
@@ -199,7 +193,7 @@ void ModuleTextures::CreateTextureFromImage(uint& TextureID, uint& width, uint& 
 		ENGINE_CONSOLE_LOG("|[error]: Image conversion failed. ERROR: %s", iluErrorString(ilGetError()));
 }
 
-uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& height, int UID) const {
+uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& height, uint& originalFormat, int UID) const {
 	// --- In this function we use devil to load an image using the path given, extract pixel data and then create texture using CreateTextureFromImage ---
 
 	uint TextureID = 0;
@@ -227,7 +221,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& 
 
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path))
-		CreateTextureFromImage(TextureID, width, height, lib_path);
+		CreateTextureFromImage(TextureID, width, height, lib_path, originalFormat);
 	else
 		ENGINE_CONSOLE_LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
 

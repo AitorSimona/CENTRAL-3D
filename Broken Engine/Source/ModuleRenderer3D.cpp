@@ -48,20 +48,22 @@ ModuleRenderer3D::~ModuleRenderer3D() {
 }
 
 // Called before render is available
-bool ModuleRenderer3D::Init(json& file) {
+bool ModuleRenderer3D::Init(json& file)
+{
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Creating 3D Renderer context");
-
 	bool ret = true;
-
+	
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 
-	if (context == NULL) {
+	if (context == NULL)
+	{
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
-	if (ret == true) {
+	if (ret == true)
+	{
 		//Use Vsync
 		if (vsync && SDL_GL_SetSwapInterval(1) < 0)
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
@@ -73,7 +75,10 @@ bool ModuleRenderer3D::Init(json& file) {
 			ret = false;
 		}
 		else
+		{
 			GL_SETERRORHANDLER(4, 4); //OpenGL Error Handler
+			LoadStatus(file);
+		}
 	}
 
 	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges ---
@@ -250,6 +255,18 @@ bool ModuleRenderer3D::CleanUp()
 	SDL_GL_DeleteContext(context);
 
 	return true;
+}
+
+void ModuleRenderer3D::LoadStatus(const json& file)
+{
+	m_GammaCorrection = file["Renderer3D"]["GammaCorrection"].is_null() ? 1.0f : file["Renderer3D"]["GammaCorrection"].get<float>();
+}
+
+const json& ModuleRenderer3D::SaveStatus() const
+{
+	static json m_config;
+	m_config["GammaCorrection"] = m_GammaCorrection;
+	return m_config;
 }
 
 void ModuleRenderer3D::OnResize(int width, int height)
@@ -931,6 +948,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 
 		// --- Send Color ---
 		glUniform3f(glGetUniformLocation(shader, "u_Color"), colorToDraw.x, colorToDraw.y, colorToDraw.z);
+
+		// --- Gamma Correction Value --- u_GammaCorrection
+		glUniform1f(glGetUniformLocation(shader, "u_GammaCorrection"), m_GammaCorrection);
 
 		// --- Set Normal Mapping Draw
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping"), (int)m_Draw_normalMapping);

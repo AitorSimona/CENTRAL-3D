@@ -65,6 +65,8 @@ in vec3 v_CamPos;
 in mat3 v_TBN;
 
 //Uniforms
+uniform float u_GammaCorrection = 1.0;
+
 uniform float u_Shininess = 32.0;
 uniform int u_UseTextures = 0;
 
@@ -119,7 +121,10 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 
 	//If we have textures, apply them
 	if(u_HasDiffuseTexture == 1)
+	{
 		diffuse *= texture(u_AlbedoTexture, v_TexCoord).rgb;
+		diffuse = pow(diffuse, vec3(1.0/u_GammaCorrection));
+	}
 	if(u_HasSpecularTexture == 1)
 		specular *= texture(u_SpecularTexture, v_TexCoord).rgb;
 

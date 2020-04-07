@@ -140,9 +140,13 @@ void ResourceMaterial::CreateInspectorNode()
 			if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
 			{
 				if (m_DiffuseResTexture)
+				{
+				//	m_DiffuseResTexture->ChangeTextureFormat(m_DiffuseResTexture->m_OriginalFormat);
 					m_DiffuseResTexture->Release();
+				}
 
 				m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+				//m_DiffuseResTexture->ChangeTextureFormat(GL_SRGB_ALPHA);
 
 				// --- Save material so we update path to texture ---
 				save_material = true;

@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "OpenGL.h"
 #include "Color.h"
+
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
@@ -189,8 +190,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	if (material)
 	{
 		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
-		static bool save_material = false;
-		static Timer material_save_time;
 
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
@@ -258,6 +257,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				//DisplayAndUpdateUniforms(material);
 				//ImGui::TreePop();
 
+				ImGui::Text("Use Linear Texture");
+				ImGui::SameLine();
+				ImGui::Checkbox("##TTT", &m_TemporalTextureTest);
+
+
 				// --- Print Texture Width and Height (Diffuse) ---
 				uint textSizeX = 0, textSizeY = 0;
 				ImGui::NewLine();
@@ -288,9 +292,17 @@ void ComponentMeshRenderer::CreateInspectorNode()
 						if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
 						{
 							if (material->m_DiffuseResTexture)
+							{
+							//	material->m_DiffuseResTexture->ChangeTextureFormat(material->m_DiffuseResTexture->m_OriginalFormat);
 								material->m_DiffuseResTexture->Release();
+							}
 
 							material->m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+
+							//if(m_TemporalTextureTest)
+							//	material->m_DiffuseResTexture->ChangeTextureFormat(GL_SRGB_ALPHA);
+							//else
+							//	material->m_DiffuseResTexture->ChangeTextureFormat(GL_RGBA);
 
 							// --- Save material so we update path to texture ---
 							save_material = true;
