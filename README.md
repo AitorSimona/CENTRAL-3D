@@ -6,10 +6,8 @@
 * GitHub repository: [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 * GitHub website: [Website](https://aitorsimona.github.io/CENTRAL-3D/)
 
-# ATTENTION: After the resource manager revamp some stuff has to be rewritten!!
-
 ## Expanding CENTRAL 3D
- - After 0.3, everything was done during my holidays, twofold purpose:
+ - After 0.3, everything was done during my holidays/free time, twofold purpose:
 
 1. Having fun, learning.
 2. Preparing stuff for Project 3 subject in CITM Barcelona (2020).
@@ -63,25 +61,11 @@ Editor camera only works when in AppState EDITOR mode.
 
 - Shaders:
 
-You can create new shaders by putting into assets folder .vertex and .fragment files, so the engine imports them 
-at startup. 
-
-You can also create shaders on the ShaderEditor panel, next to inspector (check tabs). 
-
-Steps:
-
-- Press new 
-- Give it a cool name
-- Fill the code
-- Coompile 
-- Save 
-
-You have just created your own shader! 
-
+You can create new shaders through the project panel, right click - create - shader. Double click and edit them in the program you like (default program). I recommend Visual studio with glsl extension for autocomplete/syntax highlighting support. 
 
 ## ASSET IMPORT
 
-Drop it inside window, then drag resource from project window to scene.
+Drop it inside window or inside Assets (or subfolders). Engine will import automatically.
 
 ## DEBUG
 
@@ -102,10 +86,7 @@ There are more options in Window - > Settings
 
 ## Features in beta
 
-- Texture pre-visualization on Inspector
-- Edit Menu
-- Load/Save cameras
-- Resource manager (initial implementation)
+- Edit Menu (Undo, Redo...)
 
 ## CHANGELOG
 
