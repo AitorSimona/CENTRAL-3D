@@ -16,6 +16,17 @@
 
 <img src="docs/Photo.jpg">
 
+## SPECIAL THANKS / REFERENCES
+[Unity](https://unity.com/)
+
+[EduGameEngine](https://github.com/d0n3val/Edu-Game-Engine) by [Ric](https://github.com/d0n3val) (Teacher)
+
+[ThorEngine](https://github.com/markitus18/Thor-Engine) by [Marc](https://github.com/markitus18) (Teacher)
+
+[NekoEngine](https://github.com/WickedNekomata/NekoEngine) by [Sandra](https://github.com/Sandruski) & [Guillem](https://github.com/DatBeQuiet) (Students 4rth - Terrassa)
+
+And all the 3rd party libraries too! Check them below!
+
 ## Core subsystems
 
 The engine's pillars...
@@ -34,7 +45,7 @@ Handles reference counting, every resource is only in memory once and can be use
 
 Resource management flow:
 
-- A resource is dropped on the engine, or put in the assets folder (will need restart)
+- A resource is dropped on the engine, or put in the assets folder
 - Engine automatically imports it, generates meta files and own file format files, the latters stored in the library.
 - When importing again, engine will detect a meta and load the resource from the library, in own file format, which is way faster.
 
@@ -55,19 +66,13 @@ There is a Shader class, which is a resource and works the same way as other res
 ### Shader management
 There are multiple ways to create a shader program:
 
-1. Write a vertex and fragment shaders, store them in separate files with the .vertex and .fragment extension. Engine will try to import them.
+1. Create a shader in the panel project (Right Click - Create - Shader)
 
-2. Create a program through the editor:
-
-Steps:
-
-- Press new 
-- Give it a cool name
-- Fill the code
-- Coompile 
-- Save 
+2. Double click its icon (it will open the file with the default program assigned)
 
 You have just created your own shader! 
+
+I recommend setting Visual Studio as default program, and downloading a glsl extension that provides syntax highlighting, autocompletion...
 
 ### Uniform editing
 You can edit all int, float, and vec up to vec4 uniforms through the inspector! Head to the material node, select a shader and edit the uniforms there. Changes are applied automatically. Note that these uniforms are held by the material, so all objects with the same material will share the uniforms. 
@@ -75,7 +80,7 @@ You can edit all int, float, and vec up to vec4 uniforms through the inspector! 
 <img src="docs/UniformEditing.gif">
 
 ### Binary program
-Remember to save your shader through the SAVE ALL button in the shader Editor. The engine will save the program in binary format. Once booting the engine again it will try to load the binary, if unsuccessful it will recompile the shaders. 
+The engine will save the program in binary format. Once booting the engine again it will try to load the binary, if unsuccessful it will recompile the shaders. 
 
 ## Overview
 
@@ -84,6 +89,8 @@ Remember to save your shader through the SAVE ALL button in the shader Editor. T
 [Background Music](https://www.youtube.com/watch?v=E8HY7ypKshA) 
 
 ## Other Features
+Resource Hot-Reloading
+Windows FS Watch
 Time Management
 Octree and Frustum Culling
 Scene Serialization and de-Serialization
