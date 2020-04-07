@@ -15,6 +15,8 @@
 
 [NekoEngine](https://github.com/WickedNekomata/NekoEngine) by [Sandra](https://github.com/Sandruski) & [Guillem](https://github.com/DatBeQuiet) (Students 4rth - Terrassa)
 
+And all the 4rd party libraries too! Check them below!
+
 ## Expanding CENTRAL 3D
  - After 0.3, everything was done during my holidays/free time, twofold purpose:
 
