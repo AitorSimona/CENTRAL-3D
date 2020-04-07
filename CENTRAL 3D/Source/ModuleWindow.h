@@ -73,6 +73,7 @@ private:
 	uint				display_Width = 0; // To keep the original value
 	uint				display_Height = 0; // To keep the original value
 
+
 	// --- Win Flags ---
 	bool fullscreen = false;
 	bool resizable = true;

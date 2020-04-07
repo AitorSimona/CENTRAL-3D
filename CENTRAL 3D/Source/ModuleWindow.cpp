@@ -17,6 +17,60 @@ ModuleWindow::~ModuleWindow()
 {
 }
 
+#define RESIZE_BORDER 5
+
+// https://fossies.org/linux/SDL2/test/testhittesting.c
+
+SDL_Rect drag_areas[] = 
+{
+    { 0, 0, 1920, 100 } // default
+};
+
+const uint numDragAreas = SDL_arraysize(drag_areas);
+
+static SDL_HitTestResult hitTest(SDL_Window *window, const SDL_Point *pt, void *data)
+{
+     int i;
+     int w, h;
+ 
+     for (i = 0; i < numDragAreas; i++)
+	 {
+         if (SDL_PointInRect(pt, &drag_areas[i]))
+		 {
+             SDL_Log("HIT-TEST: DRAGGABLE\n");
+             return SDL_HITTEST_DRAGGABLE;
+         }
+     }
+ 
+     SDL_GetWindowSize(window, &w, &h);
+ 
+     #define REPORT_RESIZE_HIT(name) { \
+         SDL_Log("HIT-TEST: RESIZE_" #name "\n"); \
+         return SDL_HITTEST_RESIZE_##name; \
+     }
+ 
+     if (pt->x < RESIZE_BORDER && pt->y < RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(TOPLEFT);
+     } else if (pt->x > RESIZE_BORDER && pt->x < w - RESIZE_BORDER && pt->y < RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(TOP);
+     } else if (pt->x > w - RESIZE_BORDER && pt->y < RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(TOPRIGHT);
+     } else if (pt->x > w - RESIZE_BORDER && pt->y > RESIZE_BORDER && pt->y < h - RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(RIGHT);
+     } else if (pt->x > w - RESIZE_BORDER && pt->y > h - RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(BOTTOMRIGHT);
+     } else if (pt->x < w - RESIZE_BORDER && pt->x > RESIZE_BORDER && pt->y > h - RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(BOTTOM);
+     } else if (pt->x < RESIZE_BORDER && pt->y > h - RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(BOTTOMLEFT);
+     } else if (pt->x < RESIZE_BORDER && pt->y < h - RESIZE_BORDER && pt->y > RESIZE_BORDER) {
+         REPORT_RESIZE_HIT(LEFT);
+     }
+ 
+     SDL_Log("HIT-TEST: NORMAL\n");
+     return SDL_HITTEST_NORMAL;
+}
+
 // Called before render is available
 bool ModuleWindow::Init(json file)
 {
@@ -86,7 +140,22 @@ bool ModuleWindow::Init(json file)
 			CONSOLE_LOG("Successfully created Window: %s", App->GetAppName());
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
+
+			if (borderless)
+			{
+				// --- Set hit test drag areas ---
+				drag_areas[0] = SDL_Rect{ 300,0,(int)screen_width - 500, 50 };
+
+				// --- Set SDL hit test callback ---
+				if (SDL_SetWindowHitTest(window, hitTest, NULL) == -1)
+				{
+					SDL_Log("Enabling hit-testing failed!\n");
+					SDL_Quit();
+					return 1;
+				}
+			}
 		}
+
 	}
 
 	return ret;
@@ -337,4 +406,7 @@ void ModuleWindow::UpdateWindowSize() const
 {
 	SDL_SetWindowSize(window, screen_width, screen_height);
 	App->renderer3D->OnResize(screen_width, screen_height);
+
+	// --- Set hit test drag areas ---
+	drag_areas[0] = SDL_Rect{ 300,0,(int)screen_width - 500, 50 };
 }
