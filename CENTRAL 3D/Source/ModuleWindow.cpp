@@ -21,6 +21,7 @@ ModuleWindow::~ModuleWindow()
 
 // https://fossies.org/linux/SDL2/test/testhittesting.c
 
+// --- Define custom window drag areas ---
 SDL_Rect drag_areas[] = 
 {
     { 0, 0, 1920, 100 } // default
@@ -28,47 +29,76 @@ SDL_Rect drag_areas[] =
 
 const uint numDragAreas = SDL_arraysize(drag_areas);
 
-static SDL_HitTestResult hitTest(SDL_Window *window, const SDL_Point *pt, void *data)
+// --- React to window events and decide whether resize/drag should be triggered at pos pt ---
+static SDL_HitTestResult hitTest(SDL_Window *window, const SDL_Point *point, void *data)
 {
+	 SDL_HitTestResult result = SDL_HITTEST_NORMAL;
      int i;
      int w, h;
  
+	 // --- Check if we are in a draggable area ---
      for (i = 0; i < numDragAreas; i++)
 	 {
-         if (SDL_PointInRect(pt, &drag_areas[i]))
+         if (SDL_PointInRect(point, &drag_areas[i]))
 		 {
              SDL_Log("HIT-TEST: DRAGGABLE\n");
-             return SDL_HITTEST_DRAGGABLE;
+			 result = SDL_HITTEST_DRAGGABLE;
          }
      }
  
      SDL_GetWindowSize(window, &w, &h);
  
-     #define REPORT_RESIZE_HIT(name) { \
-         SDL_Log("HIT-TEST: RESIZE_" #name "\n"); \
-         return SDL_HITTEST_RESIZE_##name; \
-     }
+	 // --- Report back to SDL, where should we resize? ---
+
+	 // REMINDER: THIS IS CLEARLY NOT WORTH IT, WE ARE REASSIGNING RESULT EVERYTIME AND NEEDS HUGE FORMATTING TO BE UNDERSTANDABLE
+
+	 //// --- Top resize ---						// --- Condition that checks in which area the point is ---										// --- Assign result ---					// If we already had a valid result, just re-assign
+	 //result =									(point->x < RESIZE_BORDER && point->y < RESIZE_BORDER)											? SDL_HITTEST_RESIZE_TOPLEFT : result;
+	 //result = result == SDL_HITTEST_NORMAL ?	((point->x > RESIZE_BORDER&& point->x < w - RESIZE_BORDER && point->y < RESIZE_BORDER)			? SDL_HITTEST_RESIZE_TOP : result)			: result;
+	 //result = result == SDL_HITTEST_NORMAL ?	((point->x > w - RESIZE_BORDER && point->y < RESIZE_BORDER)										? SDL_HITTEST_RESIZE_TOPRIGHT : result)		: result;
+
+	 //// --- Bottom resize ---
+	 //result = result == SDL_HITTEST_NORMAL ?	((point->x > w - RESIZE_BORDER && point->y > h - RESIZE_BORDER)									? SDL_HITTEST_RESIZE_BOTTOMRIGHT : result)	: result;
+	 //result = result == SDL_HITTEST_NORMAL ?	((point->x < w - RESIZE_BORDER && point->x > RESIZE_BORDER && point->y > h - RESIZE_BORDER)		? SDL_HITTEST_RESIZE_BOTTOM : result)		: result;
+	 //result = result == SDL_HITTEST_NORMAL ?	((point->x < RESIZE_BORDER && point->y > h - RESIZE_BORDER)										? SDL_HITTEST_RESIZE_BOTTOMLEFT : result)	: result;
+	 //
+	 //// --- Right/Left resize ---
+	 //result = result == SDL_HITTEST_NORMAL ?	((point->x > w - RESIZE_BORDER && point->y > RESIZE_BORDER&& point->y < h - RESIZE_BORDER)		? SDL_HITTEST_RESIZE_RIGHT : result)		: result;
+	 //result = result == SDL_HITTEST_NORMAL ?	((point->x < RESIZE_BORDER && point->y < h - RESIZE_BORDER && point->y > RESIZE_BORDER)			? SDL_HITTEST_RESIZE_LEFT : result)			: result;
+
  
-     if (pt->x < RESIZE_BORDER && pt->y < RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(TOPLEFT);
-     } else if (pt->x > RESIZE_BORDER && pt->x < w - RESIZE_BORDER && pt->y < RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(TOP);
-     } else if (pt->x > w - RESIZE_BORDER && pt->y < RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(TOPRIGHT);
-     } else if (pt->x > w - RESIZE_BORDER && pt->y > RESIZE_BORDER && pt->y < h - RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(RIGHT);
-     } else if (pt->x > w - RESIZE_BORDER && pt->y > h - RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(BOTTOMRIGHT);
-     } else if (pt->x < w - RESIZE_BORDER && pt->x > RESIZE_BORDER && pt->y > h - RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(BOTTOM);
-     } else if (pt->x < RESIZE_BORDER && pt->y > h - RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(BOTTOMLEFT);
-     } else if (pt->x < RESIZE_BORDER && pt->y < h - RESIZE_BORDER && pt->y > RESIZE_BORDER) {
-         REPORT_RESIZE_HIT(LEFT);
-     }
- 
-     SDL_Log("HIT-TEST: NORMAL\n");
-     return SDL_HITTEST_NORMAL;
+	 if (point->x < RESIZE_BORDER && point->y < RESIZE_BORDER)
+		 result = SDL_HITTEST_RESIZE_TOPLEFT;
+	 else if (point->x > RESIZE_BORDER&& point->x < w - RESIZE_BORDER && point->y < RESIZE_BORDER) 
+	 {
+		 result = SDL_HITTEST_RESIZE_TOP;
+	 }
+	 else if (point->x > w - RESIZE_BORDER && point->y < RESIZE_BORDER) 
+	 {
+		 result = SDL_HITTEST_RESIZE_TOPRIGHT;
+	 }
+	 else if (point->x > w - RESIZE_BORDER && point->y > RESIZE_BORDER&& point->y < h - RESIZE_BORDER) 
+	 {
+		 result = SDL_HITTEST_RESIZE_RIGHT;
+	 }
+	 else if (point->x > w - RESIZE_BORDER && point->y > h - RESIZE_BORDER) 
+	 {
+		 result = SDL_HITTEST_RESIZE_BOTTOMRIGHT;
+	 }
+	 else if (point->x < w - RESIZE_BORDER && point->x > RESIZE_BORDER&& point->y > h - RESIZE_BORDER) 
+	 {
+		 result = SDL_HITTEST_RESIZE_BOTTOM;
+	 }
+	 else if (point->x < RESIZE_BORDER && point->y > h - RESIZE_BORDER) 
+	 {
+		 result = SDL_HITTEST_RESIZE_BOTTOMLEFT;
+	 }
+	 else if (point->x < RESIZE_BORDER && point->y < h - RESIZE_BORDER && point->y > RESIZE_BORDER) 
+	 {
+		 result = SDL_HITTEST_RESIZE_LEFT;
+	 }
+
+     return result;
 }
 
 // Called before render is available
