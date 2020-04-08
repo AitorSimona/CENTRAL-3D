@@ -19,8 +19,7 @@ public:
 	bool CleanUp() override;
 
 	uint CreateTextureFromFile(const char* path, uint& width, uint& height, uint& originalFormat, int UID = -1) const;
-	// @Warning: You need to deallocate this data yourself!
-	char* GetTextureDataFromFile(const char* path) const;
+	std::unique_ptr<char> GetTextureDataFromFile(const char* path) const;
 
 	uint GetCheckerTextureID() const { return CheckerTexID; }
 	uint GetDefaultTextureID() const { return DefaultTexture; }
