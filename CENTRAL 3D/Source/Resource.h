@@ -15,6 +15,7 @@ public:
 		FOLDER,
 		SCENE,
 		MODEL,
+		PREFAB,
 		MATERIAL,
 		SHADER,
 		MESH,

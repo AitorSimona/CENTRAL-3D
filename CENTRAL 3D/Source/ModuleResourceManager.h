@@ -14,6 +14,7 @@ class ResourceShader;
 class ResourceMesh;
 class ResourceTexture;
 class ResourceMeta;
+class ResourcePrefab;
 
 class ModuleResourceManager : public Module
 {
@@ -25,6 +26,7 @@ class ModuleResourceManager : public Module
 	friend class ImporterFolder;
 	friend class ImporterScene;
 	friend class ImporterShader;
+	friend class ImporterPrefab;
 	friend class PanelResources;
 	friend class ComponentMeshRenderer;
 	friend class ResourceMaterial;
@@ -49,6 +51,7 @@ public:
 	Resource* ImportFolder(Importer::ImportData& IData);
 	Resource* ImportScene(Importer::ImportData& IData);
 	Resource* ImportModel(Importer::ImportData& IData);
+	Resource* ImportPrefab(Importer::ImportData& IData);
 	Resource* ImportMaterial(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
 	Resource* ImportTexture(Importer::ImportData& IData);
@@ -106,6 +109,7 @@ private:
 	std::map<uint, ResourceFolder*> folders;
 	std::map<uint, ResourceScene*> scenes;
 	std::map<uint, ResourceModel*> models;
+	std::map<uint, ResourcePrefab*> prefabs;
 	std::map<uint, ResourceMaterial*> materials;
 	std::map<uint, ResourceShader*> shaders;
 	std::map<uint, ResourceMesh*> meshes;

@@ -43,6 +43,7 @@ bool ModuleResourceManager::Init(json file)
 	importers.push_back(new ImporterFolder());
 	importers.push_back(new ImporterScene());
 	importers.push_back(new ImporterModel());
+	importers.push_back(new ImporterPrefab());
 	importers.push_back(new ImporterMaterial());
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
@@ -85,6 +86,7 @@ bool ModuleResourceManager::Start()
 
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
+	filters.push_back("prefab");
 	filters.push_back("mat");
 	filters.push_back("png");
 	filters.push_back("jpg");
@@ -186,7 +188,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Import Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
 
@@ -209,6 +211,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::MODEL:
 		resource = ImportModel(IData);
+		break;
+
+	case Resource::ResourceType::PREFAB:
+		resource = ImportPrefab(IData);
 		break;
 
 	case Resource::ResourceType::MATERIAL:
@@ -332,6 +338,26 @@ Resource* ModuleResourceManager::ImportModel(Importer::ImportData& IData)
 	}
 
 	return model;
+}
+
+Resource* ModuleResourceManager::ImportPrefab(Importer::ImportData& IData)
+{
+	Resource* prefab = nullptr;
+	ImporterPrefab* IPrefab = GetImporter<ImporterPrefab>();
+
+	// --- If the resource is already in library, load from there ---
+	if (IsFileImported(IData.path))
+	{
+		prefab = IPrefab->Load(IData.path);
+		//Loadfromlib
+	}
+
+	// --- Else call relevant importer ---
+	else
+		prefab = IPrefab->Import(IData);
+
+
+	return prefab;
 }
 
 Resource* ModuleResourceManager::ImportMaterial(Importer::ImportData& IData)
@@ -662,13 +688,14 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Get Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
 	resource = folders.find(UID) == folders.end() ? resource : (*folders.find(UID)).second;
 	resource = resource ? resource : (scenes.find(UID) == scenes.end() ? resource : (*scenes.find(UID)).second);
 	resource = resource ? resource : (models.find(UID) == models.end() ? resource : (*models.find(UID)).second);
+	resource = resource ? resource : (prefabs.find(UID) == prefabs.end() ? resource : (*prefabs.find(UID)).second);
 	resource = resource ? resource : (materials.find(UID) == materials.end() ? resource : (*materials.find(UID)).second);
 	resource = resource ? resource : (shaders.find(UID) == shaders.end() ? resource : (*shaders.find(UID)).second);
 	resource = resource ? resource : (meshes.find(UID) == meshes.end() ? resource : (*meshes.find(UID)).second);
@@ -687,7 +714,7 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -706,6 +733,11 @@ Resource * ModuleResourceManager::CreateResource(Resource::ResourceType type, st
 	case Resource::ResourceType::MODEL:
 		resource = (Resource*)new ResourceModel(App->GetRandom().Int(), source_file);
 		models[resource->GetUID()] = (ResourceModel*)resource;
+		break;
+
+	case Resource::ResourceType::PREFAB:
+		resource = (Resource*)new ResourcePrefab(App->GetRandom().Int(), source_file);
+		prefabs[resource->GetUID()] = (ResourcePrefab*)resource;
 		break;
 
 	case Resource::ResourceType::MATERIAL:
@@ -744,7 +776,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -762,6 +794,11 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 	case Resource::ResourceType::MODEL:
 		resource = (Resource*)new ResourceModel(UID, source_file);
 		models[resource->GetUID()] = (ResourceModel*)resource;
+		break;
+
+	case Resource::ResourceType::PREFAB:
+		resource = (Resource*)new ResourcePrefab(UID, source_file);
+		prefabs[resource->GetUID()] = (ResourcePrefab*)resource;
 		break;
 
 	case Resource::ResourceType::MATERIAL:
@@ -810,7 +847,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -821,6 +858,7 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = extension == "" ? Resource::ResourceType::FOLDER : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "scene" ? Resource::ResourceType::SCENE : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "fbx" || extension == "model" ? Resource::ResourceType::MODEL : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "prefab" ? Resource::ResourceType::PREFAB : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mat" ? Resource::ResourceType::MATERIAL : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "glsl" ? Resource::ResourceType::SHADER : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "dds" || extension == "png" || extension == "jpg" ? Resource::ResourceType::TEXTURE : type) : type;
@@ -1022,7 +1060,7 @@ std::string ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Destruction Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -1036,6 +1074,10 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 	case Resource::ResourceType::MODEL:
 		models.erase(resource->GetUID());
+		break;
+
+	case Resource::ResourceType::PREFAB:
+		prefabs.erase(resource->GetUID());
 		break;
 
 	case Resource::ResourceType::MATERIAL:
@@ -1105,7 +1147,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 8, "Resource Clean Up needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
@@ -1135,6 +1177,15 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	models.clear();
+
+	for (std::map<uint, ResourcePrefab*>::iterator it = prefabs.begin(); it != prefabs.end();)
+	{
+		it->second->FreeMemory();
+		delete it->second;
+		it = prefabs.erase(it);
+	}
+
+	prefabs.clear();
 
 	for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
 	{

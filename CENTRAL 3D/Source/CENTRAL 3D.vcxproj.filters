@@ -552,6 +552,12 @@
     <ClInclude Include="MathGeoLib\include\SystemInfo.h">
       <Filter>Sources\3rd Party\device</Filter>
     </ClInclude>
+    <ClInclude Include="ResourcePrefab.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterPrefab.h">
+      <Filter>Sources\Resources\Importers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -877,6 +883,12 @@
     </ClCompile>
     <ClCompile Include="PanelShaderEditor.cpp">
       <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourcePrefab.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterPrefab.cpp">
+      <Filter>Sources\Resources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
