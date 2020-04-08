@@ -165,6 +165,8 @@ bool ResourceScene::LoadInMemory() {
 			App->detour->vertsPerPoly = navigationdata["vertsPerPoly"];
 			App->detour->detailSampleDist = navigationdata["detailSampleDist"];
 			App->detour->detailSampleMaxError = navigationdata["detailSampleMaxError"];
+			App->detour->buildTiledMesh = navigationdata["buildTiledMesh"];
+			
 
 			if (!navigationdata["navMeshUID"].is_null())
 				App->detour->loadNavMeshFile(navigationdata["navMeshUID"]);

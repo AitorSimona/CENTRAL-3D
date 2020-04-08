@@ -118,6 +118,8 @@ bool PanelNavigation::Draw() {
 					ImGui::DragFloat("Vertices Per Polygon", &EngineApp->detour->vertsPerPoly, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
 					ImGui::DragFloat("Detail Sample Distance", &EngineApp->detour->detailSampleDist, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
 					ImGui::DragFloat("Detail Sample Max. Error", &EngineApp->detour->detailSampleMaxError, 0.25f, 0.02f, 9999999999.0f, "%.2f", 1.0f);
+					ImGui::Text("Build Tiled Mesh"); ImGui::SameLine();
+					ImGui::Checkbox("##tiledMesh", &EngineApp->detour->buildTiledMesh);
 					ImGui::TreePop();
 				}
 				ImGui::Separator();

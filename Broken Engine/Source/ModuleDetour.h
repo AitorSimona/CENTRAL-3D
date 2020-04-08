@@ -94,6 +94,7 @@ public:
 	void setDefaultValues();
 	void setDefaultBakeValues();
 	const ResourceNavMesh* getNavMeshResource() const;
+	void allocateNavMesh();
 
 private:
 	void createRenderMeshes();
@@ -118,6 +119,8 @@ public:
 	float vertsPerPoly = 6.0f;
 	float detailSampleDist = 6.0f;
 	float detailSampleMaxError = 1.0f;
+
+	bool buildTiledMesh = true;
 
 	char areaNames[BE_DETOUR_TOTAL_AREAS][100];
 	float areaCosts[BE_DETOUR_TOTAL_AREAS];

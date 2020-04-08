@@ -316,10 +316,33 @@ void ModuleDetour::setDefaultBakeValues() {
 	vertsPerPoly = 6.0f;
 	detailSampleDist = 6.0f;
 	detailSampleMaxError = 1.0f;
+
+	buildTiledMesh = true;
 }
 
 const ResourceNavMesh* ModuleDetour::getNavMeshResource() const {
 	return navMeshResource;
+}
+
+void ModuleDetour::allocateNavMesh() {
+	if (navMeshResource == nullptr) {
+		std::string resourceName = App->scene_manager->currentScene->GetName();
+		resourceName.erase(resourceName.find('.'));
+		resourceName = NAVMESH_FOLDER + resourceName + ".navmesh";
+		navMeshResource = (ResourceNavMesh*)App->resources->CreateResource(Resource::ResourceType::NAVMESH, resourceName.c_str());
+
+		ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+		ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, navMeshResource->GetResourceFile(), navMeshResource->GetUID());
+
+		if (meta)
+			IMeta->Save(meta);
+
+		App->resources->AddResourceToFolder(navMeshResource);
+	}
+
+	if (navMeshResource->navMesh == nullptr)
+		navMeshResource->navMesh = dtAllocNavMesh();
+
 }
 
 void ModuleDetour::createRenderMeshes() {

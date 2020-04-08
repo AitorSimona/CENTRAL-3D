@@ -138,6 +138,7 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file["Navigation Data"]["vertsPerPoly"] = App->detour->vertsPerPoly;
 		file["Navigation Data"]["detailSampleDist"] = App->detour->detailSampleDist;
 		file["Navigation Data"]["detailSampleMaxError"] = App->detour->detailSampleMaxError;
+		file["Navigation Data"]["buildTiledMesh"] = App->detour->buildTiledMesh;
 
 		for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
 			file["Navigation Data"]["Areas"][i]["name"] = App->detour->areaNames[i];
