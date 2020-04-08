@@ -15,11 +15,13 @@ public:
 
 	bool Draw();
 
+	void ExitEditPrefab();
+
 	bool openPrefab = false;
+	bool editingPrefab = false;
 	ResourcePrefab* prefab = nullptr;
 private:
 	GameObject* prefabParent = nullptr;
-	bool editingPrefab = false;
 	void DrawRecursive(GameObject* Go);
 };
 

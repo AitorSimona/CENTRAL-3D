@@ -1,6 +1,9 @@
 #include "PanelToolbar.h"
 #include "Application.h"
+#include "ModuleGui.h"
 #include "ModuleTimeManager.h"
+
+#include "PanelHierarchy.h"
 
 #include "Imgui/imgui.h"
 
@@ -29,7 +32,12 @@ bool PanelToolbar::Draw()
 			if (App->GetAppState() == AppState::PLAY || App->GetAppState() == AppState::PAUSE)
 				App->GetAppState() = AppState::TO_EDITOR;
 			else
+			{
 				App->GetAppState() = AppState::TO_PLAY;
+
+				if(App->gui->panelHierarchy->editingPrefab)
+					App->gui->panelHierarchy->ExitEditPrefab();
+			}
 		}
 		ImGui::SameLine();
 

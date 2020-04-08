@@ -40,10 +40,7 @@ bool PanelHierarchy::Draw()
 			{
 				if (ImGui::ArrowButton("##Back", ImGuiDir_::ImGuiDir_Left))
 				{
-					editingPrefab = false;
-					App->scene_manager->DestroyGameObject(prefabParent);
-					prefabParent = nullptr;
-					prefab = nullptr;
+					ExitEditPrefab();
 				}
 				else
 				{
@@ -85,6 +82,17 @@ bool PanelHierarchy::Draw()
 	ImGui::End();
 
 	return true;
+}
+
+void PanelHierarchy::ExitEditPrefab()
+{
+	editingPrefab = false;
+
+	if(prefabParent)
+		App->scene_manager->DestroyGameObject(prefabParent);
+
+	prefabParent = nullptr;
+	prefab = nullptr;
 }
 
 void PanelHierarchy::DrawRecursive(GameObject* Go)
