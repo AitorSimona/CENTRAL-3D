@@ -29,12 +29,10 @@ bool ResourceTexture::LoadInMemory()
 	if (App->resources->IsFileImported(original_file.c_str()) && App->fs->Exists(resource_file.c_str()))
 	{
 		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, m_OriginalFormat, -1));
-		m_TextureData = App->textures->GetLastStoredData();
 	}
 	else if (original_file != "DefaultTexture")
 	{
 		SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, m_OriginalFormat, GetUID()));
-		m_TextureData = App->textures->GetLastStoredData();
 	}
 
 	return true;
@@ -53,7 +51,6 @@ void ResourceTexture::OnOverwrite()
 	App->fs->Remove(resource_file.c_str());
 
 	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, m_OriginalFormat, GetUID()));
-	m_TextureData = App->textures->GetLastStoredData();
 }
 
 void ResourceTexture::OnDelete()
@@ -70,5 +67,5 @@ void ResourceTexture::OnDelete()
 void ResourceTexture::ChangeTextureFormat(uint format) const
 {
 	glBindTexture(GL_TEXTURE_2D, buffer_id);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, Texture_width, Texture_height, 0, format, GL_UNSIGNED_BYTE, m_TextureData);
+	//glTexImage2D(GL_TEXTURE_2D, 0, format, Texture_width, Texture_height, 0, format, GL_UNSIGNED_BYTE, m_TextureData);
 }

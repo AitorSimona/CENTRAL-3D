@@ -166,8 +166,7 @@ void ModuleTextures::CreateTextureFromImage(uint& TextureID, uint& width, uint& 
 	{
 		// --- Create the texture ---
 		originalFormat = ilGetInteger(IL_IMAGE_FORMAT);
-		m_LastStoredData = ilGetData();
-		TextureID = CreateTextureFromPixels(originalFormat, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), originalFormat, m_LastStoredData);
+		TextureID = CreateTextureFromPixels(originalFormat, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), originalFormat, ilGetData());
 
 		if (path != "") {
 			iluFlipImage();
@@ -229,6 +228,5 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& 
 	ilDeleteImages(1, (const ILuint*)&ImageName);
 
 	// --- Returning the Texture ID so a mesh can use it, note that this variable is filled by CreateTextureFromPixels ---
-
 	return TextureID;
 }

@@ -22,7 +22,6 @@ public:
 
 	uint GetCheckerTextureID() const { return CheckerTexID; }
 	uint GetDefaultTextureID() const { return DefaultTexture; }
-	const void* GetLastStoredData() const { return &m_LastStoredData; }
 
 private:
 
@@ -31,7 +30,6 @@ private:
 
 	uint CheckerTexID = 0;
 	uint DefaultTexture = 0;
-	mutable void* m_LastStoredData = nullptr;
 
 private:
 

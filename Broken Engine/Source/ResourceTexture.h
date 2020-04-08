@@ -18,9 +18,6 @@ public:
 
 	void SetTextureID(uint ID) { buffer_id = previewTexID = ID; }
 	uint GetTexID() { return buffer_id; }
-	
-	void SetTextureData(const void* data) const { m_TextureData = data; }
-	const void* GetTextureData() const { return m_TextureData; }
 
 public:
 
@@ -32,7 +29,6 @@ public:
 private:
 
 	uint buffer_id = 0;
-	mutable const void* m_TextureData = nullptr;
 
 private:
 
