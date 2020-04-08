@@ -58,8 +58,8 @@ ComponentCharacterController::~ComponentCharacterController()
 }
 
 void ComponentCharacterController::Update()
-{
-	/*if (App->input->GetKey(SDL_SCANCODE_UP))
+{/*
+	if (App->input->GetKey(SDL_SCANCODE_UP))
 		velocity.z = -10.0f;
 
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN))
@@ -110,7 +110,7 @@ void ComponentCharacterController::Draw()
 	if (!mesh->IsInMemory())
 	{
 		// --- Rebuild capsule ---
-		App->scene_manager->CreateCapsule(radius, height * 2, mesh);
+		App->scene_manager->CreateCapsule(radius * 2, height * 2, mesh);
 		mesh->LoadToMemory();
 	}
 
@@ -125,6 +125,7 @@ void ComponentCharacterController::Draw()
 		GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 
 		float4x4 aux = GO->GetComponent<ComponentTransform>()->GetGlobalTransform();
+		
 		aux.y += controller->getPosition().y - controller->getFootPosition().y;
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, aux.Transposed().ptr());
@@ -187,6 +188,8 @@ void ComponentCharacterController::DrawComponent()
 		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
 		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 	}
+
+	Draw();
 }
 
 void ComponentCharacterController::Move(float velX, float velZ, float minDist)
