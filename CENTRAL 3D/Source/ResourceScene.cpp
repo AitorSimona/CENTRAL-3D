@@ -162,6 +162,32 @@ void ResourceScene::CreateInspectorNode()
 {
 }
 
+void ResourceScene::DeactivateAllGameObjects()
+{
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+}
+
+void ResourceScene::ActivateAllGameObjects()
+{
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = true;
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+}
+
 // Created for on-play temporal scene 
 void ResourceScene::CopyInto(ResourceScene* target)
 {

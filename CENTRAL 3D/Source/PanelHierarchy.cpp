@@ -64,6 +64,10 @@ bool PanelHierarchy::Draw()
 		if (openPrefab)
 		{
 			openPrefab = false;
+
+			// --- Deactivate gos temporarily ---
+			App->scene_manager->currentScene->DeactivateAllGameObjects();
+
 			ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
 			prefab->parentgo = IModel->InstanceOnCurrentScene(prefab->GetResourceFile(), nullptr);
 			editingPrefab = true;
@@ -109,6 +113,8 @@ void PanelHierarchy::ExitEditPrefab()
 
 	prefab->parentgo = nullptr;
 	prefab = nullptr;
+
+	App->scene_manager->currentScene->ActivateAllGameObjects();
 }
 
 void PanelHierarchy::DrawRecursive(GameObject* Go)

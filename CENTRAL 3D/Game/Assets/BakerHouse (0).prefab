@@ -10,8 +10,8 @@
                 "rotationy": 0.0,
                 "rotationz": 0.0,
                 "scalex": 100.0,
-                "scaley": 99.99998474121094,
-                "scalez": 99.99998474121094
+                "scaley": 99.99996948242188,
+                "scalez": 99.99996948242188
             },
             "1": {
                 "Resources": {
@@ -30,10 +30,10 @@
                 }
             }
         },
-        "Parent": "1171963527",
+        "Parent": "1319669377",
         "PrefabChild": true,
         "PrefabInstance": false,
-        "UID": "1779029149"
+        "UID": "908826516"
     },
     "Chimney": {
         "Components": {
@@ -46,8 +46,8 @@
                 "rotationy": 0.0,
                 "rotationz": 0.0,
                 "scalex": 100.0,
-                "scaley": 99.99998474121094,
-                "scalez": 99.99998474121094
+                "scaley": 99.99996948242188,
+                "scalez": 99.99996948242188
             },
             "1": {
                 "Resources": {
@@ -66,10 +66,10 @@
                 }
             }
         },
-        "Parent": "1171963527",
+        "Parent": "1319669377",
         "PrefabChild": true,
         "PrefabInstance": false,
-        "UID": "1669041804"
+        "UID": "2100178875"
     },
     "GameObject (0)": {
         "Components": {
@@ -87,10 +87,10 @@
             }
         },
         "Model": "Assets/BakerHouse.fbx",
-        "Parent": "2013529060",
+        "Parent": "883141843",
         "PrefabChild": false,
         "PrefabInstance": true,
-        "UID": "1171963527"
+        "UID": "1319669377"
     },
-    "PreviewTexture": "Library/Textures/1308661369.dds"
+    "PreviewTexture": "Library/Textures/2102036566.dds"
 }

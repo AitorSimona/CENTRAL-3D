@@ -132,7 +132,7 @@ void ModuleSceneManager::DrawScene()
 	{
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetUID() != root->GetUID())
+			if ((*it).second->GetActive() && (*it).second->GetUID() != root->GetUID())
 			{
 				const AABB aabb = (*it).second->GetAABB();
 
@@ -153,7 +153,8 @@ void ModuleSceneManager::DrawScene()
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
 			// --- Issue render order ---
-			(*it)->Draw();
+			if((*it)->GetActive())
+				(*it)->Draw();
 		}
 	}
 }

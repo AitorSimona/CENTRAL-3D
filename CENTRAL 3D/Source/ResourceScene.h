@@ -15,6 +15,8 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 	void CreateInspectorNode() override;
+	void DeactivateAllGameObjects();
+	void ActivateAllGameObjects();
 
 	void CopyInto(ResourceScene* target);
 
