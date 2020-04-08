@@ -69,6 +69,9 @@ bool ResourceScene::LoadInMemory()
 				if (!file[it.key()]["PrefabInstance"].is_null())
 					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
 
+				if (!file[it.key()]["Model"].is_null())
+					go->model = (ResourceModel*)App->resources->ImportAssets(Importer::ImportData(file[it.key()]["Model"].get<std::string>().c_str()));
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
 

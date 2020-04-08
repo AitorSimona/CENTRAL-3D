@@ -81,10 +81,19 @@ bool PanelScene::Draw()
 				Resource* resource = App->resources->GetResource(UID, false);
 
 				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if (resource && resource->GetType() == Resource::ResourceType::MODEL)
+				if (resource)
 				{
-					resource = App->resources->GetResource(UID);
-					App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), (ResourceModel*)resource);
+					if (resource->GetType() == Resource::ResourceType::MODEL)
+					{
+						resource = App->resources->GetResource(UID);
+						App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), (ResourceModel*)resource);
+					}
+					if (resource->GetType() == Resource::ResourceType::PREFAB)
+					{
+						// We force a model instance without sending model*
+						resource = App->resources->GetResource(UID);
+						App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), nullptr);
+					}
 				}
 			}
 

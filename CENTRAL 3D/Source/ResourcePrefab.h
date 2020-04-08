@@ -3,6 +3,8 @@
 
 #include "Resource.h"
 
+class ResourceModel;
+
 class ResourcePrefab : public Resource
 {
 public:
@@ -13,6 +15,10 @@ public:
 	void FreeMemory() override;
 	void CreateInspectorNode() override;
 
+
+	ResourceModel* model = nullptr;
+	GameObject* parentgo = nullptr;
+	std::string previewTexPath;
 private:
 	void OnOverwrite() override;
 	void OnDelete() override;

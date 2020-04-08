@@ -61,6 +61,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 
 		rootnode = App->scene_manager->CreateEmptyGameObject();
 		rootnode->is_prefab_instance = true;
+		rootnode->model = model;
 
 		// --- Save Game objects to vector so we can save to lib later ---
 		std::vector<GameObject*> model_gos;
@@ -80,7 +81,6 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		for (uint i = 0; i < model_meshes.size(); ++i)
 		{
 			model->AddResource(model_meshes[i]);
-			//model_meshes[i]->LoadInMemory();
 		}
 		for (uint j = 0; j < model_mats.size(); ++j)
 		{
@@ -407,6 +407,9 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				if (!file[it.key()]["PrefabInstance"].is_null())
 					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
 
+				if (!file[it.key()]["Model"].is_null())
+					go->model = (ResourceModel*)App->resources->ImportAssets(ImportData(file[it.key()]["Model"].get<std::string>().c_str()));
+
 				// --- Retrieve GO's name ---
 				go->SetName(it.key().c_str());
 
@@ -459,7 +462,7 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			}
 
 			// --- Add pointer to model ---
-			if (objects[0])
+			if (objects[0] && model)
 			{
 				objects[0]->model = model;
 				model->AddUser(objects[0]);
@@ -485,6 +488,9 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 		file[model_gos[i]->GetName()]["Components"];
 		file[model_gos[i]->GetName()]["PrefabChild"] = model_gos[i]->is_prefab_child;
 		file[model_gos[i]->GetName()]["PrefabInstance"] = model_gos[i]->is_prefab_instance;
+
+		if(model_gos[i]->model)
+			file[model_gos[i]->GetName()]["Model"] = std::string(model_gos[i]->model->GetOriginalFile());
 
 		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j)
 		{

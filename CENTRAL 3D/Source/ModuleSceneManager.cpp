@@ -671,3 +671,13 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 	this->go_count--;
 }
 
+void ModuleSceneManager::GatherGameObjects(GameObject* go, std::vector<GameObject*>& gos_vec)
+{
+	gos_vec.push_back(go);
+
+	for (uint i = 0; i < go->childs.size(); ++i)
+	{
+		GatherGameObjects(go->childs[i], gos_vec);
+	}
+}
+

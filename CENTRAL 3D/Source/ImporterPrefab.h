@@ -16,7 +16,7 @@ public:
 	Resource* Import(ImportData& IData) const override;
 	Resource* Load(const char* path) const override;
 
-	void Save(ResourcePrefab* texture) const;
+	void Save(ResourcePrefab* prefab) const;
 
 	static inline Importer::ImporterType GetType() { return Importer::ImporterType::Prefab; };
 };

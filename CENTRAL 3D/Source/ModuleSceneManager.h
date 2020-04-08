@@ -35,7 +35,6 @@ public:
 	GameObject* CreateEmptyGameObject();
 	GameObject* CreateEmptyGameObjectGivenUID(uint UID);
 
-	//MYTODO: Move all resource stuff to RESOURCE MANAGER
 	GameObject* LoadSphere();
 	GameObject* LoadCube();
 	GameObject* LoadCapsule();
@@ -44,7 +43,7 @@ public:
 	GameObject* LoadDisk();
 
 	void DestroyGameObject(GameObject* go);
-
+	void GatherGameObjects(GameObject* go, std::vector<GameObject*>& gos_vec);
 	// --- Getters ---
 	GameObject* GetSelectedGameObject() const;
 	GameObject* GetRootGO() const;
@@ -63,6 +62,8 @@ public:
 	void LoadStatus(const json & file) override;
 	void SaveScene(ResourceScene* scene);
 	void SetActiveScene(ResourceScene* scene);
+
+	//MYTODO: Move all resource stuff to RESOURCE MANAGER
 
 	// --- Primitives ---
 	GameObject* LoadPrimitive(uint UID);

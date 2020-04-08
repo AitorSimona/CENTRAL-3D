@@ -3,16 +3,15 @@
 #include "ModuleGui.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
+#include "PanelProject.h"
+
+#include "mmgr/mmgr.h"
 
 ResourcePrefab::ResourcePrefab(uint UID, std::string source_file) : Resource(Resource::ResourceType::PREFAB, UID, source_file)
 {
 	extension = ".prefab";
 
-	std::string tmp = source_file;
-	App->fs->SplitFilePath(tmp.c_str(), nullptr, &tmp);
-
-	resource_file = tmp + extension;
-
+	resource_file = source_file;
 	previewTexID = App->gui->prefabTexID;
 }
 
