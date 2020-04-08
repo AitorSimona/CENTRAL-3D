@@ -231,7 +231,7 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& 
 	return TextureID;
 }
 
-std::unique_ptr<char> ModuleTextures::GetTextureDataFromFile(const char* path) const {
+char* ModuleTextures::GetTextureDataFromFile(const char* path) const {
 	if (path == nullptr) {
 		ENGINE_CONSOLE_LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr", path);
 		return nullptr;
@@ -242,15 +242,15 @@ std::unique_ptr<char> ModuleTextures::GetTextureDataFromFile(const char* path) c
 
 	// --- Bind the image ---
 	ilBindImage(ImageName);
-	std::unique_ptr<char> ret = nullptr;
+	char* ret = nullptr;
 
 	// --- Load the image into binded buffer and create texture from its pixel data ---
 	if (ilLoadImage(path)) {
 		ILinfo imageInfo;
 		iluGetImageInfo(&imageInfo);
 
-		ret = std::make_unique<char>(imageInfo.SizeOfData);
-		memcpy(ret.get(), ilGetData(), imageInfo.SizeOfData);
+		ret = new char[imageInfo.SizeOfData];
+		memcpy(ret, ilGetData(), imageInfo.SizeOfData);
 	}
 	else {
 		ENGINE_CONSOLE_LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
