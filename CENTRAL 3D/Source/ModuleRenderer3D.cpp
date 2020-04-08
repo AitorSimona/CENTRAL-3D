@@ -19,9 +19,11 @@
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
+#include "ResourcePrefab.h"
 
 #include "ImporterShader.h"
 
+#include "PanelHierarchy.h"
 #include "PanelScene.h"
 
 #include "Imgui/imgui.h"
@@ -184,7 +186,18 @@ update_status ModuleRenderer3D::PostUpdate(float dt) {
 	glStencilMask(0x00);
 
 	// --- Issue Render orders ---
-	App->scene_manager->DrawScene();
+	if (App->gui->panelHierarchy->editingPrefab)
+	{
+		std::vector<GameObject*> prefab_gos;
+		App->scene_manager->GatherGameObjects(App->gui->panelHierarchy->prefab->parentgo, prefab_gos);
+
+		for (uint i = 0; i < prefab_gos.size(); ++i)
+		{
+			prefab_gos[i]->Draw();
+		}
+	}
+	else
+		App->scene_manager->DrawScene();
 
 	// --- Draw Grid ---
 	if (display_grid)

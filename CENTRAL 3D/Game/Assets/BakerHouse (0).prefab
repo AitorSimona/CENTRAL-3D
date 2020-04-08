@@ -1,0 +1,96 @@
+{
+    "Baker_house": {
+        "Components": {
+            "0": {
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 0.7071067094802856,
+                "rotationx": -0.7071068286895752,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 100.0,
+                "scaley": 99.99998474121094,
+                "scalez": 99.99998474121094
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/980925835.dds",
+                        "path": "Library/Meshes/1994634711.mesh"
+                    }
+                }
+            },
+            "2": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/Baker_house.mat"
+                    }
+                }
+            }
+        },
+        "Parent": "1171963527",
+        "PrefabChild": true,
+        "PrefabInstance": false,
+        "UID": "1779029149"
+    },
+    "Chimney": {
+        "Components": {
+            "0": {
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 0.7071067094802856,
+                "rotationx": -0.7071068286895752,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 100.0,
+                "scaley": 99.99998474121094,
+                "scalez": 99.99998474121094
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/976746446.dds",
+                        "path": "Library/Meshes/2114063192.mesh"
+                    }
+                }
+            },
+            "2": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/Baker_house.mat"
+                    }
+                }
+            }
+        },
+        "Parent": "1171963527",
+        "PrefabChild": true,
+        "PrefabInstance": false,
+        "UID": "1669041804"
+    },
+    "GameObject (0)": {
+        "Components": {
+            "0": {
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            }
+        },
+        "Model": "Assets/BakerHouse.fbx",
+        "Parent": "2013529060",
+        "PrefabChild": false,
+        "PrefabInstance": true,
+        "UID": "1171963527"
+    },
+    "PreviewTexture": "Library/Textures/1308661369.dds"
+}
