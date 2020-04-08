@@ -68,7 +68,7 @@ Resource* ImporterPrefab::Load(const char* path) const
 
 void ImporterPrefab::Save(ResourcePrefab* prefab) const
 {
-	if (prefab && prefab->model && prefab->parentgo)
+	if (prefab && prefab->parentgo)
 	{
 		// --- Get all game objects inside parent ---
 		std::vector<GameObject*> prefab_gos;

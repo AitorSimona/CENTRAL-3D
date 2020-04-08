@@ -32,7 +32,7 @@ void ResourcePrefab::FreeMemory()
 
 void ResourcePrefab::CreateInspectorNode()
 {
-	if(App->GetAppState() != PLAY && ImGui::Button("Open Prefab", ImVec2(ImGui::GetWindowContentRegionWidth(),20)))
+	if(!App->gui->panelHierarchy->editingPrefab && App->GetAppState() != PLAY && ImGui::Button("Open Prefab", ImVec2(ImGui::GetWindowContentRegionWidth(),20)))
 		EditPrefab();
 }
 

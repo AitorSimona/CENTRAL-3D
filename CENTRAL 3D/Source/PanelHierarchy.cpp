@@ -8,8 +8,10 @@
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "ImporterModel.h"
+#include "ImporterPrefab.h"
 #include "ResourcePrefab.h"
 
 #include "GameObject.h"
@@ -62,14 +64,14 @@ bool PanelHierarchy::Draw()
 		if (openPrefab)
 		{
 			openPrefab = false;
-			editingPrefab = true;
 			ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
-			prefabParent = IModel->InstanceOnCurrentScene(prefab->GetResourceFile(), nullptr);
+			prefab->parentgo = IModel->InstanceOnCurrentScene(prefab->GetResourceFile(), nullptr);
+			editingPrefab = true;
 		}
 
 		if (editingPrefab)
 		{
-			DrawRecursive(prefabParent);
+			DrawRecursive(prefab->parentgo);
 		}
 		else
 			DrawRecursive(App->scene_manager->GetRootGO());
@@ -86,12 +88,26 @@ bool PanelHierarchy::Draw()
 
 void PanelHierarchy::ExitEditPrefab()
 {
+	std::string previewTexpath;
+	std::vector<GameObject*> prefab_gos;
+	App->scene_manager->GatherGameObjects(prefab->parentgo,prefab_gos);
+	uint texID = App->renderer3D->RenderSceneToTexture(prefab_gos,previewTexpath);
+
+	App->fs->Remove(prefab->previewTexPath.c_str());
+	prefab->previewTexPath = previewTexpath;
+	prefab->SetPreviewTexID(texID);
+
+	ImporterPrefab* IPrefab = App->resources->GetImporter<ImporterPrefab>();
+	IPrefab->Save(prefab);
+
+	App->scene_manager->SetSelectedGameObject(nullptr);
+
 	editingPrefab = false;
 
-	if(prefabParent)
-		App->scene_manager->DestroyGameObject(prefabParent);
+	if(prefab->parentgo)
+		App->scene_manager->DestroyGameObject(prefab->parentgo);
 
-	prefabParent = nullptr;
+	prefab->parentgo = nullptr;
 	prefab = nullptr;
 }
 

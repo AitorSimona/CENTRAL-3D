@@ -22,6 +22,9 @@
 
 #include "par/par_shapes.h"
 
+#include "PanelHierarchy.h"
+#include "ResourcePrefab.h"
+
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
@@ -371,7 +374,12 @@ GameObject * ModuleSceneManager::CreateEmptyGameObject()
 	GameObject* new_object = new GameObject(Name.c_str());
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->panelHierarchy->editingPrefab)
+	{
+		App->gui->panelHierarchy->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }
@@ -390,7 +398,12 @@ GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
 	GameObject* new_object = new GameObject(Name.data(), UID);
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->panelHierarchy->editingPrefab)
+	{
+		App->gui->panelHierarchy->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }

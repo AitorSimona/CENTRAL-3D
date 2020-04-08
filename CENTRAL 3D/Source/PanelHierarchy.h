@@ -21,7 +21,6 @@ public:
 	bool editingPrefab = false;
 	ResourcePrefab* prefab = nullptr;
 private:
-	GameObject* prefabParent = nullptr;
 	void DrawRecursive(GameObject* Go);
 };
 

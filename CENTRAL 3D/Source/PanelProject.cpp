@@ -5,6 +5,7 @@
 #include "ModuleEventManager.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "Resources.h"
 #include "Importers.h"
@@ -118,10 +119,17 @@ bool PanelProject::Draw()
 						ResourcePrefab* new_prefab = (ResourcePrefab*)App->resources->CreateResource(Resource::ResourceType::PREFAB, resource_name);
 	
 						new_prefab->model = go->model;
-						new_prefab->previewTexPath = go->model->previewTexPath;
+						//new_prefab->previewTexPath = go->model->previewTexPath;
 						new_prefab->parentgo = go;
-						new_prefab->SetPreviewTexID(go->model->GetPreviewTexID());
-						ImporterPrefab* IPrefab = App->resources->GetImporter<ImporterPrefab>();
+						//new_prefab->SetPreviewTexID(go->model->GetPreviewTexID());
+
+						// --- Create new preview icon ---
+						std::string previewTexpath;
+						std::vector<GameObject*> prefab_gos;
+						App->scene_manager->GatherGameObjects(new_prefab->parentgo, prefab_gos);
+						uint texID = App->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath);
+						new_prefab->previewTexPath = previewTexpath;
+						new_prefab->SetPreviewTexID(texID);
 
 						App->resources->AddResourceToFolder(new_prefab);
 
@@ -132,6 +140,7 @@ bool PanelProject::Draw()
 						if (meta)
 							IMeta->Save(meta);
 
+						ImporterPrefab* IPrefab = App->resources->GetImporter<ImporterPrefab>();
 						IPrefab->Save((ResourcePrefab*)new_prefab);
 					}
 				}
