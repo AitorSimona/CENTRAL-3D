@@ -18,45 +18,34 @@ public:
 	~ScriptingPhysics();
 
 public:
-	void SetMass(float mass);
-	float GetMass();
+	void SetMass(float mass, uint gameobject_UUID);
+	float GetMass(uint gameobject_UUID);
 
-	int GetLinearVelocity(lua_State* L);
-	int GetAngularVelocity(lua_State* L);
-	void SetLinearVelocity(float x, float y, float z);
-	void SetAngularVelocity(float x, float y, float z);
-	void SetLinearVelocityGO(float x, float y, float z, uint gameobject_UUID);
-	void SetAngularVelocityGO(float x, float y, float z, uint gameobject_UUID);
+	luabridge::LuaRef GetLinearVelocity(uint gameobject_UUID, lua_State* L);
+	luabridge::LuaRef GetAngularVelocity(uint gameobject_UUID, lua_State* L);
+	void SetLinearVelocity(float x, float y, float z, uint gameobject_UUID);
+	void SetAngularVelocity(float x, float y, float z, uint gameobject_UUID);
 
-	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode);
-	void AddTorqueGO(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID);
-	void AddForce(float forceX, float forceY, float forceZ, int ForceMode);
-	void AddForceGO(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID);
+	void AddTorque(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID);
+	void AddForce(float forceX, float forceY, float forceZ, int ForceMode, uint gameobject_UUID);
 
-	void SetKinematic(bool enable);
-	void UseGravity(bool enable);
+	void SetKinematic(bool enable, uint gameobject_UUID);
+	void UseGravity(bool enable, uint gameobject_UUID);
 	luabridge::LuaRef OverlapSphere(float position_x, float position_y, float position_z, float radius, uint layer, lua_State* L);
 
-	void Move(float vel_x, float vel_y);
-	void MoveGameObject(uint gameobject_UUID, float vel_x, float vel_y);
-	int GetCharacterPosition(lua_State* L);
-	float GetCharacterPositionX();
-	float GetCharacterPositionY();
-	float GetCharacterPositionZ();
-	void SetCharacterPosition(float posx, float posy, float posz);
-	int GetCharacterUpDirection(lua_State* L);
-	float GetCharacterUpDirectionX();
-	float GetCharacterUpDirectionY();
-	float GetCharacterUpDirectionZ();
-	void SetCharacterUpDirection(float rotx, float roty, float rotz, lua_State* L);
+	void Move(float vel_x, float vel_y, uint gameobject_UUID);
+	luabridge::LuaRef GetCharacterPosition(uint gameobject_UUID, lua_State* L);
+	void SetCharacterPosition(float posx, float posy, float posz, uint gameobject_UUID);
+	luabridge::LuaRef GetCharacterUpDirection(uint gameobject_UUID, lua_State* L);
+	void SetCharacterUpDirection(float rotx, float roty, float rotz, uint gameobject_UUID, lua_State* L);
 
-	int OnTriggerEnter(uint UID, lua_State* L);
-	int OnTriggerStay(uint UID, lua_State* L);
-	int OnTriggerExit(uint UID, lua_State* L);
+	int OnTriggerEnter(uint gameobject_UUID);
+	int OnTriggerStay(uint gameobject_UUID);
+	int OnTriggerExit(uint gameobject_UUID);
 
-	int OnCollisionEnter(uint UID, lua_State* L);
-	int OnCollisionStay(uint UID, lua_State* L);
-	int OnCollisionExit(uint UID, lua_State* L);
+	int OnCollisionEnter(uint gameobject_UUID);
+	int OnCollisionStay(uint gameobject_UUID);
+	int OnCollisionExit(uint gameobject_UUID);
 
 };
 BE_END_NAMESPACE

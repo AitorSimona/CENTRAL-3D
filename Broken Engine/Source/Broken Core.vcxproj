@@ -45,12 +45,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/DetourTileCache/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Wwise;$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/DetourTileCache/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/DetourTileCache/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Wwise;$(ProjectDir)/PhysX_3.4/Include;$(ProjectDir)Freetype/include/freetype;$(ProjectDir)Freetype/include;$(ProjectDir)RecastNavigation/DetourTileCache/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Detour/Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -283,6 +283,7 @@
     <ClInclude Include="ScriptData.h" />
     <ClInclude Include="Scripting.h" />
     <ClInclude Include="ScriptingAudio.h" />
+    <ClInclude Include="ScriptingCamera.h" />
     <ClInclude Include="ScriptingGameobject.h" />
     <ClInclude Include="ScriptingInterface.h" />
     <ClInclude Include="ScriptingNavigation.h" />
@@ -452,6 +453,7 @@
     <ClCompile Include="ResourceTexture.cpp" />
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="ScriptingAudio.cpp" />
+    <ClCompile Include="ScriptingCamera.cpp" />
     <ClCompile Include="ScriptingGameobject.cpp" />
     <ClCompile Include="ScriptingInterface.cpp" />
     <ClCompile Include="ScriptingNavigation.cpp" />

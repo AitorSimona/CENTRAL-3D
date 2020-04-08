@@ -27,8 +27,24 @@ ComponentMesh::~ComponentMesh() {
 
 	if (deformable_mesh)
 	{
+
+		if (deformable_mesh->vertices) {
+			delete[] deformable_mesh->vertices;
+			deformable_mesh->vertices = nullptr;
+		}
+
+		if (deformable_mesh->Indices) {
+			delete[] deformable_mesh->Indices;
+			deformable_mesh->Indices = nullptr;
+		}
+
+		deformable_mesh->VBO = 0;
+		deformable_mesh->EBO = 0;
+		deformable_mesh->VAO = 0;
+
 		delete deformable_mesh;
 		deformable_mesh = nullptr;
+
 	}
 	
 }

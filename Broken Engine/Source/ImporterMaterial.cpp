@@ -70,7 +70,7 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 
 	//	if (resource_mat->resource_diffuse)
 	//		resource_mat->resource_diffuse->SetParent(resource_mat);
-	//	
+	//
 	//	// MYTODO: Note we are only assigning one diffuse, and not caring about other texture types, create vector to store texture pointers
 
 
@@ -95,11 +95,12 @@ Resource* ImporterMaterial::Import(ImportData& IData) const
 	return resource_mat;
 }
 
-Resource* ImporterMaterial::Load(const char* path) const 
+Resource* ImporterMaterial::Load(const char* path) const
 {
 	ResourceMaterial* mat = nullptr;
 	ResourceTexture* diffuse = nullptr;
 	ResourceTexture* specular = nullptr;
+	ResourceTexture* normalMap = nullptr;
 	float3 matColor = float3(1.0f);
 	float matShine = 32.0f;
 
@@ -107,6 +108,7 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 	std::string diffuse_texture_path = file["ResourceDiffuse"].is_null() ? "NaN.dds" : file["ResourceDiffuse"].get<std::string>();
 	std::string specular_texture_path = file["ResourceSpecular"].is_null() ? "NaN.dds" : file["ResourceSpecular"].get<std::string>();
+	std::string normal_texture_path = file["ResourceNormalTexture"].is_null() ? "NaN.dds" : file["ResourceNormalTexture"].get<std::string>();
 
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
@@ -115,7 +117,7 @@ Resource* ImporterMaterial::Load(const char* path) const
 	mat = App->resources->materials.find(meta->GetUID()) != App->resources->materials.end() ? App->resources->materials.find(meta->GetUID())->second : (ResourceMaterial*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MATERIAL, meta->GetOriginalFile(), meta->GetUID());
 
 	// --- A folder has been renamed ---
-	if (!App->fs->Exists(mat->GetOriginalFile())) 
+	if (!App->fs->Exists(mat->GetOriginalFile()))
 	{
 		mat->SetOriginalFile(path);
 		meta->SetOriginalFile(path);
@@ -129,19 +131,21 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 		if (!file["MaterialShininess"].is_null())
 			matShine = file["MaterialShininess"].get<float>();
-		//file["AmbientColor"]["R"] = mat->m_AmbientColor.x;
-		//file["AmbientColor"]["G"] = mat->m_AmbientColor.y;
-		//file["AmbientColor"]["B"] = mat->m_AmbientColor.z;
 
 		Importer::ImportData IDataDiff(diffuse_texture_path.c_str());
 
 		if(diffuse_texture_path != "NaN.dds")
-		diffuse = (ResourceTexture*)App->resources->ImportAssets(IDataDiff);
+			diffuse = (ResourceTexture*)App->resources->ImportAssets(IDataDiff);
 
 		Importer::ImportData IDataSpec(specular_texture_path.c_str());
 
 		if (specular_texture_path != "NaN.dds")
-		specular = (ResourceTexture*)App->resources->ImportAssets(IDataSpec);
+			specular = (ResourceTexture*)App->resources->ImportAssets(IDataSpec);
+
+		Importer::ImportData IDataNormTex(normal_texture_path.c_str());
+		
+		if(normal_texture_path != "NaN.dds")
+			normalMap = (ResourceTexture*)App->resources->ImportAssets(IDataNormTex);
 
 		// --- Load Shader and Uniforms ---
 		std::string shader_path = file["shader"]["ResourceShader"].is_null() ? "NONE" : file["shader"]["ResourceShader"].get<std::string>();
@@ -250,14 +254,17 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 	if (diffuse)
 		mat->m_DiffuseResTexture = diffuse;	//mat->resource_diffuse->SetParent(mat);
-		
+
 	if (specular)
 		mat->m_SpecularResTexture = specular;	//mat->resource_diffuse->SetParent(mat);
+
+	if (normalMap)
+		mat->m_NormalResTexture = normalMap;	//mat->resource_diffuse->SetParent(mat);
 
 	return mat;
 }
 
-void ImporterMaterial::Save(ResourceMaterial* mat) const 
+void ImporterMaterial::Save(ResourceMaterial* mat) const
 {
 	if (mat->GetUID() == App->resources->DefaultMaterial->GetUID())
 		return;
@@ -267,6 +274,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	file[mat->GetName()];
 	file["ResourceDiffuse"];
 	file["ResourceSpecular"];
+	file["ResourceNormalTexture"];
 	file["AmbientColor"];
 
 	// --- Save Shader and Uniforms ---
@@ -359,6 +367,8 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 		file["ResourceDiffuse"] = mat->m_DiffuseResTexture->GetOriginalFile();
 	if (mat->m_SpecularResTexture)
 		file["ResourceSpecular"] = mat->m_SpecularResTexture->GetOriginalFile();
+	if (mat->m_NormalResTexture)
+		file["ResourceNormalTexture"] = mat->m_NormalResTexture->GetOriginalFile();
 
 	// --- Serialize JSON to string ---
 	std::string data;
@@ -381,6 +391,4 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	}
 	else
 		ENGINE_CONSOLE_LOG("|[error]: Could not load meta from: %s", mat->GetResourceFile());
-
-	
 }

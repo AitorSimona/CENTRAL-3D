@@ -118,21 +118,22 @@ void ComponentCharacterController::Draw()
 	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
 	{
 		// --- Use default shader ---
-		glUseProgram(App->renderer3D->defaultShader->ID);
+		uint shaderID = App->renderer3D->defaultShader->ID;
+		glUseProgram(shaderID);
 
 		// --- Set uniforms ---
-		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+		GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 
 		float4x4 aux = GO->GetComponent<ComponentTransform>()->GetGlobalTransform();
 		aux.y += controller->getPosition().y - controller->getFootPosition().y;
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, aux.Transposed().ptr());
 
-		int vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+		int vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 		glUniform3f(vertexColorLocation, 125, 125, 125);
 
-		int TextureSupportLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-		glUniform1i(TextureSupportLocation, -1);
+		int TextureSupportLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+		glUniform1i(TextureSupportLocation, 0);
 
 		// --- Bind mesh's vao ---
 		glBindVertexArray(mesh->VAO);

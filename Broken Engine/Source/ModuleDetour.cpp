@@ -367,6 +367,8 @@ void ModuleDetour::processTile(const dtMeshTile* tile) {
 				vert = &tile->detailVerts[(poly_d->vertBase + j - tile->header->vertCount) * 3];
 
 			memcpy(navpol->rmesh->vertices[j].position, vert, sizeof(float) * 3);
+			// @Improvement This is a fix for the navmesh render collinding with the geometry, might need to fix the renderer
+			navpol->rmesh->vertices[j].position[1] += 0.1f;
 		}
 
 		// Index pointer to copy the indices

@@ -6,6 +6,7 @@
 #include "ModulePhysics.h"
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
+#include "ModuleTimeManager.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleGui.h"
 #include "ResourceShader.h"
@@ -222,7 +223,7 @@ void ComponentCollider::UpdateTransformByRigidBody(ComponentDynamicRigidBody* RB
 	cTransform->SetRotation(Quat(transform.q.x, transform.q.y, transform.q.z, transform.q.w));
 	globalMatrix = cTransform->GetGlobalTransform() * localMatrix;
 
-	if (App->GetAppState() == AppState::PLAY && !toPlay)
+	if (App->GetAppState() == AppState::PLAY && !toPlay && !App->time->gamePaused)
 	{
 		float3 pos, scale;
 		Quat rot;

@@ -54,7 +54,6 @@ void ComponentMeshRenderer::Update()
 void ComponentMeshRenderer::DrawComponent() 
 {
 	RenderMeshFlags flags = texture;
-
 	ComponentMesh* cmesh = GO->GetComponent<ComponentMesh>();
 
 	if (App->selection->IsSelected(GO))
@@ -72,7 +71,6 @@ void ComponentMeshRenderer::DrawComponent()
 
 void ComponentMeshRenderer::DrawMesh(ResourceMesh& mesh) const 
 {
-
 }
 
 void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const ComponentTransform& transform) const
@@ -97,7 +95,6 @@ void ComponentMeshRenderer::DrawNormals(const ResourceMesh& mesh, const Componen
 	}
 
 	// --- Draw Face Normals ---
-
 	if (draw_facenormals)
 	{
 		Triangle face;
@@ -129,11 +126,9 @@ json ComponentMeshRenderer::Save() const
 {
 	json node;
 	node["Active"] = this->active;
-
 	node["Resources"]["ResourceMaterial"];
-
 	if(material)
-	node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
+		node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
 
 	return node;
 }
@@ -143,7 +138,6 @@ void ComponentMeshRenderer::Load(json& node)
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 
 	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
-
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
 	if (IMeta) 
@@ -168,22 +162,18 @@ void ComponentMeshRenderer::ONResourceEvent(uint UID, Resource::ResourceNotifica
 
 	switch (type) 
 	{
-	case Resource::ResourceNotificationType::Overwrite:
-		if (material && UID == material->GetUID())
-			material = (ResourceMaterial*)App->resources->GetResource(UID);
-		break;
-
-	case Resource::ResourceNotificationType::Deletion:
-		if (material && UID == material->GetUID())
-			material = nullptr;
-		break;
-
-	default:
-		break;
+		case Resource::ResourceNotificationType::Overwrite:
+			if (material && UID == material->GetUID()) material = (ResourceMaterial*)App->resources->GetResource(UID);
+			break;
+		case Resource::ResourceNotificationType::Deletion:
+			if (material && UID == material->GetUID()) material = nullptr;
+			break;
+		default:
+			break;
 	}
 }
 
-void ComponentMeshRenderer::CreateInspectorNode() 
+void ComponentMeshRenderer::CreateInspectorNode()
 {
 	ImGui::Checkbox("Vertex Normals", &draw_vertexnormals);
 	ImGui::SameLine();
@@ -191,15 +181,16 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::Checkbox("Checkers", &checkers);
 
-
 	ImGui::NewLine();
 	ImGui::Separator();
 	ImGui::PushID("Material");
 
 	// --- Material node ---
 	if (material)
-	{	
+	{
 		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
+		static bool save_material = false;
+		static Timer material_save_time;
 
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
@@ -217,24 +208,21 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				const char* item_current = material->shader->GetName();
 				if (ImGui::BeginCombo("##Shader", item_current, flags))
 				{
-					//if (!is_default)
-					//{
-					
-						for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+					for (std::map<uint, ResourceShader*>::iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+					{
+						bool is_selected = (item_current == it->second->GetName());
+
+						if (ImGui::Selectable(it->second->GetName(), is_selected))
 						{
-							bool is_selected = (item_current == it->second->GetName());
-
-							if (ImGui::Selectable(it->second->GetName(), is_selected))
-							{
-								item_current = it->second->GetName();
-								material->shader = it->second;
-								material->shader->GetAllUniforms(material->uniforms);
-							}
-							if (is_selected)
-								ImGui::SetItemDefaultFocus();
+							item_current = it->second->GetName();
+							material->shader = it->second;
+							material->shader->GetAllUniforms(material->uniforms);
 						}
-					//}
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
 
+					save_material = true;
 					ImGui::EndCombo();
 				}
 			}
@@ -251,11 +239,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 				ImGui::Text("Use Textures");
 				ImGui::SameLine();
-				ImGui::Checkbox("##CB", &material->m_UseTexture);
+				if(ImGui::Checkbox("##CB", &material->m_UseTexture)) save_material = true;
 
 				//Color
 				ImGui::Separator();
-				ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs);
+				if(ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs)) save_material = true;
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
 				ImGui::Text("Ambient Color");
 
@@ -263,7 +251,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Shininess");
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 				ImGui::SetNextItemWidth(300.0f);
-				ImGui::SliderFloat("", &material->m_Shininess, 0.01f, 500.00f);
+				if(ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f)) save_material = true;
 
 				//ImGui::Text("Shader Uniforms");
 
@@ -305,10 +293,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							material->m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 							// --- Save material so we update path to texture ---
-							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-							if (IMat)
-								IMat->Save(material);
+							save_material = true;
+							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+							//
+							//if (IMat)
+							//	IMat->Save(material);
 						}
 					}
 
@@ -319,10 +308,12 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Albedo");
 
 				ImGui::SameLine();
-				if (ImGui::Button("Unuse", { 43, 18 }) && material->m_DiffuseResTexture)
+				if (ImGui::Button("UnuseDiff", { 77, 18 }) && material->m_DiffuseResTexture)
 				{
 					material->m_DiffuseResTexture->RemoveUser(GetContainerGameObject());
 					material->m_DiffuseResTexture->Release();
+					material->m_DiffuseResTexture = nullptr;
+					save_material = true;
 				}
 
 
@@ -360,10 +351,11 @@ void ComponentMeshRenderer::CreateInspectorNode()
 							material->m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
 
 							// --- Save material so we update path to texture ---
-							ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-
-							if (IMat)
-								IMat->Save(material);
+							save_material = true;
+							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+							//
+							//if (IMat)
+							//	IMat->Save(material);
 						}
 					}
 
@@ -374,10 +366,70 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Specular");
 
 				ImGui::SameLine();
-				if (ImGui::Button("Unuse", { 43, 18 }) && material->m_SpecularResTexture)
+				if (ImGui::Button("UnuseSpec", { 77, 18 }) && material->m_SpecularResTexture)
 				{
 					material->m_SpecularResTexture->RemoveUser(GetContainerGameObject());
 					material->m_SpecularResTexture->Release();
+					material->m_SpecularResTexture = nullptr;
+					save_material = true;
+				}
+
+
+				// --- Print Texture Width and Height (Normal) ---
+				textSizeX = textSizeY = 0;
+				ImGui::NewLine();
+				if (material->m_NormalResTexture)
+				{
+					textSizeX = material->m_NormalResTexture->Texture_width;
+					textSizeY = material->m_NormalResTexture->Texture_height;
+				}
+
+				ImGui::Text(std::to_string(textSizeX).c_str());
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(textSizeY).c_str());
+
+				if (material->m_NormalResTexture)
+					ImGui::ImageButton((void*)(uint)material->m_NormalResTexture->GetPreviewTexID(), ImVec2(20, 20));
+				else
+					ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+
+				// --- Handle drag & drop (Specular Texture) ---
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+					{
+						uint UID = *(const uint*)payload->Data;
+						Resource* resource = App->resources->GetResource(UID, false);
+
+						if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
+						{
+							if (material->m_NormalResTexture)
+								material->m_NormalResTexture->Release();
+
+							material->m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
+
+							// --- Save material so we update path to texture ---
+							save_material = true;
+							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+							//
+							//if (IMat)
+							//	IMat->Save(material);
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::SameLine();
+				ImGui::Text("Normal Map");
+
+				ImGui::SameLine();
+				if (ImGui::Button("UnuseNorm", { 77, 18 }) && material->m_NormalResTexture)
+				{
+					material->m_NormalResTexture->RemoveUser(GetContainerGameObject());
+					material->m_NormalResTexture->Release();
+					material->m_NormalResTexture = nullptr;
+					save_material = true;
 				}
 			}
 
@@ -393,30 +445,44 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				}
 			}
 		}
-	}
-	else
-	{
-		ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
 
-		// --- Handle drag & drop ---
-		if (ImGui::BeginDragDropTarget()) 
+		
+		if (material && save_material && !material_save_time.IsRunning())
+			material_save_time.Start();
+		else if (!material)
+			material_save_time.Stop();
+
+		// --- Save material after some seconds ---
+		if (material && save_material && material_save_time.Read() > 8000.0f)
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource")) 
-			{
-				uint UID = *(const uint*)payload->Data;
-				Resource* resource = App->resources->GetResource(UID, false);
+			material_save_time.Stop();
+			save_material = false;
 
-				if (resource && resource->GetType() == Resource::ResourceType::MATERIAL) 
-				{			
-					material = (ResourceMaterial*)App->resources->GetResource(UID);
-				}
-			}
-
-			ImGui::EndDragDropTarget();
+			ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+			if (IMat)
+				IMat->Save(material);
 		}
-		ImGui::SameLine();
-		ImGui::Text("Drop Material");
 	}
+
+	// --- Handle drag & drop ---
+	ImGui::ImageButton(NULL, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1), 2);
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("resource"))
+		{
+			uint UID = *(const uint*)payload->Data;
+			Resource* resource = App->resources->GetResource(UID, false);
+
+			if (resource && resource->GetType() == Resource::ResourceType::MATERIAL)
+			{
+				material = (ResourceMaterial*)App->resources->GetResource(UID);
+			}
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+	ImGui::SameLine();
+	ImGui::Text("Drop Material");
 
 	ImGui::PopID();
 }

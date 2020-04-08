@@ -503,7 +503,7 @@ Resource* ModuleResourceManager::ImportScript(Importer::ImportData& IData)
 		script = IScr->Load(IData.path);
 
 	// --- Else call relevant importer ---
-	else 
+	else
 	{
 		std::string new_path = IData.path;
 
@@ -544,7 +544,7 @@ Resource* ModuleResourceManager::ImportFont(Importer::ImportData& IData)
 
 	if (IsFileImported(IData.path))
 		font = IFont->Load(IData.path);
-	else 
+	else
 	{
 		font = IFont->Import(IData);
 	}
@@ -1315,6 +1315,9 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 			if ((*it).second->m_SpecularResTexture && (*it).second->m_SpecularResTexture->GetUID() == resource->GetUID())
 				(*it).second->m_SpecularResTexture = nullptr;
+
+			if ((*it).second->m_NormalResTexture && (*it).second->m_NormalResTexture->GetUID() == resource->GetUID())
+				(*it).second->m_NormalResTexture = nullptr;
 		}
 
 		break;
@@ -1505,4 +1508,3 @@ bool ModuleResourceManager::CleanUp()
 
 	return true;
 }
-

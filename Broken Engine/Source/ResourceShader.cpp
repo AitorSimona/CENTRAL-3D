@@ -283,16 +283,22 @@ void ResourceShader::GetAllUniforms(std::vector<Uniform*>& uniforms)
 	{
 		glGetActiveUniform(ID, i, 128, nullptr, &size, &type, name);
 
-		if (strcmp(name, "model_matrix") == 0
-			|| strcmp(name, "view") == 0
-			|| strcmp(name, "projection") == 0
-			|| strcmp(name, "time") == 0
-			|| strcmp(name, "Color") == 0
-			|| strcmp(name, "Texture") == 0
-			|| strcmp(name, "u_Shininess") == 0
-			|| strcmp(name, "u_LightsNumber") == 0
+		if (strcmp(name, "u_Model") == 0
+			|| strcmp(name, "u_View") == 0
+			|| strcmp(name, "u_Proj") == 0
+			|| strcmp(name, "u_Color") == 0
 			|| strcmp(name, "u_CameraPosition") == 0
-			|| std::string(name).find("u_BkLights") != std::string::npos)
+			|| strcmp(name, "u_Shininess") == 0
+			|| strcmp(name, "u_UseTextures") == 0
+			|| strcmp(name, "u_HasDiffuseTexture") == 0
+			|| strcmp(name, "u_HasSpecularTexture") == 0
+			|| strcmp(name, "u_HasNormalMap") == 0
+			|| strcmp(name, "u_DrawNormalMapping") == 0
+			|| strcmp(name, "u_DrawNormalMapping_Lit") == 0
+			|| strcmp(name, "u_DrawNormalMapping_Lit_Adv") == 0
+			|| strcmp(name, "u_LightsNumber") == 0
+			|| std::string(name).find("u_BkLights") != std::string::npos
+			|| strcmp(name, "time") == 0)
 			continue;
 
 		Uniform* uniform = nullptr;

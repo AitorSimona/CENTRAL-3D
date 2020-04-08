@@ -122,6 +122,7 @@ private:
 	void DrawRenderLines();
 	void DrawRenderBoxes();
 	void DrawGrid();
+	void DrawFramebuffer();
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -141,6 +142,7 @@ public:
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
+	ResourceShader* screenShader = nullptr;
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
@@ -161,8 +163,12 @@ public:
 	bool wireframe = false;
 	bool zdrawer = false;
 	bool renderfbo = true;
+	bool drawfb = false;
 	bool display_boundingboxes = false;
 	bool display_grid = true;
+	bool m_Draw_normalMapping = false;
+	bool m_Draw_normalMapping_Lit = false;
+	bool m_Draw_normalMapping_Lit_Adv = false;
 
 	uint rendertexture = 0;
 
@@ -183,6 +189,8 @@ private:
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
 	uint Grid_VBO = 0;
+	uint quadVAO = 0;
+	uint quadVBO = 0;
 };
 BE_END_NAMESPACE
 #endif

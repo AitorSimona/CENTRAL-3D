@@ -11,7 +11,6 @@ public:
 
 public:
 	void LoadSceneFromScript(uint UUID);
-	//void LoadSceneByName(const char* name);
 	void QuitGame();
 
 };

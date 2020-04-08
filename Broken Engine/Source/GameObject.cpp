@@ -98,7 +98,10 @@ void GameObject::Draw()
 
 	// --- Call components Draw ---
 	for (int i = 0; i < components.size(); ++i)
-		components[i]->DrawComponent();
+	{
+		if(components[i] && components[i]->GetActive())
+			components[i]->DrawComponent();
+	}
 
 }
 

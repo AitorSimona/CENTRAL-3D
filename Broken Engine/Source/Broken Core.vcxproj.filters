@@ -714,6 +714,9 @@
     <ClInclude Include="ScriptingNavigation.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptingCamera.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1215,6 +1218,9 @@
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ScriptingNavigation.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingCamera.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
   </ItemGroup>
