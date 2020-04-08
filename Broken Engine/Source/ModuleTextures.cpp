@@ -230,3 +230,34 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& 
 	// --- Returning the Texture ID so a mesh can use it, note that this variable is filled by CreateTextureFromPixels ---
 	return TextureID;
 }
+
+char* ModuleTextures::GetTextureDataFromFile(const char* path) const {
+	if (path == nullptr) {
+		ENGINE_CONSOLE_LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr", path);
+		return nullptr;
+	}
+
+	uint ImageName = 0;
+	ilGenImages(1, (ILuint*)&ImageName);
+
+	// --- Bind the image ---
+	ilBindImage(ImageName);
+	char* ret = nullptr;
+
+	// --- Load the image into binded buffer and create texture from its pixel data ---
+	if (ilLoadImage(path)) {
+		ILinfo imageInfo;
+		iluGetImageInfo(&imageInfo);
+
+		ret = new char[imageInfo.SizeOfData];
+		memcpy(ret, ilGetData(), imageInfo.SizeOfData);
+	}
+	else {
+		ENGINE_CONSOLE_LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
+	}
+
+	// --- Release Image data (we have already extracted the necessary information) ---
+	ilDeleteImages(1, &ImageName);
+
+	return ret;
+}
