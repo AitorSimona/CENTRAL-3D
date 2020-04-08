@@ -356,6 +356,7 @@ void ModulePhysics::DeleteActors(GameObject* go)
 	{
 		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
 		{
+			DeleteActors((*it));
 			if ((*it)->GetComponent<ComponentCollider>() != nullptr) {
 				ComponentCollider* col = (*it)->GetComponent<ComponentCollider>();
 				physx::PxRigidActor* actor = col->GetActor();
