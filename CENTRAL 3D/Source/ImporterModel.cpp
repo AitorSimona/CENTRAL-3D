@@ -134,6 +134,24 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 		{
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
 			scene_meshes[i]->SetName(scene->mMeshes[i]->mName.C_Str());
+
+			// --- Create preview Texture ---
+
+			std::vector<GameObject*> gos;
+			gos.push_back(App->scene_manager->CreateEmptyGameObject());
+
+			// --- Create new Component Mesh to store current scene mesh data ---
+			ComponentMesh* new_mesh = (ComponentMesh*)gos[0]->AddComponent(Component::ComponentType::Mesh);
+			ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)gos[0]->AddComponent(Component::ComponentType::MeshRenderer);
+
+			// --- Assign previously loaded mesh ---
+			new_mesh->resource_mesh = scene_meshes[i];
+
+			scene_meshes[i]->FreeMemory();
+			scene_meshes[i]->LoadInMemory();
+			scene_meshes[i]->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(gos, scene_meshes[i]->previewTexPath));
+
+			App->scene_manager->DestroyGameObject(gos[0]);
 		}
 
 	}
@@ -259,14 +277,6 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 				ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)new_object->AddComponent(Component::ComponentType::MeshRenderer);
 				Renderer->material->Release();
 				Renderer->material = scene_mats[mat_index];
-
-				// --- Create preview Texture ---
-
-				std::vector<GameObject*> gos;
-				gos.push_back(new_object);
-
-				scene_meshes[mesh_index]->LoadInMemory();
-				scene_meshes[mesh_index]->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(gos, scene_meshes[mesh_index]->previewTexPath));
 			}
 
 		}

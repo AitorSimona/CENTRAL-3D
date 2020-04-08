@@ -74,6 +74,15 @@ void ImporterPrefab::Save(ResourcePrefab* prefab) const
 		std::vector<GameObject*> prefab_gos;
 		App->scene_manager->GatherGameObjects(prefab->parentgo, prefab_gos);
 
+		// --- Give new UIDs to all gos ---
+		std::vector<uint> gos;
+
+		for (uint i = 0; i < prefab_gos.size(); ++i)
+		{
+			gos.push_back(prefab_gos[i]->GetUID());
+			prefab_gos[i]->GetUID() = App->GetRandom().Int(); // force new uid
+		}
+
 		// --- Save Prefab to file ---
 
 		json file;
@@ -99,6 +108,11 @@ void ImporterPrefab::Save(ResourcePrefab* prefab) const
 				file[prefab_gos[i]->GetName()]["Components"][std::to_string((uint)prefab_gos[i]->GetComponents()[j]->GetType())] = prefab_gos[i]->GetComponents()[j]->Save();
 			}
 
+		}
+
+		for (uint i = 0; i < gos.size(); ++i)
+		{
+			prefab_gos[i]->GetUID() = gos[i]; // force new uid
 		}
 
 		// --- Serialize JSON to string ---
