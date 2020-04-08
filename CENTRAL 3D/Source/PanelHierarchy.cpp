@@ -82,8 +82,12 @@ void PanelHierarchy::DrawRecursive(GameObject* Go)
 		if (!Go->GetActive())
 			ImGui::PushStyleColor(ImGuiCol(), ImVec4(0.5, 0.5, 0.5, 1));
 
-		ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::SameLine();
+		if (Go->is_prefab_child || Go->is_prefab_instance)
+		{
+			ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+
+			ImGui::SameLine();
+		}
 
 		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), node_flags, Go->GetName().c_str());
 
@@ -107,8 +111,14 @@ void PanelHierarchy::DrawRecursive(GameObject* Go)
 
 				GameObject* go = App->scene_manager->currentScene->GetGOWithUID(UID);
 
-				if (!go->FindChildGO(Go) && go->GetUID() != Go->GetUID())
+				// --- Block move if go is prefab child ---
+				if (go->is_prefab_child)
+				{
+					CONSOLE_LOG("Cannot move child of a Prefab instance %s ...", go->GetName().c_str());
+				}
+				else if (!go->FindChildGO(Go) && go->GetUID() != Go->GetUID())
 					Go->AddChildGO(go);
+
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -116,8 +126,15 @@ void PanelHierarchy::DrawRecursive(GameObject* Go)
 		// --- Set Game Object to be destroyed ---
 		if (ImGui::IsWindowFocused() && Go == App->scene_manager->GetSelectedGameObject() && App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 		{
-			CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
-			App->scene_manager->SendToDelete(Go);
+			// --- Block delete if go is prefab child ---
+			if (!Go->is_prefab_child)
+			{
+				CONSOLE_LOG("Destroying: %s ...", Go->GetName().c_str());
+				App->scene_manager->SendToDelete(Go);
+			}
+			else
+				CONSOLE_LOG("Cannot delete child of a Prefab instance %s ...", Go->GetName().c_str());
+
 		}
 
 		// --- If node is clicked set Go as selected ---

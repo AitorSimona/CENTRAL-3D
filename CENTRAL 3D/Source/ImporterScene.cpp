@@ -71,6 +71,8 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Active"] = (*it).second->GetActive();
 		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Index"] = (*it).second->index;
+		file[string_uid]["PrefabChild"] = (*it).second->is_prefab_child;
+		file[string_uid]["PrefabInstance"] = (*it).second->is_prefab_instance;
 
 		if ((*it).second->parent != App->scene_manager->GetRootGO())
 			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
@@ -100,6 +102,8 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
 		file[string_uid]["Index"] = (*it).second->index;
+		file[string_uid]["PrefabChild"] = (*it).second->is_prefab_child;
+		file[string_uid]["PrefabInstance"] = (*it).second->is_prefab_instance;
 
 		if ((*it).second->parent != App->scene_manager->GetRootGO())
 			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());

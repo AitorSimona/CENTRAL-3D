@@ -8,6 +8,7 @@
 
 #include "Resources.h"
 #include "Importers.h"
+#include "GameObject.h"
 
 #include "Imgui/imgui.h"
 
@@ -74,10 +75,34 @@ bool PanelProject::Draw()
 
 		if (ImGui::BeginChild("AssetsExplorer", ImVec2(ImGui::GetWindowSize().x * 0.9f, ImGui::GetWindowSize().y), true, projectFlags))
 		{
+			
 			if (currentDirectory == nullptr)
 				currentDirectory = App->resources->GetAssetsFolder();
 
 			DrawFolder(currentDirectory);
+
+			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y));
+
+			ImGui::InvisibleButton("##Drop Go", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight()});
+
+			// --- Drop a prefab instance, create another prefab ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
+				{
+					uint UID = *(const uint*)payload->Data;
+
+					GameObject* go = App->scene_manager->currentScene->GetGOWithUID(UID);
+
+					// --- Block move if go is prefab child ---
+					if (go->is_prefab_instance)
+					{
+						CONSOLE_LOG("Created original prefab from: %s ...", go->GetName().c_str());
+					}
+
+				}
+				ImGui::EndDragDropTarget();
+			}
 
 			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
 

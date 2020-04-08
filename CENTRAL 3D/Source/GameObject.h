@@ -75,6 +75,8 @@ public:
 	bool Static = false;
 	ResourceModel* model = nullptr;
 	int index = -1;
+	bool is_prefab_child = false;
+	bool is_prefab_instance = false;
 
 private:
 	// Unique Identifier

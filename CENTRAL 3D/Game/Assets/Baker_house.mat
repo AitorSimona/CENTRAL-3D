@@ -5,7 +5,7 @@
         "G": 1.0,
         "R": 1.0
     },
-    "PreviewTexture": "Library/Textures/1663303863.dds",
+    "PreviewTexture": "Library/Textures/420101321.dds",
     "ResourceDiffuse": "Assets/Baker_house.png",
     "shader": {
         "ResourceShader": "Assets/Shaders/Standard.glsl",

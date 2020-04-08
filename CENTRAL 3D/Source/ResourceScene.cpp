@@ -63,6 +63,12 @@ bool ResourceScene::LoadInMemory()
 				if (!file[it.key()]["Index"].is_null())
 					go->index = file[it.key()]["Index"];
 
+				if (!file[it.key()]["PrefabChild"].is_null())
+					go->is_prefab_child = file[it.key()]["PrefabChild"];
+
+				if (!file[it.key()]["PrefabInstance"].is_null())
+					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
+
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
 

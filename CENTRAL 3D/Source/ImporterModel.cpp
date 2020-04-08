@@ -60,6 +60,7 @@ Resource* ImporterModel::Import(ImportData& IData) const
 		}
 
 		rootnode = App->scene_manager->CreateEmptyGameObject();
+		rootnode->is_prefab_instance = true;
 
 		// --- Save Game objects to vector so we can save to lib later ---
 		std::vector<GameObject*> model_gos;
@@ -195,6 +196,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 		// --- Create GO per each node that contains a mesh ---
 		nodeGo = App->scene_manager->CreateEmptyGameObject();
 		nodeGo->SetName(node->mName.C_Str());
+		nodeGo->is_prefab_child = true;
 		parent->AddChildGO(nodeGo);
 		scene_gos.push_back(nodeGo);
 	}
@@ -212,6 +214,8 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	{
 		// --- Create Game Object per mesh ---
 		GameObject* new_object = App->scene_manager->CreateEmptyGameObject();
+		new_object->is_prefab_child = true;
+
 		new_object->SetName(node->mName.C_Str());
 		nodeGo->AddChildGO(new_object);
 		scene_gos.push_back(new_object);
@@ -396,6 +400,13 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				// --- Create a Game Object for each node ---
 				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
 
+				// --- Set prefab bool ---
+				if (!file[it.key()]["PrefabChild"].is_null())
+					go->is_prefab_child = file[it.key()]["PrefabChild"];
+
+				if (!file[it.key()]["PrefabInstance"].is_null())
+					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
+
 				// --- Retrieve GO's name ---
 				go->SetName(it.key().c_str());
 
@@ -472,6 +483,8 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 		file[model_gos[i]->GetName()]["UID"] = std::to_string(model_gos[i]->GetUID());
 		file[model_gos[i]->GetName()]["Parent"] = std::to_string(model_gos[i]->parent->GetUID());
 		file[model_gos[i]->GetName()]["Components"];
+		file[model_gos[i]->GetName()]["PrefabChild"] = model_gos[i]->is_prefab_child;
+		file[model_gos[i]->GetName()]["PrefabInstance"] = model_gos[i]->is_prefab_instance;
 
 		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j)
 		{
