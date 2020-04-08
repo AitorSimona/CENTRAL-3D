@@ -4,6 +4,8 @@
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "PanelProject.h"
+#include "PanelHierarchy.h"
+#include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
 
@@ -30,6 +32,16 @@ void ResourcePrefab::FreeMemory()
 
 void ResourcePrefab::CreateInspectorNode()
 {
+	if(ImGui::Button("Open Prefab", ImVec2(ImGui::GetWindowContentRegionWidth(),20)))
+		EditPrefab();
+}
+
+void ResourcePrefab::EditPrefab()
+{
+	App->gui->panelHierarchy->prefab = this;
+	App->gui->panelHierarchy->openPrefab = true;
+
+	App->gui->panelProject->SetSelected(nullptr);
 }
 
 void ResourcePrefab::OnOverwrite()

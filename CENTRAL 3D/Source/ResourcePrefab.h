@@ -15,6 +15,7 @@ public:
 	void FreeMemory() override;
 	void CreateInspectorNode() override;
 
+	void EditPrefab();
 
 	ResourceModel* model = nullptr;
 	GameObject* parentgo = nullptr;

@@ -376,8 +376,10 @@ Resource* ImporterModel::Load(const char* path) const
 	return resource;
 }
 
-void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const
+GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const
 {
+	GameObject* parent = nullptr;
+
 	if (model_path)
 	{
 		// --- Load Scene/model file ---
@@ -408,7 +410,10 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
 
 				if (!file[it.key()]["Model"].is_null())
+				{
 					go->model = (ResourceModel*)App->resources->ImportAssets(ImportData(file[it.key()]["Model"].get<std::string>().c_str()));
+					parent = go;
+				}
 
 				// --- Retrieve GO's name ---
 				go->SetName(it.key().c_str());
@@ -438,7 +443,6 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				objects.push_back(go);
 			}
 
-
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
@@ -462,13 +466,15 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			}
 
 			// --- Add pointer to model ---
-			if (objects[0] && model)
+			if (parent && model)
 			{
-				objects[0]->model = model;
-				model->AddUser(objects[0]);
+				parent->model = model;
+				model->AddUser(parent);
 			}
 		}
 	}
+
+	return parent;
 }
 
 void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_gos, std::string& model_name) const

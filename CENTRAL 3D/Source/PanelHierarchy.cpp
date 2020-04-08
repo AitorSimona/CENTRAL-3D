@@ -7,6 +7,10 @@
 #include "ImporterScene.h"
 #include "ModuleGui.h"
 #include "ModuleFileSystem.h"
+#include "ModuleResourceManager.h"
+
+#include "ImporterModel.h"
+#include "ResourcePrefab.h"
 
 #include "GameObject.h"
 #include "PanelProject.h"
@@ -32,13 +36,46 @@ bool PanelHierarchy::Draw()
 	{
 		if (ImGui::BeginMenuBar())
 		{
-			ImGui::Image((ImTextureID)App->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
-			ImGui::SameLine();
-			ImGui::Text(App->scene_manager->currentScene->GetName());
+			if(editingPrefab)
+			{
+				if (ImGui::ArrowButton("##Back", ImGuiDir_::ImGuiDir_Left))
+				{
+					editingPrefab = false;
+					App->scene_manager->DestroyGameObject(prefabParent);
+					prefabParent = nullptr;
+					prefab = nullptr;
+				}
+				else
+				{
+					ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+					ImGui::SameLine();
+					ImGui::Text(prefab->GetName());
+				}
+			}
+			else
+			{
+				ImGui::Image((ImTextureID)App->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::SameLine();
+				ImGui::Text(App->scene_manager->currentScene->GetName());
+			}
 		}
 		ImGui::EndMenuBar();
 
-		DrawRecursive(App->scene_manager->GetRootGO());
+		// --- Instance opened prefab for editing ---
+		if (openPrefab)
+		{
+			openPrefab = false;
+			editingPrefab = true;
+			ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
+			prefabParent = IModel->InstanceOnCurrentScene(prefab->GetResourceFile(), nullptr);
+		}
+
+		if (editingPrefab)
+		{
+			DrawRecursive(prefabParent);
+		}
+		else
+			DrawRecursive(App->scene_manager->GetRootGO());
 	}
 
 	// Deselect the current GameObject when clicking in an empty space of the hierarchy

@@ -7,6 +7,7 @@
 #include <vector>
 
 class ResourceFolder;
+class ResourcePrefab;
 class Resource;
 struct Event;
 struct ImVec2;

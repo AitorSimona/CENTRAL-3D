@@ -4,6 +4,7 @@
 #include "Panel.h"
 
 class GameObject;
+class ResourcePrefab;
 
 class PanelHierarchy : public Panel
 {
@@ -14,7 +15,11 @@ public:
 
 	bool Draw();
 
+	bool openPrefab = false;
+	ResourcePrefab* prefab = nullptr;
 private:
+	GameObject* prefabParent = nullptr;
+	bool editingPrefab = false;
 	void DrawRecursive(GameObject* Go);
 };
 
