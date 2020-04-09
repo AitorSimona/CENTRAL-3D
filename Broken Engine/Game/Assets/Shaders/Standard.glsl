@@ -1,4 +1,4 @@
-#version 440 core 
+#version 440 core
 
 #define VERTEX_SHADER
 #ifdef VERTEX_SHADER
@@ -64,6 +64,8 @@ in vec3 v_CamPos;
 in mat3 v_TBN;
 
 //Uniforms
+uniform float u_GammaCorrection = 1.0;
+
 uniform float u_Shininess = 1.5;
 uniform int u_UseTextures = 0;
 
@@ -220,6 +222,8 @@ void main()
 			out_color = vec4(colorResult + v_Color, 1.0);
 		else
 			out_color = vec4(colorResult + v_Color * texture(u_AlbedoTexture, v_TexCoord).rgb, texture(u_AlbedoTexture, v_TexCoord).a);
+
+		out_color = pow(out_color, vec4(vec3(1.0/u_GammaCorrection), 1.0));
 	}
 	else
 	{

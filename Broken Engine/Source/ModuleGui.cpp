@@ -322,29 +322,29 @@ bool ModuleGui::IsMouseCaptured() const
 
 void ModuleGui::CreateIcons()
 {
-	uint width, height;
+	uint width, height, format;
 	// --- Create Icon textures ---
-	folderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, -1);
-	defaultfileTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, -1);
-	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MaterialIcon.png", width, height, -1);
-	prefabTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Prefab.png", width, height, -1);
-	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
-	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
-	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, -1);
-	shaderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ShaderIcon.png", width, height, -1);
-	scriptTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScriptIcon.png", width, height, -1);
-	meshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MeshIcon.png", width, height, -1);
-	boneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/BoneIcon.png", width, height, -1);
-	animationTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimationIcon.png", width, height, -1);
+	folderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Folder Icon.png", width, height, format, -1);
+	defaultfileTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/DefaultAsset Icon.png", width, height, format, -1);
+	materialTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MaterialIcon.png", width, height, format, -1);
+	prefabTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Prefab.png", width, height, format, -1);
+	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, format, -1);
+	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, format, -1);
+	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, format, -1);
+	shaderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ShaderIcon.png", width, height, format, -1);
+	scriptTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScriptIcon.png", width, height, format, -1);
+	meshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MeshIcon.png", width, height, format, -1);
+	boneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/BoneIcon.png", width, height, format, -1);
+	animationTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimationIcon.png", width, height, format, -1);
 
 	// -- Toolbar icons
-	translateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/TranslateIcon.png", width, height, -1);
-	rotateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/RotateIcon.png", width, height, -1);
-	scaleTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScaleIcon.png", width, height, -1);
+	translateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/TranslateIcon.png", width, height, format, -1);
+	rotateTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/RotateIcon.png", width, height, format, -1);
+	scaleTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScaleIcon.png", width, height, format, -1);
 
-	toolbarPlayTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPlayIcon.png", width, height, -1);
-	toolbarPauseTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPauseIcon.png", width, height, -1);
-	toolbarStepTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarStepIcon.png", width, height, -1);
+	toolbarPlayTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPlayIcon.png", width, height, format, -1);
+	toolbarPauseTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarPauseIcon.png", width, height, format, -1);
+	toolbarStepTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ToolbarStepIcon.png", width, height, format, -1);
 
 	// REMEMBER to gldeletetex them at cleanup!
 }
