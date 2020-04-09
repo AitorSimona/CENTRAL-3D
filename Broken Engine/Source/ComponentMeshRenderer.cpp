@@ -257,11 +257,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				//DisplayAndUpdateUniforms(material);
 				//ImGui::TreePop();
 
-				ImGui::Text("Use Linear Texture");
-				ImGui::SameLine();
-				ImGui::Checkbox("##TTT", &m_TemporalTextureTest);
-
-
 				// --- Print Texture Width and Height (Diffuse) ---
 				uint textSizeX = 0, textSizeY = 0;
 				ImGui::NewLine();
@@ -292,17 +287,9 @@ void ComponentMeshRenderer::CreateInspectorNode()
 						if (resource && resource->GetType() == Resource::ResourceType::TEXTURE)
 						{
 							if (material->m_DiffuseResTexture)
-							{
-							//	material->m_DiffuseResTexture->ChangeTextureFormat(material->m_DiffuseResTexture->m_OriginalFormat);
 								material->m_DiffuseResTexture->Release();
-							}
 
 							material->m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-							//if(m_TemporalTextureTest)
-							//	material->m_DiffuseResTexture->ChangeTextureFormat(GL_SRGB_ALPHA);
-							//else
-							//	material->m_DiffuseResTexture->ChangeTextureFormat(GL_RGBA);
 
 							// --- Save material so we update path to texture ---
 							save_material = true;
@@ -486,9 +473,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			Resource* resource = App->resources->GetResource(UID, false);
 
 			if (resource && resource->GetType() == Resource::ResourceType::MATERIAL)
-			{
 				material = (ResourceMaterial*)App->resources->GetResource(UID);
-			}
 		}
 
 		ImGui::EndDragDropTarget();

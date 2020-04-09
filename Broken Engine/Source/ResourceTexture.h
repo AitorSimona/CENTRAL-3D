@@ -14,8 +14,6 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 
-	void ChangeTextureFormat(uint format) const;
-
 	void SetTextureID(uint ID) { buffer_id = previewTexID = ID; }
 	uint GetTexID() { return buffer_id; }
 

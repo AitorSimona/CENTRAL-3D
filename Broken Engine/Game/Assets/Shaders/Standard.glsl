@@ -121,10 +121,7 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 
 	//If we have textures, apply them
 	if(u_HasDiffuseTexture == 1)
-	{
 		diffuse *= texture(u_AlbedoTexture, v_TexCoord).rgb;
-		diffuse = pow(diffuse, vec3(1.0/u_GammaCorrection));
-	}
 	if(u_HasSpecularTexture == 1)
 		specular *= texture(u_SpecularTexture, v_TexCoord).rgb;
 
@@ -226,6 +223,8 @@ void main()
 			out_color = vec4(colorResult + v_Color, 1.0);
 		else
 			out_color = vec4(colorResult + v_Color * texture(u_AlbedoTexture, v_TexCoord).rgb, texture(u_AlbedoTexture, v_TexCoord).a);
+
+		out_color = pow(out_color, vec4(vec3(1.0/u_GammaCorrection), 1.0));
 	}
 	else
 	{

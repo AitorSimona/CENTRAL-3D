@@ -63,9 +63,3 @@ void ResourceTexture::OnDelete()
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
 }
-
-void ResourceTexture::ChangeTextureFormat(uint format) const
-{
-	glBindTexture(GL_TEXTURE_2D, buffer_id);
-	//glTexImage2D(GL_TEXTURE_2D, 0, format, Texture_width, Texture_height, 0, format, GL_UNSIGNED_BYTE, m_TextureData);
-}

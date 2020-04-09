@@ -196,7 +196,7 @@
         "staticFriction": 1.0
     },
     "Renderer3D": {
-        "GammaCorrection": 3.5250000953674316
+        "GammaCorrection": 1.8650000095367432
     },
     "Window": {
         "borderless": false,
