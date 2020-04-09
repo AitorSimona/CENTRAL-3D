@@ -154,6 +154,32 @@ void ResourceScene::FreeMemory() {
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }
 
+void ResourceScene::DeactivateAllGameObjects()
+{
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+}
+
+void ResourceScene::ActivateAllGameObjects()
+{
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = true;
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+}
+
 // Created for on-play temporal scene 
 void ResourceScene::CopyInto(ResourceScene* target)
 {

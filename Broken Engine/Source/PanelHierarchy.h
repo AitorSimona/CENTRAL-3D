@@ -11,6 +11,7 @@ public:
 	~PanelHierarchy();
 
 	bool Draw();
+	void ExitEditPrefab();
 
 private:
 	void DrawRecursive(Broken::GameObject* Go);

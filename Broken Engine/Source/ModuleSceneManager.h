@@ -48,6 +48,7 @@ public:
 
 
 	void DestroyGameObject(GameObject* go);
+	void GatherGameObjects(GameObject* go, std::vector<GameObject*>& gos_vec);
 
 	// --- Getters ---
 

@@ -152,6 +152,33 @@ bool PanelHierarchy::Draw()
 	return true;
 }
 
+void PanelHierarchy::ExitEditPrefab()
+{
+	std::string previewTexpath;
+	std::vector<Broken::GameObject*> prefab_gos;
+	App->scene_manager->GatherGameObjects(EngineApp->gui->prefab->parentgo, prefab_gos);
+	uint texID = App->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath);
+
+	App->fs->Remove(EngineApp->gui->prefab->previewTexPath.c_str());
+	EngineApp->gui->prefab->previewTexPath = previewTexpath;
+	EngineApp->gui->prefab->SetPreviewTexID(texID);
+
+	Broken::ImporterPrefab* IPrefab = App->resources->GetImporter<Broken::ImporterPrefab>();
+	IPrefab->Save(EngineApp->gui->prefab);
+
+	App->selection->ClearSelection();
+
+	EngineApp->gui->editingPrefab = false;
+
+	if (EngineApp->gui->prefab->parentgo)
+		App->scene_manager->DestroyGameObject(EngineApp->gui->prefab->parentgo);
+
+	EngineApp->gui->prefab->parentgo = nullptr;
+	EngineApp->gui->prefab = nullptr;
+
+	App->scene_manager->currentScene->ActivateAllGameObjects();
+}
+
 void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 {
 	// --- Set node flags --- MANAGED BY MODULE SELECTION 
