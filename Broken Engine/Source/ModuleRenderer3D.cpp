@@ -211,13 +211,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		DrawGrid();
 
 	// --- Draw ---
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	SendShaderUniforms(defaultShader->ID);
 	DrawRenderMeshes();
 	DrawRenderLines();
-	DrawRenderBoxes();
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	DrawRenderBoxes();	
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
