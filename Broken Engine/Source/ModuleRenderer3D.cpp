@@ -411,6 +411,108 @@ void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
 
+uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*> scene_gos, std::string& out_path)
+{
+	if (scene_gos.size() == 0)
+		return 0;
+
+	// --- Issue render calls and obtain an AABB that encloses all meshes ---
+
+	AABB aabb;
+	aabb.SetNegativeInfinity();
+
+	for (uint i = 0; i < scene_gos.size(); ++i)
+	{
+		scene_gos[i]->Draw();
+		aabb.Enclose(scene_gos[i]->GetAABB());
+	}
+
+	// --- Frame aabb ---
+	screenshot_camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
+	screenshot_camera->SetFOV(60.0f);
+	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
+
+	float3 center = aabb.CenterPoint();
+
+	ComponentCamera* previous_cam = active_camera;
+	SetActiveCamera(screenshot_camera);
+
+	float diagonal = aabb.Diagonal().Length() * 0.75f;
+
+	float3 Movement = active_camera->frustum.Front() * (diagonal);
+
+	if (Movement.IsFinite())
+		screenshot_camera->frustum.SetPos(center - Movement);
+
+	PreUpdate(0.0f);
+
+	// --- Set Shader Matrices ---
+	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix (just different standard)
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
+	GLint projectLoc = glGetUniformLocation(defaultShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
+
+	// --- Bind fbo ---
+	if (renderfbo)
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
+	glDepthFunc(GL_GREATER);
+
+	// --- Do not write to the stencil buffer ---
+	glStencilMask(0x00);
+
+	//// --- Draw Grid ---
+	//DrawGrid();
+
+	// --- Draw ---
+	DrawRenderMeshes();
+
+	// --- Back to defaults ---
+	glDepthFunc(GL_LESS);
+
+	// --- Unbind fbo ---
+	if (renderfbo)
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// --- Clear render orders ---
+	ClearRenderOrders();
+
+	SDL_Surface* surface = SDL_GetWindowSurface(App->window->window);
+
+	GLubyte* pixels = new GLubyte[surface->w * surface->h * 3];
+
+	glBindTexture(GL_TEXTURE_2D, rendertexture);
+
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	uint uid = App->GetRandom().Int();
+	uint texID = App->textures->CreateTextureFromPixels(GL_RGB, surface->w, surface->h, GL_RGB, pixels);
+	App->textures->CreateAndSaveTextureFromPixels(uid, GL_RGB, surface->w, surface->h, GL_RGB, (void*)pixels, out_path);
+
+	delete[] pixels;
+
+	SetActiveCamera(previous_cam);
+
+	return texID;
+}
+
 void ModuleRenderer3D::ClearRenderOrders()
 {
 	render_meshes.clear();

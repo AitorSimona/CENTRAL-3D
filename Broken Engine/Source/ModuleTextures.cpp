@@ -107,6 +107,40 @@ uint ModuleTextures::GetDefaultTextureID() const {
 	return DefaultTexture;
 }
 
+uint ModuleTextures::CreateAndSaveTextureFromPixels(uint UID, int internalFormat, uint width, uint height, uint format, const void* pixels, std::string& out_path)
+{
+	out_path = TEXTURES_FOLDER;
+	out_path.append(std::to_string(UID));
+	out_path.append(".dds");
+
+	ILuint img;
+	ilGenImages(1, &img);
+	ilBindImage(img);
+	ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, (void*)pixels);
+
+	// --- Save to Lib ---
+	ILuint size;
+	ILubyte* data;
+	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
+	size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
+
+	if (size > 0)
+	{
+		data = new ILubyte[size]; // allocate data buffer
+
+		if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
+			App->fs->Save(out_path.c_str(), data, size);
+
+		delete[] data;
+	}
+
+	uint texID = ilutGLBindTexImage();
+
+	ilDeleteImages(1, &img);
+
+	return 	texID;
+}
+
 void ModuleTextures::SetTextureParameters(bool CheckersTexture) const {
 	// --- Set texture clamping method ---
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
