@@ -194,7 +194,7 @@ void PanelHierarchy::ExitEditPrefab()
 	std::vector<Broken::GameObject*> prefab_gos;
 	App->scene_manager->GatherGameObjects(EngineApp->gui->prefab->parentgo, prefab_gos);
 	uint texID = 0;
-	App->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath, texID);
+	previewTexpath = App->renderer3D->RenderSceneToTexture(prefab_gos, texID);
 
 	App->fs->Remove(EngineApp->gui->prefab->previewTexPath.c_str());
 	EngineApp->gui->prefab->previewTexPath = previewTexpath;

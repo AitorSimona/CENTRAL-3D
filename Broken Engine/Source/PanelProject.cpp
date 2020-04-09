@@ -124,7 +124,7 @@ bool PanelProject::Draw()
 						std::vector <Broken::GameObject*> prefab_gos;
 						EngineApp->scene_manager->GatherGameObjects(new_prefab->parentgo, prefab_gos);
 						uint texID = 0;
-						EngineApp->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath, texID);
+						previewTexpath = EngineApp->renderer3D->RenderSceneToTexture(prefab_gos, texID);
 						new_prefab->previewTexPath = previewTexpath;
 						new_prefab->SetPreviewTexID(texID);
 

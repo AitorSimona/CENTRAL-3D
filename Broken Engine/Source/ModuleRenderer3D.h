@@ -93,7 +93,7 @@ public:
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawOBB(const OBB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
-	void RenderSceneToTexture(std::vector<GameObject*>& scene_gos, std::string& out_path, uint& texId);
+	const std::string& RenderSceneToTexture(std::vector<GameObject*>& scene_gos, uint& texId);
 
 	void ClearRenderOrders();
 

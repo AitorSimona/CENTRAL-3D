@@ -419,10 +419,11 @@ void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
 
-void ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos, std::string& out_path, uint& texId)
+
+const std::string & ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos, uint& texId)
 {
 	if (scene_gos.size() == 0)
-		return;
+		return std::string("");
 
 	// --- Issue render calls and obtain an AABB that encloses all meshes ---
 
@@ -510,6 +511,7 @@ void ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos,
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	static std::string out_path;
 	uint uid = App->GetRandom().Int();
 	texId = App->textures->CreateTextureFromPixels(GL_RGB, surface->w, surface->h, GL_RGB, pixels);
 	App->textures->CreateAndSaveTextureFromPixels(uid, GL_RGB, surface->w, surface->h, GL_RGB, (void*)pixels, out_path);
@@ -517,6 +519,8 @@ void ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos,
 	delete[] pixels;
 
 	SetActiveCamera(previous_cam);
+
+	return out_path;
 }
 
 void ModuleRenderer3D::ClearRenderOrders()
@@ -1286,7 +1290,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		} 
 		#endif //VERTEX_SHADER)";
 
-	const char* fragmentScreenShader =
+	const char* fragmentScreenShader = 
 		R"(#version 440 core
 		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER

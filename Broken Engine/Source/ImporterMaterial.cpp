@@ -297,7 +297,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	tmpgo->GetComponent<ComponentMeshRenderer>()->material = (ResourceMaterial*)App->resources->GetResource(mat->GetUID());
 
 	uint TexID = 0;
-	App->renderer3D->RenderSceneToTexture(gos, mat->previewTexPath, TexID);
+	mat->previewTexPath = App->renderer3D->RenderSceneToTexture(gos, TexID);
 	mat->SetPreviewTexID(TexID);
 
 	App->scene_manager->DestroyGameObject(tmpgo);

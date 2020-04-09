@@ -115,7 +115,7 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 
 		// --- Create preview Texture ---
 		uint texID = 0;
-		App->renderer3D->RenderSceneToTexture(model_gos, model->previewTexPath, texID);
+		model->previewTexPath = App->renderer3D->RenderSceneToTexture(model_gos, texID);
 		model->SetPreviewTexID(texID);
 
 		// --- Save to Own format file in Library ---
@@ -178,7 +178,8 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 			scene_meshes[i]->FreeMemory();
 			scene_meshes[i]->LoadInMemory();
 			uint TexID = 0;
-			App->renderer3D->RenderSceneToTexture(gos, scene_meshes[i]->previewTexPath,TexID);
+			std::string previewTexPath = App->renderer3D->RenderSceneToTexture(gos, TexID);
+			scene_meshes[i]->previewTexPath = previewTexPath;
 			scene_meshes[i]->SetPreviewTexID(TexID);
 
 			App->scene_manager->DestroyGameObject(gos[0]);
