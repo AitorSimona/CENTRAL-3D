@@ -48,6 +48,7 @@ public:
 
 
 	void DestroyGameObject(GameObject* go);
+	void GatherGameObjects(GameObject* go, std::vector<GameObject*>& gos_vec);
 
 	// --- Getters ---
 
@@ -116,6 +117,11 @@ public:
 	uint treeUpdateTimer = 0;
 	ResourceScene* currentScene = nullptr;
 
+	// --- Do not modify, just use ---
+	ResourceMesh* cube = nullptr;
+	ResourceMesh* capsule = nullptr;
+	ResourceMesh* cylinder = nullptr;
+	ResourceMesh* disk = nullptr;
 	ResourceMesh* plane = nullptr;
 	ResourceMesh* sphere = nullptr;
 
@@ -127,11 +133,7 @@ private:
 	// Game objects to be deleted
 	std::vector<GameObject*> go_to_delete;
 
-	// --- Do not modify, just use ---
-	ResourceMesh* cube = nullptr;
-	ResourceMesh* capsule = nullptr;
-	ResourceMesh* cylinder = nullptr;
-	ResourceMesh* disk = nullptr;
+
 
 	uint go_count = 0;
 	GameObject* root = nullptr;

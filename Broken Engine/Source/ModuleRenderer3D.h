@@ -15,6 +15,7 @@ class ResourceMaterial;
 class ComponentLight;
 class math::float4x4;
 class ComponentParticleEmitter;
+class GameObject;
 
 typedef int RenderMeshFlags;
 
@@ -95,6 +96,8 @@ public:
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawOBB(const OBB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
+	const std::string& RenderSceneToTexture(std::vector<GameObject*>& scene_gos, uint& texId);
+
 	void ClearRenderOrders();
 
 public:
@@ -164,6 +167,7 @@ public:
 
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
+	ComponentCamera* screenshot_camera = nullptr;
 
 	SDL_GLContext context;
 

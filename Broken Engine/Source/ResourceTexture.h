@@ -22,7 +22,6 @@ public:
 	std::string Texture_path;
 	uint Texture_width = 0;
 	uint Texture_height = 0;
-	uint m_OriginalFormat = 0;
 
 private:
 

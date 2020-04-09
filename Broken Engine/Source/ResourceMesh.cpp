@@ -12,17 +12,21 @@
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ResourceMesh::ResourceMesh(uint UID, const char* source_file) : Resource(Resource::ResourceType::MESH, UID, source_file) {
+ResourceMesh::ResourceMesh(uint UID, const char* source_file) : Resource(Resource::ResourceType::MESH, UID, source_file)
+{
 	extension = ".mesh";
 	resource_file = MESHES_FOLDER + std::to_string(UID) + extension;
 
 	previewTexID = App->gui->meshTexID;
 }
 
-ResourceMesh::~ResourceMesh() {
+ResourceMesh::~ResourceMesh() 
+{
+	glDeleteTextures(1, (GLuint*)&previewTexID);
 }
 
-void ResourceMesh::CreateAABB() {
+void ResourceMesh::CreateAABB() 
+{
 	aabb.SetNegativeInfinity();
 
 	for (uint i = 0; i < VerticesSize; ++i)
@@ -245,25 +249,29 @@ void ResourceMesh::CreateVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ResourceMesh::OnOverwrite() {
+void ResourceMesh::OnOverwrite()
+{
 	// Since mesh is not a standalone resource (which means it is always owned by a model) the model is in charge
 	// of overwriting it (see ResourceModel OnOverwrite for details)
 	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
-void ResourceMesh::OnDelete() {
+void ResourceMesh::OnDelete() 
+{
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
 
 	if(App->fs->Exists(resource_file.c_str()))
 	App->fs->Remove(resource_file.c_str());
+	App->fs->Remove(previewTexPath.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);
 }
 
-void ResourceMesh::Repath() {
+void ResourceMesh::Repath() 
+{
 	ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
 	IMesh->Save(this);
 }

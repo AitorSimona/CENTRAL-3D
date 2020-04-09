@@ -27,7 +27,7 @@ public:
 	void Draw();
 
 	// --- Getters ---
-	uint			GetUID();
+	uint&			GetUID();
 	void			SetUID(uint uid);
 	const char*		GetName() const;
 	const AABB&	    GetAABB();
@@ -86,6 +86,8 @@ public:
 	bool Static = false;
 	ResourceModel* model = nullptr;
 	LayerMask layer;
+	bool is_prefab_child = false;
+	bool is_prefab_instance = false;
 
 	// to avoid including ImGui header, it's hardcoded the ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth flags (128 and 2048 respectively)
 	int node_flags = 2176;

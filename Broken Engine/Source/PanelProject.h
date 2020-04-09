@@ -18,13 +18,15 @@ public:
 	void SetSelected(Broken::Resource* new_selected);
 	Broken::Resource* GetSelected();
 	//const Broken::Resource* GetcurrentDirectory() const;
+	void GatherGameObjects(Broken::GameObject* go, std::vector<Broken::GameObject*>& gos_vec);
 
 private:
+
 	static void ONGameObjectSelected(const Broken::Event& e);
 	static void ONResourceDestroyed(const Broken::Event& e);
 	void CreateResourceHandlingPopup();
-
 private:
+
 	bool wasclicked = false;
 	uint imageSize_px = 48;
 	uint item_spacingX_px = 20;

@@ -35,7 +35,7 @@ public:
 	Resource* Import(ImportData& IData) const override;
 	Resource* Load(const char* path) const override;
 
-	void InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const;
+	GameObject* InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const;
 
 	void Save(ResourceModel* model, std::vector<GameObject*>& model_gos, const std::string& model_name) const;
 
