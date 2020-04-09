@@ -197,7 +197,7 @@ private:
 
 	//Lights vector
 	std::vector<ComponentLight*> m_LightsVec;
-	float m_GammaCorrection = 1.0f;
+	float m_GammaCorrection = 2.0f;
 
 	uint fbo = 0;
 	uint depthbufferFBO = 0;
