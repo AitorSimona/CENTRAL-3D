@@ -67,12 +67,35 @@ bool ModuleResourceManager::Start()
 	// --- Set engine's basic shaders ---
 	App->renderer3D->CreateDefaultShaders();
 
+	// --- Create default material ---
+	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
+
+	// --- Create primitives ---
+	App->scene_manager->cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
+	App->scene_manager->sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
+	App->scene_manager->capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
+	App->scene_manager->plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
+	App->scene_manager->cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 6);
+	App->scene_manager->disk = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultDisk", 13);
+
+	App->scene_manager->CreateCube(1, 1, 1, App->scene_manager->cube);
+	App->scene_manager->CreateSphere(1.0f, 25, 25, App->scene_manager->sphere);
+	App->scene_manager->CreateCapsule(1, 1, App->scene_manager->capsule);
+	App->scene_manager->CreatePlane(1, 1, 1, App->scene_manager->plane);
+	App->scene_manager->CreateCylinder(1, 1, App->scene_manager->cylinder);
+	App->scene_manager->CreateDisk(1, App->scene_manager->disk);
+
+	App->scene_manager->cube->LoadToMemory();
+	App->scene_manager->sphere->LoadToMemory();
+	App->scene_manager->capsule->LoadToMemory();
+	App->scene_manager->plane->LoadToMemory();
+	App->scene_manager->cylinder->LoadToMemory();
+	App->scene_manager->disk->LoadToMemory();
+
 	// --- Create default scene ---
 	App->scene_manager->defaultScene = (ResourceScene*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SCENE, "Assets/Scenes/DefaultScene.scene", 1);
 	App->scene_manager->currentScene = App->scene_manager->defaultScene;
 
-	// --- Create default material ---
-	DefaultMaterial = (ResourceMaterial*)CreateResource(Resource::ResourceType::MATERIAL, "DefaultMaterial");
 
 	// --- Create default font ---
 	DefaultFont = (ResourceFont*)CreateResourceGivenUID(Resource::ResourceType::FONT, "Assets/Fonts/arial.ttf",7);

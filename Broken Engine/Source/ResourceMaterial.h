@@ -20,6 +20,7 @@ public:
 	void UpdateUniforms();
 	void DisplayAndUpdateUniforms();
 
+	std::string previewTexPath;
 public:
 
 	float m_Shininess = 32.0f;

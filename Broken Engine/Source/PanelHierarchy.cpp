@@ -19,13 +19,49 @@ bool PanelHierarchy::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
-		ImGui::BeginMenuBar();
-		ImGui::Image((ImTextureID)EngineApp->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::SameLine();
-		ImGui::Text(EngineApp->scene_manager->currentScene->GetName());
+		if (ImGui::BeginMenuBar())
+		{
+			if (App->gui->editingPrefab)
+			{
+				if (ImGui::ArrowButton("##Back", ImGuiDir_::ImGuiDir_Left))
+				{
+					ExitEditPrefab();
+				}
+				else
+				{
+					ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+					ImGui::SameLine();
+					ImGui::Text(App->gui->prefab->GetName());
+				}
+			}
+			else
+			{
+				ImGui::Image((ImTextureID)App->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::SameLine();
+				ImGui::Text(App->scene_manager->currentScene->GetName());
+			}
+		}
 		ImGui::EndMenuBar();
 
-		DrawRecursive(EngineApp->scene_manager->GetRootGO());
+		// --- Instance opened prefab for editing ---
+		if (App->gui->openPrefab)
+		{
+			App->gui->openPrefab = false;
+
+			// --- Deactivate gos temporarily ---
+			App->scene_manager->currentScene->DeactivateAllGameObjects();
+
+			ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
+			App->gui->prefab->parentgo = IModel->InstanceOnCurrentScene(App->gui->prefab->GetResourceFile(), nullptr);
+			App->gui->editingPrefab = true;
+		}
+
+		if (App->gui->editingPrefab)
+		{
+			DrawRecursive(App->gui->prefab->parentgo);
+		}
+		else
+			DrawRecursive(App->scene_manager->GetRootGO());
 
 		// Deselect the current GameObject when clicking in an empty space of the hierarchy
 		if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))

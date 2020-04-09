@@ -130,6 +130,12 @@ bool ModuleRenderer3D::Init(json& file)
 
 	glGenVertexArrays(1, &PointLineVAO);
 
+	// --- Create camera to take model/meshes screenshots ---
+	screenshot_camera = new ComponentCamera(nullptr);
+	screenshot_camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
+	screenshot_camera->SetFOV(60.0f);
+	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
+
 	return ret;
 }
 

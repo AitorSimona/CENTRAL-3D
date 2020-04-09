@@ -109,28 +109,6 @@ bool ModuleSceneManager::Init(json& file)
 
 bool ModuleSceneManager::Start()
 {
-	// --- Create primitives ---
-	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
-	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
-	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
-	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
-	cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 6);
-	disk = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultDisk", 13);
-
-	CreateCube(1, 1, 1, cube);
-	CreateSphere(1.0f, 25, 25, sphere);
-	CreateCapsule(1, 1, capsule);
-	CreatePlane(1, 1, 1, plane);
-	CreateCylinder(1, 1, cylinder);
-	CreateDisk(1, disk);
-
-	cube->LoadToMemory();
-	sphere->LoadToMemory();
-	capsule->LoadToMemory();
-	plane->LoadToMemory();
-	cylinder->LoadToMemory();
-	disk->LoadToMemory();
-
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
 
