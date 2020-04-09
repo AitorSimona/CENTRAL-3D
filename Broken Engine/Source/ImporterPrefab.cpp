@@ -97,7 +97,7 @@ void ImporterPrefab::Save(ResourcePrefab* prefab) const
 			file[prefab_gos[i]->GetName()]["UID"] = std::to_string(prefab_gos[i]->GetUID());
 			file[prefab_gos[i]->GetName()]["Parent"] = std::to_string(prefab_gos[i]->parent->GetUID());
 			file[prefab_gos[i]->GetName()]["Components"];
-			file[prefab_gos[i]->GetName()]["PrefabChild"] = prefab_gos[i]->is_prefab_child;
+			file[prefab_gos[i]->GetName()]["PrefabChild"] = true;
 			file[prefab_gos[i]->GetName()]["PrefabInstance"] = prefab_gos[i]->is_prefab_instance;
 
 			if (prefab_gos[i]->model)

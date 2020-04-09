@@ -5,7 +5,6 @@
 #include "EngineApplication.h"
 #include "PanelProject.h"
 
-using namespace Broken;
 
 PanelHierarchy::PanelHierarchy(char * name) : Broken::Panel(name) {}
 
@@ -22,7 +21,7 @@ bool PanelHierarchy::Draw()
 	{
 		if (ImGui::BeginMenuBar())
 		{
-			if (App->gui->editingPrefab)
+			if (EngineApp->gui->editingPrefab)
 			{
 				if (ImGui::ArrowButton("##Back", ImGuiDir_::ImGuiDir_Left))
 				{
@@ -30,39 +29,40 @@ bool PanelHierarchy::Draw()
 				}
 				else
 				{
-					ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+					ImGui::Image((ImTextureID)EngineApp->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
 					ImGui::SameLine();
-					ImGui::Text(App->gui->prefab->GetName());
+					ImGui::Text(EngineApp->gui->prefab->GetName());
 				}
 			}
 			else
 			{
-				ImGui::Image((ImTextureID)App->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::Image((ImTextureID)EngineApp->gui->sceneTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
 				ImGui::SameLine();
-				ImGui::Text(App->scene_manager->currentScene->GetName());
+				ImGui::Text(EngineApp->scene_manager->currentScene->GetName());
 			}
 		}
 		ImGui::EndMenuBar();
 
 		// --- Instance opened prefab for editing ---
-		if (App->gui->openPrefab)
+		if (EngineApp->gui->openPrefab)
 		{
-			App->gui->openPrefab = false;
+			EngineApp->gui->openPrefab = false;
 
 			// --- Deactivate gos temporarily ---
-			App->scene_manager->currentScene->DeactivateAllGameObjects();
+			EngineApp->scene_manager->currentScene->DeactivateAllGameObjects();
 
-			ImporterModel* IModel = App->resources->GetImporter<ImporterModel>();
-			App->gui->prefab->parentgo = IModel->InstanceOnCurrentScene(App->gui->prefab->GetResourceFile(), nullptr);
-			App->gui->editingPrefab = true;
+			Broken::ImporterModel* IModel = EngineApp->resources->GetImporter<Broken::ImporterModel>();
+			EngineApp->gui->prefab->parentgo = IModel->InstanceOnCurrentScene(EngineApp->gui->prefab->GetResourceFile(), nullptr);
+			EngineApp->gui->editingPrefab = true;
 		}
 
-		if (App->gui->editingPrefab)
+		if (EngineApp->gui->editingPrefab)
 		{
-			DrawRecursive(App->gui->prefab->parentgo);
+			if(EngineApp->gui->prefab->parentgo)
+				DrawRecursive(EngineApp->gui->prefab->parentgo);
 		}
 		else
-			DrawRecursive(App->scene_manager->GetRootGO());
+			DrawRecursive(EngineApp->scene_manager->GetRootGO());
 
 		// Deselect the current GameObject when clicking in an empty space of the hierarchy
 		if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
@@ -70,7 +70,7 @@ bool PanelHierarchy::Draw()
 			//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 
 		// Allow creating GameObjects and UI Elements from the hierarchy
-		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN
+		if (EngineApp->input->GetMouseButton(SDL_BUTTON_RIGHT) == Broken::KEY_DOWN
 			&& ImGui::GetMousePos().x < ImGui::GetWindowWidth() + ImGui::GetWindowPos().x && ImGui::GetMousePos().x > ImGui::GetWindowPos().x
 			&& ImGui::GetMousePos().y < ImGui::GetWindowHeight() + ImGui::GetWindowPos().y && ImGui::GetMousePos().y > ImGui::GetWindowPos().y)
 			ImGui::OpenPopup("Create new element");
@@ -178,7 +178,7 @@ bool PanelHierarchy::Draw()
 
 		if (!dragged->FindChildGO(target) && !EngineApp->selection->IsSelected(target)) 
 		{
-			for (GameObject* obj : *EngineApp->selection->GetSelected())
+			for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
 				target->AddChildGO(obj);
 		}
 		end_drag = false;
@@ -195,26 +195,26 @@ void PanelHierarchy::ExitEditPrefab()
 	std::vector<Broken::GameObject*> prefab_gos;
 	EngineApp->editorui->panelProject->GatherGameObjects(EngineApp->gui->prefab->parentgo, prefab_gos);
 	uint texID = 0;
-	previewTexpath = App->renderer3D->RenderSceneToTexture(prefab_gos, texID);
+	previewTexpath = EngineApp->renderer3D->RenderSceneToTexture(prefab_gos, texID);
 
-	App->fs->Remove(EngineApp->gui->prefab->previewTexPath.c_str());
+	EngineApp->fs->Remove(EngineApp->gui->prefab->previewTexPath.c_str());
 	EngineApp->gui->prefab->previewTexPath = previewTexpath;
 	EngineApp->gui->prefab->SetPreviewTexID(texID);
 
-	Broken::ImporterPrefab* IPrefab = App->resources->GetImporter<Broken::ImporterPrefab>();
+	Broken::ImporterPrefab* IPrefab = EngineApp->resources->GetImporter<Broken::ImporterPrefab>();
 	IPrefab->Save(EngineApp->gui->prefab);
 
-	App->selection->ClearSelection();
+	EngineApp->selection->ClearSelection();
 
 	EngineApp->gui->editingPrefab = false;
 
 	if (EngineApp->gui->prefab->parentgo)
-		App->scene_manager->DestroyGameObject(EngineApp->gui->prefab->parentgo);
+		EngineApp->scene_manager->DestroyGameObject(EngineApp->gui->prefab->parentgo);
 
 	EngineApp->gui->prefab->parentgo = nullptr;
 	EngineApp->gui->prefab = nullptr;
 
-	App->scene_manager->currentScene->ActivateAllGameObjects();
+	EngineApp->scene_manager->currentScene->ActivateAllGameObjects();
 }
 
 void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
@@ -254,7 +254,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 
 		if (Go->is_prefab_child || Go->is_prefab_instance)
 		{
-			ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::Image((ImTextureID)EngineApp->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
 
 			ImGui::SameLine();
 		}

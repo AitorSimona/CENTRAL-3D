@@ -607,14 +607,16 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 					go->is_prefab_child = file[it.key()]["PrefabChild"];
 
 				if (!file[it.key()]["PrefabInstance"].is_null())
+				{
 					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
+					parent = go;
+				}
 
 				if (!file[it.key()]["Model"].is_null())
 				{
 					std::string model_path = file[it.key()]["Model"];
 					ImportData IData(model_path.c_str());
 					go->model = (ResourceModel*)App->resources->ImportAssets(IData);
-					parent = go;
 				}
 
 				// --- Retrieve GO's name ---
@@ -681,6 +683,8 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 	// --- Save Model to file ---
 
 	json file;
+
+	file["PreviewTexture"] = model->previewTexPath;
 
 	for (int i = 0; i < model_gos.size(); ++i)
 	{
