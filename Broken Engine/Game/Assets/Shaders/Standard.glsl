@@ -1,4 +1,4 @@
-#version 440 core 
+#version 440 core
 
 #define VERTEX_SHADER
 #ifdef VERTEX_SHADER
@@ -47,7 +47,6 @@ void main()
 
 #endif //VERTEX_SHADER
 
-
 #define FRAGMENT_SHADER
 #ifdef FRAGMENT_SHADER
 
@@ -67,7 +66,7 @@ in mat3 v_TBN;
 //Uniforms
 uniform float u_GammaCorrection = 1.0;
 
-uniform float u_Shininess = 32.0;
+uniform float u_Shininess = 1.5;
 uniform int u_UseTextures = 0;
 
 uniform int u_HasDiffuseTexture = 0;

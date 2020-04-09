@@ -1,5 +1,4 @@
 #version 440 core 
-
 #define VERTEX_SHADER 
 #ifdef VERTEX_SHADER 
 

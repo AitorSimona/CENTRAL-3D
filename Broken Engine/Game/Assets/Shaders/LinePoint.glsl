@@ -26,7 +26,7 @@ out vec4 color;
 
 void main()
 { 
-	color = vec4(ourColor, 1.0); 
+	color = vec4(v_Color, 1.0); 
 } 
 
 #endif //FRAGMENT_SHADER

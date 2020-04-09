@@ -216,7 +216,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	SendShaderUniforms(defaultShader->ID);
 	DrawRenderMeshes();
 	DrawRenderLines();
-	DrawRenderBoxes();	
+	DrawRenderBoxes();
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
@@ -652,7 +652,7 @@ void ModuleRenderer3D::SendShaderUniforms(uint shader)
 	glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
 
-	
+
 
 	if (shader == defaultShader->ID)
 	{
@@ -1037,7 +1037,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* zdrawerfragment =
-		R"(#define FRAGMENT_SHADER
+		R"(#version 440 core
+		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
 
 			in vec2 v_NearFarPlanes;
@@ -1074,7 +1075,6 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	const char* textVertShaderSrc =
 		R"(#version 440 core
-
 		#define VERTEX_SHADER
 		#ifdef VERTEX_SHADER
 
@@ -1096,7 +1096,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* textFragShaderSrc =
-		R"(#define FRAGMENT_SHADER
+		R"(#version 440 core
+		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
 
 		in vec2 v_TexCoords;
@@ -1109,7 +1110,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		void main()
 		{
 			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r);
-			color = vec4(textColor, 1.0) * sampled; 
+			color = vec4(textColor, 1.0) * sampled;
 		}
 
 		#endif //FRAGMENT_SHADER)";
