@@ -152,7 +152,8 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 }
 
 // PostUpdate present buffer to screen
-update_status ModuleRenderer3D::PostUpdate(float dt) {
+update_status ModuleRenderer3D::PostUpdate(float dt) 
+{
 	// --- Set Shader Matrices ---
 	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
@@ -369,7 +370,7 @@ void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
 
-uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*> scene_gos, std::string& out_path)
+uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos, std::string& out_path)
 {
 	if (scene_gos.size() == 0)
 		return 0;

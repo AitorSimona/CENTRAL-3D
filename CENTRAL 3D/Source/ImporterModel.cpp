@@ -417,13 +417,13 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 					go->is_prefab_child = file[it.key()]["PrefabChild"];
 
 				if (!file[it.key()]["PrefabInstance"].is_null())
-					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
-
-				if (!file[it.key()]["Model"].is_null())
 				{
-					go->model = (ResourceModel*)App->resources->ImportAssets(ImportData(file[it.key()]["Model"].get<std::string>().c_str()));
+					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
 					parent = go;
 				}
+
+				if (!file[it.key()]["Model"].is_null())
+					go->model = (ResourceModel*)App->resources->ImportAssets(ImportData(file[it.key()]["Model"].get<std::string>().c_str()));
 
 				// --- Retrieve GO's name ---
 				go->SetName(it.key().c_str());

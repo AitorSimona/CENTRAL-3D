@@ -75,7 +75,8 @@ bool PanelHierarchy::Draw()
 
 		if (editingPrefab)
 		{
-			DrawRecursive(prefab->parentgo);
+			if(prefab->parentgo)
+				DrawRecursive(prefab->parentgo);
 		}
 		else
 			DrawRecursive(App->scene_manager->GetRootGO());

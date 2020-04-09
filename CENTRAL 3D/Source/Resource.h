@@ -30,7 +30,6 @@ public:
 	};
 
 
-	Resource(ResourceType type);
 	Resource(ResourceType type, uint UID, std::string source_file);
 	virtual ~Resource();
 

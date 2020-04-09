@@ -95,54 +95,61 @@ bool PanelProject::Draw()
 
 					GameObject* go = App->scene_manager->currentScene->GetGOWithUID(UID);
 
-					// --- Block move if go is prefab child ---
-					if (go->is_prefab_instance)
+					go->is_prefab_instance = true;
+
+					CONSOLE_LOG("Created original prefab from: %s ...", go->GetName().c_str());
+
+					// --- Build original new name ---
+					std::string model_name;
+
+					if (go->model)
 					{
-						CONSOLE_LOG("Created original prefab from: %s ...", go->GetName().c_str());
-
-						// --- Build original new name ---
-						std::string model_name = go->model->GetName();
-						model_name = model_name.substr(0, model_name.find("."));
-						model_name.append(" ("); 
-						std::string currdirectory = currentDirectory->GetResourceFile();
-						std::string resource_name;
-						uint instance = 0;
-
-						resource_name = currdirectory + model_name + std::to_string(instance) + std::string(").prefab");
-
-						while (App->fs->Exists(resource_name.c_str()))
-						{
-							instance++;
-							resource_name = currdirectory + model_name + std::to_string(instance) + std::string(").prefab");
-						}
-
-						ResourcePrefab* new_prefab = (ResourcePrefab*)App->resources->CreateResource(Resource::ResourceType::PREFAB, resource_name);
-	
-						new_prefab->model = go->model;
-						//new_prefab->previewTexPath = go->model->previewTexPath;
-						new_prefab->parentgo = go;
-						//new_prefab->SetPreviewTexID(go->model->GetPreviewTexID());
-
-						// --- Create new preview icon ---
-						std::string previewTexpath;
-						std::vector<GameObject*> prefab_gos;
-						App->scene_manager->GatherGameObjects(new_prefab->parentgo, prefab_gos);
-						uint texID = App->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath);
-						new_prefab->previewTexPath = previewTexpath;
-						new_prefab->SetPreviewTexID(texID);
-
-						App->resources->AddResourceToFolder(new_prefab);
-
-						// --- Create meta ---
-						ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-						ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, std::string(currentDirectory->GetResourceFile()).append(new_prefab->GetName()), new_prefab->GetUID());
-
-						if (meta)
-							IMeta->Save(meta);
-
-						ImporterPrefab* IPrefab = App->resources->GetImporter<ImporterPrefab>();
-						IPrefab->Save((ResourcePrefab*)new_prefab);
+						model_name = go->model->GetName();
 					}
+					else
+						model_name = go->GetName();
+
+					model_name = model_name.substr(0, model_name.find("."));
+					model_name.append(" (");
+					std::string currdirectory = currentDirectory->GetResourceFile();
+					std::string resource_name;
+					uint instance = 0;
+
+					resource_name = currdirectory + model_name + std::to_string(instance) + std::string(").prefab");
+
+					while (App->fs->Exists(resource_name.c_str()))
+					{
+						instance++;
+						resource_name = currdirectory + model_name + std::to_string(instance) + std::string(").prefab");
+					}
+
+					ResourcePrefab* new_prefab = (ResourcePrefab*)App->resources->CreateResource(Resource::ResourceType::PREFAB, resource_name);
+	
+					if (go->model)
+						new_prefab->model = go->model;		
+
+					new_prefab->parentgo = go;
+
+					// --- Create new preview icon ---
+					std::string previewTexpath;
+					std::vector<GameObject*> prefab_gos;
+					App->scene_manager->GatherGameObjects(new_prefab->parentgo, prefab_gos);
+					uint texID = App->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath);
+					new_prefab->previewTexPath = previewTexpath;
+					new_prefab->SetPreviewTexID(texID);
+
+					App->resources->AddResourceToFolder(new_prefab);
+
+					// --- Create meta ---
+					ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+					ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, resource_name, new_prefab->GetUID());
+
+					if (meta)
+						IMeta->Save(meta);
+
+					ImporterPrefab* IPrefab = App->resources->GetImporter<ImporterPrefab>();
+					IPrefab->Save((ResourcePrefab*)new_prefab);
+					
 				}
 				ImGui::EndDragDropTarget();
 			}

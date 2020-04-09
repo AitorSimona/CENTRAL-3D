@@ -1,0 +1,39 @@
+{
+    "GameObject (0)": {
+        "Components": {
+            "0": {
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "1": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "",
+                        "path": "Library/Meshes/3.mesh"
+                    }
+                }
+            },
+            "2": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "DefaultMaterial"
+                    }
+                }
+            }
+        },
+        "Parent": "624092091",
+        "PrefabChild": false,
+        "PrefabInstance": true,
+        "UID": "642275503"
+    },
+    "PreviewTexture": "Library/Textures/1223674840.dds"
+}

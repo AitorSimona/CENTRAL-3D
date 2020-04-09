@@ -8,12 +8,6 @@
 #include "mmgr/mmgr.h"
 
 
-// MYTODO: TO BE DELETED ONCE SHADERS REWORK IS DONE 
-Resource::Resource(ResourceType type)
-{
-	this->type = type;
-}
-
 Resource::Resource(ResourceType type, uint UID, std::string source_file)
 {
 	this->type = type;

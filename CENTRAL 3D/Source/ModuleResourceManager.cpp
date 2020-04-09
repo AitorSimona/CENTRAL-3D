@@ -190,7 +190,7 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 9, "Resource Import Switch needs to be updated");
 
-	// --- Only standalone resources go through import here, mesh and material are imported through model's importer ---
+	// --- Only standalone resources go through import here, mesh and some materials are imported through model's importer ---
 
 	// --- Identify resource type by file extension ---
 	Resource::ResourceType type = GetResourceTypeFromPath(IData.path);
