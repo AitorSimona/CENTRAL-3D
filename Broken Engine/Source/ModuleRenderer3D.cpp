@@ -563,7 +563,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 	for (uint i = 0; i < meshInstances.size(); ++i)
 	{
 		uint shader = defaultShader->ID;
-		RenderMesh* mesh = &meshInstances[i];		
+		RenderMesh* mesh = &meshInstances[i];
 		float4x4 model = mesh->transform;
 		float3 colorToDraw = float3(1.0f);
 
@@ -620,7 +620,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		{
 			const ResourceMesh* rmesh = mesh->resource_mesh;
 			if (mesh->deformable_mesh)
-				rmesh = mesh->deformable_mesh;			
+				rmesh = mesh->deformable_mesh;
 
 			// Material
 			if (mesh->mat)
@@ -628,8 +628,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
 				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
 
-				//Textures 
-				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);			
+				//Textures
+				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);
 
 				if (mesh->flags & RenderMeshFlags_::texture)
 				{
@@ -1108,50 +1108,50 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating z buffer shader drawer ---
 
 	const char* zdrawervertex =
-		R"(#version 440 core 
-		#define VERTEX_SHADER 
-		#ifdef VERTEX_SHADER 
-		
-		layout (location = 0) in vec3 a_Position; 
-		
-		uniform vec2 nearfar; 
-		uniform mat4 u_Model; 
-		uniform mat4 u_View; 
-		uniform mat4 u_Proj; 
-		
-		out mat4 v_Projection; 
-		out vec2 v_NearFarPlanes; 
-		
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
+
+		uniform vec2 nearfar;
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out mat4 v_Projection;
+		out vec2 v_NearFarPlanes;
+
 		void main()
-		{ 
-			v_NearFarPlanes = nearfar; 
-			v_Projection = u_Proj; 
-			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0); 
+		{
+			v_NearFarPlanes = nearfar;
+			v_Projection = u_Proj;
+			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 		}
 		#endif //VERTEX_SHADER)";
 
 	const char* zdrawerfragment =
 		R"(#version 440 core
-		#define FRAGMENT_SHADER 
+		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
-		
+
 			in vec2 v_NearFarPlanes;
 			in mat4 v_Projection;
-		
+
 			out vec4 color;
-		
+
 			float LinearizeDepth(float depth)
 			{
-				float z = 2.0 * depth - 1.0; // back to NDC 
+				float z = 2.0 * depth - 1.0; // back to NDC
 				return 2.0 * v_NearFarPlanes.x * v_NearFarPlanes.y / (v_NearFarPlanes.y + v_NearFarPlanes.x - z * (v_NearFarPlanes.y - v_NearFarPlanes.x));
 			}
-		
+
 			void main()
 			{
 				float depth = LinearizeDepth(gl_FragCoord.z) / v_NearFarPlanes.y;
 				color = vec4(vec3(gl_FragCoord.z * v_NearFarPlanes.y * v_NearFarPlanes.x), 1.0);
 			}
-		
+
 		#endif //FRAGMENT_SHADER)";
 
 	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z), just in case I need it again (doubt it though)
@@ -1168,46 +1168,45 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating text rendering shaders ---
 
 	const char* textVertShaderSrc =
-		R"(#version 440 core 
-		
-		#define VERTEX_SHADER 
-		#ifdef VERTEX_SHADER 
-		
-		layout (location = 0) in vec3 a_Position; 
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
 		layout (location = 1) in vec2 a_TexCoords;
-		
-		uniform mat4 u_Model; 
-		uniform mat4 u_View; 
-		uniform mat4 u_Proj; 
-		
-		out vec2 v_TexCoords; 
-		
+
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out vec2 v_TexCoords;
+
 		void main()
-		{ 
-			gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f); 
-			v_TexCoords = a_TexCoords; 
+		{
+			gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f);
+			v_TexCoords = a_TexCoords;
 		}
-		
+
 		#endif //VERTEX_SHADER)";
 
 	const char* textFragShaderSrc =
 		R"(#version 440 core
-		#define FRAGMENT_SHADER 
-		#ifdef FRAGMENT_SHADER 
-		
-		in vec2 v_TexCoords; 
-		
-		uniform sampler2D text; 
-		uniform vec3 textColor; 
-		
-		out vec4 color; 
-		
+		#define FRAGMENT_SHADER
+		#ifdef FRAGMENT_SHADER
+
+		in vec2 v_TexCoords;
+
+		uniform sampler2D text;
+		uniform vec3 textColor;
+
+		out vec4 color;
+
 		void main()
-		{ 
-			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r); 
-			color = vec4(textColor, 1.0) * sampled; 
-		} 
-		
+		{
+			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r);
+			color = vec4(textColor, 1.0) * sampled;
+		}
+
 		#endif //FRAGMENT_SHADER)";
 
 	textShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TextShader.glsl", 11);
@@ -1290,24 +1289,24 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 		void main()
 		{
-			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);
 			TexCoords = aTexCoords;
-		} 
+		}
 		#endif //VERTEX_SHADER)";
 
-	const char* fragmentScreenShader = 
+	const char* fragmentScreenShader =
 		R"(#version 440 core
 		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
 
 		out vec4 FragColor;
-  
+
 		in vec2 TexCoords;
 
 		uniform sampler2D screenTexture;
-		
+
 		void main()
-		{ 
+		{
 		    FragColor = texture(screenTexture, TexCoords);
 		}
 		#endif //FRAGMENT_SHADER)";

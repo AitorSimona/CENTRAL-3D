@@ -12,18 +12,57 @@
 		uniform mat4 u_View;
 		uniform mat4 u_Proj;
 
-		out vec3 v_Color;
-		out vec2 v_TexCoord;
-
-		void main()
-		{
-			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0f);
-			v_Color = u_Color;
-			v_TexCoord = a_TexCoord;
-		}
-		#endif //VERTEX_SHADER
 #define FRAGMENT_SHADER
-		#ifdef FRAGMENT_SHADER
+#ifdef FRAGMENT_SHADER
+
+#define MAX_SHADER_LIGHTS 20
+
+//Output Variables
+out vec4 out_color;
+
+//Input Variables (Varying)
+in vec2 v_TexCoord;
+in vec3 v_Color;
+in vec3 v_Normal;
+in vec3 v_FragPos;
+in vec3 v_CamPos;
+in mat3 v_TBN;
+
+//Uniforms
+uniform float u_Shininess = 1.5;
+uniform int u_UseTextures = 0;
+
+uniform int u_HasDiffuseTexture = 0;
+uniform int u_HasSpecularTexture = 0;
+uniform int u_HasNormalMap = 0;
+
+uniform int u_DrawNormalMapping = 0;
+uniform int u_DrawNormalMapping_Lit = 0;
+uniform int u_DrawNormalMapping_Lit_Adv = 0;
+
+uniform sampler2D u_AlbedoTexture;
+uniform sampler2D u_SpecularTexture;
+uniform sampler2D u_NormalTexture;
+
+//Light Uniforms
+struct BrokenLight
+{
+	vec3 dir;
+	vec3 pos;
+	vec3 color;
+
+	float intensity;
+
+	vec3 attenuationKLQ;
+	vec2 InOutCutoff;
+
+	int LightType;
+};
+
+uniform int u_LightsNumber = 0;
+uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS];
+// uniform BrokenLight u_BkLights[MAX_SHADER_LIGHTS] = BrokenLight[MAX_SHADER_LIGHTS](BrokenLight(vec3(0.0), vec3(0.0), vec3(1.0), 0.5, vec3(1.0, 0.09, 0.032), vec2(12.5, 45.0), 2));
+
 
 		uniform int u_UseTextures;
 		uniform sampler2D u_AlbedoTexture;
