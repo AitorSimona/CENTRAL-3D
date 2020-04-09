@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "OpenGL.h"
 #include "Color.h"
+
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
@@ -190,8 +191,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	if (material)
 	{
 		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
-		static bool save_material = false;
-		static Timer material_save_time;
 
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
@@ -252,7 +251,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Shininess");
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 				ImGui::SetNextItemWidth(300.0f);
-				if(ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f)) save_material = true;
+				if(ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f, "%.3f", 1.5f)) save_material = true;
 
 				//ImGui::Text("Shader Uniforms");
 
@@ -475,9 +474,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			Resource* resource = App->resources->GetResource(UID, false);
 
 			if (resource && resource->GetType() == Resource::ResourceType::MATERIAL)
-			{
 				material = (ResourceMaterial*)App->resources->GetResource(UID);
-			}
 		}
 
 		ImGui::EndDragDropTarget();

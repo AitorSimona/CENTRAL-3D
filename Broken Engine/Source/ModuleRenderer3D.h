@@ -79,6 +79,9 @@ public:
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
+	virtual void LoadStatus(const json& file);
+	virtual const json& SaveStatus() const;
+
 
 	void OnResize(int width, int height);
 
@@ -198,7 +201,7 @@ private:
 
 	//Lights vector
 	std::vector<ComponentLight*> m_LightsVec;
-	float m_GammaCorrection = 1.0f;
+	float m_GammaCorrection = 2.0f;
 
 	uint fbo = 0;
 	uint depthbufferFBO = 0;

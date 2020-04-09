@@ -57,12 +57,14 @@ bool ModuleRenderer3D::Init(json& file)
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 
-	if (context == NULL) {
+	if (context == NULL)
+	{
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
-	if (ret == true) {
+	if (ret == true)
+	{
 		//Use Vsync
 		if (vsync && SDL_GL_SetSwapInterval(1) < 0)
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
@@ -74,7 +76,10 @@ bool ModuleRenderer3D::Init(json& file)
 			ret = false;
 		}
 		else
+		{
 			GL_SETERRORHANDLER(4, 4); //OpenGL Error Handler
+			LoadStatus(file);
+		}
 	}
 
 	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges ---
@@ -210,13 +215,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		DrawGrid();
 
 	// --- Draw ---
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	SendShaderUniforms(defaultShader->ID);
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
@@ -280,6 +284,18 @@ bool ModuleRenderer3D::CleanUp()
 	SDL_GL_DeleteContext(context);
 
 	return true;
+}
+
+void ModuleRenderer3D::LoadStatus(const json& file)
+{
+	m_GammaCorrection = file["Renderer3D"]["GammaCorrection"].is_null() ? 1.0f : file["Renderer3D"]["GammaCorrection"].get<float>();
+}
+
+const json& ModuleRenderer3D::SaveStatus() const
+{
+	static json m_config;
+	m_config["GammaCorrection"] = m_GammaCorrection;
+	return m_config;
 }
 
 void ModuleRenderer3D::OnResize(int width, int height)
@@ -604,6 +620,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit"), (int)m_Draw_normalMapping_Lit);
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit_Adv"), (int)m_Draw_normalMapping_Lit_Adv);
 
+		// --- Gamma Correction Value ---
+		glUniform1f(glGetUniformLocation(shader, "u_GammaCorrection"), m_GammaCorrection);
+
 		// --- Set Textures usage to 0 ---
 		//glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
 		//glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
@@ -747,6 +766,8 @@ void ModuleRenderer3D::SendShaderUniforms(uint shader)
 	glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
+
+
 
 	if (shader == defaultShader->ID)
 	{
