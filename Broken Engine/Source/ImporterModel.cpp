@@ -539,7 +539,11 @@ Resource* ImporterModel::Load(const char* path) const {
 				{
 					for (json::iterator it3 = _resources.begin(); it3 != _resources.end(); ++it3)
 					{
-						std::string value = _resources[it3.key()]["path"];
+						std::string value;
+						if (_resources[it3.key()].is_structured())
+							value = _resources[it3.key()]["path"].get<std::string>();
+						else
+							value = _resources[it3.key()].get<std::string>();
 						Importer::ImportData IData(value.c_str());
 						Resource* to_Add = App->resources->ImportAssets(IData);
 
