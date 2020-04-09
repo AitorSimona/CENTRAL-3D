@@ -120,19 +120,17 @@ bool PanelProject::Draw()
 						new_prefab->parentgo = go;
 
 						// --- Create new preview icon ---
-						std::string previewTexpath;
 						std::vector <Broken::GameObject*> prefab_gos;
-						EngineApp->scene_manager->GatherGameObjects(new_prefab->parentgo, prefab_gos);
+						GatherGameObjects(new_prefab->parentgo, prefab_gos);
 						uint texID = 0;
-						previewTexpath = EngineApp->renderer3D->RenderSceneToTexture(prefab_gos, texID);
-						new_prefab->previewTexPath = previewTexpath;
+						new_prefab->previewTexPath = EngineApp->renderer3D->RenderSceneToTexture(prefab_gos, texID);
 						new_prefab->SetPreviewTexID(texID);
 
 						EngineApp->resources->AddResourceToFolder(new_prefab);
 
 						// --- Create meta ---
 						Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
-						Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, std::string(currentDirectory->GetResourceFile()).append(new_prefab->GetName()).c_str(), new_prefab->GetUID());
+						Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, resource_name.c_str(), new_prefab->GetUID());
 
 						if (meta)
 							IMeta->Save(meta);
@@ -684,6 +682,16 @@ void PanelProject::RecursiveDirectoryDraw(Broken::ResourceFolder* directory)
 			RecursiveDirectoryDraw(*it);
 			ImGui::TreePop();
 		}
+	}
+}
+
+void PanelProject::GatherGameObjects(Broken::GameObject* go, std::vector<Broken::GameObject*>& gos_vec)
+{
+	gos_vec.push_back(go);
+
+	for (uint i = 0; i < go->childs.size(); ++i)
+	{
+		GatherGameObjects(go->childs[i], gos_vec);
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "PanelHierarchy.h"
 #include "Imgui/imgui.h"
 
+#include "ModuleEditorUI.h"
 #include "EngineApplication.h"
 #include "PanelProject.h"
 
@@ -192,7 +193,7 @@ void PanelHierarchy::ExitEditPrefab()
 {
 	std::string previewTexpath;
 	std::vector<Broken::GameObject*> prefab_gos;
-	App->scene_manager->GatherGameObjects(EngineApp->gui->prefab->parentgo, prefab_gos);
+	EngineApp->editorui->panelProject->GatherGameObjects(EngineApp->gui->prefab->parentgo, prefab_gos);
 	uint texID = 0;
 	previewTexpath = App->renderer3D->RenderSceneToTexture(prefab_gos, texID);
 

@@ -132,6 +132,7 @@ bool ModuleRenderer3D::Init(json& file)
 
 	// --- Create camera to take model/meshes screenshots ---
 	screenshot_camera = new ComponentCamera(nullptr);
+	screenshot_camera->name = "Screenshot";
 	screenshot_camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
 	screenshot_camera->SetFOV(60.0f);
 	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
@@ -455,25 +456,25 @@ const std::string & ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObjec
 
 	PreUpdate(0.0f);
 
-	// --- Set Shader Matrices ---
-	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+	//// --- Set Shader Matrices ---
+	//GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	//float nearp = App->renderer3D->active_camera->GetNearPlane();
 
-	// right handed projection matrix (just different standard)
-	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
-	float4x4 proj_RH(
-		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-		0.0f, f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, nearp, 0.0f);
+	//// right handed projection matrix (just different standard)
+	//float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	//float4x4 proj_RH(
+	//	f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+	//	0.0f, f, 0.0f, 0.0f,
+	//	0.0f, 0.0f, 0.0f, -1.0f,
+	//	0.0f, 0.0f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(defaultShader->ID, "projection");
-	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+	//GLint projectLoc = glGetUniformLocation(defaultShader->ID, "projection");
+	//glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
-	GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
+	//GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
 
 	// --- Bind fbo ---
 	if (renderfbo)
@@ -487,6 +488,8 @@ const std::string & ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObjec
 
 	//// --- Draw Grid ---
 	//DrawGrid();
+
+	SendShaderUniforms(defaultShader->ID);
 
 	// --- Draw ---
 	DrawRenderMeshes();
@@ -1128,7 +1131,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* zdrawerfragment =
-		R"(#define FRAGMENT_SHADER 
+		R"(#version 440 core
+		#define FRAGMENT_SHADER 
 		#ifdef FRAGMENT_SHADER
 		
 			in vec2 v_NearFarPlanes;
@@ -1187,7 +1191,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* textFragShaderSrc =
-		R"(#define FRAGMENT_SHADER 
+		R"(#version 440 core
+		#define FRAGMENT_SHADER 
 		#ifdef FRAGMENT_SHADER 
 		
 		in vec2 v_TexCoords; 
