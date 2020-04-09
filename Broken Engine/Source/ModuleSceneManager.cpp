@@ -17,6 +17,7 @@
 #include "ModuleUI.h"
 #include "ModuleSelection.h"
 #include "ModuleScripting.h"
+#include "ModuleGui.h"
 
 //#include "ModuleGui.h"
 
@@ -29,6 +30,7 @@
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
+#include "ResourcePrefab.h"
 
 #include "Component.h"
 #include "ComponentButton.h"
@@ -171,7 +173,7 @@ void ModuleSceneManager::DrawScene()
 	{
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetUID() != root->GetUID())
+			if ((*it).second->GetActive() && (*it).second->GetUID() != root->GetUID())
 			{
 				const AABB aabb = (*it).second->GetAABB();
 
@@ -192,7 +194,8 @@ void ModuleSceneManager::DrawScene()
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
 			// --- Issue render order ---
-			(*it)->Draw();
+			if ((*it)->GetActive())
+				(*it)->Draw();
 		}
 	}
 
@@ -529,7 +532,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 //	}*/
 //}
 
-GameObject* ModuleSceneManager::CreateEmptyGameObject() {
+GameObject* ModuleSceneManager::CreateEmptyGameObject() 
+{
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
 	Name.append("(");
@@ -542,7 +546,12 @@ GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	GameObject* new_object = new GameObject(Name.c_str());
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->editingPrefab)
+	{
+		App->gui->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }
@@ -561,7 +570,12 @@ GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
 	GameObject* new_object = new GameObject(Name.data(),UID);
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->editingPrefab)
+	{
+		App->gui->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }

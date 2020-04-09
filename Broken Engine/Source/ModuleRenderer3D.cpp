@@ -142,9 +142,6 @@ bool ModuleRenderer3D::Init(json& file)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-	// --- Clear render orders ---
-	ClearRenderOrders();
-
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -257,6 +254,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	SDL_GL_MakeCurrent(App->window->window, context);
 	SDL_GL_SwapWindow(App->window->window);
 
+	// --- Clear render orders ---
+	ClearRenderOrders();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -266,6 +266,8 @@ bool ModuleRenderer3D::CleanUp()
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
 
 	m_LightsVec.clear();
+
+	delete screenshot_camera;
 
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
@@ -417,10 +419,10 @@ void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
 
-uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*> scene_gos, std::string& out_path)
+void ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos, std::string& out_path, uint& texId)
 {
 	if (scene_gos.size() == 0)
-		return 0;
+		return;
 
 	// --- Issue render calls and obtain an AABB that encloses all meshes ---
 
@@ -509,14 +511,12 @@ uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*> scene_gos, 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	uint uid = App->GetRandom().Int();
-	uint texID = App->textures->CreateTextureFromPixels(GL_RGB, surface->w, surface->h, GL_RGB, pixels);
+	texId = App->textures->CreateTextureFromPixels(GL_RGB, surface->w, surface->h, GL_RGB, pixels);
 	App->textures->CreateAndSaveTextureFromPixels(uid, GL_RGB, surface->w, surface->h, GL_RGB, (void*)pixels, out_path);
 
 	delete[] pixels;
 
 	SetActiveCamera(previous_cam);
-
-	return texID;
 }
 
 void ModuleRenderer3D::ClearRenderOrders()

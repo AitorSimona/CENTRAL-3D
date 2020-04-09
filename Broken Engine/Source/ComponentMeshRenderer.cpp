@@ -126,9 +126,10 @@ json ComponentMeshRenderer::Save() const
 {
 	json node;
 	node["Active"] = this->active;
-	node["Resources"]["ResourceMaterial"];
-	if(material)
-		node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
+	node["Resources"]["ResourceMaterial"]["path"];
+
+	if (material)
+		node["Resources"]["ResourceMaterial"]["path"] = std::string(material->GetResourceFile());
 
 	return node;
 }
@@ -137,7 +138,7 @@ void ComponentMeshRenderer::Load(json& node)
 {
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 
-	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
+	std::string mat_path = node["Resources"]["ResourceMaterial"]["path"].is_null() ? "0" : node["Resources"]["ResourceMaterial"]["path"];
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
 	if (IMeta) 

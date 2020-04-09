@@ -45,6 +45,7 @@ bool ModuleResourceManager::Init(json& file)
 	importers.push_back(new ImporterFolder());
 	importers.push_back(new ImporterScene());
 	importers.push_back(new ImporterModel());
+	importers.push_back(new ImporterPrefab());
 	importers.push_back(new ImporterMaterial());
 	importers.push_back(new ImporterShader());
 	importers.push_back(new ImporterMesh());
@@ -103,6 +104,7 @@ bool ModuleResourceManager::Start()
 
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
+	filters.push_back("prefab");
 	filters.push_back("mat");
 	filters.push_back("png");
 	filters.push_back("jpg");

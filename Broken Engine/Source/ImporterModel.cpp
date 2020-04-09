@@ -114,7 +114,9 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 		}
 
 		// --- Create preview Texture ---
-		model->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(model_gos, model->previewTexPath));
+		uint texID = 0;
+		App->renderer3D->RenderSceneToTexture(model_gos, model->previewTexPath, texID);
+		model->SetPreviewTexID(texID);
 
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
@@ -175,7 +177,9 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 
 			scene_meshes[i]->FreeMemory();
 			scene_meshes[i]->LoadInMemory();
-			scene_meshes[i]->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(gos, scene_meshes[i]->previewTexPath));
+			uint TexID = 0;
+			App->renderer3D->RenderSceneToTexture(gos, scene_meshes[i]->previewTexPath,TexID);
+			scene_meshes[i]->SetPreviewTexID(TexID);
 
 			App->scene_manager->DestroyGameObject(gos[0]);
 		}
@@ -575,12 +579,14 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 	
 	GameObject* parent = nullptr;
 
-	if (model_path) {
+	if (model_path) 
+	{
 		// --- Load Scene/model file ---
 		json file = App->GetJLoader()->Load(model_path);
 
 		// --- Delete buffer data ---
-		if (!file.is_null()) {
+		if (!file.is_null())
+		{
 			std::vector<GameObject*> objects;
 
 			// --- Iterate main nodes ---
@@ -604,7 +610,8 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 
 				if (!file[it.key()]["Model"].is_null())
 				{
-					ImportData IData(file[it.key()]["Model"].get<std::string>().c_str());
+					std::string model_path = file[it.key()]["Model"];
+					ImportData IData(model_path.c_str());
 					go->model = (ResourceModel*)App->resources->ImportAssets(IData);
 					parent = go;
 				}
@@ -616,7 +623,8 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 				json components = file[it.key()]["Components"];
 
 
-				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) {
+				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) 
+				{
 					// --- Determine ComponentType ---
 					std::string type_string = it2.key();
 					uint type_uint = std::stoi(type_string);
@@ -673,14 +681,22 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 
 	json file;
 
-	for (int i = 0; i < model_gos.size(); ++i) {
+	for (int i = 0; i < model_gos.size(); ++i)
+	{
 		// --- Create GO Structure ---
 		file[model_gos[i]->GetName()];
 		file[model_gos[i]->GetName()]["UID"] = std::to_string(model_gos[i]->GetUID());
 		file[model_gos[i]->GetName()]["Parent"] = std::to_string(model_gos[i]->parent->GetUID());
 		file[model_gos[i]->GetName()]["Components"];
+		file[model_gos[i]->GetName()]["PrefabChild"] = model_gos[i]->is_prefab_child;
+		file[model_gos[i]->GetName()]["PrefabInstance"] = model_gos[i]->is_prefab_instance;
 
-		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j) {
+		if (model_gos[i]->model)
+			file[model_gos[i]->GetName()]["Model"] = std::string(model_gos[i]->model->GetOriginalFile());
+
+
+		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j) 
+		{
 			// --- Save Components to file ---
 			file[model_gos[i]->GetName()]["Components"][std::to_string((uint)model_gos[i]->GetComponents()[j]->GetType())] = model_gos[i]->GetComponents()[j]->Save();
 		}

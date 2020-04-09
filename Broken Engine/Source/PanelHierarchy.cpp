@@ -193,7 +193,8 @@ void PanelHierarchy::ExitEditPrefab()
 	std::string previewTexpath;
 	std::vector<Broken::GameObject*> prefab_gos;
 	App->scene_manager->GatherGameObjects(EngineApp->gui->prefab->parentgo, prefab_gos);
-	uint texID = App->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath);
+	uint texID = 0;
+	App->renderer3D->RenderSceneToTexture(prefab_gos, previewTexpath, texID);
 
 	App->fs->Remove(EngineApp->gui->prefab->previewTexPath.c_str());
 	EngineApp->gui->prefab->previewTexPath = previewTexpath;
@@ -250,8 +251,12 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		if(!Go->GetActive())
 		ImGui::PushStyleColor(ImGuiCol(), ImVec4(0.5, 0.5, 0.5, 1));
 
-		ImGui::Image((ImTextureID)EngineApp->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::SameLine();
+		if (Go->is_prefab_child || Go->is_prefab_instance)
+		{
+			ImGui::Image((ImTextureID)App->gui->prefabTexID, ImVec2(15, 15), ImVec2(0, 1), ImVec2(1, 0));
+
+			ImGui::SameLine();
+		}
 
 		bool open = ImGui::TreeNodeEx((void*)Go->GetUID(), Go->node_flags, Go->GetName());
 
