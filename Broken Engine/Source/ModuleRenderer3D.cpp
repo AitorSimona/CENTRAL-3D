@@ -37,8 +37,9 @@
 
 using namespace Broken;
 
-// ------------------------------ Basic --------------------------------------------------------
-
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Module -------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled) {
 	name = "Renderer3D";
 }
@@ -52,7 +53,7 @@ bool ModuleRenderer3D::Init(json& file)
 {
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Creating 3D Renderer context");
 	bool ret = true;
-	
+
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 
@@ -85,6 +86,8 @@ bool ModuleRenderer3D::Init(json& file)
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 
 	// --- Enable stencil testing, set to replace ---
+	glEnable(GL_DEPTH_TEST); //For shadows
+	glDepthFunc(GL_LESS);
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
@@ -208,6 +211,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		DrawGrid();
 
 	// --- Draw ---
+	SendShaderUniforms(defaultShader->ID);
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();
@@ -302,41 +306,10 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	CreateFramebuffer();
 }
 
-// ----------------------------------------------------
 
-
-// ------------------------------ Setters --------------------------------------------------------
-void ModuleRenderer3D::AddLight(ComponentLight* light)
-{
-	if(light)
-		m_LightsVec.push_back(light);
-}
-
-void ModuleRenderer3D::PopLight(ComponentLight* light)
-{
-	if (light)
-	{
-		std::vector<ComponentLight*>::iterator it = std::find(m_LightsVec.begin(), m_LightsVec.end(), light);
-
-		if(it != m_LightsVec.end())
-			m_LightsVec.erase(it);
-	}
-}
-
-const int ModuleRenderer3D::GetLightIndex(ComponentLight* light)
-{
-	if (light)
-	{
-		for (int i = 0; i < m_LightsVec.size(); ++i)
-		{
-			if (m_LightsVec[i] == light)
-				return i;
-		}
-	}
-
-	return -1;
-}
-
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Setters ------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 bool ModuleRenderer3D::SetVSync(bool _vsync)
 {
 	bool ret = true;
@@ -392,20 +365,10 @@ void ModuleRenderer3D::SetCullingCamera(ComponentCamera* camera)
 	}
 }
 
-// ----------------------------------------------------
 
-
-// ------------------------------ Getters --------------------------------------------------------
-
-bool ModuleRenderer3D::GetVSync() const
-{
-	return vsync;
-}
-
-// ----------------------------------------------------
-
-
-// ------------------------------ Render Orders --------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Render Commands ----------------------------------------------
+// ---------------------------------------------------------------------------------------------
 
 // --- Add render order to queue ---
 void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh, const RenderMeshFlags flags, const Color& color)
@@ -452,21 +415,18 @@ void ModuleRenderer3D::DrawAABB(const AABB& box, const Color& color)
 	if (box.IsFinite())
 		render_aabbs.push_back(RenderBox<AABB>(&box, color));
 }
+
 void ModuleRenderer3D::DrawOBB(const OBB& box, const Color& color)
 {
 	if (box.IsFinite())
 		render_obbs.push_back(RenderBox<OBB>(&box, color));
 }
+
 void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 {
 	if (box.IsFinite())
 		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
-
-// ----------------------------------------------------
-
-
-// ------------------------------ Utilities --------------------------------------------------------
 
 void ModuleRenderer3D::ClearRenderOrders()
 {
@@ -476,6 +436,387 @@ void ModuleRenderer3D::ClearRenderOrders()
 	render_frustums.clear();
 	render_lines.clear();
 }
+
+
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Draw Commands ------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+void ModuleRenderer3D::DrawRenderMeshes()
+{
+	// --- Activate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// --- Draw Game Object Meshes ---
+	for (std::map<uint, std::vector<RenderMesh>>::const_iterator it = render_meshes.begin(); it != render_meshes.end(); ++it)
+	{
+		DrawRenderMesh((*it).second);
+	}
+
+	// --- DeActivate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+}
+
+void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
+{
+	// --- Meshes ---
+	for (uint i = 0; i < meshInstances.size(); ++i)
+	{
+		uint shader = defaultShader->ID;
+		RenderMesh* mesh = &meshInstances[i];
+		float4x4 model = mesh->transform;
+		float3 colorToDraw = float3(1.0f);
+
+		// --- Select/Outline ---
+		if (mesh->flags & RenderMeshFlags_::selected)
+		{
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+			glStencilMask(0xFF);
+		}
+
+		if (mesh->flags & RenderMeshFlags_::outline)
+		{
+			shader = OutlineShader->ID;
+			colorToDraw = { 1.0f, 0.65f, 0.0f };
+			float3 scale = float3(1.05f, 1.05f, 1.05f);
+			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
+		}
+
+		// --- Display Z buffer ---
+		if (zdrawer)
+			shader = ZDrawerShader->ID;
+
+		// --- Get Mesh Material ---
+		if (mesh->mat->shader && shader != OutlineShader->ID && !zdrawer)
+		{
+			shader = mesh->mat->shader->ID;
+			mesh->mat->UpdateUniforms();
+		}
+
+		// --- Draw Wireframe if we must ---
+		if (mesh->flags & RenderMeshFlags_::wire)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		// ------------------------ Shader Stuff ------------------------
+		glUseProgram(shader);
+
+		// --- Set Normal Mapping Draw ---
+		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit"), (int)m_Draw_normalMapping_Lit);
+		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit_Adv"), (int)m_Draw_normalMapping_Lit_Adv);
+
+		// --- Gamma Correction Value ---
+		glUniform1f(glGetUniformLocation(shader, "u_GammaCorrection"), m_GammaCorrection);
+
+		// --- Set Textures usage to 0 ---
+		//glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
+		//glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
+		//glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
+
+		// --- Send Color ---
+		glUniform3f(glGetUniformLocation(shader, "u_Color"), colorToDraw.x, colorToDraw.y, colorToDraw.z);
+
+		// --- Set Model Matrix Uniform ---
+		glUniformMatrix4fv(glGetUniformLocation(shader, "u_Model"), 1, GL_FALSE, model.Transposed().ptr());
+
+		// --- General Rendering Uniforms (material - texture - color related) ---
+		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices) // if mesh to draw
+		{
+			const ResourceMesh* rmesh = mesh->resource_mesh;
+			if (mesh->deformable_mesh)
+				rmesh = mesh->deformable_mesh;
+
+			// Material
+			if (mesh->mat)
+			{
+				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
+				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
+
+				//Textures
+				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);
+
+				if (mesh->flags & RenderMeshFlags_::texture)
+				{
+					if (mesh->flags & RenderMeshFlags_::checkers)
+						glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
+					else
+					{
+						if (!mesh->mat->m_DiffuseResTexture && !mesh->mat->m_SpecularResTexture && !mesh->mat->m_NormalResTexture)
+							glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), 0);
+
+						// Diffuse/Albedo
+						if (mesh->mat->m_DiffuseResTexture)
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 1);
+
+							glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 1);
+							glActiveTexture(GL_TEXTURE0 + 1);
+							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
+						}
+						else
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 0);
+							glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
+						}
+
+						// Specular
+						if (mesh->mat->m_SpecularResTexture)
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 1);
+
+							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 2);
+							glActiveTexture(GL_TEXTURE0 + 2);
+							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
+						}
+						else
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 0);
+							glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
+						}
+
+						// Normal
+						if (mesh->mat->m_NormalResTexture)
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 1);
+
+							glUniform1i(glGetUniformLocation(shader, "u_NormalTexture"), 3);
+							glActiveTexture(GL_TEXTURE0 + 3);
+							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_NormalResTexture->GetTexID());
+						}
+						else
+						{
+							glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
+							glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
+						}
+					}
+				}
+			}
+
+			// --- Render ---
+			glBindVertexArray(rmesh->VAO);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
+			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); //render from array data
+
+			// --- Unbind Buffers ---
+			glBindVertexArray(0);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glActiveTexture(GL_TEXTURE0);
+		}
+
+		// --- DeActivate wireframe mode ---
+		if (mesh->flags & RenderMeshFlags_::wire)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		if (mesh->flags & RenderMeshFlags_::selected)
+			glStencilMask(0x00);
+
+		// --- Set color back to default ---
+		glUniform3f(glGetUniformLocation(shader, "u_Color"), 1.0f, 1.0f, 1.0f);
+	}
+
+	glUseProgram(0);
+}
+
+
+void ModuleRenderer3D::SendShaderUniforms(uint shader)
+{
+	// --- Display Z buffer ---
+	if (zdrawer)
+		shader = ZDrawerShader->ID;
+
+	glUseProgram(shader);
+
+	// --- Give ZDrawer near and far camera frustum planes pos ---
+	if (zdrawer)
+		glUniform2f(glGetUniformLocation(shader, "nearfar"), active_camera->GetNearPlane(), active_camera->GetFarPlane());
+
+	// --- Set Matrix Uniforms ---
+	glUniformMatrix4fv(glGetUniformLocation(shader, "u_View"), 1, GL_FALSE, active_camera->GetOpenGLViewMatrix().ptr());
+	glUniform1f(glGetUniformLocation(shader, "time"), App->time->time);
+
+	//// Right handed projection matrix
+	float f = 1.0f / tan(active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, active_camera->GetNearPlane(), 0.0f);
+
+	glUniformMatrix4fv(glGetUniformLocation(shader, "u_Proj"), 1, GL_FALSE, proj_RH.ptr());
+
+	// --- Set Normal Mapping Draw ---
+	glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping"), (int)m_Draw_normalMapping);
+
+	// --- Set HasTextures to none ---
+	glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
+	glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
+	glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
+
+	
+
+	if (shader == defaultShader->ID)
+	{
+		// --- Send Lights ---
+		glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), m_LightsVec.size());
+		for (uint i = 0; i < m_LightsVec.size(); ++i)
+			m_LightsVec[i]->SendUniforms(shader, i);
+	}
+	else
+		glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), 0);
+}
+
+
+void ModuleRenderer3D::DrawFramebuffer()
+{
+	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+	// clear all relevant buffers
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glUseProgram(screenShader->ID);
+	glBindVertexArray(quadVAO);
+	glBindTexture(GL_TEXTURE_2D, rendertexture);	// use the color attachment texture as the texture of the quad plane
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// --- Unbind buffers ---
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+}
+
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Lights -------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+void ModuleRenderer3D::AddLight(ComponentLight* light)
+{
+	if (light)
+		m_LightsVec.push_back(light);
+}
+
+void ModuleRenderer3D::PopLight(ComponentLight* light)
+{
+	if (light)
+	{
+		std::vector<ComponentLight*>::iterator it = std::find(m_LightsVec.begin(), m_LightsVec.end(), light);
+
+		if (it != m_LightsVec.end())
+			m_LightsVec.erase(it);
+	}
+}
+
+const int ModuleRenderer3D::GetLightIndex(ComponentLight* light)
+{
+	if (light)
+	{
+		for (int i = 0; i < m_LightsVec.size(); ++i)
+		{
+			if (m_LightsVec[i] == light)
+				return i;
+		}
+	}
+
+	return -1;
+}
+
+
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Buffers ------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* data) const
+{
+	uint ID = 0;
+
+	glGenBuffers(1, (GLuint*)&ID); // create buffer
+	glBindBuffer(Targetbuffer, ID); // start using created buffer
+	glBufferData(Targetbuffer, size, data, GL_STATIC_DRAW); // send data to VRAM
+	glBindBuffer(Targetbuffer, 0); // Stop using buffer
+
+	return ID;
+}
+
+void ModuleRenderer3D::CreateFramebuffer()
+{
+	// --- Create a texture to use it as depthMap for shadowing ---
+	glGenTextures(1, &depthMapTexture);
+	glBindTexture(GL_TEXTURE_2D, depthMapTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, App->window->GetWindowWidth(), App->window->GetWindowHeight(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glGenFramebuffers(1, &depthbufferFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, depthbufferFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapTexture, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// --- Create a texture to use it as render target ---
+	glGenTextures(1, &rendertexture);
+	glBindTexture(GL_TEXTURE_2D, rendertexture);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// --- Generate attachments, DEPTH and STENCIL ---
+	glGenTextures(1, &depthbuffer);
+	glBindTexture(GL_TEXTURE_2D, depthbuffer);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// --- Generate framebuffer object (fbo) ---
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Utilities ----------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+void ModuleRenderer3D::HandleObjectOutlining()
+{
+	// --- Selected Object Outlining ---
+	for (GameObject* obj : *App->selection->GetSelected())
+	{
+		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
+		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
+		// differences, making it look like borders ---
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+
+		// --- Search for Renderer Component ---
+		ComponentMeshRenderer* MeshRenderer = obj->GetComponent<ComponentMeshRenderer>();
+
+		// --- If Found, draw the mesh ---
+		if (MeshRenderer && MeshRenderer->IsEnabled() && obj->GetActive())
+		{
+			std::vector<RenderMesh> meshInstances;
+
+			ComponentMesh* cmesh = obj->GetComponent<ComponentMesh>();
+			ComponentMeshRenderer* cmesh_renderer = obj->GetComponent<ComponentMeshRenderer>();
+			RenderMeshFlags flags = outline;
+
+			if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
+			{
+				meshInstances.push_back(RenderMesh(obj->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
+				DrawRenderMesh(meshInstances);
+			}
+		}
+		//MeshRenderer->Draw(true);
+
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glEnable(GL_DEPTH_TEST);
+	}
+}
+
 
 void ModuleRenderer3D::UpdateGLCapabilities() const
 {
@@ -503,41 +844,53 @@ void ModuleRenderer3D::UpdateGLCapabilities() const
 
 }
 
-uint ModuleRenderer3D::CreateBufferFromData(uint Targetbuffer, uint size, void* data) const
+void ModuleRenderer3D::CreateGrid(float target_distance)
 {
-	uint ID = 0;
+	// --- Fill vertex data ---
 
-	glGenBuffers(1, (GLuint*)&ID); // create buffer
-	glBindBuffer(Targetbuffer, ID); // start using created buffer
-	glBufferData(Targetbuffer, size, data, GL_STATIC_DRAW); // send data to VRAM
-	glBindBuffer(Targetbuffer, 0); // Stop using buffer
+	float distance = target_distance / 4;
 
-	return ID;
+	if (distance < 1)
+		distance = 1;
+
+	float3 vertices[164];
+
+	uint i = 0;
+	int lines = -20;
+
+	for (i = 0; i < 40; i++)
+	{
+		vertices[4 * i] = float3(lines * -distance, 0.0f, 20 * -distance);
+		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 20 * distance);
+		vertices[4 * i + 2] = float3(20 * -distance, 0.0f, lines * distance);
+		vertices[4 * i + 3] = float3(20 * distance, 0.0f, lines * distance);
+
+		lines++;
+	}
+
+	vertices[4 * i] = float3(lines * -distance, 0.0f, 20 * -distance);
+	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 20 * distance);
+	vertices[4 * i + 2] = float3(20 * -distance, 0.0f, lines * distance);
+	vertices[4 * i + 3] = float3(20 * distance, 0.0f, lines * distance);
+
+	// --- Configure vertex attributes ---
+
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(Grid_VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, Grid_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
-void ModuleRenderer3D::CreateFramebuffer()
-{
-	// --- Create a texture to use it as render target ---
-	glGenTextures(1, &rendertexture);
-	glBindTexture(GL_TEXTURE_2D, rendertexture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
-	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// --- Generate attachments, DEPTH and STENCIL ---
-	glGenTextures(1, &depthbuffer);
-	glBindTexture(GL_TEXTURE_2D, depthbuffer);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, App->window->GetWindowWidth(), App->window->GetWindowHeight());
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// --- Generate framebuffer object (fbo) ---
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendertexture, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Shaders ------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 void ModuleRenderer3D::CreateDefaultShaders()
 {
 	ImporterShader* IShader = App->resources->GetImporter<ImporterShader>();
@@ -662,49 +1015,49 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating z buffer shader drawer ---
 
 	const char* zdrawervertex =
-		R"(#version 440 core 
-		#define VERTEX_SHADER 
-		#ifdef VERTEX_SHADER 
-		
-		layout (location = 0) in vec3 a_Position; 
-		
-		uniform vec2 nearfar; 
-		uniform mat4 u_Model; 
-		uniform mat4 u_View; 
-		uniform mat4 u_Proj; 
-		
-		out mat4 v_Projection; 
-		out vec2 v_NearFarPlanes; 
-		
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
+
+		uniform vec2 nearfar;
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out mat4 v_Projection;
+		out vec2 v_NearFarPlanes;
+
 		void main()
-		{ 
-			v_NearFarPlanes = nearfar; 
-			v_Projection = u_Proj; 
-			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0); 
+		{
+			v_NearFarPlanes = nearfar;
+			v_Projection = u_Proj;
+			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 		}
 		#endif //VERTEX_SHADER)";
 
 	const char* zdrawerfragment =
-		R"(#define FRAGMENT_SHADER 
+		R"(#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
-		
+
 			in vec2 v_NearFarPlanes;
 			in mat4 v_Projection;
-		
+
 			out vec4 color;
-		
+
 			float LinearizeDepth(float depth)
 			{
-				float z = 2.0 * depth - 1.0; // back to NDC 
+				float z = 2.0 * depth - 1.0; // back to NDC
 				return 2.0 * v_NearFarPlanes.x * v_NearFarPlanes.y / (v_NearFarPlanes.y + v_NearFarPlanes.x - z * (v_NearFarPlanes.y - v_NearFarPlanes.x));
 			}
-		
+
 			void main()
 			{
 				float depth = LinearizeDepth(gl_FragCoord.z) / v_NearFarPlanes.y;
 				color = vec4(vec3(gl_FragCoord.z * v_NearFarPlanes.y * v_NearFarPlanes.x), 1.0);
 			}
-		
+
 		#endif //FRAGMENT_SHADER)";
 
 	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z), just in case I need it again (doubt it though)
@@ -721,45 +1074,45 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating text rendering shaders ---
 
 	const char* textVertShaderSrc =
-		R"(#version 440 core 
-		
-		#define VERTEX_SHADER 
-		#ifdef VERTEX_SHADER 
-		
-		layout (location = 0) in vec3 a_Position; 
+		R"(#version 440 core
+
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
 		layout (location = 1) in vec2 a_TexCoords;
-		
-		uniform mat4 u_Model; 
-		uniform mat4 u_View; 
-		uniform mat4 u_Proj; 
-		
-		out vec2 v_TexCoords; 
-		
+
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out vec2 v_TexCoords;
+
 		void main()
-		{ 
-			gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f); 
-			v_TexCoords = a_TexCoords; 
+		{
+			gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f);
+			v_TexCoords = a_TexCoords;
 		}
-		
+
 		#endif //VERTEX_SHADER)";
 
 	const char* textFragShaderSrc =
-		R"(#define FRAGMENT_SHADER 
-		#ifdef FRAGMENT_SHADER 
-		
-		in vec2 v_TexCoords; 
-		
-		uniform sampler2D text; 
-		uniform vec3 textColor; 
-		
-		out vec4 color; 
-		
+		R"(#define FRAGMENT_SHADER
+		#ifdef FRAGMENT_SHADER
+
+		in vec2 v_TexCoords;
+
+		uniform sampler2D text;
+		uniform vec3 textColor;
+
+		out vec4 color;
+
 		void main()
-		{ 
-			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r); 
+		{
+			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r);
 			color = vec4(textColor, 1.0) * sampled; 
-		} 
-		
+		}
+
 		#endif //FRAGMENT_SHADER)";
 
 	textShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TextShader.glsl", 11);
@@ -842,9 +1195,9 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 		void main()
 		{
-			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);
 			TexCoords = aTexCoords;
-		} 
+		}
 		#endif //VERTEX_SHADER)";
 
 	const char* fragmentScreenShader =
@@ -853,13 +1206,13 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#ifdef FRAGMENT_SHADER
 
 		out vec4 FragColor;
-  
+
 		in vec2 TexCoords;
 
 		uniform sampler2D screenTexture;
-		
+
 		void main()
-		{ 
+		{
 		    FragColor = texture(screenTexture, TexCoords);
 		}
 		#endif //FRAGMENT_SHADER)";
@@ -877,287 +1230,9 @@ void ModuleRenderer3D::CreateDefaultShaders()
 }
 
 
-
-void ModuleRenderer3D::CreateGrid(float target_distance)
-{
-	// --- Fill vertex data ---
-
-	float distance = target_distance / 4;
-
-	if (distance < 1)
-		distance = 1;
-
-	float3 vertices[164];
-
-	uint i = 0;
-	int lines = -20;
-
-	for (i = 0; i < 40; i++)
-	{
-		vertices[4 * i] = float3(lines * -distance, 0.0f, 20 * -distance);
-		vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 20 * distance);
-		vertices[4 * i + 2] = float3(20 * -distance, 0.0f, lines * distance);
-		vertices[4 * i + 3] = float3(20 * distance, 0.0f, lines * distance);
-
-		lines++;
-	}
-
-	vertices[4 * i] = float3(lines * -distance, 0.0f, 20 * -distance);
-	vertices[4 * i + 1] = float3(lines * -distance, 0.0f, 20 * distance);
-	vertices[4 * i + 2] = float3(20 * -distance, 0.0f, lines * distance);
-	vertices[4 * i + 3] = float3(20 * distance, 0.0f, lines * distance);
-
-	// --- Configure vertex attributes ---
-
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(Grid_VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, Grid_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-
-
-// ----------------------------------------------------
-
-
-// ------------------------------ Draw --------------------------------------------------------
-
-
-void ModuleRenderer3D::DrawRenderMeshes()
-{
-	// --- Activate wireframe mode ---
-	if (wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	// --- Draw Game Object Meshes ---
-	for (std::map<uint, std::vector<RenderMesh>>::const_iterator it = render_meshes.begin(); it != render_meshes.end(); ++it)
-	{
-		DrawRenderMesh((*it).second);
-	}
-
-	// --- DeActivate wireframe mode ---
-	if (wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-}
-
-void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
-{
-	for(uint i = 0; i < meshInstances.size(); ++i)
-	{
-		RenderMesh* mesh = &meshInstances[i];
-		uint shader = defaultShader->ID;
-		float4x4 model = mesh->transform;
-		float3 colorToDraw = float3(1.0f);
-
-		// --- Select/Outline ---
-		if (mesh->flags & RenderMeshFlags_::selected)
-		{
-			glStencilFunc(GL_ALWAYS, 1, 0xFF);
-			glStencilMask(0xFF);
-		}
-
-		if (mesh->flags & RenderMeshFlags_::outline)
-		{
-			shader = OutlineShader->ID;
-			colorToDraw = { 1.0f, 0.65f, 0.0f };
-			float3 scale = float3(1.05f, 1.05f, 1.05f);
-			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
-		}
-
-		// --- Display Z buffer ---
-		if (zdrawer)
-			shader = ZDrawerShader->ID;
-
-		// --- Get Mesh Material ---
-		if (mesh->mat->shader && shader != OutlineShader->ID && shader != ZDrawerShader->ID)
-		{
-			shader = mesh->mat->shader->ID;
-			mesh->mat->UpdateUniforms();
-		}
-		
-		// --- Draw Wireframe if we must ---
-		if (mesh->flags & RenderMeshFlags_::wire)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-		// --------------------------------------------------------------------------------------------------------------
-		// ------------------------------------------------ SHADER STUFF ------------------------------------------------
-		glUseProgram(shader);
-
-		// --- Give ZDrawer near and far camera frustum planes pos ---
-		if (zdrawer)
-			glUniform2f(glGetUniformLocation(shader, "nearfar"), active_camera->GetNearPlane(), active_camera->GetFarPlane());
-		
-		// --- Set Matrix Uniforms ---
-		glUniformMatrix4fv(glGetUniformLocation(shader, "u_Model"), 1, GL_FALSE, model.Transposed().ptr());
-		glUniformMatrix4fv(glGetUniformLocation(shader, "u_View"), 1, GL_FALSE, active_camera->GetOpenGLViewMatrix().ptr());
-		glUniform1f(glGetUniformLocation(shader, "time"), App->time->time);
-
-		//// Right handed projection matrix
-		float f = 1.0f / tan(active_camera->GetFOV() * DEGTORAD / 2.0f);
-		float4x4 proj_RH(
-			f / active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
-			0.0f, f, 0.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, -1.0f,
-			0.0f, 0.0f, active_camera->GetNearPlane(), 0.0f);
-
-		glUniformMatrix4fv(glGetUniformLocation(shader, "u_Proj"), 1, GL_FALSE, proj_RH.ptr());
-
-		// --- Send Color ---
-		glUniform3f(glGetUniformLocation(shader, "u_Color"), colorToDraw.x, colorToDraw.y, colorToDraw.z);
-
-		// --- Gamma Correction Value --- u_GammaCorrection
-		glUniform1f(glGetUniformLocation(shader, "u_GammaCorrection"), m_GammaCorrection);
-
-		// --- Set Normal Mapping Draw
-		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping"), (int)m_Draw_normalMapping);
-		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit"), (int)m_Draw_normalMapping_Lit);
-		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit_Adv"), (int)m_Draw_normalMapping_Lit_Adv);
-
-		// --- Send Lights ---
-		if (shader != OutlineShader->ID)
-		{
-			glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), m_LightsVec.size());
-			for (uint i = 0; i < m_LightsVec.size(); ++i)
-				m_LightsVec[i]->SendUniforms(shader, i);
-		}
-		else
-			glUniform1i(glGetUniformLocation(shader, "u_LightsNumber"), 0);
-
-		// --- General Rendering Uniforms (material - texture - color related) ---
-		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices) // if mesh to draw
-		{
-			const ResourceMesh* rmesh = mesh->resource_mesh;
-
-			if (mesh->deformable_mesh)
-				rmesh = mesh->deformable_mesh;
-
-			glBindVertexArray(rmesh->VAO);
-
-			if (mesh->mat)
-			{
-				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
-				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
-				
-				//Textures 
-				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);
-				glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
-				glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
-				glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
-				
-				if (mesh->flags & RenderMeshFlags_::texture)
-				{
-					if (mesh->flags & RenderMeshFlags_::checkers)
-						glBindTexture(GL_TEXTURE_2D, App->textures->GetCheckerTextureID()); // start using texture
-					else
-					{
-						if (!mesh->mat->m_DiffuseResTexture && !mesh->mat->m_SpecularResTexture && !mesh->mat->m_NormalResTexture)
-							glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), 0);
-
-						if (mesh->mat->m_DiffuseResTexture)
-						{
-							glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 1);
-							
-							glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 1);
-							glActiveTexture(GL_TEXTURE0 + 1);
-							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_DiffuseResTexture->GetTexID());
-						}
-						else
-							glUniform1i(glGetUniformLocation(shader, "u_AlbedoTexture"), 0);
-
-						if (mesh->mat->m_SpecularResTexture)
-						{
-							glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 1);
-							
-							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 2);
-							glActiveTexture(GL_TEXTURE0 + 2);
-							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_SpecularResTexture->GetTexID());
-						}
-						else
-							glUniform1i(glGetUniformLocation(shader, "u_SpecularTexture"), 0);
-
-						if (mesh->mat->m_NormalResTexture)
-						{
-							glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 1);
-							
-							glUniform1i(glGetUniformLocation(shader, "u_NormalTexture"), 3);
-							glActiveTexture(GL_TEXTURE0 + 3);
-							glBindTexture(GL_TEXTURE_2D, mesh->mat->m_NormalResTexture->GetTexID());
-						}
-						else
-							glUniform1i(glGetUniformLocation(shader, "u_NormalTexture"), 0);
-					}
-				}
-			}
-			
-			// --- Render ---
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rmesh->EBO);
-			glDrawElements(GL_TRIANGLES, rmesh->IndicesSize, GL_UNSIGNED_INT, NULL); //render from array data
-
-			// --- Unbind Buffers ---
-			glBindVertexArray(0);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-		}
-
-		// --- DeActivate wireframe mode ---
-		if (mesh->flags & RenderMeshFlags_::wire)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-		if (mesh->flags & RenderMeshFlags_::selected)
-		{
-			glStencilMask(0x00);
-		}
-
-		// --- Set color back to default ---
-		glUniform3f(glGetUniformLocation(shader, "u_Color"), 1.0f, 1.0f, 1.0f);
-	}
-
-	glUseProgram(0);
-}
-
-void ModuleRenderer3D::HandleObjectOutlining()
-{
-	// --- Selected Object Outlining ---
-	for (GameObject* obj : *App->selection->GetSelected())
-	{
-		// --- Draw slightly scaled-up versions of the objects, disable stencil writing
-		// The stencil buffer is filled with several 1s. The parts that are 1 are not drawn, only the objects size
-		// differences, making it look like borders ---
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		glDisable(GL_DEPTH_TEST);
-
-		// --- Search for Renderer Component ---
-		ComponentMeshRenderer* MeshRenderer = obj->GetComponent<ComponentMeshRenderer>();
-
-		// --- If Found, draw the mesh ---
-		if (MeshRenderer && MeshRenderer->IsEnabled() && obj->GetActive())
-		{
-			std::vector<RenderMesh> meshInstances;
-
-			ComponentMesh* cmesh = obj->GetComponent<ComponentMesh>();
-			ComponentMeshRenderer* cmesh_renderer = obj->GetComponent<ComponentMeshRenderer>();
-			RenderMeshFlags flags = outline;
-
-			if (cmesh && cmesh->resource_mesh && cmesh_renderer && cmesh_renderer->material)
-			{
-				meshInstances.push_back(RenderMesh(obj->GetComponent<ComponentTransform>()->GetGlobalTransform(), cmesh->resource_mesh, cmesh_renderer->material, flags));
-				DrawRenderMesh(meshInstances);
-			}
-		}
-		//MeshRenderer->Draw(true);
-
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glEnable(GL_DEPTH_TEST);
-	}
-}
-
+// ---------------------------------------------------------------------------------------------
+// ------------------------------ Draw Utilities -----------------------------------------------
+// ---------------------------------------------------------------------------------------------
 void ModuleRenderer3D::DrawRenderLines()
 {
 	// --- Use linepoint shader ---
@@ -1268,23 +1343,6 @@ void ModuleRenderer3D::DrawGrid()
 	glUseProgram(0);
 }
 
-void ModuleRenderer3D::DrawFramebuffer() {
-	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
-	// clear all relevant buffers
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glUseProgram(screenShader->ID);
-	glBindVertexArray(quadVAO);
-	glBindTexture(GL_TEXTURE_2D, rendertexture);	// use the color attachment texture as the texture of the quad plane
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	// --- Unbind buffers ---
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);
-}
-
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
 	float3 vertices[24] =
 	{
@@ -1377,5 +1435,3 @@ void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, 
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
-
-// ----------------------------------------------------
