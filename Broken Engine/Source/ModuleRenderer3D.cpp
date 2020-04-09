@@ -1016,7 +1016,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* zdrawerfragment =
-		R"(#define FRAGMENT_SHADER 
+		R"(#version 440 core
+		#define FRAGMENT_SHADER 
 		#ifdef FRAGMENT_SHADER
 		
 			in vec2 v_NearFarPlanes;
@@ -1053,7 +1054,6 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	const char* textVertShaderSrc =
 		R"(#version 440 core 
-		
 		#define VERTEX_SHADER 
 		#ifdef VERTEX_SHADER 
 		
@@ -1075,7 +1075,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* textFragShaderSrc =
-		R"(#define FRAGMENT_SHADER 
+		R"(#version 440 core 
+		#define FRAGMENT_SHADER 
 		#ifdef FRAGMENT_SHADER 
 		
 		in vec2 v_TexCoords; 
@@ -1131,7 +1132,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* fragmentShaderSource =
-		R"(#version 440 core
+		R"(#version 440 core 
 		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
 
@@ -1179,7 +1180,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#endif //VERTEX_SHADER)";
 
 	const char* fragmentScreenShader =
-		R"(#version 440 core
+		R"(#version 440 core 
 		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
 

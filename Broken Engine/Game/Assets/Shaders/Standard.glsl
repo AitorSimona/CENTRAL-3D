@@ -47,7 +47,6 @@ void main()
 
 #endif //VERTEX_SHADER
 
-
 #define FRAGMENT_SHADER
 #ifdef FRAGMENT_SHADER
 
@@ -65,7 +64,7 @@ in vec3 v_CamPos;
 in mat3 v_TBN;
 
 //Uniforms
-uniform float u_Shininess = 32.0;
+uniform float u_Shininess = 1.5;
 uniform int u_UseTextures = 0;
 
 uniform int u_HasDiffuseTexture = 0;
