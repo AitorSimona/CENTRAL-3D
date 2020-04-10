@@ -27,7 +27,6 @@ public:
 	void RotateObject(float x, float y, float z, uint gameobject_UUID);
 	void SetObjectRotation(float x, float y, float z, uint gameobject_UUID);
 	void LookAt(float spotX, float spotY, float spotZ, uint gameobject_UUID);
-
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGTRANSFORM_H__
