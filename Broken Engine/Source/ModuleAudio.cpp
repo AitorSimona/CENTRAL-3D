@@ -6,6 +6,7 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "JSONLoader.h"
+#include <vector>
 
 #include "mmgr/mmgr.h"
 
@@ -20,7 +21,19 @@ ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled) {
 	name = "Audio";
 }
 
-ModuleAudio::~ModuleAudio() {}
+ModuleAudio::~ModuleAudio() 
+{
+	for (int i = 0; i < audioListenerList.size(); ++i)
+	{
+		delete audioListenerList[i];
+		audioListenerList[i] = nullptr;
+	}
+	for (int i = 0; i < audioSourceList.size(); ++i)
+	{
+		delete audioSourceList[i];
+		audioSourceList[i] = nullptr;
+	}
+}
 
 bool ModuleAudio::Init(json& file)
 {
@@ -197,7 +210,7 @@ WwiseGameObject::WwiseGameObject(uint64 id, const char* name)
 
 WwiseGameObject::~WwiseGameObject()
 {
-	AK::SoundEngine::UnregisterGameObj(id);
+	//AK::SoundEngine::UnregisterGameObj(id);
 }
 
 void WwiseGameObject::SetPosition(float posX, float posY, float posZ, float frontX, float frontY, float frontZ, float topX, float topY, float topZ)
@@ -249,6 +262,7 @@ WwiseGameObject* WwiseGameObject::CreateAudioSource(uint id, const char* name, f
 {
 	WwiseGameObject* go = new WwiseGameObject(id, name);
 	go->SetPosition(position.x, position.y, position.z);
+	App->audio->audioSourceList.push_back(go);
 
 	return go;
 }
@@ -261,6 +275,8 @@ WwiseGameObject* WwiseGameObject::CreateAudioListener(uint id, const char* name,
 	AK::SoundEngine::SetDefaultListeners(&listenerID, 1);
 	go->SetPosition(position.x, position.y, position.z);
 	App->audio->currentListenerID = listenerID;
+	App->audio->audioListenerList.push_back(go);
+
 	return go;
 }
 
