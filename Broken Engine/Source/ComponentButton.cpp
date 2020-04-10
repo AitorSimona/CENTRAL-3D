@@ -63,13 +63,21 @@ void ComponentButton::Update()
 
 void ComponentButton::Draw()
 {
+	//float3 worldpos = App->ui_system->ui_camera->ScreenToWorld(position2D,1.0f);
+	//float2 worldpos2 = App->ui_system->ui_camera->WorldToScreen(float3(position2D, 1.0f));
+
+	float ratiox = 856.52173;
+	float ratioy = 856.52173;
+
 	// --- Frame image with camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D*0.01f, 1.0f));
+	float4x4 transform = transform.FromTRS(float3(position2D.x / ratiox, position2D.y / ratioy,0.0f), Quat::identity, float3(size2D.x / ratiox, size2D.y / ratioy, 1.0f));
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
 	glUseProgram(shaderID);
+
+	ComponentCamera* prevcam = App->renderer3D->active_camera;
+	App->renderer3D->SetActiveCamera(App->ui_system->ui_camera);
 
 	GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
@@ -85,7 +93,7 @@ void ComponentButton::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		0.0f, 0.0f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -128,12 +136,9 @@ void ComponentButton::Draw()
 	if (state == LOCKED) ChangeColorTo(locked_color);
 
 	// --- Collider ---
-	if (collider_visible && App->GetAppState() == AppState::EDITOR) //draw only in editor mode
-	{
-		App->gui->draw_list->AddRect(ImVec2(App->gui->sceneX + collider.x, App->gui->sceneY + collider.y),
-			ImVec2(App->gui->sceneX + collider.x + collider.w, App->gui->sceneY + collider.y + collider.h),
-			ImU32(ImColor(ImVec4(1.0f, 0.0f, 0.0f, 1.0f))), 0.0f, 0, 1.0f);
-	}
+	collider = { (int)position2D.x, (int)position2D.y, (int)size2D.x, (int)size2D.y };
+
+	App->renderer3D->SetActiveCamera(prevcam);
 }
 
 json ComponentButton::Save() const

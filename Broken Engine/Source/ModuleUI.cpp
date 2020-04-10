@@ -9,6 +9,7 @@
 #include "Component.h"
 #include "ComponentCanvas.h"
 #include "ComponentButton.h"
+#include "ComponentCamera.h"
 #include "ResourceFont.h"
 
 #include <queue>
@@ -32,6 +33,12 @@ bool ModuleUI::Start()
 	/*std::string font_name = "calibri.ttf";
 
 	LoadFont(font_name);*/
+
+	ui_camera = new ComponentCamera(nullptr);
+
+	ui_camera->frustum.SetPos(float3(0.0f,0.0f, 1.0f));
+	ui_camera->SetFOV(60.0f);
+	ui_camera->Look({ 0.0f, 0.0f, 0.0f });
 
 	return true;
 }
@@ -69,6 +76,8 @@ update_status ModuleUI::PostUpdate(float dt)
 bool ModuleUI::CleanUp()
 {
 	
+	delete ui_camera;
+
 	return true;
 }
 
@@ -124,11 +133,17 @@ bool ModuleUI::CheckMousePos(SDL_Rect collider) // 0,0 is top left corner
 	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN) 
 		int i = 0;
 
-	mouse_pos.x = App->input->GetMouseX() - App->gui->sceneX;
-	mouse_pos.y = App->input->GetMouseY() - App->gui->sceneY; 
+	mouse_pos.x = App->input->GetMouseX();
+	mouse_pos.y = App->input->GetMouseY();
 
+	float2 screenpos = float2(App->gui->sceneX + App->gui->sceneWidth / 2  + collider.x, collider.y + App->gui->sceneY + App->gui->sceneHeight / 2);
+	SDL_Rect elementCollider = { screenpos.x, screenpos.y - collider.h, collider.w, collider.h };
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
-	if (SDL_HasIntersection(&MouseCollider, &collider))
+
+	ENGINE_CONSOLE_LOG("mouseX %f", screenpos.x);
+	ENGINE_CONSOLE_LOG("mouseY %f", screenpos.y);
+
+	if (SDL_HasIntersection(&MouseCollider, &elementCollider))
 		return true;
 
 	return false;
