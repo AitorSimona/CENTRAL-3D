@@ -12,7 +12,6 @@
 
 using namespace Broken;
 
-
 ComponentScript::ComponentScript(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::Script)
 {
 	name = "Script";
@@ -29,7 +28,6 @@ ComponentScript::~ComponentScript()
 		script->RemoveUser(GO);
 	}
 }
-
 
 void ComponentScript::Update()
 {
@@ -77,7 +75,7 @@ void ComponentScript::CreateInspectorNode() {
 						uint UID = *(const uint*)payload->Data;
 						Broken::Resource* resource = App->resources->GetResource(UID, false);
 
-						if (resource && resource->GetType() == Broken::Resource::ResourceType::SCENE)
+						if (resource && (resource->GetType() == Broken::Resource::ResourceType::SCENE || resource->GetType() == Broken::Resource::ResourceType::PREFAB))
 						{
 							script_variables[i].editor_value.as_double = UID;
 							script_variables[i].object_name = resource->GetName();
