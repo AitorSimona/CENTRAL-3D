@@ -3,6 +3,8 @@
 #include "ModuleFileSystem.h"
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
+#include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "ResourceMaterial.h"
 #include "ResourceFolder.h"
@@ -12,6 +14,9 @@
 
 #include "ResourceShader.h"
 
+#include "GameObject.h"
+#include "ComponentMeshRenderer.h"
+
 #include "ImporterTexture.h"
 
 #include "Assimp/include/scene.h"
@@ -19,10 +24,12 @@
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ImporterMaterial::ImporterMaterial() : Importer(Importer::ImporterType::Material) {
+ImporterMaterial::ImporterMaterial() : Importer(Importer::ImporterType::Material) 
+{
 }
 
-ImporterMaterial::~ImporterMaterial() {
+ImporterMaterial::~ImporterMaterial() 
+{
 }
 
 // --- Create Material from Scene and path to file ---
@@ -126,6 +133,16 @@ Resource* ImporterMaterial::Load(const char* path) const
 
 	if (!file.is_null())
 	{
+		// --- Load Tex preview ---
+		std::string previewTexpath = file["PreviewTexture"].is_null() ? "none" : file["PreviewTexture"];
+		uint width, height = 0;
+
+		if (previewTexpath != "none" && App->fs->Exists(previewTexpath.c_str()))
+		{
+			mat->previewTexPath = previewTexpath;
+			mat->SetPreviewTexID(App->textures->CreateTextureFromFile(mat->previewTexPath.c_str(), width, height));
+		}
+
 		if (!file["AmbientColor"].is_null())
 			matColor = float3(file["AmbientColor"]["R"].get<float>(), file["AmbientColor"]["G"].get<float>(), file["AmbientColor"]["B"].get<float>());
 
@@ -271,8 +288,23 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 
 	json file;
 
+	// --- Create preview Texture ---
+	std::vector<GameObject*> gos;
+	GameObject* tmpgo = App->scene_manager->LoadSphere();
+	gos.push_back(tmpgo);
+	tmpgo->GetComponent<ComponentMeshRenderer>()->material->Release();
+	tmpgo->GetComponent<ComponentMeshRenderer>()->material->RemoveUser(tmpgo);
+	tmpgo->GetComponent<ComponentMeshRenderer>()->material = (ResourceMaterial*)App->resources->GetResource(mat->GetUID());
+
+	uint TexID = 0;
+	mat->previewTexPath = App->renderer3D->RenderSceneToTexture(gos, TexID);
+	mat->SetPreviewTexID(TexID);
+
+	App->scene_manager->DestroyGameObject(tmpgo);
+
 	file[mat->GetName()];
 	file["ResourceDiffuse"];
+	file["PreviewTexture"] = mat->previewTexPath;
 	file["ResourceSpecular"];
 	file["ResourceNormalTexture"];
 	file["AmbientColor"];

@@ -14,7 +14,8 @@
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
-ResourceScene::ResourceScene(uint UID, const char* source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file) {
+ResourceScene::ResourceScene(uint UID, const char* source_file) : Resource(Resource::ResourceType::SCENE, UID, source_file) 
+{
 	extension = ".scene";
 	resource_file = source_file;
 	original_file = resource_file;
@@ -29,7 +30,8 @@ ResourceScene::~ResourceScene()
 	StaticGameObjects.clear();
 }
 
-bool ResourceScene::LoadInMemory() {
+bool ResourceScene::LoadInMemory() 
+{
 	// --- Load scene game objects ---
 
 	if (NoStaticGameObjects.size() == 0 && App->fs->Exists(resource_file.c_str()))
@@ -69,13 +71,24 @@ bool ResourceScene::LoadInMemory() {
 				if (!file[it.key()]["Index"].is_null())
 					go->index = file[it.key()]["Index"];
 
-
 				if (!file[it.key()]["Navigation Static"].is_null())
 					go->navigationStatic = file[it.key()]["Navigation Static"];
 
 				if (!file[it.key()]["Navigation Area"].is_null())
 					go->navigationArea = file[it.key()]["Navigation Area"];
+				if (!file[it.key()]["PrefabChild"].is_null())
+					go->is_prefab_child = file[it.key()]["PrefabChild"];
 
+				if (!file[it.key()]["PrefabInstance"].is_null())
+					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
+
+
+
+				if (!file[it.key()]["Model"].is_null())
+				{
+					Importer::ImportData IData(file[it.key()]["Model"].get<std::string>().c_str());
+					go->model = (ResourceModel*)App->resources->ImportAssets(IData);
+				}
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];				
 
@@ -210,6 +223,32 @@ void ResourceScene::FreeMemory() {
 	App->event_manager->PushEvent(e);
 
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
+}
+
+void ResourceScene::DeactivateAllGameObjects()
+{
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
+}
+
+void ResourceScene::ActivateAllGameObjects()
+{
+	for (std::unordered_map<uint, GameObject*>::iterator it = NoStaticGameObjects.begin(); it != NoStaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = true;
+	}
+
+	for (std::unordered_map<uint, GameObject*>::iterator it = StaticGameObjects.begin(); it != StaticGameObjects.end(); ++it)
+	{
+		(*it).second->GetActive() = false;
+	}
 }
 
 // Created for on-play temporal scene 

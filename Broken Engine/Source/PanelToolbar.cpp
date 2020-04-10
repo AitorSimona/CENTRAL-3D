@@ -4,6 +4,8 @@
 #include "PanelScene.h"
 #include "ModuleGui.h"
 
+#include "PanelHierarchy.h"
+
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
@@ -48,6 +50,9 @@ bool PanelToolbar::Draw()
 			if (app_status == Broken::AppState::EDITOR)
 			{
 				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
+
+				if (EngineApp->gui->editingPrefab)
+					EngineApp->editorui->panelHierarchy->ExitEditPrefab();
 			}
 
 			if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE)

@@ -3,7 +3,6 @@
 #include "OpenGL.h"
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
-#include "ResourceTexture.h"
 
 
 #include "DevIL/include/il.h"
@@ -99,12 +98,38 @@ uint ModuleTextures::LoadDefaultTexture() const {
 	return CreateTextureFromPixels(GL_RGBA, 1, 1, GL_RGBA, default_tex, true);
 }
 
-uint ModuleTextures::GetCheckerTextureID() const {
-	return CheckerTexID;
-}
+uint ModuleTextures::CreateAndSaveTextureFromPixels(uint UID, int internalFormat, uint width, uint height, uint format, const void* pixels, std::string& out_path)
+{
+	out_path = TEXTURES_FOLDER;
+	out_path.append(std::to_string(UID));
+	out_path.append(".dds");
 
-uint ModuleTextures::GetDefaultTextureID() const {
-	return DefaultTexture;
+	ILuint img;
+	ilGenImages(1, &img);
+	ilBindImage(img);
+	ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, (void*)pixels);
+
+	// --- Save to Lib ---
+	ILuint size;
+	ILubyte* data;
+	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
+	size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
+
+	if (size > 0)
+	{
+		data = new ILubyte[size]; // allocate data buffer
+
+		if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
+			App->fs->Save(out_path.c_str(), data, size);
+
+		delete[] data;
+	}
+
+	uint texID = ilutGLBindTexImage();
+
+	ilDeleteImages(1, &img);
+
+	return 	texID;
 }
 
 void ModuleTextures::SetTextureParameters(bool CheckersTexture) const {
@@ -171,9 +196,11 @@ void ModuleTextures::CreateTextureFromImage(uint& TextureID, uint& width, uint& 
 		iluFlipImage();
 
 	// --- Convert the image into a suitable format to work with ---
-	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
+	if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
+	{
 		// --- Create the texture ---
-		TextureID = CreateTextureFromPixels(ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetInteger(IL_IMAGE_FORMAT), ilGetData());
+		uint originalFormat = ilGetInteger(IL_IMAGE_FORMAT);
+		TextureID = CreateTextureFromPixels(originalFormat, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), originalFormat, ilGetData());
 
 		if (path != "") {
 			iluFlipImage();
@@ -235,6 +262,36 @@ uint ModuleTextures::CreateTextureFromFile(const char* path, uint& width, uint& 
 	ilDeleteImages(1, (const ILuint*)&ImageName);
 
 	// --- Returning the Texture ID so a mesh can use it, note that this variable is filled by CreateTextureFromPixels ---
-
 	return TextureID;
 }
+
+//void* ModuleTextures::GetTextureDataFromFile(const char* path) const {
+//	if (path == nullptr) {
+//		ENGINE_CONSOLE_LOG("|[error]: Error at loading texture from path. ERROR: Path %s was nullptr", path);
+//		return nullptr;
+//	}
+//
+//	uint ImageName = 0;
+//	ilGenImages(1, (ILuint*)&ImageName);
+//
+//	// --- Bind the image ---
+//	ilBindImage(ImageName);
+//	void* ret = nullptr;
+//
+//	// --- Load the image into binded buffer and create texture from its pixel data ---
+//	if (ilLoadImage(path)) {
+//		ILinfo imageInfo;
+//		iluGetImageInfo(&imageInfo);
+//
+//		ret = new char[imageInfo.SizeOfData];
+//		memcpy(ret, ilGetData(), imageInfo.SizeOfData);
+//	}
+//	else {
+//		ENGINE_CONSOLE_LOG("|[error]: DevIL could not load the image. ERROR: %s", iluErrorString(ilGetError()));
+//	}
+//
+//	// --- Release Image data (we have already extracted the necessary information) ---
+//	ilDeleteImages(1, &ImageName);
+//
+//	return ret;
+//}

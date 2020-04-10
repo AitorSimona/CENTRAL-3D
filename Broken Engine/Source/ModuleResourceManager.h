@@ -24,6 +24,7 @@ class ResourceMeta;
 class ResourceScript;
 class ResourceFont;
 class ResourceNavMesh;
+class ResourcePrefab;
 
 class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterTexture;
@@ -40,6 +41,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterFont;
 	friend class ImporterNavMesh;
 	friend class ImporterShader;
+	friend class ImporterPrefab;
 	friend class PanelResources;
 	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
@@ -67,6 +69,7 @@ public:
 	Resource* ImportFolder(Importer::ImportData& IData);
 	Resource* ImportScene(Importer::ImportData& IData);
 	Resource* ImportModel(Importer::ImportData& IData);
+	Resource* ImportPrefab(Importer::ImportData& IData);
 	Resource* ImportMaterial(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
 	Resource* ImportBone(Importer::ImportData& IData);
@@ -134,6 +137,7 @@ private:
 	std::map<uint, ResourceFolder*> folders;
 	std::map<uint, ResourceScene*> scenes;
 	std::map<uint, ResourceModel*> models;
+	std::map<uint, ResourcePrefab*> prefabs;
 	std::map<uint, ResourceMaterial*> materials;
 	std::map<uint, ResourceShader*> shaders;
 	std::map<uint, ResourceMesh*> meshes;

@@ -29,6 +29,7 @@ public:
 	bool LoadInMemory() override;
 	void FreeMemory() override;
 
+	std::string previewTexPath;
 private:
 
 	void CreateVBO();

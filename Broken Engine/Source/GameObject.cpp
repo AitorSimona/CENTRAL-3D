@@ -525,7 +525,7 @@ void GameObject::Disable() {
 		childs[i]->Disable();
 }
 
-uint GameObject::GetUID()
+uint& GameObject::GetUID()
 {
 	return UID;
 }

@@ -4,6 +4,7 @@
 #include "Resource.h"
 #include "ResourceFolder.h"
 #include "ResourceModel.h"
+#include "ResourcePrefab.h"
 #include "ResourceScene.h"
 #include "ResourceMaterial.h"
 #include "ResourceMesh.h"

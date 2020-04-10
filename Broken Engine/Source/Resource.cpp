@@ -1,4 +1,5 @@
 #include "Resource.h"
+#include "Resource.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleEventManager.h"
@@ -131,6 +132,11 @@ void Resource::NotifyUsers(ResourceNotificationType type)
 void Resource::SetName(const char* name) 
 {
 	this->name = name;
+}
+
+void Resource::SetPreviewTexID(uint ID)
+{
+	previewTexID = ID;
 }
 
 
