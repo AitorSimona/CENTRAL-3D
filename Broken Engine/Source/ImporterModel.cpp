@@ -3,6 +3,8 @@
 #include "ModuleFileSystem.h"
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
+#include "ModuleTextures.h"
+#include "ModuleRenderer3D.h"
 
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
@@ -58,6 +60,8 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 		}
 
 		rootnode = App->scene_manager->CreateEmptyGameObject();
+		rootnode->is_prefab_instance = true;
+		rootnode->model = model;
 
 		// --- Save Game objects to vector so we can save to lib later ---
 		std::vector<GameObject*> model_gos;
@@ -109,6 +113,10 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 			model->AddResource(bones[j]);
 		}
 
+		// --- Create preview Texture ---
+		uint texID = 0;
+		model->previewTexPath = App->renderer3D->RenderSceneToTexture(model_gos, texID);
+		model->SetPreviewTexID(texID);
 
 		// --- Save to Own format file in Library ---
 		Save(model, model_gos, rootnode->GetName());
@@ -140,24 +148,50 @@ Resource* ImporterModel::Import(ImportData& IData) const {
 	return model;
 }
 
-void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const {
+void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, ResourceMesh*>& scene_meshes, const char* source_file) const 
+{
 	ImporterMesh* IMesh = App->resources->GetImporter<ImporterMesh>();
 
-	for (uint i = 0; i < scene->mNumMeshes; ++i) {
+	for (uint i = 0; i < scene->mNumMeshes; ++i) 
+	{
 		ImportMeshData MData(source_file);
 		MData.mesh = scene->mMeshes[i];
 
 		// --- Else, Import mesh data (fill new_mesh) ---
-		if (IMesh) {
+		if (IMesh)
+		{
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
 			scene_meshes[i]->SetName(scene->mMeshes[i]->mName.C_Str());
+
+			// --- Create preview Texture ---
+
+			std::vector<GameObject*> gos;
+			gos.push_back(App->scene_manager->CreateEmptyGameObject());
+
+			// --- Create new Component Mesh to store current scene mesh data ---
+			ComponentMesh* new_mesh = (ComponentMesh*)gos[0]->AddComponent(Component::ComponentType::Mesh);
+			ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)gos[0]->AddComponent(Component::ComponentType::MeshRenderer);
+
+			// --- Assign previously loaded mesh ---
+			new_mesh->resource_mesh = scene_meshes[i];
+
+			scene_meshes[i]->FreeMemory();
+			scene_meshes[i]->LoadInMemory();
+			uint TexID = 0;
+			std::string previewTexPath = App->renderer3D->RenderSceneToTexture(gos, TexID);
+			scene_meshes[i]->previewTexPath = previewTexPath;
+			scene_meshes[i]->SetPreviewTexID(TexID);
+
+			App->scene_manager->DestroyGameObject(gos[0]);
 		}
 
 	}
 }
 
-void ImporterModel::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const {
-	for (std::map<uint, ResourceMesh*>::iterator it = scene_meshes->begin(); it != scene_meshes->end();) {
+void ImporterModel::FreeSceneMeshes(std::map<uint, ResourceMesh*>* scene_meshes) const 
+{
+	for (std::map<uint, ResourceMesh*>::iterator it = scene_meshes->begin(); it != scene_meshes->end();) 
+	{
 		it->second->FreeMemory();
 		it = scene_meshes->erase(it);
 	}
@@ -364,6 +398,8 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 	nodeGo->SetName(node->mName.C_Str());
 	parent->AddChildGO(nodeGo);
 	scene_gos.push_back(nodeGo);
+	nodeGo->is_prefab_child = true;
+
 
 	ComponentTransform* transform = nodeGo->GetComponent<ComponentTransform>();
 
@@ -390,6 +426,7 @@ void ImporterModel::LoadNodes(const aiNode* node, GameObject* parent, const aiSc
 			new_object = App->scene_manager->CreateEmptyGameObject();
 			nodeGo->AddChildGO(new_object);
 			new_object->SetName(node_name.c_str());
+			new_object->is_prefab_child = true;
 		}
 		else
 		{
@@ -470,27 +507,66 @@ Resource* ImporterModel::Load(const char* path) const {
 	}
 
 
-	if (!file.is_null()) {
+	if (!file.is_null()) 
+	{
+		// --- Load Tex preview ---
+		std::string previewTexpath = file["PreviewTexture"].is_null() ? "none" : file["PreviewTexture"];
+		uint width, height = 0;
+
+		if (previewTexpath != "none" && App->fs->Exists(previewTexpath.c_str()))
+		{
+			resource->previewTexPath = previewTexpath;
+			resource->SetPreviewTexID(App->textures->CreateTextureFromFile(resource->previewTexPath.c_str(), width, height));
+		}
+
+		//------
+
 		// --- Iterate main nodes ---
-		for (json::iterator it = file.begin(); it != file.end(); ++it) {
+		for (json::iterator it = file.begin(); it != file.end(); ++it)
+		{
+			if (it.key() == "PreviewTexture")
+				continue;
+
 			// --- Iterate components ---
 			json components = file[it.key()]["Components"];
 
-			for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) {
+			for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+			{
 				// --- Iterate and load resources ---
 				json _resources = components[it2.key()]["Resources"];
 
-				if (!_resources.is_null()) {
-					for (json::iterator it3 = _resources.begin(); it3 != _resources.end(); ++it3) {
-						std::string value = _resources[it3.key()];
+				if (!_resources.is_null())
+				{
+					for (json::iterator it3 = _resources.begin(); it3 != _resources.end(); ++it3)
+					{
+						std::string value;
+						if (_resources[it3.key()].is_structured())
+							value = _resources[it3.key()]["path"].get<std::string>();
+						else
+							value = _resources[it3.key()].get<std::string>();
 						Importer::ImportData IData(value.c_str());
 						Resource* to_Add = App->resources->ImportAssets(IData);
 
-						if (to_Add) {
+						if (to_Add)
+						{
 							// --- Give mesh a name ---
 							if (to_Add->GetType() == Resource::ResourceType::MESH)
+							{
+								ResourceMesh* mesh = (ResourceMesh*)to_Add;
+
 								to_Add->SetName(it.key().c_str());
 
+								std::string meshpreviewTexpath = _resources[it3.key()]["PreviewTexture"].is_null() ? "none" : _resources[it3.key()]["PreviewTexture"];
+								uint width, height = 0;
+
+								if (meshpreviewTexpath != "none" && App->fs->Exists(mesh->previewTexPath.c_str()))
+								{
+									mesh->previewTexPath = meshpreviewTexpath;
+									mesh->SetPreviewTexID(App->textures->CreateTextureFromFile(mesh->previewTexPath.c_str(), width, height));
+								}
+							}
+
+							//to_Add->SetParent(resource);
 							resource->AddResource(to_Add);
 						}
 					}
@@ -504,24 +580,49 @@ Resource* ImporterModel::Load(const char* path) const {
 	return resource;
 }
 
-void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const {
-	if (model_path) {
+GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel* model) const {
+	
+	GameObject* parent = nullptr;
+
+	if (model_path) 
+	{
 		// --- Load Scene/model file ---
 		json file = App->GetJLoader()->Load(model_path);
 
 		// --- Delete buffer data ---
-		if (!file.is_null()) {
+		if (!file.is_null())
+		{
 			std::vector<GameObject*> objects;
 
 			// --- Iterate main nodes ---
 			for (json::iterator it = file.begin(); it != file.end(); ++it)
 			{
+				if (it.key() == "PreviewTexture")
+					continue;
+
 				// --- Retrieve GO's UID ---
 				std::string uid = file[it.key()]["UID"];
 
 				// --- Create a Game Object for each node ---
 				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
 	
+				// --- Set prefab bool ---
+				if (!file[it.key()]["PrefabChild"].is_null())
+					go->is_prefab_child = file[it.key()]["PrefabChild"];
+
+				if (!file[it.key()]["PrefabInstance"].is_null())
+				{
+					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
+					parent = go;
+				}
+
+				if (!file[it.key()]["Model"].is_null())
+				{
+					std::string model_path = file[it.key()]["Model"];
+					ImportData IData(model_path.c_str());
+					go->model = (ResourceModel*)App->resources->ImportAssets(IData);
+				}
+
 				// --- Retrieve GO's name ---
 				go->SetName(it.key().c_str());
 	
@@ -529,7 +630,8 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 				json components = file[it.key()]["Components"];
 
 
-				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) {
+				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2) 
+				{
 					// --- Determine ComponentType ---
 					std::string type_string = it2.key();
 					uint type_uint = std::stoi(type_string);
@@ -570,12 +672,15 @@ void ImporterModel::InstanceOnCurrentScene(const char* model_path, ResourceModel
 			}
 
 			// --- Add pointer to model ---
-			if (objects[0]) {
-				objects[0]->model = model;
-				model->AddUser(objects[0]);
+			if (parent && model)
+			{
+				parent->model = model;
+				model->AddUser(parent);
 			}
 		}
 	}
+
+	return parent;
 }
 
 void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_gos, const std::string& model_name) const {
@@ -583,14 +688,24 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 
 	json file;
 
-	for (int i = 0; i < model_gos.size(); ++i) {
+	file["PreviewTexture"] = model->previewTexPath;
+
+	for (int i = 0; i < model_gos.size(); ++i)
+	{
 		// --- Create GO Structure ---
 		file[model_gos[i]->GetName()];
 		file[model_gos[i]->GetName()]["UID"] = std::to_string(model_gos[i]->GetUID());
 		file[model_gos[i]->GetName()]["Parent"] = std::to_string(model_gos[i]->parent->GetUID());
 		file[model_gos[i]->GetName()]["Components"];
+		file[model_gos[i]->GetName()]["PrefabChild"] = model_gos[i]->is_prefab_child;
+		file[model_gos[i]->GetName()]["PrefabInstance"] = model_gos[i]->is_prefab_instance;
 
-		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j) {
+		if (model_gos[i]->model)
+			file[model_gos[i]->GetName()]["Model"] = std::string(model_gos[i]->model->GetOriginalFile());
+
+
+		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j) 
+		{
 			// --- Save Components to file ---
 			file[model_gos[i]->GetName()]["Components"][std::to_string((uint)model_gos[i]->GetComponents()[j]->GetType())] = model_gos[i]->GetComponents()[j]->Save();
 		}

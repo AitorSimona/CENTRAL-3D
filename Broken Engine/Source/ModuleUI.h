@@ -2,16 +2,24 @@
 #define __MODULEUI_H__
 #pragma once
 #include "Module.h"
-#include <vector>
 #include "ResourceFont.h"
-#include "Math.h"
+#include "ComponentCanvas.h"
 
 BE_BEGIN_NAMESPACE
 
-class ComponentCanvas;
 class Component;
+
 class BROKEN_API ModuleUI : public Module
 {
+	struct PrioritySort {
+		bool operator()(ComponentCanvas* const& node1, ComponentCanvas* const& node2)
+		{
+			if (node1->priority > node2->priority)
+				return true;
+			else
+				return false;
+		}
+	};
 
 public:
 	ModuleUI(bool start_enabled = true);
@@ -30,8 +38,10 @@ public:
 	
 	void Clear();
 
-	bool CheckMousePos(Component* element, SDL_Rect collider);
-	bool CheckClick(Component* element, bool draggable);
+	bool CheckMousePos(SDL_Rect collider);
+	bool CheckClick(bool draggable = false);
+
+	void OrderCanvas();
 
 public:
 	std::vector<ComponentCanvas*> canvas;

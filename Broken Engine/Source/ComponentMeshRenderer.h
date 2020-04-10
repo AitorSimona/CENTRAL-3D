@@ -2,6 +2,7 @@
 #define __COMPONENT_MESHRENDERER_H__
 
 #include "Component.h"
+#include "Timer.h"
 
 // Specifying normal vectors length (used when drawing normals)
 #define NORMAL_LENGTH 0.5
@@ -12,7 +13,8 @@ class ResourceMesh;
 class ComponentTransform;
 class ResourceMaterial;
 
-class BROKEN_API ComponentMeshRenderer : public Component {
+class BROKEN_API ComponentMeshRenderer : public Component
+{
 public:
 
 	ComponentMeshRenderer(GameObject* ContainerGO);
@@ -32,14 +34,23 @@ public:
 	static inline Component::ComponentType GetType() { return Component::ComponentType::MeshRenderer; };
 
 private:
+
 	// --- Draw Functiions accessed by main Draw ---
 	void DrawMesh(ResourceMesh& mesh) const;
 
 public:
+
 	bool draw_vertexnormals = false;
 	bool draw_facenormals = false;
 	bool checkers = false;
 	ResourceMaterial* material = nullptr;
+
+private:
+
+	bool m_TemporalTextureTest = false;
+	bool save_material = false;
+	Timer material_save_time;
+
 };
 
 BE_END_NAMESPACE

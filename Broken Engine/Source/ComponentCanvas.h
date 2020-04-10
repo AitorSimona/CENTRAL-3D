@@ -28,6 +28,7 @@ public:
 
 public:
 	bool visible = true;
+	int priority = 0;
 
 private:
 	std::vector<Component*> elements;

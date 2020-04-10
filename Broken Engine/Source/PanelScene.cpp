@@ -66,11 +66,16 @@ bool PanelScene::Draw()
 				uint UID = *(const uint*)payload->Data;
 				Broken::Resource* resource = EngineApp->resources->GetResource(UID, false);
 
-				// MYTODO: Instance resource here, put it on scene (depending on resource)
-				if (resource && resource->GetType() == Broken::Resource::ResourceType::MODEL)
+				if (resource->GetType() == Broken::Resource::ResourceType::MODEL)
 				{
 					resource = EngineApp->resources->GetResource(UID);
-					EngineApp->resources->GetImporter < Broken::ImporterModel > ()->InstanceOnCurrentScene(resource->GetResourceFile(), (Broken::ResourceModel*)resource);
+					EngineApp->resources->GetImporter<Broken::ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), (Broken::ResourceModel*)resource);
+				}
+				if (resource->GetType() == Broken::Resource::ResourceType::PREFAB)
+				{
+					// We force a model instance without sending model*
+					resource = EngineApp->resources->GetResource(UID);
+					EngineApp->resources->GetImporter<Broken::ImporterModel>()->InstanceOnCurrentScene(resource->GetResourceFile(), nullptr);
 				}
 			}
 

@@ -691,6 +691,12 @@
     <ClInclude Include="ScriptingCamera.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
+    <ClInclude Include="ImporterPrefab.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourcePrefab.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1151,6 +1157,12 @@
     </ClCompile>
     <ClCompile Include="ScriptingCamera.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterPrefab.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourcePrefab.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
