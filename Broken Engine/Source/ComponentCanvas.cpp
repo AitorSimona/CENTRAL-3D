@@ -93,6 +93,13 @@ void ComponentCanvas::Draw() const
 					bar->Draw();
 				continue;
 			}
+			else if (elements[i]->GetType() == Component::ComponentType::CircularBar)
+			{
+				ComponentCircularBar* cbar = (ComponentCircularBar*)elements[i];
+				if (cbar->visible && cbar->GetActive())
+					cbar->Draw();
+				continue;
+			}
 			else
 				continue;
 		}
