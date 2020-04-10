@@ -106,7 +106,7 @@ void ComponentParticleEmitter::Disable()
 void ComponentParticleEmitter::UpdateParticles(float dt)
 {
 	// Create particle depending on the time
-	if (emisionActive && App->GetAppState() == AppState::PLAY) {
+	if (emisionActive && App->GetAppState() == AppState::PLAY && !App->time->gamePaused) {
 		if (App->time->GetGameplayTimePassed()*1000 - spawnClock > emisionRate)
 		{
 			uint newParticlesAmount = (App->time->GetGameplayTimePassed() * 1000 - spawnClock) / emisionRate;

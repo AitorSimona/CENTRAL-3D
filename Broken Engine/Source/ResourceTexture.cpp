@@ -19,41 +19,42 @@ ResourceTexture::ResourceTexture(uint UID, const char* source_file) : Resource(R
 	LoadToMemory();
 }
 
-ResourceTexture::~ResourceTexture() {
+ResourceTexture::~ResourceTexture()
+{
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-bool ResourceTexture::LoadInMemory() {
+bool ResourceTexture::LoadInMemory()
+{
 	if (App->resources->IsFileImported(original_file.c_str()) && App->fs->Exists(resource_file.c_str()))
+	{
 		SetTextureID(App->textures->CreateTextureFromFile(resource_file.c_str(), Texture_width, Texture_height, -1));
+	}
 	else if (original_file != "DefaultTexture")
-		SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
+	{
+		SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, UID));
+	}
 
 	return true;
 }
 
-void ResourceTexture::FreeMemory() {
+void ResourceTexture::FreeMemory()
+{
 	glDeleteTextures(1, (GLuint*)&buffer_id);
 }
 
-void ResourceTexture::SetTextureID(uint ID) {
-	buffer_id = previewTexID = ID;
-}
-
-uint ResourceTexture::GetTexID() {
-	return buffer_id;
-}
-
-void ResourceTexture::OnOverwrite() {
+void ResourceTexture::OnOverwrite()
+{
 	NotifyUsers(ResourceNotificationType::Overwrite);
 
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
 
-	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, GetUID()));
+	SetTextureID(App->textures->CreateTextureFromFile(original_file.c_str(), Texture_width, Texture_height, UID));
 }
 
-void ResourceTexture::OnDelete() {
+void ResourceTexture::OnDelete()
+{
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();

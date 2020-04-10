@@ -16,7 +16,7 @@ ScriptingInterface::ScriptingInterface() {}
 
 ScriptingInterface::~ScriptingInterface() {}
 
-void ScriptingInterface::MakeUIComponentVisible(uint go_UUID, const char* comp_type)
+void ScriptingInterface::MakeUIComponentVisible(const char* comp_type, uint go_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
@@ -50,7 +50,7 @@ void ScriptingInterface::MakeUIComponentVisible(uint go_UUID, const char* comp_t
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 
-void ScriptingInterface::MakeUIComponentInvisible(uint go_UUID, const char* comp_type)
+void ScriptingInterface::MakeUIComponentInvisible(const char* comp_type, uint go_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
@@ -84,7 +84,7 @@ void ScriptingInterface::MakeUIComponentInvisible(uint go_UUID, const char* comp
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 
-void ScriptingInterface::SetBarPercentage(uint go_UUID, float percentage)
+void ScriptingInterface::SetBarPercentage(float percentage, uint go_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
@@ -100,7 +100,7 @@ void ScriptingInterface::SetBarPercentage(uint go_UUID, float percentage)
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 
-void ScriptingInterface::SetCircularBarPercentage(uint go_UUID, float percentage)
+void ScriptingInterface::SetCircularBarPercentage(float percentage, uint go_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
@@ -116,7 +116,7 @@ void ScriptingInterface::SetCircularBarPercentage(uint go_UUID, float percentage
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 
-void ScriptingInterface::SetUIText(uint go_UUID, const char* text)
+void ScriptingInterface::SetUIText(const char* text, uint go_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
@@ -132,7 +132,7 @@ void ScriptingInterface::SetUIText(uint go_UUID, const char* text)
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 
-void ScriptingInterface::SetUITextAndNumber(uint go_UUID, const char* text, float number)
+void ScriptingInterface::SetUITextAndNumber(const char* text, float number, uint go_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 
@@ -153,7 +153,7 @@ void ScriptingInterface::SetUITextAndNumber(uint go_UUID, const char* text, floa
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", go_UUID);
 }
 
-void ScriptingInterface::SetUITextNumber(uint go_UUID, float number)
+void ScriptingInterface::SetUITextNumber(float number, uint go_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(go_UUID);
 

@@ -93,54 +93,6 @@ void ComponentCanvas::Draw() const
 					bar->Draw();
 				continue;
 			}
-			else if (elements[i]->GetType() == Component::ComponentType::Text)
-			{
-				ComponentText* text = (ComponentText*)elements[i];
-				if (text->visible)
-					text->Draw();
-				continue;
-			}
-			else if (elements[i]->GetType() == Component::ComponentType::Image)
-			{
-				ComponentImage* image = (ComponentImage*)elements[i];
-				if (image->visible)
-					image->Draw();
-				continue;
-			}
-			else if (elements[i]->GetType() == Component::ComponentType::Button)
-			{
-				ComponentButton* button = (ComponentButton*)elements[i];
-				if (button->visible)
-					button->Draw();
-			}
-			//else if (elements[i]->GetType() == Component::ComponentType::CheckBox)
-			//{
-			//	CheckBox* elem = (CheckBox*)elements[i];
-			//	if (elem->visible) 
-			//		elem->Draw();
-			//	continue;
-			//}
-			//else if (elements[i]->GetType() == Component::ComponentType::InputText)
-			//{
-			//	InputText* elem = (InputText*)elements[i];
-			//	if (elem->visible) 
-			//		elem->Draw();
-			//	continue;
-			//}
-			else if (elements[i]->GetType() == Component::ComponentType::ProgressBar)
-			{
-				ComponentProgressBar* progressbar = (ComponentProgressBar*)elements[i];
-				if (progressbar->visible)
-					progressbar->Draw();
-				continue;
-			}
-			else if (elements[i]->GetType() == Component::ComponentType::CircularBar)
-			{
-				ComponentCircularBar* circularbar = (ComponentCircularBar*)elements[i];
-				if (circularbar->visible)
-					circularbar->Draw();
-				continue;
-			}
 			else
 				continue;
 		}
@@ -152,6 +104,7 @@ json ComponentCanvas::Save() const
 	json node;
 	node["Active"] = this->active;
 	node["visible"] = std::to_string(visible);
+	node["priority"] = std::to_string(priority);
 
 	return node;
 }
@@ -160,7 +113,9 @@ void ComponentCanvas::Load(json& node)
 {
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 	std::string visible_str = node["visible"].is_null() ? "0" : node["visible"];
+	std::string priority_str = node["priority"].is_null() ? "0" : node["priority"];
 	visible = bool(std::stoi(visible_str));
+	priority = int(std::stoi(priority_str));
 }
 
 void ComponentCanvas::CreateInspectorNode()
@@ -168,7 +123,8 @@ void ComponentCanvas::CreateInspectorNode()
 
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 	ImGui::Checkbox("Visible", &visible);
-
 	ImGui::Separator();
-	
+	ImGui::SetNextItemWidth(100);
+	ImGui::InputInt("Priority", &priority);
+	ImGui::Separator();
 }

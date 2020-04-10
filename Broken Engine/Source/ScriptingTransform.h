@@ -5,6 +5,11 @@
 
 class lua_State;
 
+namespace luabridge
+{
+	class LuaRef;
+}
+
 BE_BEGIN_NAMESPACE
 class BROKEN_API ScriptingTransform {
 public:
@@ -13,23 +18,16 @@ public:
 
 public:	
 	// Position
-	int GetPosition(lua_State* L);
-	float GetPositionX() const;
-	float GetPositionY() const;
-	float GetPositionZ() const;
-
-	void Translate(float x, float y, float z, bool local);
-	void SetPosition(float x, float y, float z, bool local);
+	luabridge::LuaRef GetPosition(uint gameobject_UUID, lua_State* L);
+	void Translate(float x, float y, float z, uint gameobject_UUID);
+	void SetPosition(float x, float y, float z, uint gameobject_UUID);
 
 	// Rotation
-	void RotateObject(float x, float y, float z);
-	void SetObjectRotation(float x, float y, float z);
-	void LookAt(float spotX, float spotY, float spotZ, bool local);
+	luabridge::LuaRef GetRotation(uint gameobject_UUID, lua_State* L);
+	void RotateObject(float x, float y, float z, uint gameobject_UUID);
+	void SetObjectRotation(float x, float y, float z, uint gameobject_UUID);
+	void LookAt(float spotX, float spotY, float spotZ, uint gameobject_UUID);
 
-	int GetRotation(bool local, lua_State* L) const;
-	float GetRotationX() const;
-	float GetRotationY() const;
-	float GetRotationZ() const;
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGTRANSFORM_H__
