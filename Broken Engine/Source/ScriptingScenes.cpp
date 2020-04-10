@@ -7,6 +7,7 @@
 #include "ImporterModel.h"
 #include "ScriptData.h"
 #include "ResourceScene.h"
+#include "ResourcePrefab.h"
 #include "ResourceModel.h"
 #include "ComponentTransform.h"
 
@@ -33,10 +34,16 @@ void ScriptingScenes::QuitGame()
 
 uint ScriptingScenes::Instantiate(uint resource_UUID, float x, float y, float z, float alpha, float beta, float gamma)
 {
-	ResourceModel* model = (ResourceModel*)App->resources->GetResource(resource_UUID);
-	GameObject* go = App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(model->GetResourceFile(), nullptr);
-	go->GetComponent<ComponentTransform>()->SetPosition(x, y, z);
-	go->GetComponent<ComponentTransform>()->SetRotation({ alpha, beta, gamma });
+	uint ret = 0;
+	Resource* prefab = App->resources->GetResource(resource_UUID);
 
-	return go->GetUID();
+	if (prefab) {
+		GameObject* go = App->resources->GetImporter<ImporterModel>()->InstanceOnCurrentScene(prefab->GetResourceFile(), nullptr);
+		go->GetComponent<ComponentTransform>()->SetPosition(x, y, z);
+		go->GetComponent<ComponentTransform>()->SetRotation({ alpha, beta, gamma });
+
+		ret = go->GetUID();
+	}
+
+	return ret;
 }
