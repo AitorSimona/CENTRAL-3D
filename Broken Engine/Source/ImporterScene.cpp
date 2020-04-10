@@ -73,6 +73,9 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Active"] = (*it).second->GetActive();
 		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Index"] = (*it).second->index;
+		file[string_uid]["Navigation Static"] = (*it).second->navigationStatic;
+		file[string_uid]["Navigation Area"] = (*it).second->navigationArea;
+		file[string_uid]["Index"] = (*it).second->index;
 
 		if ((*it).second->parent != App->scene_manager->GetRootGO())
 			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
