@@ -382,7 +382,7 @@ void ModulePhysics::DeleteActors(GameObject* go)
 		go->GetComponent<ComponentCharacterController>()->Delete();
 	}
 
-	App->physics->mControllerManager->purgeControllers();
+	//App->physics->mControllerManager->purgeControllers();
 }
 
 void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<uint>& objects)

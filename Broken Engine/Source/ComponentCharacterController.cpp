@@ -207,7 +207,10 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 
 void ComponentCharacterController::Delete()
 {
-	App->physics->DeleteActor(controller->getActor());
+	physx::PxShape* shape;
+	controller->getActor()->getShapes(&shape, 1);
+	App->physics->DeleteActor(shape->getActor());
+	controller->release();
 }
 
 json ComponentCharacterController::Save() const
