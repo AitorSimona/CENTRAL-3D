@@ -301,8 +301,8 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 				EngineApp->selection->HandleSelection(Go);
 				wasclicked = false;
 			}
-			else if(!end_drag)
-				EngineApp->selection->ClearSelection();
+			/*else if(!end_drag)
+				EngineApp->selection->ClearSelection();*/
 
 		}
 		// --- Handle selection ---
