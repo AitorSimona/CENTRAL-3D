@@ -11,6 +11,7 @@ class dtNavMesh;
 class dtNavMeshQuery;
 class dtQueryFilter;
 class dtMeshTile;
+class ModuleRecast;
 
 BE_BEGIN_NAMESPACE
 
@@ -67,6 +68,7 @@ struct BROKEN_API navigationPoly {
 };
 
 class BROKEN_API ModuleDetour : public Module {
+	friend class ModuleRecast;
 public:
 	ModuleDetour(bool start_enabled = true);
 	~ModuleDetour();
@@ -95,9 +97,11 @@ public:
 	void setDefaultBakeValues();
 	const ResourceNavMesh* getNavMeshResource() const;
 	void allocateNavMesh();
+	void createRenderMeshes();
+	void saveNavMesh() const;
+	inline void initNavQuery();
 
 private:
-	void createRenderMeshes();
 	void setAreaCosts();
 	void processTile(const dtMeshTile* tile);
 

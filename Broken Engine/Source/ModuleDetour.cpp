@@ -125,10 +125,6 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 
 	//If we are in the editor we need to create the draw meshes
 	if (!App->isGame) {
-		for (int i = 0; i < renderMeshes.size(); ++i)
-			delete renderMeshes[i];
-		renderMeshes.clear();
-
 		createRenderMeshes();
 	}
 
@@ -340,13 +336,20 @@ void ModuleDetour::allocateNavMesh() {
 		App->resources->AddResourceToFolder(navMeshResource);
 	}
 
-	if (navMeshResource->navMesh == nullptr)
-		navMeshResource->navMesh = dtAllocNavMesh();
+	if (navMeshResource->navMesh != nullptr)
+		dtFreeNavMesh(navMeshResource->navMesh);
+
+	
+	navMeshResource->navMesh = dtAllocNavMesh();
 
 }
 
 void ModuleDetour::createRenderMeshes() {
 	if (navMeshResource != nullptr && navMeshResource->navMesh != nullptr) {
+		for (int i = 0; i < renderMeshes.size(); ++i)
+			delete renderMeshes[i];
+		renderMeshes.clear();
+
 		const dtNavMesh* mesh = navMeshResource->navMesh;
 		for (int ti = 0; ti < mesh->getMaxTiles(); ++ti) {
 			const dtMeshTile* tile = mesh->getTile(ti);
@@ -356,6 +359,16 @@ void ModuleDetour::createRenderMeshes() {
 		if (mat == nullptr)
 			mat = (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), true);
 	}
+}
+
+void ModuleDetour::saveNavMesh() const {
+	ImporterNavMesh* INavMesh = App->resources->GetImporter<ImporterNavMesh>();
+	INavMesh->Save(navMeshResource);
+}
+
+inline void ModuleDetour::initNavQuery() {
+	if (navMeshResource != nullptr && navMeshResource->navMesh != nullptr)
+		m_navQuery->init(navMeshResource->navMesh, 2048);
 }
 
 void ModuleDetour::setAreaCosts() {

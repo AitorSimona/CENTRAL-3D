@@ -187,6 +187,7 @@
     <ClInclude Include="PanelSettings.h" />
     <ClInclude Include="PanelShaderEditor.h" />
     <ClInclude Include="PanelToolbar.h" />
+    <ClInclude Include="rcChunkyTriMesh.h" />
     <ClInclude Include="VSresource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +260,7 @@
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
+    <ClCompile Include="rcChunkyTriMesh.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp" />
     <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp" />

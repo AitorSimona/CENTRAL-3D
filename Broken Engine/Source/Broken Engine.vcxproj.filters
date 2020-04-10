@@ -378,13 +378,16 @@
     <ClInclude Include="PanelNavigation.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
-	<ClInclude Include="PanelRendering.h">
+    <ClInclude Include="PanelRendering.h">
       <Filter>Sources\EditorPanels</Filter>
     </ClInclude>
     <ClInclude Include="ModuleRecast.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="InputGeometry.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="rcChunkyTriMesh.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -587,7 +590,7 @@
     <ClCompile Include="PanelNavigation.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
-	<ClCompile Include="PanelRendering.cpp">
+    <ClCompile Include="PanelRendering.cpp">
       <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
     <ClCompile Include="ModuleRecast.cpp">
@@ -649,6 +652,9 @@
     </ClCompile>
     <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp">
       <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="rcChunkyTriMesh.cpp">
+      <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

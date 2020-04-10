@@ -798,6 +798,7 @@ bool rcCreateHeightfield(rcContext* ctx, rcHeightfield& hf, int width, int heigh
 						 const float* bmin, const float* bmax,
 						 float cs, float ch);
 
+// --- Modified by Sergi Parra to work for Broken Engine ---
 /// Sets the area id of all triangles with a slope below the specified value
 /// to #RC_WALKABLE_AREA.
 ///  @ingroup recast
@@ -811,6 +812,9 @@ bool rcCreateHeightfield(rcContext* ctx, rcHeightfield& hf, int width, int heigh
 ///  @param[out]	areas				The triangle area ids. [Length: >= @p nt]
 void rcMarkWalkableTriangles(rcContext* ctx, const float walkableSlopeAngle, const float* verts, int nv,
 							 const int* tris, int nt, unsigned char* areas, unsigned char area); 
+void rcMarkWalkableTriangles(rcContext* ctx, const float walkableSlopeAngle, const float* verts, int nv,
+	const int* tris, const unsigned char* triareas, int nt, unsigned char* areas);
+
 
 /// Sets the area id of all triangles with a slope greater than or equal to the specified value to #RC_NULL_AREA.
 ///  @ingroup recast
