@@ -46,7 +46,7 @@ ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 ModuleScripting::~ModuleScripting() {}
 
 bool ModuleScripting::DoHotReloading() {
-	bool ret = true;
+ 	bool ret = true;
 
 	if (App->GetAppState() == AppState::EDITOR) // 	Ask Aitor, only return true when no gameplay is happening	App->scene_intro->playing == false
 	{

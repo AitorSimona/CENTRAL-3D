@@ -88,33 +88,33 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 
 		ComponentScript* script = go1->GetComponent<ComponentScript>();
 		ComponentScript* script2 = go2->GetComponent<ComponentScript>();
+		if (go1 != nullptr && go2 != nullptr) {
+			if ((pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND))
+			{
+				go1->collisions.at(ONTRIGGER_ENTER) = go2;
+				go2->collisions.at(ONTRIGGER_ENTER) = go1;
 
-		if (go1 && go2 && (pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND))
-		{
-			go1->collisions.at(ONTRIGGER_ENTER) = go2;
-			go2->collisions.at(ONTRIGGER_ENTER) = go1;
+				ScriptFunc function;
+				function.name = "OnTriggerEnter";
 
-			ScriptFunc function;
-			function.name = "OnTriggerEnter";
+				if (script)
+					App->scripting->CallbackScriptFunction(script, function);
+				if (script2)
+					App->scripting->CallbackScriptFunction(script2, function);
+			}
+			else if ((pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST))
+			{
+				go1->collisions.at(ONTRIGGER_EXIT) = go2;
+				go2->collisions.at(ONTRIGGER_EXIT) = go1;
 
-			if (script)
-				App->scripting->CallbackScriptFunction(script, function);
-			if (script2)
-				App->scripting->CallbackScriptFunction(script2, function);
-		}
-		
-		else if (go1 && go2 && (pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST))
-		{
-			go1->collisions.at(ONTRIGGER_EXIT) = go2;
-			go2->collisions.at(ONTRIGGER_EXIT) = go1;
+				ScriptFunc function;
+				function.name = "OnTriggerExit";
 
-			ScriptFunc function;
-			function.name = "OnTriggerExit";
-
-			if (script)
-				App->scripting->CallbackScriptFunction(script, function);
-			if (script2)
-				App->scripting->CallbackScriptFunction(script2, function);
+				if (script)
+					App->scripting->CallbackScriptFunction(script, function);
+				if (script2)
+					App->scripting->CallbackScriptFunction(script2, function);
+			}
 		}
 	}
 }
