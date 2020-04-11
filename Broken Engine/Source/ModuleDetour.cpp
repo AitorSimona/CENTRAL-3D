@@ -128,7 +128,7 @@ bool ModuleDetour::createNavMesh(dtNavMeshCreateParams* params) {
 		createRenderMeshes();
 	}
 
-	setAreaCosts();
+	//setAreaCosts();
 
 	//We save the scene so that it stores the NavMesh
 	App->scene_manager->SaveScene(App->scene_manager->currentScene);
@@ -227,7 +227,8 @@ int ModuleDetour::getAreaCost(uint areaIndex) const {
 void ModuleDetour::setAreaCost(uint areaIndex, float areaCost) {
 	if (areaIndex < BE_DETOUR_TOTAL_AREAS) {
 		areaCosts[areaIndex] = areaCost;
-		m_filterQuery->setAreaCost(areaIndex, areaCost);
+		if (m_filterQuery)
+			m_filterQuery->setAreaCost(areaIndex, areaCost);
 	}
 }
 
@@ -237,7 +238,7 @@ int ModuleDetour::getAreaFromName(const char* name) const {
 	for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
 		if (areaName == areaNames[i]) {
 			ret = i;
-			break;
+			break;           
 		}
 	}
 
@@ -369,6 +370,8 @@ void ModuleDetour::saveNavMesh() const {
 inline void ModuleDetour::initNavQuery() {
 	if (navMeshResource != nullptr && navMeshResource->navMesh != nullptr)
 		m_navQuery->init(navMeshResource->navMesh, 2048);
+
+	//setAreaCosts();
 }
 
 void ModuleDetour::setAreaCosts() {

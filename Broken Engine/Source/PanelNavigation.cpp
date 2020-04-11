@@ -43,7 +43,9 @@ bool PanelNavigation::Draw() {
 				ImGui::InputText("##name_bi0", EngineApp->detour->areaNames[0], 100, ImGuiInputTextFlags_ReadOnly);
 				ImGui::NextColumn();
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputFloat("##cost_bi0", &EngineApp->detour->areaCosts[0]);
+				float areaCost = EngineApp->detour->areaCosts[0];
+				if (ImGui::InputFloat("##cost_bi0", &areaCost))
+					EngineApp->detour->setAreaCost(0, areaCost);
 
 				ImGui::NextColumn();
 				ImGui::Text("Built-in 1");
@@ -63,7 +65,9 @@ bool PanelNavigation::Draw() {
 				ImGui::InputText("##name_bi2", EngineApp->detour->areaNames[2], 100, ImGuiInputTextFlags_ReadOnly);
 				ImGui::NextColumn();
 				ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-				ImGui::InputFloat("##cost_bi2", &EngineApp->detour->areaCosts[2]);
+				areaCost = EngineApp->detour->areaCosts[2];
+				if (ImGui::InputFloat("##cost_bi2", &areaCost))
+					EngineApp->detour->setAreaCost(2, areaCost);
 
 				std::string catname = "User ";
 				std::string namelabel = "##name_us";
@@ -77,7 +81,9 @@ bool PanelNavigation::Draw() {
 					ImGui::InputText((namelabel + std::to_string(i)).c_str(), EngineApp->detour->areaNames[i], 100);
 					ImGui::NextColumn();
 					ImGui::SetNextItemWidth(ImGui::GetColumnWidth() - 10);
-					ImGui::InputFloat((costlabel + std::to_string(i)).c_str(), &EngineApp->detour->areaCosts[i]);
+					areaCost = EngineApp->detour->areaCosts[i];
+					if (ImGui::InputFloat((costlabel + std::to_string(i)).c_str(), &areaCost))
+						EngineApp->detour->setAreaCost(i, areaCost);
 				}
 
 

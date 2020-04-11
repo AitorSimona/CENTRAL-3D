@@ -414,8 +414,11 @@ bool ModuleRecast::BuildTiledNavMesh(const InputGeom* m_geom) {
 		}
 	}
 
+	// We save the navmesh, create its render meshes and initialize the navQuery
 	EngineApp->detour->saveNavMesh();
+	EngineApp->detour->initNavQuery();
 	EngineApp->detour->createRenderMeshes();
+
 	return true;
 }
 
