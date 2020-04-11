@@ -337,7 +337,7 @@ void ModulePhysics::UpdateActorsGroupFilter(LayerMask* updateLayer)
 
 bool ModulePhysics::DeleteActor(physx::PxRigidActor* actor)
 {
-	if (actors.size() > 0)
+	if (actors.size() > 0 && actor)
 	{
 		if(mScene)
 			mScene->removeActor(*actor);
