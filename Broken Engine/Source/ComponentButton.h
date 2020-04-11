@@ -52,7 +52,7 @@ public:
 	bool resize = true;
 
 	float2 size2D = { 1,1 };
-	float2 position2D = { 0,0 };
+	float2 position2D = { -0.5f,-0.5f };
 	float rotation2D = 0.0f;
 
 	State state = NOTHING;

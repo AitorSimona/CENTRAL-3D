@@ -5,6 +5,7 @@
 #include "ModuleInput.h"
 #include "ModuleSceneManager.h"
 #include "ModuleGui.h"
+#include "ModuleRenderer3D.h"
 
 #include "Component.h"
 #include "ComponentCanvas.h"
@@ -83,22 +84,33 @@ bool ModuleUI::CleanUp()
 
 void ModuleUI::Draw() const
 {
-	// change camera to ortographic
+	ComponentCamera* cam = App->renderer3D->active_camera;
+	App->renderer3D->active_camera = ui_camera; //set ui camera as active camera
+
+	float3 pos = App->renderer3D->active_camera->frustum.Pos();
+	float3 up = App->renderer3D->active_camera->frustum.Up();
+	float3 front = App->renderer3D->active_camera->frustum.Front();
+
+	App->renderer3D->active_camera->frustum.SetPos({ 0,0,1 });
+	App->renderer3D->active_camera->Look({ 0, 0, 0 });
+
+	/////////////////////////////////////
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
 	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
 	glLoadIdentity();
+	//glOrtho(Configuration::viewport[Configuration::l], Configuration::viewport[Configuration::r], Configuration::viewport[Configuration::b], -Configuration::viewport[Configuration::t], Configuration::n, Configuration::f);
+	glOrtho(viewport[0], viewport[2], viewport[1], viewport[3], 1, -1);
 
-	glOrtho(0, App->gui->sceneHeight, 0, App->gui->sceneWidth, -1, 1);
-
+	glPushAttrib(GL_LIST_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT | GL_TRANSFORM_BIT);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
 	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	// Draw UI
 	for (int i = 0; i < canvas.size(); i++)
 	{
@@ -106,9 +118,15 @@ void ModuleUI::Draw() const
 			canvas[i]->Draw();
 	}
 
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	glPopAttrib();
+
+	glPopMatrix();
+
+	App->renderer3D->active_camera->frustum.SetUp(up);
+	App->renderer3D->active_camera->frustum.SetFront(front);
+	App->renderer3D->active_camera->frustum.SetPos(pos);
+
+	App->renderer3D->active_camera = cam; //reset to previous active camera
 }
 
 void ModuleUI::RemoveCanvas(ComponentCanvas* c)
@@ -136,14 +154,9 @@ bool ModuleUI::CheckMousePos(SDL_Rect collider) // 0,0 is top left corner
 	mouse_pos.x = App->input->GetMouseX();
 	mouse_pos.y = App->input->GetMouseY();
 
-	float2 screenpos = float2(App->gui->sceneX + App->gui->sceneWidth / 2  + collider.x, collider.y + App->gui->sceneY + App->gui->sceneHeight / 2);
-	SDL_Rect elementCollider = { screenpos.x, screenpos.y - collider.h, collider.w, collider.h };
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
 
-	ENGINE_CONSOLE_LOG("mouseX %f", screenpos.x);
-	ENGINE_CONSOLE_LOG("mouseY %f", screenpos.y);
-
-	if (SDL_HasIntersection(&MouseCollider, &elementCollider))
+	if (SDL_HasIntersection(&MouseCollider, &collider))
 		return true;
 
 	return false;

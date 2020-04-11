@@ -63,14 +63,12 @@ void ComponentButton::Update()
 
 void ComponentButton::Draw()
 {
-	//float3 worldpos = App->ui_system->ui_camera->ScreenToWorld(position2D,1.0f);
-	//float2 worldpos2 = App->ui_system->ui_camera->WorldToScreen(float3(position2D, 1.0f));
-
-	float ratiox = 856.52173;
-	float ratioy = 856.52173;
 
 	// --- Frame image with camera ---
-	float4x4 transform = transform.FromTRS(float3(position2D.x / ratiox, position2D.y / ratioy,0.0f), Quat::identity, float3(size2D.x / ratiox, size2D.y / ratioy, 1.0f));
+	float4x4 transform = transform.identity;
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	transform = transform.FromTRS({ position2D,nearp - 0.05f }, Quat::identity, float3(size2D /** 0.01f*/, 1.0f));
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
@@ -85,7 +83,6 @@ void ComponentButton::Draw()
 	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -357,10 +354,10 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
 
 	// Rotation
-	//ImGui::Text("Rotation:");
-	//ImGui::SameLine();
-	//ImGui::SetNextItemWidth(60);
-	//ImGui::DragFloat("##buttonrotation", &rotation2D);
+	ImGui::Text("Rotation:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##buttonrotation", &rotation2D);
 
 	// ------------------------------------------
 
