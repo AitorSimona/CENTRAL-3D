@@ -84,7 +84,8 @@ bool PanelProject::Draw()
 
 			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y));
 
-			ImGui::InvisibleButton("##Drop Go", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight()});
+			if (ImGui::InvisibleButton("##Drop Go", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() }))
+				SetSelected(nullptr);
 
 			// --- Drop a prefab instance, create another prefab ---
 			if (ImGui::BeginDragDropTarget())
