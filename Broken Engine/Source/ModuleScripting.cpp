@@ -359,6 +359,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("LoadScene", &ScriptingScenes::LoadSceneFromScript)
 		.addFunction("QuitGame", &ScriptingScenes::QuitGame)
+		.addFunction("Instantiate", &ScriptingScenes::Instantiate)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
