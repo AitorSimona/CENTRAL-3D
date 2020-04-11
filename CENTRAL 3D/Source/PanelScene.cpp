@@ -161,11 +161,14 @@ void PanelScene::HandleGuizmo()
 
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
+
+	if(guizmoMode == ImGuizmo::WORLD)
+		memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetGlobalTransform().Transposed().ptr(), 16 * sizeof(float));
+	else
+		memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
-	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
-	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
+	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, guizmoMode, modelMatrix);
 
 	// --- Update Selected go transform ---
 	if (ImGuizmo::IsUsing())
