@@ -153,6 +153,10 @@ void PanelScene::HandleGuizmo()
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
+	if(guizmoOperation == ImGuizmo::OPERATION::SCALE)
+		guizmoMode = ImGuizmo::LOCAL;
+
+
 	GameObject* selectedGO = App->scene_manager->GetSelectedGameObject();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
@@ -167,14 +171,20 @@ void PanelScene::HandleGuizmo()
 	else
 		memcpy(modelMatrix, selectedGO->GetComponent<ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 
+	static float snap[3] = { 2.5f, 2.5f, 2.5f };
+	static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
+	static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
+	bool boundSizingSnap = use_snap;
+
 	// --- Process guizmo operation ---
-	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, guizmoMode, modelMatrix);
+	ImGuizmo::Manipulate(App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), App->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, guizmoMode, modelMatrix, nullptr, use_snap ? &snap[0] : nullptr, boundSizing ? bounds : nullptr, boundSizingSnap ? boundsSnap : nullptr);
 
 	// --- Update Selected go transform ---
 	if (ImGuizmo::IsUsing())
 	{
 		float4x4 newTransform;
 		newTransform.Set(modelMatrix);
+
 		selectedGO->GetComponent<ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
 	}
 }

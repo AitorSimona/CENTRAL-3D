@@ -15,7 +15,8 @@ public:
 	bool Draw();
 
 	ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
-
+	bool use_snap = false;
+	bool boundSizing = false;
 private:
 	void HandleGuizmo();
 

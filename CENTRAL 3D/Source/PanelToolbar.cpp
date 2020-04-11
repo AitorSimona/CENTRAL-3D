@@ -34,6 +34,14 @@ bool PanelToolbar::Draw()
 		if (ImGui::RadioButton("Local", App->gui->panelScene->guizmoMode == ImGuizmo::LOCAL))
 			App->gui->panelScene->guizmoMode = ImGuizmo::LOCAL;
 
+		ImGui::SameLine();
+
+		ImGui::Checkbox("Snap", &App->gui->panelScene->use_snap);
+
+		ImGui::SameLine();
+
+		ImGui::Checkbox("BoundSizing", &App->gui->panelScene->boundSizing);
+
 
 		ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
 		ImGui::SetCursorPosY(ImGui::GetWindowPos().y + 5);
