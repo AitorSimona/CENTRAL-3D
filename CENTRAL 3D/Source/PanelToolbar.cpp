@@ -4,6 +4,7 @@
 #include "ModuleTimeManager.h"
 
 #include "PanelHierarchy.h"
+#include "PanelScene.h"
 
 #include "Imgui/imgui.h"
 
@@ -25,7 +26,17 @@ bool PanelToolbar::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
+		if (ImGui::RadioButton("World", App->gui->panelScene->guizmoMode == ImGuizmo::WORLD))
+			App->gui->panelScene->guizmoMode = ImGuizmo::WORLD;
+
+		ImGui::SameLine();
+
+		if (ImGui::RadioButton("Local", App->gui->panelScene->guizmoMode == ImGuizmo::LOCAL))
+			App->gui->panelScene->guizmoMode = ImGuizmo::LOCAL;
+
+
 		ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
+		ImGui::SetCursorPosY(ImGui::GetWindowPos().y + 5);
 
 		if(ImGui::Button("PLAY"))
 		{
