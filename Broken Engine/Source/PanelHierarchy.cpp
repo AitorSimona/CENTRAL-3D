@@ -174,6 +174,7 @@ bool PanelHierarchy::Draw()
 	if (end_drag)
 	{
 		bool to_be_cleared = false;
+
 		if (EngineApp->selection->IsSelected(target) == false) 
 		{
 			for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
@@ -193,7 +194,15 @@ bool PanelHierarchy::Draw()
 		if (to_be_cleared)
 			EngineApp->selection->ClearSelection();
 	}
-
+	if (to_unparent)
+	{
+		for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
+		{
+			EngineApp->scene_manager->GetRootGO()->AddChildGO(obj);
+		}
+		EngineApp->selection->ClearSelection();
+		to_unparent = false;
+	}
 	return true;
 }
 
@@ -298,6 +307,10 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 			{
 				EngineApp->selection->HandleSelection(Go);
 				wasclicked = false;
+			}
+			else
+			{
+				to_unparent = true;
 			}
 
 		}
