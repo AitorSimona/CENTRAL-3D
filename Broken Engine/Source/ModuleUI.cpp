@@ -108,6 +108,7 @@ void ModuleUI::Draw() const
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -121,6 +122,9 @@ void ModuleUI::Draw() const
 	glPopAttrib();
 
 	glPopMatrix();
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 
 	App->renderer3D->active_camera->frustum.SetUp(up);
 	App->renderer3D->active_camera->frustum.SetFront(front);

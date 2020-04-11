@@ -68,7 +68,8 @@ void ComponentButton::Draw()
 	float4x4 transform = transform.identity;
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
-	transform = transform.FromTRS({ position2D,nearp - 0.05f }, Quat::identity, float3(size2D /** 0.01f*/, 1.0f));
+	float3 size = { size2D.x / App->gui->sceneWidth, -size2D.y / App->gui->sceneHeight, 1.0f };
+	transform = transform.FromTRS({ position2D.x / App->gui->sceneWidth, position2D.y / App->gui->sceneHeight,nearp - 0.05f }, Quat::identity, size);
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
@@ -123,7 +124,7 @@ void ComponentButton::Draw()
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
 	// --- Text ---
-	//glColorColorF(text_color);
+	glColor4f(color.r, color.b, color.g, color.a);
 	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
 
 	 //--- Update color depending on state ---
@@ -133,7 +134,8 @@ void ComponentButton::Draw()
 	if (state == LOCKED) ChangeColorTo(locked_color);
 
 	// --- Collider ---
-	collider = { (int)position2D.x, (int)position2D.y, (int)size2D.x, (int)size2D.y };
+	collider = { (int)(position2D.x + App->gui->sceneX+ App->gui->sceneWidth/2), 
+				 (int)(-position2D.y + App->gui->sceneY + App->gui->sceneHeight/2), (int)size2D.x, (int)size2D.y };
 
 	App->renderer3D->SetActiveCamera(prevcam);
 }
