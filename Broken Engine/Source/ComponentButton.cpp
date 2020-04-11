@@ -63,27 +63,20 @@ void ComponentButton::Update()
 
 void ComponentButton::Draw()
 {
-
 	// --- Frame image with camera ---
-	float4x4 transform = transform.identity;
-
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 	float3 size = { size2D.x / App->gui->sceneWidth, -size2D.y / App->gui->sceneHeight, 1.0f };
-	transform = transform.FromTRS({ position2D.x / App->gui->sceneWidth, position2D.y / App->gui->sceneHeight,nearp - 0.05f }, Quat::identity, size);
+	float4x4 transform = transform.FromTRS({ position2D.x / App->gui->sceneWidth, position2D.y / App->gui->sceneHeight, nearp - 0.05f }, Quat::identity, size);
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
 	glUseProgram(shaderID);
-
-	ComponentCamera* prevcam = App->renderer3D->active_camera;
-	App->renderer3D->SetActiveCamera(App->ui_system->ui_camera);
 
 	GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
 	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
 
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -124,7 +117,7 @@ void ComponentButton::Draw()
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
 	// --- Text ---
-	glColor4f(color.r, color.b, color.g, color.a);
+	//glColor4f(color.r, color.b, color.g, color.a);
 	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
 
 	 //--- Update color depending on state ---
@@ -137,7 +130,12 @@ void ComponentButton::Draw()
 	collider = { (int)(position2D.x + App->gui->sceneX+ App->gui->sceneWidth/2), 
 				 (int)(-position2D.y + App->gui->sceneY + App->gui->sceneHeight/2), (int)size2D.x, (int)size2D.y };
 
-	App->renderer3D->SetActiveCamera(prevcam);
+	// Draw Collider
+	if (collider_visible && App->GetAppState() == AppState::EDITOR) //draw only in editor mode
+	{
+		App->gui->draw_list->AddRect(ImVec2(collider.x, collider.y), ImVec2(collider.x + collider.w, collider.y + collider.h),
+			ImU32(ImColor(ImVec4(1.0f, 0.0f, 0.0f, 1.0f))), 0.0f, 0, 1.0f);
+	}
 }
 
 json ComponentButton::Save() const
