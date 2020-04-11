@@ -84,17 +84,6 @@ void ModuleTimeManager::PrepareUpdate() {
 		case AppState::TO_EDITOR:
 			if (App->isGame == false)
 			App->scripting->StopDebugging();
-			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->NoStaticGameObjects.begin(); it != App->scene_manager->currentScene->NoStaticGameObjects.end(); ++it)
-			{
-				App->physics->DeleteActors((*it).second);
-			}
-
-			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->StaticGameObjects.begin(); it != App->scene_manager->currentScene->StaticGameObjects.end(); ++it)
-			{
-				App->physics->DeleteActors((*it).second);
-			}
-
-			App->physics->DeleteActors();
 
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
 

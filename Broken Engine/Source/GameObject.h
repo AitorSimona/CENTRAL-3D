@@ -72,6 +72,7 @@ public:
 	// This will not erase the GO at index, just displace it and everything after it
 	void InsertChildGO(GameObject* GO, int index);
 	bool FindChildGO(GameObject* GO);
+	bool FindParentGO(GameObject* GO);
 	void GetAllChilds(std::vector<GameObject*>& collector);
 	GameObject* GetAnimGO(GameObject* GO);
 
