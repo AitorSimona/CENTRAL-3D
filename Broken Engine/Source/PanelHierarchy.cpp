@@ -173,6 +173,7 @@ bool PanelHierarchy::Draw()
 	// --- Manage Drag & Drop ---
 	if (end_drag)
 	{
+		bool to_be_cleared = false;
 		if (EngineApp->selection->IsSelected(target) == false) 
 		{
 			for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
@@ -180,13 +181,17 @@ bool PanelHierarchy::Draw()
 				// Checking infite loops parent-child
 				//if (target->FindParentGO(obj) == false && obj->FindChildGO(target) == false)
 				if (!(target->FindParentGO(obj) || obj->FindChildGO(target))) // same as line above but more efficient
+				{
 					target->AddChildGO(obj);
+					to_be_cleared = true;
+				}
 			}
 		}
 		end_drag = false;
 		dragged = nullptr;
 		target = nullptr;
-		EngineApp->selection->ClearSelection();
+		if (to_be_cleared)
+			EngineApp->selection->ClearSelection();
 	}
 
 	return true;

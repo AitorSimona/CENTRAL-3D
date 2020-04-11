@@ -47,7 +47,7 @@ bool ModuleSelection::CleanUp()
 }
 update_status ModuleSelection::PreUpdate(float dt)
 {
-	// Delete selection
+	// Delete selection, it's done through reparenting all selected to selection root object
 	// Doing this way avoids problem of ghost parents or childs
 	if (!App->scene_manager->go_to_delete.empty())
 	{
@@ -56,12 +56,13 @@ update_status ModuleSelection::PreUpdate(float dt)
 		for (int i = 0; i < App->scene_manager->go_to_delete.size(); ++i)
 		{
 			root->AddChildGO(App->scene_manager->go_to_delete[i]);
-			//UnSelect(App->scene_manager->go_to_delete[i]);
 		}
 
+		// Actually deleting
 		root->RecursiveDelete();
 		App->scene_manager->go_count -= App->scene_manager->go_to_delete.size();
 
+		// Cleaning
 		ClearSelection();
 		App->scene_manager->go_to_delete.clear();
 	}
@@ -73,6 +74,7 @@ update_status ModuleSelection::Update(float dt)
 {
 	// SELECTED TODO -> stuck at offset
 
+	return UPDATE_CONTINUE;
 	if (aabb_selection)
 	{
 		aabb_end.x += App->input->GetMouseXMotion();
@@ -101,12 +103,11 @@ update_status ModuleSelection::Update(float dt)
 		aabb_end = float3::zero;
 		aabb_selection = false;
 	}
-	return UPDATE_CONTINUE;
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
-	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
 	return UPDATE_CONTINUE;
+	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
 
 }
 
@@ -118,6 +119,7 @@ void ModuleSelection::SceneRectangleSelect(float3 start)
 	aabb_end = start;
 	aabb_end.z += 50;
 }
+
 void ModuleSelection::SelectIfIntersects()
 {
 	if (App->scene_manager->currentScene)
@@ -188,14 +190,6 @@ bool ModuleSelection::IsSelected(GameObject* gameobject)
 	if (gameobject == nullptr) return false;
 
 	return gameobject->node_flags & 1;
-
-	/*for (int i = 0; i < selection.size(); i++)
-	{
-		if (selection[i] == gameobject)
-			return true;
-	}
-
-	return false;*/
 }
 
 void ModuleSelection::HandleSelection(GameObject* gameobject) 
@@ -228,7 +222,6 @@ GameObject* ModuleSelection::GetLastSelected() const
 
 void ModuleSelection::ClearSelection()
 {
-
 	for (GameObject* go : selection)
 	{
 		go->node_flags &= ~1;
@@ -363,10 +356,6 @@ void ModuleSelection::UnSelect(GameObject* gameobject)
 			}
 			it++;
 		}
-
-		/*Event e(Event::EventType::GameObject_Unselected);
-		e.go = gameobject;
-		App->event_manager->PushEvent(e);*/
 	}
 }
 
