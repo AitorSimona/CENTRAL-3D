@@ -30,7 +30,7 @@ And all the 3rd party libraries too! Check them below!
 - SDL 2.0.10
 - Assimp 3.3
 - Glew 2.1.0
-- ImGui 1.72b (with beta docking)
+- ImGui 1.76 WIP docking branch commit 6531
 - ImGuizmo
 - MathGeoLib 1.5 (commit 1994)
 - OpenGL 4.6
