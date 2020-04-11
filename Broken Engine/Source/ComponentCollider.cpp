@@ -423,26 +423,20 @@ void ComponentCollider::Load(json& node)
 	{
 	case 0:
 		type = COLLIDER_TYPE::NONE;
-		CreateCollider(type);
 		break;
 	case 1:
 		type = COLLIDER_TYPE::BOX;
-		CreateCollider(type, true);
 		break;
 	case 2:
 		type = COLLIDER_TYPE::SPHERE;
-		CreateCollider(type);
 		break;
 	case 3:
 		type = COLLIDER_TYPE::CAPSULE;
-		CreateCollider(type);
 	case 4:
 		type = COLLIDER_TYPE::PLANE;
-		CreateCollider(type);
 		break;
 	}
-
-	UpdateLocalMatrix();
+	editCollider = true;
 }
 
 void ComponentCollider::CreateInspectorNode()
