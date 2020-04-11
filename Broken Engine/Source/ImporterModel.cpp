@@ -163,26 +163,26 @@ void ImporterModel::LoadSceneMeshes(const aiScene* scene, std::map<uint, Resourc
 			scene_meshes[i] = (ResourceMesh*)IMesh->Import(MData);
 			scene_meshes[i]->SetName(scene->mMeshes[i]->mName.C_Str());
 
-			// --- Create preview Texture ---
+			//// --- Create preview Texture ---
 
-			std::vector<GameObject*> gos;
-			gos.push_back(App->scene_manager->CreateEmptyGameObject());
+			//std::vector<GameObject*> gos;
+			//gos.push_back(App->scene_manager->CreateEmptyGameObject());
 
-			// --- Create new Component Mesh to store current scene mesh data ---
-			ComponentMesh* new_mesh = (ComponentMesh*)gos[0]->AddComponent(Component::ComponentType::Mesh);
-			ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)gos[0]->AddComponent(Component::ComponentType::MeshRenderer);
+			//// --- Create new Component Mesh to store current scene mesh data ---
+			//ComponentMesh* new_mesh = (ComponentMesh*)gos[0]->AddComponent(Component::ComponentType::Mesh);
+			//ComponentMeshRenderer* Renderer = (ComponentMeshRenderer*)gos[0]->AddComponent(Component::ComponentType::MeshRenderer);
 
-			// --- Assign previously loaded mesh ---
-			new_mesh->resource_mesh = scene_meshes[i];
+			//// --- Assign previously loaded mesh ---
+			//new_mesh->resource_mesh = scene_meshes[i];
 
 			scene_meshes[i]->FreeMemory();
 			scene_meshes[i]->LoadInMemory();
-			uint TexID = 0;
-			std::string previewTexPath = App->renderer3D->RenderSceneToTexture(gos, TexID);
-			scene_meshes[i]->previewTexPath = previewTexPath;
-			scene_meshes[i]->SetPreviewTexID(TexID);
+			//uint TexID = 0;
+			//std::string previewTexPath = App->renderer3D->RenderSceneToTexture(gos, TexID);
+			//scene_meshes[i]->previewTexPath = previewTexPath;
+			//scene_meshes[i]->SetPreviewTexID(TexID);
 
-			App->scene_manager->DestroyGameObject(gos[0]);
+			//App->scene_manager->DestroyGameObject(gos[0]);
 		}
 
 	}
@@ -556,14 +556,14 @@ Resource* ImporterModel::Load(const char* path) const {
 
 								to_Add->SetName(it.key().c_str());
 
-								std::string meshpreviewTexpath = _resources[it3.key()]["PreviewTexture"].is_null() ? "none" : _resources[it3.key()]["PreviewTexture"];
+								/*std::string meshpreviewTexpath = _resources[it3.key()]["PreviewTexture"].is_null() ? "none" : _resources[it3.key()]["PreviewTexture"];
 								uint width, height = 0;
 
 								if (meshpreviewTexpath != "none" && App->fs->Exists(mesh->previewTexPath.c_str()))
 								{
 									mesh->previewTexPath = meshpreviewTexpath;
 									mesh->SetPreviewTexID(App->textures->CreateTextureFromFile(mesh->previewTexPath.c_str(), width, height));
-								}
+								}*/
 							}
 
 							//to_Add->SetParent(resource);

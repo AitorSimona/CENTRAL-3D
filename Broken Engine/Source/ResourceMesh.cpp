@@ -22,7 +22,7 @@ ResourceMesh::ResourceMesh(uint UID, const char* source_file) : Resource(Resourc
 
 ResourceMesh::~ResourceMesh() 
 {
-	glDeleteTextures(1, (GLuint*)&previewTexID);
+	//glDeleteTextures(1, (GLuint*)&previewTexID);
 }
 
 void ResourceMesh::CreateAABB() 
