@@ -458,6 +458,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		// --- Unload current scene ---
 		if (currentScene)
 		{
+			App->physics->DeleteActors();
+
 			// --- Reset octree ---
 			tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
