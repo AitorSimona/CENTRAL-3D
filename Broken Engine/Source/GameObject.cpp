@@ -1,3 +1,4 @@
+#include "GameObject.h"
 #include "Application.h"
 #include "GameObject.h"
 #include "Components.h"
@@ -308,6 +309,14 @@ bool GameObject::FindChildGO(GameObject* GO)
 	}
 
 	return ret;
+}
+
+bool GameObject::FindParentGO(GameObject* GO)
+{
+	if (parent == nullptr) return false;
+	if (parent->GetUID() == GO->GetUID()) return true;
+
+	return parent->FindParentGO(GO);
 }
 
 void GameObject::GetAllChilds(std::vector<GameObject*>& collector)
