@@ -676,8 +676,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 				}
-				physx::PxShapeFlags falgs =  shape->getFlags();
-
 
 				shape->setSimulationFilterData(filterData);
 				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
@@ -782,7 +780,7 @@ void ComponentCollider::Delete()
 }
 
 template <class Geometry>
-bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const
+bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform)
 {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 
@@ -801,25 +799,28 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 			App->physics->DeleteActor(dynamicRB->rigidBody);
 		}
 
-		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
-		dynamicRB->update = true;
-		dynamicRB->UpdateRBValues();
+		shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
 
-		physx::PxShape* shape_;
-		dynamicRB->rigidBody->getShapes(&shape_, 1);
-		if (shape_) {
-			*shape = *shape_;
-			if (isTrigger) {
-				shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-				shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-			}
-			else {
-				shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-				shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-			}
+		if (isTrigger) {
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else {
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		}
 
-		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup); //Setup filtering Layers
+		physx::PxFilterData filterData;
+		filterData.word0 = (1 << GO->layer); // word0 = own ID
+		filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
+
+		shape->setSimulationFilterData(filterData);
+		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+		shape->setQueryFilterData(filterData);
+
+		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics,transform, *shape,1.0f);
+		dynamicRB->update = true;
+		dynamicRB->UpdateRBValues();
 
 		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
 

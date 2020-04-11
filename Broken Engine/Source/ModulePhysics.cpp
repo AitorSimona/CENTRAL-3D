@@ -77,7 +77,6 @@ void ModulePhysics::setupFiltering(physx::PxRigidActor* actor, physx::PxU32 Laye
 			physx::PxShape* shape = shapes[i];
 
 			shape->setSimulationFilterData(filterData);
-
 			shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 			shape->setQueryFilterData(filterData);
 		}
