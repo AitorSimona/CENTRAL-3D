@@ -816,6 +816,9 @@
     <ClInclude Include="SDL\include\SDL_vulkan.h">
       <Filter>Sources\3rd Party\SDL</Filter>
     </ClInclude>
+    <ClInclude Include="Imgui\imgui_stdlib.h">
+      <Filter>Sources\3rd Party\Imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -1147,6 +1150,9 @@
     </ClCompile>
     <ClCompile Include="ImporterPrefab.cpp">
       <Filter>Sources\Resources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_stdlib.cpp">
+      <Filter>Sources\3rd Party\Imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
