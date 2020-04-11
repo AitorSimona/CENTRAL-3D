@@ -44,6 +44,7 @@ void ComponentDynamicRigidBody::Update()
 {
 	setRBValues();
 
+	UpdateRBValues();
 
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
@@ -134,7 +135,7 @@ void ComponentDynamicRigidBody::Load(json& node)
 	angular_damping = std::stoi(angular_damping_);
 
 	setRBValues();
-
+	update = true;
 }
 
 void ComponentDynamicRigidBody::CreateInspectorNode()
@@ -232,27 +233,6 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 		update = true;
 	}
 
-	if (rigidBody != nullptr) {
-		if (update == true){
-			SetMass(mass);
-			SetDensity(density);
-			UseGravity(use_gravity);
-			SetKinematic(is_kinematic);
-			SetLinearVelocity(linear_vel);
-			SetAngularVelocity(angular_vel);
-			SetLinearDamping(linear_damping);
-			SetAngularDamping(angular_damping);
-			rigidBody->setGlobalPose(rigidBody->getGlobalPose());
-		}
-		FeezePosition_X(freezePosition_X);
-		FeezePosition_Y(freezePosition_Y);
-		FeezePosition_Z(freezePosition_Z);
-		FreezeRotation_X(freezeRotation_X);
-		FreezeRotation_Y(freezeRotation_Y);
-		FreezeRotation_Z(freezeRotation_Z);
-		update = false;
-	}
-
 	StaticToDynamicRigidBody();
 }
 
@@ -274,5 +254,26 @@ void ComponentDynamicRigidBody::setRBValues() {
 
 		if (angular_vel.x != 0.0f || angular_vel.y != 0.0f || angular_vel.z != 0.0f)	
 			SetAngularVelocity(angular_vel);		
+	}
+}
+
+void ComponentDynamicRigidBody::UpdateRBValues() {
+	if (rigidBody != nullptr && update) {
+		SetMass(mass);
+		SetDensity(density);
+		UseGravity(use_gravity);
+		SetKinematic(is_kinematic);
+		SetLinearVelocity(linear_vel);
+		SetAngularVelocity(angular_vel);
+		SetLinearDamping(linear_damping);
+		SetAngularDamping(angular_damping);
+		FeezePosition_X(freezePosition_X);
+		FeezePosition_Y(freezePosition_Y);
+		FeezePosition_Z(freezePosition_Z);
+		FreezeRotation_X(freezeRotation_X);
+		FreezeRotation_Y(freezeRotation_Y);
+		FreezeRotation_Z(freezeRotation_Z);
+		//rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = false;
 	}
 }

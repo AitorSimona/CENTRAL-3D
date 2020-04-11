@@ -73,7 +73,13 @@ bool PanelInspector::Draw()
 				if (*it)
 				{
 					std::string a = "##Active";
-					ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
+					if (ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive()))
+					{
+						if ((*it)->IsEnabled())
+							(*it)->Enable();
+						else
+							(*it)->Disable();
+					}
 					ImGui::SameLine();
 
 

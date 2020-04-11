@@ -35,6 +35,8 @@ public:
 	virtual ~ComponentCollider();
 
 	void Update() override;
+	void Enable() override;
+	void Disable() override;
 
 	void UpdateCollider();
 

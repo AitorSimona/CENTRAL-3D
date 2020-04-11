@@ -86,9 +86,11 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 		go1 = App->physics->actors[pairs->triggerActor];
 		go2 = App->physics->actors[pairs->otherActor];
 
-		ComponentScript* script = go1->GetComponent<ComponentScript>();
-		ComponentScript* script2 = go2->GetComponent<ComponentScript>();
-		if (go1 != nullptr && go2 != nullptr) {
+		if (go1 != nullptr && go2 != nullptr) 
+		{
+			ComponentScript* script = go1->GetComponent<ComponentScript>();
+			ComponentScript* script2 = go2->GetComponent<ComponentScript>();
+
 			if ((pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND))
 			{
 				go1->collisions.at(ONTRIGGER_ENTER) = go2;

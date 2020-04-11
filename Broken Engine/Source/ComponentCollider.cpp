@@ -43,6 +43,35 @@ void ComponentCollider::Update()
 	}
 }
 
+void ComponentCollider::Enable()
+{
+	if (GetActor() != nullptr)
+	{
+		if (hasBeenDeactivated)
+		{
+			CreateCollider(type, true);
+			hasBeenDeactivated = false;
+		}
+
+		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+	}
+	active = true;
+}
+
+void ComponentCollider::Disable()
+{
+	if (GetActor() != nullptr)
+	{
+		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+		if (!hasBeenDeactivated)
+		{
+			App->physics->DeleteActor(GetActor());
+			hasBeenDeactivated = true;
+		}
+	}
+	active = false;
+}
+
 void ComponentCollider::UpdateCollider() {
 	CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
 }
@@ -51,30 +80,6 @@ void ComponentCollider::DrawComponent()
 {
 	if (shape)
 	{
-		if (GetActor() != nullptr)
-		{
-			if (!GetActive())
-			{
-				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-				if (!hasBeenDeactivated)
-				{
-					App->physics->DeleteActor(GetActor());
-					hasBeenDeactivated = true;
-				}
-			}
-			else
-			{
-				if (hasBeenDeactivated)
-				{
-					CreateCollider(type, true);
-					hasBeenDeactivated = false;
-				}
-
-				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
-			}
-		}
-
-
 		// --- Get shape's dimensions ---
 		physx::PxGeometryHolder holder = shape->getGeometry();
 		physx::PxGeometryType::Enum type = holder.getType();
@@ -796,6 +801,8 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 		globalMatrix.Decompose(position, rot, scale);
 
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
+		dynamicRB->update = true;
+		dynamicRB->UpdateRBValues();
 
 		physx::PxShape* shape_;
 		dynamicRB->rigidBody->getShapes(&shape_, 1);
