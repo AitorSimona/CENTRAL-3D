@@ -37,7 +37,7 @@ ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : 
 
 ComponentDynamicRigidBody::~ComponentDynamicRigidBody()
 {
-
+	App->physics->DeleteActor(rigidBody);
 }
 
 void ComponentDynamicRigidBody::Update()

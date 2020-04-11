@@ -90,7 +90,8 @@ physx::PxFilterFlags customFilterShader(
 	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
 	// Let triggers through
-	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)) {
+	if ((physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+		&& (filterData0.word0 & filterData1.word1 || filterData1.word0 & filterData0.word1)) {
 		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
 	}
 	else {
@@ -290,17 +291,19 @@ void ModulePhysics::addActor(physx::PxRigidActor* actor, GameObject* gameObject)
 }
 
 void ModulePhysics::UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* Layermask) {
-	physx::PxShape* shape;
-	actor->getShapes(&shape, 1);
+	if (actor) {
+		physx::PxShape* shape;
+		actor->getShapes(&shape, 1);
 
-	physx::PxFilterData* filterData;
-	filterData = &shape->getSimulationFilterData();
-	filterData->word0 = (1 << *Layermask);
+		physx::PxFilterData* filterData;
+		filterData = &shape->getSimulationFilterData();
+		filterData->word0 = (1 << *Layermask);
 
-	shape->setSimulationFilterData(*filterData);
+		shape->setSimulationFilterData(*filterData);
 
-	shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-	shape->setQueryFilterData(*filterData);
+		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+		shape->setQueryFilterData(*filterData);
+	}
 }
 
 void ModulePhysics::UpdateActorsGroupFilter(LayerMask* updateLayer)
@@ -310,41 +313,39 @@ void ModulePhysics::UpdateActorsGroupFilter(LayerMask* updateLayer)
 
 	for (std::map<physx::PxRigidActor*, GameObject*>::iterator it = actors.begin(); it != actors.end(); ++it)
 	{
-		LayerMask layer1 = (*it).second->layer;
-		LayerMask layer2 = *updateLayer;
-		if (layer1 == layer2) {
+		if ((*it).first != nullptr && (*it).second != nullptr) {
+			LayerMask layer1 = (*it).second->layer;
+			LayerMask layer2 = *updateLayer;
+			if (layer1 == layer2) {
 
-			physx::PxShape* shape;
-			(*it).first->getShapes(&shape, 1);
+				physx::PxShape* shape;
+				(*it).first->getShapes(&shape, 1);
 
-			physx::PxFilterData* filterData;
-			filterData = &shape->getSimulationFilterData();
-			filterData->word1 = layer_list.at(layer2).LayerGroup;
+				physx::PxFilterData* filterData;
+				filterData = &shape->getSimulationFilterData();
+				filterData->word1 = layer_list.at(layer2).LayerGroup;
 
-			shape->setSimulationFilterData(*filterData);
+				shape->setSimulationFilterData(*filterData);
 
-			shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-			shape->setQueryFilterData(*filterData);
-			break;
+				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+				shape->setQueryFilterData(*filterData);
+				break;
+			}
 		}
 	}
 }
 
-void ModulePhysics::DeleteActor(physx::PxRigidActor* actor)
+bool ModulePhysics::DeleteActor(physx::PxRigidActor* actor)
 {
 	if (actors.size() > 0)
 	{
-		for (std::map<physx::PxRigidActor*, GameObject*>::iterator it = actors.begin(); it != actors.end(); ++it)
-		{
-			if ((*it).first == actor) {
-				mScene->removeActor(*actor);
+		if(mScene)
+			mScene->removeActor(*actor);
 
-				actors.erase(actor);
-				break;
-			}
-
-		}
+		actors.erase(actor);
+		return true;
 	}
+	return false;
 }
 
 void ModulePhysics::DeleteActors(GameObject* go)
@@ -356,26 +357,18 @@ void ModulePhysics::DeleteActors(GameObject* go)
 	{
 		for (std::vector<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); ++it)
 		{
-			GameObject* go = *it;
-			DeleteActors((go));
-			if (go->GetComponent<ComponentCollider>() != nullptr) {
-				ComponentCollider* col = go->GetComponent<ComponentCollider>();
-				physx::PxRigidActor* actor = col->GetActor();
-				actors.erase(actor);
-				col->Delete();
-			}
-
-			if (go->GetComponent<ComponentCharacterController>() != nullptr) {
-				go->GetComponent<ComponentCharacterController>()->Delete();
-			}
+			GameObject* GO = *it;
+			DeleteActors((GO));
 		}
 	}
-
+	
 	if (go->GetComponent<ComponentCollider>() != nullptr) {
 		ComponentCollider* col = go->GetComponent<ComponentCollider>();
-		physx::PxRigidActor* actor = col->GetActor();
-		actors.erase(actor);
 		col->Delete();
+	}
+
+	if (go->GetComponent<ComponentCharacterController>() != nullptr) {
+		go->GetComponent<ComponentCharacterController>()->Delete();
 	}
 }
 

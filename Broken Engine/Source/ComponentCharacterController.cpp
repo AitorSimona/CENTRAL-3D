@@ -44,6 +44,12 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 
 	physx::PxShape* shape;
 	controller->getActor()->getShapes(&shape, 1);
+
+	physx::PxFilterData filterData;
+	filterData.word0 = (1 << GO->layer); // word0 = own ID
+	filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup;
+	shape->setSimulationFilterData(filterData);
+
 	App->physics->addActor(shape->getActor(), GO);
 
 	initialPosition = capsuleDesc.position;
@@ -83,7 +89,7 @@ void ComponentCharacterController::Update()
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
 
-	//Move(velocity.x, velocity.z);
+	Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
 	float3 cctPos(cctPosition.x, cctPosition.y, cctPosition.z);

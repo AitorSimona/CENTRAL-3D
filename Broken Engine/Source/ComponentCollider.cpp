@@ -47,11 +47,11 @@ void ComponentCollider::Enable()
 {
 	if (GetActor() != nullptr)
 	{
-		if (hasBeenDeactivated)
+		/*if (hasBeenDeactivated)
 		{
 			CreateCollider(type, true);
 			hasBeenDeactivated = false;
-		}
+		}*/
 
 		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
 	}
@@ -63,11 +63,11 @@ void ComponentCollider::Disable()
 	if (GetActor() != nullptr)
 	{
 		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-		if (!hasBeenDeactivated)
+		/*if (!hasBeenDeactivated)
 		{
 			App->physics->DeleteActor(GetActor());
 			hasBeenDeactivated = true;
-		}
+		}*/
 	}
 	active = false;
 }
@@ -401,8 +401,8 @@ void ComponentCollider::Load(json& node)
 	colliderType = std::stoi(colliderType_);
 	isTrigger = std::stoi(isTrigger_);
 
-	//tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
-	tmpScale = float3(0.f, 0.f, 0.f);
+	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
+	//tmpScale = float3(0.f, 0.f, 0.f);
 
 	firstCreation = true;
 
@@ -599,13 +599,19 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		shape = nullptr;
 		if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 		{
-			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
+			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr) {
 				App->physics->DeleteActor(GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
-			if (createAgain && rigidStatic)
+				GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody = nullptr;
+			}
+			if (createAgain && rigidStatic) {
 				App->physics->DeleteActor(rigidStatic);
+				rigidStatic = nullptr;
+			}
 		}
-		else
+		else {
 			App->physics->DeleteActor(rigidStatic);
+			rigidStatic = nullptr;
+		}
 
 
 		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
@@ -682,13 +688,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				shape->setSimulationFilterData(filterData);
 				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 				shape->setQueryFilterData(filterData);
-
-
-				bool a;
-				a = falgs.isSet(physx::PxShapeFlag::ePARTICLE_DRAIN);
-				a = falgs.isSet(physx::PxShapeFlag::eSCENE_QUERY_SHAPE);
-				a = falgs.isSet(physx::PxShapeFlag::eSIMULATION_SHAPE);
-				a = falgs.isSet(physx::PxShapeFlag::eTRIGGER_SHAPE);
 
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
@@ -777,14 +776,15 @@ void ComponentCollider::Delete()
 
 	if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 	{
-		if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
-			App->physics->mScene->removeActor(*(physx::PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
-		if (rigidStatic)
-			App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+		if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr) {
+			App->physics->DeleteActor(GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+			GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody = nullptr;
+		}
 	}
-
-	else if(rigidStatic)
-		App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+	if (rigidStatic) {
+		App->physics->DeleteActor(rigidStatic);
+		rigidStatic = nullptr;
+	}
 }
 
 template <class Geometry>
@@ -799,6 +799,13 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 		Quat rot = Quat::identity;
 
 		globalMatrix.Decompose(position, rot, scale);
+
+		if (rigidStatic) {
+			App->physics->DeleteActor(rigidStatic);
+		}
+		if (dynamicRB->rigidBody) {
+			App->physics->DeleteActor(dynamicRB->rigidBody);
+		}
 
 		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
 		dynamicRB->update = true;
@@ -821,13 +828,6 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup); //Setup filtering Layers
 
 		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
-
-		if (rigidStatic) {
-			App->physics->DeleteActor(rigidStatic);
-		}
-		else if (dynamicRB->rigidBody) {
-			App->physics->DeleteActor(dynamicRB->rigidBody);
-		}
 
 		App->physics->addActor(dynamicRB->rigidBody, GO);
 

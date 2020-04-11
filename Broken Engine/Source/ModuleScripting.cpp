@@ -607,7 +607,6 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 				if (script_component->script_functions[i].name == aux_str.c_str())
 				{
 					script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
-					ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
 				}
 			}
 		}
