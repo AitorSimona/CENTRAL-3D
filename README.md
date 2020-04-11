@@ -141,7 +141,7 @@ Editor camera only works when in AppState EDITOR mode.
 - 3rd Party Libraries used:
 - SDL 2.0.10
 - Glew 2.1.0
-- ImGui 1.72b (with beta docking)
+- ImGui 1.76 WIP docking branch commit 6531
 - ImGuizmo
 - MathGeoLib 1.5 (commit 1994)
 - OpenGL 4.6
