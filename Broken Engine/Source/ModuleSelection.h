@@ -88,8 +88,6 @@ public:
 
 private:
 
-
-
 	void SelectLastTo(GameObject* gameobject);
 
 	void SelectRecursive(GameObject* gameobject, GameObject* from, GameObject* to);
@@ -99,7 +97,11 @@ private:
 
 	void SelectIfIntersects();
 
+public:
+	const AABB& GetAABB() { return aabb_selection; }
+
 private:
+
 	std::vector<GameObject*> selection;
 	
 	GameObject* root = nullptr;
@@ -111,7 +113,8 @@ private:
 	
 	// Visual scene selection
 	OBB aabb;
-	bool aabb_selection = false;
+	AABB aabb_selection;
+	bool is_rectangle_selection = false;
 	float3 aabb_start = float3::zero;
 	float3 aabb_end = float3::zero;
 

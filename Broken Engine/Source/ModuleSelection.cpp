@@ -19,6 +19,8 @@ ModuleSelection::ModuleSelection(bool start_enabled)
 	root = new GameObject(tmp.c_str());
 	name = "Module Selection";
 
+	aabb_selection.SetNegativeInfinity();
+	aabb_selection = AABB({ 0,0,0 }, { 10,10,10 });
 	aabb.SetNegativeInfinity();
 	aabb = AABB({ 0,0,0 }, { 50,50,50 });
 }
@@ -75,7 +77,7 @@ update_status ModuleSelection::Update(float dt)
 	// SELECTED TODO -> stuck at offset
 
 	return UPDATE_CONTINUE;
-	if (aabb_selection)
+	if (is_rectangle_selection)
 	{
 		aabb_end.x += App->input->GetMouseXMotion();
 		aabb_end.y -= App->input->GetMouseYMotion();
@@ -98,14 +100,16 @@ update_status ModuleSelection::Update(float dt)
 
 	}
 
-	if (aabb_selection && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
+	if (is_rectangle_selection && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
 	{
 		aabb_end = float3::zero;
-		aabb_selection = false;
+		is_rectangle_selection = false;
 	}
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
+	App->renderer3D->DrawAABB(aabb_selection, { 0,1,0,1 });
+
 	return UPDATE_CONTINUE;
 	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
 
@@ -114,7 +118,7 @@ update_status ModuleSelection::PostUpdate(float dt)
 void ModuleSelection::SceneRectangleSelect(float3 start)
 {
 	aabb = AABB({ start.x,start.y,start.z }, { start.x,start.y,start.z });
-	aabb_selection = true;
+	is_rectangle_selection = true;
 	aabb_start = start;
 	aabb_end = start;
 	aabb_end.z += 50;
@@ -185,11 +189,10 @@ void ModuleSelection::ApplyOBBTransformation()
 	aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
 	//aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
 }
+
 bool ModuleSelection::IsSelected(GameObject* gameobject)
 {
-	if (gameobject == nullptr) return false;
-
-	return gameobject->node_flags & 1;
+	return gameobject != nullptr && gameobject->node_flags & 1;
 }
 
 void ModuleSelection::HandleSelection(GameObject* gameobject) 
@@ -206,12 +209,15 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 	{
 		ToggleSelect(gameobject);
 	}
-	// SELECTED TODO
 	// User is holding SHIFT, multi select the objects between selected and the new one
 	else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_REPEAT)
 	{
 		SelectLastTo(gameobject);
 	}
+
+	aabb_selection.SetNegativeInfinity();
+	for (GameObject* go : selection)
+		aabb_selection.Enclose(go->GetAABB());
 }
 
 GameObject* ModuleSelection::GetLastSelected() const
@@ -219,53 +225,7 @@ GameObject* ModuleSelection::GetLastSelected() const
 	return selection.empty() ? nullptr : *selection.rbegin();
 }
 
-
-void ModuleSelection::ClearSelection()
-{
-	for (GameObject* go : selection)
-	{
-		go->node_flags &= ~1;
-	}
-	selection.clear();
-}
-bool ModuleSelection::ComponentCanBePasted() const
-{
-	return (component_type != Component::ComponentType::Unknown);
-}
-void ModuleSelection::CopyComponentValues(Component* component)
-{
-	component_type = component->GetType();
-	if (component_type != Component::ComponentType::Unknown)
-	{
-		component_node = component->Save();
-		component_name = component->name;
-	}
-}
-
-void ModuleSelection::PasteComponentValues(Component* component)
-{
-	if (component_type != Component::ComponentType::Unknown)
-		component->Load(component_node);
-}
-
-void ModuleSelection::PasteComponentValuesToSelected()
-{
-	for (GameObject* obj : selection)
-	{
-		if (Component* component = obj->HasComponent(component_type))
-			component->Load(component_node);
-	}
-}
-
-void ModuleSelection::DeleteComponentToSelected()
-{
-	for (GameObject* obj : selection)
-	{
-		if (Component * component = obj->HasComponent(component_type))
-			component->to_delete = true;
-	}
-
-}
+// Simple selection -----------------------------------------------
 void ModuleSelection::Select(GameObject* gameobject)
 {
 	if (gameobject == nullptr)
@@ -278,6 +238,44 @@ void ModuleSelection::Select(GameObject* gameobject)
 		Event e(Event::EventType::GameObject_selected);
 		e.go = gameobject;
 		App->event_manager->PushEvent(e);
+	}
+}
+
+void ModuleSelection::UnSelect(GameObject* gameobject)
+{
+	if (gameobject == nullptr)
+	{
+		ClearSelection();
+	}
+	else if(IsSelected(gameobject)){
+
+		for (std::vector<GameObject*>::iterator it = selection.begin(); it != selection.end();)
+		{
+			if ((*it) == gameobject)
+			{
+				selection.erase(it);
+				gameobject->node_flags &= ~1;
+				break;
+			}
+			it++;
+		}
+	}
+}
+
+// Advanced selection -----------------------------------------------
+
+// returns true if the new state is selected, false otherwise or null
+bool ModuleSelection::ToggleSelect(GameObject* gameobject)
+{
+	if (gameobject == nullptr) return false;
+
+	if (IsSelected(gameobject)) {
+		UnSelect(gameobject);
+		return false;
+	}
+	else {
+		Select(gameobject);
+		return true;
 	}
 }
 
@@ -304,7 +302,7 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 		{
 			for (std::vector<Broken::GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); ++it)
 			{
-				SelectRecursive(*it,from, to);
+				SelectRecursive(*it, from, to);
 			}
 		}
 	}
@@ -330,48 +328,58 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 		{
 			for (std::vector<Broken::GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); ++it)
 			{
-				SelectRecursive(*it,from,to);
+				SelectRecursive(*it, from, to);
 			}
 		}
 
 	}
 }
 
-
-void ModuleSelection::UnSelect(GameObject* gameobject)
+void ModuleSelection::ClearSelection()
 {
-	if (gameobject == nullptr)
+	for (GameObject* go : selection)
 	{
-		ClearSelection();
+		go->node_flags &= ~1;
 	}
-	else if(IsSelected(gameobject)){
+	selection.clear();
+}
 
-		for (std::vector<GameObject*>::iterator it = selection.begin(); it != selection.end();)
-		{
-			if ((*it) == gameobject)
-			{
-				selection.erase(it);
-				gameobject->node_flags &= ~1;
-				break;
-			}
-			it++;
-		}
+// Component Management -----------------------------------------------
+bool ModuleSelection::ComponentCanBePasted() const
+{
+	return (component_type != Component::ComponentType::Unknown);
+}
+void ModuleSelection::CopyComponentValues(Component* component)
+{
+	component_type = component->GetType();
+	if (component_type != Component::ComponentType::Unknown)
+	{
+		component_node = component->Save();
+		component_name = component->name;
 	}
 }
 
-
-
-// returns true if the new state is selected, false otherwise or null
-bool ModuleSelection::ToggleSelect(GameObject* gameobject)
+void ModuleSelection::PasteComponentValues(Component* component)
 {
-	if (gameobject == nullptr) return false;
+	if (component_type != Component::ComponentType::Unknown)
+		component->Load(component_node);
+}
 
-	if (IsSelected(gameobject)) {
-		UnSelect(gameobject);
-		return false;
+void ModuleSelection::PasteComponentValuesToSelected()
+{
+	for (GameObject* obj : selection)
+	{
+		if (Component * component = obj->HasComponent(component_type))
+			component->Load(component_node);
 	}
-	else {
-		Select(gameobject);
-		return true;
+}
+
+void ModuleSelection::DeleteComponentToSelected()
+{
+	for (GameObject* obj : selection)
+	{
+		if (Component * component = obj->HasComponent(component_type))
+			component->to_delete = true;
 	}
+
 }
