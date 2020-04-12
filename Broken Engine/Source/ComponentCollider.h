@@ -35,6 +35,8 @@ public:
 	virtual ~ComponentCollider();
 
 	void Update() override;
+	void Enable() override;
+	void Disable() override;
 
 	void UpdateCollider();
 
@@ -62,7 +64,7 @@ public:
 
 private:
 	template <class Geometry>
-	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
+	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform);
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;

@@ -37,13 +37,14 @@ ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : 
 
 ComponentDynamicRigidBody::~ComponentDynamicRigidBody()
 {
-
+	App->physics->DeleteActor(rigidBody);
 }
 
 void ComponentDynamicRigidBody::Update()
 {
 	setRBValues();
 
+	UpdateRBValues();
 
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
@@ -134,7 +135,7 @@ void ComponentDynamicRigidBody::Load(json& node)
 	angular_damping = std::stoi(angular_damping_);
 
 	setRBValues();
-
+	update = true;
 }
 
 void ComponentDynamicRigidBody::CreateInspectorNode()
@@ -226,31 +227,26 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Constraints"))
 	{
-		ImGui::Text("Freeze Position"); ImGui::SameLine(); ImGui::Checkbox("##FPX", &freezePosition_X); ImGui::SameLine(); ImGui::Checkbox("##FPY", &freezePosition_Y); ImGui::SameLine(); ImGui::Checkbox("##FPZ", &freezePosition_Z);
-		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); ImGui::Checkbox("##FRX", &freezeRotation_X); ImGui::SameLine(); ImGui::Checkbox("##FRY", &freezeRotation_Y); ImGui::SameLine(); ImGui::Checkbox("##FRZ", &freezeRotation_Z);
-		ImGui::TreePop();
-		update = true;
-	}
+		ImGui::Text("Freeze Position"); ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FPX", &freezePosition_X))
+			update = true;
+		ImGui::SameLine(); 
+		if (ImGui::Checkbox("##FPY", &freezePosition_Y))
+			update = true;
+		ImGui::SameLine();
+		if(ImGui::Checkbox("##FPZ", &freezePosition_Z))
+			update = true;
 
-	if (rigidBody != nullptr) {
-		if (update == true){
-			SetMass(mass);
-			SetDensity(density);
-			UseGravity(use_gravity);
-			SetKinematic(is_kinematic);
-			SetLinearVelocity(linear_vel);
-			SetAngularVelocity(angular_vel);
-			SetLinearDamping(linear_damping);
-			SetAngularDamping(angular_damping);
-			rigidBody->setGlobalPose(rigidBody->getGlobalPose());
-		}
-		FeezePosition_X(freezePosition_X);
-		FeezePosition_Y(freezePosition_Y);
-		FeezePosition_Z(freezePosition_Z);
-		FreezeRotation_X(freezeRotation_X);
-		FreezeRotation_Y(freezeRotation_Y);
-		FreezeRotation_Z(freezeRotation_Z);
-		update = false;
+		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRX", &freezeRotation_X))
+			update = true;
+		ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRY", &freezeRotation_Y))
+			update = true;
+		ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRZ", &freezeRotation_Z))
+			update = true;
+		ImGui::TreePop();
 	}
 
 	StaticToDynamicRigidBody();
@@ -274,5 +270,26 @@ void ComponentDynamicRigidBody::setRBValues() {
 
 		if (angular_vel.x != 0.0f || angular_vel.y != 0.0f || angular_vel.z != 0.0f)	
 			SetAngularVelocity(angular_vel);		
+	}
+}
+
+void ComponentDynamicRigidBody::UpdateRBValues() {
+	if (rigidBody != nullptr && update) {
+		SetMass(mass);
+		SetDensity(density);
+		UseGravity(use_gravity);
+		SetKinematic(is_kinematic);
+		SetLinearVelocity(linear_vel);
+		SetAngularVelocity(angular_vel);
+		SetLinearDamping(linear_damping);
+		SetAngularDamping(angular_damping);
+		FeezePosition_X(freezePosition_X);
+		FeezePosition_Y(freezePosition_Y);
+		FeezePosition_Z(freezePosition_Z);
+		FreezeRotation_X(freezeRotation_X);
+		FreezeRotation_Y(freezeRotation_Y);
+		FreezeRotation_Z(freezeRotation_Z);
+		//rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = false;
 	}
 }
