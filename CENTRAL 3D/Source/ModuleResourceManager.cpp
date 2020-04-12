@@ -13,7 +13,7 @@
 
 #include "Assimp/include/cimport.h"
 
-#pragma comment (lib, "Assimp/libx86/assimp.lib")
+#pragma comment (lib, "Assimp/libx86/assimp-vc142-mt.lib")
 
 #include "mmgr/mmgr.h"
 
@@ -39,6 +39,7 @@ bool ModuleResourceManager::Init(json file)
 	stream.callback = MyAssimpCallback;
 	aiAttachLogStream(&stream);
 
+    
 	// --- Create importers ---
 	importers.push_back(new ImporterFolder());
 	importers.push_back(new ImporterScene());
