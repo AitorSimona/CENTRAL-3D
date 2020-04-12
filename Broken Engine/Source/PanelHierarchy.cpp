@@ -66,7 +66,7 @@ bool PanelHierarchy::Draw()
 
 		// Deselect the current GameObject when clicking in an empty space of the hierarchy
 		if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
-			EngineApp->selection->ClearSelection();
+			EngineApp->selection->HandleSelection(nullptr);
 			//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 
 		// Allow creating GameObjects and UI Elements from the hierarchy
@@ -168,6 +168,17 @@ bool PanelHierarchy::Draw()
 			ImGui::EndPopup();
 		}			
 	}
+
+	ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetTextLineHeightWithSpacing()));
+	if (ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
+	{
+		if (ImGui::BeginMenuBar()) {
+			std::string text = "Selected: " +  std::to_string(EngineApp->selection->GetSelected()->size());
+			ImGui::Text(text.c_str());
+			ImGui::EndMenuBar();
+		}
+	}
+		ImGui::EndChild();
 	ImGui::End();
 
 	// --- Manage Drag & Drop ---
