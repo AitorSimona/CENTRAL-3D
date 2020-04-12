@@ -59,15 +59,15 @@ public:
 
 	void HandleSelection(GameObject* gameobject);
 
-	void UpdateAABB();
+	void UpdateRoot();
 
-	GameObject* GetLastSelected() const;
+	GameObject* GetLastSelected();
 
 	void ClearSelection();
 
 	bool ComponentCanBePasted() const;
 
-	const std::vector<GameObject*>* GetSelected() const { return &selection; }
+	inline std::vector<GameObject*>* GetSelected() { return &root->childs; }
 
 	// Component management
 	void CopyComponentValues(Component* component);
@@ -101,12 +101,12 @@ private:
 public:
 
 	const AABB& GetAABB() { return aabb_selection; }
+	GameObject* root = nullptr;
 
 private:
 
-	std::vector<GameObject*> selection;
+	//std::vector<GameObject*> selection;
 	
-	GameObject* root = nullptr;
 
 	// Shift selection
 	bool start_selecting = false;

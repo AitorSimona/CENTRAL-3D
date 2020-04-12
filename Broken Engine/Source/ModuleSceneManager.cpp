@@ -293,17 +293,6 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 		App->renderer3D->DrawAABB(node->box, Red);
 }
 
-//bool ModuleSceneManager::IsSelected(GameObject* go)
-//{
-//	for (int i = 0; i < selected_gameobjects.size(); i++)
-//	{
-//		if (selected_gameobjects[i] == go)
-//			return true;
-//	}
-//
-//	return false;
-//}
-
 void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
@@ -358,10 +347,8 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 		}
 
 		// --- Set Selected ---
-		//if (toSelect)
 		// RAYCAST SELECTION
 		App->selection->HandleSelection(toSelect);
-		//SetSelectedGameObject(toSelect);
 	}
 }
 
@@ -547,17 +534,6 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 
 	return new_object;
 }
-
-//GameObject* ModuleSceneManager::CreateRootSelectedGameObject()
-//{
-//	// --- Create New Game Object Name ---
-//	std::string Name = "rootSelected";
-//
-//	// --- Create empty Game object to be filled out ---
-//	GameObject* new_object = new GameObject(Name.c_str());
-//
-//	return new_object;
-//}
 
 void ModuleSceneManager::CalculateTangentAndBitangent(ResourceMesh* mesh, uint index, float3& tangent, float3& bitangent) const
 {

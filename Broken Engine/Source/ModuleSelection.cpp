@@ -1,7 +1,10 @@
 #include "ModuleSelection.h"
 #include "Application.h"
 #include "ModuleCamera3D.h"
+
+#include "ComponentTransform.h"
 #include "ComponentCamera.h"
+
 #include "ResourceScene.h"
 #include "ModuleEventManager.h"
 #include "ModuleInput.h"
@@ -17,6 +20,7 @@ ModuleSelection::ModuleSelection(bool start_enabled)
 {
 	std::string tmp = "root_selection";
 	root = new GameObject(tmp.c_str());
+	
 	name = "Module Selection";
 
 	aabb_selection.SetNegativeInfinity();
@@ -36,6 +40,10 @@ bool ModuleSelection::Init(json& file)
 
 bool ModuleSelection::Start()
 {
+	//root->AddComponent(Component::ComponentType::Transform);
+	// JUST FOR DEBUG
+	App->scene_manager->root->AddChildGO(root);
+
 	return true;
 }
 bool ModuleSelection::CleanUp()
@@ -43,7 +51,7 @@ bool ModuleSelection::CleanUp()
 	delete root;
 	root = nullptr;
 
-	selection.clear();
+	root->childs.clear();
 
 	return true;
 }
@@ -67,6 +75,7 @@ update_status ModuleSelection::PreUpdate(float dt)
 		// Cleaning
 		ClearSelection();
 		App->scene_manager->go_to_delete.clear();
+		UpdateRoot();
 	}
 
 	return UPDATE_CONTINUE;
@@ -215,19 +224,36 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 		SelectLastTo(gameobject);
 	}
 
-	UpdateAABB();
+	UpdateRoot();
+
 }
 
-void ModuleSelection::UpdateAABB()
+void ModuleSelection::UpdateRoot()
 {
+	float3 pos = float3::zero;
+
+	ComponentTransform* root_t = root->GetComponent<ComponentTransform>();
+	root_t->SetGlobalTransform(float4x4::identity);
+
 	aabb_selection.SetNegativeInfinity();
-	for (GameObject* go : selection)
+
+	for (GameObject* go : *GetSelected())
+	{
+		ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
+		pos += go_t != nullptr ? go_t->position : float3::zero;
+
 		aabb_selection.Enclose(go->GetAABB());
+	}
+	int size = GetSelected()->size();
+	if (size > 0)
+		pos /= size;
+
+	root_t->SetPosition(pos);
 }
 
-GameObject* ModuleSelection::GetLastSelected() const
+GameObject* ModuleSelection::GetLastSelected()
 {
-	return selection.empty() ? nullptr : *selection.rbegin();
+	return GetSelected()->empty() ? nullptr : *GetSelected()->rbegin();
 }
 
 // Simple selection -----------------------------------------------
@@ -239,7 +265,7 @@ void ModuleSelection::Select(GameObject* gameobject)
 	}
 	else if (!IsSelected(gameobject)) {
 		gameobject->node_flags |= 1;
-		selection.push_back(gameobject);
+		GetSelected()->push_back(gameobject);
 		Event e(Event::EventType::GameObject_selected);
 		e.go = gameobject;
 		App->event_manager->PushEvent(e);
@@ -254,11 +280,11 @@ void ModuleSelection::UnSelect(GameObject* gameobject)
 	}
 	else if(IsSelected(gameobject)){
 
-		for (std::vector<GameObject*>::iterator it = selection.begin(); it != selection.end();)
+		for (std::vector<GameObject*>::iterator it = GetSelected()->begin(); it != GetSelected()->end();)
 		{
 			if ((*it) == gameobject)
 			{
-				selection.erase(it);
+				GetSelected()->erase(it);
 				gameobject->node_flags &= ~1;
 				break;
 			}
@@ -342,11 +368,11 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 
 void ModuleSelection::ClearSelection()
 {
-	for (GameObject* go : selection)
+	for (GameObject* go : *GetSelected())
 	{
 		go->node_flags &= ~1;
 	}
-	selection.clear();
+	GetSelected()->clear();
 }
 
 // Component Management -----------------------------------------------
@@ -372,7 +398,7 @@ void ModuleSelection::PasteComponentValues(Component* component)
 
 void ModuleSelection::PasteComponentValuesToSelected()
 {
-	for (GameObject* obj : selection)
+	for (GameObject* obj : *GetSelected())
 	{
 		if (Component * component = obj->HasComponent(component_type))
 			component->Load(component_node);
@@ -381,7 +407,7 @@ void ModuleSelection::PasteComponentValuesToSelected()
 
 void ModuleSelection::DeleteComponentToSelected()
 {
-	for (GameObject* obj : selection)
+	for (GameObject* obj : *GetSelected())
 	{
 		if (Component * component = obj->HasComponent(component_type))
 			component->to_delete = true;

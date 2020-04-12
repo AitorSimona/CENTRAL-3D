@@ -130,10 +130,10 @@ void ModuleCamera3D::UpdateCamera()
 
 		// SELECTED TODO
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
-			if (GameObject* GO = App->selection->GetLastSelected())
-				FrameObject(GO);
+			FrameObject(App->selection->root);
+			/*if (GameObject* GO = App->selection->root)
 			else
-				FrameObject(float3(0.0f));
+				FrameObject(float3(0.0f));*/
 		}
 
 		//App->scene_manager->CreateGrid(camera->frustum.Pos().Length()); // rip adaptive grid
