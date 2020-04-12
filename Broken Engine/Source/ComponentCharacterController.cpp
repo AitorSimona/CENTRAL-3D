@@ -166,36 +166,38 @@ void ComponentCharacterController::Draw()
 
 void ComponentCharacterController::DrawComponent()
 {
-	if (!GetActive())
-	{
-		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-		physx::PxShape* shape;
-		controller->getActor()->getShapes(&shape, 1);
-		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-
-		if (!hasBeenDeactivated)
+	if (controller) {
+		if (!GetActive())
 		{
-			Delete();
-			hasBeenDeactivated = true;
-		}
-	}
+			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+			physx::PxShape* shape;
+			controller->getActor()->getShapes(&shape, 1);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 
-	else
-	{
-		physx::PxShape* shape;
-		controller->getActor()->getShapes(&shape, 1);
-
-		if (hasBeenDeactivated)
-		{
-			App->physics->addActor(shape->getActor(), GO);
-			hasBeenDeactivated = false;
+			if (!hasBeenDeactivated)
+			{
+				Delete();
+				hasBeenDeactivated = true;
+			}
 		}
 
-		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
-		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-	}
+		else
+		{
+			physx::PxShape* shape;
+			controller->getActor()->getShapes(&shape, 1);
 
-	Draw();
+			if (hasBeenDeactivated)
+			{
+				App->physics->addActor(shape->getActor(), GO);
+				hasBeenDeactivated = false;
+			}
+
+			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
+
+		Draw();
+	}
 }
 
 void ComponentCharacterController::Move(float velX, float velZ, float minDist)
