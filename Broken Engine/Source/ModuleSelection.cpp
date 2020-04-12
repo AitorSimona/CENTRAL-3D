@@ -1,17 +1,16 @@
-#include "ModuleSelection.h"
 #include "Application.h"
+
+#include "ModuleSelection.h"
 #include "ModuleCamera3D.h"
+#include "ModuleEventManager.h"
+#include "ModuleInput.h"
+#include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
 
 #include "ComponentTransform.h"
 #include "ComponentCamera.h"
 
 #include "ResourceScene.h"
-#include "ModuleEventManager.h"
-#include "ModuleInput.h"
-#include "ModuleSceneManager.h"
-#include "ModuleGui.h"
-#include "ModuleRenderer3D.h"
-//#include "Math.h"
 
 
 using namespace Broken;
@@ -85,6 +84,17 @@ update_status ModuleSelection::PreUpdate(float dt)
 update_status ModuleSelection::Update(float dt)
 {
 	// SELECTED TODO -> stuck at offset
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
+	{
+		if (is_rectangle_selection)
+		{
+			aabb_end = float3::zero;
+			is_rectangle_selection = false;
+		}
+
+		//last_scale = float3::one;
+		original_scales.clear();
+	}
 
 	return UPDATE_CONTINUE;
 	if (is_rectangle_selection)
@@ -110,11 +120,7 @@ update_status ModuleSelection::Update(float dt)
 
 	}
 
-	if (is_rectangle_selection && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
-	{
-		aabb_end = float3::zero;
-		is_rectangle_selection = false;
-	}
+	
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
@@ -226,7 +232,39 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 	}
 
 	UpdateRoot();
+}
 
+void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale)
+{
+	if (guizmoOperation == ImGuizmo::OPERATION::SCALE)// && last_scale.x == 1 && last_scale.y == 1 && last_scale.z == 1)
+	{
+		for (int i = 0; i < GetSelected()->size(); i++)
+			original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
+	}
+
+	for (int i = 0; i < GetSelected()->size(); i++)
+	{
+		ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
+
+		if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+			t->SetPosition(t->GetPosition() + pos);
+
+		else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+		{
+			if (guizmoMode == ImGuizmo::MODE::LOCAL)
+				t->SetRotation(t->GetRotation() + rot);
+			/* I made it at first but could not replicate later :(
+			else
+				t->SetRotation(dummy1);*/
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+		{
+			t->Scale(original_scales.at(i).x * scale.x, original_scales.at(i).y * scale.y, original_scales.at(i).z * scale.z);
+		}
+
+	}
+
+	UpdateRoot();
 }
 
 void ModuleSelection::UpdateRoot()

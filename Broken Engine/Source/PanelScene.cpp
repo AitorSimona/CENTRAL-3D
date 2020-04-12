@@ -176,18 +176,15 @@ void PanelScene::HandleGuizmo()
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
-	Broken::ComponentTransform* selected = EngineApp->selection->root->GetComponent<Broken::ComponentTransform>();
+	Broken::ComponentTransform* root_transform = EngineApp->selection->root->GetComponent<Broken::ComponentTransform>();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();
 	ImGuizmo::SetRect(EngineApp->gui->sceneX, EngineApp->gui->sceneY, EngineApp->gui->sceneWidth, EngineApp->gui->sceneHeight);
 
 	// --- Create temporal matrix to store results of guizmo operations ---
-	//Broken::ComponentTransform t = Broken::ComponentTransform(EngineApp->selection->root);
-
 	float modelMatrix[16], deltaMatrix[16];
-	memcpy(modelMatrix, selected->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
-	//memcpy(modelMatrix, float4x4::identity.ptr(), 16 * sizeof(float));
+	memcpy(modelMatrix, root_transform->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
@@ -196,38 +193,14 @@ void PanelScene::HandleGuizmo()
 	// --- Update Selected go transform ---
 	if (ImGuizmo::IsUsing())
 	{
-		float4x4 newTransform;
+		/*float4x4 newTransform;
 		newTransform.Set(modelMatrix);
-		newTransform.Transpose();
+		newTransform.Transpose();*/
+
 		float3 pos, rot, scale;
 		ImGuizmo::DecomposeMatrixToComponents(deltaMatrix, pos.ptr(), rot.ptr(), scale.ptr());
 
-		int size = EngineApp->selection->GetSelected()->size();
-		for (Broken::GameObject* go: *EngineApp->selection->GetSelected())
-		{
-			Broken::ComponentTransform* t = go->GetComponent<Broken::ComponentTransform>();
-
-			//Calculating differences
-			//float3 pos = -selected->GetPosition()+ t->GetPosition();
-			t->SetPosition(t->GetPosition() + pos);
-			/*t->position.x += pos.x/size;
-			t->position.y += pos.y/size;
-			t->position.z += pos.z/size;*/
-
-			//Quat rot = selected->GetQuaternionRotation() - t->GetQuaternionRotation();
-
-			t->SetRotation(t->GetRotation() + rot);
-
-			//float3 scale = selected->GetScale() - t->GetScale();
-			scale.x *= t->GetScale().x;
-			scale.y *= t->GetScale().y;
-			scale.z *= t->GetScale().z;
-
-			t->Scale(scale.x, scale.y,scale.z);
-
-		}
-
-		EngineApp->selection->UpdateRoot();
+		EngineApp->selection->UseGuizmo(guizmoOperation, mode, pos, rot, scale);
 	}
 }
 

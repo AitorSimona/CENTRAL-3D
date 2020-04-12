@@ -3,6 +3,8 @@
 
 #include "Module.h"
 #include "GameObject.h"
+#include "Imgui/ImGuizmo/ImGuizmo.h"
+
 //#include "Imgui/imgui.h"
 
 /*
@@ -27,9 +29,10 @@
 		- Be deleted at once
 		- Paste previously copied components 
 		- Delete same component
+		- Guizmo transformation to all **NEW**
 	- TODO
 		- Selection counter in inspector
-		- Guizmo transformation to all
+		
 		
 */
 
@@ -58,6 +61,9 @@ public:
 	bool IsSelected(GameObject* gameobject);
 
 	void HandleSelection(GameObject* gameobject);
+
+	// Values passed must be of the deltaMatrix of the guizmo
+	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale);
 
 	void UpdateRoot();
 
@@ -119,6 +125,11 @@ private:
 	bool is_rectangle_selection = false;
 	float3 aabb_start = float3::zero;
 	float3 aabb_end = float3::zero;
+
+	// Guizmo 
+	std::vector<float3> original_scales;
+	//float3 last_scale = float3::one;
+
 
 	// Component copy and paste
 	json component_node;
