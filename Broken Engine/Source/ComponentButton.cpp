@@ -65,8 +65,9 @@ void ComponentButton::Draw()
 {
 	// --- Frame image with camera ---
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	float3 pos = { position2D.x, position2D.y, nearp + 0.026f };
 	float3 size = { size2D.x / App->gui->sceneWidth, -size2D.y / App->gui->sceneHeight, 1.0f };
-	float4x4 transform = transform.FromTRS({ position2D.x / App->gui->sceneWidth, position2D.y / App->gui->sceneHeight, nearp - 0.05f }, Quat::identity, size);
+	float4x4 transform = transform.FromTRS(pos, Quat::identity, size);
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
@@ -116,10 +117,6 @@ void ComponentButton::Draw()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 
-	// --- Text ---
-	//glColor4f(color.r, color.b, color.g, color.a);
-	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
-
 	 //--- Update color depending on state ---
 	if (state == IDLE) ChangeColorTo(idle_color);
 	if (state == HOVERED) ChangeColorTo(hovered_color);
@@ -127,8 +124,8 @@ void ComponentButton::Draw()
 	if (state == LOCKED) ChangeColorTo(locked_color);
 
 	// --- Collider ---
-	collider = { (int)(position2D.x + App->gui->sceneX+ App->gui->sceneWidth/2), 
-				 (int)(-position2D.y + App->gui->sceneY + App->gui->sceneHeight/2), (int)size2D.x, (int)size2D.y };
+	float2 screenpos = App->renderer3D->active_camera->WorldToScreen({ pos.x, -pos.y, pos.z });
+	collider = { (int)screenpos.x, (int)screenpos.y, (int)size2D.x, (int)size2D.y };
 
 	// Draw Collider
 	if (collider_visible && App->GetAppState() == AppState::EDITOR) //draw only in editor mode
@@ -315,7 +312,7 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
+	if (ImGui::DragFloat("x##buttonsize", &size2D.x) && resize)
 	{
 		if (texture)
 		{
@@ -330,7 +327,7 @@ void ComponentButton::CreateInspectorNode()
 	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
+	if (ImGui::DragFloat("y##buttonsize", &size2D.y) && resize)
 	{
 		if (texture)
 		{
@@ -348,10 +345,10 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##buttonposition", &position2D.x, 0.1f);
+	ImGui::DragFloat("x##buttonposition", &position2D.x, 0.01f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
+	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.01f);
 
 	// Rotation
 	ImGui::Text("Rotation:");
