@@ -42,16 +42,17 @@ bool ModuleSelection::Start()
 {
 	//root->AddComponent(Component::ComponentType::Transform);
 	// JUST FOR DEBUG
-	App->scene_manager->root->AddChildGO(root);
+	//App->scene_manager->root->AddChildGO(root);
 
 	return true;
 }
 bool ModuleSelection::CleanUp()
 {
+	root->childs.clear();
+
 	delete root;
 	root = nullptr;
 
-	root->childs.clear();
 
 	return true;
 }
@@ -232,8 +233,11 @@ void ModuleSelection::UpdateRoot()
 {
 	float3 pos = float3::zero;
 
+	// This part is redone and hardcoded because root has no parent and crashes when accessing the parent globaltransform
 	ComponentTransform* root_t = root->GetComponent<ComponentTransform>();
-	root_t->SetGlobalTransform(float4x4::identity);
+	root_t->Global_transform = float4x4::identity;
+	root_t->Local_transform = float4x4::identity;
+	root_t->update_transform = true;
 
 	aabb_selection.SetNegativeInfinity();
 

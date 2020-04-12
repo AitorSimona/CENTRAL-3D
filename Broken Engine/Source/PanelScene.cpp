@@ -176,28 +176,58 @@ void PanelScene::HandleGuizmo()
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
-	Broken::GameObject* selectedGO = EngineApp->selection->GetLastSelected();
+	Broken::ComponentTransform* selected = EngineApp->selection->root->GetComponent<Broken::ComponentTransform>();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();
 	ImGuizmo::SetRect(EngineApp->gui->sceneX, EngineApp->gui->sceneY, EngineApp->gui->sceneWidth, EngineApp->gui->sceneHeight);
 
 	// --- Create temporal matrix to store results of guizmo operations ---
-	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<Broken::ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
+	//Broken::ComponentTransform t = Broken::ComponentTransform(EngineApp->selection->root);
+
+	float modelMatrix[16], deltaMatrix[16];
+	memcpy(modelMatrix, selected->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 	//memcpy(modelMatrix, float4x4::identity.ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
-	ImGuizmo::Manipulate(EngineApp->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), EngineApp->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
+	ImGuizmo::Manipulate(EngineApp->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), EngineApp->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix, deltaMatrix);
 
 	// --- Update Selected go transform ---
 	if (ImGuizmo::IsUsing())
 	{
 		float4x4 newTransform;
 		newTransform.Set(modelMatrix);
-		selectedGO->GetComponent<Broken::ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
-		EngineApp->selection->UpdateAABB();
+		newTransform.Transpose();
+		float3 pos, rot, scale;
+		ImGuizmo::DecomposeMatrixToComponents(deltaMatrix, pos.ptr(), rot.ptr(), scale.ptr());
+
+		int size = EngineApp->selection->GetSelected()->size();
+		for (Broken::GameObject* go: *EngineApp->selection->GetSelected())
+		{
+			Broken::ComponentTransform* t = go->GetComponent<Broken::ComponentTransform>();
+
+			//Calculating differences
+			//float3 pos = -selected->GetPosition()+ t->GetPosition();
+			t->SetPosition(t->GetPosition() + pos);
+			/*t->position.x += pos.x/size;
+			t->position.y += pos.y/size;
+			t->position.z += pos.z/size;*/
+
+			//Quat rot = selected->GetQuaternionRotation() - t->GetQuaternionRotation();
+
+			t->SetRotation(t->GetRotation() + rot);
+
+			//float3 scale = selected->GetScale() - t->GetScale();
+			scale.x *= t->GetScale().x;
+			scale.y *= t->GetScale().y;
+			scale.z *= t->GetScale().z;
+
+			t->Scale(scale.x, scale.y,scale.z);
+
+		}
+
+		EngineApp->selection->UpdateRoot();
 	}
 }
 
