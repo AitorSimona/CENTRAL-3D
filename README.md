@@ -137,9 +137,10 @@ Editor camera only works when in AppState EDITOR mode.
 
 ## Tools used
 
-- Microsoft Visual Studio 2017 (2019 from version 0.3)
+- Microsoft Visual Studio 2019
 - 3rd Party Libraries used:
 - SDL 2.0.10
+- Assimp 5.0.1
 - Glew 2.1.0
 - ImGui 1.76 WIP docking branch commit 6531
 - ImGuizmo
