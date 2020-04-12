@@ -39,7 +39,7 @@
         "Layer1": {
             "0": true,
             "1": true,
-            "2": false,
+            "2": true,
             "3": true,
             "4": true,
             "5": true,
@@ -48,61 +48,61 @@
             "8": true,
             "9": true,
             "Active": true,
-            "Group": 1019,
+            "Group": 1023,
             "GroupSize": 10,
             "Layer": 1,
             "Name": "Player"
         },
         "Layer2": {
             "0": true,
-            "1": false,
-            "2": false,
+            "1": true,
+            "2": true,
             "3": true,
-            "4": false,
+            "4": true,
             "5": true,
             "6": true,
             "7": true,
             "8": true,
             "9": true,
             "Active": true,
-            "Group": 1001,
+            "Group": 1023,
             "GroupSize": 10,
             "Layer": 2,
-            "Name": "Player_Attack"
+            "Name": "Enemy"
         },
         "Layer3": {
             "0": true,
             "1": true,
             "2": true,
             "3": true,
-            "4": false,
+            "4": true,
             "5": true,
             "6": true,
             "7": true,
             "8": true,
             "9": true,
             "Active": true,
-            "Group": 1007,
+            "Group": 1023,
             "GroupSize": 10,
             "Layer": 3,
-            "Name": "Enemy"
+            "Name": "UI"
         },
         "Layer4": {
             "0": true,
             "1": true,
-            "2": false,
-            "3": false,
-            "4": false,
+            "2": true,
+            "3": true,
+            "4": true,
             "5": true,
             "6": true,
             "7": true,
             "8": true,
             "9": true,
             "Active": true,
-            "Group": 995,
+            "Group": 1023,
             "GroupSize": 10,
             "Layer": 4,
-            "Name": "Enemy_Attack"
+            "Name": "Ignore Raycast"
         },
         "Layer5": {
             "0": true,
@@ -202,10 +202,10 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 648,
+        "height": 810,
         "resizable": true,
         "sceneX": 480,
         "sceneY": 640,
-        "width": 1152
+        "width": 1440
     }
 }
