@@ -69,17 +69,16 @@ bool PanelInspector::Draw()
 				if (Startup)
 					ImGui::SetNextItemOpen(true);
 
-				// SELECTED TODO -> Change script name
 				if (*it)
 				{
-					std::string a = "##Active";
-					ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive());
+					std::string name = "##Active";
+					ImGui::Checkbox((name + (*it)->name).c_str(), &(*it)->GetActive());
 					ImGui::SameLine();
 
+					name = (*it)->GetType() != Component::ComponentType::Script ? (*it)->name : (*it)->name + " (Script)";
 
-					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+					if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						a = "ComponentOptions";
 						ImGui::SameLine();
 						if (ImGui::SmallButton("..."))
 							ImGui::OpenPopup("Component options");
@@ -162,7 +161,6 @@ bool PanelInspector::Draw()
 						for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
 						{
 							Broken::ComponentScript* script = (Broken::ComponentScript*)obj->AddComponent(Broken::Component::ComponentType::Script);
-							// SELECTED TODO - It is necessary to assign all the scripts? (move the line below out of the for loop)
 							script->AssignScript((Broken::ResourceScript*)resource);
 						}
 

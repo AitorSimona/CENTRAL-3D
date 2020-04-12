@@ -185,6 +185,7 @@ void PanelScene::HandleGuizmo()
 	// --- Create temporal matrix to store results of guizmo operations ---
 	float modelMatrix[16];
 	memcpy(modelMatrix, selectedGO->GetComponent<Broken::ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
+	//memcpy(modelMatrix, float4x4::identity.ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
@@ -196,6 +197,7 @@ void PanelScene::HandleGuizmo()
 		float4x4 newTransform;
 		newTransform.Set(modelMatrix);
 		selectedGO->GetComponent<Broken::ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
+		EngineApp->selection->UpdateAABB();
 	}
 }
 

@@ -44,29 +44,13 @@
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
-// SELECTED TODO
 void ModuleSceneManager::ONResourceSelected(const Event& e) 
 {
 	App->selection->ClearSelection();
-	/*if (App->scene_manager->SelectedGameObject)
-		App->scene_manager->SetSelectedGameObject(nullptr);*/
 }
 
-// SELECTED TODO
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
 {
-	// If destroyed GameObject is selected, erase from selected
-	// MANAGED BY MODULE SELECTION
-	/*for (std::vector<GameObject*>::iterator it = App->selection->selected_gameobjects.begin(); it != App->scene_manager->selected_gameobjects.end();)
-	{
-		if (e.go->GetUID() == (*it)->GetUID()) {
-			App->scene_manager->selected_gameobjects.erase(it);
-			break;
-		}
-		it++;
-	}*/
-	
-
 	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
 	{
 		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
@@ -499,40 +483,6 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");
 
 }
-
-// SELECTED TODO
-//GameObject* ModuleSceneManager::GetSelectedGameObject() const
-//{
-//
-//	return selected_gameobjects.empty() ? nullptr : *selected_gameobjects.rbegin();
-//}
-
-
-
-// SELECTED TODO
-//void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
-//	
-//	if (go == nullptr)
-//	{
-//		App->scene_manager->selected_gameobjects.clear();
-//	}
-//	else {
-//
-//		App->scene_manager->selected_gameobjects.push_back(go);
-//		Event e(Event::EventType::GameObject_selected);
-//		e.go = go;
-//		App->event_manager->PushEvent(e);
-//	}
-//	
-//	/*SelectedGameObject = go;
-//
-//	if (SelectedGameObject)
-//	{
-//		Event e(Event::EventType::GameObject_selected);
-//		e.go = go;
-//		App->event_manager->PushEvent(e);
-//	}*/
-//}
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() 
 {

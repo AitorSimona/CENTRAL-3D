@@ -14,29 +14,28 @@
 
 /* CHANGE LIST
 	- Added ModuleSelection to manage selection
+	- Visual scene rectangle selection **NEW**
+	- Script name in component title **NEW**
 	- Selection can be both on hierarchy and scene:
 		- Single -> mouse left click
 		- Additive/Substractive -> mouse left click + CTRL
 		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected
 	- Selected gameobjects can now:
-		- Change parent to the dragged one (only from bot to top, weird, bug)
+		- Change parent to the dragged one
 		- Add same component
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
 		- Paste previously copied components 
 		- Delete same component
 	- TODO
-		- Visual scene rectangle selection
 		- Selection counter in inspector
 		- Guizmo transformation to all
-		- Parenting bug to reparent from top to bot
-		- Script name in component title (Ask Didac)
+		
 */
 
 
 
 BE_BEGIN_NAMESPACE
-// SELECTED TODO
 
 class BROKEN_API ModuleSelection :	public Module
 {
@@ -59,6 +58,8 @@ public:
 	bool IsSelected(GameObject* gameobject);
 
 	void HandleSelection(GameObject* gameobject);
+
+	void UpdateAABB();
 
 	GameObject* GetLastSelected() const;
 
@@ -98,6 +99,7 @@ private:
 	void SelectIfIntersects();
 
 public:
+
 	const AABB& GetAABB() { return aabb_selection; }
 
 private:

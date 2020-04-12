@@ -153,7 +153,7 @@ void ComponentScript::AssignScript(ResourceScript* script_resource)
 		script_resource->AddUser(GO);
 	}
 
-	script_name = this->script->script_name;
+	name = this->script->script_name;
 
 	// Send Component info to scripting to create a Script Instance / Lua class
 	App->scripting->SendScriptToModule(this);

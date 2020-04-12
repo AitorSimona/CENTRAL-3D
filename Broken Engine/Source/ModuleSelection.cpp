@@ -20,7 +20,7 @@ ModuleSelection::ModuleSelection(bool start_enabled)
 	name = "Module Selection";
 
 	aabb_selection.SetNegativeInfinity();
-	aabb_selection = AABB({ 0,0,0 }, { 10,10,10 });
+
 	aabb.SetNegativeInfinity();
 	aabb = AABB({ 0,0,0 }, { 50,50,50 });
 }
@@ -215,6 +215,11 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 		SelectLastTo(gameobject);
 	}
 
+	UpdateAABB();
+}
+
+void ModuleSelection::UpdateAABB()
+{
 	aabb_selection.SetNegativeInfinity();
 	for (GameObject* go : selection)
 		aabb_selection.Enclose(go->GetAABB());
