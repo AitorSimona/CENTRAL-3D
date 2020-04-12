@@ -22,7 +22,9 @@ public:
 	void Draw();
 	void DrawComponent() override;
 
-	void Move(float velX, float velZ, float minDist = 0.01f);
+	void SetVelocity(float velX, float velY, float velZ);
+
+	void Move(float minDist = 0.01f);
 
 	void Delete();
 
@@ -60,9 +62,11 @@ private:
 	float radius = 0.5f;
 	float height = 2.0f;
 	bool sliding = true;
+	bool gravity = true;
 
 	physx::PxVec3 position = physx::PxVec3(0.0f, 0.0f, 0.0f);
 	physx::PxExtendedVec3 initialPosition = physx::PxExtendedVec3(0.0f, 0.0f, 0.0f);
+	physx::PxVec3 vel = physx::PxVec3(0);
 
 	bool creation = false;
 };
