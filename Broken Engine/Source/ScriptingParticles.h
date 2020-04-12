@@ -28,8 +28,6 @@ public:
 
 	void SetParticleScaleFromScript(float x, float y, uint gameobject_UUID);
 	void SetRandomParticleScale(float randomFactor, uint gameobject_UUID);
-
-
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGPARTICLES_H__

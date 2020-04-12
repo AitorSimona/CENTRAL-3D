@@ -173,19 +173,36 @@ bool PanelHierarchy::Draw()
 	// --- Manage Drag & Drop ---
 	if (end_drag)
 	{
-		/*if (!dragged->FindChildGO(target) && target != dragged)
-			target->AddChildGO(dragged);*/
+		bool to_be_cleared = false;
 
-		if (!dragged->FindChildGO(target) && !EngineApp->selection->IsSelected(target)) 
+		if (EngineApp->selection->IsSelected(target) == false) 
 		{
 			for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
-				target->AddChildGO(obj);
+			{
+				// Checking infite loops parent-child
+				//if (target->FindParentGO(obj) == false && obj->FindChildGO(target) == false)
+				if (!(target->FindParentGO(obj) || obj->FindChildGO(target))) // same as line above but more efficient
+				{
+					target->AddChildGO(obj);
+					to_be_cleared = true;
+				}
+			}
 		}
 		end_drag = false;
 		dragged = nullptr;
 		target = nullptr;
+		if (to_be_cleared)
+			EngineApp->selection->ClearSelection();
 	}
-
+	if (to_unparent)
+	{
+		for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
+		{
+			EngineApp->scene_manager->GetRootGO()->AddChildGO(obj);
+		}
+		EngineApp->selection->ClearSelection();
+		to_unparent = false;
+	}
 	return true;
 }
 
@@ -219,15 +236,6 @@ void PanelHierarchy::ExitEditPrefab()
 
 void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 {
-	// --- Set node flags --- MANAGED BY MODULE SELECTION 
-	/*static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-	ImGuiTreeNodeFlags node_flags = base_flags;
-
-	MANAGED BY MODULE SELECTION
-	if (EngineApp->scene_manager->IsSelected(Go))
-		node_flags |= ImGuiTreeNodeFlags_Selected;*/
-	//if (Go == EngineApp->scene_manager->GetSelectedGameObject())
-
 	// --- Avoid displaying root ---
 	if (Go->GetName() == EngineApp->scene_manager->GetRootGO()->GetName())
 	{
@@ -247,8 +255,8 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 			Go->node_flags |= ImGuiTreeNodeFlags_Leaf;
 		else
 			Go->node_flags &= ~ImGuiTreeNodeFlags_Leaf;
-		// --- Create current node and get if it is opened or not ---
 
+		// --- Create current node and get if it is opened or not ---
 		if(!Go->GetActive())
 		ImGui::PushStyleColor(ImGuiCol(), ImVec4(0.5, 0.5, 0.5, 1));
 
@@ -267,12 +275,12 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		// Our buttons are both drag sources and drag targets here!
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			//EngineApp->selection->Select(Go);
 			uint UID = Go->GetUID();
 			ImGui::SetDragDropPayload("GO", &UID, sizeof(uint));
 			dragged = Go;
 			ImGui::Text(Go->GetName());
 			ImGui::EndDragDropSource();
+			EngineApp->selection->Select(dragged);
 		}
 
 		if (ImGui::BeginDragDropTarget())
@@ -286,7 +294,6 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 		}
 
 		// --- Set Game Object to be destroyed ---
-		//if (ImGui::IsWindowFocused() && Go == EngineApp->scene_manager->GetSelectedGameObject() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		if (ImGui::IsWindowFocused() && EngineApp->selection->IsSelected(Go) && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		{
 			EX_ENGINE_CONSOLE_LOG("Destroying: %s ...",  Go->GetName());
@@ -301,39 +308,19 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 				EngineApp->selection->HandleSelection(Go);
 				wasclicked = false;
 			}
-			else if(!end_drag)
-				EngineApp->selection->ClearSelection();
+			else
+			{
+				to_unparent = true;
+			}
 
 		}
+
 		// --- Handle selection ---
 		if (ImGui::IsItemClicked())
 		{
 			selected_uid = Go->GetUID();
 			wasclicked = true;
 		}
-
-		//if (selected_uid == Go->GetUID() && wasclicked && ImGui::IsMouseReleased(0))
-		//{
-		//	if (ImGui::IsItemHovered())
-		//	{
-		//		EngineApp->selection->Select(Go);
-		//		//EngineApp->scene_manager->SetSelectedGameObject(Go);
-		//		wasclicked = false;
-		//	}
-		//	else
-		//	{
-		//		EX_ENGINE_CONSOLE_LOG("Panel Hierarchy 201 - EngineApp->scene_manager->SetSelectedGameObject(nullptr);");
-		//		//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
-		//	}
-		//}
-
-		//// --- Handle selection ---
-		//if (ImGui::IsItemClicked())
-		//{
-		//	selected_uid = Go->GetUID();
-		//	wasclicked = true;
-		//}
-
 
 		// --- Display children only if current node is open ---
 		if (open)
@@ -349,6 +336,5 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 
 			ImGui::TreePop();
 		}
-
 	}
 }

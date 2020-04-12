@@ -16,7 +16,6 @@ public:
 	~ScriptingCamera();
 
 public:
-
 	// Current Camera
 	int GetPosInFrustum(float x, float y, float z, float fovratio1, float fovratio2);
 	luabridge::LuaRef GetFrustumPlanesIntersection(float x, float y, float z, float fovratio, lua_State* L);

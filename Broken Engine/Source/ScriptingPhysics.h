@@ -46,7 +46,6 @@ public:
 	int OnCollisionEnter(uint gameobject_UUID);
 	int OnCollisionStay(uint gameobject_UUID);
 	int OnCollisionExit(uint gameobject_UUID);
-
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGPHYSICS_H__
