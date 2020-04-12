@@ -89,7 +89,7 @@ void ComponentCharacterController::Update()
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
 
-	Move(velocity.x, velocity.z);
+	//Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
 	float3 cctPos(cctPosition.x, cctPosition.y, cctPosition.z);
