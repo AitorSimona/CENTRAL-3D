@@ -39,10 +39,6 @@ bool ModuleSelection::Init(json& file)
 
 bool ModuleSelection::Start()
 {
-	//root->AddComponent(Component::ComponentType::Transform);
-	// JUST FOR DEBUG
-	//App->scene_manager->root->AddChildGO(root);
-
 	return true;
 }
 bool ModuleSelection::CleanUp()
@@ -51,7 +47,6 @@ bool ModuleSelection::CleanUp()
 
 	delete root;
 	root = nullptr;
-
 
 	return true;
 }
@@ -75,7 +70,6 @@ update_status ModuleSelection::PreUpdate(float dt)
 		// Cleaning
 		ClearSelection();
 		App->scene_manager->go_to_delete.clear();
-		UpdateRoot();
 	}
 
 	return UPDATE_CONTINUE;
@@ -92,7 +86,6 @@ update_status ModuleSelection::Update(float dt)
 			is_rectangle_selection = false;
 		}
 
-		//last_scale = float3::one;
 		original_scales.clear();
 	}
 
@@ -114,7 +107,7 @@ update_status ModuleSelection::Update(float dt)
 		float3(1,1, 1));
 
 		aabb.Transform(transform);
-		ClearSelection();
+		ClearSelection(false);
 		SelectIfIntersects();
 		//ApplyOBBTransformation();
 
@@ -124,10 +117,10 @@ update_status ModuleSelection::Update(float dt)
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
-	App->renderer3D->DrawAABB(aabb_selection, { 0,1,0,1 });
+	App->renderer3D->DrawAABB(aabb_selection, { 0.76f, 1, 0.62f,1 });
 
 	return UPDATE_CONTINUE;
-	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
+	App->renderer3D->DrawOBB(aabb, { 0,0,1,1 });
 
 }
 
@@ -172,6 +165,8 @@ void ModuleSelection::SelectIfIntersects()
 			}
 		}
 	}
+	UpdateRoot();
+
 }
 
 
@@ -206,18 +201,18 @@ void ModuleSelection::ApplyOBBTransformation()
 	//aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
 }
 
-bool ModuleSelection::IsSelected(GameObject* gameobject)
+bool ModuleSelection::IsSelected(const GameObject* gameobject) const
 {
 	return gameobject != nullptr && gameobject->node_flags & 1;
 }
 
-void ModuleSelection::HandleSelection(GameObject* gameobject) 
+void ModuleSelection::HandleSelection(GameObject* gameobject)
 {
 	// User is not holding CTRL neither SHIFT -> clean and single select the gameobject
 	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_RCTRL) == KEY_IDLE &&
 		App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_IDLE)
 	{
-		ClearSelection();
+		ClearSelection(false);
 		Select(gameobject);
 	}
 	// User is holding CTRL, toggle selection state
@@ -408,13 +403,16 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 	}
 }
 
-void ModuleSelection::ClearSelection()
+void ModuleSelection::ClearSelection(bool update_root)
 {
 	for (GameObject* go : *GetSelected())
 	{
 		go->node_flags &= ~1;
 	}
 	GetSelected()->clear();
+
+	if (update_root)
+		UpdateRoot();
 }
 
 // Component Management -----------------------------------------------

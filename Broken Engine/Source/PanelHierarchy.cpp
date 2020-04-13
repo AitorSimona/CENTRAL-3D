@@ -170,7 +170,7 @@ bool PanelHierarchy::Draw()
 	}
 
 	ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetTextLineHeightWithSpacing()));
-	if (ImGui::BeginChild("ExplorerItemResizer", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
+	if (ImGui::BeginChild("SelectionCounter", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
 	{
 		if (ImGui::BeginMenuBar()) {
 			std::string text = "Selected: " +  std::to_string(EngineApp->selection->GetSelected()->size());

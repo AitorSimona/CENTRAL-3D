@@ -16,24 +16,25 @@
 
 /* CHANGE LIST
 	- Added ModuleSelection to manage selection
-	- Visual scene rectangle selection **NEW**
-	- Script name in component title **NEW**
+	- **NEW** Visual scene rectangle selection 
+	- **NEW** Script name in component title 
+	- **NEW** Selection counter in inspector 
 	- Selection can be both on hierarchy and scene:
 		- Single -> mouse left click
 		- Additive/Substractive -> mouse left click + CTRL
 		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected
 	- Selected gameobjects can now:
-		- Change parent to the dragged one
 		- Add same component
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
 		- Paste previously copied components 
 		- Delete same component
-		- Guizmo transformation to all **NEW**
+		- **NEW** Change parent to the dragged one 
+		- **NEW** Guizmo transformation to all 
 	- TODO
-		- Selection counter in inspector
-		
-		
+		- Scene visual rectangle selection (just fix one matrix)
+		- Bugs when guizmo and parents (maybe is root obj)
+
 */
 
 
@@ -56,24 +57,16 @@ public:
 
 public:
 
-	void ApplyOBBTransformation();
-
-	bool IsSelected(GameObject* gameobject);
+	bool IsSelected(const GameObject* gameobject) const;
 
 	void HandleSelection(GameObject* gameobject);
 
-	// Values passed must be of the deltaMatrix of the guizmo
-	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale);
-
-	void UpdateRoot();
-
 	GameObject* GetLastSelected();
 
-	void ClearSelection();
-
-	bool ComponentCanBePasted() const;
-
 	inline std::vector<GameObject*>* GetSelected() { return &root->childs; }
+
+	// change update_root to false if you don't want the scene visual rectangle to clear
+	void ClearSelection(bool update_root = true);
 
 	// Component management
 	void CopyComponentValues(Component* component);
@@ -84,35 +77,44 @@ public:
 
 	void DeleteComponentToSelected();
 
+	bool ComponentCanBePasted() const;
+
 	std::string component_name = "None";
 
 
+	// Simple selection
 	void Select(GameObject* gameobject);
 
 	void UnSelect(GameObject* gameobject);
 
+	// Initializer
 	void SceneRectangleSelect(float3 start);
 
-private:
+	// Values passed must be of the deltaMatrix of the guizmo
+	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale);
 
+private:
+	// Scene rectangle 
+	void ApplyOBBTransformation();
+
+	void SelectIfIntersects();
+
+	void UpdateRoot();
+
+	// Advanced selection
 	void SelectLastTo(GameObject* gameobject);
 
 	void SelectRecursive(GameObject* gameobject, GameObject* from, GameObject* to);
 
-
 	bool ToggleSelect(GameObject* gameobject);
 
-	void SelectIfIntersects();
 
 public:
 
-	const AABB& GetAABB() { return aabb_selection; }
+	// Please DO NOT EDIT
 	GameObject* root = nullptr;
 
 private:
-
-	//std::vector<GameObject*> selection;
-	
 
 	// Shift selection
 	bool start_selecting = false;
@@ -128,8 +130,6 @@ private:
 
 	// Guizmo 
 	std::vector<float3> original_scales;
-	//float3 last_scale = float3::one;
-
 
 	// Component copy and paste
 	json component_node;
