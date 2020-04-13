@@ -253,7 +253,7 @@ void ScriptingPhysics::SetCharacterPosition(float posx, float posy, float posz, 
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject with %d UUID was not found!", gameobject_UUID);
 }
 
-void ScriptingPhysics::Move(float vel_x, float vel_y, uint gameobject_UUID)
+void ScriptingPhysics::Move(float vel_x, float vel_z, uint gameobject_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
@@ -261,7 +261,7 @@ void ScriptingPhysics::Move(float vel_x, float vel_y, uint gameobject_UUID)
 	{
 		ComponentCharacterController* character = go->GetComponent<ComponentCharacterController>();
 		if (character)
-			character->Move(vel_x, vel_y);
+			character->SetVelocity(vel_x, 0, vel_z);
 		else
 			ENGINE_CONSOLE_LOG("Character Controller is null on Move");
 	}
@@ -335,11 +335,10 @@ luabridge::LuaRef ScriptingPhysics::OverlapSphere(float position_x, float positi
 
 int ScriptingPhysics::OnTriggerEnter(uint gameobject_UUID)
 {
-	int ret = 0;
-	GameObject* body = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
-
-	if (body) {
-		GameObject* other = body->collisions.at(ONTRIGGER_ENTER);
+	int ret = 0; 
+	GameObject* GO = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	if (GO) {
+		GameObject* other = GO->collisions.at(ONTRIGGER_ENTER);
 		if (other) {
 			ret = other->GetUID();
 		}

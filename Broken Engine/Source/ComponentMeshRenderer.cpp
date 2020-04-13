@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "OpenGL.h"
 #include "Color.h"
+
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
@@ -126,9 +127,10 @@ json ComponentMeshRenderer::Save() const
 {
 	json node;
 	node["Active"] = this->active;
-	node["Resources"]["ResourceMaterial"];
-	if(material)
-		node["Resources"]["ResourceMaterial"] = std::string(material->GetResourceFile());
+	node["Resources"]["ResourceMaterial"]["path"];
+
+	if (material)
+		node["Resources"]["ResourceMaterial"]["path"] = std::string(material->GetResourceFile());
 
 	return node;
 }
@@ -137,7 +139,7 @@ void ComponentMeshRenderer::Load(json& node)
 {
 	this->active = node["Active"].is_null() ? true : (bool)node["Active"];
 
-	std::string mat_path = node["Resources"]["ResourceMaterial"].is_null() ? "0" : node["Resources"]["ResourceMaterial"];
+	std::string mat_path = node["Resources"]["ResourceMaterial"]["path"].is_null() ? "0" : node["Resources"]["ResourceMaterial"]["path"];
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 
 	if (IMeta) 
@@ -189,8 +191,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	if (material)
 	{
 		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
-		static bool save_material = false;
-		static Timer material_save_time;
 
 		// --- Mat preview
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
@@ -251,7 +251,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::Text("Shininess");
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x + 10.0f);
 				ImGui::SetNextItemWidth(300.0f);
-				if(ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f)) save_material = true;
+				if(ImGui::SliderFloat("", &material->m_Shininess, 1.0f, 500.00f, "%.3f", 1.5f)) save_material = true;
 
 				//ImGui::Text("Shader Uniforms");
 
@@ -474,9 +474,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			Resource* resource = App->resources->GetResource(UID, false);
 
 			if (resource && resource->GetType() == Resource::ResourceType::MATERIAL)
-			{
 				material = (ResourceMaterial*)App->resources->GetResource(UID);
-			}
 		}
 
 		ImGui::EndDragDropTarget();

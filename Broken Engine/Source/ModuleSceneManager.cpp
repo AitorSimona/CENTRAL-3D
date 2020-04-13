@@ -17,6 +17,7 @@
 #include "ModuleUI.h"
 #include "ModuleSelection.h"
 #include "ModuleScripting.h"
+#include "ModuleGui.h"
 
 //#include "ModuleGui.h"
 
@@ -29,6 +30,7 @@
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
+#include "ResourcePrefab.h"
 
 #include "Component.h"
 #include "ComponentButton.h"
@@ -109,28 +111,6 @@ bool ModuleSceneManager::Init(json& file)
 
 bool ModuleSceneManager::Start()
 {
-	// --- Create primitives ---
-	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
-	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
-	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
-	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
-	cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 6);
-	disk = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultDisk", 13);
-
-	CreateCube(1, 1, 1, cube);
-	CreateSphere(1.0f, 25, 25, sphere);
-	CreateCapsule(1, 1, capsule);
-	CreatePlane(1, 1, 1, plane);
-	CreateCylinder(1, 1, cylinder);
-	CreateDisk(1, disk);
-
-	cube->LoadToMemory();
-	sphere->LoadToMemory();
-	capsule->LoadToMemory();
-	plane->LoadToMemory();
-	cylinder->LoadToMemory();
-	disk->LoadToMemory();
-
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
 
@@ -193,7 +173,7 @@ void ModuleSceneManager::DrawScene()
 	{
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetUID() != root->GetUID())
+			if ((*it).second->GetActive() && (*it).second->GetUID() != root->GetUID())
 			{
 				const AABB aabb = (*it).second->GetAABB();
 
@@ -214,7 +194,8 @@ void ModuleSceneManager::DrawScene()
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
 			// --- Issue render order ---
-			(*it)->Draw();
+			if ((*it)->GetActive())
+				(*it)->Draw();
 		}
 	}
 
@@ -477,6 +458,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		// --- Unload current scene ---
 		if (currentScene)
 		{
+			App->physics->DeleteActors();
+
 			// --- Reset octree ---
 			tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
@@ -551,7 +534,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 //	}*/
 //}
 
-GameObject* ModuleSceneManager::CreateEmptyGameObject() {
+GameObject* ModuleSceneManager::CreateEmptyGameObject() 
+{
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
 	Name.append("(");
@@ -564,7 +548,12 @@ GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	GameObject* new_object = new GameObject(Name.c_str());
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->editingPrefab)
+	{
+		App->gui->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }
@@ -583,7 +572,12 @@ GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
 	GameObject* new_object = new GameObject(Name.data(),UID);
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->editingPrefab)
+	{
+		App->gui->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }
@@ -904,6 +898,16 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 	delete go;
 	go = nullptr;
 	this->go_count--;
+}
+
+void ModuleSceneManager::GatherGameObjects(GameObject* go, std::vector<GameObject*>& gos_vec)
+{
+	gos_vec.push_back(go);
+
+	for (uint i = 0; i < go->childs.size(); ++i)
+	{
+		GatherGameObjects(go->childs[i], gos_vec);
+	}
 }
 
 void ModuleSceneManager::SendToDelete(GameObject* go)

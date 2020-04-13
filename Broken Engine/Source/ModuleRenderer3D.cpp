@@ -57,12 +57,14 @@ bool ModuleRenderer3D::Init(json& file)
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 
-	if (context == NULL) {
+	if (context == NULL)
+	{
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
-	if (ret == true) {
+	if (ret == true)
+	{
 		//Use Vsync
 		if (vsync && SDL_GL_SetSwapInterval(1) < 0)
 			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
@@ -74,7 +76,10 @@ bool ModuleRenderer3D::Init(json& file)
 			ret = false;
 		}
 		else
+		{
 			GL_SETERRORHANDLER(4, 4); //OpenGL Error Handler
+			LoadStatus(file);
+		}
 	}
 
 	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges ---
@@ -130,15 +135,19 @@ bool ModuleRenderer3D::Init(json& file)
 
 	glGenVertexArrays(1, &PointLineVAO);
 
+	// --- Create camera to take model/meshes screenshots ---
+	screenshot_camera = new ComponentCamera(nullptr);
+	screenshot_camera->name = "Screenshot";
+	screenshot_camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
+	screenshot_camera->SetFOV(60.0f);
+	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
+
 	return ret;
 }
 
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-	// --- Clear render orders ---
-	ClearRenderOrders();
-
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -206,13 +215,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		DrawGrid();
 
 	// --- Draw ---
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	SendShaderUniforms(defaultShader->ID);
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
@@ -251,6 +259,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	SDL_GL_MakeCurrent(App->window->window, context);
 	SDL_GL_SwapWindow(App->window->window);
 
+	// --- Clear render orders ---
+	ClearRenderOrders();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -260,6 +271,8 @@ bool ModuleRenderer3D::CleanUp()
 	ENGINE_AND_SYSTEM_CONSOLE_LOG("Destroying 3D Renderer");
 
 	m_LightsVec.clear();
+
+	delete screenshot_camera;
 
 	glDeleteBuffers(1, (GLuint*)&Grid_VBO);
 	glDeleteVertexArrays(1, &Grid_VAO);
@@ -271,6 +284,18 @@ bool ModuleRenderer3D::CleanUp()
 	SDL_GL_DeleteContext(context);
 
 	return true;
+}
+
+void ModuleRenderer3D::LoadStatus(const json& file)
+{
+	m_GammaCorrection = file["Renderer3D"]["GammaCorrection"].is_null() ? 1.0f : file["Renderer3D"]["GammaCorrection"].get<float>();
+}
+
+const json& ModuleRenderer3D::SaveStatus() const
+{
+	static json m_config;
+	m_config["GammaCorrection"] = m_GammaCorrection;
+	return m_config;
 }
 
 void ModuleRenderer3D::OnResize(int width, int height)
@@ -411,6 +436,112 @@ void ModuleRenderer3D::DrawFrustum(const Frustum& box, const Color& color)
 		render_frustums.push_back(RenderBox<Frustum>(&box, color));
 }
 
+
+const std::string & ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos, uint& texId)
+{
+	if (scene_gos.size() == 0)
+		return std::string("");
+
+	// --- Issue render calls and obtain an AABB that encloses all meshes ---
+
+	AABB aabb;
+	aabb.SetNegativeInfinity();
+
+	for (uint i = 0; i < scene_gos.size(); ++i)
+	{
+		scene_gos[i]->Draw();
+		aabb.Enclose(scene_gos[i]->GetAABB());
+	}
+
+	// --- Frame aabb ---
+	screenshot_camera->frustum.SetPos(float3(0.0f, 25.0f, -50.0f));
+	screenshot_camera->SetFOV(60.0f);
+	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
+
+	float3 center = aabb.CenterPoint();
+
+	ComponentCamera* previous_cam = active_camera;
+	SetActiveCamera(screenshot_camera);
+
+	float diagonal = aabb.Diagonal().Length() * 0.75f;
+
+	float3 Movement = active_camera->frustum.Front() * (diagonal);
+
+	if (Movement.IsFinite())
+		screenshot_camera->frustum.SetPos(center - Movement);
+
+	PreUpdate(0.0f);
+
+	//// --- Set Shader Matrices ---
+	//GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
+
+	//float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	//// right handed projection matrix (just different standard)
+	//float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	//float4x4 proj_RH(
+	//	f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+	//	0.0f, f, 0.0f, 0.0f,
+	//	0.0f, 0.0f, 0.0f, -1.0f,
+	//	0.0f, 0.0f, nearp, 0.0f);
+
+	//GLint projectLoc = glGetUniformLocation(defaultShader->ID, "projection");
+	//glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+	//GLint modelLoc = glGetUniformLocation(defaultShader->ID, "model_matrix");
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, float4x4::identity.Transposed().ptr());
+
+	// --- Bind fbo ---
+	if (renderfbo)
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
+	glDepthFunc(GL_GREATER);
+
+	// --- Do not write to the stencil buffer ---
+	glStencilMask(0x00);
+
+	//// --- Draw Grid ---
+	//DrawGrid();
+
+	SendShaderUniforms(defaultShader->ID);
+
+	// --- Draw ---
+	DrawRenderMeshes();
+
+	// --- Back to defaults ---
+	glDepthFunc(GL_LESS);
+
+	// --- Unbind fbo ---
+	if (renderfbo)
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// --- Clear render orders ---
+	ClearRenderOrders();
+
+	SDL_Surface* surface = SDL_GetWindowSurface(App->window->window);
+
+	GLubyte* pixels = new GLubyte[surface->w * surface->h * 3];
+
+	glBindTexture(GL_TEXTURE_2D, rendertexture);
+
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	static std::string out_path;
+	uint uid = App->GetRandom().Int();
+	texId = App->textures->CreateTextureFromPixels(GL_RGB, surface->w, surface->h, GL_RGB, pixels);
+	App->textures->CreateAndSaveTextureFromPixels(uid, GL_RGB, surface->w, surface->h, GL_RGB, (void*)pixels, out_path);
+
+	delete[] pixels;
+
+	SetActiveCamera(previous_cam);
+
+	return out_path;
+}
+
 void ModuleRenderer3D::ClearRenderOrders()
 {
 	render_meshes.clear();
@@ -448,7 +579,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 	for (uint i = 0; i < meshInstances.size(); ++i)
 	{
 		uint shader = defaultShader->ID;
-		RenderMesh* mesh = &meshInstances[i];		
+		RenderMesh* mesh = &meshInstances[i];
 		float4x4 model = mesh->transform;
 		float3 colorToDraw = float3(1.0f);
 
@@ -489,6 +620,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit"), (int)m_Draw_normalMapping_Lit);
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit_Adv"), (int)m_Draw_normalMapping_Lit_Adv);
 
+		// --- Gamma Correction Value ---
+		glUniform1f(glGetUniformLocation(shader, "u_GammaCorrection"), m_GammaCorrection);
+
 		// --- Set Textures usage to 0 ---
 		//glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
 		//glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
@@ -505,7 +639,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		{
 			const ResourceMesh* rmesh = mesh->resource_mesh;
 			if (mesh->deformable_mesh)
-				rmesh = mesh->deformable_mesh;			
+				rmesh = mesh->deformable_mesh;
 
 			// Material
 			if (mesh->mat)
@@ -513,8 +647,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
 				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
 
-				//Textures 
-				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);			
+				//Textures
+				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);
 
 				if (mesh->flags & RenderMeshFlags_::texture)
 				{
@@ -632,6 +766,8 @@ void ModuleRenderer3D::SendShaderUniforms(uint shader)
 	glUniform1i(glGetUniformLocation(shader, "u_HasDiffuseTexture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "u_HasSpecularTexture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
+
+
 
 	if (shader == defaultShader->ID)
 	{
@@ -993,49 +1129,50 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating z buffer shader drawer ---
 
 	const char* zdrawervertex =
-		R"(#version 440 core 
-		#define VERTEX_SHADER 
-		#ifdef VERTEX_SHADER 
-		
-		layout (location = 0) in vec3 a_Position; 
-		
-		uniform vec2 nearfar; 
-		uniform mat4 u_Model; 
-		uniform mat4 u_View; 
-		uniform mat4 u_Proj; 
-		
-		out mat4 v_Projection; 
-		out vec2 v_NearFarPlanes; 
-		
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
+
+		uniform vec2 nearfar;
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out mat4 v_Projection;
+		out vec2 v_NearFarPlanes;
+
 		void main()
-		{ 
-			v_NearFarPlanes = nearfar; 
-			v_Projection = u_Proj; 
-			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0); 
+		{
+			v_NearFarPlanes = nearfar;
+			v_Projection = u_Proj;
+			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 		}
 		#endif //VERTEX_SHADER)";
 
 	const char* zdrawerfragment =
-		R"(#define FRAGMENT_SHADER 
+		R"(#version 440 core
+		#define FRAGMENT_SHADER
 		#ifdef FRAGMENT_SHADER
-		
+
 			in vec2 v_NearFarPlanes;
 			in mat4 v_Projection;
-		
+
 			out vec4 color;
-		
+
 			float LinearizeDepth(float depth)
 			{
-				float z = 2.0 * depth - 1.0; // back to NDC 
+				float z = 2.0 * depth - 1.0; // back to NDC
 				return 2.0 * v_NearFarPlanes.x * v_NearFarPlanes.y / (v_NearFarPlanes.y + v_NearFarPlanes.x - z * (v_NearFarPlanes.y - v_NearFarPlanes.x));
 			}
-		
+
 			void main()
 			{
 				float depth = LinearizeDepth(gl_FragCoord.z) / v_NearFarPlanes.y;
 				color = vec4(vec3(gl_FragCoord.z * v_NearFarPlanes.y * v_NearFarPlanes.x), 1.0);
 			}
-		
+
 		#endif //FRAGMENT_SHADER)";
 
 	// NOTE: not removing linearizedepth function because it was needed for the previous z buffer implementation (no reversed-z), just in case I need it again (doubt it though)
@@ -1052,45 +1189,45 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	// --- Creating text rendering shaders ---
 
 	const char* textVertShaderSrc =
-		R"(#version 440 core 
-		
-		#define VERTEX_SHADER 
-		#ifdef VERTEX_SHADER 
-		
-		layout (location = 0) in vec3 a_Position; 
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
 		layout (location = 1) in vec2 a_TexCoords;
-		
-		uniform mat4 u_Model; 
-		uniform mat4 u_View; 
-		uniform mat4 u_Proj; 
-		
-		out vec2 v_TexCoords; 
-		
+
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out vec2 v_TexCoords;
+
 		void main()
-		{ 
-			gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f); 
-			v_TexCoords = a_TexCoords; 
+		{
+			gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f);
+			v_TexCoords = a_TexCoords;
 		}
-		
+
 		#endif //VERTEX_SHADER)";
 
 	const char* textFragShaderSrc =
-		R"(#define FRAGMENT_SHADER 
-		#ifdef FRAGMENT_SHADER 
-		
-		in vec2 v_TexCoords; 
-		
-		uniform sampler2D text; 
-		uniform vec3 textColor; 
-		
-		out vec4 color; 
-		
+		R"(#version 440 core
+		#define FRAGMENT_SHADER
+		#ifdef FRAGMENT_SHADER
+
+		in vec2 v_TexCoords;
+
+		uniform sampler2D text;
+		uniform vec3 textColor;
+
+		out vec4 color;
+
 		void main()
-		{ 
-			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r); 
-			color = vec4(textColor, 1.0) * sampled; 
-		} 
-		
+		{
+			vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v_TexCoords).r);
+			color = vec4(textColor, 1.0) * sampled;
+		}
+
 		#endif //FRAGMENT_SHADER)";
 
 	textShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TextShader.glsl", 11);
@@ -1173,9 +1310,9 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 		void main()
 		{
-			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);
 			TexCoords = aTexCoords;
-		} 
+		}
 		#endif //VERTEX_SHADER)";
 
 	const char* fragmentScreenShader =
@@ -1184,13 +1321,13 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		#ifdef FRAGMENT_SHADER
 
 		out vec4 FragColor;
-  
+
 		in vec2 TexCoords;
 
 		uniform sampler2D screenTexture;
-		
+
 		void main()
-		{ 
+		{
 		    FragColor = texture(screenTexture, TexCoords);
 		}
 		#endif //FRAGMENT_SHADER)";

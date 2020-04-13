@@ -46,6 +46,7 @@ public:
 	inline void FreezeRotation_Z(bool enable) { rigidBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, enable); }
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::DynamicRigidBody; };
+	void UpdateRBValues();
 
 	// --- Save & Load ---
 	json Save() const override;
@@ -56,6 +57,7 @@ private:
 	void StaticToDynamicRigidBody();
 
 	void setRBValues();
+
 
 public:
 	physx::PxRigidDynamic* rigidBody = nullptr;
@@ -72,6 +74,7 @@ public:
 	bool freezePosition_X = false, freezePosition_Y = false, freezePosition_Z = false;
 	bool freezeRotation_X = true, freezeRotation_Y = false, freezeRotation_Z = true;
 	bool toPlay = false;
+	bool update = false;
 };
 
 BE_END_NAMESPACE

@@ -46,7 +46,7 @@ ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 ModuleScripting::~ModuleScripting() {}
 
 bool ModuleScripting::DoHotReloading() {
-	bool ret = true;
+ 	bool ret = true;
 
 	if (App->GetAppState() == AppState::EDITOR) // 	Ask Aitor, only return true when no gameplay is happening	App->scene_intro->playing == false
 	{
@@ -359,6 +359,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("LoadScene", &ScriptingScenes::LoadSceneFromScript)
 		.addFunction("QuitGame", &ScriptingScenes::QuitGame)
+		.addFunction("Instantiate", &ScriptingScenes::Instantiate)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -607,7 +608,6 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 				if (script_component->script_functions[i].name == aux_str.c_str())
 				{
 					script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
-					ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
 				}
 			}
 		}

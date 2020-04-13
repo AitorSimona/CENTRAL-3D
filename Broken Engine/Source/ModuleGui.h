@@ -20,11 +20,13 @@ struct ImDrawList;
 //class PanelShaderEditor;
 //class PanelResources;
 
+
 typedef void* (*be_imguialloc)(size_t sz, void* user_data);
 typedef void (*be_imguifree)(void* ptr, void* user_data);
 
 BE_BEGIN_NAMESPACE
 class Panel;
+class ResourcePrefab;
 
 class BROKEN_API ModuleGui : public Module
 {
@@ -75,6 +77,10 @@ public:
 	//PanelResources*		panelResources = nullptr;
 	//PanelPhysics*		panelPhysics = nullptr;
 	//PanelGame*			panelGame = nullptr;
+
+	bool openPrefab = false;
+	bool editingPrefab = false;
+	ResourcePrefab* prefab = nullptr;
 
 
 	uint folderTexID = 0;

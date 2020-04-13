@@ -44,6 +44,12 @@ ComponentCharacterController::ComponentCharacterController(GameObject* Container
 
 	physx::PxShape* shape;
 	controller->getActor()->getShapes(&shape, 1);
+
+	physx::PxFilterData filterData;
+	filterData.word0 = (1 << GO->layer); // word0 = own ID
+	filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup;
+	shape->setSimulationFilterData(filterData);
+
 	App->physics->addActor(shape->getActor(), GO);
 
 	initialPosition = capsuleDesc.position;
@@ -59,21 +65,24 @@ ComponentCharacterController::~ComponentCharacterController()
 
 void ComponentCharacterController::Update()
 {
-	/*if (App->input->GetKey(SDL_SCANCODE_UP))
-		velocity.z = -10.0f;
+	vel = physx::PxVec3(0);
+	/*
+	if (App->input->GetKey(SDL_SCANCODE_UP))
+		vel.z = -10.0f;
 
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN))
-		velocity.z = 10.0f;
+		vel.z = 10.0f;
 	else
-		velocity.z = 0.0f;
+		vel.z = 0.0f;
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT))
-		velocity.x = 10.0f;
+		vel.x = 10.0f;
 
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT))
-		velocity.x = -10.0f;
+		vel.x = -10.0f;
 	else
-		velocity.x = 0.0f;*/
+		vel.x = 0.0f;*/
+
 
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
 
@@ -83,7 +92,11 @@ void ComponentCharacterController::Update()
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
 
-	//Move(velocity.x, velocity.z);
+	if (gravity) {
+		vel.y = App->physics->mScene->getGravity().y;
+		Move();//Affect Gravity Always
+	}
+
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
 	float3 cctPos(cctPosition.x, cctPosition.y, cctPosition.z);
@@ -110,7 +123,7 @@ void ComponentCharacterController::Draw()
 	if (!mesh->IsInMemory())
 	{
 		// --- Rebuild capsule ---
-		App->scene_manager->CreateCapsule(radius, height * 2, mesh);
+		App->scene_manager->CreateCapsule(radius * 2, height * 2, mesh);
 		mesh->LoadToMemory();
 	}
 
@@ -125,6 +138,7 @@ void ComponentCharacterController::Draw()
 		GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 
 		float4x4 aux = GO->GetComponent<ComponentTransform>()->GetGlobalTransform();
+		
 		aux.y += controller->getPosition().y - controller->getFootPosition().y;
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, aux.Transposed().ptr());
@@ -159,43 +173,49 @@ void ComponentCharacterController::Draw()
 
 void ComponentCharacterController::DrawComponent()
 {
-	if (!GetActive())
-	{
-		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-		physx::PxShape* shape;
-		controller->getActor()->getShapes(&shape, 1);
-		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-
-		if (!hasBeenDeactivated)
+	if (controller) {
+		if (!GetActive())
 		{
-			Delete();
-			hasBeenDeactivated = true;
-		}
-	}
+			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+			physx::PxShape* shape;
+			controller->getActor()->getShapes(&shape, 1);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 
-	else
-	{
-		physx::PxShape* shape;
-		controller->getActor()->getShapes(&shape, 1);
-
-		if (hasBeenDeactivated)
-		{
-			App->physics->addActor(shape->getActor(), GO);
-			hasBeenDeactivated = false;
+			if (!hasBeenDeactivated)
+			{
+				Delete();
+				hasBeenDeactivated = true;
+			}
 		}
 
-		controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
-		shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		else
+		{
+			physx::PxShape* shape;
+			controller->getActor()->getShapes(&shape, 1);
+
+			if (hasBeenDeactivated)
+			{
+				App->physics->addActor(shape->getActor(), GO);
+				hasBeenDeactivated = false;
+			}
+
+			controller->getActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
+
+		Draw();
 	}
 }
-
-void ComponentCharacterController::Move(float velX, float velZ, float minDist)
+void ComponentCharacterController::SetVelocity(float velX, float velY, float velZ)
 {
-	physx::PxVec3 vel;
 	vel.x = velX;
-	vel.y = App->physics->mScene->getGravity().y;
+	vel.y = velY;
 	vel.z = velZ;
+	Move();
+}
 
+void ComponentCharacterController::Move(float minDist)
+{
 	physx::PxFilterData filterData;
 	filterData.word0 = App->physics->layer_list.at((int)GO->layer).LayerGroup; // layers that will collide
 
@@ -207,7 +227,16 @@ void ComponentCharacterController::Move(float velX, float velZ, float minDist)
 
 void ComponentCharacterController::Delete()
 {
-	App->physics->DeleteActor(controller->getActor());
+	physx::PxShape* shape = nullptr;
+
+	if (controller != nullptr)
+	{
+		controller->getActor()->getShapes(&shape, 1);
+		App->physics->DeleteActor(shape->getActor());
+		controller->release();
+		controller = nullptr;
+	}
+
 }
 
 json ComponentCharacterController::Save() const
@@ -230,6 +259,8 @@ json ComponentCharacterController::Save() const
 	else
 		node["nonWalkableMode"] = std::to_string(1);
 
+		node["gravity"] = std::to_string(gravity);
+
 	return node;
 }
 
@@ -247,6 +278,7 @@ void ComponentCharacterController::Load(json& node)
 	std::string positionZ = node["positionZ"].is_null() ? "0" : node["positionZ"];
 	std::string nonWalkableMode = node["nonWalkableMode"].is_null() ? "0" : node["nonWalkableMode"];
 	std::string firstTime_ = node["firstTime"].is_null() ? "0" : node["firstTime"];
+	std::string gravity_ = node["gravity"].is_null() ? "0" : node["gravity"];
 
 	contactOffset = std::stof(contactOffset_);
 	stepOffset = std::stof(stepOffset_);
@@ -256,6 +288,7 @@ void ComponentCharacterController::Load(json& node)
 	position.x = std::stof(positionX);
 	position.y = std::stof(positionY);
 	position.z = std::stof(positionZ);
+	gravity = std::stof(gravity_);
 
 	SetContactOffset(contactOffset);
 	SetStepOffset(stepOffset);
@@ -325,8 +358,8 @@ void ComponentCharacterController::CreateInspectorNode()
 		SetSlopeLimit(slopeLimit);
 	}
 
-	ImGui::Text("Non Walkable Mode");
-	if (ImGui::Checkbox("##W", &sliding))
+
+	if (ImGui::Checkbox("No Slide", &sliding))
 	{
 		if (sliding)
 			controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
@@ -334,6 +367,8 @@ void ComponentCharacterController::CreateInspectorNode()
 		else
 			controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::Enum::ePREVENT_CLIMBING);
 	}
+
+	ImGui::Checkbox("Gravity", &gravity);
 }
 
 void ComponentCharacterController::SetContactOffset(float offset)

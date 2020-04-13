@@ -20,9 +20,10 @@ public:
 	void UpdateUniforms();
 	void DisplayAndUpdateUniforms();
 
+	std::string previewTexPath;
 public:
 
-	float m_Shininess = 32.0f;
+	float m_Shininess = 1.5f;
 	float3 m_AmbientColor = { 1.0f, 1.0f, 1.0f };
 	ResourceTexture* m_DiffuseResTexture = nullptr;
 	ResourceTexture* m_SpecularResTexture = nullptr;

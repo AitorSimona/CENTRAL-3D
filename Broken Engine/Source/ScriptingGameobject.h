@@ -16,7 +16,6 @@ public:
 	~ScriptingGameobject();
 
 public:
-
 	// GameObject-related functions
 	uint FindGameObject(const char* go_name);
 	uint GetMyUID();

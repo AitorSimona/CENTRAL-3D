@@ -30,7 +30,7 @@ ResourceMaterial::ResourceMaterial(uint UID, const char* source_file) : Resource
 
 ResourceMaterial::~ResourceMaterial() 
 {
-
+	glDeleteTextures(1, (GLuint*)&previewTexID);
 }
 
 bool ResourceMaterial::LoadInMemory() 
@@ -464,15 +464,18 @@ void ResourceMaterial::DisplayAndUpdateUniforms()
 	glUseProgram(App->renderer3D->defaultShader->ID);
 }
 
-void ResourceMaterial::OnOverwrite() {
+void ResourceMaterial::OnOverwrite() 
+{
 	NotifyUsers(ResourceNotificationType::Overwrite);
 }
 
-void ResourceMaterial::OnDelete() {
+void ResourceMaterial::OnDelete() 
+{
 	NotifyUsers(ResourceNotificationType::Deletion);
 
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+	App->fs->Remove(previewTexPath.c_str());
 
 	Resource* diffuse = m_DiffuseResTexture;
 	Resource* specular = m_SpecularResTexture;

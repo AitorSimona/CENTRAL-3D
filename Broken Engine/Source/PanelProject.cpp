@@ -80,6 +80,78 @@ bool PanelProject::Draw()
 
 			DrawFolder(EngineApp->resources->getCurrentDirectory());
 
+			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y));
+
+			ImGui::InvisibleButton("##Drop Go", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() });
+
+			// --- Drop a prefab instance, create another prefab ---
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
+				{
+					uint UID = *(const uint*)payload->Data;
+
+					Broken::GameObject* go = EngineApp->scene_manager->currentScene->GetGOWithUID(UID);
+
+					// --- Block move if go is prefab child ---
+					go->is_prefab_instance = true;
+					
+					//ENGINE_CONSOLE_LOG("Created original prefab from: %s ...", go->GetName().c_str());
+
+					// --- Build original new name ---
+					std::string model_name;
+
+					if (go->model)
+					{
+						model_name = go->model->GetName();
+					}
+					else
+						model_name = go->GetName();
+
+					model_name = model_name.substr(0, model_name.find("."));
+					model_name.append(" (");
+					std::string currdirectory = currentDirectory->GetResourceFile();
+					std::string resource_name;
+					uint instance = 0;
+
+					resource_name = currdirectory + model_name + std::to_string(instance) + std::string(").prefab");
+
+					while (EngineApp->fs->Exists(resource_name.c_str()))
+					{
+						instance++;
+						resource_name = currdirectory + model_name + std::to_string(instance) + std::string(").prefab");
+					}
+
+					Broken::ResourcePrefab* new_prefab = (Broken::ResourcePrefab*)EngineApp->resources->CreateResource(Broken::Resource::ResourceType::PREFAB, resource_name.c_str());
+
+					if(go->model)
+						new_prefab->model = go->model;
+
+					new_prefab->parentgo = go;
+
+					// --- Create new preview icon ---
+					std::vector <Broken::GameObject*> prefab_gos;
+					GatherGameObjects(new_prefab->parentgo, prefab_gos);
+					uint texID = 0;
+					new_prefab->previewTexPath = EngineApp->renderer3D->RenderSceneToTexture(prefab_gos, texID);
+					new_prefab->SetPreviewTexID(texID);
+
+					EngineApp->resources->AddResourceToFolder(new_prefab);
+
+					// --- Create meta ---
+					Broken::ImporterMeta* IMeta = EngineApp->resources->GetImporter<Broken::ImporterMeta>();
+					Broken::ResourceMeta* meta = (Broken::ResourceMeta*)EngineApp->resources->CreateResourceGivenUID(Broken::Resource::ResourceType::META, resource_name.c_str(), new_prefab->GetUID());
+
+					if (meta)
+						IMeta->Save(meta);
+
+					Broken::ImporterPrefab* IPrefab = EngineApp->resources->GetImporter<Broken::ImporterPrefab>();
+					IPrefab->Save((Broken::ResourcePrefab*)new_prefab);
+					
+				}
+				ImGui::EndDragDropTarget();
+			}
+			
 			ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - 58));
 
 
@@ -620,6 +692,16 @@ void PanelProject::RecursiveDirectoryDraw(Broken::ResourceFolder* directory)
 			RecursiveDirectoryDraw(*it);
 			ImGui::TreePop();
 		}
+	}
+}
+
+void PanelProject::GatherGameObjects(Broken::GameObject* go, std::vector<Broken::GameObject*>& gos_vec)
+{
+	gos_vec.push_back(go);
+
+	for (uint i = 0; i < go->childs.size(); ++i)
+	{
+		GatherGameObjects(go->childs[i], gos_vec);
 	}
 }
 
