@@ -44,6 +44,9 @@ GameApplication::GameApplication() {
 	//Module to set up and manage the game
 	AddModule(game_manager);
 
+	//Recast
+	AddModule(detour);
+
 	//Physics and particles
 	AddModule(physics);
 	AddModule(particles);

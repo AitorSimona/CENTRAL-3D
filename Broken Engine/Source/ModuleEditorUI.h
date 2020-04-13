@@ -15,8 +15,8 @@ class PanelShaderEditor;
 class PanelResources;
 class PanelBuild;
 class PanelPhysics;
+class PanelNavigation;
 class PanelRendering;
-
 
 
 class ModuleEditorUI : public Broken::Module
@@ -49,6 +49,7 @@ public:
 	PanelResources*		panelResources = nullptr;
 	PanelBuild*			panelBuild = nullptr;
 	PanelPhysics*		panelPhysics = nullptr;
+	PanelNavigation*	panelNavigation = nullptr;
 	PanelRendering*		panelRendering = nullptr;
 
 private:

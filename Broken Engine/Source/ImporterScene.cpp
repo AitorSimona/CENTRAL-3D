@@ -3,11 +3,13 @@
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleSceneManager.h"
+#include "ModuleDetour.h"
 
 #include "ResourceScene.h"
 #include "GameObject.h"
 #include "ImporterMeta.h"
 #include "ResourceMeta.h"
+#include "ResourceNavMesh.h"
 
 #include "mmgr/mmgr.h"
 
@@ -71,6 +73,9 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Active"] = (*it).second->GetActive();
 		file[string_uid]["Static"] = (*it).second->Static;
 		file[string_uid]["Index"] = (*it).second->index;
+		file[string_uid]["Navigation Static"] = (*it).second->navigationStatic;
+		file[string_uid]["Navigation Area"] = (*it).second->navigationArea;
+		file[string_uid]["Index"] = (*it).second->index;
 
 		if ((*it).second->parent != App->scene_manager->GetRootGO())
 			file[string_uid]["Parent"] = std::to_string((*it).second->parent->GetUID());
@@ -98,6 +103,8 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 		file[string_uid]["Name"] = (*it).second->GetName();
 		file[string_uid]["Active"] = (*it).second->GetActive();
 		file[string_uid]["Static"] = (*it).second->Static;
+		file[string_uid]["Navigation Static"] = (*it).second->navigationStatic;
+		file[string_uid]["Navigation Area"] = (*it).second->navigationArea;
 		file[string_uid]["Index"] = (*it).second->index;
 
 		if ((*it).second->parent != App->scene_manager->GetRootGO())
@@ -115,7 +122,35 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["index"] = i;
 		}
 
+	}
 
+	if (scene == App->scene_manager->currentScene || scene == App->scene_manager->temporalScene) {
+		json navdata = file["Navigation Data"];
+		// --- Navigation Data --
+		file["Navigation Data"]["agentRadius"] = App->detour->agentRadius;
+		file["Navigation Data"]["agentHeight"] = App->detour->agentHeight;
+		file["Navigation Data"]["maxSlope"] = App->detour->maxSlope;
+		file["Navigation Data"]["stepHeight"] = App->detour->stepHeight;
+		file["Navigation Data"]["voxelSize"] = App->detour->voxelSize;
+
+		file["Navigation Data"]["voxelHeight"] = App->detour->voxelHeight;
+		file["Navigation Data"]["regionMinSize"] = App->detour->regionMinSize;
+		file["Navigation Data"]["regionMergeSize"] = App->detour->regionMergeSize;
+		file["Navigation Data"]["edgeMaxLen"] = App->detour->edgeMaxLen;
+		file["Navigation Data"]["edgeMaxError"] = App->detour->edgeMaxError;
+		file["Navigation Data"]["vertsPerPoly"] = App->detour->vertsPerPoly;
+		file["Navigation Data"]["detailSampleDist"] = App->detour->detailSampleDist;
+		file["Navigation Data"]["detailSampleMaxError"] = App->detour->detailSampleMaxError;
+		file["Navigation Data"]["buildTiledMesh"] = App->detour->buildTiledMesh;
+
+		for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+			file["Navigation Data"]["Areas"][i]["name"] = App->detour->areaNames[i];
+			file["Navigation Data"]["Areas"][i]["cost"] = App->detour->areaCosts[i];
+		}
+
+		const ResourceNavMesh* c_navmesh = App->detour->getNavMeshResource();
+		if (c_navmesh != nullptr)
+			file["Navigation Data"]["navMeshUID"] = c_navmesh->GetUID();
 	}
 
 	// --- Serialize JSON to string ---

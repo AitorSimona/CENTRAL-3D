@@ -33,6 +33,18 @@ void ResourceMesh::CreateAABB()
 		aabb.Enclose(float3(vertices[i].position));
 }
 
+void ResourceMesh::CreateOBB() {
+	//obb.SetNegativeInfinity();
+
+	std::vector<vec> vec_array;
+	for (uint i = 0; i < VerticesSize; ++i)
+		vec_array.push_back(vec(vertices[i].position));
+
+	obb = OBB::OptimalEnclosingOBB(vec_array.data(), VerticesSize);
+
+
+}
+
 bool ResourceMesh::LoadInMemory()
 {
 	bool ret = true;
@@ -151,6 +163,7 @@ bool ResourceMesh::LoadInMemory()
 	}
 
 	CreateAABB();
+	//CreateOBB();
 	CreateVBO();
 	CreateEBO();
 	CreateVAO();

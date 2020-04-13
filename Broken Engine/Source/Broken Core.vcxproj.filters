@@ -85,6 +85,18 @@
     <Filter Include="Sources\BrokenEngine\3rd Party\Wwise">
       <UniqueIdentifier>{66a1222c-d715-4978-80b8-e9d7167be77e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation">
+      <UniqueIdentifier>{c56a6bd3-efae-4251-a095-700b8b083604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\Detour">
+      <UniqueIdentifier>{5bf6fa64-51c9-40c1-8419-b88010226093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\DebugUtils">
+      <UniqueIdentifier>{fb574cad-a6dd-487e-847c-c7b79c2ae007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\DetourTileCache">
+      <UniqueIdentifier>{327df616-7529-4ed7-8a79-95ebc84a0635}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrokenCore.h">
@@ -663,6 +675,9 @@
     <ClInclude Include="ImporterAnimator.h">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleDetour.h">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
     <ClInclude Include="ComponentCharacterController.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClInclude>
@@ -675,18 +690,29 @@
     <ClInclude Include="ComponentProgressBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceNavMesh.h">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImporterNavMesh.h">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClInclude>
     <ClInclude Include="PhysxSimulationEvents.h">
       <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="ComponentLight.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h" />
     <ClInclude Include="ComponentCircularBar.h">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClInclude>
     <ClInclude Include="ModuleSelection.h">
       <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptingNavigation.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClInclude>
     <ClInclude Include="ScriptingCamera.h">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
@@ -1131,6 +1157,9 @@
     <ClCompile Include="ImporterAnimator.cpp">
       <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleDetour.cpp">
+      <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
     <ClCompile Include="ComponentCharacterController.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components</Filter>
     </ClCompile>
@@ -1143,6 +1172,45 @@
     <ClCompile Include="ComponentProgressBar.cpp">
       <Filter>Sources\BrokenEngine\Game Objects\Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMesh.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\DebugDraw.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DebugUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DebugUtils\Source\DetourDebugDraw.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DebugUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DetourTileCache\Source\DetourTileCache.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DetourTileCache</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\DetourTileCache\Source\DetourTileCacheBuilder.cpp">
+      <Filter>Sources\BrokenEngine\3rd Party\RecastNavigation\DetourTileCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceNavMesh.cpp">
+      <Filter>Sources\BrokenEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImporterNavMesh.cpp">
+      <Filter>Sources\BrokenEngine\Resources\Importers</Filter>
+    </ClCompile>
     <ClCompile Include="PhysxSimulationEvents.cpp">
       <Filter>Sources\BrokenEngine\Tools\Helpers</Filter>
     </ClCompile>
@@ -1154,6 +1222,9 @@
     </ClCompile>
     <ClCompile Include="ModuleSelection.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptingNavigation.cpp">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>
     </ClCompile>
     <ClCompile Include="ScriptingCamera.cpp">
       <Filter>Sources\BrokenEngine\Modules\Scripting Functions</Filter>

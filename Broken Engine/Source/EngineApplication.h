@@ -3,8 +3,6 @@
 
 #include "BrokenEngine.h"
 
-class ModuleEditorUI;
-
 class EngineApplication : public Broken::Application {
 
 public:
@@ -15,7 +13,8 @@ public:
 	void SaveForBuild(const Broken::json& reference, const char* path) const;
 
 public:
-	ModuleEditorUI* editorui;
+	class ModuleEditorUI* editorui;
+	class ModuleRecast* recast;
 	
 };
 

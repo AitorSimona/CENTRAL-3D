@@ -41,10 +41,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(ProjectDir)/RecastNavigation/Detour/Include;$(ProjectDir)RecastNavigation/DebugUtils/Include;$(ProjectDir)RecastNavigation/Recast/Include;$(ProjectDir)/PhysX_3.4/Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -92,6 +92,7 @@
     <ClInclude Include="Imgui\imstb_rectpack.h" />
     <ClInclude Include="Imgui\imstb_textedit.h" />
     <ClInclude Include="Imgui\imstb_truetype.h" />
+    <ClInclude Include="InputGeometry.h" />
     <ClInclude Include="json\json.hpp" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\GJK2D.h" />
@@ -169,12 +170,14 @@
     <ClInclude Include="mmgr\mmgr.h" />
     <ClInclude Include="mmgr\nommgr.h" />
     <ClInclude Include="ModuleEditorUI.h" />
+    <ClInclude Include="ModuleRecast.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="PanelAbout.h" />
     <ClInclude Include="PanelBuild.h" />
     <ClInclude Include="PanelConsole.h" />
     <ClInclude Include="PanelHierarchy.h" />
     <ClInclude Include="PanelInspector.h" />
+    <ClInclude Include="PanelNavigation.h" />
     <ClInclude Include="PanelPhysics.h" />
     <ClInclude Include="PanelProject.h" />
     <ClInclude Include="PanelRendering.h" />
@@ -184,6 +187,7 @@
     <ClInclude Include="PanelSettings.h" />
     <ClInclude Include="PanelShaderEditor.h" />
     <ClInclude Include="PanelToolbar.h" />
+    <ClInclude Include="rcChunkyTriMesh.h" />
     <ClInclude Include="VSresource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +200,7 @@
     <ClCompile Include="Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="InputGeometry.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\GJK2D.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\Random\LCG.cpp" />
@@ -240,11 +245,13 @@
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleEditorUI.cpp" />
+    <ClCompile Include="ModuleRecast.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelBuild.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
     <ClCompile Include="PanelHierarchy.cpp" />
     <ClCompile Include="PanelInspector.cpp" />
+    <ClCompile Include="PanelNavigation.cpp" />
     <ClCompile Include="PanelPhysics.cpp" />
     <ClCompile Include="PanelProject.cpp" />
     <ClCompile Include="PanelRendering.cpp" />
@@ -253,6 +260,25 @@
     <ClCompile Include="PanelSettings.cpp" />
     <ClCompile Include="PanelShaderEditor.cpp" />
     <ClCompile Include="PanelToolbar.cpp" />
+    <ClCompile Include="rcChunkyTriMesh.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMesh.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\Recast.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAlloc.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastArea.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAssert.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastContour.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastFilter.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastLayers.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMesh.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMeshDetail.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRasterization.cpp" />
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRegion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Broken Engine.rc" />

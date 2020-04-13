@@ -1,5 +1,6 @@
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
+#include "ModuleRecast.h"
 #include "BrokenEngineMain.h"
 
 
@@ -15,6 +16,7 @@ EngineApplication::EngineApplication() {
 
 	//We initiate our own modules
 	editorui = new ModuleEditorUI();
+	recast = new ModuleRecast();
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -41,6 +43,10 @@ EngineApplication::EngineApplication() {
 	// Scenes
 	AddModule(scene_manager);
 	AddModule(selection);
+
+	// Recast
+	AddModule(recast);
+	AddModule(detour);
 
 	//Physics and particles
 	AddModule(physics);

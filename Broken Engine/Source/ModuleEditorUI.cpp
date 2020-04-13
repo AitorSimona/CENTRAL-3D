@@ -60,6 +60,9 @@ bool ModuleEditorUI::Init(Broken::json& file) {
 	panelPhysics = new PanelPhysics("Physics");
 	panels.push_back(panelPhysics);
 
+	panelNavigation = new PanelNavigation("Navigation");
+	panels.push_back(panelNavigation);
+
 	LoadStatus(file);
 
 	return true;
@@ -261,6 +264,10 @@ update_status ModuleEditorUI::Update(float dt) {
 
 			if (ImGui::MenuItem("Console")) {
 				panelConsole->OnOff();
+			}
+
+			if (ImGui::MenuItem("Navigation")) {
+				panelNavigation->OnOff();
 			}
 
 			ImGui::EndMenu();
