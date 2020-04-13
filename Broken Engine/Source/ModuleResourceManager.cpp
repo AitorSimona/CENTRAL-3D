@@ -1414,6 +1414,12 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 
 }
 
+void ModuleResourceManager::ForceDelete(Resource* resource)
+{
+	resource->OnDelete();
+	delete resource;
+}
+
 void ModuleResourceManager::setCurrentDirectory(ResourceFolder* dir) {
 	currentDirectory = dir;
 }

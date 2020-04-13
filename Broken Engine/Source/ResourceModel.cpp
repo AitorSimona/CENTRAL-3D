@@ -129,6 +129,7 @@ void ResourceModel::OnDelete()
 	FreeMemory();
 
 	App->fs->Remove(resource_file.c_str());
+	App->fs->Remove(original_file.c_str());
 	App->fs->Remove(previewTexPath.c_str());
 
 	for (uint i = 0; i < resources.size(); ++i) 

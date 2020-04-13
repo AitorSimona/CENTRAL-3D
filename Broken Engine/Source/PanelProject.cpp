@@ -57,6 +57,9 @@ bool PanelProject::Draw()
 	// --- Draw project panel, Unity style ---
 	if (ImGui::Begin(name, &enabled, projectFlags))
 	{
+		// --- Delete resource ---
+		//if (ImGui::IsWindowFocused() && GetSelected() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
+		//	delete_selected = true;
 
 		CreateResourceHandlingPopup();
 
@@ -192,6 +195,7 @@ bool PanelProject::Draw()
 
 void PanelProject::CreateResourceHandlingPopup()
 {
+
 	//ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
 	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
@@ -202,6 +206,7 @@ void PanelProject::CreateResourceHandlingPopup()
 		//ImGui::MenuItem("(dummy menu)", NULL, false, false);
 		//if (ImGui::MenuItem("New")) {}
 		//if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+
 
 		if (ImGui::BeginMenu("Create"))
 		{
@@ -295,6 +300,37 @@ void PanelProject::CreateResourceHandlingPopup()
 
 			ImGui::EndMenu();
 		}
+		if (GetSelected())
+		{
+			if (ImGui::MenuItem("Delete"))
+				delete_selected = true;		
+		}
+		ImGui::EndPopup();
+	}
+
+	if (delete_selected)
+		ImGui::OpenPopup("Delete Selected Asset?");
+
+	if (ImGui::BeginPopupModal("Delete Selected Asset?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("You are about to delete the selected asset. There is no going back!");
+
+		if (ImGui::Button("Delete", ImVec2(300, 0)))
+		{
+			EngineApp->resources->ForceDelete(GetSelected());
+			SetSelected(nullptr);
+			delete_selected = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(300, 0)))
+		{
+			delete_selected = false;
+			ImGui::CloseCurrentPopup();
+		}
+
 		ImGui::EndPopup();
 	}
 
