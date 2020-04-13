@@ -69,6 +69,7 @@ void ResourceTexture::OnDelete()
 
 	FreeMemory();
 	App->fs->Remove(resource_file.c_str());
+	App->fs->Remove(original_file.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);
 	App->resources->ONResourceDestroyed(this);

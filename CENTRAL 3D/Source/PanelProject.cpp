@@ -15,6 +15,7 @@
 
 
 #include "mmgr/mmgr.h"
+#include "ModuleInput.h"
 
 // --- Event Manager Callbacks ---
 void PanelProject::ONGameObjectSelected(const Event& e)
@@ -195,6 +196,10 @@ bool PanelProject::Draw()
 
 void PanelProject::CreateResourceHandlingPopup()
 {
+	// --- Delete resource ---
+	if (selected && !selected->has_parent && App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
+		delete_selected = true;
+
 	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
 		ImGui::OpenPopup("Resources");
 
@@ -282,6 +287,39 @@ void PanelProject::CreateResourceHandlingPopup()
 			}
 
 			ImGui::EndMenu();
+		}
+
+		if (selected && !selected->has_parent)
+		{
+			if (ImGui::MenuItem("Delete"))
+				delete_selected = true;
+		}
+		ImGui::EndPopup();
+	}
+
+	// --- Handle resource deletion ---
+	if (delete_selected)
+		ImGui::OpenPopup("Delete Selected Asset?");
+
+	if (ImGui::BeginPopupModal("Delete Selected Asset?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("You are about to delete the selected asset. There is no going back!");
+
+		if (ImGui::Button("Delete", ImVec2(300, 0)))
+		{
+			selected->OnDelete();
+			delete selected;
+			SetSelected(nullptr);
+			delete_selected = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(300, 0)))
+		{
+			delete_selected = false;
+			ImGui::CloseCurrentPopup();
 		}
 
 		ImGui::EndPopup();
