@@ -52,6 +52,15 @@
     <Filter Include="Sources\3rd party\Imgui\ImGuizmo">
       <UniqueIdentifier>{319e935e-aded-4788-b84c-e6b5eef8f7b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd party\RecastNavigation">
+      <UniqueIdentifier>{aa16bee1-28e8-4f0b-8ad5-88da32022ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd party\RecastNavigation\recast">
+      <UniqueIdentifier>{4511f2e0-7e42-40b5-825c-752f0eb7207b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\3rd party\RecastNavigation\detour">
+      <UniqueIdentifier>{abbcbaca-0a41-40ee-a7e8-d829685c3de9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VSresource.h">
@@ -366,8 +375,20 @@
     <ClInclude Include="Imgui\imstb_truetype.h">
       <Filter>Sources\3rd party\Imgui</Filter>
     </ClInclude>
+    <ClInclude Include="PanelNavigation.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
     <ClInclude Include="PanelRendering.h">
       <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRecast.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="InputGeometry.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="rcChunkyTriMesh.h">
+      <Filter>Sources\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -566,8 +587,74 @@
     <ClCompile Include="Imgui\imgui_widgets.cpp">
       <Filter>Sources\3rd party\Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="PanelNavigation.cpp">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
     <ClCompile Include="PanelRendering.cpp">
       <Filter>Sources\EditorPanels</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleRecast.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\Recast.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAlloc.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastArea.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastAssert.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastContour.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastFilter.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastLayers.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMesh.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastMeshDetail.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRasterization.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Recast\Source\RecastRegion.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\recast</Filter>
+    </ClCompile>
+    <ClCompile Include="InputGeometry.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAlloc.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourAssert.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourCommon.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMesh.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="RecastNavigation\Detour\Source\DetourNode.cpp">
+      <Filter>Sources\3rd party\RecastNavigation\detour</Filter>
+    </ClCompile>
+    <ClCompile Include="rcChunkyTriMesh.cpp">
+      <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

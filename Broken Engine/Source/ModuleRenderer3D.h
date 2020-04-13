@@ -26,7 +26,8 @@ enum BROKEN_API RenderMeshFlags_
 	selected	= 1 << 1,
 	checkers	= 1 << 2,
 	wire		= 1 << 3,
-	texture		= 1 << 4
+	texture		= 1 << 4,
+	color       = 1 << 5
 };
 
 struct BROKEN_API RenderMesh
@@ -36,7 +37,7 @@ struct BROKEN_API RenderMesh
 	float4x4 transform;
 	const ResourceMesh* resource_mesh = nullptr;
 	ResourceMaterial* mat = nullptr;
-//	Color color; // force a color draw, useful if no texture is given
+	Color color; // force a color draw, useful if no texture is given
 	
 
 	// temporal!

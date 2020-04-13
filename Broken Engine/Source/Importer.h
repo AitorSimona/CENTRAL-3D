@@ -24,6 +24,7 @@ public:
 		Script,
 		Meta,
 		Font,
+		NavMesh,
 		Unknown
 	};
 

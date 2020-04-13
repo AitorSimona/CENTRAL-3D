@@ -221,6 +221,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &meshTexID);
 	glDeleteTextures(1, &boneTexID);
 	glDeleteTextures(1, &animationTexID);
+	glDeleteTextures(1, &navmeshTexID);
 	// -- Toolbar
 	glDeleteTextures(1, &translateTexID);
 	glDeleteTextures(1, &rotateTexID);
@@ -229,6 +230,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &toolbarPauseTexID);
 	glDeleteTextures(1, &toolbarPauseTexID);
 	//glDeleteTextures(1, &toolbarStopTexID);
+
 
 	return ret;
 }
@@ -331,6 +333,7 @@ void ModuleGui::CreateIcons()
 	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, -1);
+	navmeshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/NavMesh.png", width, height, -1);
 	shaderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ShaderIcon.png", width, height, -1);
 	scriptTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScriptIcon.png", width, height, -1);
 	meshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MeshIcon.png", width, height, -1);
