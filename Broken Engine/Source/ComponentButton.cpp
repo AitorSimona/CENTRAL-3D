@@ -66,7 +66,7 @@ void ComponentButton::Draw()
 	// --- Frame image with camera ---
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 	float3 pos = { position2D.x, position2D.y, nearp + 0.026f };
-	float3 size = { size2D.x / App->gui->sceneWidth, -size2D.y / App->gui->sceneHeight, 1.0f };
+	float3 size = { size2D.x / App->gui->sceneWidth, size2D.y / App->gui->sceneHeight, 1.0f };
 	float4x4 transform = transform.FromTRS(pos, Quat::identity, size);
 
 	// --- Set Uniforms ---
@@ -125,7 +125,7 @@ void ComponentButton::Draw()
 
 	// --- Collider ---
 	float2 screenpos = App->renderer3D->active_camera->WorldToScreen({ pos.x, -pos.y, pos.z });
-	collider = { (int)screenpos.x, (int)screenpos.y, (int)size2D.x, (int)size2D.y };
+	collider = { (int)screenpos.x, (int)(screenpos.y - size2D.y), (int)size2D.x, (int)size2D.y };
 
 	// Draw Collider
 	if (collider_visible && App->GetAppState() == AppState::EDITOR) //draw only in editor mode
@@ -312,8 +312,11 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("x##buttonsize", &size2D.x) && resize)
+	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 1.0f) && resize)
 	{
+		if (size2D.x < 0.0f)
+			size2D.x = 0;
+
 		if (texture)
 		{
 			if (texture->Texture_height != 0 && texture->Texture_width != 0)
@@ -329,6 +332,9 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::SetNextItemWidth(60);
 	if (ImGui::DragFloat("y##buttonsize", &size2D.y) && resize)
 	{
+		if (size2D.y < 0.0f)
+			size2D.y = 0;
+
 		if (texture)
 		{
 			if (texture->Texture_height != 0 && texture->Texture_width != 0)
