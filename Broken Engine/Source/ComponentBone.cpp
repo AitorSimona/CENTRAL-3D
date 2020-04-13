@@ -1,16 +1,23 @@
-#include "Application.h"
 #include "ComponentBone.h"
-#include "ComponentTransform.h"
-#include "ComponentAnimation.h"
+
+// -- Modules --
+#include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleCamera3D.h"
-#include "ComponentCamera.h"
 #include "ModuleRenderer3D.h"
-#include "ResourceShader.h"
 #include "ModuleSceneManager.h"
 
+// -- Resources --
+#include "ResourceShader.h"
+#include "ResourceBone.h"
+
+// -- Components --
 #include "GameObject.h"
+#include "ComponentCamera.h"
+#include "ComponentTransform.h"
+#include "ComponentAnimation.h"
+
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 

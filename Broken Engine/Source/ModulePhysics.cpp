@@ -313,7 +313,7 @@ void ModulePhysics::UpdateActorsGroupFilter(LayerMask* updateLayer)
 	for (std::map<physx::PxRigidActor*, GameObject*>::iterator it = actors.begin(); it != actors.end(); ++it)
 	{
 		if ((*it).first != nullptr && (*it).second != nullptr) {
-			LayerMask layer1 = (*it).second->layer;
+			LayerMask layer1 = (LayerMask)(*it).second->layer;
 			LayerMask layer2 = *updateLayer;
 			if (layer1 == layer2) {
 

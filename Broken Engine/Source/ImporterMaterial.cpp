@@ -1,4 +1,6 @@
 #include "ImporterMaterial.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleTextures.h"
@@ -6,21 +8,20 @@
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 
-#include "ResourceMaterial.h"
-#include "ResourceFolder.h"
-
-#include "ImporterMeta.h"
-#include "ResourceMeta.h"
-
-#include "ResourceShader.h"
-
+// -- Components --
 #include "GameObject.h"
 #include "ComponentMeshRenderer.h"
 
+// -- Resources --
+#include "ResourceMaterial.h"
+#include "ResourceFolder.h"
+#include "ResourceMeta.h"
+#include "ResourceTexture.h"
+#include "ResourceShader.h"
+#include "ImporterMeta.h"
 #include "ImporterTexture.h"
 
 #include "Assimp/include/scene.h"
-
 #include "mmgr/mmgr.h"
 
 using namespace Broken;

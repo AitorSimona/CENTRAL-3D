@@ -8,8 +8,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleGui.h"
 #include "ModuleRenderer3D.h"
-//#include "Math.h"
-
+#include "GameObject.h"
 
 using namespace Broken;
 

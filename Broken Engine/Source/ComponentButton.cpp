@@ -555,7 +555,7 @@ void ComponentButton::UpdateState()
 	{
 		if (state != DRAGGING)
 		{
-			if (App->ui_system->CheckMousePos(collider)) //check if hovering
+			if (App->ui_system->CheckMousePos(&collider)) //check if hovering
 			{
 				if (App->ui_system->CheckClick(draggable)) //if hovering check if click
 				{

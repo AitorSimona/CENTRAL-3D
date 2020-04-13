@@ -1,17 +1,25 @@
 #include "ComponentAnimation.h"
+
+// -- Modules --
 #include "Application.h"
-#include "ComponentTransform.h"
-#include "ComponentBone.h"
-#include "ComponentMesh.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleTimeManager.h"
 #include "ModuleInput.h"
+
+// -- Components --
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ComponentBone.h"
+#include "ComponentMesh.h"
+
+// -- Resources --
+#include "ResourceBone.h"
+#include "ResourceMesh.h"
 #include "ResourceAnimation.h"
 #include "ResourceAnimator.h"
 #include "ImporterAnimator.h"
 
-#include "GameObject.h"
 #include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"

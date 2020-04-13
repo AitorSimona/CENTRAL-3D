@@ -31,6 +31,7 @@
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
+#include "ResourceTexture.h"
 
 #include "ImporterShader.h"
 
