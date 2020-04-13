@@ -47,12 +47,11 @@ void ComponentCollider::Enable()
 {
 	if (GetActor() != nullptr)
 	{
-		/*if (hasBeenDeactivated)
+		if (hasBeenDeactivated)
 		{
-			CreateCollider(type, true);
+			App->physics->mScene->addActor(*GetActor());
 			hasBeenDeactivated = false;
-		}*/
-
+		}
 		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
 	}
 	active = true;
@@ -63,11 +62,11 @@ void ComponentCollider::Disable()
 	if (GetActor() != nullptr)
 	{
 		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-		/*if (!hasBeenDeactivated)
+		if (!hasBeenDeactivated)
 		{
-			App->physics->DeleteActor(GetActor());
+			App->physics->mScene->removeActor(*GetActor());
 			hasBeenDeactivated = true;
-		}*/
+		}
 	}
 	active = false;
 }
