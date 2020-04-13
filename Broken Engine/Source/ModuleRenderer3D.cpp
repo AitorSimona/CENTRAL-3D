@@ -213,7 +213,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Draw ---
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	SendShaderUniforms(defaultShader->ID);
+
+	for (std::map<uint, ResourceShader*>::const_iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+	{
+		if((*it).second)
+			SendShaderUniforms((*it).second->ID);
+	}
 
 	// --- Draw Grid ---
 	if (display_grid)
@@ -222,6 +227,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();
+
+	// --- Selected Object Outlining ---
+	HandleObjectOutlining();
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
@@ -234,12 +242,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		(*LightIterator)->Draw();
 
 	App->ui_system->Draw();
-
-
-	// --- Selected Object Outlining ---
-	//#ifndef BE_GAME_BUILD
-	HandleObjectOutlining();
-	/*#endif*/
 
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);
