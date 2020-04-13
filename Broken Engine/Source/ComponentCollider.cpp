@@ -846,7 +846,7 @@ physx::PxRigidActor* ComponentCollider::GetActor() {
 		return rigidStatic;
 }
 
-void ComponentCollider::UpdateActorLayer(const uint* layerMask) {
+void ComponentCollider::UpdateActorLayer(const int* layerMask) {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 
 	if (dynamicRB != nullptr)

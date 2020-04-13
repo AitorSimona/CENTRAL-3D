@@ -87,7 +87,7 @@ public:
 	bool navigationStatic = false;
 	uint navigationArea = 0; 
 	ResourceModel* model = nullptr;
-	uint layer;
+	int layer;
 	bool is_prefab_child = false;
 	bool is_prefab_instance = false;
 
