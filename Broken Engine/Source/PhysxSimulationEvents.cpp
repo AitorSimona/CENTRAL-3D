@@ -78,17 +78,20 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 	for (physx::PxU32 i = 0; i < count; ++i)
 	{
 		// ignore pairs when shapes have been deleted
-		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER) &&
+			!(pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST))
 			continue;
 
 		GameObject* go1 = nullptr;
 		GameObject* go2 = nullptr;
-		go1 = App->physics->actors[pairs->triggerActor];
-		go2 = App->physics->actors[pairs->otherActor];
+		go1 = App->physics->actors[pairs[i].triggerActor];
+		go2 = App->physics->actors[pairs[i].otherActor];
 
-		ComponentScript* script = go1->GetComponent<ComponentScript>();
-		ComponentScript* script2 = go2->GetComponent<ComponentScript>();
-		if (go1 != nullptr && go2 != nullptr) {
+		if (go1 != nullptr && go2 != nullptr)
+		{
+			ComponentScript* script = go1->GetComponent<ComponentScript>();
+			ComponentScript* script2 = go2->GetComponent<ComponentScript>();
+
 			if ((pairs[i].status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND))
 			{
 				go1->collisions.at(ONTRIGGER_ENTER) = go2;
@@ -117,5 +120,6 @@ void PhysxSimulationEvents::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 
 			}
 		}
 	}
+
 }
 

@@ -43,6 +43,35 @@ void ComponentCollider::Update()
 	}
 }
 
+void ComponentCollider::Enable()
+{
+	if (GetActor() != nullptr)
+	{
+		/*if (hasBeenDeactivated)
+		{
+			CreateCollider(type, true);
+			hasBeenDeactivated = false;
+		}*/
+
+		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+	}
+	active = true;
+}
+
+void ComponentCollider::Disable()
+{
+	if (GetActor() != nullptr)
+	{
+		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+		/*if (!hasBeenDeactivated)
+		{
+			App->physics->DeleteActor(GetActor());
+			hasBeenDeactivated = true;
+		}*/
+	}
+	active = false;
+}
+
 void ComponentCollider::UpdateCollider() {
 	CreateCollider((ComponentCollider::COLLIDER_TYPE)colliderType, true);
 }
@@ -51,30 +80,6 @@ void ComponentCollider::DrawComponent()
 {
 	if (shape)
 	{
-		if (GetActor() != nullptr)
-		{
-			if (!GetActive())
-			{
-				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-				if (!hasBeenDeactivated)
-				{
-					App->physics->DeleteActor(GetActor());
-					hasBeenDeactivated = true;
-				}
-			}
-			else
-			{
-				if (hasBeenDeactivated)
-				{
-					CreateCollider(type, true);
-					hasBeenDeactivated = false;
-				}
-
-				GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
-			}
-		}
-
-
 		// --- Get shape's dimensions ---
 		physx::PxGeometryHolder holder = shape->getGeometry();
 		physx::PxGeometryType::Enum type = holder.getType();
@@ -396,8 +401,8 @@ void ComponentCollider::Load(json& node)
 	colliderType = std::stoi(colliderType_);
 	isTrigger = std::stoi(isTrigger_);
 
-	//tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
-	tmpScale = float3(0.f, 0.f, 0.f);
+	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
+	//tmpScale = float3(0.f, 0.f, 0.f);
 
 	firstCreation = true;
 
@@ -418,26 +423,20 @@ void ComponentCollider::Load(json& node)
 	{
 	case 0:
 		type = COLLIDER_TYPE::NONE;
-		CreateCollider(type);
 		break;
 	case 1:
 		type = COLLIDER_TYPE::BOX;
-		CreateCollider(type, true);
 		break;
 	case 2:
 		type = COLLIDER_TYPE::SPHERE;
-		CreateCollider(type);
 		break;
 	case 3:
 		type = COLLIDER_TYPE::CAPSULE;
-		CreateCollider(type);
 	case 4:
 		type = COLLIDER_TYPE::PLANE;
-		CreateCollider(type);
 		break;
 	}
-
-	UpdateLocalMatrix();
+	editCollider = true;
 }
 
 void ComponentCollider::CreateInspectorNode()
@@ -594,13 +593,19 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		shape = nullptr;
 		if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 		{
-			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
+			if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr) {
 				App->physics->DeleteActor(GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
-			if (createAgain && rigidStatic)
+				GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody = nullptr;
+			}
+			if (createAgain && rigidStatic) {
 				App->physics->DeleteActor(rigidStatic);
+				rigidStatic = nullptr;
+			}
 		}
-		else
+		else {
 			App->physics->DeleteActor(rigidStatic);
+			rigidStatic = nullptr;
+		}
 
 
 		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
@@ -671,19 +676,10 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 				}
-				physx::PxShapeFlags falgs =  shape->getFlags();
-
 
 				shape->setSimulationFilterData(filterData);
 				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 				shape->setQueryFilterData(filterData);
-
-
-				bool a;
-				a = falgs.isSet(physx::PxShapeFlag::ePARTICLE_DRAIN);
-				a = falgs.isSet(physx::PxShapeFlag::eSCENE_QUERY_SHAPE);
-				a = falgs.isSet(physx::PxShapeFlag::eSIMULATION_SHAPE);
-				a = falgs.isSet(physx::PxShapeFlag::eTRIGGER_SHAPE);
 
 				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
 
@@ -772,18 +768,19 @@ void ComponentCollider::Delete()
 
 	if (GO->GetComponent<ComponentDynamicRigidBody>() != nullptr)
 	{
-		if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr)
-			App->physics->mScene->removeActor(*(physx::PxActor*)GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
-		if (rigidStatic)
-			App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+		if (GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody != nullptr) {
+			App->physics->DeleteActor(GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody);
+			GO->GetComponent<ComponentDynamicRigidBody>()->rigidBody = nullptr;
+		}
 	}
-
-	else if(rigidStatic)
-		App->physics->mScene->removeActor(*(physx::PxActor*)rigidStatic);
+	if (rigidStatic) {
+		App->physics->DeleteActor(rigidStatic);
+		rigidStatic = nullptr;
+	}
 }
 
 template <class Geometry>
-bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const
+bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform)
 {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 
@@ -795,32 +792,37 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 
 		globalMatrix.Decompose(position, rot, scale);
 
-		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics, transform, geometry, *App->physics->mMaterial, 1.0f);
-
-		physx::PxShape* shape_;
-		dynamicRB->rigidBody->getShapes(&shape_, 1);
-		if (shape_) {
-			*shape = *shape_;
-			if (isTrigger) {
-				shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-				shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-			}
-			else {
-				shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-				shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-			}
-		}
-
-		App->physics->setupFiltering((physx::PxRigidActor*)dynamicRB->rigidBody, (1 << GO->layer), App->physics->layer_list.at(GO->layer).LayerGroup); //Setup filtering Layers
-
-		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
-
 		if (rigidStatic) {
 			App->physics->DeleteActor(rigidStatic);
 		}
-		else if (dynamicRB->rigidBody) {
+		if (dynamicRB->rigidBody) {
 			App->physics->DeleteActor(dynamicRB->rigidBody);
 		}
+
+		shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
+
+		if (isTrigger) {
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else {
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
+
+		physx::PxFilterData filterData;
+		filterData.word0 = (1 << GO->layer); // word0 = own ID
+		filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
+
+		shape->setSimulationFilterData(filterData);
+		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+		shape->setQueryFilterData(filterData);
+
+		dynamicRB->rigidBody = PxCreateDynamic(*App->physics->mPhysics,transform, *shape,1.0f);
+		dynamicRB->update = true;
+		dynamicRB->UpdateRBValues();
+
+		dynamicRB->rigidBody->setGlobalPose(physx::PxTransform(position.x,position.y,position.z, physx::PxQuat(rot.x, rot.y, rot.z, rot.w)));
 
 		App->physics->addActor(dynamicRB->rigidBody, GO);
 
