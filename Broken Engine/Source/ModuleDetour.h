@@ -6,7 +6,8 @@
 #include "Color.h"
 #include "Math.h"
 
-class dtNavMeshCreateParams;
+struct dtNavMeshCreateParams;
+struct dtNavMeshParams;
 class dtNavMesh;
 class dtNavMeshQuery;
 class dtQueryFilter;
@@ -100,6 +101,11 @@ public:
 	void createRenderMeshes();
 	void saveNavMesh() const;
 	inline void initNavQuery();
+
+	// For the sake of keeping memory in the dll heap
+	bool createNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize);
+	uint initNavMesh(const dtNavMeshParams* params);
+	void freeNavMeshData(void* ptr);
 
 private:
 	void setAreaCosts();

@@ -382,7 +382,7 @@ bool ModuleRecast::BuildTiledNavMesh(const InputGeom* m_geom) {
 
 	dtStatus status;
 
-	status = m_navmesh->init(&params);
+	status = EngineApp->detour->initNavMesh(&params);
 	if (dtStatusFailed(status)) {
 		EX_ENGINE_CONSOLE_LOG("buildTilesMesh: Could not init navmesh.");
 		return false;
@@ -409,7 +409,7 @@ bool ModuleRecast::BuildTiledNavMesh(const InputGeom* m_geom) {
 				// Let the navmesh own the data.
 				dtStatus status = m_navmesh->addTile(data[y*tw+x], dataSize[y * tw + x], DT_TILE_FREE_DATA, 0, 0);
 				if (dtStatusFailed(status))
-					dtFree(data[y * tw + x]);
+					EngineApp->detour->freeNavMeshData(data[y * tw + x]);
 			}
 		}
 	}
@@ -710,7 +710,7 @@ void ModuleRecast::BuildTile(const InputGeom* m_geom, const int tx, const int ty
 		params.ch = m_cfg.ch;
 		params.buildBvTree = true;
 
-		if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
+		if (!EngineApp->detour->createNavMeshData(&params, &navData, &navDataSize)) {
 			std::lock_guard<std::mutex> lk(logMutex);
 			EX_ENGINE_CONSOLE_LOG("tileBuild: Could not build Detour navmesh.");
 			return;
@@ -719,6 +719,8 @@ void ModuleRecast::BuildTile(const InputGeom* m_geom, const int tx, const int ty
 
 	tile_ctx.stopTimer(RC_TIMER_TOTAL);
 
+	rcFreePolyMesh(m_pmesh);
+	rcFreePolyMeshDetail(m_dmesh);
 	*datasize = navDataSize;
 	*data = navData;
 

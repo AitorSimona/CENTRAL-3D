@@ -210,7 +210,7 @@ void ModuleDetour::deleteNavMesh() {
 
 void ModuleDetour::clearNavMesh() {
 	if (navMeshResource != nullptr)
-		navMeshResource->FreeMemory();
+		//navMeshResource->FreeMemory();
 
 	navMeshResource = nullptr;
 	for (int i = 0; i < renderMeshes.size(); ++i)
@@ -339,7 +339,6 @@ void ModuleDetour::allocateNavMesh() {
 
 	if (navMeshResource->navMesh != nullptr)
 		dtFreeNavMesh(navMeshResource->navMesh);
-
 	
 	navMeshResource->navMesh = dtAllocNavMesh();
 
@@ -365,6 +364,8 @@ void ModuleDetour::createRenderMeshes() {
 void ModuleDetour::saveNavMesh() const {
 	ImporterNavMesh* INavMesh = App->resources->GetImporter<ImporterNavMesh>();
 	INavMesh->Save(navMeshResource);
+	// So that it stores the navmesh UID
+	App->scene_manager->SaveScene(App->scene_manager->currentScene);
 }
 
 inline void ModuleDetour::initNavQuery() {
@@ -372,6 +373,22 @@ inline void ModuleDetour::initNavQuery() {
 		m_navQuery->init(navMeshResource->navMesh, 2048);
 
 	//setAreaCosts();
+}
+
+inline bool ModuleDetour::createNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize) {
+	return dtCreateNavMeshData(params, outData, outDataSize);
+}
+
+uint ModuleDetour::initNavMesh(const dtNavMeshParams* params) {
+	uint ret = DT_FAILURE;
+	if (navMeshResource != nullptr && navMeshResource->navMesh != nullptr)
+		ret = navMeshResource->navMesh->init(params);
+
+	return ret;
+}
+
+void ModuleDetour::freeNavMeshData(void* ptr) {
+	dtFree(ptr);
 }
 
 void ModuleDetour::setAreaCosts() {
