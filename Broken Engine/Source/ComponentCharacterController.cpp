@@ -81,7 +81,20 @@ void ComponentCharacterController::Update()
 	else
 		velocity.x = 0.0f;*/
 
+
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
+
+	float3 p;
+	p.x = controller->getActor()->getGlobalPose().p.x;
+	p.y = controller->getActor()->getGlobalPose().p.y;
+	p.z = controller->getActor()->getGlobalPose().p.z;
+	if (App->physics->RaycastGO(p, float3(0,-11,0), 5) != nullptr)
+	{
+		int a = 0;
+	}
+	
+	Move(velocity.x, velocity.z);
+
 
 	if (cTransform->updateValues || App->gui->isUsingGuizmo)
 	{
@@ -89,7 +102,6 @@ void ComponentCharacterController::Update()
 		controller->setFootPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
 	}
 
-	//Move(velocity.x, velocity.z);
 
 	physx::PxExtendedVec3 cctPosition = controller->getFootPosition();
 	float3 cctPos(cctPosition.x, cctPosition.y, cctPosition.z);

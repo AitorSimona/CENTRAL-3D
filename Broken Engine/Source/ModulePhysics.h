@@ -2,6 +2,7 @@
 #define MODULE_PHYSICS_H_
 #include "Module.h"
 #include "PhysX_3.4/Include/PxVolumeCache.h"
+#include "PhysX_3.4/Include/extensions/PxRaycastCCD.h"
 #include "Math.h"
 
 namespace physx
@@ -53,7 +54,7 @@ struct Layer {
 	bool active;
 	std::vector<bool> active_layers;
 	physx::PxU32 LayerGroup;
-
+	
 	void UpdateLayerGroup() {
 		physx::PxU32 ID = 0;
 
@@ -134,6 +135,9 @@ public:
 
 	void LoadStatus(const Broken::json& file) override;
 
+	bool Raycast(float3 origin, float3 direction, float maxDistance, LayerMask layer = LayerMask::LAYER_0, bool hitTriggers = false);
+	GameObject* RaycastGO(float3 origin, float3 direction, float maxDistance, LayerMask layer = LayerMask::LAYER_0, bool hitTriggers = false);
+
 public:
 
 	physx::PxPvd* mPvd = nullptr;
@@ -144,6 +148,8 @@ public:
 	physx::PxScene* mScene = nullptr;
 	physx::PxMaterial* mMaterial = nullptr;
 	physx::PxRigidStatic* plane = nullptr;
+	physx::RaycastCCDManager* raycastManager = nullptr;
+
 	std::vector<Layer> layer_list;
 	std::map<physx::PxRigidActor*, GameObject*> actors;
 	std::vector<uint>* detected_objects;

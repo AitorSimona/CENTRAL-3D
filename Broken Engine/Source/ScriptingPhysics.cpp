@@ -316,6 +316,19 @@ void ScriptingPhysics::SetCharacterUpDirection(float rotx, float roty, float rot
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject with %d UUID was not found!", gameobject_UUID);
 }
 
+int ScriptingPhysics::Raycast(float originX, float originY, float originZ, float directionX, float directionY, float directionZ, float maxDistance, int layer, bool hitTriggers)
+{
+	float3 origin(originX, originY, originZ);
+	float3 direction(directionX, directionY, directionZ);
+
+	GameObject* go = App->physics->RaycastGO(origin, direction, maxDistance, (LayerMask)layer, hitTriggers);
+
+	if (go)
+		return go->GetUID();
+	
+	return 0;
+}
+
 luabridge::LuaRef ScriptingPhysics::OverlapSphere(float position_x, float position_y, float position_z, float radius, uint layer, lua_State* L)
 {
 	std::vector<uint> objects;

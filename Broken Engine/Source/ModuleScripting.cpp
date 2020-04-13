@@ -282,6 +282,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
 
 		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
+		.addFunction("Raycast", &ScriptingPhysics::Raycast)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

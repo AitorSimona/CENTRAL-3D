@@ -21,7 +21,7 @@
     "Physics": {
         "Layer0": {
             "0": true,
-            "1": true,
+            "1": false,
             "2": true,
             "3": true,
             "4": true,
@@ -31,13 +31,13 @@
             "8": true,
             "9": true,
             "Active": true,
-            "Group": 1023,
+            "Group": 1021,
             "GroupSize": 10,
             "Layer": 0,
             "Name": "Default"
         },
         "Layer1": {
-            "0": true,
+            "0": false,
             "1": true,
             "2": false,
             "3": true,
@@ -48,7 +48,7 @@
             "8": true,
             "9": true,
             "Active": true,
-            "Group": 1019,
+            "Group": 1018,
             "GroupSize": 10,
             "Layer": 1,
             "Name": "Player"
@@ -202,10 +202,10 @@
         "borderless": false,
         "fullscreen": false,
         "fullscreenDesktop": false,
-        "height": 648,
+        "height": 1008,
         "resizable": true,
         "sceneX": 480,
         "sceneY": 640,
-        "width": 1152
+        "width": 1160
     }
 }
