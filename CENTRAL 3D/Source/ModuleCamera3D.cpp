@@ -143,7 +143,7 @@ void ModuleCamera3D::OnMouseClick(const float mouse_x, const float mouse_y)
 
 	LineSegment ray = App->renderer3D->active_camera->frustum.UnProjectLineSegment(normalized_x, normalized_y);
 
-	ray.b = ray.a + ray.Dir() * camera->frustum.Pos().Length();
+	ray.b = ray.a + (ray.Dir() * camera->GetFarPlane() * 2);
 
 	last_ray = ray;
 
