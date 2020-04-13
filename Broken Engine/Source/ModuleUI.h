@@ -11,6 +11,7 @@ BE_BEGIN_NAMESPACE
 
 class Component;
 class ComponentCanvas;
+class ComponentCamera;
 
 class BROKEN_API ModuleUI : public Module
 {
