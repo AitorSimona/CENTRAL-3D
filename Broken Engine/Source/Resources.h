@@ -16,5 +16,6 @@
 #include "ResourceScript.h"
 #include "ResourceMeta.h"
 #include "ResourceFont.h"
+#include "ResourceNavMesh.h"
 
 #endif // __RESOURCES_H__

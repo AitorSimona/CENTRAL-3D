@@ -227,10 +227,26 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 
 	if (ImGui::TreeNode("Constraints"))
 	{
-		ImGui::Text("Freeze Position"); ImGui::SameLine(); ImGui::Checkbox("##FPX", &freezePosition_X); ImGui::SameLine(); ImGui::Checkbox("##FPY", &freezePosition_Y); ImGui::SameLine(); ImGui::Checkbox("##FPZ", &freezePosition_Z);
-		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); ImGui::Checkbox("##FRX", &freezeRotation_X); ImGui::SameLine(); ImGui::Checkbox("##FRY", &freezeRotation_Y); ImGui::SameLine(); ImGui::Checkbox("##FRZ", &freezeRotation_Z);
+		ImGui::Text("Freeze Position"); ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FPX", &freezePosition_X))
+			update = true;
+		ImGui::SameLine(); 
+		if (ImGui::Checkbox("##FPY", &freezePosition_Y))
+			update = true;
+		ImGui::SameLine();
+		if(ImGui::Checkbox("##FPZ", &freezePosition_Z))
+			update = true;
+
+		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRX", &freezeRotation_X))
+			update = true;
+		ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRY", &freezeRotation_Y))
+			update = true;
+		ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRZ", &freezeRotation_Z))
+			update = true;
 		ImGui::TreePop();
-		update = true;
 	}
 
 	StaticToDynamicRigidBody();

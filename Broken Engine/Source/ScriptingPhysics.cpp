@@ -1,14 +1,22 @@
 #include "ScriptingPhysics.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleScripting.h"
 #include "ModuleSceneManager.h"
+#include "ModulePhysics.h"
+
+// -- Components --
+#include "GameObject.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ComponentCharacterController.h"
-#include "ScriptData.h"
+
 #include "ResourceScene.h"
+#include "ScriptData.h"
 
 using namespace Broken;
+
 ScriptingPhysics::ScriptingPhysics() {}
 
 ScriptingPhysics::~ScriptingPhysics() {}
@@ -253,7 +261,7 @@ void ScriptingPhysics::SetCharacterPosition(float posx, float posy, float posz, 
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! This Gameobject with %d UUID was not found!", gameobject_UUID);
 }
 
-void ScriptingPhysics::Move(float vel_x, float vel_y, uint gameobject_UUID)
+void ScriptingPhysics::Move(float vel_x, float vel_z, uint gameobject_UUID)
 {
 	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
 
@@ -261,7 +269,7 @@ void ScriptingPhysics::Move(float vel_x, float vel_y, uint gameobject_UUID)
 	{
 		ComponentCharacterController* character = go->GetComponent<ComponentCharacterController>();
 		if (character)
-			character->Move(vel_x, vel_y);
+			character->SetVelocity(vel_x, 0, vel_z);
 		else
 			ENGINE_CONSOLE_LOG("Character Controller is null on Move");
 	}

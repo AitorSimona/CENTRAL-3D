@@ -1,11 +1,7 @@
 #ifndef __PANEL_H__
 #define __PANEL_H__
-#include "BrokenCore.h"
 
-BE_BEGIN_NAMESPACE
-
-class Application;
-class BROKEN_API Panel {
+class Panel {
 public:
 
 	Panel(char* title);
@@ -19,10 +15,9 @@ public:
 	virtual inline char* GetName() const { return name; }
 
 protected:
-protected:
 	bool enabled = false;
 	char* name = nullptr;
 };
-BE_END_NAMESPACE
+
 #endif
 

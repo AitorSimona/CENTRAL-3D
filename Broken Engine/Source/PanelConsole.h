@@ -1,10 +1,10 @@
 #ifndef __PANEL_CONSOLE_H__
 #define __PANEL_CONSOLE_H__
 
-#include "BrokenEngine.h"
 #include "Imgui/imgui.h"
+#include "Panel.h"
 
-class PanelConsole : public Broken::Panel
+class PanelConsole : public Panel
 {
 public:
 

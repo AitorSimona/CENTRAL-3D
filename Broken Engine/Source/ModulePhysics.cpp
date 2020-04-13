@@ -289,7 +289,7 @@ void ModulePhysics::addActor(physx::PxRigidActor* actor, GameObject* gameObject)
 	mScene->addActor(*actor);
 }
 
-void ModulePhysics::UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* Layermask) {
+void ModulePhysics::UpdateActorLayer(const physx::PxRigidActor* actor, const LayerMask* Layermask) {
 	if (actor) {
 		physx::PxShape* shape;
 		actor->getShapes(&shape, 1);
@@ -313,7 +313,7 @@ void ModulePhysics::UpdateActorsGroupFilter(LayerMask* updateLayer)
 	for (std::map<physx::PxRigidActor*, GameObject*>::iterator it = actors.begin(); it != actors.end(); ++it)
 	{
 		if ((*it).first != nullptr && (*it).second != nullptr) {
-			LayerMask layer1 = (*it).second->layer;
+			LayerMask layer1 = (LayerMask)(*it).second->layer;
 			LayerMask layer2 = *updateLayer;
 			if (layer1 == layer2) {
 

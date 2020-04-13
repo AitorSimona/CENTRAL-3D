@@ -1,12 +1,43 @@
 #include "PanelHierarchy.h"
+#include "EngineApplication.h"
+
 #include "Imgui/imgui.h"
 
+// -- Modules --
 #include "ModuleEditorUI.h"
-#include "EngineApplication.h"
+#include "ModuleGui.h"
+#include "ModuleSceneManager.h"
+#include "ModuleResourceManager.h"
+#include "ModuleSelection.h"
+#include "ModuleInput.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleFilesystem.h"
+
+// -- Resources --
+#include "ResourcePrefab.h"
+#include "ResourceScene.h"
+
+// -- Components
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ComponentCamera.h"
+#include "ComponentCanvas.h"
+#include "ComponentImage.h"
+#include "ComponentText.h"
+#include "ComponentProgressbar.h"
+#include "ComponentLight.h"
+
+// -- Importer
+#include "ImporterModel.h"
+#include "ImporterPrefab.h"
+
+// -- Panels --
 #include "PanelProject.h"
 
+// -- Utilities --
+#include "EngineLog.h"
 
-PanelHierarchy::PanelHierarchy(char * name) : Broken::Panel(name) {}
+PanelHierarchy::PanelHierarchy(char * name) : Panel(name) {}
 
 PanelHierarchy::~PanelHierarchy() {}
 
@@ -280,7 +311,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 			dragged = Go;
 			ImGui::Text(Go->GetName());
 			ImGui::EndDragDropSource();
-			EngineApp->selection->Select(dragged);
+			//EngineApp->selection->Select(dragged); // Aitor: Should not set dragged as selected since we won't be able to drag one go into another's component!
 		}
 
 		if (ImGui::BeginDragDropTarget())

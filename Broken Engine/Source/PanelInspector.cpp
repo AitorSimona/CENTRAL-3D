@@ -1,35 +1,24 @@
 #include "PanelInspector.h"
-#include "Imgui/imgui.h"
-#include "Application.h"
 #include "EngineApplication.h"
+
+#include "Imgui/imgui.h"
+
+// -- Modules --
+#include "ModuleGui.h"
+#include "ModuleSelection.h"
 #include "ModuleEditorUI.h"
-#include "PanelProject.h"
+#include "ModuleResourceManager.h"
+#include "ModuleSceneManager.h"
 #include "ModulePhysics.h"
+
+// -- Components --
+#include "GameObject.h"
+#include "Component.h"
+#include "ComponentScript.h"
 #include "ComponentCollider.h"
 
-#include "PhysX_3.4/Include/PxPhysicsAPI.h"
-
-using namespace Broken;
-//#include "ModuleSceneManager.h"
-//#include "ModuleRenderer3D.h"
-//#include "ModuleResourceManager.h"
-//#include "ModuleGui.h"
-
-//#include "GameObject.h"
-//#include "ComponentTransform.h"
-//#include "ComponentMesh.h"
-//#include "ComponentMeshRenderer.h"
-//#include "ComponentCamera.h"
-
-#include "PanelShaderEditor.h"
-
-//#include "ResourceMesh.h"
-//#include "ResourceMaterial.h"
-//#include "ResourceTexture.h"
-//#include "ResourceShader.h"
-//#include "ComponentScript.h"
-
-//#include "mmgr/mmgr.h"
+// -- Panels --
+#include "PanelProject.h"
 
 PanelInspector::PanelInspector(char * name) : Panel(name)
 {
@@ -55,13 +44,13 @@ bool PanelInspector::Draw()
 		if (Selected != nullptr)
 		{
 			// --- Game Object ---
-			CreateGameObjectNode(*Selected);
+			CreateGameObjectNode(Selected);
 
 			// --- Components ---
 
-			std::vector<Broken::Component*>* components = &Selected->GetComponents();
+			const std::vector<Broken::Component*>& components = Selected->GetComponents();
 
-			for (std::vector<Broken::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
+			for (std::vector<Broken::Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 			{
 				if ((*it) == nullptr)
 					continue;
@@ -271,42 +260,42 @@ bool PanelInspector::Draw()
 	return true;
 }
 
-void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
+void PanelInspector::CreateGameObjectNode(Broken::GameObject* Selected) const
 {
 	ImGui::BeginChild("child", ImVec2(0, 70), true);
 
-	if (ImGui::Checkbox("##GOActive", &Selected.GetActive()))
+	if (ImGui::Checkbox("##GOActive", &Selected->GetActive()))
 	{
-		if (Selected.GetActive())
-			Selected.Enable();
+		if (Selected->GetActive())
+			Selected->Enable();
 		else
-			Selected.Disable();
+			Selected->Disable();
 	}
 	ImGui::SameLine();
 
 	// --- Game Object Name Setter ---
 	static char GOName[100] = "";
-	strcpy_s(GOName, 100, Selected.GetName());
+	strcpy_s(GOName, 100, Selected->GetName());
 	if (ImGui::InputText("", GOName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-		Selected.SetName(GOName);
+		Selected->SetName(GOName);
 
-	static bool objectStatic = Selected.Static;
-	bool checkboxBool = Selected.Static;
+	static bool objectStatic = Selected->Static;
+	bool checkboxBool = Selected->Static;
 
 	ImGui::SameLine();
 
 	if (ImGui::Checkbox("Static", &checkboxBool)) {
 		objectStatic = checkboxBool;
-		if (!Selected.childs.empty())
+		if (!Selected->childs.empty())
 			ImGui::OpenPopup("Static gameObject");
 		else
-			EngineApp->scene_manager->SetStatic(&Selected, objectStatic,  false);
+			EngineApp->scene_manager->SetStatic(Selected, objectStatic,  false);
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(400,75));
 	if (ImGui::BeginPopup("Static gameObject", ImGuiWindowFlags_NoScrollbar))
 	{
-		if (Selected.Static) {
+		if (Selected->Static) {
 			ImGui::Indent(30);
 			ImGui::Text("You are about to make this object non-static.");
 			ImGui::Spacing();
@@ -318,13 +307,13 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 
 			ImGui::Indent(130);
 			if (ImGui::Button("Yes")) {
-				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
+				EngineApp->scene_manager->SetStatic(Selected, objectStatic, true);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
 
 			if (ImGui::Button("No")) {
-				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, false);
+				EngineApp->scene_manager->SetStatic(Selected, objectStatic, false);
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -341,13 +330,13 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 			ImGui::Indent(130);
 
 			if (ImGui::Button("Yes")) {
-				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, true);
+				EngineApp->scene_manager->SetStatic(Selected, objectStatic, true);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
 
 			if (ImGui::Button("No")) {
-				EngineApp->scene_manager->SetStatic(&Selected, objectStatic, false);
+				EngineApp->scene_manager->SetStatic(Selected, objectStatic, false);
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -355,29 +344,29 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 		ImGui::EndPopup();
 	}
 
-	std::vector<Layer>* layers = &App->physics->layer_list;
+	const std::vector<Layer>& layers = EngineApp->physics->layer_list;
 
 	static ImGuiComboFlags flags = 0;
 
-	const char* item_current = layers->at(Selected.layer).name.c_str();
+	const char* item_current = layers.at(Selected->layer).name.c_str();
 	ImGui::Text("Layer: ");
 	ImGui::SameLine();
 	if (ImGui::BeginCombo("##Layer:", item_current, flags))
 	{
-		for (int n = 0; n < layers->size(); n++)
+		for (std::vector<Layer>::const_iterator it = layers.begin(); it != layers.end(); ++it)
 		{
-			if (!layers->at(n).active)
+			if (!(*it).active)
 				continue;
 
-			bool is_selected = (item_current == layers->at(n).name.c_str());
-			if (ImGui::Selectable(layers->at(n).name.c_str(), is_selected)) {
-				item_current = layers->at(n).name.c_str();
-				Selected.layer = layers->at(n).layer;
+			bool is_selected = (item_current == (*it).name.c_str());
+			if (ImGui::Selectable((*it).name.c_str(), is_selected)) {
+				item_current = (*it).name.c_str();
+				Selected->layer = (*it).layer;
 
-				ComponentCollider* col = Selected.GetComponent<ComponentCollider>();
+				Broken::ComponentCollider* col = Selected->GetComponent<Broken::ComponentCollider>();
 
 				if(col)
-					col->UpdateActorLayer(&layers->at(n).layer);
+					col->UpdateActorLayer((int*)&(*it).layer);
 			}
 			if (is_selected) {
 				ImGui::SetItemDefaultFocus();

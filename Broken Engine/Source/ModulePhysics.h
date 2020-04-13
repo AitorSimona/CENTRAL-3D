@@ -121,7 +121,7 @@ public:
 
 	void addActor(physx::PxRigidActor* actor, GameObject* gameObject);
 
-	void UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* LayerMask);
+	void UpdateActorLayer(const physx::PxRigidActor* actor, const LayerMask* LayerMask);
 
 	void UpdateActorsGroupFilter(LayerMask* updateLayer);
 
