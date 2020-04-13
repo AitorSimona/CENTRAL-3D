@@ -1,7 +1,7 @@
 #ifndef __ENGINEAPPLICATION_H__
 #define __ENGINEAPPLICATION_H__
 
-#include "BrokenEngine.h"
+#include "Application.h"
 
 class EngineApplication : public Broken::Application {
 

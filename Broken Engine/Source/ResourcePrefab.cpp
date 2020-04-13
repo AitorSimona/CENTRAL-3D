@@ -1,9 +1,11 @@
 #include "ResourcePrefab.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
-#include "PanelProject.h"
+#include "ModuleSelection.h"
 
 #include "Imgui/imgui.h"
 

@@ -1,8 +1,15 @@
 #include "InputGeometry.h"
-#include "ResourceMesh.h"
-#include "ComponentTransform.h"
-#include "ComponentMesh.h"
 #include "Recast.h"
+
+// -- Components --
+#include "GameObject.h"
+#include "ComponentMesh.h"
+#include "ComponentTransform.h"
+
+// -- Resources --
+#include "ResourceMesh.h"
+
+// -- Utilities --
 #include "EngineLog.h"
 #include "mmgr/mmgr.h"
 

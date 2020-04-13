@@ -1,16 +1,30 @@
 #include "ModuleRecast.h"
 #include "EngineApplication.h"
-#include "InputGeometry.h"
-#include "mmgr/mmgr.h"
+
+// -- Recast --
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMesh.h"
-#include "ResourceMesh.h"
-#include "ModuleRenderer3D.h"
-#include "ResourceMaterial.h"
 #include "RecastDebugDraw.h"
 #include "ResourceNavMesh.h"
+
+// -- Modules --
+#include "ModuleRenderer3D.h"
 #include "ModuleThreading.h"
+#include "ModuleEventManager.h"
+#include "ModuleDetour.h"
+
+// -- Resources --
+#include "ResourceMaterial.h"
+
+// -- Components --
+#include "GameObject.h"
+
+// -- Utilities --
+#include "EngineLog.h"
 #include "Math.h"
+#include "InputGeometry.h"
+#include "mmgr/mmgr.h"
+
 
 inline unsigned int nextPow2(unsigned int v) {
 	v--;

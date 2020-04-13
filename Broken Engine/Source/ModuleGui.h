@@ -2,30 +2,17 @@
 #define __MODULE_GUI_H__
 
 #include "Module.h"
-#include "Panel.h"
 #include "BrokenCore.h"
 
 #include <vector>
 struct ImGuiContext;
 struct ImDrawList;
-//
-//class PanelSettings;
-//class PanelAbout;
-//class PanelConsole;
-//class PanelInspector;
-//class PanelHierarchy;
-//class PanelScene;
-//class PanelToolbar;
-//class PanelProject;
-//class PanelShaderEditor;
-//class PanelResources;
 
 
 typedef void* (*be_imguialloc)(size_t sz, void* user_data);
 typedef void (*be_imguifree)(void* ptr, void* user_data);
 
 BE_BEGIN_NAMESPACE
-class Panel;
 class ResourcePrefab;
 
 class BROKEN_API ModuleGui : public Module
@@ -45,12 +32,8 @@ public:
 	void Draw() const;
 	void DockSpace() const;
 	void RequestBrowser(const char * url) const;
-	void AddPanel(Panel* npanel);
 
 	ImGuiContext* getImgUICtx() const;
-
-	void LoadStatus(const json & file) override;
-
 	void HandleInput(SDL_Event* event) const;
 
 	bool IsKeyboardCaptured() const;
@@ -62,22 +45,6 @@ public:
 	be_imguifree GetImGuiFree() const;
 
 public:
-
-	/*PanelSettings*	panelSettings = nullptr;
-	PanelAbout*			panelAbout = nullptr;
-	PanelConsole*		panelConsole = nullptr;
-	PanelInspector*		panelInspector = nullptr;
-	PanelHierarchy*		panelHierarchy = nullptr;
-	PanelScene*			panelScene = nullptr;
-	PanelBuild*			panelBuild = nullptr;
-	PanelToolbar*       panelToolbar = nullptr;
-	PanelProject*		panelProject = nullptr;
-	PanelShaderEditor*  panelShaderEditor = nullptr;
-	PanelResources*		panelResources = nullptr;*/
-	//PanelResources*		panelResources = nullptr;
-	//PanelPhysics*		panelPhysics = nullptr;
-	//PanelGame*			panelGame = nullptr;
-
 	bool openPrefab = false;
 	bool editingPrefab = false;
 	ResourcePrefab* prefab = nullptr;
@@ -121,8 +88,6 @@ private:
 	bool capture_keyboard = false;
 	bool capture_mouse = false;
 	ImGuiContext* ctx = nullptr;
-
-	std::vector<Panel*> panels;
 };
 
 BE_END_NAMESPACE

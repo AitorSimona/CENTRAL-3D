@@ -59,7 +59,7 @@ public:
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
 	physx::PxRigidActor*					GetActor();
-	void									UpdateActorLayer(LayerMask* layerMask);
+	void									UpdateActorLayer(const LayerMask* layerMask);
 	void									Delete();
 
 private:

@@ -1,10 +1,21 @@
 #include "PanelBuild.h"
-//#include "JSONLoader.h"
 #include "EngineApplication.h"
+
 #include <queue>
 #include "Imgui/imgui.h"
 
-PanelBuild::PanelBuild(char* name) : Broken::Panel(name){
+// -- Modules --
+#include "ModuleGui.h"
+#include "ModuleSceneManager.h"
+#include "ModuleFilesystem.h"
+#include "ModuleThreading.h"
+
+// -- Resources --
+#include "GameObject.h"
+#include "ResourceScene.h"
+
+
+PanelBuild::PanelBuild(char* name) : Panel(name){
 	buildName = "Broken Engine Game";
 	enabled = false;
 }

@@ -1,13 +1,32 @@
 #include "ModuleEditorUI.h"
 #include "EngineApplication.h"
-#include "Panels.h"
+
+// -- Imgui --
 #include "Imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "Imgui/imgui_internal.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
-//#include "mmgr/mmgr.h"
+
+// -- Modules --
+#include "ModuleGui.h"
+#include "ModuleSceneManager.h"
+
+// -- Components --
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ComponentCamera.h"
+#include "ComponentCanvas.h"
+#include "ComponentImage.h"
+#include "ComponentText.h"
+#include "ComponentProgressbar.h"
+#include "ComponentLight.h"
+
+// -- Utilities --
+#include "EngineLog.h"
+#include "Panels.h"
+#include "mmgr/mmgr.h"
 
 ModuleEditorUI::ModuleEditorUI(bool start_enabled) : Module(start_enabled) {
 	name = "EditorUI";

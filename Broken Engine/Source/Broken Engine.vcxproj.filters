@@ -390,6 +390,9 @@
     <ClInclude Include="rcChunkyTriMesh.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Panel.h">
+      <Filter>Sources\EditorPanels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineApplication.cpp">
@@ -655,6 +658,9 @@
     </ClCompile>
     <ClCompile Include="rcChunkyTriMesh.cpp">
       <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel.cpp">
+      <Filter>Sources\EditorPanels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

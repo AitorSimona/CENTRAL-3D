@@ -1,13 +1,19 @@
 #include "PanelResources.h"
+
+// -- Modules --
 #include "EngineApplication.h"
+#include "ModuleGui.h"
+#include "ModuleResourceManager.h"
+
+// -- Resources --
 #include "Resources.h"
 
+// -- Utilities --
 #include "Imgui/imgui.h"
-
 #include "mmgr/mmgr.h"
 
 
-PanelResources::PanelResources(char* name) : Broken::Panel(name)
+PanelResources::PanelResources(char* name) : Panel(name)
 {
 }
 

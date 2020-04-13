@@ -1,9 +1,9 @@
 #ifndef __PANEL_ABOUT_H__
 #define __PANEL_ABOUT_H__
 
-#include "BrokenEngine.h"
+#include "Panel.h"
 
-class PanelAbout : public Broken::Panel
+class PanelAbout : public Panel
 {
 public:
 

@@ -289,7 +289,7 @@ void ModulePhysics::addActor(physx::PxRigidActor* actor, GameObject* gameObject)
 	mScene->addActor(*actor);
 }
 
-void ModulePhysics::UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* Layermask) {
+void ModulePhysics::UpdateActorLayer(const physx::PxRigidActor* actor, const LayerMask* Layermask) {
 	if (actor) {
 		physx::PxShape* shape;
 		actor->getShapes(&shape, 1);

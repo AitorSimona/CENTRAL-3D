@@ -105,9 +105,6 @@
     <ClInclude Include="Errors.h">
       <Filter>Sources\BrokenEngine</Filter>
     </ClInclude>
-    <ClInclude Include="BrokenEngine.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="Module.h">
       <Filter>Sources\BrokenEngine\Modules</Filter>
     </ClInclude>
@@ -542,9 +539,6 @@
     </ClInclude>
     <ClInclude Include="Quadtree.h">
       <Filter>Sources\BrokenEngine\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Panel.h">
-      <Filter>Sources\BrokenEngine\Panel</Filter>
     </ClInclude>
     <ClInclude Include="Components.h">
       <Filter>Sources\BrokenEngine\Tools</Filter>
@@ -1027,9 +1021,6 @@
     </ClCompile>
     <ClCompile Include="Quadtree.cpp">
       <Filter>Sources\BrokenEngine\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="Panel.cpp">
-      <Filter>Sources\BrokenEngine\Panel</Filter>
     </ClCompile>
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\BrokenEngine\Modules</Filter>

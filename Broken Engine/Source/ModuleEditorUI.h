@@ -1,8 +1,9 @@
 #ifndef __MODULEEDITORUI_H__
 #define __MODULEEDITORUI_H__
 
-#include "BrokenEngine.h"
+#include "Module.h"
 
+class Panel;
 class PanelSettings;
 class PanelAbout;
 class PanelConsole;
@@ -53,7 +54,7 @@ public:
 	PanelRendering*		panelRendering = nullptr;
 
 private:
-	std::vector<Broken::Panel*> panels;
+	std::vector<Panel*> panels;
 	bool show_demo_window = false;
 
 };
