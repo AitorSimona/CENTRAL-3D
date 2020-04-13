@@ -57,10 +57,6 @@ bool PanelProject::Draw()
 	// --- Draw project panel, Unity style ---
 	if (ImGui::Begin(name, &enabled, projectFlags))
 	{
-		// --- Delete resource ---
-		//if (ImGui::IsWindowFocused() && GetSelected() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
-		//	delete_selected = true;
-
 		CreateResourceHandlingPopup();
 
 		if (ImGui::BeginMenuBar())
@@ -195,7 +191,9 @@ bool PanelProject::Draw()
 
 void PanelProject::CreateResourceHandlingPopup()
 {
-
+	// --- Delete resource ---
+	if (GetSelected() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
+		delete_selected = true;
 	//ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
 	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
