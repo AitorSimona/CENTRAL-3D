@@ -124,7 +124,7 @@ public:
 
 	void UpdateActorsGroupFilter(LayerMask* updateLayer);
 
-	void DeleteActor(physx::PxRigidActor* actor);
+	bool DeleteActor(physx::PxRigidActor* actor);
 
 	void DeleteActors(GameObject* go = nullptr);
 

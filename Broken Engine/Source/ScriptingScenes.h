@@ -10,8 +10,9 @@ public:
 	~ScriptingScenes();
 
 public:
-	void LoadSceneFromScript(uint UUID);
+	void LoadSceneFromScript(uint scene_UUID);
 	void QuitGame();
+	uint Instantiate(uint resource_UUID, float x, float y, float z, float alpha, float beta, float gamma);
 
 };
 BE_END_NAMESPACE
