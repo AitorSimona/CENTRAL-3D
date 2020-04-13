@@ -172,6 +172,7 @@
     <ClInclude Include="ModuleEditorUI.h" />
     <ClInclude Include="ModuleRecast.h" />
     <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="Panel.h" />
     <ClInclude Include="PanelAbout.h" />
     <ClInclude Include="PanelBuild.h" />
     <ClInclude Include="PanelConsole.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleEditorUI.cpp" />
     <ClCompile Include="ModuleRecast.cpp" />
+    <ClCompile Include="Panel.cpp" />
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelBuild.cpp" />
     <ClCompile Include="PanelConsole.cpp" />

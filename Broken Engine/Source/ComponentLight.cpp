@@ -1,16 +1,20 @@
 #include "ComponentLight.h"
 
+// -- Modules --
 #include "Application.h"
-
-#include "ComponentTransform.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
+
+// -- Resources --
 #include "ResourceShader.h"
-#include "ComponentCamera.h"
 #include "ResourceMesh.h"
 
-#include "Imgui/imgui.h"
+// -- Components --
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ComponentCamera.h"
 
+#include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
 using namespace Broken;

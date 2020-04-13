@@ -1,7 +1,19 @@
 #include "PanelNavigation.h"
 #include "Imgui/imgui.h"
+
+// -- Modules --
 #include "EngineApplication.h"
 #include "ModuleRecast.h"
+#include "ModuleGui.h"
+#include "ModuleDetour.h"
+#include "ModuleSelection.h"
+
+// -- Components --
+#include "GameObject.h"
+#include "ComponentMesh.h"
+
+// -- Utilities --
+#include <queue>
 
 PanelNavigation::PanelNavigation(char* name) : Panel(name) {
 }

@@ -1,14 +1,22 @@
 #include "ScriptingPhysics.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleScripting.h"
 #include "ModuleSceneManager.h"
+#include "ModulePhysics.h"
+
+// -- Components --
+#include "GameObject.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ComponentCharacterController.h"
-#include "ScriptData.h"
+
 #include "ResourceScene.h"
+#include "ScriptData.h"
 
 using namespace Broken;
+
 ScriptingPhysics::ScriptingPhysics() {}
 
 ScriptingPhysics::~ScriptingPhysics() {}

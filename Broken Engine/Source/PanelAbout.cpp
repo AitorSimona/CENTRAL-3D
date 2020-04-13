@@ -1,8 +1,12 @@
 #include "PanelAbout.h"
+
+// -- Modules --
 #include "EngineApplication.h"
+#include "ModuleGui.h"
+
 #include "Imgui/imgui.h"
 
-PanelAbout::PanelAbout(char * name) : Broken::Panel(name)
+PanelAbout::PanelAbout(char * name) : Panel(name)
 {
 }
 

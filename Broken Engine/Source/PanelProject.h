@@ -1,13 +1,24 @@
 #ifndef __PANEL_PROJECT_H__
 #define __PANEL_PROJECT_H__
 
-#include "BrokenEngine.h"
+#include "Panel.h"
+
 #include <string>
 #include <vector>
-#include "Imgui/imgui.h"
 
+namespace Broken
+{
+	class GameObject;
+	class Resource;
+	class ResourceFolder;
+	struct Event;
+}
 
-class PanelProject : public Broken::Panel
+typedef unsigned int uint;
+struct ImVec4;
+struct ImVec2;
+
+class PanelProject : public Panel
 {
 public:
 

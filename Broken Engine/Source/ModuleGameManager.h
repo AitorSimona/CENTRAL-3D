@@ -1,7 +1,8 @@
 #ifndef __MODULEGAMEMANAGER_H__
 #define __MODULEGAMEMANAGER_H__
 #pragma once
-#include "BrokenEngine.h"
+
+#include "Module.h"
 
 class ModuleGameManager : public Broken::Module {
 public:

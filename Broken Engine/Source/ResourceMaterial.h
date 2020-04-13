@@ -2,11 +2,14 @@
 #define __RESOURCE_MATERIAL_H__
 
 #include "Resource.h"
-
-#include "ResourceTexture.h"
-#include "ResourceShader.h"
+#include "Math.h"
 
 BE_BEGIN_NAMESPACE
+
+class ResourceTexture;
+class ResourceShader;
+struct Uniform;
+
 class BROKEN_API ResourceMaterial : public Resource 
 {
 public:

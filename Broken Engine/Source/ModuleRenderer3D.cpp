@@ -1,5 +1,7 @@
-#include "Application.h"
 #include "ModuleRenderer3D.h"
+
+// -- Modules --
+#include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
@@ -7,26 +9,32 @@
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
 #include "ModuleParticles.h"
+#include "ModuleTextures.h"
+#include "ModuleTimeManager.h"
+#include "ModuleSelection.h"
 
+// -- Components --
 #include "GameObject.h"
+#include "Component.h"
+#include "ComponentMesh.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
 #include "ComponentCharacterController.h"
-#include "ResourceShader.h"
 #include "ComponentAudioListener.h"
 #include "ComponentLight.h"
-#include "Component.h"
 #include "ComponentParticleEmitter.h"
 
+// -- Resources --
+#include "ResourceShader.h"
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
+#include "ResourceTexture.h"
 
-#include "PanelScene.h"
+#include "ImporterShader.h"
 
-#include "Imgui/imgui.h"
 #include "OpenGL.h"
 #include "Math.h"
 

@@ -1,10 +1,12 @@
 #include "ModuleResourceManager.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleGui.h"
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
-
+#include "ModuleRenderer3D.h"
 
 #include "Importers.h"
 #include "Resources.h"

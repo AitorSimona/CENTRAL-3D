@@ -2,8 +2,8 @@
 #define __BE_MODULERENDERER_H__
 
 #include "Module.h"
-#include "Light.h"
-#include "JSONLoader.h"
+#include "Color.h"
+#include "Math.h"
 
 #define MAX_LIGHTS 8
 
@@ -16,6 +16,7 @@ class ComponentLight;
 class math::float4x4;
 class ComponentParticleEmitter;
 class GameObject;
+class ComponentLight;
 
 typedef int RenderMeshFlags;
 

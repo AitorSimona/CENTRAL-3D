@@ -3,9 +3,14 @@
 
 #include "Component.h"
 #include "Math.h"
-#include "ModulePhysics.h"
-#include "PhysX_3.4/Include/PxPhysicsAPI.h"
-#include "PhysX_3.4/Include/PxSimulationEventCallback.h"
+
+namespace physx
+{
+	class PxRigidActor;
+	class PxRigidStatic;
+	class PxTransform;
+	class PxShape;
+}
 
 BE_BEGIN_NAMESPACE
 
@@ -59,7 +64,7 @@ public:
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
 	physx::PxRigidActor*					GetActor();
-	void									UpdateActorLayer(LayerMask* layerMask);
+	void									UpdateActorLayer(const int* layerMask);
 	void									Delete();
 
 private:

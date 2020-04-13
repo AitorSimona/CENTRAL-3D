@@ -1,9 +1,10 @@
 #include "PanelConsole.h"
 #include "EngineApplication.h"
+#include "ModuleGui.h"
 
 #include "mmgr/mmgr.h"
 
-PanelConsole::PanelConsole(char * name) : Broken::Panel(name)
+PanelConsole::PanelConsole(char * name) : Panel(name)
 {
 }
 

@@ -1,5 +1,6 @@
 #include "ComponentButton.h"
-#include "GameObject.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
@@ -10,16 +11,23 @@
 #include "ModuleCamera3D.h"
 #include "ModuleSceneManager.h"
 #include "ModuleFileSystem.h"
+#include "ModuleScripting.h"
+#include "ModuleInput.h"
 
+// -- Components --
+#include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
+#include "ComponentCanvas.h"
+#include "ComponentScript.h"
 
+// -- Resources --
 #include "ResourceShader.h"
 #include "ResourceTexture.h"
-
-#include "Math.h"
+#include "ResourceScene.h"
 #include "ResourceMesh.h"
 
+// -- Utitilies --
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
@@ -553,7 +561,7 @@ void ComponentButton::UpdateState()
 	{
 		if (state != DRAGGING)
 		{
-			if (App->ui_system->CheckMousePos(collider)) //check if hovering
+			if (App->ui_system->CheckMousePos(&collider)) //check if hovering
 			{
 				if (App->ui_system->CheckClick(draggable)) //if hovering check if click
 				{

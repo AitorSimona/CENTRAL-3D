@@ -1,11 +1,20 @@
+#ifndef __COMPONENTBUTTON_H__
+#define __COMPONENTBUTTON_H__
 #pragma once
+
 #include "Component.h"
-#include "ComponentCanvas.h"
-#include "ComponentScript.h"
+#include "Color.h"
+#include "Math.h"
+#include "SDL/include/SDL_rect.h"
+
+#include <string>
+#include <vector>
 
 BE_BEGIN_NAMESPACE
 
 class ResourceTexture;
+class ComponentCanvas;
+class ComponentScript;
 
 class BROKEN_API ComponentButton : public Component
 {
@@ -79,3 +88,4 @@ private:
 };
 
 BE_END_NAMESPACE
+#endif

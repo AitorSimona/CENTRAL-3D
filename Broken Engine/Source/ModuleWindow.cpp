@@ -3,6 +3,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
 
+#include "SDL/include/SDL.h"
 
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #include "mmgr/mmgr.h"

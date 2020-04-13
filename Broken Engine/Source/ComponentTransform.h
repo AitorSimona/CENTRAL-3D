@@ -1,8 +1,8 @@
 #ifndef __COMPONENT_TRANSFORM_H__
 #define __COMPONENT_TRANSFORM_H__
 
-#include "Math.h"
 #include "Component.h"
+#include "Math.h"
 
 BE_BEGIN_NAMESPACE
 

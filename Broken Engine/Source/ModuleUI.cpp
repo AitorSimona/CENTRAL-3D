@@ -150,7 +150,7 @@ void ModuleUI::Clear()
 	canvas.clear();
 }
 
-bool ModuleUI::CheckMousePos(SDL_Rect collider) // 0,0 is top left corner
+bool ModuleUI::CheckMousePos(SDL_Rect* collider) // 0,0 is top left corner
 {
 	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN) 
 		int i = 0;
@@ -159,11 +159,7 @@ bool ModuleUI::CheckMousePos(SDL_Rect collider) // 0,0 is top left corner
 	mouse_pos.y = App->input->GetMouseY();
 
 	SDL_Rect MouseCollider = { mouse_pos.x,mouse_pos.y,1,1 };
-
-	if (SDL_HasIntersection(&MouseCollider, &collider))
-		return true;
-
-	return false;
+	return SDL_HasIntersection(&MouseCollider, collider);
 }
 
 bool ModuleUI::CheckClick(bool draggable)
@@ -198,4 +194,11 @@ void ModuleUI::OrderCanvas()
 		canvas.push_back(ListOrder.top());
 		ListOrder.pop();
 	}
+}
+
+bool ModuleUI::PrioritySort::operator()(ComponentCanvas* const& node1, ComponentCanvas* const& node2) {
+		if (node1->priority > node2->priority)
+			return true;
+		else
+			return false;
 }

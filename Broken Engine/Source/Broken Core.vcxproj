@@ -98,7 +98,6 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="BrokenCore.h" />
-    <ClInclude Include="BrokenEngine.h" />
     <ClInclude Include="BrokenEngineMain.h" />
     <ClInclude Include="ComponentButton.h" />
     <ClInclude Include="ComponentCanvas.h" />
@@ -258,7 +257,6 @@
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="OpenGL.h" />
-    <ClInclude Include="Panel.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="par\par_shapes.h" />
     <ClInclude Include="PerfTimer.h" />
@@ -422,7 +420,6 @@
     <ClCompile Include="ModuleTimeManager.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
-    <ClCompile Include="Panel.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="PhysxSimulationEvents.cpp" />

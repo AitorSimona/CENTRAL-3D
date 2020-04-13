@@ -2,11 +2,11 @@
 #define __COMPONENT_BONE_H__
 
 #include "Component.h"
-#include "ResourceBone.h"
-//#include "Math.h"
+#include "Math.h"
 
 BE_BEGIN_NAMESPACE
 class GameObject;
+class ResourceBone;
 
 class BROKEN_API ComponentBone : public Component
 {

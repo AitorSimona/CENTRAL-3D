@@ -1,4 +1,6 @@
 #include "ImporterModel.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleSceneManager.h"
@@ -6,27 +8,31 @@
 #include "ModuleTextures.h"
 #include "ModuleRenderer3D.h"
 
+// -- Assimp --
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
 #include "Assimp/include/cfileio.h"
 
+// -- Components --
 #include "GameObject.h"
+#include "Components.h"
+
+// -- Resources --
+#include "ResourceModel.h"
+#include "ResourceMeta.h"
+#include "ResourceMaterial.h"
+#include "ResourceAnimation.h"
+#include "ResourceMesh.h"
+#include "ResourceBone.h"
+
+// -- Importers --
 #include "ImporterMeta.h"
 #include "ImporterMesh.h"
 #include "ImporterMaterial.h"
 #include "ImporterBone.h"
 #include "ImporterAnimation.h"
 #include "ImporterBone.h"
-
-
-#include "Components.h"
-
-#include "ResourceModel.h"
-#include "ResourceMeta.h"
-#include "ResourceMaterial.h"
-#include "ResourceAnimation.h"
-
 
 #include "mmgr/mmgr.h"
 

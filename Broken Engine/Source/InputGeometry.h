@@ -2,11 +2,17 @@
 #define __INPUTGEOMETRY_H__
 #pragma once
 
-#include "GameObject.h"
-#include "ResourceMesh.h"
+#include <vector>
 #include "Math.h"
 #include "rcChunkyTriMesh.h"
 
+namespace Broken
+{
+	class GameObject;
+	class Vertex;
+}
+
+typedef unsigned int uint;
 
 static const int MAX_CONVEXVOL_PTS = 9; // Recast has way fewer
 struct ConvexVolume {
