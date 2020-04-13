@@ -280,7 +280,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 			dragged = Go;
 			ImGui::Text(Go->GetName());
 			ImGui::EndDragDropSource();
-			EngineApp->selection->Select(dragged);
+			//EngineApp->selection->Select(dragged); // Aitor: Should not set dragged as selected since we won't be able to drag one go into another's component!
 		}
 
 		if (ImGui::BeginDragDropTarget())
