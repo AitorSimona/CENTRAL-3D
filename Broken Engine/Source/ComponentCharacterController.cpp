@@ -96,7 +96,7 @@ void ComponentCharacterController::Update()
 		int a = 0;
 	}
 
-	Move(velocity.x, velocity.z);
+	//Move(velocity.x, velocity.z);
 
 
 	if (cTransform->updateValues || App->gui->isUsingGuizmo)
