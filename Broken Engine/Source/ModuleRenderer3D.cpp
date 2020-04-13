@@ -210,14 +210,15 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Issue Render orders ---
 	App->scene_manager->DrawScene();
 
-	// --- Draw Grid ---
-	if (display_grid)
-		DrawGrid();
-
 	// --- Draw ---
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	SendShaderUniforms(defaultShader->ID);
+
+	// --- Draw Grid ---
+	if (display_grid)
+		DrawGrid();
+
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();

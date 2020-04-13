@@ -51,7 +51,7 @@ public:
 	bool draggable = false;
 	bool resize = true;
 
-	float2 size2D = { 1,1 };
+	float2 size2D = { 50,50 };
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
 
