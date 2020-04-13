@@ -136,15 +136,23 @@ bool ComponentCamera::ContainsAABB(const AABB& ref) {
 	return true;
 }
 
-float2 ComponentCamera::WorldToScreen(const float3& pos) {
-	float2 ret;
-	float4x4 viewProjectionMatrix = frustum.ProjectionMatrix() * frustum.ViewMatrix();
+float2 ComponentCamera::WorldToScreen(const float3& pos) 
+{
+	float4 clipSpacePos = frustum.ProjectionMatrix() * (frustum.ViewMatrix() * float4(pos, 1.0));
 
-	float3 t_pos = viewProjectionMatrix.MulPos(pos);
-	ret.x = math::RoundInt(((t_pos.x + 1.0) / 2.0) * App->gui->sceneWidth);
-	ret.y = math::RoundInt(((1.0 - t_pos.y) / 2.0) * App->gui->sceneHeight);
+	float3 ndcSpacePos;
+	ndcSpacePos.x = clipSpacePos.x / clipSpacePos.w;
+	ndcSpacePos.y = clipSpacePos.y / clipSpacePos.w;
+	ndcSpacePos.z = clipSpacePos.z / clipSpacePos.w;
 
-	return ret;
+	float2 viewSize = { App->gui->sceneWidth, App->gui->sceneHeight };
+	float2 viewOffset = { App->gui->sceneX, App->gui->sceneY };
+
+	float2 windowSpacePos;
+	windowSpacePos.x = ((ndcSpacePos.x + 1.0) / 2.0) * viewSize.x + viewOffset.x;
+	windowSpacePos.y = ((ndcSpacePos.y + 1.0) / 2.0) * viewSize.y + viewOffset.y;
+
+	return windowSpacePos;
 }
 
 float3 ComponentCamera::ScreenToWorld(const float2& pos, float distance) {

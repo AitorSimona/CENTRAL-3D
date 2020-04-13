@@ -114,6 +114,7 @@ void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	glActiveTexture(GL_TEXTURE0);
 
 	// --- Set uniforms back to defaults ---
 	glUniform1i(TextureLocation, 0);
