@@ -192,7 +192,7 @@ bool PanelProject::Draw()
 void PanelProject::CreateResourceHandlingPopup()
 {
 	// --- Delete resource ---
-	if (GetSelected() && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
+	if (selected && !selected->has_parent && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
 		delete_selected = true;
 	//ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
@@ -298,7 +298,7 @@ void PanelProject::CreateResourceHandlingPopup()
 
 			ImGui::EndMenu();
 		}
-		if (GetSelected())
+		if (selected && !selected->has_parent)
 		{
 			if (ImGui::MenuItem("Delete"))
 				delete_selected = true;		
