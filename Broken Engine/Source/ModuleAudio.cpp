@@ -54,7 +54,18 @@ bool ModuleAudio::Start()
 update_status ModuleAudio::PostUpdate(float dt)
 {
 	AK::SoundEngine::RenderAudio();
-
+	if (App->GetAppState() == Broken::AppState::TO_PAUSE)
+	{
+		PauseAllAudioEvents();
+	}
+	if (App->GetAppState() == Broken::AppState::TO_EDITOR)
+	{
+		StopAllAudioEvents();
+	}
+	if (App->GetAppState() == Broken::AppState::TO_PLAY)
+	{
+		ResumeAllAudioEvents();
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -305,17 +316,6 @@ void ModuleAudio::LoadEventsFromJson()
 	
 	json Events = File["SoundBanksInfo"]["SoundBanks"][0]["IncludedEvents"];
 	EventMap.begin();
-	//for (json::iterator it = Events.begin(); it != Events.end(); ++it)
-	//{
-
-	//	std::string idstring = Events["Id"];
-	//	std::string namestring = Events["Name"];
-
-	//	Id = std::stoul(idstring);
-	//	//name = (*it).find("Name").value();
-
-	//	//EventMap.insert(std::pair<std::string, uint>(name, Id));
-	//}
 
 	for (uint i = 0; i < Events.size(); ++i)
 	{
@@ -329,4 +329,19 @@ void ModuleAudio::LoadEventsFromJson()
 	}
 
 	uint i = 0;
+}
+
+void ModuleAudio::StopAllAudioEvents()
+{
+	AK::SoundEngine::StopAll();
+}
+
+void  ModuleAudio::ResumeAllAudioEvents()
+{
+	AK::SoundEngine::WakeupFromSuspend();
+}
+
+void  ModuleAudio::PauseAllAudioEvents()
+{
+	AK::SoundEngine::Suspend();
 }

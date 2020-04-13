@@ -56,6 +56,9 @@ private:
 	void TerminateWwise();
 	void LoadSoundBank(const char* path);
 	void LoadEventsFromJson();
+	void StopAllAudioEvents();
+	void ResumeAllAudioEvents();
+	void PauseAllAudioEvents();
 
 public:
 	AkGameObjectID currentListenerID = 0;
