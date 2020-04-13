@@ -25,7 +25,7 @@ void Component::Disable() {
 }
 
 bool Component::IsEnabled() const {
-	return active; 
+	return active;
 }
 
 bool& Component::GetActive() {

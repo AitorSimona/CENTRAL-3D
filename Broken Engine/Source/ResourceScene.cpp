@@ -4,6 +4,8 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 #include "ModuleSceneManager.h"
+#include "ModuleEventManager.h"
+#include "ModuleDetour.h"
 
 #include "GameObject.h"
 
@@ -46,6 +48,8 @@ bool ResourceScene::LoadInMemory()
 			{
 				// --- Retrieve GO's UID ---
 				std::string uid = it.key().c_str();
+				if (uid == "Navigation Data")
+					continue;
 
 				// --- Create a Game Object for each node ---
 				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
@@ -67,6 +71,11 @@ bool ResourceScene::LoadInMemory()
 				if (!file[it.key()]["Index"].is_null())
 					go->index = file[it.key()]["Index"];
 
+				if (!file[it.key()]["Navigation Static"].is_null())
+					go->navigationStatic = file[it.key()]["Navigation Static"];
+
+				if (!file[it.key()]["Navigation Area"].is_null())
+					go->navigationArea = file[it.key()]["Navigation Area"];
 				if (!file[it.key()]["PrefabChild"].is_null())
 					go->is_prefab_child = file[it.key()]["PrefabChild"];
 
@@ -80,7 +89,6 @@ bool ResourceScene::LoadInMemory()
 					Importer::ImportData IData(file[it.key()]["Model"].get<std::string>().c_str());
 					go->model = (ResourceModel*)App->resources->ImportAssets(IData);
 				}
-
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];				
 
@@ -119,6 +127,11 @@ bool ResourceScene::LoadInMemory()
 
 				if (go->Static)
 					App->scene_manager->SetStatic(go, true, false);
+
+				Event e;
+				e.type = Event::EventType::GameObject_loaded;
+				e.go = go;
+				App->event_manager->PushEvent(e);
 			}
 
 			App->scene_manager->GetRootGO()->childs.clear();
@@ -146,7 +159,46 @@ bool ResourceScene::LoadInMemory()
 					App->scene_manager->GetRootGO()->AddChildGO(objects[i], objects[i]->index);
 			}
 		}
+
+
+		// Load navigation data
+		json navigationdata = file["Navigation Data"];
+		if (!navigationdata.is_null()) {
+			App->detour->agentHeight = navigationdata["agentHeight"];
+			App->detour->agentRadius = navigationdata["agentRadius"];
+			App->detour->maxSlope = navigationdata["maxSlope"];
+			App->detour->stepHeight = navigationdata["stepHeight"];
+			App->detour->voxelSize = navigationdata["voxelSize"];
+
+			App->detour->voxelHeight = navigationdata["voxelHeight"];
+			App->detour->regionMinSize = navigationdata["regionMinSize"];
+			App->detour->regionMergeSize = navigationdata["regionMergeSize"];
+			App->detour->edgeMaxLen = navigationdata["edgeMaxLen"];
+			App->detour->edgeMaxError = navigationdata["edgeMaxError"];
+			App->detour->vertsPerPoly = navigationdata["vertsPerPoly"];
+			App->detour->detailSampleDist = navigationdata["detailSampleDist"];
+			App->detour->detailSampleMaxError = navigationdata["detailSampleMaxError"];
+			App->detour->buildTiledMesh = navigationdata["buildTiledMesh"];
+			
+
+			if (!navigationdata["navMeshUID"].is_null())
+				App->detour->loadNavMeshFile(navigationdata["navMeshUID"]);
+			else
+				App->detour->clearNavMesh();
+
+			for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+				std::string areaName = navigationdata["Areas"][i]["name"];
+				sprintf_s(App->detour->areaNames[i], areaName.c_str());
+				App->detour->areaCosts[i] = navigationdata["Areas"][i]["cost"];
+			}
+		}
+		else {
+			App->detour->setDefaultValues();
+			App->detour->clearNavMesh();
+		}
 	}
+
+
 
 	return true;
 }
@@ -166,6 +218,9 @@ void ResourceScene::FreeMemory() {
 	}
 
 	StaticGameObjects.clear();
+	Event e;
+	e.type = Event::EventType::Scene_unloaded;
+	App->event_manager->PushEvent(e);
 
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }

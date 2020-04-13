@@ -2,8 +2,8 @@
 #define __BE_MODULERENDERER_H__
 
 #include "Module.h"
-#include "Light.h"
-#include "JSONLoader.h"
+#include "Color.h"
+#include "Math.h"
 
 #define MAX_LIGHTS 8
 
@@ -16,6 +16,7 @@ class ComponentLight;
 class math::float4x4;
 class ComponentParticleEmitter;
 class GameObject;
+class ComponentLight;
 
 typedef int RenderMeshFlags;
 
@@ -26,7 +27,8 @@ enum BROKEN_API RenderMeshFlags_
 	selected	= 1 << 1,
 	checkers	= 1 << 2,
 	wire		= 1 << 3,
-	texture		= 1 << 4
+	texture		= 1 << 4,
+	color       = 1 << 5
 };
 
 struct BROKEN_API RenderMesh
@@ -36,7 +38,7 @@ struct BROKEN_API RenderMesh
 	float4x4 transform;
 	const ResourceMesh* resource_mesh = nullptr;
 	ResourceMaterial* mat = nullptr;
-//	Color color; // force a color draw, useful if no texture is given
+	Color color; // force a color draw, useful if no texture is given
 	
 
 	// temporal!

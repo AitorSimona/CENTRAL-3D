@@ -13,6 +13,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BrokenCore", "Source\Broken
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BEG", "Source\BEG.vcxproj", "{F201F70E-F1F1-4572-97C1-781DAB3AB933}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9D8227E1-C988-489E-BEA3-E2B1694373DF}"
+	ProjectSection(SolutionItems) = preProject
+		Game\Settings\EditorConfig.json = Game\Settings\EditorConfig.json
+		Game\Settings\GameConfig.json = Game\Settings\GameConfig.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86

@@ -1,11 +1,16 @@
 #ifndef __PANEL_RESOURCES_H__
 #define __PANEL_RESOURCES_H__
 
-#include "BrokenEngine.h"
+#include "Panel.h"
 
 struct ImVec4;
 
-class PanelResources : public Broken::Panel
+namespace Broken
+{
+	class Resource;
+}
+
+class PanelResources : public Panel
 {
 public:
 

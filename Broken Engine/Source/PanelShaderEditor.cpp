@@ -1,10 +1,16 @@
 #include "PanelShaderEditor.h"
 
-//#include "OpenGL.h"
-#include "Imgui/imgui.h"
-
+// -- Modules --
 #include "EngineApplication.h"
+#include "ModuleGui.h"
+#include "ModuleRenderer3D.h"
 
+// -- Resources --
+#include "ResourceMaterial.h"
+#include "ResourceShader.h"
+
+// -- Utilities --
+#include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
 // https://github.com/ocornut/imgui/issues/2035
@@ -29,7 +35,7 @@ bool InputText(const char* label, std::string* str, ImGuiInputTextFlags flags)
 	return ImGui::InputTextMultiline(label, (char*)str->c_str(), str->capacity() + 1, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), flags, InputTextCallback, (void*)str);
 }
 
-PanelShaderEditor::PanelShaderEditor(char * name) : Broken::Panel(name)
+PanelShaderEditor::PanelShaderEditor(char * name) : Panel(name)
 {
 }
 

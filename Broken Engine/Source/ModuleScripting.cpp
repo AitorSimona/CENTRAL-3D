@@ -23,6 +23,7 @@
 #include "ScriptingParticles.h"
 #include "ScriptingInterface.h"
 #include "ScriptingScenes.h"
+#include "ScriptingNavigation.h"
 #include "ScriptVar.h"
 #include <iterator>
 
@@ -149,6 +150,10 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 		.endClass()
 
 		.beginClass <ScriptingScenes>("Scenes")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
+		.beginClass <ScriptingNavigation>("Navigation")
 		.addConstructor<void(*) (void)>()
 		.endClass()
 
@@ -282,6 +287,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
 
 		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
+		.addFunction("Raycast", &ScriptingPhysics::Raycast)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -360,6 +366,19 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("LoadScene", &ScriptingScenes::LoadSceneFromScript)
 		.addFunction("QuitGame", &ScriptingScenes::QuitGame)
 		.addFunction("Instantiate", &ScriptingScenes::Instantiate)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// NAVIGATION
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingNavigation>("Navigation")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("AllAreas", &ScriptingNavigation::AllAreas)
+		.addFunction("GetAreaFromName", &ScriptingNavigation::GetAreaFromName)
+		.addFunction("GetAreaCost", &ScriptingNavigation::GetAreaCost)
+		.addFunction("SetAreaCost", &ScriptingNavigation::SetAreaCost)
+		.addFunction("CalculatePath", &ScriptingNavigation::CalculatePath)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

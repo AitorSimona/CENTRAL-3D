@@ -4,6 +4,7 @@
 #include <stdlib.h>
 //#include "BrokenCore.h"
 #include "Application.h"
+#include "EngineLog.h"
 
 
 #define NOMINMAX

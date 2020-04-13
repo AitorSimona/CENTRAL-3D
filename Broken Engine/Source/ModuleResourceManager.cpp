@@ -1,10 +1,12 @@
 #include "ModuleResourceManager.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "ModuleGui.h"
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
-
+#include "ModuleRenderer3D.h"
 
 #include "Importers.h"
 #include "Resources.h"
@@ -56,6 +58,7 @@ bool ModuleResourceManager::Init(json& file)
 	importers.push_back(new ImporterScript);
 	importers.push_back(new ImporterMeta());
 	importers.push_back(new ImporterFont());
+	importers.push_back(new ImporterNavMesh());
 
 	return true;
 }
@@ -113,6 +116,7 @@ bool ModuleResourceManager::Start()
 	filters.push_back("ttf");
 	filters.push_back("otf");
 	filters.push_back("animator");
+	filters.push_back("navmesh");
 	filters.push_back("glsl");
 
 
@@ -210,7 +214,7 @@ ResourceFolder* ModuleResourceManager::SearchAssets(ResourceFolder* parent, cons
 // --- Identify resource by file extension, call relevant importer, prepare everything for its use ---
 Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Import Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Import Switch needs to be updated");
 
 	// --- Only standalone resources go through import here, mesh and some materials are imported through model's importer ---
 
@@ -277,6 +281,10 @@ Resource* ModuleResourceManager::ImportAssets(Importer::ImportData& IData)
 
 	case Resource::ResourceType::SCRIPT:
 		resource = ImportScript(IData); //MYTODO: Dídac I assume I must create a new Importer to handle scripts importing
+		break;
+
+	case Resource::ResourceType::NAVMESH:
+		resource = ImportNavMesh(IData);
 		break;
 
 	case Resource::ResourceType::UNKNOWN:
@@ -595,6 +603,20 @@ Resource* ModuleResourceManager::ImportFont(Importer::ImportData& IData)
 	return font;
 }
 
+Resource* ModuleResourceManager::ImportNavMesh(Importer::ImportData& IData) {
+	Resource* navmesh = nullptr;
+
+	ImporterNavMesh* INavMesh = GetImporter<ImporterNavMesh>();
+
+	if (IsFileImported(IData.path))
+		navmesh = INavMesh->Load(IData.path);
+	else {
+		navmesh = INavMesh->Import(IData);
+	}
+
+	return navmesh;
+}
+
 void ModuleResourceManager::HandleFsChanges()
 {
 	// --- First retrieve all windows fs files and directories in ASSETS ---
@@ -824,7 +846,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Get Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Get Switch needs to be updated");
 
 	// To clarify: resource = condition ? value to be assigned if true : value to be assigned if false
 
@@ -841,6 +863,7 @@ Resource* ModuleResourceManager::GetResource(uint UID, bool loadinmemory) // loa
 	resource = resource ? resource : (textures.find(UID) == textures.end() ? resource : (*textures.find(UID)).second);
 	resource = resource ? resource : (scripts.find(UID) == scripts.end() ? resource : (*scripts.find(UID)).second);
 	resource = resource ? resource : (fonts.find(UID) == fonts.end() ? resource : (*fonts.find(UID)).second);
+	resource = resource ? resource : (navmeshes.find(UID) == navmeshes.end() ? resource : (*navmeshes.find(UID)).second);
 
 	if (resource && loadinmemory)
 		resource->LoadToMemory();
@@ -855,7 +878,7 @@ Resource* ModuleResourceManager::CreateResource(Resource::ResourceType type, con
 {
 	// Note you CANNOT create a meta resource through this function, use CreateResourceGivenUID instead
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Creation Switch needs to be updated");
 
 	Resource* resource = nullptr;
 
@@ -926,6 +949,11 @@ Resource* ModuleResourceManager::CreateResource(Resource::ResourceType type, con
 		fonts[resource->GetUID()] = (ResourceFont*)resource;
 		break;
 
+	case Resource::ResourceType::NAVMESH:
+		resource = (Resource*) new ResourceNavMesh(App->GetRandom().Int(), source_file);
+		navmeshes[resource->GetUID()] = (ResourceNavMesh*)resource;
+		break;
+
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
 		break;
@@ -942,7 +970,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 {
 	Resource* resource = nullptr;
 
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Creation Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Creation Switch needs to be updated");
 
 
 	switch (type)
@@ -1022,6 +1050,11 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 		resource = (Resource*)new ResourceFont(UID, source_file);
 		fonts[resource->GetUID()] = (ResourceFont*)resource;
 		break;
+	
+	case Resource::ResourceType::NAVMESH:
+		resource = (Resource*)new ResourceNavMesh(UID, source_file);
+		navmeshes[resource->GetUID()] = (ResourceNavMesh*)resource;
+		break;
 
 	case Resource::ResourceType::UNKNOWN:
 		ENGINE_CONSOLE_LOG("![Warning]: Detected unsupported resource type");
@@ -1038,7 +1071,7 @@ Resource* ModuleResourceManager::CreateResourceGivenUID(Resource::ResourceType t
 
 Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char* path)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Switch needs to be updated");
 
 	std::string extension = "";
 	App->fs->SplitFilePath(path, nullptr, nullptr, &extension);
@@ -1060,6 +1093,7 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "lua" ? Resource::ResourceType::SCRIPT : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "meta" ? Resource::ResourceType::META : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "ttf" || extension == "otf" ? Resource::ResourceType::FONT : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "navmesh" ? Resource::ResourceType::NAVMESH : type) : type;
 
 	return type;
 }
@@ -1274,7 +1308,7 @@ std::shared_ptr<std::string> ModuleResourceManager::GetNewUniqueName(Resource::R
 
 void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Destruction Switch needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Destruction Switch needs to be updated");
 
 	switch (resource->GetType())
 	{
@@ -1363,6 +1397,10 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		fonts.erase(resource->GetUID());
 		break;
 
+	case Resource::ResourceType::NAVMESH:
+		navmeshes.erase(resource->GetUID());
+		break;
+
 	case Resource::ResourceType::META:
 		metas.erase(resource->GetUID());
 		break;
@@ -1395,7 +1433,7 @@ update_status ModuleResourceManager::Update(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 14, "Resource Clean Up needs to be updated");
+	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Clean Up needs to be updated");
 
 	// --- Delete resources ---
 	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
@@ -1524,6 +1562,14 @@ bool ModuleResourceManager::CleanUp()
 	}
 
 	fonts.clear();
+
+	for (std::map<uint, ResourceNavMesh*>::iterator it = navmeshes.begin(); it != navmeshes.end();) {
+		it->second->FreeMemory();
+		delete it->second;
+		it = navmeshes.erase(it);
+	}
+
+	navmeshes.clear();
 
 	// --- Delete importers ---
 	for (uint i = 0; i < importers.size(); ++i)

@@ -1,9 +1,13 @@
 #ifndef __PANEL_HIERARCHY_H__
 #define __PANEL_HIERARCHY_H__
 
-#include "BrokenEngine.h"
+#include "Panel.h"
+namespace Broken
+{
+	class GameObject;
+}
 
-class PanelHierarchy : public Broken::Panel
+class PanelHierarchy : public Panel
 {
 public:
 
@@ -19,7 +23,7 @@ private:
 	bool wasclicked = false;
 	bool end_drag = false;
 	bool to_unparent = false;
-	uint selected_uid = 0;
+	unsigned int selected_uid = 0;
 	Broken::GameObject* target = nullptr;
 	Broken::GameObject* dragged = nullptr;
 };

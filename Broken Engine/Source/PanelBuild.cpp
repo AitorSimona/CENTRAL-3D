@@ -1,10 +1,21 @@
 #include "PanelBuild.h"
-//#include "JSONLoader.h"
 #include "EngineApplication.h"
+
 #include <queue>
 #include "Imgui/imgui.h"
 
-PanelBuild::PanelBuild(char* name) : Broken::Panel(name){
+// -- Modules --
+#include "ModuleGui.h"
+#include "ModuleSceneManager.h"
+#include "ModuleFilesystem.h"
+#include "ModuleThreading.h"
+
+// -- Resources --
+#include "GameObject.h"
+#include "ResourceScene.h"
+
+
+PanelBuild::PanelBuild(char* name) : Panel(name){
 	buildName = "Broken Engine Game";
 	enabled = false;
 }
@@ -148,7 +159,7 @@ void PanelBuild::makeBuild() {
 	EngineApp->fs->DeleteArray(files);
 
 	static const char* directories[] = { ASSETS_FOLDER, SETTINGS_FOLDER, LIBRARY_FOLDER, TEXTURES_FOLDER, MESHES_FOLDER, SCENES_FOLDER,
-		MODELS_FOLDER, SHADERS_FOLDER, SHADERS_ASSETS_FOLDER, SCRIPTS_FOLDER, SOUNDS_FOLDER, ANIMATIONS_FOLDER, ANIMATOR_FOLDER, BONES_FOLDER, FONTS_FOLDER};
+		MODELS_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER, SHADERS_ASSETS_FOLDER, SOUNDS_FOLDER, ANIMATIONS_FOLDER, BONES_FOLDER, FONTS_FOLDER, NAVMESH_FOLDER};
 
 	std::shared_ptr<std::string> build = std::make_shared<std::string>(buildName);
 	for (int i = 0; i < IM_ARRAYSIZE(directories); ++i) {

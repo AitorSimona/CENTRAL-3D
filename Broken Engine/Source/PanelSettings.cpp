@@ -1,19 +1,28 @@
-#include <vector>
 #include "PanelSettings.h"
+
+// -- Modules --
 #include "EngineApplication.h"
 #include "ModuleGui.h"
+#include "ModuleTimeManager.h"
+#include "ModuleWindow.h"
+#include "ModuleInput.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
+#include "ModuleHardware.h"
 
+// -- Components --
+#include "ComponentCamera.h"
+
+// -- Utilities --
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 #include "DevIL/include/il.h"
 #include "Assimp/include/version.h"
-
+#pragma comment (lib, "Assimp/libx86/assimp.lib")
 #include "mmgr/mmgr.h"
 
-#pragma comment (lib, "Assimp/libx86/assimp.lib")
 
-
-PanelSettings::PanelSettings(char * name): Broken::Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
+PanelSettings::PanelSettings(char * name): Panel(name) , FPS_Tracker(FPS_TRACKER_SIZE), MS_Tracker(FPS_TRACKER_SIZE)
 {
 
 }

@@ -1,14 +1,32 @@
 #include "PanelScene.h"
-#include "Imgui/imgui.h"
 
+// -- Modules --
 #include "EngineApplication.h"
+#include "ModuleGui.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleResourceManager.h"
+#include "ModuleSceneManager.h"
+#include "ModuleSelection.h"
+#include "ModuleCamera3D.h"
+#include "ModuleInput.h"
+
+// -- Panels --
 #include "PanelProject.h"
 
-#include "OpenGL.h"
+// -- Components --
+#include "GameObject.h"
+#include "ComponentCamera.h"
+#include "ComponentTransform.h"
 
+// -- Importers --
+#include "ImporterModel.h"
+
+// -- Utilities --
+#include "OpenGL.h"
+#include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-PanelScene::PanelScene(char* name) : Broken::Panel(name)
+PanelScene::PanelScene(char* name) : Panel(name)
 {
 	ImGuizmo::Enable(true);
 	overlay = "Camera Speed Overlay";

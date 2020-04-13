@@ -1,10 +1,16 @@
 #include "ScriptingParticles.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleScripting.h"
 #include "ModuleSceneManager.h"
+
+// -- Components --
+#include "GameObject.h"
 #include "ComponentParticleEmitter.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ResourceScene.h"
+
 #include "ScriptData.h"
 
 using namespace Broken;

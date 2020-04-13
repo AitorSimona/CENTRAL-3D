@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 #include "Resource.h"
-#include "ModulePhysics.h"
 
 BE_BEGIN_NAMESPACE
 
@@ -85,8 +84,10 @@ public:
 	std::vector<GameObject*> childs;
 	std::vector<GameObject*> collisions;
 	bool Static = false;
+	bool navigationStatic = false;
+	uint navigationArea = 0; 
 	ResourceModel* model = nullptr;
-	LayerMask layer;
+	int layer;
 	bool is_prefab_child = false;
 	bool is_prefab_instance = false;
 
