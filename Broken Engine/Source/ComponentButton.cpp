@@ -116,6 +116,7 @@ void ComponentButton::Draw()
 	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	glActiveTexture(GL_TEXTURE0);
 
 	 //--- Update color depending on state ---
 	if (state == IDLE) ChangeColorTo(idle_color);
