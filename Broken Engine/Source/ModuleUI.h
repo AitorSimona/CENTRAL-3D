@@ -8,6 +8,7 @@
 BE_BEGIN_NAMESPACE
 
 class Component;
+class ComponentCamera;
 
 class BROKEN_API ModuleUI : public Module
 {
@@ -44,6 +45,9 @@ public:
 	void OrderCanvas();
 
 public:
+
+	ComponentCamera* ui_camera = nullptr;
+
 	std::vector<ComponentCanvas*> canvas;
 
 	float2 drag_start = float2::zero;

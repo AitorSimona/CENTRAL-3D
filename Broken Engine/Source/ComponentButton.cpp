@@ -64,8 +64,10 @@ void ComponentButton::Update()
 void ComponentButton::Draw()
 {
 	// --- Frame image with camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D*0.01f, 1.0f));
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	float3 pos = { position2D.x, position2D.y, nearp + 0.026f };
+	float3 size = { size2D.x / App->gui->sceneWidth, size2D.y / App->gui->sceneHeight, 1.0f };
+	float4x4 transform = transform.FromTRS(pos, Quat::identity, size);
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
@@ -77,15 +79,13 @@ void ComponentButton::Draw()
 	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
-
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
 	float4x4 proj_RH(
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		0.0f, 0.0f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -116,10 +116,7 @@ void ComponentButton::Draw()
 	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-
-	// --- Text ---
-	//glColorColorF(text_color);
-	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
+	glActiveTexture(GL_TEXTURE0);
 
 	 //--- Update color depending on state ---
 	if (state == IDLE) ChangeColorTo(idle_color);
@@ -128,10 +125,13 @@ void ComponentButton::Draw()
 	if (state == LOCKED) ChangeColorTo(locked_color);
 
 	// --- Collider ---
+	float2 screenpos = App->renderer3D->active_camera->WorldToScreen({ pos.x, -pos.y, pos.z });
+	collider = { (int)screenpos.x, (int)(screenpos.y - size2D.y), (int)size2D.x, (int)size2D.y };
+
+	// Draw Collider
 	if (collider_visible && App->GetAppState() == AppState::EDITOR) //draw only in editor mode
 	{
-		App->gui->draw_list->AddRect(ImVec2(App->gui->sceneX + collider.x, App->gui->sceneY + collider.y),
-			ImVec2(App->gui->sceneX + collider.x + collider.w, App->gui->sceneY + collider.y + collider.h),
+		App->gui->draw_list->AddRect(ImVec2(collider.x, collider.y), ImVec2(collider.x + collider.w, collider.y + collider.h),
 			ImU32(ImColor(ImVec4(1.0f, 0.0f, 0.0f, 1.0f))), 0.0f, 0, 1.0f);
 	}
 }
@@ -313,8 +313,11 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
+	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 1.0f) && resize)
 	{
+		if (size2D.x < 0.0f)
+			size2D.x = 0;
+
 		if (texture)
 		{
 			if (texture->Texture_height != 0 && texture->Texture_width != 0)
@@ -328,8 +331,11 @@ void ComponentButton::CreateInspectorNode()
 	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
+	if (ImGui::DragFloat("y##buttonsize", &size2D.y) && resize)
 	{
+		if (size2D.y < 0.0f)
+			size2D.y = 0;
+
 		if (texture)
 		{
 			if (texture->Texture_height != 0 && texture->Texture_width != 0)
@@ -346,16 +352,16 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##buttonposition", &position2D.x, 0.1f);
+	ImGui::DragFloat("x##buttonposition", &position2D.x, 0.01f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
+	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.01f);
 
 	// Rotation
-	//ImGui::Text("Rotation:");
-	//ImGui::SameLine();
-	//ImGui::SetNextItemWidth(60);
-	//ImGui::DragFloat("##buttonrotation", &rotation2D);
+	ImGui::Text("Rotation:");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(60);
+	ImGui::DragFloat("##buttonrotation", &rotation2D);
 
 	// ------------------------------------------
 
