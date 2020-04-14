@@ -12,7 +12,6 @@
 
 #define BANKNAME_INIT "Assets/Sounds/Init.bnk"
 
-using namespace AK;
 using namespace Broken;
 
 CAkDefaultIOHookBlocking g_lowLevelIO;
@@ -156,7 +155,7 @@ void ModuleAudio::InitWwise()
 
 	AkBankID bankID;
 	AKRESULT retValue;
-	retValue = SoundEngine::LoadBank(BANKNAME_INIT, AK_DEFAULT_POOL_ID, bankID);
+	retValue = AK::SoundEngine::LoadBank(BANKNAME_INIT, AK_DEFAULT_POOL_ID, bankID);
 	//assert(retValue == AK_Success);
 }
 
