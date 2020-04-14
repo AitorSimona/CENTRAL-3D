@@ -1331,24 +1331,24 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 	case Resource::ResourceType::MATERIAL:
 		materials.erase(resource->GetUID());
 
-		// --- Tell parent model, if any ---
-		if (resource->has_parent)
-		{
-			for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end(); ++it)
-			{
-				std::vector<Resource*>* model_resources = (*it).second->GetResources();
+		//// --- Tell parent model, if any ---
+		//if (resource->has_parent)
+		//{
+		//	for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end(); ++it)
+		//	{
+		//		std::vector<Resource*>* model_resources = (*it).second->GetResources();
 
-				for (std::vector<Resource*>::iterator res = model_resources->begin(); res != model_resources->end(); ++res)
-				{
-					if ((*res)->GetUID() == resource->GetUID())
-					{
-						(*it).second->RemoveResource(resource);
-						break;
-					}
-				}
+		//		for (std::vector<Resource*>::iterator res = model_resources->begin(); res != model_resources->end(); ++res)
+		//		{
+		//			if ((*res)->GetUID() == resource->GetUID())
+		//			{
+		//				(*it).second->RemoveResource(resource);
+		//				break;
+		//			}
+		//		}
 
-			}
-		}
+		//	}
+		//}
 		break;
 
 	case Resource::ResourceType::SHADER:
@@ -1414,6 +1414,14 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 		break;
 	}
 
+}
+
+void ModuleResourceManager::ForceDelete(Resource* resource)
+{
+	resource->OnDelete();
+
+	if(resource->GetUID() != App->scene_manager->defaultScene->GetUID())
+		delete resource;
 }
 
 void ModuleResourceManager::setCurrentDirectory(ResourceFolder* dir) {

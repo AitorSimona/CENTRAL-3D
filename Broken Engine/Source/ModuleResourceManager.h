@@ -108,6 +108,7 @@ public:
 	bool IsFileImported(const char* file);
 	std::shared_ptr<std::string> GetNewUniqueName(Resource::ResourceType type);
 	void ONResourceDestroyed(Resource* resource);
+	void ForceDelete(Resource* resource); // to prevent problems with different heaps, related to exe - dll relationship
 
 	//MYTODO For editor panel to set currentDirectory
 	void setCurrentDirectory(ResourceFolder* dir);
