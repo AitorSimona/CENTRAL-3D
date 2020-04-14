@@ -1,8 +1,10 @@
+#ifndef __COMPONENTCIRCULARBAR_H__
+#define __COMPONENTCIRCULARBAR_H__
 #pragma once
 
 #include "Component.h"
-#include "ComponentCanvas.h"
 #include "Math.h"
+#include "Color.h"
 
 BE_BEGIN_NAMESPACE
 
@@ -55,3 +57,4 @@ public:
 };
 
 BE_END_NAMESPACE
+#endif

@@ -2,7 +2,6 @@
 #define __MODULE_TEXTURES_H__
 
 #include "Module.h"
-#include "ResourceTexture.h"
 
 #define CHECKERS_HEIGHT 32
 #define CHECKERS_WIDTH 32

@@ -39,6 +39,8 @@ public:
 	luabridge::LuaRef GetCharacterUpDirection(uint gameobject_UUID, lua_State* L);
 	void SetCharacterUpDirection(float rotx, float roty, float rotz, uint gameobject_UUID, lua_State* L);
 
+	int Raycast(float originX, float originY, float originZ, float directionX, float directionY, float directionZ, float maxDistance, int layer, bool hitTriggers);
+
 	int OnTriggerEnter(uint gameobject_UUID);
 	int OnTriggerStay(uint gameobject_UUID);
 	int OnTriggerExit(uint gameobject_UUID);

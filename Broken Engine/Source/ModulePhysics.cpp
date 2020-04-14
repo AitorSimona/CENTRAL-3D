@@ -19,8 +19,8 @@
 #include "PhysX_3.4/Include/characterkinematic/PxControllerManager.h"
 #include "PhysX_3.4/Include/foundation/PxAllocatorCallback.h"
 #include "PhysX_3.4/Include/PxQueryReport.h"
-#include "PhysX_3.4/Include/PxVolumeCache.h"
 #include "PhysX_3.4/Include/PxQueryFiltering.h"
+#include "PhysX_3.4/Include/extensions/PxRaycastCCD.h"
 
 #ifndef _DEBUG
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CHECKED_x86.lib")
@@ -289,7 +289,7 @@ void ModulePhysics::addActor(physx::PxRigidActor* actor, GameObject* gameObject)
 	mScene->addActor(*actor);
 }
 
-void ModulePhysics::UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* Layermask) {
+void ModulePhysics::UpdateActorLayer(const physx::PxRigidActor* actor, const LayerMask* Layermask) {
 	if (actor) {
 		physx::PxShape* shape;
 		actor->getShapes(&shape, 1);
@@ -313,7 +313,7 @@ void ModulePhysics::UpdateActorsGroupFilter(LayerMask* updateLayer)
 	for (std::map<physx::PxRigidActor*, GameObject*>::iterator it = actors.begin(); it != actors.end(); ++it)
 	{
 		if ((*it).first != nullptr && (*it).second != nullptr) {
-			LayerMask layer1 = (*it).second->layer;
+			LayerMask layer1 = (LayerMask)(*it).second->layer;
 			LayerMask layer2 = *updateLayer;
 			if (layer1 == layer2) {
 
@@ -344,6 +344,7 @@ bool ModulePhysics::DeleteActor(physx::PxRigidActor* actor)
 		actors.erase(actor);
 		return true;
 	}
+
 	return false;
 }
 
@@ -485,4 +486,63 @@ void ModulePhysics::LoadStatus(const Broken::json& file) {
 		}
 		loaded = true;
 	}
+}
+
+bool ModulePhysics::Raycast(float3 origin_, float3 direction_, float maxDistance, LayerMask layer, bool hitTriggers)
+{
+	physx::PxVec3 origin(origin_.x, origin_.y, origin_.z);
+	physx::PxVec3 direction(direction_.x, direction_.y, direction_.z);
+	direction.normalize();
+	
+	physx::PxRaycastBuffer hit;
+	physx::PxQueryFilterData filterData;
+	
+	filterData.data.word0 = App->physics->layer_list.at((int)layer).LayerGroup;
+
+	bool status = mScene->raycast(origin, direction, maxDistance, hit, physx::PxHitFlag::eDEFAULT, filterData) && !(origin - hit.block.position == physx::PxVec3(0.f,0.f,0.f));
+
+	if (status && !hitTriggers)
+	{
+		GameObject* go = actors[hit.block.actor];
+
+		ComponentCollider* collider = go->GetComponent<ComponentCollider>();
+		if (collider)
+		{
+			if (collider->isTrigger)
+				status = false;
+		}
+	}
+
+	return status;
+}
+
+GameObject* ModulePhysics::RaycastGO(float3 origin_, float3 direction_, float maxDistance, LayerMask layer, bool hitTriggers)
+{
+	physx::PxVec3 origin(origin_.x, origin_.y, origin_.z);
+	physx::PxVec3 direction(direction_.x, direction_.y, direction_.z);
+	direction.normalize();
+
+	physx::PxRaycastBuffer hit;
+	physx::PxQueryFilterData filterData;
+
+	filterData.data.word0 = App->physics->layer_list.at((int)layer).LayerGroup;
+
+	bool status = mScene->raycast(origin, direction, maxDistance, hit, physx::PxHitFlag::eDEFAULT, filterData) && !(origin - hit.block.position == physx::PxVec3(0.f, 0.f, 0.f));
+
+	if (status && !hitTriggers)
+	{
+		GameObject* go = actors[hit.block.actor];
+
+		ComponentCollider* collider = go->GetComponent<ComponentCollider>();
+		if (collider)
+		{
+			if (!collider->isTrigger)
+				return go;
+		}
+	}
+
+	else if (status)
+		return actors[hit.block.actor];
+
+	return nullptr;
 }

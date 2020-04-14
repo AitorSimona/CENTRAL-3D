@@ -84,7 +84,20 @@ void ComponentCharacterController::Update()
 		vel.x = 0.0f;*/
 
 
+
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
+
+	float3 p;
+	p.x = controller->getActor()->getGlobalPose().p.x;
+	p.y = controller->getActor()->getGlobalPose().p.y;
+	p.z = controller->getActor()->getGlobalPose().p.z;
+	if (App->physics->RaycastGO(p, float3(0,-11,0), 5) != nullptr)
+	{
+		int a = 0;
+	}
+
+	//Move(velocity.x, velocity.z);
+
 
 	if (cTransform->updateValues || App->gui->isUsingGuizmo)
 	{
@@ -138,7 +151,7 @@ void ComponentCharacterController::Draw()
 		GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 
 		float4x4 aux = GO->GetComponent<ComponentTransform>()->GetGlobalTransform();
-		
+
 		aux.y += controller->getPosition().y - controller->getFootPosition().y;
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, aux.Transposed().ptr());

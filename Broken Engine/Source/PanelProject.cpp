@@ -1,18 +1,40 @@
 #include "PanelProject.h"
+
+// -- Modules --
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
+#include "ModuleEventManager.h"
+#include "ModuleGui.h"
+#include "ModuleResourceManager.h"
+#include "ModuleSceneManager.h"
+#include "ModuleFileSystem.h"
+#include "ModuleRenderer3D.h"
 
-//#include "ModuleFileSystem.h"
-//#include "ModuleResourceManager.h"
-//#include "ModuleEventManager.h"
-//#include "ModuleGui.h"
+// -- Resources --
+#include "ResourceScene.h"
+#include "ResourceModel.h"
+#include "ResourceFolder.h"
+#include "ResourcePrefab.h"
+#include "ResourceShader.h"
 
-//#include "ResourceFolder.h"
-//#include "ResourceModel.h"
+// -- Importers --
+#include "ImporterMeta.h"
+#include "ImporterPrefab.h"
+#include "ImporterFolder.h"
+#include "ImporterMaterial.h"
+#include "ImporterShader.h"
+#include "ImporterScene.h"
+#include "ImporterScript.h"
+
+// -- Components --
+#include "GameObject.h"
+
+// -- Utilities --
+#include "Imgui/imgui.h"
+#include <memory>
 #include <iostream>
 #include <fstream>
-#include <memory>
-#include "mmgr/nommgr.h"
+#include "mmgr/mmgr.h"
 
 // --- Event Manager Callbacks ---
 void PanelProject::ONGameObjectSelected(const Broken::Event& e)
@@ -28,7 +50,7 @@ void PanelProject::ONResourceDestroyed(const Broken::Event& e)
 
 // -------------------------------
 
-PanelProject::PanelProject(char * name) : Broken::Panel(name)
+PanelProject::PanelProject(char * name) : Panel(name)
 {
 	// --- Add Event Listeners ---
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_selected, ONGameObjectSelected);

@@ -1,5 +1,7 @@
-#include "Application.h"
 #include "ModuleRenderer3D.h"
+
+// -- Modules --
+#include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleGui.h"
 #include "ModuleSceneManager.h"
@@ -7,26 +9,32 @@
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
 #include "ModuleParticles.h"
+#include "ModuleTextures.h"
+#include "ModuleTimeManager.h"
+#include "ModuleSelection.h"
 
+// -- Components --
 #include "GameObject.h"
+#include "Component.h"
+#include "ComponentMesh.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentCollider.h"
 #include "ComponentCharacterController.h"
-#include "ResourceShader.h"
 #include "ComponentAudioListener.h"
 #include "ComponentLight.h"
-#include "Component.h"
 #include "ComponentParticleEmitter.h"
 
+// -- Resources --
+#include "ResourceShader.h"
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
 #include "ResourceMaterial.h"
+#include "ResourceTexture.h"
 
-#include "PanelScene.h"
+#include "ImporterShader.h"
 
-#include "Imgui/imgui.h"
 #include "OpenGL.h"
 #include "Math.h"
 
@@ -210,17 +218,26 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Issue Render orders ---
 	App->scene_manager->DrawScene();
 
+	// --- Draw ---
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	for (std::map<uint, ResourceShader*>::const_iterator it = App->resources->shaders.begin(); it != App->resources->shaders.end(); ++it)
+	{
+		if((*it).second)
+			SendShaderUniforms((*it).second->ID);
+	}
+
 	// --- Draw Grid ---
 	if (display_grid)
 		DrawGrid();
 
-	// --- Draw ---
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	SendShaderUniforms(defaultShader->ID);
 	DrawRenderMeshes();
 	DrawRenderLines();
 	DrawRenderBoxes();
+
+	// --- Selected Object Outlining ---
+	HandleObjectOutlining();
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
@@ -233,12 +250,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		(*LightIterator)->Draw();
 
 	App->ui_system->Draw();
-
-
-	// --- Selected Object Outlining ---
-	//#ifndef BE_GAME_BUILD
-	HandleObjectOutlining();
-	/*#endif*/
 
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);

@@ -5,12 +5,13 @@
 #include "..\Game\Assets\Sounds\Wwise_IDs.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
+#include "JSONLoader.h"
+#include <vector>
 
 #include "mmgr/mmgr.h"
 
 #define BANKNAME_INIT "Assets/Sounds/Init.bnk"
 
-//using namespace AK;
 using namespace Broken;
 
 CAkDefaultIOHookBlocking g_lowLevelIO;
@@ -19,7 +20,19 @@ ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled) {
 	name = "Audio";
 }
 
-ModuleAudio::~ModuleAudio() {}
+ModuleAudio::~ModuleAudio() 
+{
+	for (int i = 0; i < audioListenerList.size(); ++i)
+	{
+		delete audioListenerList[i];
+		audioListenerList[i] = nullptr;
+	}
+	for (int i = 0; i < audioSourceList.size(); ++i)
+	{
+		delete audioSourceList[i];
+		audioSourceList[i] = nullptr;
+	}
+}
 
 bool ModuleAudio::Init(json& file)
 {
@@ -32,13 +45,26 @@ bool ModuleAudio::Init(json& file)
 
 bool ModuleAudio::Start()
 {
+	LoadEventsFromJson();
+
 	return true;
 }
 
 update_status ModuleAudio::PostUpdate(float dt)
 {
 	AK::SoundEngine::RenderAudio();
-
+	if (App->GetAppState() == Broken::AppState::TO_PAUSE)
+	{
+		PauseAllAudioEvents();
+	}
+	if (App->GetAppState() == Broken::AppState::TO_EDITOR)
+	{
+		StopAllAudioEvents();
+	}
+	if (App->GetAppState() == Broken::AppState::TO_PLAY)
+	{
+		ResumeAllAudioEvents();
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -51,7 +77,7 @@ bool ModuleAudio::CleanUp()
 void ModuleAudio::InitWwise()
 {
 	// Initialize audio engine
-	// Memory.
+	// Memory
 	AkMemSettings memSettings;
 
 	memSettings.uMaxNumPools = 20;
@@ -64,12 +90,19 @@ void ModuleAudio::InitWwise()
 	AkDeviceSettings deviceSettings;
 	AK::StreamMgr::GetDefaultDeviceSettings(deviceSettings);
 
+
+	
+
 	// Sound Engine
 	AkInitSettings l_InitSettings;
 	AkPlatformInitSettings l_platInitSetings;
 	AK::SoundEngine::GetDefaultInitSettings(l_InitSettings);
 	AK::SoundEngine::GetDefaultPlatformInitSettings(l_platInitSetings);
 
+	// Setting pool sizes for this game. Here, allow for user content; every game should determine its own optimal values.
+	l_InitSettings.uDefaultPoolSize = 2 * 1024 * 1024;
+	l_platInitSetings.uLEngineDefaultPoolSize = 4 * 1024 * 1024;
+	
 	// Music Engine
 	AkMusicSettings musicInit;
 	AK::MusicEngine::GetDefaultInitSettings(musicInit);
@@ -77,35 +110,35 @@ void ModuleAudio::InitWwise()
 	// Create and initialise an instance of our memory manager.
 	if (AK::MemoryMgr::Init(&memSettings) != AK_Success)
 	{
-		assert(!"Could not create the memory manager.");
+		AKASSERT(!"Could not create the memory manager.");
 		return;
 	}
 
 	// Create and initialise an instance of the default stream manager.
 	if (!AK::StreamMgr::Create(stmSettings))
 	{
-		assert(!"Could not create the Stream Manager");
+		AKASSERT(!"Could not create the Stream Manager");
 		return;
 	}
 
 	// Create an IO device.
 	if (g_lowLevelIO.Init(deviceSettings) != AK_Success)
 	{
-		assert(!"Cannot create streaming I/O device");
+		AKASSERT(!"Cannot create streaming I/O device");
 		return;
 	}
 
 	// Initialize sound engine.
 	if (AK::SoundEngine::Init(&l_InitSettings, &l_platInitSetings) != AK_Success)
 	{
-		assert(!"Cannot initialize sound engine");
+		AKASSERT(!"Cannot initialize sound engine");
 		return;
 	}
 
 	// Initialize music engine.
 	if (AK::MusicEngine::Init(&musicInit) != AK_Success)
 	{
-		assert(!"Cannot initialize music engine");
+		AKASSERT(!"Cannot initialize music engine");
 		return;
 	}
 
@@ -115,9 +148,9 @@ void ModuleAudio::InitWwise()
 	AK::Comm::GetDefaultInitSettings(settingsComm);
 	if (AK::Comm::Init(settingsComm) != AK_Success)
 	{
-		assert(!"Cannot initialize music communication");
+		AKASSERT(!"Cannot initialize music communication");
 		return;
-	}
+}
 #endif // AK_OPTIMIZED
 
 	AkBankID bankID;
@@ -187,7 +220,7 @@ WwiseGameObject::WwiseGameObject(uint64 id, const char* name)
 
 WwiseGameObject::~WwiseGameObject()
 {
-	AK::SoundEngine::UnregisterGameObj(id);
+	//AK::SoundEngine::UnregisterGameObj(id);
 }
 
 void WwiseGameObject::SetPosition(float posX, float posY, float posZ, float frontX, float frontY, float frontZ, float topX, float topY, float topZ)
@@ -239,6 +272,7 @@ WwiseGameObject* WwiseGameObject::CreateAudioSource(uint id, const char* name, f
 {
 	WwiseGameObject* go = new WwiseGameObject(id, name);
 	go->SetPosition(position.x, position.y, position.z);
+	App->audio->audioSourceList.push_back(go);
 
 	return go;
 }
@@ -251,6 +285,8 @@ WwiseGameObject* WwiseGameObject::CreateAudioListener(uint id, const char* name,
 	AK::SoundEngine::SetDefaultListeners(&listenerID, 1);
 	go->SetPosition(position.x, position.y, position.z);
 	App->audio->currentListenerID = listenerID;
+	App->audio->audioListenerList.push_back(go);
+
 	return go;
 }
 
@@ -269,4 +305,42 @@ void WwiseGameObject::SetAuxSends()
 uint WwiseGameObject::GetID()
 {
 	return id;
+}
+
+void ModuleAudio::LoadEventsFromJson()
+{
+	uint Id = 0;
+	std::string name;
+	json File = App->GetJLoader()->Load("Assets/Sounds/Main.json");
+	
+	json Events = File["SoundBanksInfo"]["SoundBanks"][0]["IncludedEvents"];
+	EventMap.begin();
+
+	for (uint i = 0; i < Events.size(); ++i)
+	{
+		json node = Events[i];
+
+		std::string idstring = node["Id"];
+		std::string namestring = node["Name"];
+		Id = std::stoul(idstring);
+
+		EventMap.insert(std::pair<std::string, uint>(namestring, Id));
+	}
+
+	uint i = 0;
+}
+
+void ModuleAudio::StopAllAudioEvents()
+{
+	AK::SoundEngine::StopAll();
+}
+
+void  ModuleAudio::ResumeAllAudioEvents()
+{
+	AK::SoundEngine::WakeupFromSuspend();
+}
+
+void  ModuleAudio::PauseAllAudioEvents()
+{
+	AK::SoundEngine::Suspend();
 }

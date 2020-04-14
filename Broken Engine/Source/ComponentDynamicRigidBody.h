@@ -1,10 +1,10 @@
 #ifndef _COMPONENT_RIGIDBODY_H_
 #define _COMPONENT_RIGIDBODY_H_
 
-#include "Module.h"
 #include "BrokenCore.h"
-#include "GameObject.h"
+#include "Component.h"
 
+#include "Math.h"
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 BE_BEGIN_NAMESPACE

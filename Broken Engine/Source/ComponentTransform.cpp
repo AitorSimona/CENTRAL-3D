@@ -161,7 +161,7 @@ void ComponentTransform::Load(json& node)
 	std::string scaley = node["scaley"].is_null() ? "0" : node["scaley"];
 	std::string scalez = node["scalez"].is_null() ? "0" : node["scalez"];
 
-	GO->layer = (LayerMask)int(std::stof(layer));
+	GO->layer = std::stof(layer);
 
 	float3 pos = float3(std::stof(posx), std::stof(posy), std::stof(posz));
 

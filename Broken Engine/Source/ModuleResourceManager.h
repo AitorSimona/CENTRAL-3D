@@ -47,6 +47,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ComponentMeshRenderer;
 	friend class ResourceMaterial;
 	friend class ModuleSceneManager;
+	friend class ModuleRenderer3D;
 	friend class ScriptingScenes;
 public:
 

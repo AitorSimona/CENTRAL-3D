@@ -13,6 +13,9 @@
 #include "ResourceMesh.h"
 #include "OpenGL.h"
 
+#include "PhysX_3.4/Include/PxPhysicsAPI.h"
+#include "PhysX_3.4/Include/PxSimulationEventCallback.h"
+
 #include "Imgui/imgui.h"
 
 #include "mmgr/mmgr.h"
@@ -47,12 +50,11 @@ void ComponentCollider::Enable()
 {
 	if (GetActor() != nullptr)
 	{
-		/*if (hasBeenDeactivated)
+		if (hasBeenDeactivated)
 		{
-			CreateCollider(type, true);
+			App->physics->mScene->addActor(*GetActor());
 			hasBeenDeactivated = false;
-		}*/
-
+		}
 		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
 	}
 	active = true;
@@ -63,11 +65,11 @@ void ComponentCollider::Disable()
 	if (GetActor() != nullptr)
 	{
 		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-		/*if (!hasBeenDeactivated)
+		if (!hasBeenDeactivated)
 		{
-			App->physics->DeleteActor(GetActor());
+			App->physics->mScene->removeActor(*GetActor());
 			hasBeenDeactivated = true;
-		}*/
+		}
 	}
 	active = false;
 }
@@ -843,11 +845,11 @@ physx::PxRigidActor* ComponentCollider::GetActor() {
 		return rigidStatic;
 }
 
-void ComponentCollider::UpdateActorLayer(LayerMask* layerMask) {
+void ComponentCollider::UpdateActorLayer(const int* layerMask) {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 
 	if (dynamicRB != nullptr)
-		App->physics->UpdateActorLayer(dynamicRB->rigidBody, layerMask);
+		App->physics->UpdateActorLayer(dynamicRB->rigidBody, (LayerMask*)layerMask);
 	else
-		App->physics->UpdateActorLayer(rigidStatic, layerMask);
+		App->physics->UpdateActorLayer(rigidStatic, (LayerMask*)layerMask);
 }
