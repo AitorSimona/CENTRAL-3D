@@ -308,7 +308,10 @@ void PanelProject::CreateResourceHandlingPopup()
 		if (ImGui::Button("Delete", ImVec2(300, 0)))
 		{
 			selected->OnDelete();
-			delete selected;
+
+			if (selected->GetUID() != App->scene_manager->defaultScene->GetUID())
+				delete selected;
+
 			SetSelected(nullptr);
 			delete_selected = false;
 			ImGui::CloseCurrentPopup();
