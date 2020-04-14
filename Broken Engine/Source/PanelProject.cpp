@@ -9,6 +9,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleInput.h"
 
 // -- Resources --
 #include "ResourceScene.h"

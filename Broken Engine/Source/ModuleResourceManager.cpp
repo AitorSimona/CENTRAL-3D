@@ -1419,7 +1419,9 @@ void ModuleResourceManager::ONResourceDestroyed(Resource* resource)
 void ModuleResourceManager::ForceDelete(Resource* resource)
 {
 	resource->OnDelete();
-	delete resource;
+
+	if(resource->GetUID() != App->scene_manager->defaultScene->GetUID())
+		delete resource;
 }
 
 void ModuleResourceManager::setCurrentDirectory(ResourceFolder* dir) {
