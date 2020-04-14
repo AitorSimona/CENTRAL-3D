@@ -22,7 +22,7 @@
     "Physics": {
         "Layer0": {
             "0": true,
-            "1": false,
+            "1": true,
             "2": true,
             "3": true,
             "4": true,
@@ -32,13 +32,13 @@
             "8": true,
             "9": true,
             "Active": true,
-            "Group": 1021,
+            "Group": 1023,
             "GroupSize": 10,
             "Layer": 0,
             "Name": "Default"
         },
         "Layer1": {
-            "0": false,
+            "0": true,
             "1": true,
             "2": true,
             "3": true,
