@@ -286,6 +286,10 @@ void ResourceScene::OnDelete()
 	App->fs->Remove(resource_file.c_str());
 
 	App->resources->RemoveResourceFromFolder(this);
-	App->resources->ONResourceDestroyed(this);
+
+	if (this->GetUID() != App->scene_manager->defaultScene->GetUID())
+		App->resources->ONResourceDestroyed(this);
+	else
+		LoadToMemory();
 }
 
