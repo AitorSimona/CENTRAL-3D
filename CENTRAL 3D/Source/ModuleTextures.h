@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Globals.h"
+#include <vector>
 
 #define CHECKERS_HEIGHT 32
 #define CHECKERS_WIDTH 32
@@ -20,7 +21,7 @@ public:
 
 	uint CreateTextureFromFile(const char* path, uint &width, uint &height, int UID = -1) const;
 	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
-
+	uint CreateCubemap(std::vector<uint>& cubemap_textures);
 	uint GetCheckerTextureID() const;
 	uint GetDefaultTextureID() const;
 

@@ -3,7 +3,7 @@
     "ResourceData": {
         "FORMAT": 36385
     },
-    "SOURCE": "Assets/Shaders/LinePoint.glsl",
-    "UID": 9,
+    "SOURCE": "Assets/Shaders/SkyboxShader.glsl",
+    "UID": 11,
     "fileFormatVersion": 2
 }

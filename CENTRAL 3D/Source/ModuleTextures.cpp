@@ -207,6 +207,47 @@ uint ModuleTextures::CreateTextureFromPixels(int internalFormat, uint width, uin
 	return TextureID;
 }
 
+uint ModuleTextures::CreateCubemap(std::vector<uint>& cubemap_textures)
+{
+	uint texID = 0;
+
+	glGenTextures(1, &texID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+
+	for (uint i = 0; i < 6; i++)
+	{
+		if (cubemap_textures[i] == 0)
+			continue;
+
+		glBindTexture(GL_TEXTURE_2D, cubemap_textures[i]);
+		int w, h;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+		GLubyte* pixels = new GLubyte[w * h * 3];
+
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+			0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels
+		);
+
+		delete[] pixels;
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	return texID;
+}
+
 inline void ModuleTextures::CreateTextureFromImage(uint &TextureID, uint &width, uint &height, std::string& path) const
 {
 	// --- Attention!! If the image is flipped, we flip it back --- 
