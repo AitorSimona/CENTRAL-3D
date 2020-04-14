@@ -82,6 +82,7 @@ public:
 	float3 offset = float3::zero;
 	int colliderType = 0;
 	bool hasBeenDeactivated = false;
+	bool isTrigger = false;
 
 
 private:
@@ -94,7 +95,6 @@ private:
 	float3 tmpScale = float3::one;
 	bool firstCreation = false;
 	bool toPlay = false;
-	bool isTrigger = false;
 };
 
 
