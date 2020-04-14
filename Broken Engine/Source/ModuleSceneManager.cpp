@@ -45,6 +45,11 @@
 
 #include "mmgr/mmgr.h"
 
+#include "ComponentAudioSource.h"
+#include "ModuleAudio.h"
+#include "../Game/Assets/Sounds/Wwise_IDs.h"
+
+
 #define TREE_UPDATE_PERIOD 1000
 
 using namespace Broken;
@@ -127,6 +132,13 @@ bool ModuleSceneManager::Start()
 	//	LoadStatus(App->GetConfigFile());
 
 	treeUpdateTimer = SDL_GetTicks();
+
+	//music = LoadCube();
+	//music->AddComponent(Component::ComponentType::AudioSource);
+	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();//GetComponent(Component::ComponentType::AudioSource);
+	//musicSource->SetID(AK::EVENTS::MUSIC);
+	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->isPlaying = true;
 
 	return true;
 }
