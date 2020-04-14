@@ -1,15 +1,17 @@
 #include "PanelPhysics.h"
-#include "Application.h"
-#include "EngineApplication.h"
 #include "Imgui/imgui.h"
+
+// -- Modules --
+#include "EngineApplication.h"
+#include "ModuleGui.h"
 #include "ModulePhysics.h"
+
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 #include "mmgr/mmgr.h"
 
-using namespace Broken;
-PanelPhysics::PanelPhysics(char* name) : Broken::Panel(name)
+PanelPhysics::PanelPhysics(char* name) : Panel(name)
 {
 }
 
@@ -21,15 +23,15 @@ bool PanelPhysics::Draw()
 {
 	ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 
-	gravity = EngineApp->physics->mScene->getGravity();
-	staticFriction = EngineApp->physics->mMaterial->getStaticFriction();
-	dynamicFriction = EngineApp->physics->mMaterial->getDynamicFriction();
-	restitution = EngineApp->physics->mMaterial->getRestitution();
+	physx::PxVec3 gravity = EngineApp->physics->mScene->getGravity();
+	float staticFriction = EngineApp->physics->mMaterial->getStaticFriction();
+	float dynamicFriction = EngineApp->physics->mMaterial->getDynamicFriction();
+	float restitution = EngineApp->physics->mMaterial->getRestitution();
 
-	tmpGravity = gravity;
-	tmpStaticFriction = staticFriction;
-	tmpDynamicFriction = dynamicFriction;
-	tmpRestitution = restitution;
+	physx::PxVec3 tmpGravity = gravity;
+	float tmpStaticFriction = staticFriction;
+	float tmpDynamicFriction = dynamicFriction;
+	float tmpRestitution = restitution;
 
 	ImGuiWindowFlags settingsFlags = 0;
 	settingsFlags = ImGuiWindowFlags_NoFocusOnAppearing;
@@ -112,24 +114,25 @@ void PanelPhysics::CreateLayerFilterGrid() {
 
 	uint last = 0;
 	uint actives = 0;
+	float sizeMax = 0;
 
-	for (int i = 0; i < App->physics->layer_list.size(); ++i) { //GET LARGEST TEXT
-		Layer* layer = &App->physics->layer_list.at(i);
+	for (int i = 0; i < EngineApp->physics->layer_list.size(); ++i) { //GET LARGEST TEXT
+		Layer* layer = &EngineApp->physics->layer_list.at(i);
 		int size = ImGui::CalcTextSize(layer->name.c_str()).x;
 		if (size > padding.x) padding.x = size, sizeMax = size;
 		if (layer->active) last = i, actives++;
 	}
 
-	for (int i = 0; i < App->physics->layer_list.size(); ++i) { //HORIZONTAL
-		Layer* layer = &App->physics->layer_list.at(i);
+	for (int i = 0; i < EngineApp->physics->layer_list.size(); ++i) { //HORIZONTAL
+		Layer* layer = &EngineApp->physics->layer_list.at(i);
 
 		if (!layer->active)
 			continue;
 
 		ImGui::Text(layer->name.c_str());
 
-		for (int j = App->physics->layer_list.size() - 1; j - i <= App->physics->layer_list.size(); --j) { //VERTICAL
-			Layer* aux_layer = &App->physics->layer_list.at(j);
+		for (int j = EngineApp->physics->layer_list.size() - 1; j - i <= EngineApp->physics->layer_list.size(); --j) { //VERTICAL
+			Layer* aux_layer = &EngineApp->physics->layer_list.at(j);
 
 			if (!aux_layer->active)
 				continue;
@@ -149,16 +152,16 @@ void PanelPhysics::CreateLayerFilterGrid() {
 				//UPDATE LAYERS
 				layer->UpdateLayerGroup();
 				aux_layer->UpdateLayerGroup();
-				App->physics->UpdateActorsGroupFilter(&layer->layer);
-				App->physics->UpdateActorsGroupFilter(&aux_layer->layer);
+				EngineApp->physics->UpdateActorsGroupFilter(&layer->layer);
+				EngineApp->physics->UpdateActorsGroupFilter(&aux_layer->layer);
 			}
 
 		}
 	}
-	uint count = App->physics->layer_list.size() - 1;
+	uint count = EngineApp->physics->layer_list.size() - 1;
 	uint c2 = actives - 1;
 	for (int i = count; i >= 0; --i) { //VERTICAL
-		Layer layer = App->physics->layer_list.at(i); 
+		Layer layer = EngineApp->physics->layer_list.at(i); 
 		if (!layer.active)
 			continue;
 
@@ -180,25 +183,25 @@ void PanelPhysics::CreateLayerList() {
 	ImGui::Separator();
 	ImGui::NewLine();
 
-	uint count = App->physics->layer_list.size();
+	uint count = EngineApp->physics->layer_list.size();
 	for (int i = 0; i < count; ++i) {
 		std::string name("Layer ");
 		name.append(std::to_string(i).c_str());
 		name.append(":");
 		ImGui::Text(name.c_str());
 
-		char buffer[MAX_TEXT_SIZE] = "";
+		char buffer[512] = "";
 		if (i < count) {
 			ImGui::SameLine();
-			strcpy(buffer, App->physics->layer_list.at(i).name.c_str());
-			if (ImGui::InputTextWithHint(std::string("##").append(std::to_string(i)).c_str(), "Layer Name", buffer, MAX_TEXT_SIZE, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+			strcpy(buffer, EngineApp->physics->layer_list.at(i).name.c_str());
+			if (ImGui::InputTextWithHint(std::string("##").append(std::to_string(i)).c_str(), "Layer Name", buffer, 512, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 			{
-				App->physics->layer_list.at(i).name = buffer;
-				if (std::strcmp(App->physics->layer_list.at(i).name.c_str(), "")) {
-					App->physics->layer_list.at(i).active = true;
+				EngineApp->physics->layer_list.at(i).name = buffer;
+				if (std::strcmp(EngineApp->physics->layer_list.at(i).name.c_str(), "")) {
+					EngineApp->physics->layer_list.at(i).active = true;
 				}
 				else {
-					App->physics->layer_list.at(i).active = false;
+					EngineApp->physics->layer_list.at(i).active = false;
 				}
 			}
 		}

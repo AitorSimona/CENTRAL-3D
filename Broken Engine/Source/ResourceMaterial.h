@@ -2,11 +2,14 @@
 #define __RESOURCE_MATERIAL_H__
 
 #include "Resource.h"
-
-#include "ResourceTexture.h"
-#include "ResourceShader.h"
+#include "Math.h"
 
 BE_BEGIN_NAMESPACE
+
+class ResourceTexture;
+class ResourceShader;
+struct Uniform;
+
 class BROKEN_API ResourceMaterial : public Resource 
 {
 public:
@@ -20,12 +23,14 @@ public:
 	void UpdateUniforms();
 	void DisplayAndUpdateUniforms();
 
+	std::string previewTexPath;
 public:
 
-	float m_Shininess = 32.0f;
+	float m_Shininess = 1.5f;
 	float3 m_AmbientColor = { 1.0f, 1.0f, 1.0f };
 	ResourceTexture* m_DiffuseResTexture = nullptr;
 	ResourceTexture* m_SpecularResTexture = nullptr;
+	ResourceTexture* m_NormalResTexture = nullptr;
 
 	bool m_UseTexture = true;
 

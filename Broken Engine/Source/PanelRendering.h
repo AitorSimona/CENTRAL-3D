@@ -1,9 +1,9 @@
 #ifndef __PANEL_RENDERING_H__
 #define __PANEL_RENDERING_H__
 
-#include "BrokenEngine.h"
+#include "Panel.h"
 
-class PanelRendering : public Broken::Panel
+class PanelRendering : public Panel
 {
 public:
 

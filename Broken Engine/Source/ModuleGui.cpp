@@ -54,49 +54,6 @@ bool ModuleGui::Init(json& file)
 	if (!App->fs->Exists("imgui.ini"))
 		App->fs->Copy("imgui.ini.bak", "imgui.ini");
 
-	// --- Create UI Panels ---
-
-	/*panelSettings = new PanelSettings("Settings");
-	panels.push_back(panelSettings);
-
-	panelAbout = new PanelAbout("About");
-	panels.push_back(panelAbout);
-
-	panelConsole = new PanelConsole("Console");
-	panels.push_back(panelConsole);
-
-	panelInspector = new PanelInspector("Inspector");
-	panels.push_back(panelInspector);
-
-	panelHierarchy = new PanelHierarchy("Hierarchy");
-	panels.push_back(panelHierarchy);
-
-	panelScene = new PanelScene("Scene");
-	panels.push_back(panelScene);
-
-	panelToolbar = new PanelToolbar("Toolbar");
-	panels.push_back(panelToolbar);
-
-	panelProject = new PanelProject("Project");
-	panels.push_back(panelProject);
-
-	panelShaderEditor = new PanelShaderEditor("ShaderEditor");
-	panels.push_back(panelShaderEditor);
-
-	panelResources = new PanelResources("Resources");
-	panels.push_back(panelResources);*/
-
-	//LoadStatus(file);
-	//panelPhysics = new PanelPhysics("Physics");
-	//panels.push_back(panelPhysics);
-
-	//panelBuild = new PanelBuild("Build");
-	//panels.push_back(panelBuild);
-
-	//LoadStatus(file);
-	//panelGame = new PanelGame("Game");
-	//panels.push_back(panelGame);
-
 	return true;
 }
 
@@ -191,23 +148,6 @@ bool ModuleGui::CleanUp()
 {
 	bool ret = true;
 
-	// --- Iterate panels and delete ---
-	for (uint i = 0; i < panels.size(); ++i)
-	{
-		delete panels[i];
-		panels[i] = nullptr;
-	}
-
-	//panelSettings = nullptr;
-	//panelAbout = nullptr;
-	//panelConsole = nullptr;
-	//panelHierarchy = nullptr;
-	//panelInspector = nullptr;
-	//panelScene = nullptr;
-	//panelToolbar = nullptr;
-	//panelProject = nullptr;
-	//panelShaderEditor = nullptr;
-
 	// --- Delete editor textures ---
 	glDeleteTextures(1, &folderTexID);
 	glDeleteTextures(1, &defaultfileTexID);
@@ -221,6 +161,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &meshTexID);
 	glDeleteTextures(1, &boneTexID);
 	glDeleteTextures(1, &animationTexID);
+	glDeleteTextures(1, &navmeshTexID);
 	// -- Toolbar
 	glDeleteTextures(1, &translateTexID);
 	glDeleteTextures(1, &rotateTexID);
@@ -229,6 +170,7 @@ bool ModuleGui::CleanUp()
 	glDeleteTextures(1, &toolbarPauseTexID);
 	glDeleteTextures(1, &toolbarPauseTexID);
 	//glDeleteTextures(1, &toolbarStopTexID);
+
 
 	return ret;
 }
@@ -283,27 +225,10 @@ void ModuleGui::RequestBrowser(const char * url) const
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
 
-void ModuleGui::AddPanel(Panel* npanel) {
-	panels.push_back(npanel);
-}
-
 ImGuiContext* ModuleGui::getImgUICtx() const {
 	return ctx;
 }
 
-void ModuleGui::LoadStatus(const json & file)
-{
-
-	for (uint i = 0; i < panels.size(); ++i)
-	{
-
-		if (file["GUI"].find(panels[i]->GetName()) != file["GUI"].end()) {
-			panels[i]->SetOnOff(file["GUI"][panels[i]->GetName()]);
-		}
-		else
-			ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: Could not find sub-node %s in GUI JSON Node, please check JSON EditorConfig", panels[i]->GetName());
-	}
-}
 void ModuleGui::HandleInput(SDL_Event * event) const
 {
 	if(!App->isGame)
@@ -331,6 +256,7 @@ void ModuleGui::CreateIcons()
 	playbuttonTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/PlayButton.png", width, height, -1);
 	sceneTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/Scene.png", width, height, -1);
 	animatorTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/AnimatorIcon.png", width, height, -1);
+	navmeshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/NavMesh.png", width, height, -1);
 	shaderTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ShaderIcon.png", width, height, -1);
 	scriptTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/ScriptIcon.png", width, height, -1);
 	meshTexID = App->textures->CreateTextureFromFile("Settings/EditorResources/MeshIcon.png", width, height, -1);

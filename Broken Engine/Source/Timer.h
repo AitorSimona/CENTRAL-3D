@@ -16,6 +16,8 @@ public:
 
 	Uint32 Read();
 
+	const bool IsRunning() const { return running; }
+
 private:
 
 	bool	running;

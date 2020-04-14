@@ -1,5 +1,6 @@
 #include "ComponentButton.h"
-#include "GameObject.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleUI.h"
@@ -10,16 +11,23 @@
 #include "ModuleCamera3D.h"
 #include "ModuleSceneManager.h"
 #include "ModuleFileSystem.h"
+#include "ModuleScripting.h"
+#include "ModuleInput.h"
 
+// -- Components --
+#include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
+#include "ComponentCanvas.h"
+#include "ComponentScript.h"
 
+// -- Resources --
 #include "ResourceShader.h"
 #include "ResourceTexture.h"
-
-#include "Math.h"
+#include "ResourceScene.h"
 #include "ResourceMesh.h"
 
+// -- Utitilies --
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
@@ -36,7 +44,7 @@ ComponentButton::ComponentButton(GameObject* gameObject) : Component(gameObject,
 	color = idle_color;
 
 	canvas = (ComponentCanvas*)gameObject->AddComponent(Component::ComponentType::Canvas);
-	texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
+	//texture = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "DefaultTexture");
 
 	//font.init("Assets/Fonts/Dukas.ttf", font_size);
 	//font.path = "Assets/Fonts/Dukas.ttf";
@@ -64,20 +72,20 @@ void ComponentButton::Update()
 void ComponentButton::Draw()
 {
 	// --- Frame image with camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D*0.01f, 1.0f));
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	float3 pos = { position2D.x, position2D.y, nearp + 0.026f };
+	float3 size = { size2D.x / App->gui->sceneWidth, size2D.y / App->gui->sceneHeight, 1.0f };
+	float4x4 transform = transform.FromTRS(pos, Quat::identity, size);
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
 	glUseProgram(shaderID);
 
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+	GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -85,21 +93,27 @@ void ComponentButton::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		0.0f, 0.0f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	// --- Color & Texturing ---
-	GLint vertexColorLocation = glGetUniformLocation(shaderID, "Color");
+	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
 
-	int TextureLocation = glGetUniformLocation(shaderID, "Texture");
-	glUniform1i(TextureLocation, 1);
+	GameObject* gameObj = GetContainerGameObject();
 
-	glUniform1i(glGetUniformLocation(shaderID, "ourTexture"), 1);
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+	if (texture)
+	{
+		glUniform1i(TextureLocation, 1);
+		glUniform1i(glGetUniformLocation(shaderID, "u_AlbedoTexture"), 1);
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, texture->GetTexID());
+	}
+	else
+		glUniform1i(TextureLocation, 0);
 	
 	// --- Draw plane with given texture ---
 	glBindVertexArray(App->scene_manager->plane->VAO);
@@ -110,10 +124,7 @@ void ComponentButton::Draw()
 	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
-
-	// --- Text ---
-	//glColorColorF(text_color);
-	//glfreetype::print(camera, font, position2D.x + text_pos.x, position2D.y + text_pos.y, text);
+	glActiveTexture(GL_TEXTURE0);
 
 	 //--- Update color depending on state ---
 	if (state == IDLE) ChangeColorTo(idle_color);
@@ -122,10 +133,13 @@ void ComponentButton::Draw()
 	if (state == LOCKED) ChangeColorTo(locked_color);
 
 	// --- Collider ---
+	float2 screenpos = App->renderer3D->active_camera->WorldToScreen({ pos.x, -pos.y, pos.z });
+	collider = { (int)screenpos.x, (int)(screenpos.y - size2D.y), (int)size2D.x, (int)size2D.y };
+
+	// Draw Collider
 	if (collider_visible && App->GetAppState() == AppState::EDITOR) //draw only in editor mode
 	{
-		App->gui->draw_list->AddRect(ImVec2(App->gui->sceneX + collider.x, App->gui->sceneY + collider.y),
-			ImVec2(App->gui->sceneX + collider.x + collider.w, App->gui->sceneY + collider.y + collider.h),
+		App->gui->draw_list->AddRect(ImVec2(collider.x, collider.y), ImVec2(collider.x + collider.w, collider.y + collider.h),
 			ImU32(ImColor(ImVec4(1.0f, 0.0f, 0.0f, 1.0f))), 0.0f, 0, 1.0f);
 	}
 }
@@ -307,26 +321,38 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 0.01f) && resize)
+	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 1.0f) && resize)
 	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		if (size2D.x < 0.0f)
+			size2D.x = 0;
+
+		if (texture)
 		{
-			if (texture->Texture_width <= texture->Texture_height)
-				size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width <= texture->Texture_height)
+					size2D.y = size2D.x * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.y = size2D.x * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
 		}
 	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("y##buttonsize", &size2D.y, 0.01f) && resize)
+	if (ImGui::DragFloat("y##buttonsize", &size2D.y) && resize)
 	{
-		if (texture->Texture_height != 0 && texture->Texture_width != 0)
+		if (size2D.y < 0.0f)
+			size2D.y = 0;
+
+		if (texture)
 		{
-			if (texture->Texture_width >= texture->Texture_height)
-				size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
-			else
-				size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			if (texture->Texture_height != 0 && texture->Texture_width != 0)
+			{
+				if (texture->Texture_width >= texture->Texture_height)
+					size2D.x = size2D.y * (float(texture->Texture_width) / float(texture->Texture_height));
+				else
+					size2D.x = size2D.y * (float(texture->Texture_height) / float(texture->Texture_width));
+			}
 		}
 	}
 
@@ -334,10 +360,10 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##buttonposition", &position2D.x, 0.1f);
+	ImGui::DragFloat("x##buttonposition", &position2D.x, 0.01f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.1f);
+	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.01f);
 
 	// Rotation
 	ImGui::Text("Rotation:");
@@ -535,9 +561,9 @@ void ComponentButton::UpdateState()
 	{
 		if (state != DRAGGING)
 		{
-			if (App->ui_system->CheckMousePos(this, collider)) //check if hovering
+			if (App->ui_system->CheckMousePos(&collider)) //check if hovering
 			{
-				if (App->ui_system->CheckClick(this, draggable)) //if hovering check if click
+				if (App->ui_system->CheckClick(draggable)) //if hovering check if click
 				{
 					if (draggable == true && (App->ui_system->drag_start.x != App->ui_system->mouse_pos.x || App->ui_system->drag_start.y != App->ui_system->mouse_pos.y)) //if draggable and mouse moves
 					{
@@ -561,7 +587,7 @@ void ComponentButton::UpdateState()
 		}
 		else
 		{
-			if (!App->ui_system->CheckClick(this, draggable)) //if stop clicking
+			if (!App->ui_system->CheckClick(draggable)) //if stop clicking
 				ChangeStateTo(IDLE);
 		}
 	}

@@ -12,6 +12,7 @@ public:
 		Folder,
 		Scene,
 		Model,
+		Prefab,
 		Material,
 		Shader,
 		Mesh,
@@ -23,6 +24,7 @@ public:
 		Script,
 		Meta,
 		Font,
+		NavMesh,
 		Unknown
 	};
 

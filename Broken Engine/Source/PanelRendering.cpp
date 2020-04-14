@@ -1,10 +1,15 @@
 #include "PanelRendering.h"
-#include "EngineApplication.h"
-#include "Imgui/imgui.h"
 
+// -- Modules --
+#include "EngineApplication.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleGui.h"
+
+// -- Utilities --
+#include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-PanelRendering::PanelRendering(char* name) : Broken::Panel(name)
+PanelRendering::PanelRendering(char* name) : Panel(name)
 {
 }
 

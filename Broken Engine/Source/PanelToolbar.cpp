@@ -1,13 +1,20 @@
 #include "PanelToolbar.h"
+
+// -- Modules --
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
-#include "PanelScene.h"
 #include "ModuleGui.h"
+#include "ModuleTimeManager.h"
 
+// -- Panels --
+#include "PanelScene.h"
+#include "PanelHierarchy.h"
+
+// -- Utilitites --
 #include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
-PanelToolbar::PanelToolbar(char * name) : Broken::Panel(name)
+PanelToolbar::PanelToolbar(char * name) : Panel(name)
 {
 }
 
@@ -48,6 +55,9 @@ bool PanelToolbar::Draw()
 			if (app_status == Broken::AppState::EDITOR)
 			{
 				EngineApp->GetAppState() = Broken::AppState::TO_PLAY;
+
+				if (EngineApp->gui->editingPrefab)
+					EngineApp->editorui->panelHierarchy->ExitEditPrefab();
 			}
 
 			if (app_status == Broken::AppState::PLAY || app_status == Broken::AppState::PAUSE)

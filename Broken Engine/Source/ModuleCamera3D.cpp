@@ -190,7 +190,7 @@ void ModuleCamera3D::FrameObject(GameObject* GO) {
 			reference.y = center.y;
 			reference.z = center.z;
 
-			float3 Movement = camera->frustum.Front() * (10.0f * mesh->GetAABB().HalfDiagonal().Length());
+			float3 Movement = camera->frustum.Front() * (2 * GO->GetAABB().Diagonal().Length());
 
 			if (Movement.IsFinite())
 				camera->frustum.SetPos(reference - Movement);

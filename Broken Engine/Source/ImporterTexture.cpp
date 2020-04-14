@@ -47,7 +47,7 @@ Resource* ImporterTexture::Load(const char* path) const
 	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
 	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(path);
 
-	texture = App->resources->textures.find(meta->GetUID()) != App->resources->textures.end() ? App->resources->textures.find(meta->GetUID())->second : (ResourceTexture*)App->resources->CreateResourceGivenUID(Resource::ResourceType::TEXTURE, path, meta->GetUID());
+	texture = App->resources->textures.find(meta->GetUID()) != App->resources->textures.end() ? (ResourceTexture*)App->resources->GetResource(meta->GetUID()) : (ResourceTexture*)App->resources->CreateResourceGivenUID(Resource::ResourceType::TEXTURE, path, meta->GetUID());
 
 	// --- A folder has been renamed ---
 	if (!App->fs->Exists(texture->GetOriginalFile())) 

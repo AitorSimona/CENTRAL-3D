@@ -2,7 +2,8 @@
 #define __SELECTION_H__
 
 #include "Module.h"
-#include "GameObject.h"
+#include "Component.h"
+#include "Math.h"
 //#include "Imgui/imgui.h"
 
 /*
@@ -36,6 +37,7 @@
 
 
 BE_BEGIN_NAMESPACE
+class GameObject;
 // SELECTED TODO
 
 class BROKEN_API ModuleSelection :	public Module

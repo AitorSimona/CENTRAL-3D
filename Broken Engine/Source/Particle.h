@@ -4,8 +4,6 @@
 #include "Math.h"
 #include "BrokenCore.h"
 
-#include "ResourceTexture.h"
-
 BE_BEGIN_NAMESPACE
 
 class ResourceTexture;

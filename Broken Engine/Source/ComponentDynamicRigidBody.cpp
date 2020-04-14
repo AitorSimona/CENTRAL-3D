@@ -14,6 +14,8 @@ using namespace Broken;
 ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : Component(ContainerGO, Component::ComponentType::DynamicRigidBody)
 {
 	name = "Dynamic RigidBody";
+	
+
 	if (rigidBody != nullptr)
 	{
 		SetMass(mass);
@@ -35,13 +37,14 @@ ComponentDynamicRigidBody::ComponentDynamicRigidBody(GameObject* ContainerGO) : 
 
 ComponentDynamicRigidBody::~ComponentDynamicRigidBody()
 {
-
+	App->physics->DeleteActor(rigidBody);
 }
 
 void ComponentDynamicRigidBody::Update()
 {
 	setRBValues();
 
+	UpdateRBValues();
 
 	if (to_delete)
 		this->GetContainerGameObject()->RemoveComponent(this);
@@ -132,7 +135,7 @@ void ComponentDynamicRigidBody::Load(json& node)
 	angular_damping = std::stoi(angular_damping_);
 
 	setRBValues();
-
+	update = true;
 }
 
 void ComponentDynamicRigidBody::CreateInspectorNode()
@@ -143,51 +146,44 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 	ImGui::Text("Mass:"); ImGui::SameLine();
 	if (ImGui::DragFloat("##M", &mass, 1.0f, 0.0f, 100000.0f))
 	{
-		SetMass(mass);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::Text("Density:"); ImGui::SameLine();
 	if (ImGui::DragFloat("##D", &density, 1.0f, 0.0f, 100000.0f))
 	{
-		SetDensity(density);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::Text("Gravity:"); ImGui::SameLine();
 	if (ImGui::Checkbox("##G", &use_gravity))
 	{
-		UseGravity(use_gravity);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::Text("Kinematic:"); ImGui::SameLine();
 	if (ImGui::Checkbox("##K", &is_kinematic))
 	{
-		SetKinematic(is_kinematic);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::Text("Linear Velocity:"); ImGui::SameLine(); ImGui::PushItemWidth(50);
 	if (ImGui::DragFloat("##LVX", &linear_vel.x))
 	{
-		SetLinearVelocity(linear_vel);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::SameLine();
 	if (ImGui::DragFloat("##LVY", &linear_vel.y))
 	{
-		SetLinearVelocity(linear_vel);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::SameLine();
 
 	if (ImGui::DragFloat("##LVZ", &linear_vel.z))
 	{
-		SetLinearVelocity(linear_vel);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::PopItemWidth();
@@ -196,23 +192,20 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 
 	if (ImGui::DragFloat("##AVX", &angular_vel.x))
 	{
-		SetAngularVelocity(angular_vel);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::SameLine();
 
 	if (ImGui::DragFloat("##AVY", &angular_vel.y))
 	{
-		SetAngularVelocity(angular_vel);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::SameLine();
 	if (ImGui::DragFloat("##AVZ", &angular_vel.z))
 	{
-		SetAngularVelocity(angular_vel);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::PopItemWidth();
@@ -221,34 +214,39 @@ void ComponentDynamicRigidBody::CreateInspectorNode()
 
 	if (ImGui::DragFloat("##LD", &linear_damping))
 	{
-		SetLinearDamping(linear_damping);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 	ImGui::Text("Angular Damping:"); ImGui::SameLine();
 
 	if (ImGui::DragFloat("##AD", &angular_damping))
 	{
-		SetAngularDamping(angular_damping);
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = true;
 	}
 
 
 	if (ImGui::TreeNode("Constraints"))
 	{
-		ImGui::Text("Freeze Position"); ImGui::SameLine(); ImGui::Checkbox("##FPX", &freezePosition_X); ImGui::SameLine(); ImGui::Checkbox("##FPY", &freezePosition_Y); ImGui::SameLine(); ImGui::Checkbox("##FPZ", &freezePosition_Z);
-		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); ImGui::Checkbox("##FRX", &freezeRotation_X); ImGui::SameLine(); ImGui::Checkbox("##FRY", &freezeRotation_Y); ImGui::SameLine(); ImGui::Checkbox("##FRZ", &freezeRotation_Z);
-		ImGui::TreePop();
-		rigidBody->setGlobalPose(rigidBody->getGlobalPose());
-	}
+		ImGui::Text("Freeze Position"); ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FPX", &freezePosition_X))
+			update = true;
+		ImGui::SameLine(); 
+		if (ImGui::Checkbox("##FPY", &freezePosition_Y))
+			update = true;
+		ImGui::SameLine();
+		if(ImGui::Checkbox("##FPZ", &freezePosition_Z))
+			update = true;
 
-	if (rigidBody != nullptr) {
-		FeezePosition_X(freezePosition_X);
-		FeezePosition_Y(freezePosition_Y);
-		FeezePosition_Z(freezePosition_Z);
-		FreezeRotation_X(freezeRotation_X);
-		FreezeRotation_Y(freezeRotation_Y);
-		FreezeRotation_Z(freezeRotation_Z);
+		ImGui::Text("Freeze Rotation"); ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRX", &freezeRotation_X))
+			update = true;
+		ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRY", &freezeRotation_Y))
+			update = true;
+		ImGui::SameLine(); 
+		if(ImGui::Checkbox("##FRZ", &freezeRotation_Z))
+			update = true;
+		ImGui::TreePop();
 	}
 
 	StaticToDynamicRigidBody();
@@ -260,6 +258,7 @@ void ComponentDynamicRigidBody::StaticToDynamicRigidBody()
 	if (collider != nullptr && rigidBody == nullptr)
 	{
 		collider->CreateCollider(collider->type, true);
+		update = true;
 	}
 }
 
@@ -271,5 +270,26 @@ void ComponentDynamicRigidBody::setRBValues() {
 
 		if (angular_vel.x != 0.0f || angular_vel.y != 0.0f || angular_vel.z != 0.0f)	
 			SetAngularVelocity(angular_vel);		
+	}
+}
+
+void ComponentDynamicRigidBody::UpdateRBValues() {
+	if (rigidBody != nullptr && update) {
+		SetMass(mass);
+		SetDensity(density);
+		UseGravity(use_gravity);
+		SetKinematic(is_kinematic);
+		SetLinearVelocity(linear_vel);
+		SetAngularVelocity(angular_vel);
+		SetLinearDamping(linear_damping);
+		SetAngularDamping(angular_damping);
+		FeezePosition_X(freezePosition_X);
+		FeezePosition_Y(freezePosition_Y);
+		FeezePosition_Z(freezePosition_Z);
+		FreezeRotation_X(freezeRotation_X);
+		FreezeRotation_Y(freezeRotation_Y);
+		FreezeRotation_Z(freezeRotation_Z);
+		//rigidBody->setGlobalPose(rigidBody->getGlobalPose());
+		update = false;
 	}
 }
