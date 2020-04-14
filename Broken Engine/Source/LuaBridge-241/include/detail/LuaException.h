@@ -93,7 +93,7 @@ public:
       }
       catch (Exception e)
       {
-          ENGINE_AND_SYSTEM_CONSOLE_LOG("LUA EXCEPTION THROWN: %s", e.what());
+          ENGINE_AND_SYSTEM_CONSOLE_LOG("|[error]: LUA EXCEPTION THROWN: %s", e.what());
       }
 
   }
