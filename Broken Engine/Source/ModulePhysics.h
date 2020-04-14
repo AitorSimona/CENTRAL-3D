@@ -2,7 +2,6 @@
 #define MODULE_PHYSICS_H_
 #include "Module.h"
 #include "PhysX_3.4/Include/PxVolumeCache.h"
-#include "PhysX_3.4/Include/extensions/PxRaycastCCD.h"
 #include "Math.h"
 
 namespace physx
@@ -20,6 +19,7 @@ namespace physx
 	class PxSimulationEventCallback;
 	class PxActorShape;
 	class PxQueryFilterCallback;
+	class RaycastCCDManager;
 
 	typedef uint32_t PxU32;
 	const float fixed_dt = (1.0f / 60.0f);

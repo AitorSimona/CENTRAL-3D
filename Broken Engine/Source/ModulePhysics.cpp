@@ -19,8 +19,8 @@
 #include "PhysX_3.4/Include/characterkinematic/PxControllerManager.h"
 #include "PhysX_3.4/Include/foundation/PxAllocatorCallback.h"
 #include "PhysX_3.4/Include/PxQueryReport.h"
-#include "PhysX_3.4/Include/PxVolumeCache.h"
 #include "PhysX_3.4/Include/PxQueryFiltering.h"
+#include "PhysX_3.4/Include/extensions/PxRaycastCCD.h"
 
 #ifndef _DEBUG
 #pragma comment(lib, "PhysX_3.4/lib/Checked/PhysX3CHECKED_x86.lib")
