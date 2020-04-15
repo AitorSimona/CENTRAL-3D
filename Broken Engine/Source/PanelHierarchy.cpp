@@ -1,8 +1,8 @@
 #include "PanelHierarchy.h"
 #include "Imgui/imgui.h"
 
-#include "ModuleEditorUI.h"
 #include "EngineApplication.h"
+#include "ModuleEditorUI.h"
 #include "PanelProject.h"
 
 
@@ -173,7 +173,9 @@ bool PanelHierarchy::Draw()
 	if (ImGui::BeginChild("SelectionCounter", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
 	{
 		if (ImGui::BeginMenuBar()) {
-			std::string text = "Selected: " +  std::to_string(EngineApp->selection->GetSelected()->size());
+			std::string text = "Selected: ";
+			if (Broken::GameObject* selected = EngineApp->selection->GetSelected()->size() <= 1 ? EngineApp->selection->GetLastSelected() : EngineApp->selection->root)
+				text += selected->GetName();
 			ImGui::Text(text.c_str());
 			ImGui::EndMenuBar();
 		}
@@ -192,10 +194,12 @@ bool PanelHierarchy::Draw()
 			{
 				// Checking infite loops parent-child
 				//if (target->FindParentGO(obj) == false && obj->FindChildGO(target) == false)
-				if (!(target->FindParentGO(obj) || obj->FindChildGO(target))) // same as line above but more efficient
+				//if (!(target->FindParentGO(obj) || obj->FindChildGO(target))) // same as line above but more efficient
+				if (!target->FindParentGO(obj))
 				{
 					target->AddChildGO(obj);
 					to_be_cleared = true;
+					obj->is_been_reparented = true;
 				}
 			}
 		}
@@ -210,6 +214,7 @@ bool PanelHierarchy::Draw()
 		for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
 		{
 			EngineApp->scene_manager->GetRootGO()->AddChildGO(obj);
+			obj->is_been_reparented = true;
 		}
 		EngineApp->selection->ClearSelection();
 		to_unparent = false;

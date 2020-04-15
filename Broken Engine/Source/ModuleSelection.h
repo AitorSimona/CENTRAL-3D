@@ -3,6 +3,9 @@
 
 #include "Module.h"
 #include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ModuleEventManager.h"
+
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 
 //#include "Imgui/imgui.h"
@@ -37,8 +40,6 @@
 
 */
 
-
-
 BE_BEGIN_NAMESPACE
 
 class BROKEN_API ModuleSelection :	public Module
@@ -56,7 +57,7 @@ public:
 
 
 public:
-
+	
 	bool IsSelected(const GameObject* gameobject) const;
 
 	void HandleSelection(GameObject* gameobject);
@@ -66,7 +67,7 @@ public:
 	inline std::vector<GameObject*>* GetSelected() { return &root->childs; }
 
 	// change update_root to false if you don't want the scene visual rectangle to clear
-	void ClearSelection(bool update_root = true);
+	void ClearSelection();
 
 	// Component management
 	void CopyComponentValues(Component* component);
@@ -91,7 +92,8 @@ public:
 	void SceneRectangleSelect(float3 start);
 
 	// Values passed must be of the deltaMatrix of the guizmo
-	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale);
+	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3x3 rot, float3 scale, float3 delta_pos, float3 delta_rot, float3 delta_scale);
+	//void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale, float3 delta_pos, float3 delta_rot, float3 delta_scale);
 
 private:
 	// Scene rectangle 
@@ -113,6 +115,9 @@ public:
 
 	// Please DO NOT EDIT
 	GameObject* root = nullptr;
+	ComponentTransform* root_transform = nullptr;
+
+	bool center = true; // center or pivot
 
 private:
 
@@ -130,7 +135,7 @@ private:
 
 	// Guizmo 
 	std::vector<float3> original_scales;
-
+	float3 original_scale = float3::one;
 	// Component copy and paste
 	json component_node;
 	Component::ComponentType component_type = Component::ComponentType::Unknown;

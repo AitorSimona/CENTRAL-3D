@@ -41,8 +41,8 @@ public:
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Transform; };
 
 public:
-	bool update_transform = false;
-	bool updateValues = false;
+	bool update_transform = true;
+	bool updateValues = true;
 private:
 	//void UpdateLocalTransform();
 	void UpdateTRS();

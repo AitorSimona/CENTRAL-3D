@@ -2,12 +2,10 @@
 
 #include "ModuleSelection.h"
 #include "ModuleCamera3D.h"
-#include "ModuleEventManager.h"
 #include "ModuleInput.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
 
-#include "ComponentTransform.h"
 #include "ComponentCamera.h"
 
 #include "ResourceScene.h"
@@ -17,9 +15,10 @@ using namespace Broken;
 
 ModuleSelection::ModuleSelection(bool start_enabled)
 {
-	std::string tmp = "root_selection";
+	std::string tmp = "Selection";
 	root = new GameObject(tmp.c_str());
-	
+	root_transform = root->GetComponent<ComponentTransform>();
+
 	name = "Module Selection";
 
 	aabb_selection.SetNegativeInfinity();
@@ -37,10 +36,17 @@ bool ModuleSelection::Init(json& file)
 	return true;
 }
 
+
 bool ModuleSelection::Start()
 {
+	//root = App->scene_manager->CreateEmptyGameObject();
+	//root->SetName("ModuleSelection");
+
+	//App->event_manager->AddListener(Broken::Event::EventType::GameObject_reparented, OnGameObjectReparented);
+
 	return true;
 }
+
 bool ModuleSelection::CleanUp()
 {
 	root->childs.clear();
@@ -52,6 +58,8 @@ bool ModuleSelection::CleanUp()
 }
 update_status ModuleSelection::PreUpdate(float dt)
 {
+	UpdateRoot();
+
 	// Delete selection, it's done through reparenting all selected to selection root object
 	// Doing this way avoids problem of ghost parents or childs
 	if (!App->scene_manager->go_to_delete.empty())
@@ -87,6 +95,7 @@ update_status ModuleSelection::Update(float dt)
 		}
 
 		original_scales.clear();
+		original_scale = float3::one;
 	}
 
 	return UPDATE_CONTINUE;
@@ -107,7 +116,7 @@ update_status ModuleSelection::Update(float dt)
 		float3(1,1, 1));
 
 		aabb.Transform(transform);
-		ClearSelection(false);
+		ClearSelection();
 		SelectIfIntersects();
 		//ApplyOBBTransformation();
 
@@ -118,6 +127,9 @@ update_status ModuleSelection::Update(float dt)
 update_status ModuleSelection::PostUpdate(float dt)
 {
 	App->renderer3D->DrawAABB(aabb_selection, { 0.76f, 1, 0.62f,1 });
+
+	// SELECTED TODO : REMOVE THIS
+	if (App->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) return UPDATE_STOP;
 
 	return UPDATE_CONTINUE;
 	App->renderer3D->DrawOBB(aabb, { 0,0,1,1 });
@@ -165,7 +177,6 @@ void ModuleSelection::SelectIfIntersects()
 			}
 		}
 	}
-	UpdateRoot();
 
 }
 
@@ -212,7 +223,7 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_RCTRL) == KEY_IDLE &&
 		App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_IDLE)
 	{
-		ClearSelection(false);
+		ClearSelection();
 		Select(gameobject);
 	}
 	// User is holding CTRL, toggle selection state
@@ -226,66 +237,137 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 		SelectLastTo(gameobject);
 	}
 
-	UpdateRoot();
 }
 
-void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale)
+void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3x3 rot, float3 scale, float3 delta_pos, float3 delta_rot, float3 delta_scale)
 {
-	if (guizmoOperation == ImGuizmo::OPERATION::SCALE)// && last_scale.x == 1 && last_scale.y == 1 && last_scale.z == 1)
+	if (center)
 	{
+		if (guizmoOperation == ImGuizmo::OPERATION::SCALE)// && last_scale.x == 1 && last_scale.y == 1 && last_scale.z == 1)
+		{
+			for (int i = 0; i < GetSelected()->size(); i++)
+				original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
+		}
+
 		for (int i = 0; i < GetSelected()->size(); i++)
-			original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
-	}
+		{
+			bool move = true;
+			for (int j = 0; j < GetSelected()->size() && move; j++)
+			{
+				if (i == j) continue;
+				if (GetSelected()->at(i)->FindParentGO(GetSelected()->at(j)))
+					move = false;
+			}
+			if (!move) continue;
 
-	for (int i = 0; i < GetSelected()->size(); i++)
+			ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
+
+			if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+			{
+				t->SetPosition(t->GetPosition() + delta_pos);
+			}
+			else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+			{
+				t->SetRotation(t->GetRotation() + delta_rot);
+			}
+			else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+			{
+				t->Scale(original_scales.at(i).x * delta_scale.x, original_scales.at(i).y * delta_scale.y, original_scales.at(i).z * delta_scale.z);
+			}
+
+		}
+	}
+	else
 	{
-		ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
-
-		if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
-			t->SetPosition(t->GetPosition() + pos);
-
-		else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+		for (GameObject* go : *GetSelected())
 		{
-			if (guizmoMode == ImGuizmo::MODE::LOCAL)
-				t->SetRotation(t->GetRotation() + rot);
-			/* I made it at first but could not replicate later :(
-			else
-				t->SetRotation(dummy1);*/
-		}
-		else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
-		{
-			t->Scale(original_scales.at(i).x * scale.x, original_scales.at(i).y * scale.y, original_scales.at(i).z * scale.z);
-		}
+			ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
+			float4x4 transform = float4x4::identity;
+			//root_transform->Local_transform = transform;
+			if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+			{
+				go_t->SetPosition(go_t->GetPosition() + delta_pos);
+				//transform = float4x4::FromTRS(delta,go_t->GetQuaternionRotation(),go_t->GetScale());
 
+				//root_transform->SetPosition(pos);
+			}
+
+			else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+			{
+				//transform = float4x4::FromTRS(pos, rot, go_t->GetScale());
+				transform.SetRotatePart(rot);
+			}
+			else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+			{
+				transform = float4x4::FromTRS(go_t->GetPosition(), go_t->GetQuaternionRotation(), scale);
+				transform.Scale(scale);
+			}
+		
+			go_t->SetGlobalTransform(transform);
+				//UpdateSelectionTransforms(go);
+		}
 	}
 
-	UpdateRoot();
 }
 
 void ModuleSelection::UpdateRoot()
 {
+	int size = GetSelected()->size();
+	std::string n = "Selection (" + std::to_string(size) + ")";
+	root->SetName(n.c_str());
 	float3 pos = float3::zero;
 
 	// This part is redone and hardcoded because root has no parent and crashes when accessing the parent globaltransform
-	ComponentTransform* root_t = root->GetComponent<ComponentTransform>();
+	/*ComponentTransform* root_t = root->GetComponent<ComponentTransform>();
 	root_t->Global_transform = float4x4::identity;
-	root_t->Local_transform = float4x4::identity;
-	root_t->update_transform = true;
+	root_t->Local_transform = float4x4::identity;*/
 
 	aabb_selection.SetNegativeInfinity();
 
 	for (GameObject* go : *GetSelected())
 	{
 		ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
-		pos += go_t != nullptr ? go_t->position : float3::zero;
+		pos += go_t != nullptr ? go_t->GetPosition() : float3::zero;
 
 		aabb_selection.Enclose(go->GetAABB());
 	}
-	int size = GetSelected()->size();
+	
 	if (size > 0)
 		pos /= size;
 
-	root_t->SetPosition(pos);
+	root_transform->SetPosition(pos);
+
+	// Components
+	//if (GetSelected()->size() > 1) // Creates buggsssss
+	//{
+	//	for (Component* component : App->selection->root->GetComponents())
+	//	{
+	//		if (!component->to_delete && component->GetType() == Component::ComponentType::Transform) continue;
+	//		App->selection->root->RemoveComponent(component);
+	//	}
+
+	//	for (Component* component : App->selection->GetLastSelected()->GetComponents())
+	//	{
+	//		bool all_have_same_component = true;
+	//		Component::ComponentType type = component->GetType();
+	//		if (type == Component::ComponentType::Transform) continue;
+
+	//		for (GameObject* obj : *App->selection->GetSelected())
+	//		{
+	//			if (!obj->HasComponent(type))
+	//			{
+	//				all_have_same_component = false;
+	//				break;
+	//			}
+	//		}
+
+	//		if (all_have_same_component == false) continue;
+	//		else
+	//		{
+	//			App->selection->root->AddComponent(type);
+	//		}
+	//	}
+	//}
 }
 
 GameObject* ModuleSelection::GetLastSelected()
@@ -403,16 +485,13 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 	}
 }
 
-void ModuleSelection::ClearSelection(bool update_root)
+void ModuleSelection::ClearSelection()
 {
 	for (GameObject* go : *GetSelected())
 	{
 		go->node_flags &= ~1;
 	}
 	GetSelected()->clear();
-
-	if (update_root)
-		UpdateRoot();
 }
 
 // Component Management -----------------------------------------------
