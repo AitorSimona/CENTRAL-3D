@@ -87,6 +87,7 @@ bool ModuleResourceManager::Start()
 
 	// --- Add file filters, so we only search for relevant files ---
 	filters.push_back("fbx");
+	filters.push_back("obj");
 	filters.push_back("prefab");
 	filters.push_back("mat");
 	filters.push_back("png");
@@ -858,7 +859,7 @@ Resource::ResourceType ModuleResourceManager::GetResourceTypeFromPath(const char
 
 	type = extension == "" ? Resource::ResourceType::FOLDER : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "scene" ? Resource::ResourceType::SCENE : type) : type;
-	type = type == Resource::ResourceType::UNKNOWN ? (extension == "fbx" || extension == "model" ? Resource::ResourceType::MODEL : type) : type;
+	type = type == Resource::ResourceType::UNKNOWN ? (extension == "fbx" || extension == "model" || extension == "obj" ? Resource::ResourceType::MODEL : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "prefab" ? Resource::ResourceType::PREFAB : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "mat" ? Resource::ResourceType::MATERIAL : type) : type;
 	type = type == Resource::ResourceType::UNKNOWN ? (extension == "glsl" ? Resource::ResourceType::SHADER : type) : type;

@@ -802,7 +802,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 
 	// --- Creating Skybox Reflection Vertex and Fragment Shaders ---
 
-	const char* SkyboxReflectionVShaderSource =
+	const char* EnvironmentMappingVShaderSource =
 		"#version 460 core \n"
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
@@ -828,7 +828,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#endif //VERTEX_SHADER\n"
 		;
 
-	const char* SkyboxReflectionFShaderSource =
+	const char* EnvironmentMappingReflectionFShaderSource =
 		"#version 460 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
@@ -849,13 +849,43 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#endif //FRAGMENT_SHADER\n"
 		;
 
+	const char* EnvironmentMappingRefractionFShaderSource =
+		"#version 460 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
+		"uniform int Texture;\n"
+		"in vec3 ourColor; \n"
+		"in vec2 TexCoord; \n"
+		"in vec3 Normal; \n"
+		"in vec3 Position; \n"
+		"uniform vec3 cameraPos; \n"
+		"uniform samplerCube skybox; \n"
+		"out vec4 color; \n"
+		"uniform sampler2D ourTexture; \n"
+		"void main(){ \n"
+		"float refractive_index = 1.00 / 1.52; \n"
+		"vec3 I = normalize(Position - cameraPos); \n"
+		"vec3 R = refract(I, normalize(Normal), refractive_index); \n"
+		"color = vec4(texture(skybox, vec3(R.x, -R.y, R.z)).rgb, 1.0); \n"
+		"} \n"
+		"#endif //FRAGMENT_SHADER\n"
+		;
+
+	// MYTODO: This could be merged into one shader, pass uniform and decide whether to refract or reflect
 	SkyboxReflectionShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxReflectionShader.glsl", 12);
-	SkyboxReflectionShader->vShaderCode = SkyboxReflectionVShaderSource;
-	SkyboxReflectionShader->fShaderCode = SkyboxReflectionFShaderSource;
+	SkyboxReflectionShader->vShaderCode = EnvironmentMappingVShaderSource;
+	SkyboxReflectionShader->fShaderCode = EnvironmentMappingReflectionFShaderSource;
 	SkyboxReflectionShader->ReloadAndCompileShader();
 	SkyboxReflectionShader->SetName("SkyboxReflectionShader");
 	SkyboxReflectionShader->LoadToMemory();
 	//IShader->Save(SkyboxReflectionShader);
+
+	SkyboxRefractionShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxRefractionShader.glsl", 13);
+	SkyboxRefractionShader->vShaderCode = EnvironmentMappingVShaderSource;
+	SkyboxRefractionShader->fShaderCode = EnvironmentMappingRefractionFShaderSource;
+	SkyboxRefractionShader->ReloadAndCompileShader();
+	SkyboxRefractionShader->SetName("SkyboxRefractionShader");
+	SkyboxRefractionShader->LoadToMemory();
 
 	// --- Creating Default Vertex and Fragment Shaders ---
 
@@ -1018,7 +1048,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			shader = mesh->mat->shader->ID;
 			mesh->mat->UpdateUniforms();
 		}
-		shader = SkyboxReflectionShader->ID;
+		shader = SkyboxRefractionShader->ID;
 
 		glUseProgram(shader);
 
