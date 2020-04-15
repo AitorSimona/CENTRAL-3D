@@ -261,8 +261,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+	DrawSkybox(); // could not manage to draw it after scene with reversed-z ...
+
 	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
 	glDepthFunc(GL_GREATER);
+
 
 	// --- Do not write to the stencil buffer ---
 	glStencilMask(0x00);
@@ -282,14 +285,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	// --- Selected Object Outlining ---
 	HandleObjectOutlining();
 
-
-	float3 prevpos = active_camera->frustum.Pos();
-
-	App->renderer3D->active_camera->frustum.SetPos(float3::zero);
-
-	DrawSkybox();
-
-	App->renderer3D->active_camera->frustum.SetPos(prevpos);
 
 	// --- Back to defaults ---
 	glDepthFunc(GL_LESS);
@@ -647,49 +642,6 @@ void ModuleRenderer3D::CreateDefaultShaders()
 {
 	ImporterShader* IShader = App->resources->GetImporter<ImporterShader>();
 
-	const char* vertexShaderT =
-		"#version 460 core \n"
-		"#define VERTEX_SHADER \n"
-		"#ifdef VERTEX_SHADER \n"
-		"layout (location = 0) in vec3 position; \n"
-		"layout(location = 1) in vec3 normal; \n"
-		"layout(location = 2) in vec3 color; \n"
-		"layout (location = 3) in vec2 texCoord; \n"
-		"uniform vec3 Color; \n"
-		"out vec3 ourColor; \n"
-		"out vec2 TexCoord; \n"
-		"uniform mat4 model_matrix; \n"
-		"uniform mat4 view; \n"
-		"uniform mat4 projection; \n"
-		"void main(){ \n"
-		"gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); \n"
-		"ourColor = Color; \n"
-		"TexCoord = texCoord; \n"
-		"}\n"
-		"#endif //VERTEX_SHADER\n"
-		;
-
-	const char* fragmentShaderT =
-		"#version 460 core \n"
-		"#define FRAGMENT_SHADER \n"
-		"#ifdef FRAGMENT_SHADER \n"
-		"uniform int Texture;\n"
-		"in vec3 ourColor; \n"
-		"in vec2 TexCoord; \n"
-		"out vec4 color; \n"
-		"uniform sampler2D ourTexture; \n"
-		"void main(){ \n"
-		"color = texture(ourTexture, TexCoord); \n"
-		"if(Texture == -1)\n"
-		"color = vec4(ourColor, 1);\n"
-		"} \n"
-		"#endif //FRAGMENT_SHADER\n"
-		;
-
-	VertexShaderTemplate = vertexShaderT;
-	FragmentShaderTemplate = fragmentShaderT;
-
-
 	// --- Creating outline drawing shaders ---
 	const char* OutlineVertShaderSrc =
 		"#version 460 core \n"
@@ -735,12 +687,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
-		"TexCoords = position * vec3(1.0,-1.0,1.0); \n"
-		"mat3 mat3View = mat3(view); \n"
-		"mat4 noTranslationView = mat4(mat3View); \n" 
-		"vec4 pos = projection * noTranslationView * vec4(position, 1.0f); \n"
-		"float w = -1.0; \n"
-		"gl_Position = vec4(pos.xy, w, w); \n"
+		"TexCoords = position; \n"
+		"gl_Position = projection * view * vec4(position, 0.0); \n"
 		"}\n"
 		"#endif //VERTEX_SHADER\n"
 		;
@@ -1251,12 +1199,18 @@ void ModuleRenderer3D::DrawGrid()
 
 void ModuleRenderer3D::DrawSkybox()
 {
+	glDepthMask(GL_FALSE);
+
+	float3 prevpos = active_camera->frustum.Pos();
+
+	App->renderer3D->active_camera->frustum.SetPos(float3::zero);
+
 	SkyboxShader->use();
 	// draw skybox as last
-	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+	glDepthFunc(GL_GEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 	//view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
 	float4x4 view = App->renderer3D->active_camera->GetOpenGLViewMatrix();
-	//view.SetTranslatePart(float4::zero);
+	view.SetTranslatePart(float4::zero);
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
@@ -1284,6 +1238,10 @@ void ModuleRenderer3D::DrawSkybox()
 	//glDepthFunc(GL_LESS); // set depth function back to default
 
 	defaultShader->use();
+
+	App->renderer3D->active_camera->frustum.SetPos(prevpos);
+	glDepthMask(GL_TRUE);
+
 }
 
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
