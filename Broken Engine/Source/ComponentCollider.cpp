@@ -34,7 +34,10 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 ComponentCollider::~ComponentCollider()
 {
 	mesh->Release();
-	convex_mesh->release();//reduce instances
+	if (convex_mesh)
+		convex_mesh->release();//reduce instances
+	if (triangle_mesh)
+		triangle_mesh->release();
 }
 
 void ComponentCollider::Update()
