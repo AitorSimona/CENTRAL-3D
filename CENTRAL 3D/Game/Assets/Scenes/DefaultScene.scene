@@ -1,0 +1,46 @@
+{
+    "971291891": {
+        "Active": true,
+        "Components": {
+            "0": {
+                "Active": true,
+                "Index": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "1": {
+                "Active": true,
+                "Index": 1,
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "",
+                        "path": "Library/Meshes/2.mesh"
+                    }
+                }
+            },
+            "2": {
+                "Active": true,
+                "Index": 2,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "DefaultMaterial"
+                    }
+                }
+            }
+        },
+        "Index": 0,
+        "Name": "GameObject (4294967295)",
+        "Parent": "-1",
+        "PrefabChild": false,
+        "PrefabInstance": false,
+        "Static": false
+    }
+}

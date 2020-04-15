@@ -711,7 +711,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	SkyboxShader->ReloadAndCompileShader();
 	SkyboxShader->SetName("SkyboxShader");
 	SkyboxShader->LoadToMemory();
-	IShader->Save(SkyboxShader);
+	//IShader->Save(SkyboxShader);
 
 	// --- Creating point/line drawing shaders ---
 
@@ -799,6 +799,63 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	ZDrawerShader->LoadToMemory();
 	IShader->Save(ZDrawerShader);
 
+
+	// --- Creating Skybox Reflection Vertex and Fragment Shaders ---
+
+	const char* SkyboxReflectionVShaderSource =
+		"#version 460 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
+		"layout (location = 0) in vec3 position; \n"
+		"layout(location = 1) in vec3 normal; \n"
+		"layout(location = 2) in vec3 color; \n"
+		"layout (location = 3) in vec2 texCoord; \n"
+		"uniform vec3 Color = vec3(1.0); \n"
+		"out vec3 ourColor; \n"
+		"out vec2 TexCoord; \n"
+		"out vec3 Normal; \n"
+		"out vec3 Position; \n"
+		"uniform mat4 model_matrix; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"Normal = mat3(transpose(inverse(model_matrix))) * normal; \n"
+		"Position = vec3(model_matrix * vec4(position, 1.0)); \n"
+		"gl_Position = projection * view * vec4 (Position, 1.0f); \n"
+		"ourColor = Color; \n"
+		"TexCoord = texCoord; \n"
+		"}\n"
+		"#endif //VERTEX_SHADER\n"
+		;
+
+	const char* SkyboxReflectionFShaderSource =
+		"#version 460 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
+		"uniform int Texture;\n"
+		"in vec3 ourColor; \n"
+		"in vec2 TexCoord; \n"
+		"in vec3 Normal; \n"
+		"in vec3 Position; \n"
+		"uniform vec3 cameraPos; \n"
+		"uniform samplerCube skybox; \n"
+		"out vec4 color; \n"
+		"uniform sampler2D ourTexture; \n"
+		"void main(){ \n"
+		"vec3 I = normalize(Position - cameraPos); \n"
+		"vec3 R = reflect(I, normalize(Normal)); \n"
+		"color = vec4(texture(skybox, -R).rgb, 1.0); \n"
+		"} \n"
+		"#endif //FRAGMENT_SHADER\n"
+		;
+
+	SkyboxReflectionShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxReflectionShader.glsl", 12);
+	SkyboxReflectionShader->vShaderCode = SkyboxReflectionVShaderSource;
+	SkyboxReflectionShader->fShaderCode = SkyboxReflectionFShaderSource;
+	SkyboxReflectionShader->ReloadAndCompileShader();
+	SkyboxReflectionShader->SetName("SkyboxReflectionShader");
+	SkyboxReflectionShader->LoadToMemory();
+	//IShader->Save(SkyboxReflectionShader);
 
 	// --- Creating Default Vertex and Fragment Shaders ---
 
@@ -961,6 +1018,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			shader = mesh->mat->shader->ID;
 			mesh->mat->UpdateUniforms();
 		}
+		shader = SkyboxReflectionShader->ID;
 
 		glUseProgram(shader);
 
@@ -1004,6 +1062,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (mesh->flags & RenderMeshFlags_::wire)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexID);
+		glUniform3f(glGetUniformLocation(shader, "cameraPos"), active_camera->frustum.Pos().x, active_camera->frustum.Pos().y, active_camera->frustum.Pos().z);
+
 		if (mesh->resource_mesh->vertices && mesh->resource_mesh->Indices)
 		{
 			const ResourceMesh* rmesh = mesh->resource_mesh;
@@ -1031,6 +1092,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			glBindVertexArray(0);
 			glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
 		}
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
 
 		// --- DeActivate wireframe mode ---
 		if (mesh->flags & RenderMeshFlags_::wire)
@@ -1201,15 +1265,8 @@ void ModuleRenderer3D::DrawSkybox()
 	glDepthMask(GL_FALSE);
 
 	float3 prevpos = active_camera->frustum.Pos();
-	float3 up = App->renderer3D->active_camera->frustum.Up();
-	float3 front = App->renderer3D->active_camera->frustum.Front();
 
 	App->renderer3D->active_camera->frustum.SetPos(float3::zero);
-
-	math::Quat rotationX = math::Quat::RotateAxisAngle(float3::unitX, 180 * DEGTORAD);
-
-	App->renderer3D->active_camera->frustum.SetUp(rotationX.Mul(App->renderer3D->active_camera->frustum.Up()).Normalized());
-	App->renderer3D->active_camera->frustum.SetFront(rotationX.Mul(App->renderer3D->active_camera->frustum.Front()).Normalized());
 
 	SkyboxShader->use();
 	// draw skybox as last
@@ -1245,8 +1302,6 @@ void ModuleRenderer3D::DrawSkybox()
 
 	defaultShader->use();
 
-	App->renderer3D->active_camera->frustum.SetUp(up);
-	App->renderer3D->active_camera->frustum.SetFront(front);
 	App->renderer3D->active_camera->frustum.SetPos(prevpos);
 	glDepthMask(GL_TRUE);
 

@@ -129,6 +129,7 @@ public:
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* SkyboxShader = nullptr;
+	ResourceShader* SkyboxReflectionShader = nullptr;
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
