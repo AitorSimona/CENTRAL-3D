@@ -239,6 +239,34 @@ void ComponentMeshRenderer::CreateInspectorNode()
 				ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
 				ImGui::Text("Ambient Color");
 
+
+				ImGui::Separator();
+
+				// --- Environment mapping ---
+				if (ImGui::Button("None"))
+				{
+					material->reflective = false;
+					material->refractive = false;
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::RadioButton("Reflective", material->reflective))
+				{
+					material->reflective = true;
+					material->refractive = false;
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::RadioButton("Refractive", material->refractive))
+				{
+					material->reflective = false;
+					material->refractive = true;
+				}
+
+				ImGui::Separator();
+
 				// --- Print Texture Width and Height (Diffuse) ---
 				uint textSizeX = 0, textSizeY = 0;
 				ImGui::NewLine();

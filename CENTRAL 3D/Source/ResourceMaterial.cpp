@@ -48,7 +48,7 @@ void ResourceMaterial::FreeMemory()
 
 void ResourceMaterial::CreateInspectorNode()
 {
-	// --- Mat preview
+	// --- Mat preview ---
 	ImGui::Image((void*)(uint)GetPreviewTexID(), ImVec2(30, 30));
 	ImGui::SameLine();
 
@@ -93,6 +93,33 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::ColorEdit4("##Color", (float*)&color, ImGuiColorEditFlags_NoInputs);
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
 	ImGui::Text("Color");
+
+	ImGui::Separator();
+
+	// --- Environment mapping ---
+	if (ImGui::Button("None"))
+	{
+		reflective = false;
+		refractive = false;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::RadioButton("Reflective", reflective))
+	{
+		reflective = true;
+		refractive = false;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::RadioButton("Refractive", refractive))
+	{
+		reflective = false;
+		refractive = true;
+	}
+
+	ImGui::Separator();
 
 	// --- Print Texture Width and Height (Diffuse) ---
 	uint textSizeX = 0, textSizeY = 0;

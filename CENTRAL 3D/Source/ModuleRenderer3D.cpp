@@ -1048,7 +1048,11 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			shader = mesh->mat->shader->ID;
 			mesh->mat->UpdateUniforms();
 		}
-		shader = SkyboxRefractionShader->ID;
+
+		if(mesh->mat->reflective)
+			shader = SkyboxReflectionShader->ID;
+		else if (mesh->mat->refractive)
+			shader = SkyboxRefractionShader->ID;
 
 		glUseProgram(shader);
 

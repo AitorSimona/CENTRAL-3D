@@ -29,6 +29,8 @@ public:
 	std::vector<Uniform*> uniforms;
 	Color color = White;
 
+	bool reflective = false;
+	bool refractive = false;
 private:
 	void OnOverwrite() override;
 	void OnDelete() override;
