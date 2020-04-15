@@ -261,14 +261,13 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+	// --- Do not write to the stencil buffer ---
+	glStencilMask(0x00);
+
 	DrawSkybox(); // could not manage to draw it after scene with reversed-z ...
 
 	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
 	glDepthFunc(GL_GREATER);
-
-
-	// --- Do not write to the stencil buffer ---
-	glStencilMask(0x00);
 
 	// --- Issue Render orders ---
 	App->scene_manager->DrawScene();
@@ -687,8 +686,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"uniform mat4 view; \n"
 		"uniform mat4 projection; \n"
 		"void main(){ \n"
-		"TexCoords = position; \n"
-		"gl_Position = projection * view * vec4(position, 0.0); \n"
+		"TexCoords = position * vec3(1,-1,1); \n"
+		"gl_Position = projection * view * vec4(position, 1.0); \n"
 		"}\n"
 		"#endif //VERTEX_SHADER\n"
 		;
@@ -1202,8 +1201,15 @@ void ModuleRenderer3D::DrawSkybox()
 	glDepthMask(GL_FALSE);
 
 	float3 prevpos = active_camera->frustum.Pos();
+	float3 up = App->renderer3D->active_camera->frustum.Up();
+	float3 front = App->renderer3D->active_camera->frustum.Front();
 
 	App->renderer3D->active_camera->frustum.SetPos(float3::zero);
+
+	math::Quat rotationX = math::Quat::RotateAxisAngle(float3::unitX, 180 * DEGTORAD);
+
+	App->renderer3D->active_camera->frustum.SetUp(rotationX.Mul(App->renderer3D->active_camera->frustum.Up()).Normalized());
+	App->renderer3D->active_camera->frustum.SetFront(rotationX.Mul(App->renderer3D->active_camera->frustum.Front()).Normalized());
 
 	SkyboxShader->use();
 	// draw skybox as last
@@ -1239,6 +1245,8 @@ void ModuleRenderer3D::DrawSkybox()
 
 	defaultShader->use();
 
+	App->renderer3D->active_camera->frustum.SetUp(up);
+	App->renderer3D->active_camera->frustum.SetFront(front);
 	App->renderer3D->active_camera->frustum.SetPos(prevpos);
 	glDepthMask(GL_TRUE);
 
