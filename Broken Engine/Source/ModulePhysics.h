@@ -20,6 +20,9 @@ namespace physx
 	class PxActorShape;
 	class PxQueryFilterCallback;
 	class RaycastCCDManager;
+	class PxCooking;
+	class PxConvexMesh;
+	class PxBase;
 
 	typedef uint32_t PxU32;
 	const float fixed_dt = (1.0f / 60.0f);
@@ -42,10 +45,6 @@ enum LayerMask
 	LAYER_8,
 	LAYER_9
 };
-
-//struct LayerM {
-//	uint layers[MAX_LAYERS];
-//};
 
 
 struct Layer {
@@ -77,6 +76,7 @@ enum Collision_Type {
 	ONCOLLISION_EXIT
 };
 
+
 struct BROKEN_API UserIterator : physx::PxVolumeCache::Iterator
 {
 	virtual void processShapes(physx::PxU32 count, const physx::PxActorShape* actorShapePairs);
@@ -94,6 +94,7 @@ struct BROKEN_API FilterCallback : physx::PxQueryFilterCallback {
 BE_BEGIN_NAMESPACE
 class GameObject;
 class PhysxSimulationEvents;
+class ResourceMesh;
 
 class BROKEN_API ModulePhysics : public Broken::Module
 {
@@ -141,6 +142,7 @@ public:
 public:
 
 	physx::PxPvd* mPvd = nullptr;
+	physx::PxCooking* mCooking = nullptr;
 	physx::PxPvdSceneClient* pvdClient = nullptr;
 	physx::PxFoundation* mFoundation = nullptr;
 	physx::PxControllerManager* mControllerManager = nullptr;
@@ -153,6 +155,7 @@ public:
 	std::vector<Layer> layer_list;
 	std::map<physx::PxRigidActor*, GameObject*> actors;
 	std::vector<uint>* detected_objects;
+	std::map<ResourceMesh *,physx::PxBase*> cooked_meshes;
 	physx::PxVolumeCache* cache;
 	UserIterator iter;
 

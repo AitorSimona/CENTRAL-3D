@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentDynamicRigidBody.h"
+#include "ComponentMesh.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneManager.h"
 #include "ModuleResourceManager.h"
@@ -11,7 +12,9 @@
 #include "ModuleGui.h"
 #include "ResourceShader.h"
 #include "ResourceMesh.h"
+#include "ComponentMeshRenderer.h"
 #include "OpenGL.h"
+#include "ResourceScene.h"
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 #include "PhysX_3.4/Include/PxSimulationEventCallback.h"
@@ -31,6 +34,7 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 ComponentCollider::~ComponentCollider()
 {
 	mesh->Release();
+	convex_mesh->release();//reduce instances
 }
 
 void ComponentCollider::Update()
@@ -55,7 +59,7 @@ void ComponentCollider::Enable()
 			App->physics->mScene->addActor(*GetActor());
 			hasBeenDeactivated = false;
 		}
-		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+		//GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
 	}
 	active = true;
 }
@@ -64,7 +68,7 @@ void ComponentCollider::Disable()
 {
 	if (GetActor() != nullptr)
 	{
-		GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+		//GetActor()->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
 		if (!hasBeenDeactivated)
 		{
 			App->physics->mScene->removeActor(*GetActor());
@@ -100,15 +104,6 @@ void ComponentCollider::DrawComponent()
 				mesh->LoadToMemory();
 			}
 			break;
-			case physx::PxGeometryType::ePLANE:
-			{
-				physx::PxPlaneGeometry pxplane = holder.plane();
-
-				// --- Rebuild plane ---
-				App->scene_manager->CreatePlane(1, 1, 1, mesh);
-				mesh->LoadToMemory();
-			}
-			break;
 			case physx::PxGeometryType::eCAPSULE:
 			{
 				physx::PxCapsuleGeometry capsule = holder.capsule();
@@ -129,7 +124,12 @@ void ComponentCollider::DrawComponent()
 			}
 			break;
 			case physx::PxGeometryType::eCONVEXMESH:
+			{
+				// --- Rebuild box ---
+				//Compute mesh
+				//mesh->LoadToMemory();
 				break;
+			}
 			case physx::PxGeometryType::eTRIANGLEMESH:
 				break;
 			case physx::PxGeometryType::eHEIGHTFIELD:
@@ -268,7 +268,7 @@ json ComponentCollider::Save() const
 	case COLLIDER_TYPE::CAPSULE:
 		colliderType = 3;
 		break;
-	case COLLIDER_TYPE::PLANE:
+	case COLLIDER_TYPE::MESH:
 		colliderType = 4;
 		break;
 	}
@@ -404,14 +404,9 @@ void ComponentCollider::Load(json& node)
 	isTrigger = std::stoi(isTrigger_);
 
 	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
-	//tmpScale = float3(0.f, 0.f, 0.f);
 
 	firstCreation = true;
 
-	/*if (hasBeenDeactivated_ == "1")
-		hasBeenDeactivated = true;
-	else*/
-	//hasBeenDeactivated = true;
 
 	toPlay = false;
 
@@ -421,23 +416,7 @@ void ComponentCollider::Load(json& node)
 
 	int tmp = std::stoi(colliderEnum);
 	colliderType = tmp;
-	switch (tmp)
-	{
-	case 0:
-		type = COLLIDER_TYPE::NONE;
-		break;
-	case 1:
-		type = COLLIDER_TYPE::BOX;
-		break;
-	case 2:
-		type = COLLIDER_TYPE::SPHERE;
-		break;
-	case 3:
-		type = COLLIDER_TYPE::CAPSULE;
-	case 4:
-		type = COLLIDER_TYPE::PLANE;
-		break;
-	}
+	type = (ComponentCollider::COLLIDER_TYPE)colliderType;
 	editCollider = true;
 }
 
@@ -448,28 +427,13 @@ void ComponentCollider::CreateInspectorNode()
 	if (ImGui::Button("Delete component"))
 		to_delete = true;
 
-	if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0\0")) 
+	if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0MESH\0\0")) 
 	{
-		switch (colliderType)
-		{
-		case 0:
-			type = ComponentCollider::COLLIDER_TYPE::NONE;
-			break;
-		case 1:
-			type = ComponentCollider::COLLIDER_TYPE::BOX;
-			break;
-		case 2:
-			type = ComponentCollider::COLLIDER_TYPE::SPHERE;
-			break;
-		case 3:
-			type = ComponentCollider::COLLIDER_TYPE::CAPSULE;
-			break;
-		}
+		type = (ComponentCollider::COLLIDER_TYPE)colliderType;
 		editCollider = true;
 	}
-
-	if (shape)
-	{
+	
+	if (type != ComponentCollider::COLLIDER_TYPE::MESH && type != ComponentCollider::COLLIDER_TYPE::NONE) {
 		ImGui::Text("Is Trigger");
 		ImGui::SameLine();
 		if (ImGui::Checkbox("##T", &isTrigger))
@@ -499,10 +463,11 @@ void ComponentCollider::CreateInspectorNode()
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.15f);
 
 		ImGui::DragFloat("##PZ", &position->z, 0.005f);
+	}
 
-		switch (shape->getGeometryType())
-		{
-		case physx::PxGeometryType::eSPHERE:
+	switch (type)
+	{
+	case  ComponentCollider::COLLIDER_TYPE::SPHERE:
 		{
 			float prevRadius = radius;
 
@@ -522,8 +487,7 @@ void ComponentCollider::CreateInspectorNode()
 
 			break;
 		}
-
-		case physx::PxGeometryType::eBOX:
+		case ComponentCollider::COLLIDER_TYPE::BOX:
 		{
 			float3 prevScale = colliderSize;
 			ImGui::Text("Size");
@@ -556,8 +520,7 @@ void ComponentCollider::CreateInspectorNode()
 
 			break;
 		}
-
-		case physx::PxGeometryType::eCAPSULE:
+		case ComponentCollider::COLLIDER_TYPE::CAPSULE:
 		{
 			float prevRadius = radius;
 			float prevheight = height;
@@ -580,10 +543,36 @@ void ComponentCollider::CreateInspectorNode()
 				editCollider = true;
 				colliderType = (int)COLLIDER_TYPE::CAPSULE;
 			}
-
 			break;
 		}
+		case ComponentCollider::COLLIDER_TYPE::MESH:
+		{
+			if (ImGui::Checkbox("Convex", &isConvex))
+				editCollider = true;
+			
+			if(ImGui::Checkbox("Trigger", &isTrigger))
+				editCollider = true;
 
+			ImGui::Text("Mesh");
+			ImGui::SameLine();
+
+			if(!dragged_mesh)
+				ImGui::Button("Drag GO with Mesh", ImVec2(150, 20));
+			else
+				ImGui::Button(dragged_mesh->GetName(), ImVec2(150, 20));
+
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
+				{
+					uint UID = *(const uint*)payload->Data;
+					GameObject* go = App->scene_manager->currentScene->GetGOWithUID(UID);
+					if (go->HasComponent(ComponentType::Mesh)) {
+						dragged_mesh = go->GetComponent<ComponentMesh>()->resource_mesh;
+						editCollider = true;
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
 		}
 	}
 }
@@ -608,7 +597,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			App->physics->DeleteActor(rigidStatic);
 			rigidStatic = nullptr;
 		}
-
 
 		// --- Make sure to always enter here or else the mesh's data won't be released!!! ---
 		if (mesh && mesh->IsInMemory())
@@ -659,36 +647,8 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			physx::PxTransform position(physx::PxVec3(center.x, center.y, center.z));
 
 			shape = App->physics->mPhysics->createShape(boxGeometry, *App->physics->mMaterial);
-			shape->setGeometry(boxGeometry);
 
-			if (!HasDynamicRigidBody(boxGeometry, position))
-			{
-				if(rigidStatic)
-					App->physics->DeleteActor(rigidStatic);
-
-				physx::PxFilterData filterData;
-				filterData.word0 = (1 << GO->layer); // word0 = own ID
-				filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
-
-				if (isTrigger) {
-					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-				}
-				else {
-					shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-					shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-				}
-
-				shape->setSimulationFilterData(filterData);
-				shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-				shape->setQueryFilterData(filterData);
-
-				rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
-
-				App->physics->addActor(rigidStatic, GO);
-			}
-
-
+			CreateRigidbody(boxGeometry,position);
 
 			if (!firstCreation)
 			{
@@ -724,20 +684,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::SPHERE;
 			break;
 		}
-		case ComponentCollider::COLLIDER_TYPE::PLANE: {
-			physx::PxBoxGeometry planeGeometry(physx::PxVec3(colliderSize.x, 0.0001f, colliderSize.z));
-			shape = App->physics->mPhysics->createShape(planeGeometry, *App->physics->mMaterial);
-			shape->setGeometry(planeGeometry);
-
-			if (!HasDynamicRigidBody(planeGeometry, localTransform))
-			{
-				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->addActor(rigidStatic, GO);
-			}
-
-			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::PLANE;
-			break;
-		}
 		case ComponentCollider::COLLIDER_TYPE::CAPSULE: {
 			physx::PxCapsuleGeometry CapsuleGeometry(radius, height);
 			shape = App->physics->mPhysics->createShape(CapsuleGeometry, *App->physics->mMaterial);
@@ -752,12 +698,135 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
 			break;
 		}
+		case ComponentCollider::COLLIDER_TYPE::MESH: {
+			if (dragged_mesh) {
+				physx::PxTransform position(GO->GetAABB().CenterPoint().x, GO->GetAABB().CenterPoint().y, GO->GetAABB().CenterPoint().z);
+
+				if (isConvex) {//Convex Collider
+					//mesh = dragged_mesh;
+					if (!App->physics->cooked_meshes[dragged_mesh]) {//Cook Mesh
+						physx::PxVec3* vertices = new physx::PxVec3[dragged_mesh->VerticesSize];
+						for (int j = 0; j < dragged_mesh->VerticesSize; ++j) {
+							vertices[j].x = dragged_mesh->vertices[j].position[0];
+							vertices[j].y = dragged_mesh->vertices[j].position[1];
+							vertices[j].z = dragged_mesh->vertices[j].position[2];
+						}
+
+						physx::PxConvexMeshDesc convexDesc;
+						convexDesc.points.count = dragged_mesh->VerticesSize;
+						convexDesc.points.stride = sizeof(physx::PxVec3);
+						convexDesc.points.data = vertices;
+
+						convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;// | physx::PxConvexFlag::eDISABLE_MESH_VALIDATION | physx::PxConvexFlag::eFAST_INERTIA_COMPUTATION;
+
+						physx::PxDefaultMemoryOutputStream outStream;
+						if (!App->physics->mCooking->cookConvexMesh(convexDesc, outStream)) {
+							return ENGINE_CONSOLE_LOG("| Error cooking vertices on Mesh Collider");
+						}
+
+						// Create the mesh from a stream.
+						physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
+						convex_mesh = App->physics->mPhysics->createConvexMesh(inStream);
+						App->physics->cooked_meshes.insert(std::pair<ResourceMesh*, physx::PxConvexMesh*>(dragged_mesh, nullptr));
+						App->physics->cooked_meshes[dragged_mesh] = convex_mesh;
+
+						delete[] vertices;
+					}
+					else {
+						convex_mesh = (physx::PxConvexMesh*)App->physics->cooked_meshes[dragged_mesh];
+						convex_mesh->acquireReference();
+					}
+
+					physx::PxConvexMeshGeometry geometry(convex_mesh);
+					shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
+
+					CreateRigidbody(geometry, position);
+				}
+				else { //Mesh Collider
+					if (!App->physics->cooked_meshes[dragged_mesh]) {
+						physx::PxVec3* vertices = new physx::PxVec3[dragged_mesh->VerticesSize];
+						for (int j = 0; j < dragged_mesh->VerticesSize; ++j) {
+							vertices[j].x = dragged_mesh->vertices[j].position[0];
+							vertices[j].y = dragged_mesh->vertices[j].position[1];
+							vertices[j].z = dragged_mesh->vertices[j].position[2];
+						}
+						physx::PxU16* indices = new physx::PxU16[dragged_mesh->IndicesSize];
+						for (uint i = 0; i < dragged_mesh->IndicesSize; ++i)
+							indices[i] = dragged_mesh->Indices[i];
+
+						physx::PxTriangleMeshDesc meshDesc;
+						meshDesc.points.count = dragged_mesh->VerticesSize;
+						meshDesc.points.stride = sizeof(physx::PxVec3);
+						meshDesc.points.data = vertices;
+
+						meshDesc.triangles.count = dragged_mesh->IndicesSize / 3;
+						meshDesc.triangles.stride = 3 * sizeof(physx::PxU16);
+						meshDesc.triangles.data = indices;
+
+						meshDesc.flags = physx::PxMeshFlag::e16_BIT_INDICES;
+
+						physx::PxDefaultMemoryOutputStream writeBuffer;
+						if (!App->physics->mCooking->cookTriangleMesh(meshDesc, writeBuffer)) {
+							return ENGINE_AND_SYSTEM_CONSOLE_LOG("| Could not create Mesh Collider");
+						}
+
+						physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+						triangle_mesh = App->physics->mPhysics->createTriangleMesh(readBuffer);
+						App->physics->cooked_meshes.insert(std::pair<ResourceMesh*, physx::PxBase*>(dragged_mesh, nullptr));
+						App->physics->cooked_meshes[dragged_mesh] = triangle_mesh;
+
+						delete[] vertices;
+						delete[] indices;
+					}
+					else {
+						triangle_mesh = (physx::PxTriangleMesh*)App->physics->cooked_meshes[dragged_mesh];
+						triangle_mesh->acquireReference();
+					}
+				}
+				physx::PxTriangleMeshGeometry geometry(triangle_mesh);
+				shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
+
+				CreateRigidbody(geometry, position);
+			}
+			break;
+		}
 		case ComponentCollider::COLLIDER_TYPE::NONE: {
 			lastIndex = -1;
 			break;
 		}
 	}
 	editCollider = false;
+}
+
+
+template <class Geometry>
+void ComponentCollider::CreateRigidbody(Geometry geometry, physx::PxTransform position) {
+	if (!HasDynamicRigidBody(geometry, position))
+	{
+		if (rigidStatic)
+			App->physics->DeleteActor(rigidStatic);
+
+		physx::PxFilterData filterData;
+		filterData.word0 = (1 << GO->layer); // word0 = own ID
+		filterData.word1 = App->physics->layer_list.at(GO->layer).LayerGroup; // word1 = ID mask to filter pairs that trigger a contact callback;
+
+		if (isTrigger) {
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else {
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
+
+		shape->setSimulationFilterData(filterData);
+		shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+		shape->setQueryFilterData(filterData);
+
+		rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
+
+		App->physics->addActor(rigidStatic, GO);
+	}
 }
 
 void ComponentCollider::Delete()
@@ -830,7 +899,6 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 
 		return true;
 	}
-
 	else {
 		return false;
 	}

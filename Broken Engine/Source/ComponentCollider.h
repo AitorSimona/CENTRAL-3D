@@ -10,6 +10,8 @@ namespace physx
 	class PxRigidStatic;
 	class PxTransform;
 	class PxShape;
+	class PxConvexMesh;
+	class PxTriangleMesh;
 }
 
 BE_BEGIN_NAMESPACE
@@ -29,7 +31,7 @@ public:
 		BOX,
 		SPHERE,
 		CAPSULE,
-		PLANE
+		MESH
 	};
 
 public:
@@ -59,6 +61,8 @@ public:
 
 	void CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain = false);
 
+	void CreateRigidbody();
+
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
@@ -68,12 +72,15 @@ public:
 	void									Delete();
 
 private:
+	template<class Geometry>
+	void CreateRigidbody(Geometry geometry, physx::PxTransform position);
 	template <class Geometry>
 	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform);
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;
+	ResourceMesh* dragged_mesh = nullptr;
 	bool editCollider = false;
 	bool updateValues = false;
 	float3 centerPosition = float3::zero;
@@ -83,10 +90,13 @@ public:
 	int colliderType = 0;
 	bool hasBeenDeactivated = false;
 	bool isTrigger = false;
+	bool isConvex = false;
 
 
 private:
 	physx::PxShape* shape = nullptr;
+	physx::PxConvexMesh* convex_mesh = nullptr;
+	physx::PxTriangleMesh* triangle_mesh = nullptr;
 	float3 colliderSize = float3(1, 1, 1);
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
