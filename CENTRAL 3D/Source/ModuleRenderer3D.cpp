@@ -844,7 +844,7 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"void main(){ \n"
 		"vec3 I = normalize(Position - cameraPos); \n"
 		"vec3 R = reflect(I, normalize(Normal)); \n"
-		"color = vec4(texture(skybox, -R).rgb, 1.0); \n"
+		"color = vec4(texture(skybox, vec3(R.x, -R.y, R.z)).rgb, 1.0); \n"
 		"} \n"
 		"#endif //FRAGMENT_SHADER\n"
 		;
