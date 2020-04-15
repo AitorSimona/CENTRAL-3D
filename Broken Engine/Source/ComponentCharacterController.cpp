@@ -141,7 +141,7 @@ void ComponentCharacterController::Draw()
 	}
 
 	// --- Render shape ---
-	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
+	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices && draw)
 	{
 		// --- Use default shader ---
 		uint shaderID = App->renderer3D->defaultShader->ID;
@@ -330,6 +330,8 @@ void ComponentCharacterController::CreateInspectorNode()
 {
 	if (ImGui::Button("Delete component"))
 		to_delete = true;
+
+	ImGui::Checkbox("Show", &draw);
 
 	if (ImGui::DragFloat("Radius", &radius, 0.005f))
 	{
