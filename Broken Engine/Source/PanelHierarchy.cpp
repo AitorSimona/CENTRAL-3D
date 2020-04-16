@@ -204,7 +204,7 @@ bool PanelHierarchy::Draw()
 	if (ImGui::BeginChild("SelectionCounter", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
 	{
 		if (ImGui::BeginMenuBar()) {
-			std::string text = "Selected: ";
+			std::string text = "";
 			if (Broken::GameObject* selected = EngineApp->selection->GetSelected()->size() <= 1 ? EngineApp->selection->GetLastSelected() : EngineApp->selection->root)
 				text += selected->GetName();
 			ImGui::Text(text.c_str());

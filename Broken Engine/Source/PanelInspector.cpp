@@ -310,19 +310,29 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 	strcpy_s(GOName, 128, Selected.GetName());
 
 	if (ImGui::InputText("", GOName, 128, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+
 		for (int i = 0; i < App->selection->GetSelected()->size(); i++)
 		{
-			number = " (" + std::to_string(i) + ")";
-			number = GOName + number;
-			//std::strcat(GOName, number.c_str());
+			if (i == 0)
+			{
+				App->selection->GetSelected()->at(i)->SetName(GOName);
+			}
+			else
+			{
+				number = " (" + std::to_string(i) + ")";
+				number = GOName + number;
 
-			App->selection->GetSelected()->at(i)->SetName(number.c_str());
+				App->selection->GetSelected()->at(i)->SetName(number.c_str());
+			}
 		}
 
 
-	bool objectStatic = true;
+	static bool objectStatic = true;
 	bool checkbox_static = true;
 	bool exists_childs = false;
+	//[STATIC] Knowing what to display, if all the selected are at the same state, it will display the state, otherwise it will display false
+	// Knowing if inside selection there's a parent with childs
+	// Once both variables are solved it can break the loop search
 	for (int i=0; i < App->selection->GetSelected()->size() && (checkbox_static || !exists_childs);i++)
 	{
 		if (App->selection->GetSelected()->at(i)->Static == false) 
@@ -336,6 +346,7 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 
 	if (ImGui::Checkbox("Static", &checkbox_static)) {
 		objectStatic = checkbox_static;
+		
 		if (exists_childs)
 			ImGui::OpenPopup("Static gameObject");
 		else
@@ -346,10 +357,13 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 	ImGui::SetNextWindowSize(ImVec2(400,75));
 	if (ImGui::BeginPopup("Static gameObject", ImGuiWindowFlags_NoScrollbar))
 	{
-		static std::string text = (!objectStatic) ? "You are about to make objects non-static.\nDo you want to edit the children aswell?" :
-			"You are about to make this objects static.\nDo you want to edit the children aswell?";
+		
+		/* Gets a little bug so I am deleting the first part where displays the action to be done (always showing non-static)
 
-		ImGui::Text(text.c_str());
+		static std::string text = (objectStatic) ? "You are about to make objects non-static.\nDo you want to edit the children aswell?" :
+			"You are about to make this objects static.\nDo you want to edit the children aswell?";*/
+
+		ImGui::Text("Do you want to edit the children aswell?");
 
 		ImGui::Indent(130);
 		if (ImGui::Button("Yes")) {
@@ -420,7 +434,7 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 					ComponentCollider* col = obj->GetComponent<ComponentCollider>();
 
 					if(col)
-						col->UpdateActorLayer((const int*)layers->at(n).layer);
+						col->UpdateActorLayer((int*)&layers->at(n).layer);
 				}
 			}
 			if (is_selected) {
