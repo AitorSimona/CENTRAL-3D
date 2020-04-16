@@ -50,8 +50,9 @@ bool PanelInspector::Draw()
 	{
 		// SELECTED TODO
 		// Displaying the minimum common inspector of the selection
+		//Broken::GameObject* Selected = EngineApp->selection->GetSelected()->size() <= 1 ? EngineApp->selection->GetLastSelected() : EngineApp->selection->root;
 
-		Broken::GameObject* Selected = EngineApp->selection->GetSelected()->size() <= 1 ? EngineApp->selection->GetLastSelected() : EngineApp->selection->root;
+		Broken::GameObject* Selected = EngineApp->selection->GetLastSelected();
 		const std::vector<Broken::GameObject*>* GosSelected = EngineApp->selection->GetSelected();
 		Broken::Resource* SelectedRes = EngineApp->editorui->panelProject->GetSelected();
 
@@ -384,7 +385,8 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 
 	static ImGuiComboFlags flags = 0;
 
-	int layer = App->selection->GetLastSelected()->GetLayer();
+	//int layer = App->selection->GetLastSelected()->GetLayer();
+	int layer = Selected.GetLayer();
 
 	std::string layer_name = layers->at(layer).name.c_str();
 	for (GameObject* obj : *App->selection->GetSelected())

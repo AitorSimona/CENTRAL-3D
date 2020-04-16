@@ -193,16 +193,10 @@ void PanelScene::HandleGuizmo()
 	// --- Update Selected go transform ---
 	if (ImGuizmo::IsUsing())
 	{
-		float4x4 newTransform;
-		newTransform.Set(modelMatrix);
-		newTransform.Transpose();
-		
-		float3 pos, rot, scale;
-		ImGuizmo::DecomposeMatrixToComponents(modelMatrix, pos.ptr(), rot.ptr(), scale.ptr());
-
 		float3 delta_pos, delta_rot, delta_scale;
 		ImGuizmo::DecomposeMatrixToComponents(deltaMatrix, delta_pos.ptr(), delta_rot.ptr(), delta_scale.ptr());
-		EngineApp->selection->UseGuizmo(guizmoOperation, mode, pos, newTransform.RotatePart() ,scale, delta_pos, delta_rot, delta_scale);
+
+		EngineApp->selection->UseGuizmo(guizmoOperation, delta_pos, delta_rot, delta_scale);
 	}
 }
 

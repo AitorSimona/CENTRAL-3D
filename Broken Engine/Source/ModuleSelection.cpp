@@ -95,10 +95,10 @@ update_status ModuleSelection::Update(float dt)
 		}
 
 		original_scales.clear();
-		original_scale = float3::one;
 	}
 
 	return UPDATE_CONTINUE;
+
 	if (is_rectangle_selection)
 	{
 		aabb_end.x += App->input->GetMouseXMotion();
@@ -129,7 +129,7 @@ update_status ModuleSelection::PostUpdate(float dt)
 	App->renderer3D->DrawAABB(aabb_selection, { 0.76f, 1, 0.62f,1 });
 
 	// SELECTED TODO : REMOVE THIS
-	if (App->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) return UPDATE_STOP;
+	//if (App->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) return UPDATE_STOP;
 
 	return UPDATE_CONTINUE;
 	App->renderer3D->DrawOBB(aabb, { 0,0,1,1 });
@@ -239,78 +239,46 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 
 }
 
-void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3x3 rot, float3 scale, float3 delta_pos, float3 delta_rot, float3 delta_scale)
+void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation,float3 delta_pos, float3 delta_rot, float3 delta_scale)
 {
-	/*if (center)
-	{*/
-		if (guizmoOperation == ImGuizmo::OPERATION::SCALE)// && last_scale.x == 1 && last_scale.y == 1 && last_scale.z == 1)
-		{
-			for (int i = 0; i < GetSelected()->size(); i++)
-				original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
-		}
 
+	if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+	{
 		for (int i = 0; i < GetSelected()->size(); i++)
+			original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
+	}
+
+	for (int i = 0; i < GetSelected()->size(); i++)
+	{
+		bool move = true;
+		for (int j = 0; j < GetSelected()->size() && move; j++)
 		{
-			bool move = true;
-			for (int j = 0; j < GetSelected()->size() && move; j++)
-			{
-				if (i == j) continue;
-				if (GetSelected()->at(i)->FindParentGO(GetSelected()->at(j)))
-					move = false;
-			}
-			if (!move) continue;
-
-			ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
-
-			if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
-			{
-				float4x4 tr = t->GetGlobalTransform();
-				tr.SetTranslatePart(t->GetGlobalPosition() + delta_pos);
-				
-				t->SetGlobalTransform(tr);
-				//t->SetPosition(t->GetPosition() + delta_pos);
-			}
-			else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
-			{
-				t->SetRotation(t->GetRotation() + delta_rot);
-			}
-			else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
-			{
-				t->Scale(original_scales.at(i).x * delta_scale.x, original_scales.at(i).y * delta_scale.y, original_scales.at(i).z * delta_scale.z);
-			}
-
+			if (i == j) continue;
+			if (GetSelected()->at(i)->FindParentGO(GetSelected()->at(j)))
+				move = false;
 		}
-	//}
-	//else
-	//{
-	//	for (GameObject* go : *GetSelected())
-	//	{
-	//		ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
-	//		float4x4 transform = float4x4::identity;
-	//		//root_transform->Local_transform = transform;
-	//		if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
-	//		{
-	//			go_t->SetPosition(go_t->GetPosition() + delta_pos);
-	//			//transform = float4x4::FromTRS(delta,go_t->GetQuaternionRotation(),go_t->GetScale());
+		if (!move) continue;
 
-	//			//root_transform->SetPosition(pos);
-	//		}
+		ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
 
-	//		else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
-	//		{
-	//			//transform = float4x4::FromTRS(pos, rot, go_t->GetScale());
-	//			transform.SetRotatePart(rot);
-	//		}
-	//		else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
-	//		{
-	//			transform = float4x4::FromTRS(go_t->GetPosition(), go_t->GetQuaternionRotation(), scale);
-	//			transform.Scale(scale);
-	//		}
-	//	
-	//		go_t->SetGlobalTransform(transform);
-	//			//UpdateSelectionTransforms(go);
-	//	}
-	//}
+		if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+		{
+			float4x4 tr = t->GetGlobalTransform();
+			tr.SetTranslatePart(t->GetGlobalPosition() + delta_pos);
+				
+			t->SetGlobalTransform(tr);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+		{
+			t->SetRotation(t->GetRotation() + delta_rot);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+		{
+			t->Scale(original_scales.at(i).x * delta_scale.x, original_scales.at(i).y * delta_scale.y, original_scales.at(i).z * delta_scale.z);
+		}
+
+	}
+
 
 }
 
@@ -321,19 +289,11 @@ void ModuleSelection::UpdateRoot()
 	root->SetName(n.c_str());
 	float3 pos = float3::zero;
 
-	// This part is redone and hardcoded because root has no parent and crashes when accessing the parent globaltransform
-	/*ComponentTransform* root_t = root->GetComponent<ComponentTransform>();
-	root_t->Global_transform = float4x4::identity;
-	root_t->Local_transform = float4x4::identity;*/
-
 	aabb_selection.SetNegativeInfinity();
 
-	// Temporal fix to guizmo bug
-	//if (size == 1)
-	//{
-	//	pos = GetLastSelected()->GetComponent<ComponentTransform>()->GetGlobalPosition();
-	//}
-	//if (size > 1){
+
+	if (size > 0)
+	{
 		for (GameObject* go : *GetSelected())
 		{
 			ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
@@ -341,44 +301,10 @@ void ModuleSelection::UpdateRoot()
 
 			aabb_selection.Enclose(go->GetAABB());
 		}
-
-		if (size > 0)
-			pos /= size;
-	//}
+		pos /= size;
+	}
 
 	root_transform->SetPosition(pos);
-
-	// Components
-	//if (GetSelected()->size() > 1) // Creates buggsssss
-	//{
-	//	for (Component* component : App->selection->root->GetComponents())
-	//	{
-	//		if (!component->to_delete && component->GetType() == Component::ComponentType::Transform) continue;
-	//		App->selection->root->RemoveComponent(component);
-	//	}
-
-	//	for (Component* component : App->selection->GetLastSelected()->GetComponents())
-	//	{
-	//		bool all_have_same_component = true;
-	//		Component::ComponentType type = component->GetType();
-	//		if (type == Component::ComponentType::Transform) continue;
-
-	//		for (GameObject* obj : *App->selection->GetSelected())
-	//		{
-	//			if (!obj->HasComponent(type))
-	//			{
-	//				all_have_same_component = false;
-	//				break;
-	//			}
-	//		}
-
-	//		if (all_have_same_component == false) continue;
-	//		else
-	//		{
-	//			App->selection->root->AddComponent(type);
-	//		}
-	//	}
-	//}
 }
 
 GameObject* ModuleSelection::GetLastSelected()
@@ -400,6 +326,7 @@ void ModuleSelection::Select(GameObject* gameobject)
 		e.go = gameobject;
 		App->event_manager->PushEvent(e);
 	}
+	ShowCommonComponents();
 }
 
 void ModuleSelection::UnSelect(GameObject* gameobject)
@@ -421,7 +348,10 @@ void ModuleSelection::UnSelect(GameObject* gameobject)
 			it++;
 		}
 	}
+	ShowCommonComponents();
 }
+
+
 
 // Advanced selection -----------------------------------------------
 
@@ -506,6 +436,46 @@ void ModuleSelection::ClearSelection()
 }
 
 // Component Management -----------------------------------------------
+
+// In progress
+void ModuleSelection::ShowCommonComponents()
+{
+	return;
+
+	if (GetSelected()->size() > 1) // Creates buggsssss
+	{
+		for (Component* component : App->selection->root->GetComponents())
+		{
+			if (!component->to_delete && component->GetType() == Component::ComponentType::Transform) continue;
+			App->selection->root->RemoveComponent(component);
+		}
+
+		for (Component* component : App->selection->GetLastSelected()->GetComponents())
+		{
+			bool all_have_same_component = true;
+			Component::ComponentType type = component->GetType();
+			if (type == Component::ComponentType::Transform) continue;
+
+			for (int i = 0; i < App->selection->GetSelected()->size() - 1; i++)
+			{
+				if (!GetSelected()->at(i)->HasComponent(type))
+				{
+					all_have_same_component = false;
+					break;
+				}
+			}
+
+			if (all_have_same_component == false) continue;
+			else
+			{
+				json node = component->Save();
+				root->AddComponent(type);
+				root->GetComponents().back()->Load(node);
+			}
+		}
+	}
+}
+
 bool ModuleSelection::ComponentCanBePasted() const
 {
 	return (component_type != Component::ComponentType::Unknown);
@@ -544,3 +514,142 @@ void ModuleSelection::DeleteComponentToSelected()
 	}
 
 }
+
+// DRAFTS -----------------------------------------------------------------------------
+
+// Useguizmo
+/*void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation, float3 delta_pos, float3 delta_rot, float3 delta_scale)
+{
+	if (center)
+	{
+	if (guizmoOperation == ImGuizmo::OPERATION::SCALE)// && last_scale.x == 1 && last_scale.y == 1 && last_scale.z == 1)
+	{
+		for (int i = 0; i < GetSelected()->size(); i++)
+			original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
+	}
+
+	for (int i = 0; i < GetSelected()->size(); i++)
+	{
+		bool move = true;
+		for (int j = 0; j < GetSelected()->size() && move; j++)
+		{
+			if (i == j) continue;
+			if (GetSelected()->at(i)->FindParentGO(GetSelected()->at(j)))
+				move = false;
+		}
+		if (!move) continue;
+
+		ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
+
+		if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+		{
+			float4x4 tr = t->GetGlobalTransform();
+			tr.SetTranslatePart(t->GetGlobalPosition() + delta_pos);
+
+			t->SetGlobalTransform(tr);
+			//t->SetPosition(t->GetPosition() + delta_pos);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+		{
+			t->SetRotation(t->GetRotation() + delta_rot);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+		{
+			t->Scale(original_scales.at(i).x * delta_scale.x, original_scales.at(i).y * delta_scale.y, original_scales.at(i).z * delta_scale.z);
+		}
+
+	}
+	}
+	else
+	{
+		for (GameObject* go : *GetSelected())
+		{
+			ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
+			float4x4 transform = float4x4::identity;
+			//root_transform->Local_transform = transform;
+			if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+			{
+				go_t->SetPosition(go_t->GetPosition() + delta_pos);
+				//transform = float4x4::FromTRS(delta,go_t->GetQuaternionRotation(),go_t->GetScale());
+
+				//root_transform->SetPosition(pos);
+			}
+
+			else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+			{
+				//transform = float4x4::FromTRS(pos, rot, go_t->GetScale());
+				transform.SetRotatePart(rot);
+			}
+			else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+			{
+				transform = float4x4::FromTRS(go_t->GetPosition(), go_t->GetQuaternionRotation(), scale);
+				transform.Scale(scale);
+			}
+		
+			go_t->SetGlobalTransform(transform);
+				//UpdateSelectionTransforms(go);
+		}
+	}
+
+}
+*/
+
+// UpdateRoot
+/*void ModuleSelection::UpdateRoot()
+{
+	int size = GetSelected()->size();
+	std::string n = "Selection (" + std::to_string(size) + ")";
+	root->SetName(n.c_str());
+	float3 pos = float3::zero;
+
+	aabb_selection.SetNegativeInfinity();
+
+
+	if (size > 0)
+	{
+		for (GameObject* go : *GetSelected())
+		{
+			ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
+			pos += go_t != nullptr ? go_t->GetGlobalPosition() : float3::zero;
+
+			aabb_selection.Enclose(go->GetAABB());
+		}
+		pos /= size;
+	}
+
+
+	root_transform->SetPosition(pos);
+	
+	// Components
+	if (GetSelected()->size() > 1) // Creates buggsssss
+	{
+		for (Component* component : App->selection->root->GetComponents())
+		{
+			if (!component->to_delete && component->GetType() == Component::ComponentType::Transform) continue;
+			App->selection->root->RemoveComponent(component);
+		}
+
+		for (Component* component : App->selection->GetLastSelected()->GetComponents())
+		{
+			bool all_have_same_component = true;
+			Component::ComponentType type = component->GetType();
+			if (type == Component::ComponentType::Transform) continue;
+
+			for (GameObject* obj : *App->selection->GetSelected())
+			{
+				if (!obj->HasComponent(type))
+				{
+					all_have_same_component = false;
+					break;
+				}
+			}
+
+			if (all_have_same_component == false) continue;
+			else
+			{
+				App->selection->root->AddComponent(type);
+			}
+		}
+	}
+	
+}*/

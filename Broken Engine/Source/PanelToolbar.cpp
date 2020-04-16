@@ -40,12 +40,6 @@ bool PanelToolbar::Draw()
 			EngineApp->editorui->panelScene->guizmoOperation = ImGuizmo::OPERATION::SCALE;
 		ImGui::SameLine();
 
-		ImGui::SetCursorPosX(100);
-
-		if (ImGui::Button(EngineApp->selection->center ? "CENTER" : "PIVOT"))
-			EngineApp->selection->center = !EngineApp->selection->center;
-		ImGui::SameLine();
-
 		ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth() / 2 - 100);
 
 		Broken::AppState app_status = EngineApp->GetAppState();

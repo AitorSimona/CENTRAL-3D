@@ -184,9 +184,11 @@ bool PanelHierarchy::Draw()
 	ImGui::End();
 
 	// --- Manage Drag & Drop ---
+
 	if (end_drag)
 	{
 		bool to_be_cleared = false;
+		EngineApp->selection->Select(dragged);
 
 		if (EngineApp->selection->IsSelected(target) == false) 
 		{
@@ -296,7 +298,7 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 			dragged = Go;
 			ImGui::Text(Go->GetName());
 			ImGui::EndDragDropSource();
-			EngineApp->selection->Select(dragged);
+			//EngineApp->selection->Select(dragged);
 		}
 
 		if (ImGui::BeginDragDropTarget())

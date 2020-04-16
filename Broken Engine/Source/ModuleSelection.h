@@ -36,7 +36,6 @@
 		- **NEW** Guizmo transformation to all 
 	- TODO
 		- Scene visual rectangle selection (just fix one matrix)
-		- Bugs when guizmo and parents (maybe is root obj)
 
 */
 
@@ -66,7 +65,6 @@ public:
 
 	inline std::vector<GameObject*>* GetSelected() { return &root->childs; }
 
-	// change update_root to false if you don't want the scene visual rectangle to clear
 	void ClearSelection();
 
 	// Component management
@@ -82,18 +80,18 @@ public:
 
 	std::string component_name = "None";
 
-
 	// Simple selection
 	void Select(GameObject* gameobject);
 
 	void UnSelect(GameObject* gameobject);
 
+	void ShowCommonComponents();
+
 	// Initializer
 	void SceneRectangleSelect(float3 start);
 
 	// Values passed must be of the deltaMatrix of the guizmo
-	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3x3 rot, float3 scale, float3 delta_pos, float3 delta_rot, float3 delta_scale);
-	//void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, ImGuizmo::MODE guizmoMode, float3 pos, float3 rot, float3 scale, float3 delta_pos, float3 delta_rot, float3 delta_scale);
+	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, float3 delta_pos, float3 delta_rot, float3 delta_scale);
 
 private:
 	// Scene rectangle 
@@ -115,9 +113,8 @@ public:
 
 	// Please DO NOT EDIT
 	GameObject* root = nullptr;
+	// Please DO NOT EDIT
 	ComponentTransform* root_transform = nullptr;
-
-	bool center = true; // center or pivot
 
 private:
 
@@ -135,7 +132,7 @@ private:
 
 	// Guizmo 
 	std::vector<float3> original_scales;
-	float3 original_scale = float3::one;
+
 	// Component copy and paste
 	json component_node;
 	Component::ComponentType component_type = Component::ComponentType::Unknown;
