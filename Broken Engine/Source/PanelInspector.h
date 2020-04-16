@@ -17,12 +17,12 @@ public:
 
 	bool Draw();
 
-	void CreateComponentOptionsMenu(std::vector<Broken::Component*>::const_iterator& it);
+
 
 	bool Startup = true;
 
 private:
-	void CreateGameObjectNode(Broken::GameObject* Selected) const;
+	void CreateGameObjectNode(Broken::GameObject& Selected) const;
 };
 
 #endif
