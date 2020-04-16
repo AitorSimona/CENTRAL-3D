@@ -131,7 +131,7 @@ void ComponentCollider::DrawComponent()
 		current_mesh = dragged_mesh;
 
 	// --- Render shape ---
-	if (current_mesh && current_mesh->IsInMemory() && current_mesh->vertices && current_mesh->Indices && App->GetAppState() != AppState::PLAY)
+	if (current_mesh && current_mesh->IsInMemory() && current_mesh->vertices && current_mesh->Indices && draw && App->GetAppState() != AppState::PLAY)
 	{
 		RenderMeshFlags flags = wire;
 		App->renderer3D->DrawMesh(globalMatrix * float4x4::FromQuat(dragged_rot), current_mesh, (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), false), nullptr, flags, Color(125,125,125));
@@ -310,6 +310,8 @@ json ComponentCollider::Save() const
 
 	node["draggedUID"] = std::to_string(dragged_UID);
 
+	node["draw"] = std::to_string(draw);
+
 	if (hasBeenDeactivated)
 		node["hasBeenDeactivated"] = std::to_string(1);
 	else
@@ -373,6 +375,8 @@ void ComponentCollider::Load(json& node)
 
 	std::string draggedUID_ = node["draggedUID"].is_null() ? "0" : node["draggedUID"];
 
+	std::string draw_ = node["draw"].is_null() ? "0" : node["draw"];
+
 
 	centerPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
 	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
@@ -401,6 +405,8 @@ void ComponentCollider::Load(json& node)
 
 	firstCreation = true;
 
+	draw = std::stof(draw_);
+
 	dragged_UID = std::atoi(draggedUID_.c_str());
 
 	toPlay = false;
@@ -421,6 +427,9 @@ void ComponentCollider::CreateInspectorNode()
 
 	if (ImGui::Button("Delete component"))
 		to_delete = true;
+
+	ImGui::SameLine();
+	ImGui::Checkbox("Show", &draw);
 
 	if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0MESH\0\0")) 
 	{

@@ -114,6 +114,7 @@ private:
 	float3 tmpScale = float3::one;
 	bool firstCreation = false;
 	bool toPlay = false;
+	bool draw = false;
 };
 
 
