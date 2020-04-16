@@ -18,8 +18,6 @@
 PanelBuild::PanelBuild(char* name) : Panel(name){
 	buildName = "Broken Engine Game";
 	enabled = false;
-	if (!EngineApp->fs->Exists(BUILDS_FOLDER))
-		EngineApp->fs->CreateDirectoryA(BUILDS_FOLDER);
 }
 
 PanelBuild::~PanelBuild() {
