@@ -10,6 +10,7 @@
 
 #include "ResourceScene.h"
 
+#include "mmgr/mmgr.h"
 
 using namespace Broken;
 
