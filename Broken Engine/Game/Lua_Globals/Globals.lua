@@ -1,11 +1,11 @@
 function NewVector3()
 local vector = {}
 
-vector.type = "Vector3"
+vector.type = "Vec3"
 
-vector.x = 30
-vector.y = 20
-vector.z = 10
+vector.x = 0
+vector.y = 0
+vector.z = 0
 
 return vector
 end

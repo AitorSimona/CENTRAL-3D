@@ -13,6 +13,9 @@
 #include "ScriptData.h"
 #include "ResourceScene.h"
 
+// -- Utilities --
+#include "TranslatorUtilities.h"
+
 using namespace Broken;
 ScriptingTransform::ScriptingTransform() {}
 
@@ -36,56 +39,13 @@ luabridge::LuaRef ScriptingTransform::GetPosition(uint gameobject_UUID, lua_Stat
 	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", gameobject_UUID);
 
-	/*luabridge::LuaRef table = luabridge::newTable(L);
-	table.append(pos.x);
-	table.append(pos.y);
-	table.append(pos.z);*/
-	//luaL_dofile(L,)
-
 	luabridge::LuaRef ScriptGetTable = luabridge::getGlobal(L, "NewVector3");
 	luabridge::LuaRef table(ScriptGetTable());
 
-	double x = pos.x;
-	double y = pos.y;
-	double z = pos.z;
+	CppLuaTranslatorUtilities translator;
+	CppTable vec = translator.GetCppTableFromVec3(pos);
 
-	double test = 20.0f;
-
-	std::string x_str = "x";
-	std::string y_str = "y";
-	std::string z_str = "z";
-	
-
-	std::map<std::string, double> nums_test;
-	nums_test.emplace("test",30.0f);
-
-	nums_test["test"] = 50.0f;
-
-	if(table[x_str.c_str()].isNumber())
-	{
-	table[x_str.c_str()] = pos.x;
-	table[y_str.c_str()] = pos.y;
-	table[z_str.c_str()] = pos.z;
-	}
-
-	//for (luabridge::Iterator iterator(table); !iterator.isNil(); ++iterator) {
-	//	// Declare necessary vars for intialization & get variable name
-	//	std::string str = (*iterator).first.tostring();
-
-	//	if (str.data() == "x")
-	//	{
-	//		(*iterator).second = pos.x;
-	//	}
-	//	else if (str.data() == "y")
-	//	{
-	//		(*iterator).second = pos.y;
-	//	}
-	//	else if (str.data() == "z")
-	//	{
-	//		(*iterator).second = pos.z;
-	//	}
-	//}
-	
+	translator.PassCppTableValuesToLuaTable(vec, table);
 
 	return table;
 }

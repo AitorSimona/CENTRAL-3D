@@ -1,5 +1,6 @@
 #include "TranslatorUtilities.h"
 #include "LuaIncludes.h"
+#include	"MathGeoLib/include/Math/float3.h"
 
 CppLuaTranslatorUtilities::CppLuaTranslatorUtilities()
 {
@@ -14,8 +15,11 @@ void CppLuaTranslatorUtilities::PassCppTableValuesToLuaTable(CppTable cpp_table,
 {
 	if (lua_table["type"].isString())
 	{
-		if (lua_table["type"] != cpp_table.type.c_str())
-			ENGINE_CONSOLE_LOG("Attempted to pass a cpp_table of type %s into a lua table of type ",cpp_table.type, lua_table["type"]);
+		std::string aux_str = lua_table["type"];
+		if (aux_str.compare(cpp_table.type))
+		{
+			ENGINE_CONSOLE_LOG("!Attempted to pass a cpp_table of type %s into a lua table of type %s", cpp_table.type.c_str(), aux_str.c_str());
+		}
 	}
 
 	//Iterate the variables in the cpp table & pass them to the lua table corresponding variable
@@ -39,4 +43,19 @@ void CppLuaTranslatorUtilities::PassCppTableValuesToLuaTable(CppTable cpp_table,
 	{
 		lua_table[(*it_bool).first.c_str()] = (*it_bool).second;
 	}
+}
+
+CppTable CppLuaTranslatorUtilities::GetCppTableFromVec3(float3 vec3)
+{
+	CppTable ret;
+
+	//Since Lua uses the table for everythig it is nice to know what we are dealing with, if the designer didn't mention or place
+	//a type in the table he has prepared in the Globals.lua PLACE/CHOOSE ONE YOURSELF. The type here and at Globals.lua MUST be identical, you will be warned in the engine console if you make a typo
+	ret.type = "Vec3";
+
+	ret.vars_num.emplace("x",vec3.x);
+	ret.vars_num.emplace("y", vec3.y);
+	ret.vars_num.emplace("z", vec3.z);
+
+	return ret;
 }
