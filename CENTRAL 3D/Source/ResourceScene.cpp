@@ -30,6 +30,8 @@ ResourceScene::~ResourceScene()
 
 bool ResourceScene::LoadInMemory()
 {
+	// MYTODO: Clean this
+
 	// --- Load scene game objects ---
 
 	if (NoStaticGameObjects.size() == 0 && App->fs->Exists(resource_file.c_str()))
@@ -104,7 +106,7 @@ bool ResourceScene::LoadInMemory()
 					{
 						component->SetUID(uid);
 						component->GetActive() = active;
-						component->Load(components[it2.key()]);
+						//component->Load(components[it2.key()]);
 					}
 
 				}
@@ -117,6 +119,14 @@ bool ResourceScene::LoadInMemory()
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
+				// --- Call components load ---
+				std::vector<Component*>* go_components = &objects[i]->GetComponents();
+
+				for (std::vector<Component*>::const_iterator it = go_components->begin(); it != go_components->end(); ++it)
+				{
+					(*it)->Load(file[std::to_string(objects[i]->GetUID())]["Components"][std::to_string((*it)->GetUID())]);
+				}
+
 				std::string parent_uid_string = file[std::to_string(objects[i]->GetUID())]["Parent"];
 				int parent_uid = std::stoi(parent_uid_string);
 

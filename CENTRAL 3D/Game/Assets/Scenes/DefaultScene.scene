@@ -1,4 +1,51 @@
 {
+    "1022916306": {
+        "Active": true,
+        "Components": {
+            "1603438212": {
+                "Active": true,
+                "Index": 0,
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "2141942899": {
+                "Active": true,
+                "Index": 2,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/New material 3.mat"
+                    }
+                },
+                "Type": 2
+            },
+            "329335651": {
+                "Active": true,
+                "Index": 1,
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "",
+                        "path": "Library/Meshes/2.mesh"
+                    }
+                },
+                "Type": 1
+            }
+        },
+        "Index": 1,
+        "Name": "GameObject (8)",
+        "Parent": "-1",
+        "PrefabChild": false,
+        "PrefabInstance": false,
+        "Static": false
+    },
     "1151975622": {
         "Active": true,
         "Components": {
