@@ -1,9 +1,7 @@
 #include "ModuleSceneManager.h"
+
+// -- Modules --
 #include "Application.h"
-#include "GameObject.h"
-#include "ComponentTransform.h"
-#include "ComponentMeshRenderer.h"
-#include "ComponentMesh.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 #include "ModuleFileSystem.h"
@@ -12,28 +10,38 @@
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
 #include "ModulePhysics.h"
-#include "ComponentCamera.h"
-#include "ComponentBone.h"
 #include "ModuleUI.h"
+#include "ModuleDetour.h"
 #include "ModuleSelection.h"
 #include "ModuleScripting.h"
+#include "ModuleGui.h"
 
-//#include "ModuleGui.h"
+#include "par/par_shapes.h"
 
+// -- Components --
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ComponentMeshRenderer.h"
+#include "ComponentMesh.h"
+#include "ComponentCamera.h"
+#include "ComponentBone.h"
+
+// -- Resources --
+#include "ResourceMaterial.h"
+#include "ResourceTexture.h"
+#include "ResourceShader.h"
+#include "ResourcePrefab.h"
+#include "ResourceScene.h"
+#include "ResourceMesh.h"
+
+// -- Importers --
 #include "ImporterMaterial.h"
 #include "ImporterScene.h"
 #include "ImporterMeta.h"
 
-#include "par/par_shapes.h"
-
-#include "ResourceMaterial.h"
-#include "ResourceTexture.h"
-#include "ResourceShader.h"
-
 #include "Component.h"
 #include "ComponentButton.h"
 
-#include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
 
@@ -114,28 +122,6 @@ bool ModuleSceneManager::Init(json& file)
 
 bool ModuleSceneManager::Start()
 {
-	// --- Create primitives ---
-	cube = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCube", 2);
-	sphere = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultSphere", 3);
-	capsule = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCapsule", 4);
-	plane = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultPlane", 5);
-	cylinder = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultCylinder", 6);
-	disk = (ResourceMesh*)App->resources->CreateResourceGivenUID(Resource::ResourceType::MESH, "DefaultDisk", 13);
-
-	CreateCube(1, 1, 1, cube);
-	CreateSphere(1.0f, 25, 25, sphere);
-	CreateCapsule(1, 1, capsule);
-	CreatePlane(1, 1, 1, plane);
-	CreateCylinder(1, 1, cylinder);
-	CreateDisk(1, disk);
-
-	cube->LoadToMemory();
-	sphere->LoadToMemory();
-	capsule->LoadToMemory();
-	plane->LoadToMemory();
-	cylinder->LoadToMemory();
-	disk->LoadToMemory();
-
 	// --- Always load default scene ---
 	defaultScene->LoadToMemory();
 
@@ -205,7 +191,7 @@ void ModuleSceneManager::DrawScene()
 	{
 		for (std::unordered_map<uint, GameObject*>::iterator it = currentScene->NoStaticGameObjects.begin(); it != currentScene->NoStaticGameObjects.end(); it++)
 		{
-			if ((*it).second->GetUID() != root->GetUID())
+			if ((*it).second->GetActive() && (*it).second->GetUID() != root->GetUID())
 			{
 				const AABB aabb = (*it).second->GetAABB();
 
@@ -216,7 +202,8 @@ void ModuleSceneManager::DrawScene()
 				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
 					// --- Issue render order ---
-					(*it).second->Draw();
+					if ((*it).second->GetActive())
+						(*it).second->Draw();
 				}
 			}
 		}
@@ -226,8 +213,12 @@ void ModuleSceneManager::DrawScene()
 		for (std::vector<GameObject*>::iterator it = static_go.begin(); it != static_go.end(); it++)
 		{
 			// --- Issue render order ---
-			(*it)->Draw();
+			if ((*it)->GetActive())
+				(*it)->Draw();
 		}
+
+		App->detour->Draw();
+
 	}
 
 }
@@ -489,6 +480,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		// --- Unload current scene ---
 		if (currentScene)
 		{
+			App->physics->DeleteActors();
+
 			// --- Reset octree ---
 			tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
@@ -563,7 +556,8 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 //	}*/
 //}
 
-GameObject* ModuleSceneManager::CreateEmptyGameObject() {
+GameObject* ModuleSceneManager::CreateEmptyGameObject() 
+{
 	// --- Create New Game Object Name ---
 	std::string Name = "GameObject ";
 	Name.append("(");
@@ -576,7 +570,12 @@ GameObject* ModuleSceneManager::CreateEmptyGameObject() {
 	GameObject* new_object = new GameObject(Name.c_str());
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->editingPrefab)
+	{
+		App->gui->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }
@@ -595,7 +594,12 @@ GameObject* ModuleSceneManager::CreateEmptyGameObjectGivenUID(uint UID)
 	GameObject* new_object = new GameObject(Name.data(),UID);
 	currentScene->NoStaticGameObjects[new_object->GetUID()] = new_object;
 
-	App->scene_manager->GetRootGO()->AddChildGO(new_object);
+	if (App->gui->editingPrefab)
+	{
+		App->gui->prefab->parentgo->AddChildGO(new_object);
+	}
+	else
+		App->scene_manager->GetRootGO()->AddChildGO(new_object);
 
 	return new_object;
 }
@@ -627,12 +631,36 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 //	return new_object;
 //}
 
-void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const {
-	// --- Obtain data from par shapes mesh and load it into mesh ---
+void ModuleSceneManager::CalculateTangentAndBitangent(ResourceMesh* mesh, uint index, float3& tangent, float3& bitangent) const
+{
+	int i = index;
+	float3 v0 = { mesh->vertices[i].position[0], mesh->vertices[i].position[1], mesh->vertices[i].position[2] };
+	float3 v1 = { mesh->vertices[i + 1].position[0], mesh->vertices[i + 1].position[1], mesh->vertices[i + 1].position[2] };
+	float3 v2 = { mesh->vertices[i + 2].position[0], mesh->vertices[i + 2].position[1], mesh->vertices[i + 2].position[2] };
 
+	float2 uv0 = { mesh->vertices[i].texCoord[0], mesh->vertices[i].texCoord[1] };
+	float2 uv1 = { mesh->vertices[i + 1].texCoord[0], mesh->vertices[i + 1].texCoord[1] };
+	float2 uv2 = { mesh->vertices[i + 2].texCoord[0], mesh->vertices[i + 2].texCoord[1] };
+
+	float3 dPos1 = v1 - v0;
+	float3 dPos2 = v2 - v0;
+	float2 dUV1 = uv1 - uv0;
+	float2 dUV2 = uv2 - uv0;
+
+	float r = 1.0f / (dUV1.x * dUV2.y - dUV1.y * dUV2.x);
+
+	if (r == inf)
+		r = 0.0f;
+
+	tangent = (dPos1 * dUV2.y - dPos2 * dUV1.y) * r;
+	bitangent = (dPos2 * dUV1.x - dPos1 * dUV2.x) * r;
+}
+
+void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh, bool calculateTangents) const
+{
+	// --- Obtain data from par shapes mesh and load it into mesh ---
 	new_mesh->IndicesSize = mesh->ntriangles * 3;
 	new_mesh->VerticesSize = mesh->npoints;
-
 	new_mesh->vertices = new Vertex[new_mesh->VerticesSize];
 
 	for (uint i = 0; i < new_mesh->VerticesSize; ++i) {
@@ -646,18 +674,32 @@ void ModuleSceneManager::LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_
 		new_mesh->vertices[i].normal[1] = mesh->normals[(3 * i) + 1];
 		new_mesh->vertices[i].normal[2] = mesh->normals[(3 * i) + 2];
 
-		// --- Colors ---
-
 		// --- Texture Coords ---
 		new_mesh->vertices[i].texCoord[0] = mesh->tcoords[2 * i];
 		new_mesh->vertices[i].texCoord[1] = mesh->tcoords[(2 * i) + 1];
 	}
 
+	if (calculateTangents)
+	{
+		for (uint i = 0; i < new_mesh->VerticesSize - 2; i += 3)
+		{
+			// --- Tangents & Bitangents Calculations ---	
+			float3 tangent, bitangent;
+			CalculateTangentAndBitangent(new_mesh, i, tangent, bitangent);
+
+			new_mesh->vertices[i].tangent[0] = new_mesh->vertices[i + 1].tangent[0] = new_mesh->vertices[i + 2].tangent[0] = tangent.x;
+			new_mesh->vertices[i].tangent[1] = new_mesh->vertices[i + 1].tangent[1] = new_mesh->vertices[i + 2].tangent[1] = tangent.y;
+			new_mesh->vertices[i].tangent[2] = new_mesh->vertices[i + 1].tangent[2] = new_mesh->vertices[i + 2].tangent[2] = tangent.z;
+			new_mesh->vertices[i].biTangent[0] = new_mesh->vertices[i + 1].biTangent[0] = new_mesh->vertices[i + 2].biTangent[0] = bitangent.x;
+			new_mesh->vertices[i].biTangent[1] = new_mesh->vertices[i + 1].biTangent[1] = new_mesh->vertices[i + 2].biTangent[1] = bitangent.y;
+			new_mesh->vertices[i].biTangent[2] = new_mesh->vertices[i + 1].biTangent[2] = new_mesh->vertices[i + 2].biTangent[2] = bitangent.z;
+		}
+	}
+
 	// --- Indices ---
 	new_mesh->Indices = new uint[new_mesh->IndicesSize];
-	for (uint i = 0; i < new_mesh->IndicesSize; ++i) {
+	for (uint i = 0; i < new_mesh->IndicesSize; ++i)
 		new_mesh->Indices[i] = mesh->triangles[i];
-	}
 
 	par_shapes_free_mesh(mesh);
 }
@@ -698,7 +740,7 @@ void ModuleSceneManager::CreateCube(float sizeX, float sizeY, float sizeZ, Resou
 
 	if (mesh) {
 		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
-		LoadParMesh(mesh, rmesh);
+		LoadParMesh(mesh, rmesh, true);
 	}
 }
 
@@ -706,9 +748,10 @@ void ModuleSceneManager::CreateSphere(float Radius, int slices, int slacks, Reso
 	// --- Create par shapes sphere ---
 	par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(slices, slacks);
 
-	if (mesh) {
+	if (mesh)
+	{
 		par_shapes_scale(mesh, Radius / 2, Radius / 2, Radius / 2);
-		LoadParMesh(mesh, rmesh);
+		LoadParMesh(mesh, rmesh, false);
 	}
 }
 
@@ -742,7 +785,7 @@ void ModuleSceneManager::CreateCylinder(float radius, float height, ResourceMesh
 	if (ParshapeMesh)
 	{
 		par_shapes_scale(ParshapeMesh, radius/2, height/2, radius/2);
-		LoadParMesh(ParshapeMesh, rmesh);
+		LoadParMesh(ParshapeMesh, rmesh, false);
 	}
 }
 
@@ -754,7 +797,7 @@ void ModuleSceneManager::CreatePlane(float sizeX, float sizeY, float sizeZ, Reso
 	if (mesh)
 	{
 		par_shapes_scale(mesh, sizeX, sizeY, sizeZ);
-		LoadParMesh(mesh, rmesh);
+		LoadParMesh(mesh, rmesh, true);
 	}
 }
 
@@ -788,7 +831,7 @@ void ModuleSceneManager::CreateDisk(float radius, ResourceMesh* rmesh)
 	if (ParshapeMesh)
 	{
 		par_shapes_scale(ParshapeMesh, radius / 2, 0.5, 0);
-		LoadParMesh(ParshapeMesh, rmesh);
+		LoadParMesh(ParshapeMesh, rmesh, false);
 	}
 }
 
@@ -821,7 +864,7 @@ void ModuleSceneManager::CreateCapsule(float radius, float height, ResourceMesh*
 
 	if (top_sphere)
 	{
-		LoadParMesh(top_sphere, rmesh);
+		LoadParMesh(top_sphere, rmesh, false);
 	}
 }
 
@@ -877,6 +920,16 @@ void ModuleSceneManager::DestroyGameObject(GameObject* go)
 	delete go;
 	go = nullptr;
 	this->go_count--;
+}
+
+void ModuleSceneManager::GatherGameObjects(GameObject* go, std::vector<GameObject*>& gos_vec)
+{
+	gos_vec.push_back(go);
+
+	for (uint i = 0; i < go->childs.size(); ++i)
+	{
+		GatherGameObjects(go->childs[i], gos_vec);
+	}
 }
 
 void ModuleSceneManager::SendToDelete(GameObject* go)

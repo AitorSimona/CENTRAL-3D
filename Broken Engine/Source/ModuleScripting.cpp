@@ -18,10 +18,12 @@
 #include "ScriptingInputs.h"
 #include "ScriptingAnimations.h"
 #include "ScriptingAudio.h"
+#include "ScriptingCamera.h"
 #include "ScriptingGameobject.h"
 #include "ScriptingParticles.h"
 #include "ScriptingInterface.h"
 #include "ScriptingScenes.h"
+#include "ScriptingNavigation.h"
 #include "ScriptVar.h"
 #include <iterator>
 
@@ -45,7 +47,7 @@ ModuleScripting::ModuleScripting(bool start_enabled) : Module(start_enabled) {
 ModuleScripting::~ModuleScripting() {}
 
 bool ModuleScripting::DoHotReloading() {
-	bool ret = true;
+ 	bool ret = true;
 
 	if (App->GetAppState() == AppState::EDITOR) // 	Ask Aitor, only return true when no gameplay is happening	App->scene_intro->playing == false
 	{
@@ -151,6 +153,10 @@ bool ModuleScripting::JustCompile(std::string absolute_path) {
 		.addConstructor<void(*) (void)>()
 		.endClass()
 
+		.beginClass <ScriptingNavigation>("Navigation")
+		.addConstructor<void(*) (void)>()
+		.endClass()
+
 		.beginClass <ScriptingInputs>("Inputs")
 		.addConstructor<void(*) (void)>()
 		.endClass()
@@ -189,10 +195,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("GameTime", &ScriptingSystem::GameTime)
 		.addFunction("PauseGame", &ScriptingSystem::PauseGame)
 		.addFunction("ResumeGame", &ScriptingSystem::ResumeGame)
+		.addFunction("GetDebuggingPath", &ScriptingSystem::GetDebuggingPath)
 
 		// Maths
 		.addFunction("CompareFloats", &ScriptingSystem::FloatNumsAreEqual)
 		.addFunction("CompareDoubles", &ScriptingSystem::DoubleNumsAreEqual)
+		.addFunction("RandomNumber", &ScriptingSystem::RandomNumber)
+		.addFunction("RandomNumberInRange", &ScriptingSystem::RandomNumberInRange)
+		.addFunction("RandomNumberList", &ScriptingSystem::RandomNumberList)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -203,22 +213,14 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		// Position
 		.addFunction("GetPosition", &ScriptingTransform::GetPosition)
-		.addFunction("GetPositionX", &ScriptingTransform::GetPositionX)
-		.addFunction("GetPositionY", &ScriptingTransform::GetPositionY)
-		.addFunction("GetPositionZ", &ScriptingTransform::GetPositionZ)
-
 		.addFunction("Translate", &ScriptingTransform::Translate)
 		.addFunction("SetPosition", &ScriptingTransform::SetPosition)
 
 		// Rotation
+		.addFunction("GetRotation", &ScriptingTransform::GetRotation)
 		.addFunction("RotateObject", &ScriptingTransform::RotateObject)
 		.addFunction("SetObjectRotation", &ScriptingTransform::SetObjectRotation)
 		.addFunction("LookAt", &ScriptingTransform::LookAt)
-
-		.addFunction("GetRotation", &ScriptingTransform::GetRotation)
-		.addFunction("GetRotationX", &ScriptingTransform::GetRotationX)
-		.addFunction("GetRotationY", &ScriptingTransform::GetRotationY)
-		.addFunction("GetRotationZ", &ScriptingTransform::GetRotationZ)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -236,20 +238,19 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetMyLayer", &ScriptingGameobject::GetMyLayer)
 		.addFunction("GetLayerByID", &ScriptingGameobject::GetLayerByID)
-		.addFunction("GetGameObjectPos", &ScriptingGameobject::GetGameObjectPos)
-		.addFunction("GetGameObjectPosX", &ScriptingGameobject::GetGameObjectPosX)
-		.addFunction("GetGameObjectPosY", &ScriptingGameobject::GetGameObjectPosY)
-		.addFunction("GetGameObjectPosZ", &ScriptingGameobject::GetGameObjectPosZ)
-		.addFunction("TranslateGameObject", &ScriptingGameobject::TranslateGameObject)
-
 		.addFunction("GetComponent", &ScriptingGameobject::GetComponentFromGO)
-		.addFunction("GetPositionInFrustum", &ScriptingGameobject::GetPosInFrustum)
-		.addFunction("GetFrustumPlanesIntersection", &ScriptingGameobject::GetFrustumPlanesIntersection) //For the referenced LuaState passed: Top (x), Bottom (y), Left (z), Right (w) will be 1 if in positive plane side (inside frustum), 0 (outside frustum) if not
-		.addFunction("GetTopFrustumIntersection", &ScriptingGameobject::GetTopFrustumIntersection)
-		.addFunction("GetBottomFrustumIntersection", &ScriptingGameobject::GetBottomFrustumIntersection)
-		.addFunction("GetLeftFrustumIntersection", &ScriptingGameobject::GetLeftFrustumIntersection)
-		.addFunction("GetRightFrustumIntersection", &ScriptingGameobject::GetRightFrustumIntersection)
 		.addFunction("GetScript", &ScriptingGameobject::GetScript)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// CAMERA
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingCamera>("Camera")
+		.addConstructor<void(*) (void)>()
+		.addFunction("GetPositionInFrustum", &ScriptingCamera::GetPosInFrustum)
+		.addFunction("GetFrustumPlanesIntersection", &ScriptingCamera::GetFrustumPlanesIntersection)
+		.addFunction("WorldToScreen", &ScriptingCamera::WorldToScreen)
+		.addFunction("ScreenToWorld", &ScriptingCamera::ScreenToWorld)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -263,16 +264,11 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("GetAngularVelocity", &ScriptingPhysics::GetAngularVelocity)
 		.addFunction("SetAngularVelocity", &ScriptingPhysics::SetAngularVelocity)
-		.addFunction("SetAngularVelocity_GO", &ScriptingPhysics::SetAngularVelocityGO)
 		.addFunction("GetLinearVelocity", &ScriptingPhysics::GetLinearVelocity)
 		.addFunction("SetLinearVelocity", &ScriptingPhysics::SetLinearVelocity)
-		.addFunction("SetLinearVelocity_GO", &ScriptingPhysics::SetLinearVelocityGO)
 
 		.addFunction("AddTorque", &ScriptingPhysics::AddTorque)
-		.addFunction("AddTorque_GO", &ScriptingPhysics::AddTorqueGO)
 		.addFunction("AddForce", &ScriptingPhysics::AddForce)
-		.addFunction("AddForce_GO", &ScriptingPhysics::AddForceGO)
-
 		.addFunction("UseGravity", &ScriptingPhysics::UseGravity)
 		.addFunction("SetKinematic", &ScriptingPhysics::SetKinematic)
 
@@ -285,20 +281,13 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("OnCollisionExit", &ScriptingPhysics::OnCollisionExit)
 
 		.addFunction("Move", &ScriptingPhysics::Move)
-		.addFunction("MoveGameObject", &ScriptingPhysics::MoveGameObject)
 		.addFunction("GetCharacterPosition", &ScriptingPhysics::GetCharacterPosition)
-		.addFunction("GetCharacterPositionX", &ScriptingPhysics::GetCharacterPositionX)
-		.addFunction("GetCharacterPositionY", &ScriptingPhysics::GetCharacterPositionY)
-		.addFunction("GetCharacterPositionZ", &ScriptingPhysics::GetCharacterPositionZ)
 		.addFunction("SetCharacterPosition", &ScriptingPhysics::SetCharacterPosition)
 		.addFunction("GetCharacterUpDirection", &ScriptingPhysics::GetCharacterUpDirection)
-		.addFunction("GetCharacterUpDirectionX", &ScriptingPhysics::GetCharacterUpDirectionX)
-		.addFunction("GetCharacterUpDirectionY", &ScriptingPhysics::GetCharacterUpDirectionY)
-		.addFunction("GetCharacterUpDirectionZ", &ScriptingPhysics::GetCharacterUpDirectionZ)
 		.addFunction("SetCharacterUpDirection", &ScriptingPhysics::SetCharacterUpDirection)
 
 		.addFunction("OverlapSphere", &ScriptingPhysics::OverlapSphere)
-
+		.addFunction("Raycast", &ScriptingPhysics::Raycast)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -309,13 +298,9 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("ActivateParticlesEmission", &ScriptingParticles::ActivateParticleEmitter)
 		.addFunction("DeactivateParticlesEmission", &ScriptingParticles::DeactivateParticleEmitter)
-		.addFunction("ActivateParticlesEmission_GO", &ScriptingParticles::ActivateParticleEmitterGO)
-		.addFunction("DeactivateParticlesEmission_GO", &ScriptingParticles::DeactivateParticleEmitterGO)
-
+		
 		.addFunction("PlayParticleEmitter", &ScriptingParticles::PlayParticleEmitter)
 		.addFunction("StopParticleEmitter", &ScriptingParticles::StopParticleEmitter)
-		.addFunction("PlayParticleEmitter_GO", &ScriptingParticles::PlayParticleEmitterGO)
-		.addFunction("StopParticleEmitter_GO", &ScriptingParticles::StopParticleEmitterGO)
 		.addFunction("SetEmissionRate", &ScriptingParticles::SetEmissionRateFromScript)
 		.addFunction("SetParticlesPerCreation", &ScriptingParticles::SetParticlesPerCreationFromScript)
 
@@ -380,6 +365,20 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 
 		.addFunction("LoadScene", &ScriptingScenes::LoadSceneFromScript)
 		.addFunction("QuitGame", &ScriptingScenes::QuitGame)
+		.addFunction("Instantiate", &ScriptingScenes::Instantiate)
+		.endClass()
+
+		// ----------------------------------------------------------------------------------
+		// NAVIGATION
+		// ----------------------------------------------------------------------------------
+		.beginClass <ScriptingNavigation>("Navigation")
+		.addConstructor<void(*) (void)>()
+
+		.addFunction("AllAreas", &ScriptingNavigation::AllAreas)
+		.addFunction("GetAreaFromName", &ScriptingNavigation::GetAreaFromName)
+		.addFunction("GetAreaCost", &ScriptingNavigation::GetAreaCost)
+		.addFunction("SetAreaCost", &ScriptingNavigation::SetAreaCost)
+		.addFunction("CalculatePath", &ScriptingNavigation::CalculatePath)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------
@@ -456,6 +455,11 @@ void ModuleScripting::SendScriptToModule(ComponentScript* script_component) {
 // Fill the ScriptVars of the component associated with this script
 void ModuleScripting::FillScriptInstanceComponentVars(ScriptInstance* script) {
 
+	if (script == nullptr)
+	{
+		ENGINE_CONSOLE_LOG("|[Error] The script sent to FillScriptInstanceComponentVars is NULLPTR, operation will be aborted");
+		return;
+	}
 	// Reset the type of all the variables
 	for (int i = 0; i < script->my_component->script_variables.size(); ++i)
 		script->my_component->script_variables[i].type = VarType::NONE;
@@ -566,6 +570,9 @@ void ModuleScripting::FillScriptInstanceComponentFuncs(ScriptInstance* script)
 void ModuleScripting::DeleteScriptInstanceWithParentComponent(ComponentScript* script_component) {
 	for (int i = 0; i < class_instances.size(); ++i) {
 		if (class_instances[i] != nullptr && class_instances[i]->my_component == script_component) {
+			if (class_instances[i] == current_script)
+				current_script = nullptr;
+
 			delete class_instances[i];
 			class_instances.erase(class_instances.begin() + i);
 		}
@@ -617,10 +624,9 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 		{
 			for (int i = 0; i < script_component->script_functions.size(); ++i)
 			{
-				if (script_component->script_functions.at(i).name == aux_str)
+				if (script_component->script_functions[i].name == aux_str.c_str())
 				{
 					script->my_table_class[aux_str.c_str()](); // call to Lua to execute the given function
-					ENGINE_CONSOLE_LOG("Callback of function %s", aux_str.c_str());
 				}
 			}
 		}
@@ -628,6 +634,63 @@ void ModuleScripting::CallbackScriptFunction(ComponentScript* script_component, 
 	else
 	{
 		ENGINE_CONSOLE_LOG("Can't callback %s since component has a null script instance", aux_str.c_str());
+	}
+}
+
+void ModuleScripting::CompileDebugging()
+{
+	std::string abs_path = App->fs->GetBasePath();
+	App->fs->NormalizePath(abs_path);
+
+	std::size_t d_pos = 0;
+	d_pos = abs_path.find("Debug");
+	std::size_t r_pos = 0;
+	r_pos = abs_path.find("Release");
+
+	if (d_pos != 4294967295)  // If we are in DEBUG
+	{
+		abs_path = abs_path.substr(0, d_pos);
+		abs_path += "Game/";
+	}
+	else if (r_pos != 4294967295) // If we are in RELEASE
+	{
+		abs_path = abs_path.substr(0, r_pos);
+		abs_path += "Game/";
+	}
+
+	abs_path += "Lua_Debug";
+
+	debug_path = abs_path;
+
+	luabridge::getGlobalNamespace(L)
+		.beginNamespace("Scripting")
+		.beginClass <ScriptingSystem>("System")
+		.addConstructor<void(*) (void)>()
+		.addFunction("GetDebuggingPath", &ScriptingSystem::GetDebuggingPath)
+		.endClass()
+		.endNamespace();
+
+	std::string test = debug_path + "/IDE_Debugger.lua";
+	bool compiled = luaL_dofile(L, test.c_str());
+
+	if (compiled == LUA_OK) {
+		//We don't need to do nothing here, LOG something at most
+		ENGINE_CONSOLE_LOG("Compiled %s successfully!", test.c_str());
+	}
+	else {
+		std::string error = lua_tostring(L, -1);
+		ENGINE_CONSOLE_LOG("%s", error.data());
+	}
+
+	//debug_instance->my_table_class = luabridge::getGlobal(L, "GetTableDebug");
+}
+
+void ModuleScripting::StopDebugging()
+{
+	if (debug_instance != nullptr)
+	{
+			std::string path = debug_path + "/Debugger_Close.lua";
+			luaL_dofile(L, path.c_str());
 	}
 }
 
@@ -650,11 +713,12 @@ void ModuleScripting::CallbackScriptFunctionParam(ComponentScript* script_compon
 	}
 }
 
-
 bool ModuleScripting::Init(json& file) {
 	// Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);
+
+	debug_instance = new ScriptInstance;
 
 	return true;
 }
@@ -665,6 +729,12 @@ bool ModuleScripting::Start() {
 
 bool ModuleScripting::CleanUp() {
 	CleanUpInstances();
+
+	if (debug_instance != nullptr)
+	{
+		delete debug_instance;
+		debug_instance = nullptr;
+	}
 
 	return true;
 }
@@ -684,7 +754,6 @@ update_status ModuleScripting::Update(float realDT) {
 			(*it)->started = false;
 		}
 	}
-
 	// Carles to Didac
 	// 1. You can use the "IsWhatever" functions of App to check the current game state.
 	// 2. "App->IsGameFirstFrame()" marks the first frame a GameUpdate() will happen, if you want to do anything right before the game plays in preparation
@@ -699,6 +768,7 @@ update_status ModuleScripting::Update(float realDT) {
 
 update_status ModuleScripting::GameUpdate(float gameDT)
 {
+
 	if (cannot_start == false && App->GetAppState() == AppState::PLAY)
 	{
 		const uint origSize = class_instances.size();	// This avoids messing the iteration with newly Instantiated scripts
@@ -728,8 +798,8 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 
 				if (current_script->awoken == false)
 				{
-					current_script->my_table_class["Awake"]();	// Awake is done first, regardless of the script being active or not
 					current_script->awoken = true;
+					current_script->my_table_class["Awake"]();	// Awake is done first, regardless of the script being active or not
 				}
 				else if (current_script->my_component->GetActive()) //Check if the script instance and it's object holding it are active
 				{
@@ -739,13 +809,15 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 					{
 						if (current_script->started == false)
 						{
-							current_script->my_table_class["Start"]();	// Start is done only once for the first time the script is active
 							current_script->started = true;
+							current_script->my_table_class["Start"]();	// Start is done only once for the first time the script is active
 						}
 						else
 						{
 							current_script->my_table_class["Update"]();	// Update is done on every iteration of the script as long as it remains active
-							FillScriptInstanceComponentVars(current_script); // Show variables at runtime
+							
+							if(current_script != nullptr)
+								FillScriptInstanceComponentVars(current_script); // Show variables at runtime
 						}
 					}
 				}
@@ -767,6 +839,9 @@ void ModuleScripting::CleanUpInstances() {
 		if ((*it) != nullptr)
 			delete (*it);
 	}
+
+	current_script = nullptr;
+	//debug_instance->my_table_class = 0;
 
 	class_instances.clear();
 }

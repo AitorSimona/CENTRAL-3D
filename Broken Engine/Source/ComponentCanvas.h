@@ -1,5 +1,5 @@
-#ifndef __CANVAS_H__
-#define __CANVAS_H__
+#ifndef __COMPONENTCANVAS_H__
+#define __COMPONENTCANVAS_H__
 #pragma once
 
 #include "Component.h"
@@ -28,6 +28,7 @@ public:
 
 public:
 	bool visible = true;
+	int priority = 0;
 
 private:
 	std::vector<Component*> elements;

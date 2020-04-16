@@ -27,7 +27,7 @@ public:
 private:
 	bool isEditorCam = false;
 	WwiseGameObject* wwiseGO = nullptr;
-	AkGameObjectID id = 0;
+	unsigned __int64 id = 0;
 };
 
 BE_END_NAMESPACE

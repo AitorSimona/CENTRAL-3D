@@ -1,16 +1,20 @@
 #include "ComponentLight.h"
 
+// -- Modules --
 #include "Application.h"
-
-#include "ComponentTransform.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleSceneManager.h"
+
+// -- Resources --
 #include "ResourceShader.h"
-#include "ComponentCamera.h"
 #include "ResourceMesh.h"
 
-#include "Imgui/imgui.h"
+// -- Components --
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ComponentCamera.h"
 
+#include "Imgui/imgui.h"
 #include "mmgr/mmgr.h"
 
 using namespace Broken;
@@ -159,21 +163,22 @@ void ComponentLight::Draw()
 		return;
 
 	// --- Set Uniforms ---
-	glUseProgram(App->renderer3D->defaultShader->ID);
+	uint shaderID = App->renderer3D->defaultShader->ID;
+	glUseProgram(shaderID);
 
-	int TextureLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Texture");
-	glUniform1i(TextureLocation, -1);
-	GLint vertexColorLocation = glGetUniformLocation(App->renderer3D->defaultShader->ID, "Color");
+	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
+	glUniform1i(TextureLocation, 0);
+	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
 	glUniform3f(vertexColorLocation, m_Color.x, m_Color.y, m_Color.z);
 
 	ComponentTransform* trans = GetContainerGameObject()->GetComponent<ComponentTransform>();
 	if (trans)
 	{
-		GLint modelLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "model_matrix");
+		GLint modelLoc = glGetUniformLocation(shaderID, "u_Model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, trans->GetGlobalTransform().Transposed().ptr());
 	}
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
 	float nearp = App->renderer3D->active_camera->GetNearPlane();
@@ -186,7 +191,7 @@ void ComponentLight::Draw()
 		0.0f, 0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, nearp, 0.0f);
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->defaultShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	glUniform1i(TextureLocation, 0); //reset texture location

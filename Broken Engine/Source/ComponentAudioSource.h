@@ -2,8 +2,6 @@
 #define __COMPONENTAUDIOSOURCE__H__
 
 #include "Component.h"
-#include "Wwise/AK/SoundEngine/Common/AkTypes.h"
-
 
 BE_BEGIN_NAMESPACE
 class WwiseGameObject;
@@ -38,7 +36,7 @@ public:
 public:
 
 	WwiseGameObject* wwiseGO = nullptr;
-	AkGameObjectID id = 0;
+	unsigned __int64 id = 0;
 	bool isPaused = false;
 	bool isPlaying = false;
 };

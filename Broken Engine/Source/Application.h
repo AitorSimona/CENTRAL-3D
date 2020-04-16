@@ -47,6 +47,7 @@ class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
 class ModuleSelection;
+class ModuleDetour;
 
 class BROKEN_API Application {
 public:
@@ -69,7 +70,6 @@ public:
 	void ClearLogsFromConsole();
 
 public:
-
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleRenderer3D* renderer3D = nullptr;
@@ -89,6 +89,7 @@ public:
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
 	ModuleSelection* selection = nullptr;
+	ModuleDetour* detour = nullptr;
 
 
 	bool isGame = false;

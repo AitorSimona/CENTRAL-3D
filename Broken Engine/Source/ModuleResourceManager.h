@@ -23,6 +23,8 @@ class ResourceTexture;
 class ResourceMeta;
 class ResourceScript;
 class ResourceFont;
+class ResourceNavMesh;
+class ResourcePrefab;
 
 class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterTexture;
@@ -37,12 +39,15 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterFolder;
 	friend class ImporterScript;
 	friend class ImporterFont;
+	friend class ImporterNavMesh;
 	friend class ImporterShader;
+	friend class ImporterPrefab;
 	friend class PanelResources;
 	friend class PanelBuild;
 	friend class ComponentMeshRenderer;
 	friend class ResourceMaterial;
 	friend class ModuleSceneManager;
+	friend class ModuleRenderer3D;
 	friend class ScriptingScenes;
 public:
 
@@ -65,6 +70,7 @@ public:
 	Resource* ImportFolder(Importer::ImportData& IData);
 	Resource* ImportScene(Importer::ImportData& IData);
 	Resource* ImportModel(Importer::ImportData& IData);
+	Resource* ImportPrefab(Importer::ImportData& IData);
 	Resource* ImportMaterial(Importer::ImportData& IData);
 	Resource* ImportMesh(Importer::ImportData& IData);
 	Resource* ImportBone(Importer::ImportData& IData);
@@ -75,6 +81,7 @@ public:
 	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
 	Resource* ImportFont(Importer::ImportData& IData);
+	Resource* ImportNavMesh(Importer::ImportData& IData);
 
 	void HandleFsChanges();
 	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret);
@@ -100,7 +107,6 @@ public:
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	bool IsFileImported(const char* file);
 	std::shared_ptr<std::string> GetNewUniqueName(Resource::ResourceType type);
-
 	void ONResourceDestroyed(Resource* resource);
 
 	//MYTODO For editor panel to set currentDirectory
@@ -132,6 +138,7 @@ private:
 	std::map<uint, ResourceFolder*> folders;
 	std::map<uint, ResourceScene*> scenes;
 	std::map<uint, ResourceModel*> models;
+	std::map<uint, ResourcePrefab*> prefabs;
 	std::map<uint, ResourceMaterial*> materials;
 	std::map<uint, ResourceShader*> shaders;
 	std::map<uint, ResourceMesh*> meshes;
@@ -142,6 +149,7 @@ private:
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 	std::map<uint, ResourceFont*> fonts;
+	std::map<uint, ResourceNavMesh*> navmeshes;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;

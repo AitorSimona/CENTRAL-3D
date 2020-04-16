@@ -1,23 +1,27 @@
 #include "ScriptingAudio.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleScripting.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleAudio.h"
 
+// -- Components --
+#include "GameObject.h"
 #include "ComponentParticleEmitter.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentCollider.h"
 #include "ComponentAnimation.h"
-
-#include "ModuleRenderer3D.h"
 #include "ComponentCamera.h"
+#include "ComponentAudioSource.h"
+
 
 #include "../Game/Assets/Sounds/Wwise_IDs.h"
-#include "ComponentAudioSource.h"
-#include "ModuleAudio.h"
-
 #include "ScriptData.h"
 
 using namespace Broken;
+
 ScriptingAudio::ScriptingAudio() {}
 
 ScriptingAudio::~ScriptingAudio() {}

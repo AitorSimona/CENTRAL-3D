@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 #include "Resource.h"
-#include "ModulePhysics.h"
 
 BE_BEGIN_NAMESPACE
 
@@ -27,7 +26,7 @@ public:
 	void Draw();
 
 	// --- Getters ---
-	uint			GetUID();
+	uint&			GetUID();
 	void			SetUID(uint uid);
 	const char*		GetName() const;
 	const AABB&	    GetAABB();
@@ -67,8 +66,12 @@ public:
 	//void OnUpdateTransform();
 	void TransformGlobal(GameObject* GO);
 	void RemoveChildGO(GameObject* GO);
+	// If there is a GO at index, it will erase it and replace it
 	void AddChildGO(GameObject* GO, int index = -1);
+	// This will not erase the GO at index, just displace it and everything after it
+	void InsertChildGO(GameObject* GO, int index);
 	bool FindChildGO(GameObject* GO);
+	bool FindParentGO(GameObject* GO);
 	void GetAllChilds(std::vector<GameObject*>& collector);
 	GameObject* GetAnimGO(GameObject* GO);
 
@@ -81,8 +84,12 @@ public:
 	std::vector<GameObject*> childs;
 	std::vector<GameObject*> collisions;
 	bool Static = false;
+	bool navigationStatic = false;
+	uint navigationArea = 0; 
 	ResourceModel* model = nullptr;
-	LayerMask layer;
+	int layer;
+	bool is_prefab_child = false;
+	bool is_prefab_instance = false;
 
 	// to avoid including ImGui header, it's hardcoded the ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth flags (128 and 2048 respectively)
 	int node_flags = 2176;

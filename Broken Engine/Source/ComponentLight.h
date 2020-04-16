@@ -1,9 +1,9 @@
 #ifndef __COMPONENT_LIGHT_H__
 #define __COMPONENT_LIGHT_H__
 
-#include "GameObject.h"
 #include "Component.h"
 #include "Color.h"
+#include "Math.h"
 
 BE_BEGIN_NAMESPACE
 

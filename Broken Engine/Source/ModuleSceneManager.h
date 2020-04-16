@@ -48,6 +48,7 @@ public:
 
 
 	void DestroyGameObject(GameObject* go);
+	void GatherGameObjects(GameObject* go, std::vector<GameObject*>& gos_vec);
 
 	// --- Getters ---
 
@@ -100,7 +101,10 @@ private:
 	GameObject* CreateRootGameObject();
 
 	// --- Primitives ---
-	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh) const;
+	//For Broken Engine's sake, please put the bool to false if not cube or plane
+	void LoadParMesh(par_shapes_mesh_s* mesh, ResourceMesh* new_mesh, bool calculateTangents) const;
+	void CalculateTangentAndBitangent(ResourceMesh* mesh, uint index, float3& tangent, float3& bitangent) const;
+
 public:
 	//Components helper, check AddComponent function
 	std::vector<int> repeatable_components;
@@ -113,6 +117,11 @@ public:
 	uint treeUpdateTimer = 0;
 	ResourceScene* currentScene = nullptr;
 
+	// --- Do not modify, just use ---
+	ResourceMesh* cube = nullptr;
+	ResourceMesh* capsule = nullptr;
+	ResourceMesh* cylinder = nullptr;
+	ResourceMesh* disk = nullptr;
 	ResourceMesh* plane = nullptr;
 	ResourceMesh* sphere = nullptr;
 
@@ -124,11 +133,7 @@ private:
 	// Game objects to be deleted
 	std::vector<GameObject*> go_to_delete;
 
-	// --- Do not modify, just use ---
-	ResourceMesh* cube = nullptr;
-	ResourceMesh* capsule = nullptr;
-	ResourceMesh* cylinder = nullptr;
-	ResourceMesh* disk = nullptr;
+
 
 	uint go_count = 0;
 	GameObject* root = nullptr;

@@ -3,9 +3,14 @@
 
 #include "Component.h"
 #include "Math.h"
-#include "ModulePhysics.h"
-#include "PhysX_3.4/Include/PxPhysicsAPI.h"
-#include "PhysX_3.4/Include/PxSimulationEventCallback.h"
+
+namespace physx
+{
+	class PxRigidActor;
+	class PxRigidStatic;
+	class PxTransform;
+	class PxShape;
+}
 
 BE_BEGIN_NAMESPACE
 
@@ -35,6 +40,8 @@ public:
 	virtual ~ComponentCollider();
 
 	void Update() override;
+	void Enable() override;
+	void Disable() override;
 
 	void UpdateCollider();
 
@@ -57,12 +64,12 @@ public:
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
 	physx::PxRigidActor*					GetActor();
-	void									UpdateActorLayer(LayerMask* layerMask);
+	void									UpdateActorLayer(const int* layerMask);
 	void									Delete();
 
 private:
 	template <class Geometry>
-	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform) const;
+	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform);
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
@@ -75,6 +82,7 @@ public:
 	float3 offset = float3::zero;
 	int colliderType = 0;
 	bool hasBeenDeactivated = false;
+	bool isTrigger = false;
 
 
 private:
@@ -87,7 +95,6 @@ private:
 	float3 tmpScale = float3::one;
 	bool firstCreation = false;
 	bool toPlay = false;
-	bool isTrigger = false;
 };
 
 

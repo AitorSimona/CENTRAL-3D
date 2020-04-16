@@ -1,9 +1,15 @@
 #include "ScriptingAnimations.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleScripting.h"
 #include "ModuleSceneManager.h"
+
+// -- Components --
+#include "GameObject.h"
 #include "ComponentDynamicRigidBody.h"
 #include "ComponentAnimation.h"
+
 #include "ResourceScene.h"
 #include "ScriptData.h"
 

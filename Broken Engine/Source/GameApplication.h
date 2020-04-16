@@ -2,9 +2,11 @@
 #define __GAMEAPPLICATION_H__
 #pragma once
 
-#include "BrokenEngine.h"
+#include "Application.h"
 
 class ModuleGameManager;
+
+typedef unsigned int uint;
 
 class GameApplication : public Broken::Application {
 public:

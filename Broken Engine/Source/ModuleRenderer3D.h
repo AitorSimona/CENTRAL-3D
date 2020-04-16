@@ -2,8 +2,8 @@
 #define __BE_MODULERENDERER_H__
 
 #include "Module.h"
-#include "Light.h"
-#include "JSONLoader.h"
+#include "Color.h"
+#include "Math.h"
 
 #define MAX_LIGHTS 8
 
@@ -15,6 +15,8 @@ class ResourceMaterial;
 class ComponentLight;
 class math::float4x4;
 class ComponentParticleEmitter;
+class GameObject;
+class ComponentLight;
 
 typedef int RenderMeshFlags;
 
@@ -25,7 +27,8 @@ enum BROKEN_API RenderMeshFlags_
 	selected	= 1 << 1,
 	checkers	= 1 << 2,
 	wire		= 1 << 3,
-	texture		= 1 << 4
+	texture		= 1 << 4,
+	color       = 1 << 5
 };
 
 struct BROKEN_API RenderMesh
@@ -35,7 +38,7 @@ struct BROKEN_API RenderMesh
 	float4x4 transform;
 	const ResourceMesh* resource_mesh = nullptr;
 	ResourceMaterial* mat = nullptr;
-//	Color color; // force a color draw, useful if no texture is given
+	Color color; // force a color draw, useful if no texture is given
 	
 
 	// temporal!
@@ -70,7 +73,7 @@ class BROKEN_API ModuleRenderer3D : public Module
 	friend class ModuleResourceManager;
 public:
 
-	// --- Basic ---
+	// --- Module ---
 	ModuleRenderer3D(bool start_enabled = true);
 	~ModuleRenderer3D();
 
@@ -78,46 +81,62 @@ public:
 	update_status PreUpdate(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp() override;
+	virtual void LoadStatus(const json& file);
+	virtual const json& SaveStatus() const;
+
 
 	void OnResize(int width, int height);
 
-	// --- Setters ---
-	bool SetVSync(bool _vsync);
-	void SetActiveCamera(ComponentCamera* camera);
-	void SetCullingCamera(ComponentCamera* camera);
-
-	// --- Getters ---
-	bool GetVSync() const;
-
-	// --- To Add Lights ---
+	// --- Lights ---
 	void AddLight(ComponentLight* light);
 	void PopLight(ComponentLight* light);
 	const int GetLightIndex(ComponentLight* light);
-	const float GetGammaCorrection() const { return m_GammaCorrection; }
-	void SetGammaCorrection(float gammaCorr) { m_GammaCorrection = gammaCorr; }
 
-	// --- Render orders --- // Deformable mesh is Temporal!
+	// --- Render Commands --- // Deformable mesh is Temporal!
 	void DrawMesh(const float4x4 transform, const ResourceMesh* mesh, ResourceMaterial* mat, const ResourceMesh* deformable_mesh = nullptr, const RenderMeshFlags flags = 0, const Color& color = White);
 	void DrawLine(const float4x4 transform, const float3 a, const float3 b, const Color& color);
 	void DrawAABB(const AABB& box, const Color& color);
 	void DrawOBB(const OBB& box, const Color& color);
 	void DrawFrustum(const Frustum& box, const Color& color);
+	const std::string& RenderSceneToTexture(std::vector<GameObject*>& scene_gos, uint& texId);
+
+	void ClearRenderOrders();
+
+public:
+
+	// --- Setters ---
+	bool SetVSync(bool _vsync);
+	void SetActiveCamera(ComponentCamera* camera);
+	void SetCullingCamera(ComponentCamera* camera);
+	void SetGammaCorrection(float gammaCorr) { m_GammaCorrection = gammaCorr; }
+
+	// --- Getters ---
+	bool GetVSync() const { return vsync; }
+	const float GetGammaCorrection() const { return m_GammaCorrection; }
 
 private:
+
 	// --- Utilities ---
-	void ClearRenderOrders();
 	void UpdateGLCapabilities() const;
+	void HandleObjectOutlining();
+	void CreateGrid(float target_distance);
+	
+	// --- Buffers ---
 	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
 	void CreateFramebuffer();
+	
+	// --- Shaders ---
 	void CreateDefaultShaders();
-	void CreateGrid(float target_distance);
 
 private:
 
-	// --- Draw ---
+	// --- Draw Commands ---
+	void SendShaderUniforms(uint shader);
 	void DrawRenderMeshes();
 	void DrawRenderMesh(std::vector<RenderMesh> meshInstances);
-	void HandleObjectOutlining();
+	void DrawFramebuffer();
+	
+	// --- Draw Utilities ---
 	void DrawRenderLines();
 	void DrawRenderBoxes();
 	void DrawGrid();
@@ -134,12 +153,14 @@ private:
 	static void DrawWireFromVertices(const float3* corners, Color color, uint VAO);
 
 public:
+
 	// --- Default Shader ---
 	ResourceShader* defaultShader = nullptr;
 	ResourceShader* linepointShader = nullptr;
 	ResourceShader* OutlineShader = nullptr;
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
+	ResourceShader* screenShader = nullptr;
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
@@ -148,6 +169,7 @@ public:
 
 	ComponentCamera* active_camera = nullptr;
 	ComponentCamera* culling_camera = nullptr;
+	ComponentCamera* screenshot_camera = nullptr;
 
 	SDL_GLContext context;
 
@@ -160,12 +182,18 @@ public:
 	bool wireframe = false;
 	bool zdrawer = false;
 	bool renderfbo = true;
+	bool drawfb = false;
 	bool display_boundingboxes = false;
 	bool display_grid = true;
+	bool m_Draw_normalMapping = false;
+	bool m_Draw_normalMapping_Lit = false;
+	bool m_Draw_normalMapping_Lit_Adv = false;
 
 	uint rendertexture = 0;
+	uint depthMapTexture = 0;
 
 private:
+
 	std::map<uint, std::vector<RenderMesh>> render_meshes;
 
 	std::vector<RenderBox<AABB>> render_aabbs;
@@ -175,13 +203,16 @@ private:
 
 	//Lights vector
 	std::vector<ComponentLight*> m_LightsVec;
-	float m_GammaCorrection = 1.0f;
+	float m_GammaCorrection = 2.0f;
 
 	uint fbo = 0;
+	uint depthbufferFBO = 0;
 	uint depthbuffer = 0;
 	uint PointLineVAO = 0;
 	uint Grid_VAO = 0;
 	uint Grid_VBO = 0;
+	uint quadVAO = 0;
+	uint quadVBO = 0;
 };
 BE_END_NAMESPACE
 #endif

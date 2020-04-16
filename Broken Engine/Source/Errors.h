@@ -28,7 +28,7 @@ static bool GLLogCall(const char* function, const char* file, int line)
 
 static void APIENTRY ErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-	if (id == 131185)
+	if (id == 131185 || id == 131218) //Don't know what error && shader being recompiled
 		return;
 
 	std::cout <<	"-----------------------------------------------------------------------" << std::endl <<

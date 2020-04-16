@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include "ComponentCollider.h"
 #include "ComponentCharacterController.h"
+#include "ModuleScripting.h"
+
 #include "ResourceScene.h"
 
 
@@ -39,6 +41,9 @@ void ModuleTimeManager::PrepareUpdate() {
 	switch (App->GetAppState())
 	{
 		case AppState::TO_PLAY:
+			if (App->isGame == false)
+			App->scripting->CompileDebugging();
+
 			App->GetAppState() = AppState::PLAY;
 
 			// --- Create temporal directory/scene ---
@@ -51,12 +56,12 @@ void ModuleTimeManager::PrepareUpdate() {
 			break;
 
 		case AppState::PLAY:
-			if (gamePaused) 
+			if (gamePaused)
 			{
 				time -= realtime_dt;
 				game_dt = 0.0f;
 			}
-			else 
+			else
 			{
 				//App->scene_manager->SetSelectedGameObject(nullptr);
 				game_dt *= Time_scale;
@@ -77,17 +82,8 @@ void ModuleTimeManager::PrepareUpdate() {
 			break;
 
 		case AppState::TO_EDITOR:
-			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->NoStaticGameObjects.begin(); it != App->scene_manager->currentScene->NoStaticGameObjects.end(); ++it)
-			{
-				App->physics->DeleteActors((*it).second);
-			}
-
-			for (std::unordered_map<uint, GameObject*>::iterator it = App->scene_manager->currentScene->StaticGameObjects.begin(); it != App->scene_manager->currentScene->StaticGameObjects.end(); ++it)
-			{
-				App->physics->DeleteActors((*it).second);
-			}
-
-			App->physics->DeleteActors();
+			if (App->isGame == false)
+			App->scripting->StopDebugging();
 
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
 
@@ -97,7 +93,7 @@ void ModuleTimeManager::PrepareUpdate() {
 			App->fs->Remove(App->scene_manager->temporalScene->GetResourceFile());
 			App->fs->Remove(std::string(App->scene_manager->temporalScene->GetResourceFile()).append(".meta").c_str());
 			App->fs->Remove("Temp/");
-
+			gamePaused = false;
 			App->GetAppState() = AppState::EDITOR;
 
 			ENGINE_CONSOLE_LOG("APP STATE EDITOR");

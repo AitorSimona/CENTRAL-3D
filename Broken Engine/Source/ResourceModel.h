@@ -17,6 +17,7 @@ public:
 	std::vector<Resource*>* GetResources();
 
 	bool openInProject = false;
+	std::string previewTexPath;
 private:
 	std::vector<Resource*> resources;
 	bool HasResource(Resource* resource);
