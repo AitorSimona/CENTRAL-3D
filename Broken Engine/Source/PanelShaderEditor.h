@@ -1,10 +1,15 @@
 #ifndef __PANEL_SHADER_EDITOR_H__
 #define __PANEL_SHADER_EDITOR_H__
 
-#include "BrokenEngine.h"
-#include <vector>
+#include "Panel.h"
 
-class PanelShaderEditor : public Broken::Panel
+namespace Broken
+{
+	class ResourceMaterial;
+	class ResourceShader;
+}
+
+class PanelShaderEditor : public Panel
 {
 public:
 

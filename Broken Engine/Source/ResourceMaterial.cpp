@@ -1,6 +1,6 @@
 #include "ResourceMaterial.h"
 
-#include "OpenGL.h"
+// -- Modules --
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleGui.h"
@@ -8,12 +8,14 @@
 #include "ModuleResourceManager.h"
 #include "ModuleEventManager.h"
 
+// -- Resources --
 #include "ResourceTexture.h"
+#include "ResourceShader.h"
 
 #include "ImporterMaterial.h"
 
 #include "Imgui/imgui.h"
-
+#include "OpenGL.h"
 #include "mmgr/mmgr.h"
 
 using namespace Broken;

@@ -3,6 +3,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
 
+#include "SDL/include/SDL.h"
 
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #include "mmgr/mmgr.h"
@@ -40,15 +41,8 @@ bool ModuleWindow::Init(json& file) {
 		display_Height = display.h;
 
 		// --- Assign Display Specific values to code vars ---
-		if (!App->isGame)
-		{
-			screen_width = uint(display.w * 0.75f);
-			screen_height = uint(display.h * 0.75f);
-		}
-		else
-		{
-			resizable = false;
-		}
+		screen_width = uint(display.w * 0.75f);
+		screen_height = uint(display.h * 0.75f);
 
 		RefreshRate = display.refresh_rate;
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;

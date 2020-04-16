@@ -19,6 +19,10 @@ namespace physx
 	class PxSimulationEventCallback;
 	class PxActorShape;
 	class PxQueryFilterCallback;
+	class RaycastCCDManager;
+	class PxCooking;
+	class PxConvexMesh;
+	class PxBase;
 
 	typedef uint32_t PxU32;
 	const float fixed_dt = (1.0f / 60.0f);
@@ -42,10 +46,6 @@ enum LayerMask
 	LAYER_9
 };
 
-//struct LayerM {
-//	uint layers[MAX_LAYERS];
-//};
-
 
 struct Layer {
 	std::string name;
@@ -53,7 +53,7 @@ struct Layer {
 	bool active;
 	std::vector<bool> active_layers;
 	physx::PxU32 LayerGroup;
-
+	
 	void UpdateLayerGroup() {
 		physx::PxU32 ID = 0;
 
@@ -76,6 +76,7 @@ enum Collision_Type {
 	ONCOLLISION_EXIT
 };
 
+
 struct BROKEN_API UserIterator : physx::PxVolumeCache::Iterator
 {
 	virtual void processShapes(physx::PxU32 count, const physx::PxActorShape* actorShapePairs);
@@ -93,6 +94,7 @@ struct BROKEN_API FilterCallback : physx::PxQueryFilterCallback {
 BE_BEGIN_NAMESPACE
 class GameObject;
 class PhysxSimulationEvents;
+class ResourceMesh;
 
 class BROKEN_API ModulePhysics : public Broken::Module
 {
@@ -120,7 +122,7 @@ public:
 
 	void addActor(physx::PxRigidActor* actor, GameObject* gameObject);
 
-	void UpdateActorLayer(physx::PxRigidActor* actor, LayerMask* LayerMask);
+	void UpdateActorLayer(const physx::PxRigidActor* actor, const LayerMask* LayerMask);
 
 	void UpdateActorsGroupFilter(LayerMask* updateLayer);
 
@@ -128,15 +130,21 @@ public:
 
 	void DeleteActors(GameObject* go = nullptr);
 
+	void RemoveCookedActors();
+
 	void OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<uint>& objects);
 
 	const Broken::json& SaveStatus() const override;
 
 	void LoadStatus(const Broken::json& file) override;
 
+	bool Raycast(float3 origin, float3 direction, float maxDistance, LayerMask layer = LayerMask::LAYER_0, bool hitTriggers = false);
+	GameObject* RaycastGO(float3 origin, float3 direction, float maxDistance, LayerMask layer = LayerMask::LAYER_0, bool hitTriggers = false);
+
 public:
 
 	physx::PxPvd* mPvd = nullptr;
+	physx::PxCooking* mCooking = nullptr;
 	physx::PxPvdSceneClient* pvdClient = nullptr;
 	physx::PxFoundation* mFoundation = nullptr;
 	physx::PxControllerManager* mControllerManager = nullptr;
@@ -144,9 +152,13 @@ public:
 	physx::PxScene* mScene = nullptr;
 	physx::PxMaterial* mMaterial = nullptr;
 	physx::PxRigidStatic* plane = nullptr;
+	physx::RaycastCCDManager* raycastManager = nullptr;
+
 	std::vector<Layer> layer_list;
 	std::map<physx::PxRigidActor*, GameObject*> actors;
 	std::vector<uint>* detected_objects;
+	std::map<ResourceMesh *,physx::PxBase*> cooked_meshes;
+	std::map<ResourceMesh*, physx::PxBase*> cooked_convex;
 	physx::PxVolumeCache* cache;
 	UserIterator iter;
 

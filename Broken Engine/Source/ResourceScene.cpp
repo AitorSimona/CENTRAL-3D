@@ -4,6 +4,11 @@
 #include "ModuleFileSystem.h"
 #include "ModuleResourceManager.h"
 #include "ModuleSceneManager.h"
+#include "ModuleEventManager.h"
+#include "ModuleDetour.h"
+#include "ModuleUI.h"
+#include "ModuleScripting.h"
+#include "ModulePhysics.h"
 
 #include "GameObject.h"
 
@@ -46,6 +51,8 @@ bool ResourceScene::LoadInMemory()
 			{
 				// --- Retrieve GO's UID ---
 				std::string uid = it.key().c_str();
+				if (uid == "Navigation Data")
+					continue;
 
 				// --- Create a Game Object for each node ---
 				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
@@ -67,6 +74,11 @@ bool ResourceScene::LoadInMemory()
 				if (!file[it.key()]["Index"].is_null())
 					go->index = file[it.key()]["Index"];
 
+				if (!file[it.key()]["Navigation Static"].is_null())
+					go->navigationStatic = file[it.key()]["Navigation Static"];
+
+				if (!file[it.key()]["Navigation Area"].is_null())
+					go->navigationArea = file[it.key()]["Navigation Area"];
 				if (!file[it.key()]["PrefabChild"].is_null())
 					go->is_prefab_child = file[it.key()]["PrefabChild"];
 
@@ -80,7 +92,6 @@ bool ResourceScene::LoadInMemory()
 					Importer::ImportData IData(file[it.key()]["Model"].get<std::string>().c_str());
 					go->model = (ResourceModel*)App->resources->ImportAssets(IData);
 				}
-
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];				
 
@@ -105,7 +116,8 @@ bool ResourceScene::LoadInMemory()
 					// --- Load Component Data ---
 					if (component) 
 					{
-						component->Load(components[type_string]);
+						// NOTE: Commented this so components do not try to ask for a nonexistant go, we first create all gos and ask components to load later
+						//component->Load(components[type_string]);
 
 						// --- UID ---
 						json c_UID = components[it2.key()]["UID"];
@@ -119,6 +131,36 @@ bool ResourceScene::LoadInMemory()
 
 				if (go->Static)
 					App->scene_manager->SetStatic(go, true, false);
+
+				Event e;
+				e.type = Event::EventType::GameObject_loaded;
+				e.go = go;
+				App->event_manager->PushEvent(e);
+			}
+
+			uint ite = 0;
+
+			for (json::iterator it = file.begin(); it != file.end(); ++it)
+			{
+				// --- Iterate components ---
+				json components = file[it.key()]["Components"];
+				std::vector<Component*>* go_components = &objects[ite]->GetComponents();
+
+				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+				{
+					// --- UID ---
+					json c_UID = components[it2.key()]["UID"];
+					int c_index = -1;
+					json index = components[it2.key()]["index"];
+					std::string type_string = it2.key();
+
+					if (!index.is_null())
+						c_index = index.get<uint>();
+
+					go_components->at(c_index)->Load((components[type_string]));
+				}
+
+				ite++;
 			}
 
 			App->scene_manager->GetRootGO()->childs.clear();
@@ -146,7 +188,46 @@ bool ResourceScene::LoadInMemory()
 					App->scene_manager->GetRootGO()->AddChildGO(objects[i], objects[i]->index);
 			}
 		}
+
+
+		// Load navigation data
+		json navigationdata = file["Navigation Data"];
+		if (!navigationdata.is_null()) {
+			App->detour->agentHeight = navigationdata["agentHeight"];
+			App->detour->agentRadius = navigationdata["agentRadius"];
+			App->detour->maxSlope = navigationdata["maxSlope"];
+			App->detour->stepHeight = navigationdata["stepHeight"];
+			App->detour->voxelSize = navigationdata["voxelSize"];
+
+			App->detour->voxelHeight = navigationdata["voxelHeight"];
+			App->detour->regionMinSize = navigationdata["regionMinSize"];
+			App->detour->regionMergeSize = navigationdata["regionMergeSize"];
+			App->detour->edgeMaxLen = navigationdata["edgeMaxLen"];
+			App->detour->edgeMaxError = navigationdata["edgeMaxError"];
+			App->detour->vertsPerPoly = navigationdata["vertsPerPoly"];
+			App->detour->detailSampleDist = navigationdata["detailSampleDist"];
+			App->detour->detailSampleMaxError = navigationdata["detailSampleMaxError"];
+			App->detour->buildTiledMesh = navigationdata["buildTiledMesh"];
+			
+
+			if (!navigationdata["navMeshUID"].is_null())
+				App->detour->loadNavMeshFile(navigationdata["navMeshUID"]);
+			else
+				App->detour->clearNavMesh();
+
+			for (int i = 0; i < BE_DETOUR_TOTAL_AREAS; ++i) {
+				std::string areaName = navigationdata["Areas"][i]["name"];
+				sprintf_s(App->detour->areaNames[i], areaName.c_str());
+				App->detour->areaCosts[i] = navigationdata["Areas"][i]["cost"];
+			}
+		}
+		else {
+			App->detour->setDefaultValues();
+			App->detour->clearNavMesh();
+		}
 	}
+
+
 
 	return true;
 }
@@ -166,6 +247,9 @@ void ResourceScene::FreeMemory() {
 	}
 
 	StaticGameObjects.clear();
+	Event e;
+	e.type = Event::EventType::Scene_unloaded;
+	App->event_manager->PushEvent(e);
 
 	// Note that this will be called once we load another scene, and the octree will be cleared right after this 
 }
@@ -265,18 +349,39 @@ void ResourceScene::OnOverwrite() {
 
 void ResourceScene::OnDelete()
 {
+
+	if (this->GetUID() == App->scene_manager->currentScene->GetUID()
+		&& (this->GetUID() != App->scene_manager->defaultScene->GetUID()))
+	{
+		App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
+	}
+
+	FreeMemory();
+
 	if (this->GetUID() == App->scene_manager->defaultScene->GetUID())
 	{
-		if (this->GetUID() == App->scene_manager->currentScene->GetUID())
-		{
-			App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
-		}
+		App->physics->DeleteActors();
 
-		FreeMemory();
-		App->fs->Remove(resource_file.c_str());
+		// --- Reset octree ---
+		App->scene_manager->tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
-		App->resources->RemoveResourceFromFolder(this);
-		App->resources->ONResourceDestroyed(this);
+		// --- Release current scene ---
+		Release();
+		App->scripting->CleanUpInstances();
+
+		// --- Clear root ---
+		App->scene_manager->GetRootGO()->childs.clear();
+
+		App->ui_system->Clear();
 	}
+
+	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+
+	if (this->GetUID() != App->scene_manager->defaultScene->GetUID())
+		App->resources->ONResourceDestroyed(this);
+	else
+		LoadToMemory();
 }
 

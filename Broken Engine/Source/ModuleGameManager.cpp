@@ -1,6 +1,11 @@
 #include "ModuleGameManager.h"
 #include "GameApplication.h"
 
+#include "ModuleRenderer3D.h"
+#include "ModuleGui.h"
+#include "ModuleWindow.h"
+#include "ModuleSceneManager.h"
+
 ModuleGameManager::ModuleGameManager(bool start_enabled) {
 	name = "Game Manager";
 }

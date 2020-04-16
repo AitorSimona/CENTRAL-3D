@@ -1,18 +1,41 @@
 #include "PanelProject.h"
+
+// -- Modules --
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
+#include "ModuleEventManager.h"
+#include "ModuleGui.h"
+#include "ModuleResourceManager.h"
+#include "ModuleSceneManager.h"
+#include "ModuleFileSystem.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleInput.h"
 
-//#include "ModuleFileSystem.h"
-//#include "ModuleResourceManager.h"
-//#include "ModuleEventManager.h"
-//#include "ModuleGui.h"
+// -- Resources --
+#include "ResourceScene.h"
+#include "ResourceModel.h"
+#include "ResourceFolder.h"
+#include "ResourcePrefab.h"
+#include "ResourceShader.h"
 
-//#include "ResourceFolder.h"
-//#include "ResourceModel.h"
+// -- Importers --
+#include "ImporterMeta.h"
+#include "ImporterPrefab.h"
+#include "ImporterFolder.h"
+#include "ImporterMaterial.h"
+#include "ImporterShader.h"
+#include "ImporterScene.h"
+#include "ImporterScript.h"
+
+// -- Components --
+#include "GameObject.h"
+
+// -- Utilities --
+#include "Imgui/imgui.h"
+#include <memory>
 #include <iostream>
 #include <fstream>
-#include <memory>
-#include "mmgr/nommgr.h"
+#include "mmgr/mmgr.h"
 
 // --- Event Manager Callbacks ---
 void PanelProject::ONGameObjectSelected(const Broken::Event& e)
@@ -28,7 +51,7 @@ void PanelProject::ONResourceDestroyed(const Broken::Event& e)
 
 // -------------------------------
 
-PanelProject::PanelProject(char * name) : Broken::Panel(name)
+PanelProject::PanelProject(char * name) : Panel(name)
 {
 	// --- Add Event Listeners ---
 	EngineApp->event_manager->AddListener(Broken::Event::EventType::GameObject_selected, ONGameObjectSelected);
@@ -57,7 +80,6 @@ bool PanelProject::Draw()
 	// --- Draw project panel, Unity style ---
 	if (ImGui::Begin(name, &enabled, projectFlags))
 	{
-
 		CreateResourceHandlingPopup();
 
 		if (ImGui::BeginMenuBar())
@@ -192,6 +214,9 @@ bool PanelProject::Draw()
 
 void PanelProject::CreateResourceHandlingPopup()
 {
+	// --- Delete resource ---
+	if (selected && !selected->has_parent && EngineApp->input->GetKey(SDL_SCANCODE_DELETE) == Broken::KEY_DOWN)
+		delete_selected = true;
 	//ImGui::SetCurrentContext(EngineApp->gui->getImgUICtx());
 	// Call the more complete ShowExampleMenuFile which we use in various places of this demo
 	if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows))
@@ -202,6 +227,7 @@ void PanelProject::CreateResourceHandlingPopup()
 		//ImGui::MenuItem("(dummy menu)", NULL, false, false);
 		//if (ImGui::MenuItem("New")) {}
 		//if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+
 
 		if (ImGui::BeginMenu("Create"))
 		{
@@ -295,6 +321,37 @@ void PanelProject::CreateResourceHandlingPopup()
 
 			ImGui::EndMenu();
 		}
+		if (selected && !selected->has_parent)
+		{
+			if (ImGui::MenuItem("Delete"))
+				delete_selected = true;		
+		}
+		ImGui::EndPopup();
+	}
+
+	if (delete_selected)
+		ImGui::OpenPopup("Delete Selected Asset?");
+
+	if (ImGui::BeginPopupModal("Delete Selected Asset?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("You are about to delete the selected asset. There is no going back!");
+
+		if (ImGui::Button("Delete", ImVec2(300, 0)))
+		{
+			EngineApp->resources->ForceDelete(GetSelected());
+			SetSelected(nullptr);
+			delete_selected = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(300, 0)))
+		{
+			delete_selected = false;
+			ImGui::CloseCurrentPopup();
+		}
+
 		ImGui::EndPopup();
 	}
 

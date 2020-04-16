@@ -33,16 +33,11 @@ Resource* ImporterMesh::Import(ImportData& IData) const {
 	for (uint i = 0; i < data.mesh->mNumVertices; ++i)
 	{
 		// --- Vertices ---
-		resource_mesh->vertices[i].position[0] = data.mesh->mVertices[i].x;
-		resource_mesh->vertices[i].position[1] = data.mesh->mVertices[i].y;
-		resource_mesh->vertices[i].position[2] = data.mesh->mVertices[i].z;
+		memcpy(resource_mesh->vertices[i].position, &data.mesh->mVertices[i], sizeof(float) * 3);
 
 		// --- Normals ---
-		if (data.mesh->HasNormals())
-		{
-			resource_mesh->vertices[i].normal[0] = data.mesh->mNormals[i].x;
-			resource_mesh->vertices[i].normal[1] = data.mesh->mNormals[i].y;
-			resource_mesh->vertices[i].normal[2] = data.mesh->mNormals[i].z;
+		if (data.mesh->HasNormals()) {
+			memcpy(resource_mesh->vertices[i].normal, &data.mesh->mNormals[i], sizeof(float) * 3);
 		}
 
 		// --- Colors ---

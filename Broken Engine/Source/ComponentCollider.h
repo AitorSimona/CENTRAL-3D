@@ -3,9 +3,18 @@
 
 #include "Component.h"
 #include "Math.h"
-#include "ModulePhysics.h"
-#include "PhysX_3.4/Include/PxPhysicsAPI.h"
-#include "PhysX_3.4/Include/PxSimulationEventCallback.h"
+
+namespace physx
+{
+	class PxRigidActor;
+	class PxRigidStatic;
+	class PxTransform;
+	class PxShape;
+	class PxConvexMesh;
+	class PxTriangleMesh; 
+	class PxVec3;
+	typedef uint16_t PxU16;
+}
 
 BE_BEGIN_NAMESPACE
 
@@ -13,6 +22,7 @@ BE_BEGIN_NAMESPACE
 class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
+struct Vertex;
 
 class BROKEN_API ComponentCollider : public Component
 {
@@ -24,7 +34,7 @@ public:
 		BOX,
 		SPHERE,
 		CAPSULE,
-		PLANE
+		MESH
 	};
 
 public:
@@ -52,23 +62,31 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+	void GetMesh();
+
 	void CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain = false);
+
+	void CreateRigidbody();
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Collider; };
 
 	float4x4 GetGlobalMatrix() { return globalMatrix; }
 
 	physx::PxRigidActor*					GetActor();
-	void									UpdateActorLayer(LayerMask* layerMask);
+	void									UpdateActorLayer(const int* layerMask);
 	void									Delete();
 
 private:
+	template<class Geometry>
+	void CreateRigidbody(Geometry geometry, physx::PxTransform position);
 	template <class Geometry>
 	bool HasDynamicRigidBody(Geometry geometry, physx::PxTransform transform);
 
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;
+	ResourceMesh* current_mesh = nullptr;
+	ResourceMesh* dragged_mesh = nullptr;
 	bool editCollider = false;
 	bool updateValues = false;
 	float3 centerPosition = float3::zero;
@@ -77,10 +95,17 @@ public:
 	float3 offset = float3::zero;
 	int colliderType = 0;
 	bool hasBeenDeactivated = false;
+	bool isTrigger = false;
+	bool isConvex = false;
+	Quat dragged_rot = Quat::identity;
+	float3 dragged_scale = float3::one;
+	int dragged_UID = 0;
 
 
 private:
 	physx::PxShape* shape = nullptr;
+	physx::PxConvexMesh* convex_mesh = nullptr;
+	physx::PxTriangleMesh* triangle_mesh = nullptr;
 	float3 colliderSize = float3(1, 1, 1);
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
@@ -89,7 +114,8 @@ private:
 	float3 tmpScale = float3::one;
 	bool firstCreation = false;
 	bool toPlay = false;
-	bool isTrigger = false;
+	bool draw = false;
+	bool localMesh = false;
 };
 
 

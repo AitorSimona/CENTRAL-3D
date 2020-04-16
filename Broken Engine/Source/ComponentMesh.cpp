@@ -1,17 +1,22 @@
 #include "ComponentMesh.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleFileSystem.h"
 #include "ModuleRenderer3D.h"
 
+// -- Components --
+#include "GameObject.h"
 #include "ComponentBone.h"
 #include "ComponentTransform.h"
 
+// -- Resource --
+#include "ResourceMesh.h"
+#include "ResourceBone.h"
+
 #include "Math.h"
-
-#include "GameObject.h"
 #include "Imgui/imgui.h"
-
 #include "mmgr/mmgr.h"
 
 using namespace Broken;

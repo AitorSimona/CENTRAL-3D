@@ -1,9 +1,7 @@
 #ifndef __ENGINEAPPLICATION_H__
 #define __ENGINEAPPLICATION_H__
 
-#include "BrokenEngine.h"
-
-class ModuleEditorUI;
+#include "Application.h"
 
 class EngineApplication : public Broken::Application {
 
@@ -13,9 +11,11 @@ public:
 	~EngineApplication();
 
 	void SaveForBuild(const Broken::json& reference, const char* path) const;
+	void GetDefaultGameConfig(Broken::json& config) const;
 
 public:
-	ModuleEditorUI* editorui;
+	class ModuleEditorUI* editorui;
+	class ModuleRecast* recast;
 	
 };
 

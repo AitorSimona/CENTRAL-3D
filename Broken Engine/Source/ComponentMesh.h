@@ -2,11 +2,16 @@
 #define __COMPONENT_MESH_H__
 
 #include "Component.h"
-#include "ResourceMesh.h"
+
+namespace math
+{
+	class AABB;
+}
 
 BE_BEGIN_NAMESPACE
 class ComponentBone;
-class math::AABB;
+class ResourceMesh;
+
 
 class BROKEN_API ComponentMesh : public Component {
 public:
@@ -16,7 +21,7 @@ public:
 
 	void Update() override;
 
-	const AABB& GetAABB() const;
+	const math::AABB& GetAABB() const;
 
 	// --- Save & Load ---
 	json Save() const override;

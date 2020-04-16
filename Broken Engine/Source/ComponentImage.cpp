@@ -103,6 +103,7 @@ void ComponentImage::Draw()
 	glUniform1i(TextureLocation, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); // Stop using buffer (texture)
+	glActiveTexture(GL_TEXTURE0);
 }
 
 json ComponentImage::Save() const

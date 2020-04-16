@@ -85,22 +85,25 @@ Resource* ImporterScript::Load(const char* path) const {
 	std::size_t g_pos = 0;
 	g_pos = abs_path.find("Game");
 
-	if (d_pos != 4294967295)  // If we are in DEBUG
+	if (d_pos != 4294967295 && App->isGame == false)  // If we are in DEBUG
 	{
 		abs_path = abs_path.substr(0, d_pos);
 		abs_path += "Game/";
 	}
 
-	if (r_pos != 4294967295) // If we are in RELEASE
+	if (r_pos != 4294967295 && App->isGame == false) // If we are in RELEASE
 	{
 		abs_path = abs_path.substr(0, r_pos);
 		abs_path += "Game/";
+
+		int i = 100;
+		assert(i != 100, "We detected we are in an exe!");
 	}
 
-	if (g_pos != 4294967295) // If we are in a EXE final build
-	{
-		abs_path = abs_path.substr(0, g_pos);
-	}
+	//if (g_pos != 4294967295) // If we are in a EXE final build
+	//{
+	//	//abs_path = abs_path.substr(0, g_pos);
+	//}
 	
 	abs_path += path;
 	App->fs->NormalizePath(abs_path);

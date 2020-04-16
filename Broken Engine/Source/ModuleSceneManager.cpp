@@ -1,9 +1,7 @@
 #include "ModuleSceneManager.h"
+
+// -- Modules --
 #include "Application.h"
-#include "GameObject.h"
-#include "ComponentTransform.h"
-#include "ComponentMeshRenderer.h"
-#include "ComponentMesh.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleTextures.h"
 #include "ModuleFileSystem.h"
@@ -12,32 +10,45 @@
 #include "ModuleInput.h"
 #include "ModuleEventManager.h"
 #include "ModulePhysics.h"
-#include "ComponentCamera.h"
-#include "ComponentBone.h"
 #include "ModuleUI.h"
+#include "ModuleDetour.h"
 #include "ModuleSelection.h"
 #include "ModuleScripting.h"
 #include "ModuleGui.h"
 
-//#include "ModuleGui.h"
-
-#include "ImporterMaterial.h"
-#include "ImporterScene.h"
-#include "ImporterMeta.h"
-
 #include "par/par_shapes.h"
 
+// -- Components --
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ComponentMeshRenderer.h"
+#include "ComponentMesh.h"
+#include "ComponentCamera.h"
+#include "ComponentBone.h"
+
+// -- Resources --
 #include "ResourceMaterial.h"
 #include "ResourceTexture.h"
 #include "ResourceShader.h"
 #include "ResourcePrefab.h"
+#include "ResourceScene.h"
+#include "ResourceMesh.h"
+
+// -- Importers --
+#include "ImporterMaterial.h"
+#include "ImporterScene.h"
+#include "ImporterMeta.h"
 
 #include "Component.h"
 #include "ComponentButton.h"
 
-#include "ResourceScene.h"
 
 #include "mmgr/mmgr.h"
+
+#include "ComponentAudioSource.h"
+#include "ModuleAudio.h"
+#include "../Game/Assets/Sounds/Wwise_IDs.h"
+
 
 #define TREE_UPDATE_PERIOD 1000
 
@@ -106,6 +117,13 @@ bool ModuleSceneManager::Start()
 
 	treeUpdateTimer = SDL_GetTicks();
 
+	//music = LoadCube();
+	//music->AddComponent(Component::ComponentType::AudioSource);
+	//ComponentAudioSource* musicSource = (ComponentAudioSource*)music->GetComponent<ComponentAudioSource>();//GetComponent(Component::ComponentType::AudioSource);
+	//musicSource->SetID(AK::EVENTS::MUSIC);
+	//musicSource->wwiseGO->PlayEvent(AK::EVENTS::BACKGROUNDMUSIC);
+	//musicSource->isPlaying = true;
+
 	return true;
 }
 
@@ -168,7 +186,8 @@ void ModuleSceneManager::DrawScene()
 				if (aabb.IsFinite() && App->renderer3D->culling_camera->frustum.Intersects(aabb))
 				{
 					// --- Issue render order ---
-					(*it).second->Draw();
+					if ((*it).second->GetActive())
+						(*it).second->Draw();
 				}
 			}
 		}
@@ -181,6 +200,9 @@ void ModuleSceneManager::DrawScene()
 			if ((*it)->GetActive())
 				(*it)->Draw();
 		}
+
+		App->detour->Draw();
+
 	}
 
 }
@@ -453,6 +475,7 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		}
 		else
 		{
+			App->physics->RemoveCookedActors();
 			currentScene = scene; // force this so gos are not added to another scene
 			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
 

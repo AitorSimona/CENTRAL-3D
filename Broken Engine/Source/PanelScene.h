@@ -1,10 +1,10 @@
 #ifndef __PANEL_SCENE_H__
 #define __PANEL_SCENE_H__
 
-#include "BrokenEngine.h"
+#include "Panel.h"
 #include "Imgui/ImGuizmo/ImGuizmo.h"
 
-class PanelScene : public Broken::Panel
+class PanelScene : public Panel
 {
 public:
 

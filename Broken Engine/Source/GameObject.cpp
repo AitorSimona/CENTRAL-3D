@@ -5,6 +5,7 @@
 
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
+#include "ModulePhysics.h"
 #include "ComponentAudioListener.h"
 #include "ComponentAudioSource.h"
 #include "ComponentCanvas.h"

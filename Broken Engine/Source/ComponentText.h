@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Component.h"
-//#include "TextRenderer.hpp"
 #include "Color.h"
 #include <string>
 #include "Math.h"

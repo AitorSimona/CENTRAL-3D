@@ -1,13 +1,24 @@
 #ifndef __PANEL_PROJECT_H__
 #define __PANEL_PROJECT_H__
 
-#include "BrokenEngine.h"
+#include "Panel.h"
+
 #include <string>
 #include <vector>
-#include "Imgui/imgui.h"
 
+namespace Broken
+{
+	class GameObject;
+	class Resource;
+	class ResourceFolder;
+	struct Event;
+}
 
-class PanelProject : public Broken::Panel
+typedef unsigned int uint;
+struct ImVec4;
+struct ImVec2;
+
+class PanelProject : public Panel
 {
 public:
 
@@ -26,7 +37,7 @@ private:
 	static void ONResourceDestroyed(const Broken::Event& e);
 	void CreateResourceHandlingPopup();
 private:
-
+	bool delete_selected = false;
 	bool wasclicked = false;
 	uint imageSize_px = 48;
 	uint item_spacingX_px = 20;

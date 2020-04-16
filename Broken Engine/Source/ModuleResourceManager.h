@@ -23,6 +23,7 @@ class ResourceTexture;
 class ResourceMeta;
 class ResourceScript;
 class ResourceFont;
+class ResourceNavMesh;
 class ResourcePrefab;
 
 class BROKEN_API ModuleResourceManager : public Module {
@@ -38,6 +39,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ImporterFolder;
 	friend class ImporterScript;
 	friend class ImporterFont;
+	friend class ImporterNavMesh;
 	friend class ImporterShader;
 	friend class ImporterPrefab;
 	friend class PanelResources;
@@ -45,6 +47,7 @@ class BROKEN_API ModuleResourceManager : public Module {
 	friend class ComponentMeshRenderer;
 	friend class ResourceMaterial;
 	friend class ModuleSceneManager;
+	friend class ModuleRenderer3D;
 	friend class ScriptingScenes;
 public:
 
@@ -78,6 +81,7 @@ public:
 	Resource* ImportScript(Importer::ImportData& IData);
 	Resource* ImportMeta(Importer::ImportData& IData);
 	Resource* ImportFont(Importer::ImportData& IData);
+	Resource* ImportNavMesh(Importer::ImportData& IData);
 
 	void HandleFsChanges();
 	void RetrieveFilesAndDirectories(const char* directory, std::map<std::string, std::vector<std::string>>& ret);
@@ -103,8 +107,8 @@ public:
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	bool IsFileImported(const char* file);
 	std::shared_ptr<std::string> GetNewUniqueName(Resource::ResourceType type);
-
 	void ONResourceDestroyed(Resource* resource);
+	void ForceDelete(Resource* resource); // to prevent problems with different heaps, related to exe - dll relationship
 
 	//MYTODO For editor panel to set currentDirectory
 	void setCurrentDirectory(ResourceFolder* dir);
@@ -146,6 +150,7 @@ private:
 	std::map<uint, ResourceScript*> scripts;
 	std::map<uint, ResourceMeta*> metas;
 	std::map<uint, ResourceFont*> fonts;
+	std::map<uint, ResourceNavMesh*> navmeshes;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;

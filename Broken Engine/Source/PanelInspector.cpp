@@ -1,8 +1,9 @@
 #include "PanelInspector.h"
-#include "Imgui/imgui.h"
-#include "Application.h"
 #include "EngineApplication.h"
+#include "Imgui/imgui.h"
 #include "ModuleEditorUI.h"
+#include "ModuleGui.h"
+#include "ModuleSelection.h"
 #include "PanelProject.h"
 #include "ModulePhysics.h"
 #include "ComponentCollider.h"
@@ -10,9 +11,9 @@
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 
 using namespace Broken;
-//#include "ModuleSceneManager.h"
+#include "ModuleSceneManager.h"
 //#include "ModuleRenderer3D.h"
-//#include "ModuleResourceManager.h"
+#include "ModuleResourceManager.h"
 //#include "ModuleGui.h"
 
 //#include "GameObject.h"
@@ -27,7 +28,7 @@ using namespace Broken;
 //#include "ResourceMaterial.h"
 //#include "ResourceTexture.h"
 //#include "ResourceShader.h"
-//#include "ComponentScript.h"
+#include "ComponentScript.h"
 
 //#include "mmgr/mmgr.h"
 
@@ -89,7 +90,41 @@ bool PanelInspector::Draw()
 
 					if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						CreateComponentOptionsMenu(it);
+						// Creating component options menu (...)
+						ImGui::SameLine();
+						if (ImGui::SmallButton("..."))
+							ImGui::OpenPopup("Component options");
+
+						if (ImGui::BeginPopup("Component options"))
+						{
+							bool dummy = false;
+							if (ImGui::MenuItem("Delete component"))
+							{
+								(*it)->to_delete = true;
+							}
+							if (ImGui::MenuItem("Copy values"))
+							{
+								EngineApp->selection->CopyComponentValues((*it));
+							}
+							if (ImGui::MenuItem("Paste values", EngineApp->selection->component_name.c_str(), &dummy, EngineApp->selection->ComponentCanBePasted()))
+							{
+								EngineApp->selection->PasteComponentValues((*it));
+							}
+							if (ImGui::MenuItem("Paste values to all selected", EngineApp->selection->component_name.c_str(), &dummy, EngineApp->selection->ComponentCanBePasted()))
+							{
+								EngineApp->selection->PasteComponentValuesToSelected();
+							}
+							if (ImGui::BeginMenu("Delete component to all selected"))
+							{
+								if (ImGui::MenuItem("Confirm delete"))
+								{
+									EngineApp->selection->DeleteComponentToSelected();
+
+								}
+								ImGui::EndMenu();
+							}
+							ImGui::EndPopup();
+						}
 
 						(*it)->CreateInspectorNode();
 
@@ -240,43 +275,7 @@ bool PanelInspector::Draw()
 	return true;
 }
 
-void PanelInspector::CreateComponentOptionsMenu(std::vector<Broken::Component*>::const_iterator& it)
-{
-	ImGui::SameLine();
-	if (ImGui::SmallButton("..."))
-		ImGui::OpenPopup("Component options");
 
-	if (ImGui::BeginPopup("Component options"))
-	{
-		bool dummy = false;
-		if (ImGui::MenuItem("Delete component"))
-		{
-			(*it)->to_delete = true;
-		}
-		if (ImGui::MenuItem("Copy values"))
-		{
-			EngineApp->selection->CopyComponentValues((*it));
-		}
-		if (ImGui::MenuItem("Paste values", EngineApp->selection->component_name.c_str(), &dummy, EngineApp->selection->ComponentCanBePasted()))
-		{
-			EngineApp->selection->PasteComponentValues((*it));
-		}
-		if (ImGui::MenuItem("Paste values to all selected", EngineApp->selection->component_name.c_str(), &dummy, EngineApp->selection->ComponentCanBePasted()))
-		{
-			EngineApp->selection->PasteComponentValuesToSelected();
-		}
-		if (ImGui::BeginMenu("Delete component to all selected"))
-		{
-			if (ImGui::MenuItem("Confirm delete"))
-			{
-				EngineApp->selection->DeleteComponentToSelected();
-
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndPopup();
-	}
-}
 
 // SELECTED TODO: test editing for multiselection
 // OPTIMIZE DEFAULT SHOWN PROPERTIES -> LESS SELECTION ITERATIONS
@@ -421,7 +420,7 @@ void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 					ComponentCollider* col = obj->GetComponent<ComponentCollider>();
 
 					if(col)
-						col->UpdateActorLayer(&layers->at(n).layer);
+						col->UpdateActorLayer((const int*)layers->at(n).layer);
 				}
 			}
 			if (is_selected) {

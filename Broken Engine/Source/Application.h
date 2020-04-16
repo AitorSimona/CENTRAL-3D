@@ -47,6 +47,7 @@ class ModulePhysics;
 class ModuleParticles;
 class ModuleAudio;
 class ModuleSelection;
+class ModuleDetour;
 
 class BROKEN_API Application {
 public:
@@ -55,7 +56,6 @@ public:
 	const char* GetAppName() const;
 	const char* GetOrganizationName() const;
 	json GetDefaultConfig() const;
-	void GetDefaultGameConfig(json& config) const;
 	json& GetConfigFile();
 	std::vector<std::string>& GetLogs();
 	LCG& GetRandom();
@@ -69,7 +69,6 @@ public:
 	void ClearLogsFromConsole();
 
 public:
-
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleRenderer3D* renderer3D = nullptr;
@@ -89,6 +88,7 @@ public:
 	ModuleParticles* particles = nullptr;
 	ModuleAudio* audio = nullptr;
 	ModuleSelection* selection = nullptr;
+	ModuleDetour* detour = nullptr;
 
 
 	bool isGame = false;
@@ -98,12 +98,12 @@ public:
 
 protected:
 	std::list<Module*> list_modules;
-
-private:
-	JSONLoader			JLoader;
 	std::string			appName;
 	std::string			orgName;
 	std::string			configpath;
+
+private:
+	JSONLoader			JLoader;
 	json				tempjson;
 
 	LCG*				RandomNumber = nullptr;

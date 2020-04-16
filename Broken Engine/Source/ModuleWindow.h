@@ -2,7 +2,6 @@
 #define __MODULEWINDOW_H__
 
 #include "Module.h"
-#include "SDL/include/SDL.h"
 #include "BrokenCore.h"
 
 
@@ -55,10 +54,10 @@ public:
 
 public:
 	//The window we'll be rendering to
-	SDL_Window* window;
+	class SDL_Window* window;
 
 	//The surface contained by the window
-	SDL_Surface* screen_surface;
+	class SDL_Surface* screen_surface;
 
 private:
 

@@ -18,6 +18,7 @@
 #include "ModulePhysics.h"
 #include "ModuleParticles.h"
 #include "ModuleAudio.h"
+#include "ModuleDetour.h"
 #include "ModuleSelection.h"
 
 #include "mmgr/mmgr.h"
@@ -58,6 +59,7 @@ Application::Application() {
 	physics = new ModulePhysics(true);
 	particles = new ModuleParticles(true);
 	audio = new ModuleAudio(true);
+	detour = new ModuleDetour(true);
 	selection = new ModuleSelection(true);
 
 	// The order of calls is very important!
@@ -336,38 +338,6 @@ json Application::GetDefaultConfig() const {
 	};
 
 	return config;
-}
-
-void Application::GetDefaultGameConfig(json& config) const {
-	// --- Create Game Config with default values ---
-	config = {
-		{"Application", {
-			{"Organization", orgName}
-
-		}},
-		{"SceneManager", {
-
-		}},
-		{"Camera3D", {
-
-		}},
-		{"Window", {
-			{"width", 1024},
-			{"height", 720},
-			{"fullscreen", false},
-			{"resizable", true},
-			{"borderless", false},
-			{"fullscreenDesktop", false}
-		}},
-
-		{"Input", {
-
-		}},
-
-		{"Renderer3D", {
-			{"VSync", true}
-		}},
-	};
 }
 
 json& Application::GetConfigFile() {

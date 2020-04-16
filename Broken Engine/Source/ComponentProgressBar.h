@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Component.h"
-#include "ComponentCanvas.h"
 #include "Math.h"
+#include "Color.h"
 
 BE_BEGIN_NAMESPACE
 

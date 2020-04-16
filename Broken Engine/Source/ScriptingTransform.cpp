@@ -1,8 +1,15 @@
 #include "ScriptingTransform.h"
+
+// -- Modules --
 #include "Application.h"
 #include "ModuleScripting.h"
 #include "ModuleSceneManager.h"
+
+// -- Components -
+#include "GameObject.h"
 #include "Components.h"
+#include "ComponentTransform.h"
+
 #include "ScriptData.h"
 #include "ResourceScene.h"
 

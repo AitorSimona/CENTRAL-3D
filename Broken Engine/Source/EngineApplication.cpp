@@ -1,5 +1,26 @@
 #include "EngineApplication.h"
 #include "ModuleEditorUI.h"
+#include "ModuleRecast.h"
+#include "ModuleEventManager.h"
+#include "ModuleInput.h"
+#include "ModuleTimeManager.h"
+#include "ModuleHardware.h"
+#include "ModuleFileSystem.h"
+#include "ModuleWindow.h"
+#include "ModuleCamera3D.h"
+#include "ModuleGui.h"
+#include "ModuleSceneManager.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleTextures.h"
+#include "ModuleResourceManager.h"
+#include "ModuleScripting.h"
+#include "ModuleThreading.h"
+#include "ModuleUI.h"
+#include "ModulePhysics.h"
+#include "ModuleParticles.h"
+#include "ModuleAudio.h"
+#include "ModuleDetour.h"
+#include "ModuleSelection.h"
 #include "BrokenEngineMain.h"
 
 
@@ -15,6 +36,7 @@ EngineApplication::EngineApplication() {
 
 	//We initiate our own modules
 	editorui = new ModuleEditorUI();
+	recast = new ModuleRecast();
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -42,6 +64,10 @@ EngineApplication::EngineApplication() {
 	AddModule(scene_manager);
 	AddModule(selection);
 
+	// Recast
+	AddModule(recast);
+	AddModule(detour);
+
 	//Physics and particles
 	AddModule(physics);
 	AddModule(particles);
@@ -58,8 +84,22 @@ EngineApplication::EngineApplication() {
 EngineApplication::~EngineApplication() {
 }
 
+void EngineApplication::GetDefaultGameConfig(Broken::json& config) const {
+	// --- Create Game Config with default values ---
+	config = {
+		{"Application", {
+			{"Organization", orgName}
+
+		}},
+
+		{"Renderer3D", {
+			{"VSync", true}
+		}}
+	};
+}
+
 void EngineApplication::SaveForBuild(const Broken::json& reference, const char* path) const {
-	static Broken::json config = reference;
+	Broken::json config = reference;
 
 	Broken::json node;
 	for (std::list<Broken::Module*>::const_iterator item = list_modules.begin(); item != list_modules.end(); ++item) {

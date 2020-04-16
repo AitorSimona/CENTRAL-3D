@@ -4,12 +4,12 @@
 #include "Module.h"
 #include "Math.h"
 #include "Wwise/AK/SoundEngine/Common/AkTypes.h"
+#include <vector>
 
 BE_BEGIN_NAMESPACE
 class BROKEN_API WwiseGameObject
 {
 public:
-
 	WwiseGameObject(uint64 id, const char* name);
 	~WwiseGameObject();
 
@@ -32,7 +32,6 @@ public:
 	AkGameObjectID id = 0;
 private:
 	const char* name = nullptr;
-	
 
 	AkVector position = { 0,0,0 };
 	AkVector orientationFront = { 0,0,0 };
@@ -56,10 +55,17 @@ private:
 	void InitWwise();
 	void TerminateWwise();
 	void LoadSoundBank(const char* path);
+	void LoadEventsFromJson();
+	void StopAllAudioEvents();
+	void ResumeAllAudioEvents();
+	void PauseAllAudioEvents();
 
 public:
 	AkGameObjectID currentListenerID = 0;
 	//unsigned long g_envMAP[255];
+	std::map <std::string, uint> EventMap;
+	std::vector<WwiseGameObject*> audioListenerList;
+	std::vector<WwiseGameObject*> audioSourceList;
 };
 BE_END_NAMESPACE
 #endif __ModuleAudio__H__
