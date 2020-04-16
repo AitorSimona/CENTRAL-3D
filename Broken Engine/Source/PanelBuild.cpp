@@ -30,6 +30,12 @@ bool PanelBuild::Draw() {
 	settingsFlags = ImGuiWindowFlags_NoDocking;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags)) {
+		#ifdef _DEBUG
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.75, 0, 0, 255));
+		ImGui::Text("Hey, it looks like you might be doing a build in Debug mode!");
+		ImGui::Text("Do make sure you have compiled in release first or BEG.exe will be non-existant!");
+		ImGui::PopStyleColor();
+		#endif
 		ImGui::Separator();
 		ImGui::Text("Build name:");
 		static char buildNameBuffer[100];
@@ -62,13 +68,6 @@ bool PanelBuild::Draw() {
 			static ImGuiComboFlags flags = 0;
 			if (ImGui::BeginCombo("##Scenes Combo", selectedCamera->GetName(), flags)) // The second parameter is the label previewed before opening the combo.
 			{
-				#ifdef _DEBUG
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255, 0, 0, 255));
-				ImGui::Text("Hey, it looks like you might be doing a build in Debug mode!");
-				ImGui::Text("Do make sure you have compiled in release first or BEG.exe will be non-existant!");
-				ImGui::PopStyleColor();
-				ImGui::Separator();
-				#endif
 				for (int n = 0; n < cameras.size(); n++) {
 					bool is_selected = (selectedCamera == cameras[n]);
 					if (ImGui::Selectable(cameras[n]->GetName(), is_selected)) {
