@@ -24,6 +24,7 @@ using namespace Broken;
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled) {
 	camera = new ComponentCamera(nullptr);
+	listener = new ComponentAudioListener(nullptr, reference);
 	name = "Camera3D";
 }
 
@@ -56,6 +57,7 @@ bool ModuleCamera3D::CleanUp() {
 	ENGINE_CONSOLE_LOG("Cleaning camera");
 
 	delete camera;
+	delete listener;
 
 	return true;
 }
