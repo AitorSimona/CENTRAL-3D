@@ -30,6 +30,12 @@ bool PanelBuild::Draw() {
 	settingsFlags = ImGuiWindowFlags_NoDocking;
 
 	if (ImGui::Begin(name, &enabled, settingsFlags)) {
+		#ifdef _DEBUG
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.75, 0, 0, 255));
+		ImGui::Text("Hey, it looks like you might be doing a build in Debug mode!");
+		ImGui::Text("Do make sure you have compiled in release first or BEG.exe will be non-existant!");
+		ImGui::PopStyleColor();
+		#endif
 		ImGui::Separator();
 		ImGui::Text("Build name:");
 		static char buildNameBuffer[100];
@@ -75,9 +81,26 @@ bool PanelBuild::Draw() {
 				ImGui::EndCombo();
 			}
 			ImGui::Separator();
+			if (ImGui::BeginPopup("Build already exists!")) {
+				ImGui::Text("The build \"%s\" already exists!", buildName.c_str());
+				ImGui::Text("Should we delete it?");
+
+				if (ImGui::Button("Yes##deleteBuild")) {
+					EngineApp->fs->DeleteDirectoryAndContents(buildName.c_str());
+					makeBuild();
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("No##deleteBuild")) {
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
 			if (ImGui::Button("Build the game!")) {
-				EngineApp->scene_manager->SaveScene(EngineApp->scene_manager->currentScene);
-				makeBuild();
+				if (EngineApp->fs->Exists((BUILDS_FOLDER + buildName).c_str()))
+					ImGui::OpenPopup("Build already exists!");
+				else
+					makeBuild();
 			}
 		}
 		else
@@ -138,40 +161,54 @@ void PanelBuild::findCameras() {
 
 void PanelBuild::makeBuild() {
 
+	// Save the scene
+	EngineApp->scene_manager->SaveScene(EngineApp->scene_manager->currentScene);
+
+	std::string buildFolder = BUILDS_FOLDER + buildName + '/';
 
 	// Create build folders
-	EngineApp->fs->CreateDirectoryA(buildName.c_str());
+	EngineApp->fs->CreateDirectoryA(buildFolder.c_str());
+	EngineApp->fs->CreateDirectoryA((buildFolder + LIBRARY_FOLDER).c_str());
+	EngineApp->fs->CreateDirectoryA((buildFolder + ASSETS_FOLDER).c_str());
+	EngineApp->fs->CreateDirectoryA((buildFolder + SETTINGS_FOLDER).c_str());
 
 	//We copy the executable
-	EngineApp->fs->Copy(GAME_EXE, (buildName + "/" + buildName + ".exe").c_str());
+	EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, GAME_EXE, buildFolder.c_str());
 
-	const std::vector<std::string>* files = EngineApp->fs->ExDiscoverFiles("");
+	const std::vector<std::string>& files = EngineApp->fs->ExDiscoverFiles("");
 
 	//We copy all dlls and .ini
-	for (std::vector<std::string>::const_iterator it = (*files).begin(); it != (*files).end(); ++it) {
-		std::string extension = ((*it).substr((*it).find_last_of(".") + 1));
-		EngineApp->fs->NormalizePath(extension);
+	std::string extension;
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it) {
+		extension = ((*it).substr((*it).find_last_of(".") + 1));
+
+		// We normalize it
+		for (std::string::iterator c = extension.begin(); c != extension.end(); ++c) {
+			if (*c == '\\')
+				*c = '/';
+			else
+				*c = std::tolower(*c);
+		}
 
 		if (extension == "dll" || extension == "ini" || extension == "meta")
-			EngineApp->fs->Copy((*it).c_str(), (buildName + "/" + *it).c_str());
+			EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildFolder.c_str());
 	}
 
-	EngineApp->fs->DeleteArray(files);
+	// We create the folder structure and get all files we need to copy
+	std::vector<std::string> filesToCopy;
+	createFoldersAndRetrieveFiles(ASSETS_FOLDER, (buildFolder + ASSETS_FOLDER).c_str(), filesToCopy);
+	createFoldersAndRetrieveFiles(LIBRARY_FOLDER, (buildFolder + LIBRARY_FOLDER).c_str(), filesToCopy);
 
-	static const char* directories[] = { ASSETS_FOLDER, SETTINGS_FOLDER, LIBRARY_FOLDER, TEXTURES_FOLDER, MESHES_FOLDER, SCENES_FOLDER,
-		MODELS_FOLDER, SHADERS_FOLDER, SCRIPTS_FOLDER, SHADERS_ASSETS_FOLDER, SOUNDS_FOLDER, ANIMATIONS_FOLDER, BONES_FOLDER, FONTS_FOLDER, NAVMESH_FOLDER};
-
-	std::shared_ptr<std::string> build = std::make_shared<std::string>(buildName);
-	for (int i = 0; i < IM_ARRAYSIZE(directories); ++i) {
-		std::shared_ptr<std::string> dir = std::make_shared<std::string>(directories[i]);
-		EngineApp->fs->CreateDirectoryA((buildName + "/" + directories[i]).c_str());
-		EngineApp->threading->ADDTASK(this, PanelBuild::copyAllFolderMT, dir, build);
-	}
+	for (std::vector<std::string>::const_iterator it = filesToCopy.begin(); it != filesToCopy.end(); ++it)
+		EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildFolder.c_str());
 
 	//We wait for the module threading to finish tasks
 	EngineApp->threading->FinishProcessing();
+	EngineApp->fs->DeleteArray(files);
+	filesToCopy.clear();
 
-	std::string settingspath = buildName + "/Settings/GameConfig.json";
+
+	std::string settingspath = buildFolder + SETTINGS_FOLDER + "GameConfig.json";
 	//We write our settings to gameSettings.
 	Broken::json gameSettings;
 	EngineApp->GetDefaultGameConfig(gameSettings);
@@ -186,17 +223,25 @@ void PanelBuild::makeBuild() {
 	SetOnOff(false);
 }
 
-void PanelBuild::copyAllFolderMT(std::shared_ptr<std::string> path, std::shared_ptr<std::string> build) {
-	const std::vector<std::string>* files = EngineApp->fs->ExDiscoverFiles((*path).c_str());
+void PanelBuild::copyFile(const char* path, const char* buildFolder) {
+	std::string new_path = buildFolder;
+	new_path += path;
+	EngineApp->fs->Copy(path, new_path.c_str());
+}
 
-	std::string curr_path;
-	std::string new_path;
+void PanelBuild::createFoldersAndRetrieveFiles(const char* path, const char* newPath, std::vector<std::string>& outFiles) {
+	const std::vector<std::string>& folders = EngineApp->fs->ExDiscoverDirectories(path);
+	const std::vector<std::string>& files = EngineApp->fs->ExDiscoverFiles(path);
 
-	for (std::vector<std::string>::const_iterator it = (*files).begin(); it != (*files).end(); ++it) {
-		curr_path = *path + *it;
-		new_path = *build + "/" + *path + *it;
-		EngineApp->fs->Copy(curr_path.c_str(), new_path.c_str());
+
+	for (std::vector<std::string>::const_iterator it = folders.begin(); it != folders.end(); ++it) {
+		EngineApp->fs->CreateDirectoryA((newPath + *it).c_str());
+		createFoldersAndRetrieveFiles((path + *it + "/").c_str(), (newPath + *it + "/").c_str(), outFiles);
 	}
 
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
+		outFiles.push_back(path + *it);
+
+	EngineApp->fs->DeleteArray(folders);
 	EngineApp->fs->DeleteArray(files);
 }
