@@ -84,6 +84,20 @@ EngineApplication::EngineApplication() {
 EngineApplication::~EngineApplication() {
 }
 
+void EngineApplication::GetDefaultGameConfig(Broken::json& config) const {
+	// --- Create Game Config with default values ---
+	config = {
+		{"Application", {
+			{"Organization", orgName}
+
+		}},
+
+		{"Renderer3D", {
+			{"VSync", true}
+		}}
+	};
+}
+
 void EngineApplication::SaveForBuild(const Broken::json& reference, const char* path) const {
 	static Broken::json config = reference;
 
