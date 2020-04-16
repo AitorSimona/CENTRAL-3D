@@ -116,7 +116,8 @@ bool ResourceScene::LoadInMemory()
 					// --- Load Component Data ---
 					if (component) 
 					{
-						component->Load(components[type_string]);
+						// NOTE: Commented this so components do not try to ask for a nonexistant go, we first create all gos and ask components to load later
+						//component->Load(components[type_string]);
 
 						// --- UID ---
 						json c_UID = components[it2.key()]["UID"];
@@ -135,6 +136,31 @@ bool ResourceScene::LoadInMemory()
 				e.type = Event::EventType::GameObject_loaded;
 				e.go = go;
 				App->event_manager->PushEvent(e);
+			}
+
+			uint ite = 0;
+
+			for (json::iterator it = file.begin(); it != file.end(); ++it)
+			{
+				// --- Iterate components ---
+				json components = file[it.key()]["Components"];
+				std::vector<Component*>* go_components = &objects[ite]->GetComponents();
+
+				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+				{
+					// --- UID ---
+					json c_UID = components[it2.key()]["UID"];
+					int c_index = -1;
+					json index = components[it2.key()]["index"];
+					std::string type_string = it2.key();
+
+					if (!index.is_null())
+						c_index = index.get<uint>();
+
+					go_components->at(c_index)->Load((components[type_string]));
+				}
+
+				ite++;
 			}
 
 			App->scene_manager->GetRootGO()->childs.clear();
