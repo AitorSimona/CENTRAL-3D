@@ -81,8 +81,8 @@ void ComponentCharacterController::Update()
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT))
 		vel.x = -10.0f;
 	else
-		vel.x = 0.0f;*/
-
+		vel.x = 0.0f;
+	*/
 
 
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();

@@ -59,6 +59,8 @@ public:
 	void Load(json& node) override;
 	void CreateInspectorNode() override;
 
+	void GetMesh();
+
 	void CreateCollider(ComponentCollider::COLLIDER_TYPE type, bool createAgain = false);
 
 	void CreateRigidbody();
@@ -80,6 +82,7 @@ private:
 public:
 	COLLIDER_TYPE type = COLLIDER_TYPE::NONE;
 	ResourceMesh* mesh = nullptr;
+	ResourceMesh* current_mesh = nullptr;
 	ResourceMesh* dragged_mesh = nullptr;
 	bool editCollider = false;
 	bool updateValues = false;
@@ -91,6 +94,9 @@ public:
 	bool hasBeenDeactivated = false;
 	bool isTrigger = false;
 	bool isConvex = false;
+	Quat dragged_rot = Quat::identity;
+	float3 dragged_scale = float3::one;
+	int dragged_UID = 0;
 
 
 private:

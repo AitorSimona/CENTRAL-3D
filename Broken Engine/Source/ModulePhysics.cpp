@@ -248,19 +248,23 @@ bool ModulePhysics::CleanUp()
 {	
 	cache->release();	//195
 	mControllerManager->release();//182
+	mMaterial->release();
+	mCooking->release();
 	mScene->release(); //172
 	mPhysics->release(); //153
-	mCooking->release();
 	mPvd->release(); //149
 	mFoundation->release(); //136
+	RELEASE(simulationEventsCallback);
+	RELEASE(raycastManager);
+	RELEASE(detected_objects);
+	cooked_meshes.clear();
+	actors.clear();
 
 	mControllerManager = nullptr;
 	mPhysics = nullptr;
 	mFoundation = nullptr;
 	mScene = nullptr;
 	mPvd = nullptr;
-
-	RELEASE(simulationEventsCallback);
 
 	return true;
 }
@@ -358,8 +362,11 @@ bool ModulePhysics::DeleteActor(physx::PxRigidActor* actor)
 
 void ModulePhysics::DeleteActors(GameObject* go)
 {
-	if (go == nullptr)
+	bool isRoot = false;
+	if (go == nullptr) {
 		go = App->scene_manager->GetRootGO();
+		isRoot = true;
+	}
 
 	if (go->childs.size() > 0)
 	{
@@ -378,6 +385,32 @@ void ModulePhysics::DeleteActors(GameObject* go)
 	if (go->GetComponent<ComponentCharacterController>() != nullptr) {
 		go->GetComponent<ComponentCharacterController>()->Delete();
 	}
+
+}
+
+void ModulePhysics::RemoveCookedActors() {
+	for (std::map<ResourceMesh*, physx::PxBase*>::iterator it = cooked_meshes.begin(); it != cooked_meshes.end(); ++it)
+	{
+		int i = 0;
+		if ((*it).second->getConcreteType() == physx::PxConcreteType::eCONVEX_MESH) {
+			physx::PxConvexMesh* mesh = (physx::PxConvexMesh*)(*it).second;
+			if (mesh) {
+				if (mesh->getReferenceCount() > 0) {
+					(*it).second->release();
+				}
+			}
+		}
+		else if ((*it).second->getConcreteType() == physx::PxConcreteType::eTRIANGLE_MESH_BVH33 || (*it).second->getConcreteType() == physx::PxConcreteType::eTRIANGLE_MESH_BVH34) {
+			physx::PxTriangleMesh* mesh = (physx::PxTriangleMesh*)(*it).second;
+			if (mesh) {
+				i = mesh->getReferenceCount();
+				if (mesh->getReferenceCount() > 0) {
+					(*it).second->release();
+				}
+			}
+		}
+	}
+	cooked_meshes.clear();
 }
 
 void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<uint>& objects)

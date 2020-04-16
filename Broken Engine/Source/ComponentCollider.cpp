@@ -34,10 +34,6 @@ ComponentCollider::ComponentCollider(GameObject* ContainerGO) : Component(Contai
 ComponentCollider::~ComponentCollider()
 {
 	mesh->Release();
-	if (convex_mesh)
-		convex_mesh->release();//reduce instances
-	if (triangle_mesh)
-		triangle_mesh->release();
 }
 
 void ComponentCollider::Update()
@@ -100,8 +96,6 @@ void ComponentCollider::DrawComponent()
 			{
 			case physx::PxGeometryType::eSPHERE:
 			{
-				physx::PxSphereGeometry pxsphere = holder.sphere();
-
 				// --- Rebuild sphere ---
 				App->scene_manager->CreateSphere(1, 25, 25, mesh);
 				mesh->LoadToMemory();
@@ -109,8 +103,6 @@ void ComponentCollider::DrawComponent()
 			break;
 			case physx::PxGeometryType::eCAPSULE:
 			{
-				physx::PxCapsuleGeometry capsule = holder.capsule();
-
 				// --- Rebuild capsule ---
 				App->scene_manager->CreateCapsule(radius, height, mesh);
 				mesh->LoadToMemory();
@@ -118,40 +110,27 @@ void ComponentCollider::DrawComponent()
 			break;
 			case physx::PxGeometryType::eBOX:
 			{
-				physx::PxCapsuleGeometry capsule = holder.capsule();
-
 				// --- Rebuild box ---
 				App->scene_manager->CreateCube(1, 1, 1, mesh);
 				mesh->LoadToMemory();
-
 			}
 			break;
-			case physx::PxGeometryType::eCONVEXMESH:
-			{
-				// --- Rebuild box ---
-				//Compute mesh
-				//mesh->LoadToMemory();
-				break;
-			}
-			case physx::PxGeometryType::eTRIANGLEMESH:
-				break;
-			case physx::PxGeometryType::eHEIGHTFIELD:
-				break;
-			case physx::PxGeometryType::eGEOMETRY_COUNT:
-				break;
-			case physx::PxGeometryType::eINVALID:
-				break;
 			default:
 				break;
 			}
 		}
 	}
 
+	if (!dragged_mesh)
+		current_mesh = mesh;
+	else
+		current_mesh = dragged_mesh;
+
 	// --- Render shape ---
-	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices && App->GetAppState() != AppState::PLAY)
+	if (current_mesh && current_mesh->IsInMemory() && current_mesh->vertices && current_mesh->Indices && App->GetAppState() != AppState::PLAY)
 	{
 		RenderMeshFlags flags = wire;
-		App->renderer3D->DrawMesh(globalMatrix, mesh, (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), false), nullptr, flags, Color(125,125,125));
+		App->renderer3D->DrawMesh(globalMatrix * float4x4::FromQuat(dragged_rot), current_mesh, (ResourceMaterial*)App->resources->GetResource(App->resources->GetDefaultMaterialUID(), false), nullptr, flags, Color(125,125,125));
 	}
 
 }
@@ -174,6 +153,7 @@ void ComponentCollider::UpdateLocalMatrix() {
 	localMatrix.scaleX = colliderSize.x * originalSize.x;
 	localMatrix.scaleY = colliderSize.y * originalSize.y;
 	localMatrix.scaleZ = colliderSize.z * originalSize.z;
+
 
 	globalMatrix = gt * localMatrix;
 
@@ -323,6 +303,8 @@ json ComponentCollider::Save() const
 
 	node["firstCreation"] = std::to_string(firstCreation);
 
+	node["draggedUID"] = std::to_string(dragged_UID);
+
 	if (hasBeenDeactivated)
 		node["hasBeenDeactivated"] = std::to_string(1);
 	else
@@ -383,6 +365,8 @@ void ComponentCollider::Load(json& node)
 
 	std::string hasBeenDeactivated_ = node["hasBeenDeactivated"].is_null() ? "0" : node["hasBeenDeactivated"];
 
+	std::string draggedUID_ = node["draggedUID"].is_null() ? "0" : node["draggedUID"];
+
 
 	centerPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
 	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
@@ -410,6 +394,7 @@ void ComponentCollider::Load(json& node)
 
 	firstCreation = true;
 
+	dragged_UID = std::atoi(draggedUID_.c_str());
 
 	toPlay = false;
 
@@ -433,7 +418,14 @@ void ComponentCollider::CreateInspectorNode()
 	if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0MESH\0\0")) 
 	{
 		type = (ComponentCollider::COLLIDER_TYPE)colliderType;
+		current_mesh = nullptr;
+		colliderSize = float3::one;
+		centerPosition = float3::zero;
+		dragged_rot = Quat::identity;
+		dragged_scale = float3::one;
+		dragged_mesh = nullptr;
 		editCollider = true;
+		dragged_UID = 0;
 	}
 	
 	if (type != ComponentCollider::COLLIDER_TYPE::MESH && type != ComponentCollider::COLLIDER_TYPE::NONE) {
@@ -550,8 +542,14 @@ void ComponentCollider::CreateInspectorNode()
 		}
 		case ComponentCollider::COLLIDER_TYPE::MESH:
 		{
-			if (ImGui::Checkbox("Convex", &isConvex))
+			if (ImGui::Checkbox("Convex", &isConvex)) {
 				editCollider = true;
+				if (App->physics->cooked_meshes[dragged_mesh]->isReleasable()) {
+					App->physics->cooked_meshes[dragged_mesh]->release();
+					App->physics->cooked_meshes.erase(dragged_mesh);
+					dragged_mesh = nullptr;
+				}
+			}
 			
 			if(ImGui::Checkbox("Trigger", &isTrigger))
 				editCollider = true;
@@ -567,14 +565,34 @@ void ComponentCollider::CreateInspectorNode()
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
 				{
-					uint UID = *(const uint*)payload->Data;
+					uint UID = *(const uint*)payload->Data; 
 					GameObject* go = App->scene_manager->currentScene->GetGOWithUID(UID);
 					if (go->HasComponent(ComponentType::Mesh)) {
-						dragged_mesh = go->GetComponent<ComponentMesh>()->resource_mesh;
+						dragged_UID = UID;
 						editCollider = true;
 					}
 				}
 				ImGui::EndDragDropTarget();
+			}
+		}
+	}
+}
+
+void ComponentCollider::GetMesh() {
+
+	if (dragged_UID != 0) {
+		GameObject* go = App->scene_manager->currentScene->GetGOWithUID(dragged_UID);
+		if (go) {
+			if (go->HasComponent(ComponentType::Mesh)) {
+				if (dragged_mesh != go->GetComponent<ComponentMesh>()->resource_mesh) {
+					dragged_mesh = go->GetComponent<ComponentMesh>()->resource_mesh;
+					dragged_scale = go->GetComponent<ComponentTransform>()->GetScale();
+					if (go != GO) {
+						centerPosition = go->GetComponent<ComponentTransform>()->GetPosition();
+						dragged_rot = go->GetComponent<ComponentTransform>()->GetQuaternionRotation();
+						colliderSize = dragged_scale;
+					}
+				}
 			}
 		}
 	}
@@ -702,8 +720,11 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			break;
 		}
 		case ComponentCollider::COLLIDER_TYPE::MESH: {
+			GetMesh();
 			if (dragged_mesh) {
 				physx::PxTransform position(GO->GetAABB().CenterPoint().x, GO->GetAABB().CenterPoint().y, GO->GetAABB().CenterPoint().z);
+				physx::PxMeshScale mesh_scale(physx::PxVec3(dragged_scale.x, dragged_scale.y, dragged_scale.z), physx::PxQuat(dragged_rot.x, dragged_rot.y, dragged_rot.z, dragged_rot.w));
+				//physx::PxMeshScale mesh_scale(physx::PxVec3(dragged_scale.x, dragged_scale.y, dragged_scale.z), physx::PxQuat(physx::PxIDENTITY()));
 
 				if (isConvex) {//Convex Collider
 					//mesh = dragged_mesh;
@@ -719,17 +740,28 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						convexDesc.points.count = dragged_mesh->VerticesSize;
 						convexDesc.points.stride = sizeof(physx::PxVec3);
 						convexDesc.points.data = vertices;
+						///--------------------------------COOKING-------------------------------------------
+						//convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
 
-						convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;// | physx::PxConvexFlag::eDISABLE_MESH_VALIDATION | physx::PxConvexFlag::eFAST_INERTIA_COMPUTATION;
+						//physx::PxDefaultMemoryOutputStream outStream;
+						//if (!App->physics->mCooking->cookConvexMesh(convexDesc, outStream)) {
+						//	return ENGINE_CONSOLE_LOG("| Error cooking vertices on Mesh Collider");
+						//}
 
-						physx::PxDefaultMemoryOutputStream outStream;
-						if (!App->physics->mCooking->cookConvexMesh(convexDesc, outStream)) {
-							return ENGINE_CONSOLE_LOG("| Error cooking vertices on Mesh Collider");
-						}
-
-						// Create the mesh from a stream.
-						physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
-						convex_mesh = App->physics->mPhysics->createConvexMesh(inStream);
+						//// Create the mesh from a stream.
+						//physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
+						//convex_mesh = App->physics->mPhysics->createConvexMesh(inStream);
+						///--------------------------------RUNTIME-------------------------------------------
+						convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eDISABLE_MESH_VALIDATION | physx::PxConvexFlag::eFAST_INERTIA_COMPUTATION;
+						#ifdef _DEBUG
+							// mesh should be validated before cooking without the mesh cleaning
+							if (!App->physics->mCooking->validateConvexMesh(convexDesc)) {
+								ENGINE_CONSOLE_LOG("| Could not validate Convex Mesh");
+							}
+						#endif	
+						convex_mesh = App->physics->mCooking->createConvexMesh(convexDesc,App->physics->mPhysics->getPhysicsInsertionCallback());
+						///-----------------------------------------------------------------------------------
+						
 						App->physics->cooked_meshes.insert(std::pair<ResourceMesh*, physx::PxConvexMesh*>(dragged_mesh, nullptr));
 						App->physics->cooked_meshes[dragged_mesh] = convex_mesh;
 
@@ -737,10 +769,9 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 					}
 					else {
 						convex_mesh = (physx::PxConvexMesh*)App->physics->cooked_meshes[dragged_mesh];
-						convex_mesh->acquireReference();
+						//convex_mesh->acquireReference();
 					}
-
-					physx::PxConvexMeshGeometry geometry(convex_mesh);
+					physx::PxConvexMeshGeometry geometry(convex_mesh, mesh_scale);
 					shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
 
 					CreateRigidbody(geometry, position);
@@ -767,14 +798,30 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						meshDesc.triangles.data = indices;
 
 						meshDesc.flags = physx::PxMeshFlag::e16_BIT_INDICES;
-
-						physx::PxDefaultMemoryOutputStream writeBuffer;
+						///--------------------------------COOKING-------------------------------------------
+						/*physx::PxDefaultMemoryOutputStream writeBuffer;
 						if (!App->physics->mCooking->cookTriangleMesh(meshDesc, writeBuffer)) {
 							return ENGINE_AND_SYSTEM_CONSOLE_LOG("| Could not create Mesh Collider");
 						}
 
 						physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-						triangle_mesh = App->physics->mPhysics->createTriangleMesh(readBuffer);
+						triangle_mesh = App->physics->mPhysics->createTriangleMesh(readBuffer);*/
+						///--------------------------------RUNTIME--------------------------------------------
+						physx::PxTolerancesScale scale;
+						physx::PxCookingParams params(scale);
+						params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+						params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
+						params.meshCookingHint = physx::PxMeshCookingHint::eCOOKING_PERFORMANCE;
+						App->physics->mCooking->setParams(params);
+						#ifdef _DEBUG
+							// mesh should be validated before cooking without the mesh cleaning
+							if (!App->physics->mCooking->validateTriangleMesh(meshDesc)) {
+								ENGINE_CONSOLE_LOG("| Could not validate Mesh Collider");
+							}
+						#endif
+						triangle_mesh = App->physics->mCooking->createTriangleMesh(meshDesc, App->physics->mPhysics->getPhysicsInsertionCallback());
+						///----------------------------------------------------------------------------------------------------------
+						
 						App->physics->cooked_meshes.insert(std::pair<ResourceMesh*, physx::PxBase*>(dragged_mesh, nullptr));
 						App->physics->cooked_meshes[dragged_mesh] = triangle_mesh;
 
@@ -783,12 +830,12 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 					}
 					else {
 						triangle_mesh = (physx::PxTriangleMesh*)App->physics->cooked_meshes[dragged_mesh];
-						triangle_mesh->acquireReference();
+						//triangle_mesh->acquireReference();
 					}
 				}
-				physx::PxTriangleMeshGeometry geometry(triangle_mesh);
-				shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
 
+				physx::PxTriangleMeshGeometry geometry(triangle_mesh, mesh_scale); 
+				shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
 				CreateRigidbody(geometry, position);
 			}
 			break;
@@ -827,13 +874,21 @@ void ComponentCollider::CreateRigidbody(Geometry geometry, physx::PxTransform po
 		shape->setQueryFilterData(filterData);
 
 		rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
-
+		
 		App->physics->addActor(rigidStatic, GO);
+		
 	}
 }
 
 void ComponentCollider::Delete()
 {
+	if (triangle_mesh) {
+		triangle_mesh->release();
+	}
+	if (convex_mesh) {
+		convex_mesh->release();
+	}
+
 	if (shape)
 	{
 		shape->release();
@@ -902,9 +957,7 @@ bool ComponentCollider::HasDynamicRigidBody(Geometry geometry, physx::PxTransfor
 
 		return true;
 	}
-	else {
-		return false;
-	}
+	return false;
 }
 
 physx::PxRigidActor* ComponentCollider::GetActor() {

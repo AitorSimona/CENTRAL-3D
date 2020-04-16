@@ -130,6 +130,8 @@ public:
 
 	void DeleteActors(GameObject* go = nullptr);
 
+	void RemoveCookedActors();
+
 	void OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<uint>& objects);
 
 	const Broken::json& SaveStatus() const override;
