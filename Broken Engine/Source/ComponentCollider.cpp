@@ -186,7 +186,8 @@ void ComponentCollider::UpdateLocalMatrix() {
 	else
 	{
 		if ((App->gui->isUsingGuizmo && !App->isGame) || cTransform->updateValues){ //ON EDITOR
-				dynamicRB->rigidBody->setGlobalPose(transform);
+
+			dynamicRB->rigidBody->setGlobalPose(transform);
 		}
 		else if (dynamicRB->rigidBody != nullptr) //ON GAME
 		{
@@ -615,6 +616,25 @@ void ComponentCollider::CreateInspectorNode()
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("X")) {
+				current_mesh = nullptr;
+				colliderSize = float3::one;
+				centerPosition = float3::zero;
+				dragged_rot = Quat::identity;
+				dragged_scale = float3::one;
+				dragged_UID = 0;
+				dragged_mesh = nullptr;
+				if (convex_mesh) {
+					convex_mesh->release();
+					convex_mesh = nullptr;
+				}
+				if (triangle_mesh) {
+					triangle_mesh->release();
+					triangle_mesh = nullptr;
+				}
+				editCollider = true;
+			}
 		}
 	}
 }
@@ -625,14 +645,13 @@ void ComponentCollider::GetMesh() {
 		GameObject* go = App->scene_manager->currentScene->GetGOWithUID(dragged_UID);
 		if (go) {
 			if (go->HasComponent(ComponentType::Mesh)) {
-				if (dragged_mesh != go->GetComponent<ComponentMesh>()->resource_mesh) {
-					dragged_mesh = go->GetComponent<ComponentMesh>()->resource_mesh;
-					dragged_scale = go->GetComponent<ComponentTransform>()->GetScale();
-					if (go != GO) {
-						centerPosition = go->GetComponent<ComponentTransform>()->GetPosition();
-						dragged_rot = go->GetComponent<ComponentTransform>()->GetQuaternionRotation();
-						colliderSize = dragged_scale;
-					}
+				dragged_mesh = go->GetComponent<ComponentMesh>()->resource_mesh;
+				dragged_scale = go->GetComponent<ComponentTransform>()->GetScale();
+				if (go != GO) {
+					centerPosition = go->GetComponent<ComponentTransform>()->GetPosition();
+					dragged_rot = go->GetComponent<ComponentTransform>()->GetQuaternionRotation();
+					colliderSize = dragged_scale;
+					localMesh = true;
 				}
 			}
 		}
@@ -764,7 +783,11 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			GetMesh();
 			if (dragged_mesh) {
 				physx::PxTransform position(GO->GetAABB().CenterPoint().x, GO->GetAABB().CenterPoint().y, GO->GetAABB().CenterPoint().z);
-				physx::PxMeshScale mesh_scale(physx::PxVec3(dragged_scale.x, dragged_scale.y, dragged_scale.z), physx::PxQuat(dragged_rot.x, dragged_rot.y, dragged_rot.z, dragged_rot.w));
+				Quat aux = dragged_rot;
+				float3 rot_scale = aux.Inverted().Mul(dragged_scale).Abs();
+				if(localMesh)
+					colliderSize = rot_scale;
+				physx::PxMeshScale mesh_scale(physx::PxVec3(rot_scale.x, rot_scale.y, rot_scale.z), physx::PxQuat(dragged_rot.x, dragged_rot.y, dragged_rot.z, dragged_rot.w));
 				//physx::PxMeshScale mesh_scale(physx::PxVec3(dragged_scale.x, dragged_scale.y, dragged_scale.z), physx::PxQuat(physx::PxIDENTITY()));
 
 				if (isConvex) {//Convex Collider

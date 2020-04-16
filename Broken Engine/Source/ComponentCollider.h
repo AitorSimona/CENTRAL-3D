@@ -115,6 +115,7 @@ private:
 	bool firstCreation = false;
 	bool toPlay = false;
 	bool draw = false;
+	bool localMesh = false;
 };
 
 
