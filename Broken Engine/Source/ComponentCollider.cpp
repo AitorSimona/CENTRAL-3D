@@ -20,6 +20,7 @@
 #include "PhysX_3.4/Include/PxSimulationEventCallback.h"
 
 #include "Imgui/imgui.h"
+#include "Imgui/imgui_internal.h"
 
 #include "mmgr/mmgr.h"
 
@@ -166,7 +167,7 @@ void ComponentCollider::UpdateLocalMatrix() {
 
 	if ((math::Abs(scale.x - tmpScale.x) > threshold
 		|| math::Abs(scale.y - tmpScale.y) > threshold
-		|| math::Abs(scale.z - tmpScale.z) > threshold))
+		|| math::Abs(scale.z - tmpScale.z) > threshold) && cTransform->updateValues)
 	{
 		editCollider = true;
 		tmpScale = scale;
@@ -258,6 +259,7 @@ json ComponentCollider::Save() const
 
 	node["colliderType"] = std::to_string(colliderType);
 	node["isTrigger"] = std::to_string(isTrigger);
+	node["isConvex"] = std::to_string(isConvex);
 
 	node["localPositionx"] = std::to_string(centerPosition.x);
 	node["localPositiony"] = std::to_string(centerPosition.y);
@@ -356,6 +358,7 @@ void ComponentCollider::Load(json& node)
 	std::string colliderType_ = node["colliderType"].is_null() ? "0" : node["colliderType"];
 
 	std::string isTrigger_ = node["isTrigger"].is_null() ? "0" : node["isTrigger"];
+	std::string isConvex_ = node["isConvex"].is_null() ? "0" : node["isConvex"];
 
 	std::string tmpScalex = node["tmpScalex"].is_null() ? "0" : node["tmpScalex"];
 	std::string tmpScaley = node["tmpScaley"].is_null() ? "0" : node["tmpScaley"];
@@ -389,6 +392,7 @@ void ComponentCollider::Load(json& node)
 	lastIndex = std::stoi(lastIndex_);
 	colliderType = std::stoi(colliderType_);
 	isTrigger = std::stoi(isTrigger_);
+	isConvex = std::stoi(isConvex_);
 
 	tmpScale = float3(std::stof(tmpScalex), std::stof(tmpScaley), std::stof(tmpScalez));
 
@@ -544,15 +548,30 @@ void ComponentCollider::CreateInspectorNode()
 		{
 			if (ImGui::Checkbox("Convex", &isConvex)) {
 				editCollider = true;
-				if (App->physics->cooked_meshes[dragged_mesh]->isReleasable()) {
-					App->physics->cooked_meshes[dragged_mesh]->release();
-					App->physics->cooked_meshes.erase(dragged_mesh);
-					dragged_mesh = nullptr;
+				if (dragged_mesh) {
+					if (App->physics->cooked_meshes[dragged_mesh]->isReleasable()) {
+						App->physics->cooked_meshes[dragged_mesh]->release();
+						App->physics->cooked_meshes.erase(dragged_mesh);
+						dragged_mesh = nullptr;
+					}
 				}
 			}
-			
-			if(ImGui::Checkbox("Trigger", &isTrigger))
+
+			if (!isConvex){
+				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+			}
+
+			ImGui::NewLine();
+			ImGui::SameLine(50.f);
+			if (ImGui::Checkbox("Trigger", &isTrigger)) {
 				editCollider = true;
+			}
+
+			if (!isConvex) {
+				ImGui::PopItemFlag();
+				ImGui::PopStyleVar();
+			}
 
 			ImGui::Text("Mesh");
 			ImGui::SameLine();
@@ -740,6 +759,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						convexDesc.points.count = dragged_mesh->VerticesSize;
 						convexDesc.points.stride = sizeof(physx::PxVec3);
 						convexDesc.points.data = vertices;
+
 						///--------------------------------COOKING-------------------------------------------
 						//convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
 
@@ -753,12 +773,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						//convex_mesh = App->physics->mPhysics->createConvexMesh(inStream);
 						///--------------------------------RUNTIME-------------------------------------------
 						convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eDISABLE_MESH_VALIDATION | physx::PxConvexFlag::eFAST_INERTIA_COMPUTATION;
-						#ifdef _DEBUG
-							// mesh should be validated before cooking without the mesh cleaning
-							if (!App->physics->mCooking->validateConvexMesh(convexDesc)) {
-								ENGINE_CONSOLE_LOG("| Could not validate Convex Mesh");
-							}
-						#endif	
+						//convexDesc.vertexLimit = 10;
 						convex_mesh = App->physics->mCooking->createConvexMesh(convexDesc,App->physics->mPhysics->getPhysicsInsertionCallback());
 						///-----------------------------------------------------------------------------------
 						
@@ -832,11 +847,11 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						triangle_mesh = (physx::PxTriangleMesh*)App->physics->cooked_meshes[dragged_mesh];
 						//triangle_mesh->acquireReference();
 					}
+					physx::PxTriangleMeshGeometry geometry(triangle_mesh, mesh_scale);
+					shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
+					CreateRigidbody(geometry, position);
 				}
 
-				physx::PxTriangleMeshGeometry geometry(triangle_mesh, mesh_scale); 
-				shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
-				CreateRigidbody(geometry, position);
 			}
 			break;
 		}
