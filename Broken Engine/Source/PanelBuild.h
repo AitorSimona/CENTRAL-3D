@@ -24,10 +24,8 @@ public:
 private:
 	void findCameras();
 	void makeBuild();
-	void createFileFolders(const std::vector<std::string>& files);
-	inline void getAllFolders(const std::string& file, std::vector<std::string>& outDirs);
-	void copyAllFolder(const char* path, const char* build);
-	void copyFile(const char* path, const char* build);
+	// @Improvement Sergi: this should not really use shared_ptrs if it can be avoided
+	void copyAllFolderMT(std::shared_ptr<std::string> path, std::shared_ptr<std::string> build);
 
 private:
 	std::vector<Broken::GameObject*> cameras;

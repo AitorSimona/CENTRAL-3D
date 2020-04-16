@@ -6,6 +6,9 @@
 #include "ModuleSceneManager.h"
 #include "ModuleEventManager.h"
 #include "ModuleDetour.h"
+#include "ModuleUI.h"
+#include "ModuleScripting.h"
+#include "ModulePhysics.h"
 
 #include "GameObject.h"
 
@@ -320,18 +323,39 @@ void ResourceScene::OnOverwrite() {
 
 void ResourceScene::OnDelete()
 {
+
+	if (this->GetUID() == App->scene_manager->currentScene->GetUID()
+		&& (this->GetUID() != App->scene_manager->defaultScene->GetUID()))
+	{
+		App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
+	}
+
+	FreeMemory();
+
 	if (this->GetUID() == App->scene_manager->defaultScene->GetUID())
 	{
-		if (this->GetUID() == App->scene_manager->currentScene->GetUID())
-		{
-			App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
-		}
+		App->physics->DeleteActors();
 
-		FreeMemory();
-		App->fs->Remove(resource_file.c_str());
+		// --- Reset octree ---
+		App->scene_manager->tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
-		App->resources->RemoveResourceFromFolder(this);
-		App->resources->ONResourceDestroyed(this);
+		// --- Release current scene ---
+		Release();
+		App->scripting->CleanUpInstances();
+
+		// --- Clear root ---
+		App->scene_manager->GetRootGO()->childs.clear();
+
+		App->ui_system->Clear();
 	}
+
+	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+
+	if (this->GetUID() != App->scene_manager->defaultScene->GetUID())
+		App->resources->ONResourceDestroyed(this);
+	else
+		LoadToMemory();
 }
 
