@@ -902,13 +902,6 @@ void ComponentCollider::CreateRigidbody(Geometry geometry, physx::PxTransform po
 
 void ComponentCollider::Delete()
 {
-	if (triangle_mesh) {
-		//triangle_mesh->release();
-	}
-	if (convex_mesh) {
-		//convex_mesh->release();
-	}
-
 	if (shape)
 	{
 		shape->release();
