@@ -13,7 +13,7 @@
         "Scene": true,
         "Settings": false,
         "ShaderEditor": false,
-        "Toolbar": false
+        "Toolbar": true
     },
     "Input": null,
     "Renderer3D": {

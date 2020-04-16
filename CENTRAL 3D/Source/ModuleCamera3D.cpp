@@ -22,7 +22,6 @@
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 {
-	camera = new ComponentCamera(nullptr);
 }
 
 ModuleCamera3D::~ModuleCamera3D()
@@ -30,6 +29,7 @@ ModuleCamera3D::~ModuleCamera3D()
 
 bool ModuleCamera3D::Init(json config)
 {
+	camera = new ComponentCamera(nullptr);
 	App->renderer3D->SetActiveCamera(camera);
 	App->renderer3D->SetCullingCamera(camera);
 	return true;
@@ -41,7 +41,7 @@ bool ModuleCamera3D::Start()
 	CONSOLE_LOG("Setting up the camera");
 
 	bool ret = true;
-	camera->frustum.SetPos(float3(0.0f,25.0f,-50.0f));
+	camera->frustum.SetPos(float3(0.0f,25.0f,50.0f));
 	camera->SetFOV(60.0f);
 	reference = camera->frustum.Pos();
 	camera->Look({ 0.0f, 0.0f, 0.0f });

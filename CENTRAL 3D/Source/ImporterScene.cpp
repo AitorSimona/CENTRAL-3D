@@ -81,13 +81,15 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 
 		file[string_uid]["Components"];
 
+		std::vector<Component*> go_components = (*it).second->GetComponents();
 
-		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
+		for (uint i = 0; i < go_components.size(); ++i)
 		{
 			// --- Save Components to file ---
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Index"] = i;
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Active"] = (*it).second->GetComponents()[i]->GetActive();
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())] = go_components[i]->Save();
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())]["Index"] = i;
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())]["Type"] = (uint)go_components[i]->GetType();
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())]["Active"] = go_components[i]->GetActive();
 		}
 	}
 
@@ -113,12 +115,15 @@ void ImporterScene::SaveSceneToFile(ResourceScene* scene) const
 
 		file[string_uid]["Components"];
 
-		for (uint i = 0; i < (*it).second->GetComponents().size(); ++i)
+		std::vector<Component*> go_components = (*it).second->GetComponents();
+
+		for (uint i = 0; i < go_components.size(); ++i)
 		{
 			// --- Save Components to file ---
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())] = (*it).second->GetComponents()[i]->Save();
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Index"] = i;
-			file[string_uid]["Components"][std::to_string((uint)(*it).second->GetComponents()[i]->GetType())]["Active"] = (*it).second->GetComponents()[i]->GetActive();
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())] = go_components[i]->Save();
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())]["Index"] = i;
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())]["Type"] = (uint)go_components[i]->GetType();
+			file[string_uid]["Components"][std::to_string(go_components[i]->GetUID())]["Active"] = go_components[i]->GetActive();
 		}
 	}
 

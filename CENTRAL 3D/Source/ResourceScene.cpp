@@ -75,24 +75,25 @@ bool ResourceScene::LoadInMemory()
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
 
-
 				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
 				{
-					// --- Determine ComponentType ---
-					std::string type_string = it2.key();
-					uint type_uint = std::stoi(type_string);
-					Component::ComponentType type = (Component::ComponentType)type_uint;
-
-					// --- and index ---
+					std::string stringuid = it2.key();
+					uint uid = std::stoi(stringuid);
+					uint type_uint = 0;
 					int c_index = -1;
 					bool active = false;
 	
+					// --- Load basic data ---
 					if (!components[it2.key()]["Index"].is_null())
 						c_index = components[it2.key()]["Index"].get<uint>();
 
 					if (!components[it2.key()]["Active"].is_null())
 						active = components[it2.key()]["Active"].get<bool>();
 
+					if (!components[it2.key()]["Type"].is_null())
+						type_uint = components[it2.key()]["Type"].get<uint>();
+
+					Component::ComponentType type = (Component::ComponentType)type_uint;
 					Component* component = nullptr;
 
 					// --- Create/Retrieve Component ---
@@ -101,8 +102,9 @@ bool ResourceScene::LoadInMemory()
 					// --- Load Component Data ---
 					if (component)
 					{
+						component->SetUID(uid);
 						component->GetActive() = active;
-						component->Load(components[type_string]);
+						component->Load(components[it2.key()]);
 					}
 
 				}

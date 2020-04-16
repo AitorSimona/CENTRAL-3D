@@ -435,10 +435,14 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
 				{
 					// --- Determine ComponentType ---
-					std::string type_string = it2.key();
-					uint type_uint = std::stoi(type_string);
-					Component::ComponentType type = (Component::ComponentType)type_uint;
+					std::string stringuid = it2.key();
+					uint uid = std::stoi(stringuid);
+					uint type_uint = 0;
 
+					if (!components[it2.key()]["Type"].is_null())
+						type_uint = components[it2.key()]["Type"].get<uint>();
+
+					Component::ComponentType type = (Component::ComponentType)type_uint;
 					Component* component = nullptr;
 
 					// --- Create/Retrieve Component ---
@@ -446,7 +450,10 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 
 					// --- Load Component Data ---
 					if (component)
-						component->Load(components[type_string]);
+					{
+						component->SetUID(uid);
+						component->Load(components[it2.key()]);
+					}
 
 				}
 
@@ -508,10 +515,13 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 		if(model_gos[i]->model)
 			file[model_gos[i]->GetName()]["Model"] = std::string(model_gos[i]->model->GetOriginalFile());
 
-		for (int j = 0; j < model_gos[i]->GetComponents().size(); ++j)
+		std::vector<Component*> go_components = model_gos[i]->GetComponents();
+
+		for (int j = 0; j < go_components.size(); ++j)
 		{
 			// --- Save Components to file ---
-			file[model_gos[i]->GetName()]["Components"][std::to_string((uint)model_gos[i]->GetComponents()[j]->GetType())] = model_gos[i]->GetComponents()[j]->Save();
+			file[model_gos[i]->GetName()]["Components"][std::to_string(go_components[j]->GetUID())] = go_components[j]->Save();
+			file[model_gos[i]->GetName()]["Components"][std::to_string(go_components[j]->GetUID())]["Type"] = (uint)go_components[j]->GetType();
 		}
 
 	}

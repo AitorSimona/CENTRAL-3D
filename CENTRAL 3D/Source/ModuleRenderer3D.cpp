@@ -221,12 +221,12 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 
 	// --- Clear framebuffers ---
 	float backColor = 0.65f;
-	//glClearColor(backColor, backColor, backColor, 1.0f);
+	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearDepth(0.0f);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	//glClearColor(backColor, backColor, backColor, 1.0f);
+	glClearColor(backColor, backColor, backColor, 1.0f);
 	glClearDepth(0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -872,15 +872,14 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		;
 
 	// MYTODO: This could be merged into one shader, pass uniform and decide whether to refract or reflect
-	SkyboxReflectionShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxReflectionShader.glsl", 12);
+	SkyboxReflectionShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxReflectionShader.glsl", 13);
 	SkyboxReflectionShader->vShaderCode = EnvironmentMappingVShaderSource;
 	SkyboxReflectionShader->fShaderCode = EnvironmentMappingReflectionFShaderSource;
 	SkyboxReflectionShader->ReloadAndCompileShader();
 	SkyboxReflectionShader->SetName("SkyboxReflectionShader");
 	SkyboxReflectionShader->LoadToMemory();
-	//IShader->Save(SkyboxReflectionShader);
 
-	SkyboxRefractionShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxRefractionShader.glsl", 13);
+	SkyboxRefractionShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxRefractionShader.glsl", 14);
 	SkyboxRefractionShader->vShaderCode = EnvironmentMappingVShaderSource;
 	SkyboxRefractionShader->fShaderCode = EnvironmentMappingRefractionFShaderSource;
 	SkyboxRefractionShader->ReloadAndCompileShader();
@@ -1296,6 +1295,9 @@ void ModuleRenderer3D::DrawGrid()
 
 void ModuleRenderer3D::DrawSkybox()
 {
+	if (!SkyboxShader)
+		return;
+
 	glDepthMask(GL_FALSE);
 
 	float3 prevpos = active_camera->frustum.Pos();

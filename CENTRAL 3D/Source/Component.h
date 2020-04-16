@@ -31,7 +31,10 @@ public:
 	ComponentType GetType() const;
 	GameObject* GetContainerGameObject() const;
 	bool& GetActive();
+	uint GetUID();
+
 	bool IsEnabled() const;
+	void SetUID(uint uid);
 
 	// --- Save & Load ---
 	virtual json Save() const = 0;
@@ -43,6 +46,7 @@ public:
 	std::string name;
 	bool openinInspector = true;
 protected:
+	uint UID = 0;
 	bool active = false;
 	GameObject* GO = nullptr;
 	ComponentType type = ComponentType::Unknown;
