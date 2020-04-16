@@ -18,6 +18,8 @@
 PanelBuild::PanelBuild(char* name) : Panel(name){
 	buildName = "Broken Engine Game";
 	enabled = false;
+	if (!EngineApp->fs->Exists(BUILDS_FOLDER))
+		EngineApp->fs->CreateDirectoryA(BUILDS_FOLDER);
 }
 
 PanelBuild::~PanelBuild() {
@@ -82,8 +84,8 @@ bool PanelBuild::Draw() {
 				ImGui::EndCombo();
 			}
 			ImGui::Separator();
-			if (ImGui::BeginPopup("Build folder already exists!")) {
-				ImGui::Text("The folder \"%s\" already exists!", buildName.c_str());
+			if (ImGui::BeginPopup("Build already exists!")) {
+				ImGui::Text("The build \"%s\" already exists!", buildName.c_str());
 				ImGui::Text("Should we delete it?");
 
 				if (ImGui::Button("Yes##deleteBuild")) {
@@ -98,8 +100,8 @@ bool PanelBuild::Draw() {
 				ImGui::EndPopup();
 			}
 			if (ImGui::Button("Build the game!")) {
-				if (EngineApp->fs->Exists(buildName.c_str()))
-					ImGui::OpenPopup("Build folder already exists!");
+				if (EngineApp->fs->Exists((BUILDS_FOLDER + buildName).c_str()))
+					ImGui::OpenPopup("Build already exists!");
 				else
 					makeBuild();
 			}
@@ -165,16 +167,16 @@ void PanelBuild::makeBuild() {
 	// Save the scene
 	EngineApp->scene_manager->SaveScene(EngineApp->scene_manager->currentScene);
 
-	std::string buildFolder = buildName + '/';
+	std::string buildFolder = BUILDS_FOLDER + buildName + '/';
 
 	// Create build folders
-	EngineApp->fs->CreateDirectoryA(buildName.c_str());
+	EngineApp->fs->CreateDirectoryA(buildFolder.c_str());
 	EngineApp->fs->CreateDirectoryA((buildFolder + LIBRARY_FOLDER).c_str());
 	EngineApp->fs->CreateDirectoryA((buildFolder + ASSETS_FOLDER).c_str());
 	EngineApp->fs->CreateDirectoryA((buildFolder + SETTINGS_FOLDER).c_str());
 
 	//We copy the executable
-	EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, GAME_EXE, buildName.c_str());
+	EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, GAME_EXE, buildFolder.c_str());
 
 	const std::vector<std::string>& files = EngineApp->fs->ExDiscoverFiles("");
 
@@ -192,7 +194,7 @@ void PanelBuild::makeBuild() {
 		}
 
 		if (extension == "dll" || extension == "ini" || extension == "meta")
-			EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildName.c_str());
+			EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildFolder.c_str());
 	}
 
 	// We create the folder structure and get all files we need to copy
@@ -201,7 +203,7 @@ void PanelBuild::makeBuild() {
 	createFoldersAndRetrieveFiles(LIBRARY_FOLDER, (buildFolder + LIBRARY_FOLDER).c_str(), filesToCopy);
 
 	for (std::vector<std::string>::const_iterator it = filesToCopy.begin(); it != filesToCopy.end(); ++it)
-		EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildName.c_str());
+		EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildFolder.c_str());
 
 	//We wait for the module threading to finish tasks
 	EngineApp->threading->FinishProcessing();
@@ -224,9 +226,8 @@ void PanelBuild::makeBuild() {
 	SetOnOff(false);
 }
 
-void PanelBuild::copyFile(const char* path, const char* buildName) {
-	std::string new_path = buildName;
-	new_path += "/";
+void PanelBuild::copyFile(const char* path, const char* buildFolder) {
+	std::string new_path = buildFolder;
 	new_path += path;
 	EngineApp->fs->Copy(path, new_path.c_str());
 }

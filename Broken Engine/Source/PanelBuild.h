@@ -24,7 +24,7 @@ public:
 private:
 	void findCameras();
 	void makeBuild();
-	void copyFile(const char* path, const char* buildName);
+	void copyFile(const char* path, const char* buildFolder);
 	void createFoldersAndRetrieveFiles(const char* path, const char* newPath, std::vector<std::string>& outFiles);
 
 
