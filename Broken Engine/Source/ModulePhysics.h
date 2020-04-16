@@ -158,6 +158,7 @@ public:
 	std::map<physx::PxRigidActor*, GameObject*> actors;
 	std::vector<uint>* detected_objects;
 	std::map<ResourceMesh *,physx::PxBase*> cooked_meshes;
+	std::map<ResourceMesh*, physx::PxBase*> cooked_convex;
 	physx::PxVolumeCache* cache;
 	UserIterator iter;
 

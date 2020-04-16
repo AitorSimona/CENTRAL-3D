@@ -1,5 +1,4 @@
 #include "ModulePhysics.h"
-#include "ModulePhysics.h"
 #include "Application.h"
 #include "ModuleSceneManager.h"
 #include "ComponentCollider.h"
@@ -389,14 +388,16 @@ void ModulePhysics::DeleteActors(GameObject* go)
 }
 
 void ModulePhysics::RemoveCookedActors() {
-	for (std::map<ResourceMesh*, physx::PxBase*>::iterator it = cooked_meshes.begin(); it != cooked_meshes.end(); ++it)
+	/*for (std::map<ResourceMesh*, physx::PxBase*>::iterator it = cooked_meshes.begin(); it != cooked_meshes.end(); ++it)
 	{
 		int i = 0;
 		if ((*it).second->getConcreteType() == physx::PxConcreteType::eCONVEX_MESH) {
 			physx::PxConvexMesh* mesh = (physx::PxConvexMesh*)(*it).second;
 			if (mesh) {
-				if (mesh->getReferenceCount() > 0) {
+				i = mesh->getReferenceCount();
+				while (i > 1) {
 					(*it).second->release();
+					i = mesh->getReferenceCount();
 				}
 			}
 		}
@@ -404,13 +405,17 @@ void ModulePhysics::RemoveCookedActors() {
 			physx::PxTriangleMesh* mesh = (physx::PxTriangleMesh*)(*it).second;
 			if (mesh) {
 				i = mesh->getReferenceCount();
-				if (mesh->getReferenceCount() > 0) {
+				while (i > 1) {
 					(*it).second->release();
+					i = mesh->getReferenceCount();
 				}
 			}
 		}
-	}
+	}*/
+	mCooking->release(); 
+	mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, physx::PxCookingParams(physx::PxTolerancesScale()));
 	cooked_meshes.clear();
+	cooked_convex.clear();
 }
 
 void ModulePhysics::OverlapSphere(float3 position, float radius, LayerMask layer, std::vector<uint>& objects)

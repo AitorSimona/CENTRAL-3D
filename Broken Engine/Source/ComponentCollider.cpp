@@ -15,12 +15,15 @@
 #include "ComponentMeshRenderer.h"
 #include "OpenGL.h"
 #include "ResourceScene.h"
+#include "ModuleThreading.h"
 
 #include "PhysX_3.4/Include/PxPhysicsAPI.h"
 #include "PhysX_3.4/Include/PxSimulationEventCallback.h"
 
 #include "Imgui/imgui.h"
 #include "Imgui/imgui_internal.h"
+
+#include "Timer.h"
 
 #include "mmgr/mmgr.h"
 
@@ -549,23 +552,33 @@ void ComponentCollider::CreateInspectorNode()
 			if (ImGui::Checkbox("Convex", &isConvex)) {
 				editCollider = true;
 				if (dragged_mesh) {
-					if (App->physics->cooked_meshes[dragged_mesh]->isReleasable()) {
-						App->physics->cooked_meshes[dragged_mesh]->release();
-						App->physics->cooked_meshes.erase(dragged_mesh);
-						dragged_mesh = nullptr;
+					if (triangle_mesh) {
+						triangle_mesh = nullptr;
 					}
+					if (convex_mesh) {
+						convex_mesh = nullptr;
+					}
+					dragged_mesh = nullptr;
 				}
 			}
 
 			if (!isConvex){
 				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
 				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+				isTrigger = false;
 			}
 
 			ImGui::NewLine();
 			ImGui::SameLine(50.f);
 			if (ImGui::Checkbox("Trigger", &isTrigger)) {
 				editCollider = true;
+				if (dragged_mesh) {
+					dragged_mesh = nullptr;
+					if (convex_mesh) {
+						convex_mesh->release();
+						convex_mesh = nullptr;
+					}
+				}
 			}
 
 			if (!isConvex) {
@@ -746,8 +759,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 				//physx::PxMeshScale mesh_scale(physx::PxVec3(dragged_scale.x, dragged_scale.y, dragged_scale.z), physx::PxQuat(physx::PxIDENTITY()));
 
 				if (isConvex) {//Convex Collider
-					//mesh = dragged_mesh;
-					if (!App->physics->cooked_meshes[dragged_mesh]) {//Cook Mesh
+					if (!App->physics->cooked_convex[dragged_mesh]) {//Cook Mesh
 						physx::PxVec3* vertices = new physx::PxVec3[dragged_mesh->VerticesSize];
 						for (int j = 0; j < dragged_mesh->VerticesSize; ++j) {
 							vertices[j].x = dragged_mesh->vertices[j].position[0];
@@ -773,18 +785,16 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						//convex_mesh = App->physics->mPhysics->createConvexMesh(inStream);
 						///--------------------------------RUNTIME-------------------------------------------
 						convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eDISABLE_MESH_VALIDATION | physx::PxConvexFlag::eFAST_INERTIA_COMPUTATION;
-						//convexDesc.vertexLimit = 10;
 						convex_mesh = App->physics->mCooking->createConvexMesh(convexDesc,App->physics->mPhysics->getPhysicsInsertionCallback());
 						///-----------------------------------------------------------------------------------
 						
-						App->physics->cooked_meshes.insert(std::pair<ResourceMesh*, physx::PxConvexMesh*>(dragged_mesh, nullptr));
-						App->physics->cooked_meshes[dragged_mesh] = convex_mesh;
+						App->physics->cooked_convex.insert(std::pair<ResourceMesh*, physx::PxConvexMesh*>(dragged_mesh, nullptr));
+						App->physics->cooked_convex[dragged_mesh] = convex_mesh;
 
 						delete[] vertices;
 					}
 					else {
-						convex_mesh = (physx::PxConvexMesh*)App->physics->cooked_meshes[dragged_mesh];
-						//convex_mesh->acquireReference();
+						convex_mesh = (physx::PxConvexMesh*)App->physics->cooked_convex[dragged_mesh];
 					}
 					physx::PxConvexMeshGeometry geometry(convex_mesh, mesh_scale);
 					shape = App->physics->mPhysics->createShape(geometry, *App->physics->mMaterial);
@@ -800,8 +810,9 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 							vertices[j].z = dragged_mesh->vertices[j].position[2];
 						}
 						physx::PxU16* indices = new physx::PxU16[dragged_mesh->IndicesSize];
-						for (uint i = 0; i < dragged_mesh->IndicesSize; ++i)
+						for (uint i = 0; i < dragged_mesh->IndicesSize; ++i) {
 							indices[i] = dragged_mesh->Indices[i];
+						}
 
 						physx::PxTriangleMeshDesc meshDesc;
 						meshDesc.points.count = dragged_mesh->VerticesSize;
@@ -828,12 +839,6 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
 						params.meshCookingHint = physx::PxMeshCookingHint::eCOOKING_PERFORMANCE;
 						App->physics->mCooking->setParams(params);
-						#ifdef _DEBUG
-							// mesh should be validated before cooking without the mesh cleaning
-							if (!App->physics->mCooking->validateTriangleMesh(meshDesc)) {
-								ENGINE_CONSOLE_LOG("| Could not validate Mesh Collider");
-							}
-						#endif
 						triangle_mesh = App->physics->mCooking->createTriangleMesh(meshDesc, App->physics->mPhysics->getPhysicsInsertionCallback());
 						///----------------------------------------------------------------------------------------------------------
 						
@@ -898,10 +903,10 @@ void ComponentCollider::CreateRigidbody(Geometry geometry, physx::PxTransform po
 void ComponentCollider::Delete()
 {
 	if (triangle_mesh) {
-		triangle_mesh->release();
+		//triangle_mesh->release();
 	}
 	if (convex_mesh) {
-		convex_mesh->release();
+		//convex_mesh->release();
 	}
 
 	if (shape)

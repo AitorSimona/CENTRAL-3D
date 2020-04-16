@@ -11,7 +11,9 @@ namespace physx
 	class PxTransform;
 	class PxShape;
 	class PxConvexMesh;
-	class PxTriangleMesh;
+	class PxTriangleMesh; 
+	class PxVec3;
+	typedef uint16_t PxU16;
 }
 
 BE_BEGIN_NAMESPACE
@@ -20,6 +22,7 @@ BE_BEGIN_NAMESPACE
 class ResourceMesh;
 class ComponentDynamicRigidBody;
 class ComponentTransform;
+struct Vertex;
 
 class BROKEN_API ComponentCollider : public Component
 {
