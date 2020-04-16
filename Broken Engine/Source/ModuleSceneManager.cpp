@@ -504,6 +504,7 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		}
 		else
 		{
+			App->physics->RemoveCookedActors();
 			currentScene = scene; // force this so gos are not added to another scene
 			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
 
