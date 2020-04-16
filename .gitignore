@@ -357,7 +357,9 @@ Broken Engine/Game/imgui.ini
 
 # Engine temp files
 Broken Engine/Game/Temp/
-Broken Engine/Game/Broken Engine Game
+
+# Engine builds
+Broken Engine/Game/Builds/
 
 # Engine dlls and exes
 Broken Engine/Game/BrokenCore_DEBUG.dll
