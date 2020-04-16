@@ -11,6 +11,7 @@ public:
 	~EngineApplication();
 
 	void SaveForBuild(const Broken::json& reference, const char* path) const;
+	void GetDefaultGameConfig(Broken::json& config) const;
 
 public:
 	class ModuleEditorUI* editorui;

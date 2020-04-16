@@ -42,7 +42,7 @@ void ModuleTimeManager::PrepareUpdate() {
 	{
 		case AppState::TO_PLAY:
 			if (App->isGame == false)
-			App->scripting->CompileDebugging();
+				App->scripting->CompileDebugging();
 
 			App->GetAppState() = AppState::PLAY;
 
@@ -83,7 +83,7 @@ void ModuleTimeManager::PrepareUpdate() {
 
 		case AppState::TO_EDITOR:
 			if (App->isGame == false)
-			App->scripting->StopDebugging();
+				App->scripting->StopDebugging();
 
 			App->scene_manager->SetActiveScene(App->scene_manager->currentScene);
 

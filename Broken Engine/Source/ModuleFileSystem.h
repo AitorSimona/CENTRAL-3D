@@ -13,6 +13,7 @@ int close_sdl_rwops(SDL_RWops *rw);
 struct aiFileIO;
 
 BE_BEGIN_NAMESPACE
+#define MAX_RETURNED_ARRAYS 50
 
 
 class BROKEN_API ModuleFileSystem : public Module {
@@ -39,18 +40,20 @@ public:
 	std::string GetDirectoryFromPath(std::string& path);
 	std::string GetNameFromPath(std::string path, bool withExtension = false);
 	void DiscoverFiles(const char* directory, std::vector<std::string>& files) const;
-	const std::vector<std::string>* ExDiscoverFiles(const char* directory);
+	const std::vector<std::string>& ExDiscoverFiles(const char* directory);
 	void DiscoverDirectories(const char* directory, std::vector<std::string>& dirs) const;
-	const std::vector<std::string>* ExDiscoverDirectories(const char* directory);
+	const std::vector<std::string>& ExDiscoverDirectories(const char* directory);
 	void DiscoverFilesAndDirectories(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const;
 	bool CopyFromOutsideFS(const char* full_path, const char* destination);
 	bool Copy(const char* source, const char* destination);
+	void CopyDirectoryandContents(const char* source, const char* destination, bool recursive = true);
 	void SplitFilePath(const char* full_path, std::string* path, std::string* file = nullptr, std::string* extension = nullptr) const;
 	void NormalizePath(char* full_path, bool lowercase = false) const;
 	void NormalizePath(std::string& full_path, bool lowercase = false) const;
 	uint GetLastModificationTime(const char* file);
 	void WatchDirectory(const char* directory);
 	void RemoveFileExtension(std::string& file);
+	void DeleteDirectoryAndContents(const char* dir_path, bool recursive = true);
 
 	// Open for Read/Write
 	unsigned int Load(const char* path, const char* file, char** buffer) const;
@@ -58,7 +61,7 @@ public:
 	SDL_RWops* Load(const char* file) const;
 
 
-	void DeleteArray(const std::vector<std::string>* to_delete);
+	void DeleteArray(const std::vector<std::string>& to_delete);
 
 
 	// IO interfaces for other libs to handle files via PHYSfs
@@ -73,6 +76,7 @@ public:
 	const char* GetReadPaths() const;
 
 private:
+	typedef std::vector<std::string> string_vec;
 	// --- FS Windows Watcher ---
 	ulong dwWaitStatus;
 	HANDLE dwChangeHandles[1]; // void*
@@ -81,8 +85,9 @@ private:
 	Timer wait_timer;
 	uint32 wait_time = 1000; // ms
 
-	// --- Vector of returned char** ---
-	std::vector<std::vector<std::string>*> returned_arrays;
+	// --- Returned vectors ---
+	inline void AddToReturnedArrays(string_vec* ptr);
+	string_vec* returned_arrays[MAX_RETURNED_ARRAYS];
 
 
 	void CreateAssimpIO();
