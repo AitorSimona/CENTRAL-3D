@@ -53,15 +53,15 @@ bool ModuleAudio::Start()
 update_status ModuleAudio::PostUpdate(float dt)
 {
 	AK::SoundEngine::RenderAudio();
-	if (App->GetAppState() == Broken::AppState::TO_PAUSE)
+	if (App->GetAppState() == Broken::AppState::PAUSE)
 	{
 		PauseAllAudioEvents();
 	}
-	if (App->GetAppState() == Broken::AppState::TO_EDITOR)
+	if (App->GetAppState() == Broken::AppState::EDITOR)
 	{
 		StopAllAudioEvents();
 	}
-	if (App->GetAppState() == Broken::AppState::TO_PLAY)
+	if (App->GetAppState() == Broken::AppState::PLAY)
 	{
 		ResumeAllAudioEvents();
 	}
