@@ -24,8 +24,9 @@ public:
 private:
 	void findCameras();
 	void makeBuild();
-	// @Improvement Sergi: this should not really use shared_ptrs if it can be avoided
-	void copyAllFolderMT(std::shared_ptr<std::string> path, std::shared_ptr<std::string> build);
+	void copyFile(const char* path, const char* buildFolder);
+	void createFoldersAndRetrieveFiles(const char* path, const char* newPath, std::vector<std::string>& outFiles);
+
 
 private:
 	std::vector<Broken::GameObject*> cameras;

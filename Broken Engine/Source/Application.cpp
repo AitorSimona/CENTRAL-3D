@@ -340,38 +340,6 @@ json Application::GetDefaultConfig() const {
 	return config;
 }
 
-void Application::GetDefaultGameConfig(json& config) const {
-	// --- Create Game Config with default values ---
-	config = {
-		{"Application", {
-			{"Organization", orgName}
-
-		}},
-		{"SceneManager", {
-
-		}},
-		{"Camera3D", {
-
-		}},
-		{"Window", {
-			{"width", 1024},
-			{"height", 720},
-			{"fullscreen", false},
-			{"resizable", true},
-			{"borderless", false},
-			{"fullscreenDesktop", false}
-		}},
-
-		{"Input", {
-
-		}},
-
-		{"Renderer3D", {
-			{"VSync", true}
-		}},
-	};
-}
-
 json& Application::GetConfigFile() {
 	tempjson = JLoader.Load(configpath.data());
 
