@@ -144,20 +144,22 @@ bool ResourceScene::LoadInMemory()
 			{
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
-				std::vector<Component*>* go_components = &objects[ite]->GetComponents();
+				if (!components.is_null()) {
+					std::vector<Component*>* go_components = &objects[ite]->GetComponents();
 
-				for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
-				{
-					// --- UID ---
-					json c_UID = components[it2.key()]["UID"];
-					int c_index = -1;
-					json index = components[it2.key()]["index"];
-					std::string type_string = it2.key();
+					for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+					{
+						// --- UID ---
+						json c_UID = components[it2.key()]["UID"];
+						int c_index = -1;
+						json index = components[it2.key()]["index"];
+						std::string type_string = it2.key();
 
-					if (!index.is_null())
-						c_index = index.get<uint>();
+						if (!index.is_null())
+							c_index = index.get<uint>();
 
-					go_components->at(c_index)->Load((components[type_string]));
+						go_components->at(c_index)->Load((components[type_string]));
+					}
 				}
 
 				ite++;
