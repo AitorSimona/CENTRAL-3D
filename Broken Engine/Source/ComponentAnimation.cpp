@@ -190,6 +190,23 @@ void ComponentAnimation::SetCurrentAnimationSpeed(float speed)
 		ENGINE_AND_SYSTEM_CONSOLE_LOG("Current Animation is nullptr!");
 }
 
+bool ComponentAnimation::CurrentAnimationEnded()
+{
+	if (playing_animation)
+	{
+		if (Frame >= playing_animation->end)
+			return true;
+		else
+			return false;
+	}
+	else
+	{
+		ENGINE_AND_SYSTEM_CONSOLE_LOG("Current Animation is nullptr!");
+		return true;
+	}
+}
+
+// ------------------------ SAVE/LOAD ------------------------ 
 json ComponentAnimation::Save() const
 {
 	json node;

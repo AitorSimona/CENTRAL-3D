@@ -42,10 +42,12 @@ public:
 
 	Animation* GetDefaultAnimation() const;
 
+	// --- Scripting ---
 	void PlayAnimation(const char* name, float speed = 30);
 	void ChangeBlendTime(float value);
 	void SetAnimationSpeed(const char* name, float speed);
 	void SetCurrentAnimationSpeed(float speed);
+	bool CurrentAnimationEnded();
 
 	// --- Save & Load ---
 	json Save() const override;

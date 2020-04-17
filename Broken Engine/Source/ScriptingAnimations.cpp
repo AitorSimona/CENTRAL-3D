@@ -19,8 +19,13 @@ ScriptingAnimations::ScriptingAnimations() {}
 ScriptingAnimations::~ScriptingAnimations() {}
 
 void ScriptingAnimations::StartAnimation(const char* name, float speed)
-{	
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+{
+	ComponentAnimation* anim = nullptr;
+
+	if(App->scripting->current_script)
+		anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Script component is NULL");
 
 	if (anim)
 		anim->PlayAnimation(name, speed);
@@ -30,7 +35,12 @@ void ScriptingAnimations::StartAnimation(const char* name, float speed)
 
 void ScriptingAnimations::SetCurrentAnimSpeed(float speed)
 {
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	ComponentAnimation* anim = nullptr;
+
+	if (App->scripting->current_script)
+		anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Script component is NULL");
 
 	if (anim)
 		anim->SetCurrentAnimationSpeed(speed);
@@ -40,7 +50,12 @@ void ScriptingAnimations::SetCurrentAnimSpeed(float speed)
 
 void ScriptingAnimations::SetAnimSpeed(const char* name, float speed)
 {
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	ComponentAnimation* anim = nullptr;
+
+	if (App->scripting->current_script)
+		anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Script component is NULL");
 
 	if (anim)
 		anim->SetAnimationSpeed(name, speed);
@@ -50,10 +65,32 @@ void ScriptingAnimations::SetAnimSpeed(const char* name, float speed)
 
 void ScriptingAnimations::SetBlendTime(float value)
 {
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	ComponentAnimation* anim = nullptr;
+
+	if (App->scripting->current_script)
+		anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Script component is NULL");
 
 	if (anim)
 		anim->ChangeBlendTime(value);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+}
+
+int ScriptingAnimations::CurrentAnimEnded()
+{
+	ComponentAnimation* anim = nullptr;
+
+	if (App->scripting->current_script)
+		anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Script component is NULL");
+
+	if (anim)
+		return (int)anim->CurrentAnimationEnded();
+	else
+		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
+
+	return 0;
 }

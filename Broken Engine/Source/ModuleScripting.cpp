@@ -339,6 +339,7 @@ void ModuleScripting::CompileScriptTableClass(ScriptInstance* script)
 		.addFunction("SetAnimationSpeed", &ScriptingAnimations::SetAnimSpeed)
 		.addFunction("SetCurrentAnimationSpeed", &ScriptingAnimations::SetCurrentAnimSpeed)
 		.addFunction("SetBlendTime", &ScriptingAnimations::SetBlendTime)
+		.addFunction("CurrentAnimationEnded", &ScriptingAnimations::CurrentAnimEnded)
 		.endClass()
 
 		// ----------------------------------------------------------------------------------

@@ -10,11 +10,12 @@ public:
 	~ScriptingAnimations();
 
 public:
+
 	void StartAnimation(const char* name, float speed);
 	void SetAnimSpeed(const char* name, float speed);
 	void SetCurrentAnimSpeed(float speed);
 	void SetBlendTime(float value);
-
+	int CurrentAnimEnded();
 };
 BE_END_NAMESPACE
 #endif // __SCRIPTINGANIMATIONS_H__
