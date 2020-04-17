@@ -18,14 +18,20 @@
 */
 
 /* CHANGE LIST
-	- Added ModuleSelection to manage selection
-	- **NEW** Visual scene rectangle selection 
+	- **NEW** Visual scene feedback rectangle of selection 
 	- **NEW** Script name in component title 
-	- **NEW** Selection counter in inspector 
+	- **NEW** Selection counter in hierarchy 
+	- **NEW** Multi renaming
+	- **NEW** Multi active/inactive
+	- **NEW** Multi static/dynamic (edited feedback "edit child too" for bug purposes)
+	- **NEW** Multi layer changing
+	- **NEW** Focus object bug fixed
+	- **NEW** Visual scene feedback rectangle of selection
+	- Added ModuleSelection to manage selection
 	- Selection can be both on hierarchy and scene:
 		- Single -> mouse left click
 		- Additive/Substractive -> mouse left click + CTRL
-		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected
+		- Multiple (weird but working on scene)-> mouse left click + SHIFT if there's at least one selected
 	- Selected gameobjects can now:
 		- Add same component
 		- Be highlighted both scene and hierarchy
