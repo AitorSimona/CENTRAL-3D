@@ -1,22 +1,28 @@
-#include "ModuleSelection.h"
 #include "Application.h"
+
+#include "ModuleSelection.h"
 #include "ModuleCamera3D.h"
-#include "ComponentCamera.h"
-#include "ResourceScene.h"
-#include "ModuleEventManager.h"
 #include "ModuleInput.h"
 #include "ModuleSceneManager.h"
-#include "ModuleGui.h"
 #include "ModuleRenderer3D.h"
-#include "GameObject.h"
+
+#include "ComponentCamera.h"
+
+#include "ResourceScene.h"
+
+#include "mmgr/mmgr.h"
 
 using namespace Broken;
 
 ModuleSelection::ModuleSelection(bool start_enabled)
 {
-	std::string tmp = "root_selection";
+	std::string tmp = "Selection";
 	root = new GameObject(tmp.c_str());
+	root_transform = root->GetComponent<ComponentTransform>();
+
 	name = "Module Selection";
+
+	aabb_selection.SetNegativeInfinity();
 
 	aabb.SetNegativeInfinity();
 	aabb = AABB({ 0,0,0 }, { 50,50,50 });
@@ -31,21 +37,30 @@ bool ModuleSelection::Init(json& file)
 	return true;
 }
 
+
 bool ModuleSelection::Start()
 {
+	//root = App->scene_manager->CreateEmptyGameObject();
+	//root->SetName("ModuleSelection");
+
+	//App->event_manager->AddListener(Broken::Event::EventType::GameObject_reparented, OnGameObjectReparented);
+
 	return true;
 }
+
 bool ModuleSelection::CleanUp()
 {
+	root->childs.clear();
+
 	delete root;
 	root = nullptr;
-
-	selection.clear();
 
 	return true;
 }
 update_status ModuleSelection::PreUpdate(float dt)
 {
+	UpdateRoot();
+
 	// Delete selection, it's done through reparenting all selected to selection root object
 	// Doing this way avoids problem of ghost parents or childs
 	if (!App->scene_manager->go_to_delete.empty())
@@ -72,9 +87,20 @@ update_status ModuleSelection::PreUpdate(float dt)
 update_status ModuleSelection::Update(float dt)
 {
 	// SELECTED TODO -> stuck at offset
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
+	{
+		if (is_rectangle_selection)
+		{
+			aabb_end = float3::zero;
+			is_rectangle_selection = false;
+		}
+
+		original_scales.clear();
+	}
 
 	return UPDATE_CONTINUE;
-	if (aabb_selection)
+
+	if (is_rectangle_selection)
 	{
 		aabb_end.x += App->input->GetMouseXMotion();
 		aabb_end.y -= App->input->GetMouseYMotion();
@@ -97,23 +123,24 @@ update_status ModuleSelection::Update(float dt)
 
 	}
 
-	if (aabb_selection && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
-	{
-		aabb_end = float3::zero;
-		aabb_selection = false;
-	}
+	
 }
 update_status ModuleSelection::PostUpdate(float dt)
 {
+	App->renderer3D->DrawAABB(aabb_selection, { 0.76f, 1, 0.62f,1 });
+
+	// SELECTED TODO : REMOVE THIS
+	//if (App->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) return UPDATE_STOP;
+
 	return UPDATE_CONTINUE;
-	App->renderer3D->DrawOBB(aabb, { 0,1,0,1 });
+	App->renderer3D->DrawOBB(aabb, { 0,0,1,1 });
 
 }
 
 void ModuleSelection::SceneRectangleSelect(float3 start)
 {
 	aabb = AABB({ start.x,start.y,start.z }, { start.x,start.y,start.z });
-	aabb_selection = true;
+	is_rectangle_selection = true;
 	aabb_start = start;
 	aabb_end = start;
 	aabb_end.z += 50;
@@ -151,6 +178,7 @@ void ModuleSelection::SelectIfIntersects()
 			}
 		}
 	}
+
 }
 
 
@@ -184,14 +212,13 @@ void ModuleSelection::ApplyOBBTransformation()
 	aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
 	//aabb.Transform(App->camera->camera->GetOpenGLViewMatrix());
 }
-bool ModuleSelection::IsSelected(GameObject* gameobject)
-{
-	if (gameobject == nullptr) return false;
 
-	return gameobject->node_flags & 1;
+bool ModuleSelection::IsSelected(const GameObject* gameobject) const
+{
+	return gameobject != nullptr && gameobject->node_flags & 1;
 }
 
-void ModuleSelection::HandleSelection(GameObject* gameobject) 
+void ModuleSelection::HandleSelection(GameObject* gameobject)
 {
 	// User is not holding CTRL neither SHIFT -> clean and single select the gameobject
 	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_RCTRL) == KEY_IDLE &&
@@ -205,66 +232,88 @@ void ModuleSelection::HandleSelection(GameObject* gameobject)
 	{
 		ToggleSelect(gameobject);
 	}
-	// SELECTED TODO
 	// User is holding SHIFT, multi select the objects between selected and the new one
 	else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_REPEAT)
 	{
 		SelectLastTo(gameobject);
 	}
+
 }
 
-GameObject* ModuleSelection::GetLastSelected() const
+void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation,float3 delta_pos, float3 delta_rot, float3 delta_scale)
 {
-	return selection.empty() ? nullptr : *selection.rbegin();
-}
 
-
-void ModuleSelection::ClearSelection()
-{
-	for (GameObject* go : selection)
+	if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
 	{
-		go->node_flags &= ~1;
-	}
-	selection.clear();
-}
-bool ModuleSelection::ComponentCanBePasted() const
-{
-	return (component_type != Component::ComponentType::Unknown);
-}
-void ModuleSelection::CopyComponentValues(Component* component)
-{
-	component_type = component->GetType();
-	if (component_type != Component::ComponentType::Unknown)
-	{
-		component_node = component->Save();
-		component_name = component->name;
-	}
-}
-
-void ModuleSelection::PasteComponentValues(Component* component)
-{
-	if (component_type != Component::ComponentType::Unknown)
-		component->Load(component_node);
-}
-
-void ModuleSelection::PasteComponentValuesToSelected()
-{
-	for (GameObject* obj : selection)
-	{
-		if (Component* component = obj->HasComponent(component_type))
-			component->Load(component_node);
-	}
-}
-
-void ModuleSelection::DeleteComponentToSelected()
-{
-	for (GameObject* obj : selection)
-	{
-		if (Component * component = obj->HasComponent(component_type))
-			component->to_delete = true;
+		for (int i = 0; i < GetSelected()->size(); i++)
+			original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
 	}
 
+	for (int i = 0; i < GetSelected()->size(); i++)
+	{
+		bool move = true;
+		for (int j = 0; j < GetSelected()->size() && move; j++)
+		{
+			if (i == j) continue;
+			if (GetSelected()->at(i)->FindParentGO(GetSelected()->at(j)))
+				move = false;
+		}
+		if (!move) continue;
+
+		ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
+
+		if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+		{
+			float4x4 tr = t->GetGlobalTransform();
+			tr.SetTranslatePart(t->GetGlobalPosition() + delta_pos);
+				
+			t->SetGlobalTransform(tr);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+		{
+			t->SetRotation(t->GetRotation() + delta_rot);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+		{
+			t->Scale(original_scales.at(i).x * delta_scale.x, original_scales.at(i).y * delta_scale.y, original_scales.at(i).z * delta_scale.z);
+		}
+
+	}
+
+
 }
+
+void ModuleSelection::UpdateRoot()
+{
+	int size = GetSelected()->size();
+	std::string n = "Selection (" + std::to_string(size) + ")";
+	root->SetName(n.c_str());
+	float3 pos = float3::zero;
+
+	aabb_selection.SetNegativeInfinity();
+
+
+	if (size > 0)
+	{
+		for (GameObject* go : *GetSelected())
+		{
+			ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
+			pos += go_t != nullptr ? go_t->GetGlobalPosition() : float3::zero;
+
+			aabb_selection.Enclose(go->GetAABB());
+		}
+		pos /= size;
+	}
+
+	root_transform->SetPosition(pos);
+}
+
+GameObject* ModuleSelection::GetLastSelected()
+{
+	return GetSelected()->empty() ? nullptr : *GetSelected()->rbegin();
+}
+
+// Simple selection -----------------------------------------------
 void ModuleSelection::Select(GameObject* gameobject)
 {
 	if (gameobject == nullptr)
@@ -273,10 +322,52 @@ void ModuleSelection::Select(GameObject* gameobject)
 	}
 	else if (!IsSelected(gameobject)) {
 		gameobject->node_flags |= 1;
-		selection.push_back(gameobject);
+		GetSelected()->push_back(gameobject);
 		Event e(Event::EventType::GameObject_selected);
 		e.go = gameobject;
 		App->event_manager->PushEvent(e);
+	}
+	ShowCommonComponents();
+}
+
+void ModuleSelection::UnSelect(GameObject* gameobject)
+{
+	if (gameobject == nullptr)
+	{
+		ClearSelection();
+	}
+	else if(IsSelected(gameobject)){
+
+		for (std::vector<GameObject*>::iterator it = GetSelected()->begin(); it != GetSelected()->end();)
+		{
+			if ((*it) == gameobject)
+			{
+				GetSelected()->erase(it);
+				gameobject->node_flags &= ~1;
+				break;
+			}
+			it++;
+		}
+	}
+	ShowCommonComponents();
+}
+
+
+
+// Advanced selection -----------------------------------------------
+
+// returns true if the new state is selected, false otherwise or null
+bool ModuleSelection::ToggleSelect(GameObject* gameobject)
+{
+	if (gameobject == nullptr) return false;
+
+	if (IsSelected(gameobject)) {
+		UnSelect(gameobject);
+		return false;
+	}
+	else {
+		Select(gameobject);
+		return true;
 	}
 }
 
@@ -303,7 +394,7 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 		{
 			for (std::vector<Broken::GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); ++it)
 			{
-				SelectRecursive(*it,from, to);
+				SelectRecursive(*it, from, to);
 			}
 		}
 	}
@@ -329,48 +420,237 @@ void ModuleSelection::SelectRecursive(GameObject* gameobject, GameObject* from, 
 		{
 			for (std::vector<Broken::GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); ++it)
 			{
-				SelectRecursive(*it,from,to);
+				SelectRecursive(*it, from, to);
 			}
 		}
 
 	}
 }
 
-
-void ModuleSelection::UnSelect(GameObject* gameobject)
+void ModuleSelection::ClearSelection()
 {
-	if (gameobject == nullptr)
+	for (GameObject* go : *GetSelected())
 	{
-		ClearSelection();
+		go->node_flags &= ~1;
 	}
-	else if(IsSelected(gameobject)){
+	GetSelected()->clear();
+}
 
-		for (std::vector<GameObject*>::iterator it = selection.begin(); it != selection.end();)
+// Component Management -----------------------------------------------
+
+// In progress
+void ModuleSelection::ShowCommonComponents()
+{
+	return;
+
+	if (GetSelected()->size() > 1) // Creates buggsssss
+	{
+		for (Component* component : App->selection->root->GetComponents())
 		{
-			if ((*it) == gameobject)
+			if (!component->to_delete && component->GetType() == Component::ComponentType::Transform) continue;
+			App->selection->root->RemoveComponent(component);
+		}
+
+		for (Component* component : App->selection->GetLastSelected()->GetComponents())
+		{
+			bool all_have_same_component = true;
+			Component::ComponentType type = component->GetType();
+			if (type == Component::ComponentType::Transform) continue;
+
+			for (int i = 0; i < App->selection->GetSelected()->size() - 1; i++)
 			{
-				selection.erase(it);
-				gameobject->node_flags &= ~1;
-				break;
+				if (!GetSelected()->at(i)->HasComponent(type))
+				{
+					all_have_same_component = false;
+					break;
+				}
 			}
-			it++;
+
+			if (all_have_same_component == false) continue;
+			else
+			{
+				json node = component->Save();
+				root->AddComponent(type);
+				root->GetComponents().back()->Load(node);
+			}
 		}
 	}
 }
 
-
-
-// returns true if the new state is selected, false otherwise or null
-bool ModuleSelection::ToggleSelect(GameObject* gameobject)
+bool ModuleSelection::ComponentCanBePasted() const
 {
-	if (gameobject == nullptr) return false;
-
-	if (IsSelected(gameobject)) {
-		UnSelect(gameobject);
-		return false;
-	}
-	else {
-		Select(gameobject);
-		return true;
+	return (component_type != Component::ComponentType::Unknown);
+}
+void ModuleSelection::CopyComponentValues(Component* component)
+{
+	component_type = component->GetType();
+	if (component_type != Component::ComponentType::Unknown)
+	{
+		component_node = component->Save();
+		component_name = component->name;
 	}
 }
+
+void ModuleSelection::PasteComponentValues(Component* component)
+{
+	if (component_type != Component::ComponentType::Unknown)
+		component->Load(component_node);
+}
+
+void ModuleSelection::PasteComponentValuesToSelected()
+{
+	for (GameObject* obj : *GetSelected())
+	{
+		if (Component * component = obj->HasComponent(component_type))
+			component->Load(component_node);
+	}
+}
+
+void ModuleSelection::DeleteComponentToSelected()
+{
+	for (GameObject* obj : *GetSelected())
+	{
+		if (Component * component = obj->HasComponent(component_type))
+			component->to_delete = true;
+	}
+
+}
+
+// DRAFTS -----------------------------------------------------------------------------
+
+// Useguizmo
+/*void ModuleSelection::UseGuizmo(ImGuizmo::OPERATION guizmoOperation, float3 delta_pos, float3 delta_rot, float3 delta_scale)
+{
+	if (center)
+	{
+	if (guizmoOperation == ImGuizmo::OPERATION::SCALE)// && last_scale.x == 1 && last_scale.y == 1 && last_scale.z == 1)
+	{
+		for (int i = 0; i < GetSelected()->size(); i++)
+			original_scales.push_back(GetSelected()->at(i)->GetComponent<ComponentTransform>()->GetScale());
+	}
+
+	for (int i = 0; i < GetSelected()->size(); i++)
+	{
+		bool move = true;
+		for (int j = 0; j < GetSelected()->size() && move; j++)
+		{
+			if (i == j) continue;
+			if (GetSelected()->at(i)->FindParentGO(GetSelected()->at(j)))
+				move = false;
+		}
+		if (!move) continue;
+
+		ComponentTransform* t = GetSelected()->at(i)->GetComponent<ComponentTransform>();
+
+		if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+		{
+			float4x4 tr = t->GetGlobalTransform();
+			tr.SetTranslatePart(t->GetGlobalPosition() + delta_pos);
+
+			t->SetGlobalTransform(tr);
+			//t->SetPosition(t->GetPosition() + delta_pos);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+		{
+			t->SetRotation(t->GetRotation() + delta_rot);
+		}
+		else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+		{
+			t->Scale(original_scales.at(i).x * delta_scale.x, original_scales.at(i).y * delta_scale.y, original_scales.at(i).z * delta_scale.z);
+		}
+
+	}
+	}
+	else
+	{
+		for (GameObject* go : *GetSelected())
+		{
+			ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
+			float4x4 transform = float4x4::identity;
+			//root_transform->Local_transform = transform;
+			if (guizmoOperation == ImGuizmo::OPERATION::TRANSLATE)
+			{
+				go_t->SetPosition(go_t->GetPosition() + delta_pos);
+				//transform = float4x4::FromTRS(delta,go_t->GetQuaternionRotation(),go_t->GetScale());
+
+				//root_transform->SetPosition(pos);
+			}
+
+			else if (guizmoOperation == ImGuizmo::OPERATION::ROTATE)
+			{
+				//transform = float4x4::FromTRS(pos, rot, go_t->GetScale());
+				transform.SetRotatePart(rot);
+			}
+			else if (guizmoOperation == ImGuizmo::OPERATION::SCALE)
+			{
+				transform = float4x4::FromTRS(go_t->GetPosition(), go_t->GetQuaternionRotation(), scale);
+				transform.Scale(scale);
+			}
+		
+			go_t->SetGlobalTransform(transform);
+				//UpdateSelectionTransforms(go);
+		}
+	}
+
+}
+*/
+
+// UpdateRoot
+/*void ModuleSelection::UpdateRoot()
+{
+	int size = GetSelected()->size();
+	std::string n = "Selection (" + std::to_string(size) + ")";
+	root->SetName(n.c_str());
+	float3 pos = float3::zero;
+
+	aabb_selection.SetNegativeInfinity();
+
+
+	if (size > 0)
+	{
+		for (GameObject* go : *GetSelected())
+		{
+			ComponentTransform* go_t = go->GetComponent<ComponentTransform>();
+			pos += go_t != nullptr ? go_t->GetGlobalPosition() : float3::zero;
+
+			aabb_selection.Enclose(go->GetAABB());
+		}
+		pos /= size;
+	}
+
+
+	root_transform->SetPosition(pos);
+	
+	// Components
+	if (GetSelected()->size() > 1) // Creates buggsssss
+	{
+		for (Component* component : App->selection->root->GetComponents())
+		{
+			if (!component->to_delete && component->GetType() == Component::ComponentType::Transform) continue;
+			App->selection->root->RemoveComponent(component);
+		}
+
+		for (Component* component : App->selection->GetLastSelected()->GetComponents())
+		{
+			bool all_have_same_component = true;
+			Component::ComponentType type = component->GetType();
+			if (type == Component::ComponentType::Transform) continue;
+
+			for (GameObject* obj : *App->selection->GetSelected())
+			{
+				if (!obj->HasComponent(type))
+				{
+					all_have_same_component = false;
+					break;
+				}
+			}
+
+			if (all_have_same_component == false) continue;
+			else
+			{
+				App->selection->root->AddComponent(type);
+			}
+		}
+	}
+	
+}*/

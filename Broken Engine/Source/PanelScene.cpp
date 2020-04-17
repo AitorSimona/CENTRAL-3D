@@ -194,26 +194,27 @@ void PanelScene::HandleGuizmo()
 			guizmoOperation = ImGuizmo::OPERATION::SCALE;
 	}
 
-	Broken::GameObject* selectedGO = EngineApp->selection->GetLastSelected();
+	Broken::ComponentTransform* root_transform = EngineApp->selection->root->GetComponent<Broken::ComponentTransform>();
 
 	// --- Set drawing to this window and rendering rect (Scene Image) ---
 	ImGuizmo::SetDrawlist();
 	ImGuizmo::SetRect(EngineApp->gui->sceneX, EngineApp->gui->sceneY, EngineApp->gui->sceneWidth, EngineApp->gui->sceneHeight);
 
 	// --- Create temporal matrix to store results of guizmo operations ---
-	float modelMatrix[16];
-	memcpy(modelMatrix, selectedGO->GetComponent<Broken::ComponentTransform>()->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
+	float modelMatrix[16], deltaMatrix[16];
+	memcpy(modelMatrix, root_transform->GetLocalTransform().Transposed().ptr(), 16 * sizeof(float));
 
 	// --- Process guizmo operation ---
 	ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL; // or Local ??
-	ImGuizmo::Manipulate(EngineApp->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), EngineApp->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix);
+	ImGuizmo::Manipulate(EngineApp->renderer3D->active_camera->GetOpenGLViewMatrix().ptr(), EngineApp->renderer3D->active_camera->GetOpenGLProjectionMatrix().ptr(), guizmoOperation, mode, modelMatrix, deltaMatrix);
 
 	// --- Update Selected go transform ---
 	if (ImGuizmo::IsUsing())
 	{
-		float4x4 newTransform;
-		newTransform.Set(modelMatrix);
-		selectedGO->GetComponent<Broken::ComponentTransform>()->SetGlobalTransform(newTransform.Transposed());
+		float3 delta_pos, delta_rot, delta_scale;
+		ImGuizmo::DecomposeMatrixToComponents(deltaMatrix, delta_pos.ptr(), delta_rot.ptr(), delta_scale.ptr());
+
+		EngineApp->selection->UseGuizmo(guizmoOperation, delta_pos, delta_rot, delta_scale);
 	}
 }
 

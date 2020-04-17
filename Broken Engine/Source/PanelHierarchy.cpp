@@ -97,7 +97,7 @@ bool PanelHierarchy::Draw()
 
 		// Deselect the current GameObject when clicking in an empty space of the hierarchy
 		if (ImGui::InvisibleButton("##Deselect", { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetCursorPosY() }))
-			EngineApp->selection->ClearSelection();
+			EngineApp->selection->HandleSelection(nullptr);
 			//EngineApp->scene_manager->SetSelectedGameObject(nullptr);
 
 		// Allow creating GameObjects and UI Elements from the hierarchy
@@ -199,12 +199,27 @@ bool PanelHierarchy::Draw()
 			ImGui::EndPopup();
 		}			
 	}
+
+	ImGui::SetCursorScreenPos(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetTextLineHeightWithSpacing()));
+	if (ImGui::BeginChild("SelectionCounter", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar))
+	{
+		if (ImGui::BeginMenuBar()) {
+			std::string text = "";
+			if (Broken::GameObject* selected = EngineApp->selection->GetSelected()->size() <= 1 ? EngineApp->selection->GetLastSelected() : EngineApp->selection->root)
+				text += selected->GetName();
+			ImGui::Text(text.c_str());
+			ImGui::EndMenuBar();
+		}
+	}
+		ImGui::EndChild();
 	ImGui::End();
 
 	// --- Manage Drag & Drop ---
+
 	if (end_drag)
 	{
 		bool to_be_cleared = false;
+		EngineApp->selection->Select(dragged);
 
 		if (EngineApp->selection->IsSelected(target) == false) 
 		{
@@ -212,10 +227,12 @@ bool PanelHierarchy::Draw()
 			{
 				// Checking infite loops parent-child
 				//if (target->FindParentGO(obj) == false && obj->FindChildGO(target) == false)
-				if (!(target->FindParentGO(obj) || obj->FindChildGO(target))) // same as line above but more efficient
+				//if (!(target->FindParentGO(obj) || obj->FindChildGO(target))) // same as line above but more efficient
+				if (!target->FindParentGO(obj))
 				{
 					target->AddChildGO(obj);
 					to_be_cleared = true;
+					obj->is_been_reparented = true;
 				}
 			}
 		}
@@ -230,6 +247,7 @@ bool PanelHierarchy::Draw()
 		for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
 		{
 			EngineApp->scene_manager->GetRootGO()->AddChildGO(obj);
+			obj->is_been_reparented = true;
 		}
 		EngineApp->selection->ClearSelection();
 		to_unparent = false;
@@ -311,7 +329,6 @@ void PanelHierarchy::DrawRecursive(Broken::GameObject * Go)
 			dragged = Go;
 			ImGui::Text(Go->GetName());
 			ImGui::EndDragDropSource();
-			//EngineApp->selection->Select(dragged); // Aitor: Should not set dragged as selected since we won't be able to drag one go into another's component!
 		}
 
 		if (ImGui::BeginDragDropTarget())

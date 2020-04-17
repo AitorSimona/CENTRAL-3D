@@ -2,8 +2,12 @@
 #define __SELECTION_H__
 
 #include "Module.h"
-#include "Component.h"
-#include "Math.h"
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "ModuleEventManager.h"
+
+#include "Imgui/ImGuizmo/ImGuizmo.h"
+
 //#include "Imgui/imgui.h"
 
 /*
@@ -14,31 +18,34 @@
 */
 
 /* CHANGE LIST
+	- **NEW** Visual scene feedback rectangle of selection 
+	- **NEW** Script name in component title 
+	- **NEW** Selection counter in hierarchy 
+	- **NEW** Multi renaming
+	- **NEW** Multi active/inactive
+	- **NEW** Multi static/dynamic (edited feedback "edit child too" for bug purposes)
+	- **NEW** Multi layer changing
+	- **NEW** Focus object bug fixed
+	- **NEW** Visual scene feedback rectangle of selection
 	- Added ModuleSelection to manage selection
 	- Selection can be both on hierarchy and scene:
 		- Single -> mouse left click
 		- Additive/Substractive -> mouse left click + CTRL
-		- Multiple (weird on scene)-> mouse left click + SHIFT if there's at least one selected
+		- Multiple (weird but working on scene)-> mouse left click + SHIFT if there's at least one selected
 	- Selected gameobjects can now:
-		- Change parent to the dragged one (only from bot to top, weird, bug)
 		- Add same component
 		- Be highlighted both scene and hierarchy
 		- Be deleted at once
 		- Paste previously copied components 
 		- Delete same component
+		- **NEW** Change parent to the dragged one 
+		- **NEW** Guizmo transformation to all 
 	- TODO
-		- Visual scene rectangle selection
-		- Selection counter in inspector
-		- Guizmo transformation to all
-		- Parenting bug to reparent from top to bot
-		- Script name in component title (Ask Didac)
+		- Scene visual rectangle selection (just fix one matrix)
+
 */
 
-
-
 BE_BEGIN_NAMESPACE
-class GameObject;
-// SELECTED TODO
 
 class BROKEN_API ModuleSelection :	public Module
 {
@@ -55,20 +62,16 @@ public:
 
 
 public:
-
-	void ApplyOBBTransformation();
-
-	bool IsSelected(GameObject* gameobject);
+	
+	bool IsSelected(const GameObject* gameobject) const;
 
 	void HandleSelection(GameObject* gameobject);
 
-	GameObject* GetLastSelected() const;
+	GameObject* GetLastSelected();
+
+	inline std::vector<GameObject*>* GetSelected() { return &root->childs; }
 
 	void ClearSelection();
-
-	bool ComponentCanBePasted() const;
-
-	const std::vector<GameObject*>* GetSelected() const { return &selection; }
 
 	// Component management
 	void CopyComponentValues(Component* component);
@@ -79,32 +82,47 @@ public:
 
 	void DeleteComponentToSelected();
 
+	bool ComponentCanBePasted() const;
+
 	std::string component_name = "None";
 
-
+	// Simple selection
 	void Select(GameObject* gameobject);
 
 	void UnSelect(GameObject* gameobject);
 
+	void ShowCommonComponents();
+
+	// Initializer
 	void SceneRectangleSelect(float3 start);
 
+	// Values passed must be of the deltaMatrix of the guizmo
+	void UseGuizmo(ImGuizmo::OPERATION guizmoOperation, float3 delta_pos, float3 delta_rot, float3 delta_scale);
+
 private:
+	// Scene rectangle 
+	void ApplyOBBTransformation();
 
+	void SelectIfIntersects();
 
+	void UpdateRoot();
 
+	// Advanced selection
 	void SelectLastTo(GameObject* gameobject);
 
 	void SelectRecursive(GameObject* gameobject, GameObject* from, GameObject* to);
 
-
 	bool ToggleSelect(GameObject* gameobject);
 
-	void SelectIfIntersects();
+
+public:
+
+	// Please DO NOT EDIT
+	GameObject* root = nullptr;
+	// Please DO NOT EDIT
+	ComponentTransform* root_transform = nullptr;
 
 private:
-	std::vector<GameObject*> selection;
-	
-	GameObject* root = nullptr;
 
 	// Shift selection
 	bool start_selecting = false;
@@ -113,9 +131,13 @@ private:
 	
 	// Visual scene selection
 	OBB aabb;
-	bool aabb_selection = false;
+	AABB aabb_selection;
+	bool is_rectangle_selection = false;
 	float3 aabb_start = float3::zero;
 	float3 aabb_end = float3::zero;
+
+	// Guizmo 
+	std::vector<float3> original_scales;
 
 	// Component copy and paste
 	json component_node;
