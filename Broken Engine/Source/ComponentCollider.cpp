@@ -144,7 +144,7 @@ void ComponentCollider::UpdateLocalMatrix() {
 	ComponentDynamicRigidBody* dynamicRB = GO->GetComponent<ComponentDynamicRigidBody>();
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
 
-	if (!rigidStatic && !dynamicRB)
+	if (!rigidStatic && (!dynamicRB || !dynamicRB->rigidBody))
 		return;
 
 	math::float4x4 gt = cTransform->GetGlobalTransform();
