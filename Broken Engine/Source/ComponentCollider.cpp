@@ -756,11 +756,8 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			shape = App->physics->mPhysics->createShape(SphereGeometry, *App->physics->mMaterial);
 			shape->setGeometry(SphereGeometry);
 
-			if (!HasDynamicRigidBody(SphereGeometry, localTransform))
-			{
-				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->addActor(rigidStatic, GO);
-			}
+			physx::PxTransform transform(transform->position.x, transform->position.y, transform->position.z);
+			CreateRigidbody(SphereGeometry, transform);
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::SPHERE;
 			break;
@@ -768,13 +765,11 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 		case ComponentCollider::COLLIDER_TYPE::CAPSULE: {
 			physx::PxCapsuleGeometry CapsuleGeometry(radius, height);
 			shape = App->physics->mPhysics->createShape(CapsuleGeometry, *App->physics->mMaterial);
-			shape->setGeometry(CapsuleGeometry);
-
-			if (!HasDynamicRigidBody(CapsuleGeometry, localTransform))
-			{
-				rigidStatic = PxCreateStatic(*App->physics->mPhysics, localTransform, *shape);
-				App->physics->addActor(rigidStatic, GO);
-			}
+			physx::PxTransform relativePose(physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0, 0, 1)));
+			shape->setLocalPose(relativePose);
+			
+			physx::PxTransform transform(transform->position.x, transform->position.y, transform->position.z);
+			CreateRigidbody(CapsuleGeometry, transform);
 
 			lastIndex = (int)ComponentCollider::COLLIDER_TYPE::CAPSULE;
 			break;
