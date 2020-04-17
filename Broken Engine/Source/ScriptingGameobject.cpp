@@ -36,7 +36,8 @@ uint ScriptingGameobject::FindGameObject(const char* go_name)
 
 uint ScriptingGameobject::GetMyUID()
 {
-	return App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
+	if(App->scripting->current_script!=nullptr)
+		return App->scripting->current_script->my_component->GetContainerGameObject()->GetUID();
 }
 
 uint ScriptingGameobject::GetScriptGOParent()
