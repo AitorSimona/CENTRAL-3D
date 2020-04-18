@@ -34,7 +34,7 @@ private:
 	Broken::GameObject* selectedCamera;
 	std::string sceneName;
 	//std::string cameraName;
-
+	bool Activate_Debug = false;
 };
 
 #endif

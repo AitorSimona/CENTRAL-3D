@@ -746,6 +746,11 @@ void ModuleScripting::DeployScriptingGlobals()
 }
 
 bool ModuleScripting::Init(json& file) {
+
+	//First, check if we are in a debuggable game build (managed inside the application)
+	//And decide wether we use the boolean or not
+	LoadStatus(file);
+
 	// Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);
@@ -925,6 +930,23 @@ ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript*
 	}
 
 	return ret;
+}
+
+void ModuleScripting::LoadStatus(const json& file)
+{
+	if (App->isGame)
+	{
+		if (file.find(name) != file.end())
+		{
+			if (!file[name.c_str()]["LUA_Debug_Game"].is_null())
+			{
+				if (App->fs->Exists(LUA_DEBUG))
+					Debug_Build = file[name.c_str()]["LUA_Debug_Game"];
+				else
+					Debug_Build = false;
+			}
+		}
+	}
 }
 
 bool ModuleScripting::Stop() {
