@@ -200,16 +200,13 @@
         "GammaCorrection": 1.8650000095367432
     },
     "Window": {
-      "borderless": false,
-      "fullscreen": false,
-      "fullscreenDesktop": false,
-      "height": 810,
-      "resizable": true,
-      "sceneX": 480,
-      "sceneY": 640,
-      "width": 1440
-    },
-  "Scripting": {
-    "LUA_Debug_Game":  false
-  }
+        "borderless": false,
+        "fullscreen": false,
+        "fullscreenDesktop": false,
+        "height": 1080,
+        "resizable": true,
+        "sceneX": 480,
+        "sceneY": 640,
+        "width": 1920
+    }
 }
