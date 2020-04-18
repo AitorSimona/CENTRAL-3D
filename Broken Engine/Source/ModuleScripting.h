@@ -53,6 +53,9 @@ public:
 	bool Stop() override;
 	ScriptInstance* GetScriptInstanceFromComponent(ComponentScript* component_script);
 
+	//Load info from the settings json
+	void LoadStatus(const json& file);
+
 public:
 	ScriptInstance* current_script;
 	update_status game_update = UPDATE_CONTINUE;

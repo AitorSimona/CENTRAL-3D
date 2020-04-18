@@ -863,6 +863,26 @@ ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript*
 	return ret;
 }
 
+void ModuleScripting::LoadStatus(const json& file)
+{
+	if (App->isGame)
+	{
+		for (json::iterator it = file.begin(); it != file.end(); ++it)
+		{
+			// --- Retrieve GO's UID ---
+			std::string Module = it.key().c_str();
+			if (Module == "Scripting")
+				continue;
+
+			if (!file[it.key()]["LUA_Debug_Game"].is_null())
+			{
+
+			}
+
+		}
+	}
+}
+
 bool ModuleScripting::Stop() {
 	for (std::vector<ScriptInstance*>::iterator it = class_instances.begin(); it != class_instances.end(); ++it)
 		(*it)->awoken = (*it)->started = false;

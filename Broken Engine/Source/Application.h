@@ -92,6 +92,7 @@ public:
 
 
 	bool isGame = false;
+	bool isDebuggableGame = false;
 
 	//Random Number Generator
 	RNGen RandomNumberGenerator;
