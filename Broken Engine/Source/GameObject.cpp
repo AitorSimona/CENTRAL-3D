@@ -79,7 +79,7 @@ void GameObject::Update(float dt)
 		collider->UpdateLocalMatrix();
 
 	if (GetComponent<ComponentTransform>()->update_transform)
-		TransformGlobal(this);
+		TransformGlobal();
 
 	for (int i = 0; i < components.size(); ++i)
 	{
@@ -170,21 +170,31 @@ void GameObject::RecursiveDelete()
 //	UpdateAABB();
 //}
 
-void GameObject::TransformGlobal(GameObject* GO)
+//Why is there this GameObject* GO if the object passed is the object itself (this)?
+void GameObject::TransformGlobal()
 {
-	ComponentTransform* transform = GO->GetComponent<ComponentTransform>();
-	transform->OnUpdateTransform(GO->parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
+	ComponentTransform* transform = GetComponent<ComponentTransform>();
+	float4x4 old_transform = transform->GetGlobalTransform();
+
+	if (parent)
+	transform->OnUpdateTransform(parent->GetComponent<ComponentTransform>()->GetGlobalTransform());
 
 	ComponentCamera* camera = GetComponent<ComponentCamera>();
 
 	if (camera)
-		camera->OnUpdateTransform(transform->GetGlobalTransform());
+	camera->OnUpdateTransform(transform->GetGlobalTransform());
 
-	for (std::vector<GameObject*>::iterator tmp = GO->childs.begin(); tmp != GO->childs.end(); ++tmp)
+	for (std::vector<GameObject*>::iterator tmp = childs.begin(); tmp != childs.end(); ++tmp)
 	{
-		TransformGlobal(*tmp);
+		(*tmp)->TransformGlobal();
 	}
 
+	if (is_been_reparented)
+	{
+		transform->SetGlobalTransform(old_transform);
+		is_been_reparented = false;
+	}
+	
 }
 
 void GameObject::RemoveChildGO(GameObject* GO)

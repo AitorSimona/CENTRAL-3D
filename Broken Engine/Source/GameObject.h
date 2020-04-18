@@ -64,7 +64,8 @@ public:
 	// --- Utilities ---
 	void RecursiveDelete();
 	//void OnUpdateTransform();
-	void TransformGlobal(GameObject* GO);
+	//void TransformGlobal(GameObject* GO);
+	void TransformGlobal();
 	void RemoveChildGO(GameObject* GO);
 	// If there is a GO at index, it will erase it and replace it
 	void AddChildGO(GameObject* GO, int index = -1);
@@ -90,6 +91,7 @@ public:
 	int layer;
 	bool is_prefab_child = false;
 	bool is_prefab_instance = false;
+	bool is_been_reparented = false;
 
 	// to avoid including ImGui header, it's hardcoded the ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth flags (128 and 2048 respectively)
 	int node_flags = 2176;

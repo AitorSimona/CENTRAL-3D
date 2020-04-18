@@ -127,14 +127,9 @@ void ModuleCamera3D::UpdateCamera()
 			CameraLookAround(m_CameraSpeedDeltaTime, reference);
 
 		// --- Frame object ---
-
-		// SELECTED TODO
-		/*if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
-			if (GameObject* GO = App->scene_manager->GetSelectedGameObject())
-				FrameObject(GO);
-			else
-				FrameObject(float3(0.0f));
-		}*/
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
+			FrameObject(App->selection->root);
+		}
 
 		//App->scene_manager->CreateGrid(camera->frustum.Pos().Length()); // rip adaptive grid
 	}
@@ -180,7 +175,9 @@ void ModuleCamera3D::FrameObject(GameObject* GO) {
 		ComponentMesh* mesh = GO->GetComponent<ComponentMesh>();
 
 		if (transform)
-			FrameObject(transform->GetGlobalPosition());
+			FrameObject(transform->GetPosition());
+			// Changed to local position because always is focusing on selection and uses only local values
+			//FrameObject(transform->GetGlobalPosition());
 
 		if (mesh && mesh->resource_mesh)
 		{
