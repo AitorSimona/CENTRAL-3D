@@ -171,6 +171,7 @@ void PanelBuild::makeBuild() {
 	EngineApp->fs->CreateDirectoryA((buildFolder + LIBRARY_FOLDER).c_str());
 	EngineApp->fs->CreateDirectoryA((buildFolder + ASSETS_FOLDER).c_str());
 	EngineApp->fs->CreateDirectoryA((buildFolder + SETTINGS_FOLDER).c_str());
+	EngineApp->fs->CreateDirectoryA((buildFolder + LUA_GLOBALS).c_str());
 
 	//We copy the executable
 	EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, GAME_EXE, buildFolder.c_str());
@@ -198,6 +199,7 @@ void PanelBuild::makeBuild() {
 	std::vector<std::string> filesToCopy;
 	createFoldersAndRetrieveFiles(ASSETS_FOLDER, (buildFolder + ASSETS_FOLDER).c_str(), filesToCopy);
 	createFoldersAndRetrieveFiles(LIBRARY_FOLDER, (buildFolder + LIBRARY_FOLDER).c_str(), filesToCopy);
+	createFoldersAndRetrieveFiles(LUA_GLOBALS, (buildFolder + LUA_GLOBALS).c_str(), filesToCopy);
 
 	for (std::vector<std::string>::const_iterator it = filesToCopy.begin(); it != filesToCopy.end(); ++it)
 		EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildFolder.c_str());
