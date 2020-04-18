@@ -934,16 +934,19 @@ ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript*
 
 void ModuleScripting::LoadStatus(const json& file)
 {
-	/*if (App->isGame)
-	{*/
-	if (file.find(name) != file.end())
+	if (App->isGame)
 	{
-		if (!file[name.c_str()]["LUA_Debug_Game"].is_null())
+		if (file.find(name) != file.end())
 		{
-			Debug_Build = file[name.c_str()]["LUA_Debug_Game"];
+			if (!file[name.c_str()]["LUA_Debug_Game"].is_null())
+			{
+				if (App->fs->Exists(LUA_DEBUG))
+					Debug_Build = file[name.c_str()]["LUA_Debug_Game"];
+				else
+					Debug_Build = false;
+			}
 		}
 	}
-	//}
 }
 
 bool ModuleScripting::Stop() {
