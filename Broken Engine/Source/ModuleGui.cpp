@@ -84,7 +84,7 @@ bool ModuleGui::Start()
 
 		// Setup style
 		ImGuiStyle& style = ImGui::GetStyle();
-		ImGui::StyleColorsDark();
+		ImGui::StyleColorsBroken();
 		style.FrameBorderSize = 1.0f;
 	}
 	else
