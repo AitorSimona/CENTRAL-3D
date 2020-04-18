@@ -81,6 +81,9 @@ bool PanelBuild::Draw() {
 				ImGui::EndCombo();
 			}
 			ImGui::Separator();
+			ImGui::Text("Lua Debugging:");
+			ImGui::Checkbox("Make the game build debuggable (Scripting)", &Activate_Debug);
+			ImGui::Separator();
 			if (ImGui::BeginPopup("Build already exists!")) {
 				ImGui::Text("The build \"%s\" already exists!", buildName.c_str());
 				ImGui::Text("Should we delete it?");
@@ -106,7 +109,6 @@ bool PanelBuild::Draw() {
 		else
 			ImGui::Text("You have no cameras in the scene.");
 
-		ImGui::Checkbox("Make the game build debuggable (on the Lua part)", &Activate_Debug);
 	}
 	ImGui::End();
 
