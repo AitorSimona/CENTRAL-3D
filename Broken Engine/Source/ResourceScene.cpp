@@ -6,6 +6,9 @@
 #include "ModuleSceneManager.h"
 #include "ModuleEventManager.h"
 #include "ModuleDetour.h"
+#include "ModuleUI.h"
+#include "ModuleScripting.h"
+#include "ModulePhysics.h"
 
 #include "GameObject.h"
 
@@ -113,7 +116,8 @@ bool ResourceScene::LoadInMemory()
 					// --- Load Component Data ---
 					if (component) 
 					{
-						component->Load(components[type_string]);
+						// NOTE: Commented this so components do not try to ask for a nonexistant go, we first create all gos and ask components to load later
+						//component->Load(components[type_string]);
 
 						// --- UID ---
 						json c_UID = components[it2.key()]["UID"];
@@ -132,6 +136,33 @@ bool ResourceScene::LoadInMemory()
 				e.type = Event::EventType::GameObject_loaded;
 				e.go = go;
 				App->event_manager->PushEvent(e);
+			}
+
+			uint ite = 0;
+
+			for (json::iterator it = file.begin(); it != file.end(); ++it)
+			{
+				// --- Iterate components ---
+				json components = file[it.key()]["Components"];
+				if (!components.is_null()) {
+					std::vector<Component*>* go_components = &objects[ite]->GetComponents();
+
+					for (json::iterator it2 = components.begin(); it2 != components.end(); ++it2)
+					{
+						// --- UID ---
+						json c_UID = components[it2.key()]["UID"];
+						int c_index = -1;
+						json index = components[it2.key()]["index"];
+						std::string type_string = it2.key();
+
+						if (!index.is_null())
+							c_index = index.get<uint>();
+
+						go_components->at(c_index)->Load((components[type_string]));
+					}
+				}
+
+				ite++;
 			}
 
 			App->scene_manager->GetRootGO()->childs.clear();
@@ -320,18 +351,39 @@ void ResourceScene::OnOverwrite() {
 
 void ResourceScene::OnDelete()
 {
+
+	if (this->GetUID() == App->scene_manager->currentScene->GetUID()
+		&& (this->GetUID() != App->scene_manager->defaultScene->GetUID()))
+	{
+		App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
+	}
+
+	FreeMemory();
+
 	if (this->GetUID() == App->scene_manager->defaultScene->GetUID())
 	{
-		if (this->GetUID() == App->scene_manager->currentScene->GetUID())
-		{
-			App->scene_manager->SetActiveScene(App->scene_manager->defaultScene);
-		}
+		App->physics->DeleteActors();
 
-		FreeMemory();
-		App->fs->Remove(resource_file.c_str());
+		// --- Reset octree ---
+		App->scene_manager->tree.SetBoundaries(AABB(float3(-100, -100, -100), float3(100, 100, 100)));
 
-		App->resources->RemoveResourceFromFolder(this);
-		App->resources->ONResourceDestroyed(this);
+		// --- Release current scene ---
+		Release();
+		App->scripting->CleanUpInstances();
+
+		// --- Clear root ---
+		App->scene_manager->GetRootGO()->childs.clear();
+
+		App->ui_system->Clear();
 	}
+
+	App->fs->Remove(resource_file.c_str());
+
+	App->resources->RemoveResourceFromFolder(this);
+
+	if (this->GetUID() != App->scene_manager->defaultScene->GetUID())
+		App->resources->ONResourceDestroyed(this);
+	else
+		LoadToMemory();
 }
 

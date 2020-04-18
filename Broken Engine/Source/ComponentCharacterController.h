@@ -69,6 +69,7 @@ private:
 	physx::PxVec3 vel = physx::PxVec3(0);
 
 	bool creation = false;
+	bool draw = true;
 };
 
 BE_END_NAMESPACE

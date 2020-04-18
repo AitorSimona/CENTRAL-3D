@@ -55,29 +55,13 @@
 using namespace Broken;
 // --- Event Manager Callbacks ---
 
-// SELECTED TODO
 void ModuleSceneManager::ONResourceSelected(const Event& e) 
 {
 	App->selection->ClearSelection();
-	/*if (App->scene_manager->SelectedGameObject)
-		App->scene_manager->SetSelectedGameObject(nullptr);*/
 }
 
-// SELECTED TODO
 void ModuleSceneManager::ONGameObjectDestroyed(const Event& e) 
 {
-	// If destroyed GameObject is selected, erase from selected
-	// MANAGED BY MODULE SELECTION
-	/*for (std::vector<GameObject*>::iterator it = App->selection->selected_gameobjects.begin(); it != App->scene_manager->selected_gameobjects.end();)
-	{
-		if (e.go->GetUID() == (*it)->GetUID()) {
-			App->scene_manager->selected_gameobjects.erase(it);
-			break;
-		}
-		it++;
-	}*/
-	
-
 	for (GameObject* obj : App->scene_manager->GetRootGO()->childs) //all objects in scene
 	{
 		if (obj->HasComponent(Component::ComponentType::Button)) //if has button component
@@ -331,17 +315,6 @@ void ModuleSceneManager::RecursiveDrawQuadtree(QuadtreeNode* node) const
 		App->renderer3D->DrawAABB(node->box, Red);
 }
 
-//bool ModuleSceneManager::IsSelected(GameObject* go)
-//{
-//	for (int i = 0; i < selected_gameobjects.size(); i++)
-//	{
-//		if (selected_gameobjects[i] == go)
-//			return true;
-//	}
-//
-//	return false;
-//}
-
 void ModuleSceneManager::SelectFromRay(LineSegment& ray) 
 {
 	// --- Note all Game Objects are pushed into a map given distance so we can decide order later ---
@@ -396,10 +369,8 @@ void ModuleSceneManager::SelectFromRay(LineSegment& ray)
 		}
 
 		// --- Set Selected ---
-		//if (toSelect)
 		// RAYCAST SELECTION
 		App->selection->HandleSelection(toSelect);
-		//SetSelectedGameObject(toSelect);
 	}
 }
 
@@ -504,6 +475,7 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		}
 		else
 		{
+			App->physics->RemoveCookedActors();
 			currentScene = scene; // force this so gos are not added to another scene
 			currentScene = (ResourceScene*)App->resources->GetResource(scene->GetUID());
 
@@ -521,40 +493,6 @@ void ModuleSceneManager::SetActiveScene(ResourceScene* scene)
 		ENGINE_CONSOLE_LOG("|[error]: Trying to load invalid scene");
 
 }
-
-// SELECTED TODO
-//GameObject* ModuleSceneManager::GetSelectedGameObject() const
-//{
-//
-//	return selected_gameobjects.empty() ? nullptr : *selected_gameobjects.rbegin();
-//}
-
-
-
-// SELECTED TODO
-//void ModuleSceneManager::SetSelectedGameObject(GameObject* go) {
-//	
-//	if (go == nullptr)
-//	{
-//		App->scene_manager->selected_gameobjects.clear();
-//	}
-//	else {
-//
-//		App->scene_manager->selected_gameobjects.push_back(go);
-//		Event e(Event::EventType::GameObject_selected);
-//		e.go = go;
-//		App->event_manager->PushEvent(e);
-//	}
-//	
-//	/*SelectedGameObject = go;
-//
-//	if (SelectedGameObject)
-//	{
-//		Event e(Event::EventType::GameObject_selected);
-//		e.go = go;
-//		App->event_manager->PushEvent(e);
-//	}*/
-//}
 
 GameObject* ModuleSceneManager::CreateEmptyGameObject() 
 {
@@ -619,17 +557,6 @@ GameObject * ModuleSceneManager::CreateRootGameObject()
 
 	return new_object;
 }
-
-//GameObject* ModuleSceneManager::CreateRootSelectedGameObject()
-//{
-//	// --- Create New Game Object Name ---
-//	std::string Name = "rootSelected";
-//
-//	// --- Create empty Game object to be filled out ---
-//	GameObject* new_object = new GameObject(Name.c_str());
-//
-//	return new_object;
-//}
 
 void ModuleSceneManager::CalculateTangentAndBitangent(ResourceMesh* mesh, uint index, float3& tangent, float3& bitangent) const
 {

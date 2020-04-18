@@ -36,7 +36,8 @@ public:
 	static inline Component::ComponentType GetType() { return Component::ComponentType::Script; };
 public:
 	ResourceScript* script = nullptr;
-	std::string script_name;
+	// Using component name instead of duplicating it with script_name
+	//std::string script_name;
 	std::vector<ScriptVar> script_variables;
 	std::vector<ScriptFunc> script_functions;
 };

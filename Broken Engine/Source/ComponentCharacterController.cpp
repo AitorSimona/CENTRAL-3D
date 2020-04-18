@@ -81,8 +81,8 @@ void ComponentCharacterController::Update()
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT))
 		vel.x = -10.0f;
 	else
-		vel.x = 0.0f;*/
-
+		vel.x = 0.0f;
+	*/
 
 
 	ComponentTransform* cTransform = GO->GetComponent<ComponentTransform>();
@@ -141,7 +141,7 @@ void ComponentCharacterController::Draw()
 	}
 
 	// --- Render shape ---
-	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices)
+	if (mesh && mesh->IsInMemory() && mesh->vertices && mesh->Indices && draw)
 	{
 		// --- Use default shader ---
 		uint shaderID = App->renderer3D->defaultShader->ID;
@@ -330,6 +330,8 @@ void ComponentCharacterController::CreateInspectorNode()
 {
 	if (ImGui::Button("Delete component"))
 		to_delete = true;
+
+	ImGui::Checkbox("Show", &draw);
 
 	if (ImGui::DragFloat("Radius", &radius, 0.005f))
 	{

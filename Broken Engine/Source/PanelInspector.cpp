@@ -1,24 +1,36 @@
 #include "PanelInspector.h"
 #include "EngineApplication.h"
-
 #include "Imgui/imgui.h"
-
-// -- Modules --
+#include "ModuleEditorUI.h"
 #include "ModuleGui.h"
 #include "ModuleSelection.h"
-#include "ModuleEditorUI.h"
-#include "ModuleResourceManager.h"
-#include "ModuleSceneManager.h"
+#include "PanelProject.h"
 #include "ModulePhysics.h"
-
-// -- Components --
-#include "GameObject.h"
-#include "Component.h"
-#include "ComponentScript.h"
 #include "ComponentCollider.h"
 
-// -- Panels --
-#include "PanelProject.h"
+#include "PhysX_3.4/Include/PxPhysicsAPI.h"
+
+using namespace Broken;
+#include "ModuleSceneManager.h"
+//#include "ModuleRenderer3D.h"
+#include "ModuleResourceManager.h"
+//#include "ModuleGui.h"
+
+//#include "GameObject.h"
+//#include "ComponentTransform.h"
+//#include "ComponentMesh.h"
+//#include "ComponentMeshRenderer.h"
+//#include "ComponentCamera.h"
+
+#include "PanelShaderEditor.h"
+
+//#include "ResourceMesh.h"
+//#include "ResourceMaterial.h"
+//#include "ResourceTexture.h"
+//#include "ResourceShader.h"
+#include "ComponentScript.h"
+
+//#include "mmgr/mmgr.h"
 
 PanelInspector::PanelInspector(char * name) : Panel(name)
 {
@@ -37,6 +49,10 @@ bool PanelInspector::Draw()
 
 	if (ImGui::Begin(name, &enabled, settingsFlags))
 	{
+		// SELECTED TODO
+		// Displaying the minimum common inspector of the selection
+		//Broken::GameObject* Selected = EngineApp->selection->GetSelected()->size() <= 1 ? EngineApp->selection->GetLastSelected() : EngineApp->selection->root;
+
 		Broken::GameObject* Selected = EngineApp->selection->GetLastSelected();
 		const std::vector<Broken::GameObject*>* GosSelected = EngineApp->selection->GetSelected();
 		Broken::Resource* SelectedRes = EngineApp->editorui->panelProject->GetSelected();
@@ -44,25 +60,24 @@ bool PanelInspector::Draw()
 		if (Selected != nullptr)
 		{
 			// --- Game Object ---
-			CreateGameObjectNode(Selected);
+			CreateGameObjectNode(*Selected);
 
 			// --- Components ---
+			
+			std::vector<Broken::Component*>* components = &Selected->GetComponents();
 
-			const std::vector<Broken::Component*>& components = Selected->GetComponents();
-
-			for (std::vector<Broken::Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
-			{
+			for (std::vector<Broken::Component*>::const_iterator it = components->begin(); it != components->end(); ++it)
+			{	
 				if ((*it) == nullptr)
 					continue;
 
 				if (Startup)
 					ImGui::SetNextItemOpen(true);
 
-				// SELECTED TODO -> Change script name
 				if (*it)
 				{
-					std::string a = "##Active";
-					if (ImGui::Checkbox((a + (*it)->name).c_str(), &(*it)->GetActive()))
+					std::string name = "##Active";
+					if (ImGui::Checkbox((name + (*it)->name).c_str(), &(*it)->GetActive()))
 					{
 						if ((*it)->IsEnabled())
 							(*it)->Enable();
@@ -71,10 +86,11 @@ bool PanelInspector::Draw()
 					}
 					ImGui::SameLine();
 
+					name = (*it)->GetType() != Component::ComponentType::Script ? (*it)->name : (*it)->name + " (Script)";
 
-					if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+					if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						a = "ComponentOptions";
+						// Creating component options menu (...)
 						ImGui::SameLine();
 						if (ImGui::SmallButton("..."))
 							ImGui::OpenPopup("Component options");
@@ -90,7 +106,7 @@ bool PanelInspector::Draw()
 							{
 								EngineApp->selection->CopyComponentValues((*it));
 							}
-							if (ImGui::MenuItem("Paste values", EngineApp->selection->component_name.c_str(),&dummy,EngineApp->selection->ComponentCanBePasted()))
+							if (ImGui::MenuItem("Paste values", EngineApp->selection->component_name.c_str(), &dummy, EngineApp->selection->ComponentCanBePasted()))
 							{
 								EngineApp->selection->PasteComponentValues((*it));
 							}
@@ -157,7 +173,6 @@ bool PanelInspector::Draw()
 						for (Broken::GameObject* obj : *EngineApp->selection->GetSelected())
 						{
 							Broken::ComponentScript* script = (Broken::ComponentScript*)obj->AddComponent(Broken::Component::ComponentType::Script);
-							// SELECTED TODO - It is necessary to assign all the scripts? (move the line below out of the for loop)
 							script->AssignScript((Broken::ResourceScript*)resource);
 						}
 
@@ -260,113 +275,167 @@ bool PanelInspector::Draw()
 	return true;
 }
 
-void PanelInspector::CreateGameObjectNode(Broken::GameObject* Selected) const
+
+
+// SELECTED TODO: test editing for multiselection
+// OPTIMIZE DEFAULT SHOWN PROPERTIES -> LESS SELECTION ITERATIONS
+void PanelInspector::CreateGameObjectNode(Broken::GameObject & Selected) const
 {
 	ImGui::BeginChild("child", ImVec2(0, 70), true);
 
-	if (ImGui::Checkbox("##GOActive", &Selected->GetActive()))
+	// Changing active state to true if all are selected and to false if at least one is not active
+	bool active = true;
+	for (GameObject* obj : *App->selection->GetSelected())
 	{
-		if (Selected->GetActive())
-			Selected->Enable();
+		if (obj->GetActive() == false) {
+			active = false;
+			break;
+		}
+	}
+
+	if (ImGui::Checkbox("##GOActive", &active))
+	{
+		if (active)
+			for (GameObject* obj : *App->selection->GetSelected())
+				obj->Enable();
 		else
-			Selected->Disable();
+			for (GameObject* obj : *App->selection->GetSelected())
+				obj->Disable();
 	}
 	ImGui::SameLine();
 
 	// --- Game Object Name Setter ---
-	static char GOName[100] = "";
-	strcpy_s(GOName, 100, Selected->GetName());
-	if (ImGui::InputText("", GOName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
-		Selected->SetName(GOName);
+	static char GOName[128] = "";
+	static std::string number = "";
+	strcpy_s(GOName, 128, Selected.GetName());
 
-	static bool objectStatic = Selected->Static;
-	bool checkboxBool = Selected->Static;
+	if (ImGui::InputText("", GOName, 128, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+
+		for (int i = 0; i < App->selection->GetSelected()->size(); i++)
+		{
+			if (i == 0)
+			{
+				App->selection->GetSelected()->at(i)->SetName(GOName);
+			}
+			else
+			{
+				number = " (" + std::to_string(i) + ")";
+				number = GOName + number;
+
+				App->selection->GetSelected()->at(i)->SetName(number.c_str());
+			}
+		}
+
+
+	static bool objectStatic = true;
+	bool checkbox_static = true;
+	bool exists_childs = false;
+	//[STATIC] Knowing what to display, if all the selected are at the same state, it will display the state, otherwise it will display false
+	// Knowing if inside selection there's a parent with childs
+	// Once both variables are solved it can break the loop search
+	for (int i=0; i < App->selection->GetSelected()->size() && (checkbox_static || !exists_childs);i++)
+	{
+		if (App->selection->GetSelected()->at(i)->Static == false) 
+			checkbox_static = false;
+
+		if (App->selection->GetSelected()->at(i)->childs.empty() == false)
+			exists_childs = true;
+	}
 
 	ImGui::SameLine();
 
-	if (ImGui::Checkbox("Static", &checkboxBool)) {
-		objectStatic = checkboxBool;
-		if (!Selected->childs.empty())
+	if (ImGui::Checkbox("Static", &checkbox_static)) {
+		objectStatic = checkbox_static;
+		
+		if (exists_childs)
 			ImGui::OpenPopup("Static gameObject");
 		else
-			EngineApp->scene_manager->SetStatic(Selected, objectStatic,  false);
+			for (GameObject* obj : *App->selection->GetSelected())
+				EngineApp->scene_manager->SetStatic(obj, objectStatic,  false);
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(400,75));
 	if (ImGui::BeginPopup("Static gameObject", ImGuiWindowFlags_NoScrollbar))
 	{
-		if (Selected->Static) {
-			ImGui::Indent(30);
-			ImGui::Text("You are about to make this object non-static.");
-			ImGui::Spacing();
+		
+		/* Gets a little bug so I am deleting the first part where displays the action to be done (always showing non-static)
 
-			ImGui::Unindent(10);
-			ImGui::Text("Do you want its children to be non-static aswell?");
+		static std::string text = (objectStatic) ? "You are about to make objects non-static.\nDo you want to edit the children aswell?" :
+			"You are about to make this objects static.\nDo you want to edit the children aswell?";*/
 
-			ImGui::Spacing();
+		ImGui::Text("Do you want to edit the children aswell?");
 
-			ImGui::Indent(130);
-			if (ImGui::Button("Yes")) {
-				EngineApp->scene_manager->SetStatic(Selected, objectStatic, true);
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SameLine();
-
-			if (ImGui::Button("No")) {
-				EngineApp->scene_manager->SetStatic(Selected, objectStatic, false);
-				ImGui::CloseCurrentPopup();
-			}
+		ImGui::Indent(130);
+		if (ImGui::Button("Yes")) {
+			for (GameObject* obj : *App->selection->GetSelected())
+				EngineApp->scene_manager->SetStatic(obj, objectStatic, true);
+			ImGui::CloseCurrentPopup();
 		}
-		else {
-			ImGui::Indent(30);
-			ImGui::Text("You are about to make this object static.");
-			ImGui::Spacing();
+		ImGui::SameLine();
 
-			ImGui::Unindent(10);
-			ImGui::Text("Do you want its children to be static aswell?");
-
-			ImGui::Spacing();
-
-			ImGui::Indent(130);
-
-			if (ImGui::Button("Yes")) {
-				EngineApp->scene_manager->SetStatic(Selected, objectStatic, true);
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SameLine();
-
-			if (ImGui::Button("No")) {
-				EngineApp->scene_manager->SetStatic(Selected, objectStatic, false);
-				ImGui::CloseCurrentPopup();
-			}
+		if (ImGui::Button("No")) {
+			for (GameObject* obj : *App->selection->GetSelected())
+				EngineApp->scene_manager->SetStatic(obj, objectStatic, false);
+			ImGui::CloseCurrentPopup();
 		}
+
+		/*ImGui::Indent(30);
+		ImGui::Text("You are about to make this object non-static.");
+		ImGui::Spacing();
+
+		ImGui::Unindent(10);
+		ImGui::Text("Do you want its children to be non-static aswell?");
+
+		ImGui::Spacing();*/
+
+
+
 
 		ImGui::EndPopup();
 	}
 
-	const std::vector<Layer>& layers = EngineApp->physics->layer_list;
+	std::vector<Layer>* layers = &App->physics->layer_list;
 
 	static ImGuiComboFlags flags = 0;
 
-	const char* item_current = layers.at(Selected->layer).name.c_str();
+	//int layer = App->selection->GetLastSelected()->GetLayer();
+	int layer = Selected.GetLayer();
+
+	std::string layer_name = layers->at(layer).name.c_str();
+	for (GameObject* obj : *App->selection->GetSelected())
+	{
+		if (layer != obj->GetLayer())
+		{
+			layer_name = "---";
+			layer = -1;
+			break;
+		}
+	}
+
+	//const char* item_current = layers->at(Selected.layer).name.c_str();
 	ImGui::Text("Layer: ");
 	ImGui::SameLine();
-	if (ImGui::BeginCombo("##Layer:", item_current, flags))
+	if (ImGui::BeginCombo("##Layer:", layer_name.c_str(), flags))
 	{
-		for (std::vector<Layer>::const_iterator it = layers.begin(); it != layers.end(); ++it)
+		for (int n = 0; n < layers->size(); n++)
 		{
-			if (!(*it).active)
+			if (!layers->at(n).active)
 				continue;
 
-			bool is_selected = (item_current == (*it).name.c_str());
-			if (ImGui::Selectable((*it).name.c_str(), is_selected)) {
-				item_current = (*it).name.c_str();
-				Selected->layer = (*it).layer;
+			bool is_selected = (layer_name == layers->at(n).name.c_str());
 
-				Broken::ComponentCollider* col = Selected->GetComponent<Broken::ComponentCollider>();
+			if (ImGui::Selectable(layers->at(n).name.c_str(), is_selected)) {
+				// Changing layer
+				for (GameObject* obj : *App->selection->GetSelected())
+				{
+					layer_name = layers->at(n).name.c_str();
+					obj->layer = layers->at(n).layer;
 
-				if(col)
-					col->UpdateActorLayer((int*)&(*it).layer);
+					ComponentCollider* col = obj->GetComponent<ComponentCollider>();
+
+					if(col)
+						col->UpdateActorLayer((int*)&layers->at(n).layer);
+				}
 			}
 			if (is_selected) {
 				ImGui::SetItemDefaultFocus();

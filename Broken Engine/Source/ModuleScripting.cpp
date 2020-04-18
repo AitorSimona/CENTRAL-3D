@@ -550,7 +550,7 @@ void ModuleScripting::FillScriptInstanceComponentFuncs(ScriptInstance* script)
 		{
 			//Something went wrong, LOG Component name & GameObject affected
 			std::string aux_str = script->my_component->GetContainerGameObject()->GetName();
-			ENGINE_CONSOLE_LOG("Tried to add a ''null_function'' to script component: %s of GameObject: %s", script->my_component->script_name.c_str(), aux_str.c_str());
+			ENGINE_CONSOLE_LOG("Tried to add a ''null_function'' to script component: %s of GameObject: %s", script->my_component->name.c_str(), aux_str.c_str());
 		}
 		else if (script->my_component->ScriptFuncAlreadyInComponent(function.name) == false)
 		{
@@ -587,7 +587,7 @@ void ModuleScripting::NullifyScriptInstanceWithParentComponent(ComponentScript* 
 		{
 			class_instances[i]->script_is_null = true;
 
-			ENGINE_AND_SYSTEM_CONSOLE_LOG("Lua Resource for component %s (lua script component) is nullptr!",class_instances[i]->my_component->script_name.c_str());
+			ENGINE_AND_SYSTEM_CONSOLE_LOG("Lua Resource for component %s (lua script component) is nullptr!",class_instances[i]->my_component->name.c_str());
 		}
 	}
 }
