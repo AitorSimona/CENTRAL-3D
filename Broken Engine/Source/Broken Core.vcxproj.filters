@@ -97,6 +97,9 @@
     <Filter Include="Sources\BrokenEngine\3rd Party\RecastNavigation\DetourTileCache">
       <UniqueIdentifier>{327df616-7529-4ed7-8a79-95ebc84a0635}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\BrokenEngine\Modules\Scripting Functions\SuperTranslator">
+      <UniqueIdentifier>{dfb6aa68-2de4-4b97-86f6-c98a62a54228}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrokenCore.h">
@@ -717,6 +720,9 @@
     <ClInclude Include="ResourcePrefab.h">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="TranslatorUtilities.h">
+      <Filter>Sources\BrokenEngine\Modules\Scripting Functions\SuperTranslator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathGeoLib\include\SystemInfo.cpp">
@@ -1226,6 +1232,7 @@
     <ClCompile Include="ResourcePrefab.cpp">
       <Filter>Sources\BrokenEngine\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="TranslatorUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">
