@@ -20,18 +20,15 @@ public:
 	~ModuleScripting();
 
 public:
-	//template <typename T, typename U>
-	//void ConvertVectorToTable(lua_State* L, T begin, U end);
-
-	//template <typename T, typename U>
-	//void ConvertTableToVector(lua_State* L, T begin, U end);
 
 	bool DoHotReloading();
 	bool JustCompile(std::string absolute_path);
 	void CompileScriptTableClass(ScriptInstance* script);
 	void SendScriptToModule(ComponentScript* script_component);
+
 	void FillScriptInstanceComponentVars(ScriptInstance* script);
 	void FillScriptInstanceComponentFuncs(ScriptInstance* script);
+
 	void DeleteScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NullifyScriptInstanceWithParentComponent(ComponentScript* script_component);
 	void NotifyHotReloading();
@@ -40,6 +37,10 @@ public:
 	void CompileDebugging();
 	void StopDebugging();
 	void CallbackScriptFunctionParam(ComponentScript* script_component, const ScriptFunc& function_to_call, uint id);
+	void DeployScriptingGlobals();
+	
+
+	std::string GetScriptingBasePath();
 
 	void CleanUpInstances();
 

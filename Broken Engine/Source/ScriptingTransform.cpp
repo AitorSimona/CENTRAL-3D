@@ -13,6 +13,9 @@
 #include "ScriptData.h"
 #include "ResourceScene.h"
 
+// -- Utilities --
+#include "TranslatorUtilities.h"
+
 using namespace Broken;
 ScriptingTransform::ScriptingTransform() {}
 
@@ -36,10 +39,13 @@ luabridge::LuaRef ScriptingTransform::GetPosition(uint gameobject_UUID, lua_Stat
 	else
 		ENGINE_CONSOLE_LOG("(SCRIPTING) Alert! Could not find GameObject with UUID %d", gameobject_UUID);
 
-	luabridge::LuaRef table = luabridge::newTable(L);
-	table.append(pos.x);
-	table.append(pos.y);
-	table.append(pos.z);
+	luabridge::LuaRef ScriptGetTable = luabridge::getGlobal(L, "NewVector3");
+	luabridge::LuaRef table(ScriptGetTable());
+
+	CppLuaTranslatorUtilities translator;
+	CppTable vec = translator.GetCppTableFromVec3(pos);
+
+	translator.PassCppTableValuesToLuaTable(vec, table);
 
 	return table;
 }

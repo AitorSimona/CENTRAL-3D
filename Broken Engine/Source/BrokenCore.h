@@ -161,6 +161,7 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define NAVMESH_FOLDER "Assets/NavMeshes/"
 #define BUILDS_FOLDER "Builds/"
 #define GAME_EXE "BEG.exe"
+#define LUA_GLOBALS "Lua_Globals/"
 
 #define SCREEN_SIZE 1
 #define MAX_BUF_SIZE 4096

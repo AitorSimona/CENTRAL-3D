@@ -297,6 +297,7 @@
     <ClInclude Include="ScriptVar.h" />
     <ClInclude Include="ComponentText.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="TranslatorUtilities.h" />
     <ClInclude Include="wwise.h" />
     <ClInclude Include="Wwise\IO\Common\AkFileLocationBase.h" />
     <ClInclude Include="Wwise\IO\Common\AkFilePackage.h" />
@@ -468,6 +469,7 @@
     <ClCompile Include="ScriptVar.cpp" />
     <ClCompile Include="ComponentText.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TranslatorUtilities.cpp" />
     <ClCompile Include="wwise.cpp" />
     <ClCompile Include="Wwise\IO\Common\AkFileLocationBase.cpp" />
     <ClCompile Include="Wwise\IO\Common\AkFilePackage.cpp" />
