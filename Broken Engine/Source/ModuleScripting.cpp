@@ -746,6 +746,11 @@ void ModuleScripting::DeployScriptingGlobals()
 }
 
 bool ModuleScripting::Init(json& file) {
+
+	//First, check if we are in a debuggable game build (managed inside the application)
+	//And decide wether we use the boolean or not
+	LoadStatus(file);
+
 	// Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);
@@ -929,22 +934,16 @@ ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript*
 
 void ModuleScripting::LoadStatus(const json& file)
 {
-	if (App->isGame)
+	/*if (App->isGame)
+	{*/
+	if (file.find(name) != file.end())
 	{
-		for (json::iterator it = file.begin(); it != file.end(); ++it)
+		if (!file[name.c_str()]["LUA_Debug_Game"].is_null())
 		{
-			// --- Retrieve GO's UID ---
-			std::string Module = it.key().c_str();
-			if (Module == "Scripting")
-				continue;
-
-			if (!file[it.key()]["LUA_Debug_Game"].is_null())
-			{
-
-			}
-
+			Debug_Build = file[name.c_str()]["LUA_Debug_Game"];
 		}
 	}
+	//}
 }
 
 bool ModuleScripting::Stop() {
