@@ -33,7 +33,6 @@ ModuleCamera3D::~ModuleCamera3D() {
 bool ModuleCamera3D::Init(json& file) {
 	App->renderer3D->SetActiveCamera(camera);
 	App->renderer3D->SetCullingCamera(camera);
-	listener = new ComponentAudioListener(nullptr, reference);
 	return true;
 }
 
@@ -48,7 +47,7 @@ bool ModuleCamera3D::Start() {
 	camera->Look({ 0.0f, 0.0f, 0.0f });
 	FrameObject({ 0.0f, 0.0f, 0.0f });
 	camera->SetCameraValues(m_CustomDefaultCameraValues);
-
+	listener = new ComponentAudioListener(nullptr, reference);
 	return ret;
 }
 
