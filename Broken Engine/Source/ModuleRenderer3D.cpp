@@ -150,6 +150,92 @@ bool ModuleRenderer3D::Init(json& file)
 	screenshot_camera->SetFOV(60.0f);
 	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
 
+
+	// MYTODO: Currently creating twice the texture since res manager will import it from Images folder, 
+	// i should make a default skybox that does not need textures and then let the user change it through a new panel (check Unity)
+	// --- Load skybox textures ---
+	uint width, height = 0;
+	ResourceTexture* Texright = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "SkyboxTexRight");
+	ResourceTexture* Texleft = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "SkyboxTexLeft");
+	ResourceTexture* Texback = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "SkyboxTexBack");
+	ResourceTexture* Texfront = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "SkyboxTexFront");
+	ResourceTexture* Textop = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "SkyboxTexTop");
+	ResourceTexture* Texbottom = (ResourceTexture*)App->resources->CreateResource(Resource::ResourceType::TEXTURE, "SkyboxTexBottom");
+
+	Texright->SetTextureID(App->textures->CreateTextureFromFile("Assets/Images/right.jpg", width, height, -1));
+	Texleft->SetTextureID(App->textures->CreateTextureFromFile("Assets/Images/left.jpg", width, height, -1));
+	Texback->SetTextureID(App->textures->CreateTextureFromFile("Assets/Images/back.jpg", width, height, -1));
+	Texfront->SetTextureID(App->textures->CreateTextureFromFile("Assets/Images/front.jpg", width, height, -1));
+	Textop->SetTextureID(App->textures->CreateTextureFromFile("Assets/Images/top.jpg", width, height, -1));
+	Texbottom->SetTextureID(App->textures->CreateTextureFromFile("Assets/Images/bottom.jpg", width, height, -1));
+
+	std::vector<uint> cubemaptexIDs;
+	cubemaptexIDs.push_back(Texright->GetTexID());
+	cubemaptexIDs.push_back(Texleft->GetTexID());
+	cubemaptexIDs.push_back(Texbottom->GetTexID());
+	cubemaptexIDs.push_back(Textop->GetTexID());
+	cubemaptexIDs.push_back(Texfront->GetTexID());
+	cubemaptexIDs.push_back(Texback->GetTexID());
+
+
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+
+	// skybox VAO
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	cubemapTexID = App->textures->CreateCubemap(cubemaptexIDs);
+
 	return ret;
 }
 
