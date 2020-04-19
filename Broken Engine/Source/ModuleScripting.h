@@ -59,7 +59,7 @@ public:
 
 public:
 	ScriptInstance* current_script;
-	update_status game_update = UPDATE_CONTINUE;
+	update_status scripting_update = UPDATE_CONTINUE;
 	std::string debug_path = "null";
 
 	bool Debug_Build = false;
