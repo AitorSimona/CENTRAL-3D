@@ -18,9 +18,10 @@ ScriptingAnimations::ScriptingAnimations() {}
 
 ScriptingAnimations::~ScriptingAnimations() {}
 
-void ScriptingAnimations::StartAnimation(const char* name, float speed)
+void ScriptingAnimations::StartAnimation(const char* name, float speed, uint gameobject_UUID)
 {	
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
 
 	if (anim)
 		anim->PlayAnimation(name, speed);
@@ -28,9 +29,10 @@ void ScriptingAnimations::StartAnimation(const char* name, float speed)
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
-void ScriptingAnimations::SetCurrentAnimSpeed(float speed)
+void ScriptingAnimations::SetCurrentAnimSpeed(float speed, uint gameobject_UUID)
 {
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
 
 	if (anim)
 		anim->SetCurrentAnimationSpeed(speed);
@@ -38,20 +40,20 @@ void ScriptingAnimations::SetCurrentAnimSpeed(float speed)
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
-void ScriptingAnimations::SetAnimSpeed(const char* name, float speed)
+void ScriptingAnimations::SetAnimSpeed(const char* name, float speed, uint gameobject_UUID)
 {
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
-
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
 	if (anim)
 		anim->SetAnimationSpeed(name, speed);
 	else
 		ENGINE_CONSOLE_LOG("[Script]: Animation component is NULL");
 }
 
-void ScriptingAnimations::SetBlendTime(float value)
+void ScriptingAnimations::SetBlendTime(float value, uint gameobject_UUID)
 {
-	ComponentAnimation* anim = App->scripting->current_script->my_component->GetContainerGameObject()->GetComponent<ComponentAnimation>();
-
+	GameObject* go = App->scene_manager->currentScene->GetGOWithUID(gameobject_UUID);
+	ComponentAnimation* anim = go->GetComponent<ComponentAnimation>();
 	if (anim)
 		anim->ChangeBlendTime(value);
 	else
