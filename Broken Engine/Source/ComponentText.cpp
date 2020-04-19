@@ -51,20 +51,8 @@ void ComponentText::Draw()
 		return;
 	}
 
-	// --- Update transform and rotation to face camera ---
-	float3 frustum_pos = App->renderer3D->active_camera->frustum.Pos();
-	float3 center = float3(frustum_pos.x, frustum_pos.y, 10);
-
-	// --- Frame image with camera ---
-	float4x4 transform = transform.FromTRS(float3(frustum_pos.x, frustum_pos.y, 10),
-		App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(),
-		float3(size2D, 1));
-
-	float3 Movement = App->renderer3D->active_camera->frustum.Front();
-	float3 camera_pos = frustum_pos;
-
-	if (Movement.IsFinite())
-		App->renderer3D->active_camera->frustum.SetPos(center - Movement);
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	float4x4 transform = transform.FromTRS({ position2D.x, position2D.y, nearp + 0.026f }, Quat::identity, { size2D.x, size2D.y, 1.0f });
 
 	// Options
 	glDisable(GL_CULL_FACE);
@@ -80,7 +68,6 @@ void ComponentText::Draw()
 	GLint viewLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -88,7 +75,7 @@ void ComponentText::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp, 0.0f);
+		0.0f, 0.0f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(App->renderer3D->textShader->ID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -141,8 +128,6 @@ void ComponentText::Draw()
 
 	glUseProgram(App->renderer3D->defaultShader->ID);
 
-	// --- Set camera back to original position ---
-	App->renderer3D->active_camera->frustum.SetPos(camera_pos);
 }
 
 json ComponentText::Save() const
@@ -266,10 +251,10 @@ void ComponentText::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##textposition", &position2D.x, 0.05f);
+	ImGui::DragFloat("x##textposition", &position2D.x, 0.001f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##textposition", &position2D.y, 0.05f);
+	ImGui::DragFloat("y##textposition", &position2D.y, 0.001f);
 
 	// Rotation
 	//ImGui::Text("Rotation:");
