@@ -55,7 +55,6 @@ void ResourceMaterial::FreeMemory()
 void ResourceMaterial::CreateInspectorNode()
 {
 	static bool save_material = false;
-	static Timer material_save_time;
 
 	// --- Mat preview
 	ImGui::Image((void*)(uint)GetPreviewTexID(), ImVec2(30, 30));
@@ -145,13 +144,7 @@ void ResourceMaterial::CreateInspectorNode()
 					m_DiffuseResTexture->Release();
 
 				m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-				// --- Save material so we update path to texture ---
 				save_material = true;
-				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-				//
-				//if (IMat)
-				//	IMat->Save(this);
 			}
 		}
 
@@ -204,13 +197,7 @@ void ResourceMaterial::CreateInspectorNode()
 					m_SpecularResTexture->Release();
 
 				m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-				// --- Save material so we update path to texture ---
 				save_material = true;
-				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-				//
-				//if (IMat)
-				//	IMat->Save(this);
 			}
 		}
 
@@ -262,13 +249,7 @@ void ResourceMaterial::CreateInspectorNode()
 					m_NormalResTexture->Release();
 
 				m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-				// --- Save material so we update path to texture ---
 				save_material = true;
-				//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-				//
-				//if (IMat)
-				//	IMat->Save(this);
 			}
 		}
 
@@ -287,13 +268,8 @@ void ResourceMaterial::CreateInspectorNode()
 		save_material = true;
 	}
 
-	if (save_material && !material_save_time.IsRunning())
-		material_save_time.Start();
-
-	// --- Save material after some seconds ---
-	if (save_material && material_save_time.Read() > 8000.0f)
+	if (save_material)
 	{
-		material_save_time.Stop();
 		save_material = false;
 
 		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
@@ -301,6 +277,7 @@ void ResourceMaterial::CreateInspectorNode()
 			IMat->Save(this);
 	}
 }
+
 
 void ResourceMaterial::UpdateUniforms() 
 {

@@ -49,8 +49,6 @@ private:
 
 	bool m_TemporalTextureTest = false;
 	bool save_material = false;
-	Timer material_save_time;
-
 };
 
 BE_END_NAMESPACE

@@ -196,7 +196,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 		ImGui::Image((void*)(uint)material->GetPreviewTexID(), ImVec2(30, 30));
 		ImGui::SameLine();
 
-		if (ImGui::TreeNode(material->GetName()))
+		if (ImGui::TreeNodeEx(material->GetName(), ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			static ImGuiComboFlags flags = 0;
 
@@ -291,13 +291,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 								material->m_DiffuseResTexture->Release();
 
 							material->m_DiffuseResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-							// --- Save material so we update path to texture ---
 							save_material = true;
-							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-							//
-							//if (IMat)
-							//	IMat->Save(material);
 						}
 					}
 
@@ -349,13 +343,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 								material->m_SpecularResTexture->Release();
 
 							material->m_SpecularResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-							// --- Save material so we update path to texture ---
 							save_material = true;
-							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-							//
-							//if (IMat)
-							//	IMat->Save(material);
 						}
 					}
 
@@ -407,13 +395,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 								material->m_NormalResTexture->Release();
 
 							material->m_NormalResTexture = (ResourceTexture*)App->resources->GetResource(UID);
-
-							// --- Save material so we update path to texture ---
 							save_material = true;
-							//ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-							//
-							//if (IMat)
-							//	IMat->Save(material);
 						}
 					}
 
@@ -444,24 +426,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 					material = nullptr;
 				}
 			}
-		}
-
-		
-		if (material && save_material && !material_save_time.IsRunning())
-			material_save_time.Start();
-		else if (!material)
-			material_save_time.Stop();
-
-		// --- Save material after some seconds ---
-		if (material && save_material && material_save_time.Read() > 8000.0f)
-		{
-			material_save_time.Stop();
-			save_material = false;
-
-			ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-			if (IMat)
-				IMat->Save(material);
-		}
+		}		
 	}
 
 	// --- Handle drag & drop ---
@@ -481,6 +446,16 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	}
 	ImGui::SameLine();
 	ImGui::Text("Drop Material");
+
+	// --- Save material ---
+	if (save_material)
+	{
+		save_material = false;
+
+		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
+		if (IMat)
+			IMat->Save(material);
+	}
 
 	ImGui::PopID();
 }
