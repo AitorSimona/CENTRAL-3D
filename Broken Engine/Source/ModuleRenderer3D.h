@@ -140,6 +140,7 @@ private:
 	void DrawRenderLines();
 	void DrawRenderBoxes();
 	void DrawGrid();
+	void DrawSkybox();
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -161,6 +162,8 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
 	ResourceShader* screenShader = nullptr;
+
+	ResourceShader* SkyboxShader = nullptr;
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;

@@ -295,11 +295,13 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
     if (renderfbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
-	glDepthFunc(GL_GREATER);
-
 	// --- Do not write to the stencil buffer ---
 	glStencilMask(0x00);
+
+	DrawSkybox(); // could not manage to draw it after scene with reversed-z ...
+
+	// --- Set depth filter to greater (Passes if the incoming depth value is greater than the stored depth value) ---
+	glDepthFunc(GL_GREATER);
 
 	// --- Issue Render orders ---
 	App->scene_manager->DrawScene();
@@ -1447,6 +1449,43 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	screenShader->ReloadAndCompileShader();
 	IShader->Save(screenShader);
 
+	// --- Creating skybox shader ---
+	const char* SkyboxVertShaderSrc =
+		"#version 460 core \n"
+		"#define VERTEX_SHADER \n"
+		"#ifdef VERTEX_SHADER \n"
+		"layout (location = 0) in vec3 position; \n"
+		"out vec3 TexCoords; \n"
+		"uniform mat4 view; \n"
+		"uniform mat4 projection; \n"
+		"void main(){ \n"
+		"TexCoords = position * vec3(1,-1,1); \n"
+		"gl_Position = projection * view * vec4(position, 1.0); \n"
+		"}\n"
+		"#endif //VERTEX_SHADER\n"
+		;
+
+	const char* SkyboxFragShaderSrc =
+		"#version 460 core \n"
+		"#define FRAGMENT_SHADER \n"
+		"#ifdef FRAGMENT_SHADER \n"
+		"in vec3 TexCoords; \n"
+		"uniform samplerCube skybox;\n"
+		"out vec4 color; \n"
+		"void main(){ \n"
+		"color = texture(skybox, TexCoords); \n"
+		"} \n"
+		"#endif //FRAGMENT_SHADER \n"
+		;
+
+	SkyboxShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/SkyboxShader.glsl", 15);
+	SkyboxShader->vShaderCode = SkyboxVertShaderSrc;
+	SkyboxShader->fShaderCode = SkyboxFragShaderSrc;
+	SkyboxShader->ReloadAndCompileShader();
+	SkyboxShader->SetName("SkyboxShader");
+	SkyboxShader->LoadToMemory();
+	IShader->Save(SkyboxShader);
+
 	defaultShader->use();
 }
 
@@ -1562,6 +1601,55 @@ void ModuleRenderer3D::DrawGrid()
 	glLineWidth(1.0f);
 
 	glUseProgram(0);
+}
+
+void ModuleRenderer3D::DrawSkybox()
+{
+	if (!SkyboxShader)
+		return;
+
+	glDepthMask(GL_FALSE);
+
+	float3 prevpos = active_camera->frustum.Pos();
+
+	App->renderer3D->active_camera->frustum.SetPos(float3::zero);
+
+	SkyboxShader->use();
+	// draw skybox as last
+	glDepthFunc(GL_GEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+	//view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+	float4x4 view = App->renderer3D->active_camera->GetOpenGLViewMatrix();
+	view.SetTranslatePart(float4::zero);
+
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+
+	// right handed projection matrix
+	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
+	float4x4 proj_RH(
+		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
+		0.0f, f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, nearp, 0.0f);
+
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->SkyboxShader->ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.ptr());
+
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->SkyboxShader->ID, "projection");
+	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
+
+
+	// skybox cube
+	glBindVertexArray(skyboxVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexID);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+	//glDepthFunc(GL_LESS); // set depth function back to default
+
+	defaultShader->use();
+
+	App->renderer3D->active_camera->frustum.SetPos(prevpos);
+	glDepthMask(GL_TRUE);
 }
 
 void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, uint VAO) {
