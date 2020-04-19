@@ -380,8 +380,9 @@ void ComponentCollider::Load(json& node)
 
 
 	centerPosition = float3(std::stof(localPositionx), std::stof(localPositiony), std::stof(localPositionz));
-	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
+	colliderSize = float3(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 	offset = float3(std::stof(offsetx), std::stof(offsety), std::stof(offsetz));
+	originalSize = float3(std::stof(originalScalex), std::stof(originalScaley), std::stof(originalScalez));
 
 	localMatrix.x = std::stof(localMatrixx);
 	localMatrix.y = std::stof(localMatrixy);
@@ -393,7 +394,6 @@ void ComponentCollider::Load(json& node)
 	globalMatrix.z = std::stof(globalMatrixz);
 	globalMatrix.w = std::stof(globalMatrixw);
 
-	colliderSize = float3(std::stof(scalex), std::stof(scaley), std::stof(scalez));
 
 	radius = std::stof(radius_);
 	height = std::stof(height_);
@@ -432,7 +432,7 @@ void ComponentCollider::CreateInspectorNode()
 	ImGui::SameLine();
 	ImGui::Checkbox("Show", &draw);
 
-	if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0MESH\0\0")) 
+	if (ImGui::Combo("Type", &colliderType, "NONE\0BOX\0SPHERE\0CAPSULE\0MESH\0\0"))
 	{
 		type = (ComponentCollider::COLLIDER_TYPE)colliderType;
 		current_mesh = nullptr;
@@ -444,7 +444,7 @@ void ComponentCollider::CreateInspectorNode()
 		editCollider = true;
 		dragged_UID = 0;
 	}
-	
+
 	if (type != ComponentCollider::COLLIDER_TYPE::MESH && type != ComponentCollider::COLLIDER_TYPE::NONE) {
 		ImGui::Text("Is Trigger");
 		ImGui::SameLine();
@@ -607,7 +607,7 @@ void ComponentCollider::CreateInspectorNode()
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GO"))
 				{
-					uint UID = *(const uint*)payload->Data; 
+					uint UID = *(const uint*)payload->Data;
 					GameObject* go = App->scene_manager->currentScene->GetGOWithUID(UID);
 					if (go->HasComponent(ComponentType::Mesh)) {
 						dragged_UID = UID;
@@ -652,6 +652,11 @@ void ComponentCollider::GetMesh() {
 					dragged_rot = go->GetComponent<ComponentTransform>()->GetQuaternionRotation();
 					colliderSize = dragged_scale;
 					localMesh = true;
+				}
+				else {
+					centerPosition = float3::zero;
+					colliderSize = float3::one;
+					offset = float3::zero;
 				}
 			}
 		}
@@ -767,7 +772,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 			shape = App->physics->mPhysics->createShape(CapsuleGeometry, *App->physics->mMaterial);
 			physx::PxTransform relativePose(physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0, 0, 1)));
 			shape->setLocalPose(relativePose);
-			
+
 			physx::PxTransform transform(transform->position.x, transform->position.y, transform->position.z);
 			CreateRigidbody(CapsuleGeometry, transform);
 
@@ -814,7 +819,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX | physx::PxConvexFlag::eDISABLE_MESH_VALIDATION | physx::PxConvexFlag::eFAST_INERTIA_COMPUTATION;
 						convex_mesh = App->physics->mCooking->createConvexMesh(convexDesc,App->physics->mPhysics->getPhysicsInsertionCallback());
 						///-----------------------------------------------------------------------------------
-						
+
 						App->physics->cooked_convex.insert(std::pair<ResourceMesh*, physx::PxConvexMesh*>(dragged_mesh, nullptr));
 						App->physics->cooked_convex[dragged_mesh] = convex_mesh;
 
@@ -868,7 +873,7 @@ void ComponentCollider::CreateCollider(ComponentCollider::COLLIDER_TYPE type, bo
 						App->physics->mCooking->setParams(params);
 						triangle_mesh = App->physics->mCooking->createTriangleMesh(meshDesc, App->physics->mPhysics->getPhysicsInsertionCallback());
 						///----------------------------------------------------------------------------------------------------------
-						
+
 						App->physics->cooked_meshes.insert(std::pair<ResourceMesh*, physx::PxBase*>(dragged_mesh, nullptr));
 						App->physics->cooked_meshes[dragged_mesh] = triangle_mesh;
 
@@ -921,9 +926,9 @@ void ComponentCollider::CreateRigidbody(Geometry geometry, physx::PxTransform po
 		shape->setQueryFilterData(filterData);
 
 		rigidStatic = PxCreateStatic(*App->physics->mPhysics, position, *shape);
-		
+
 		App->physics->addActor(rigidStatic, GO);
-		
+
 	}
 }
 
