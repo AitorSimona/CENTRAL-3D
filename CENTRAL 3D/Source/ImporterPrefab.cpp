@@ -92,20 +92,23 @@ void ImporterPrefab::Save(ResourcePrefab* prefab) const
 		for (int i = 0; i < prefab_gos.size(); ++i)
 		{
 			// --- Create GO Structure ---
-			file[prefab_gos[i]->GetName()];
-			file[prefab_gos[i]->GetName()]["UID"] = std::to_string(prefab_gos[i]->GetUID());
-			file[prefab_gos[i]->GetName()]["Parent"] = std::to_string(prefab_gos[i]->parent->GetUID());
-			file[prefab_gos[i]->GetName()]["Components"];
-			file[prefab_gos[i]->GetName()]["PrefabChild"] = prefab_gos[i]->is_prefab_child;
-			file[prefab_gos[i]->GetName()]["PrefabInstance"] = prefab_gos[i]->is_prefab_instance;
+			file[std::to_string(prefab_gos[i]->GetUID())];
+			file[std::to_string(prefab_gos[i]->GetUID())]["Name"] = prefab_gos[i]->GetName();
+			file[std::to_string(prefab_gos[i]->GetUID())]["Parent"] = std::to_string(prefab_gos[i]->parent->GetUID());
+			file[std::to_string(prefab_gos[i]->GetUID())]["Components"];
+			file[std::to_string(prefab_gos[i]->GetUID())]["PrefabChild"] = prefab_gos[i]->is_prefab_child;
+			file[std::to_string(prefab_gos[i]->GetUID())]["PrefabInstance"] = prefab_gos[i]->is_prefab_instance;
 
 			if (prefab_gos[i]->model)
-				file[prefab_gos[i]->GetName()]["Model"] = std::string(prefab_gos[i]->model->GetOriginalFile());
+				file[std::to_string(prefab_gos[i]->GetUID())]["Model"] = std::string(prefab_gos[i]->model->GetOriginalFile());
 
-			for (int j = 0; j < prefab_gos[i]->GetComponents().size(); ++j)
+			std::vector<Component*> go_components = prefab_gos[i]->GetComponents();
+
+			for (int j = 0; j < go_components.size(); ++j)
 			{
 				// --- Save Components to file ---
-				file[prefab_gos[i]->GetName()]["Components"][std::to_string((uint)prefab_gos[i]->GetComponents()[j]->GetType())] = prefab_gos[i]->GetComponents()[j]->Save();
+				file[std::to_string(prefab_gos[i]->GetUID())]["Components"][std::to_string(go_components[j]->GetUID())] = go_components[j]->Save();
+				file[std::to_string(prefab_gos[i]->GetUID())]["Components"][std::to_string(go_components[j]->GetUID())]["Type"] = (uint)go_components[j]->GetType();
 			}
 
 		}

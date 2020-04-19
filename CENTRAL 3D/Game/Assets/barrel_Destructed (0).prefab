@@ -1,0 +1,454 @@
+{
+    "1098909851": {
+        "Components": {
+            "1399739292": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "1695998316": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            },
+            "588831119": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/1681585145.dds",
+                        "path": "Library/Meshes/1793622007.mesh"
+                    }
+                },
+                "Type": 1
+            }
+        },
+        "Name": "Object2818",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "1126530595": {
+        "Components": {
+            "1297813850": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/998663944.dds",
+                        "path": "Library/Meshes/988129709.mesh"
+                    }
+                },
+                "Type": 1
+            },
+            "1330347453": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "1871086972": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            }
+        },
+        "Name": "Object2822",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "1206441038": {
+        "Components": {
+            "1042019224": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "127831150": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/671556133.dds",
+                        "path": "Library/Meshes/1051889952.mesh"
+                    }
+                },
+                "Type": 1
+            },
+            "560260982": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            }
+        },
+        "Name": "Object2823",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "1251105134": {
+        "Components": {
+            "1505185763": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "164242118": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            },
+            "1778483164": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/1609153999.dds",
+                        "path": "Library/Meshes/1897612478.mesh"
+                    }
+                },
+                "Type": 1
+            }
+        },
+        "Name": "Object2826",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "1253811894": {
+        "Components": {
+            "477343990": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "544237516": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            },
+            "856490465": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/53000480.dds",
+                        "path": "Library/Meshes/1698840612.mesh"
+                    }
+                },
+                "Type": 1
+            }
+        },
+        "Name": "Object2820",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "1603279964": {
+        "Components": {
+            "168324143": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            }
+        },
+        "Model": "Assets/barrel_Destructed.FBX",
+        "Name": "GameObject (2)",
+        "Parent": "640765016",
+        "PrefabChild": false,
+        "PrefabInstance": true
+    },
+    "1926554237": {
+        "Components": {
+            "1539344235": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/1910649512.dds",
+                        "path": "Library/Meshes/87279935.mesh"
+                    }
+                },
+                "Type": 1
+            },
+            "1976499174": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "513581400": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            }
+        },
+        "Name": "Object2825",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "1936282408": {
+        "Components": {
+            "1880649054": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "437854290": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            },
+            "589830944": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/101001847.dds",
+                        "path": "Library/Meshes/569512534.mesh"
+                    }
+                },
+                "Type": 1
+            }
+        },
+        "Name": "Object2821",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "411145456": {
+        "Components": {
+            "1193118824": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/952392188.dds",
+                        "path": "Library/Meshes/983667683.mesh"
+                    }
+                },
+                "Type": 1
+            },
+            "1338951800": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "1458179744": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            }
+        },
+        "Name": "Object2827",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "49369878": {
+        "Components": {
+            "1119829877": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "1287502694": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            },
+            "1429545929": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/172233953.dds",
+                        "path": "Library/Meshes/1420880193.mesh"
+                    }
+                },
+                "Type": 1
+            }
+        },
+        "Name": "Object2819",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "548261313": {
+        "Components": {
+            "1323775601": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            },
+            "1509867724": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/225634940.dds",
+                        "path": "Library/Meshes/1543056756.mesh"
+                    }
+                },
+                "Type": 1
+            },
+            "665509969": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            }
+        },
+        "Name": "Object2824",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "722588918": {
+        "Components": {
+            "1470623837": {
+                "Resources": {
+                    "ResourceMesh": {
+                        "PreviewTexture": "Library/Textures/1321501961.dds",
+                        "path": "Library/Meshes/76898124.mesh"
+                    }
+                },
+                "Type": 1
+            },
+            "572849994": {
+                "Type": 0,
+                "positionx": 0.0,
+                "positiony": 0.0,
+                "positionz": 0.0,
+                "rotationw": 1.0,
+                "rotationx": 0.0,
+                "rotationy": 0.0,
+                "rotationz": 0.0,
+                "scalex": 1.0,
+                "scaley": 1.0,
+                "scalez": 1.0
+            },
+            "724317758": {
+                "Active": true,
+                "Resources": {
+                    "ResourceMaterial": {
+                        "path": "Assets/05 - Default.mat"
+                    }
+                },
+                "Type": 2
+            }
+        },
+        "Name": "Cylinder002",
+        "Parent": "1603279964",
+        "PrefabChild": true,
+        "PrefabInstance": false
+    },
+    "PreviewTexture": "Library/Textures/1041269283.dds"
+}

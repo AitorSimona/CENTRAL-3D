@@ -407,7 +407,7 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 					continue;
 
 				// --- Retrieve GO's UID ---
-				std::string uid = file[it.key()]["UID"];
+				std::string uid = it.key();
 
 				// --- Create a Game Object for each node ---
 				GameObject* go = App->scene_manager->CreateEmptyGameObjectGivenUID(std::stoi(uid));
@@ -419,14 +419,17 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 				if (!file[it.key()]["PrefabInstance"].is_null())
 				{
 					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
-					parent = go;
+
+					if(go->is_prefab_instance)
+						parent = go;
 				}
 
 				if (!file[it.key()]["Model"].is_null())
 					go->model = (ResourceModel*)App->resources->ImportAssets(ImportData(file[it.key()]["Model"].get<std::string>().c_str()));
 
 				// --- Retrieve GO's name ---
-				go->SetName(it.key().c_str());
+				std::string name = file[it.key()]["Name"];
+				go->SetName(name.c_str());
 
 				// --- Iterate components ---
 				json components = file[it.key()]["Components"];
@@ -463,7 +466,7 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 			// --- Parent Game Objects / Build Hierarchy ---
 			for (uint i = 0; i < objects.size(); ++i)
 			{
-				std::string parent_uid_string = file[objects[i]->GetName()]["Parent"];
+				std::string parent_uid_string = file[std::to_string(objects[i]->GetUID())]["Parent"];
 				uint parent_uid = std::stoi(parent_uid_string);
 
 				for (uint j = 0; j < objects.size(); ++j)
@@ -505,23 +508,23 @@ void ImporterModel::Save(ResourceModel* model, std::vector<GameObject*>& model_g
 	for (int i = 0; i < model_gos.size(); ++i)
 	{
 		// --- Create GO Structure ---
-		file[model_gos[i]->GetName()];
-		file[model_gos[i]->GetName()]["UID"] = std::to_string(model_gos[i]->GetUID());
-		file[model_gos[i]->GetName()]["Parent"] = std::to_string(model_gos[i]->parent->GetUID());
-		file[model_gos[i]->GetName()]["Components"];
-		file[model_gos[i]->GetName()]["PrefabChild"] = model_gos[i]->is_prefab_child;
-		file[model_gos[i]->GetName()]["PrefabInstance"] = model_gos[i]->is_prefab_instance;
+		file[std::to_string(model_gos[i]->GetUID())];
+		file[std::to_string(model_gos[i]->GetUID())]["Name"] = model_gos[i]->GetName();
+		file[std::to_string(model_gos[i]->GetUID())]["Parent"] = std::to_string(model_gos[i]->parent->GetUID());
+		file[std::to_string(model_gos[i]->GetUID())]["Components"];
+		file[std::to_string(model_gos[i]->GetUID())]["PrefabChild"] = model_gos[i]->is_prefab_child;
+		file[std::to_string(model_gos[i]->GetUID())]["PrefabInstance"] = model_gos[i]->is_prefab_instance;
 
 		if(model_gos[i]->model)
-			file[model_gos[i]->GetName()]["Model"] = std::string(model_gos[i]->model->GetOriginalFile());
+			file[std::to_string(model_gos[i]->GetUID())]["Model"] = std::string(model_gos[i]->model->GetOriginalFile());
 
 		std::vector<Component*> go_components = model_gos[i]->GetComponents();
 
 		for (int j = 0; j < go_components.size(); ++j)
 		{
 			// --- Save Components to file ---
-			file[model_gos[i]->GetName()]["Components"][std::to_string(go_components[j]->GetUID())] = go_components[j]->Save();
-			file[model_gos[i]->GetName()]["Components"][std::to_string(go_components[j]->GetUID())]["Type"] = (uint)go_components[j]->GetType();
+			file[std::to_string(model_gos[i]->GetUID())]["Components"][std::to_string(go_components[j]->GetUID())] = go_components[j]->Save();
+			file[std::to_string(model_gos[i]->GetUID())]["Components"][std::to_string(go_components[j]->GetUID())]["Type"] = (uint)go_components[j]->GetType();
 		}
 
 	}
