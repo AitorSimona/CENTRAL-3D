@@ -47,7 +47,7 @@ bool ModuleCamera3D::Start() {
 	camera->Look({ 0.0f, 0.0f, 0.0f });
 	FrameObject({ 0.0f, 0.0f, 0.0f });
 	camera->SetCameraValues(m_CustomDefaultCameraValues);
-
+	listener = new ComponentAudioListener(nullptr, reference);
 	return ret;
 }
 
@@ -56,6 +56,7 @@ bool ModuleCamera3D::CleanUp() {
 	ENGINE_CONSOLE_LOG("Cleaning camera");
 
 	delete camera;
+	delete listener;
 
 	return true;
 }
