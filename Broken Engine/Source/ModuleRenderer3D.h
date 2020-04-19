@@ -133,6 +133,7 @@ private:
 	// --- Draw Commands ---
 	void SendShaderUniforms(uint shader);
 	void DrawRenderMeshes();
+	void DrawTransparentRenderMeshes();
 	void DrawRenderMesh(std::vector<RenderMesh> meshInstances);
 	void DrawFramebuffer();
 	
@@ -161,6 +162,8 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
 	ResourceShader* screenShader = nullptr;
+	ResourceShader* TransparencyShader = nullptr;
+
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
@@ -195,6 +198,7 @@ public:
 private:
 
 	std::map<uint, std::vector<RenderMesh>> render_meshes;
+	std::map<uint, std::vector<RenderMesh>> transparent_render_meshes;
 
 	std::vector<RenderBox<AABB>> render_aabbs;
 	std::vector<RenderBox<OBB>> render_obbs;

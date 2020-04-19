@@ -99,6 +99,7 @@ bool ModuleRenderer3D::Init(json& file)
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
+
 	// --- Create screen quad ---
 	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 		// positions   // texCoords
@@ -238,6 +239,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	// --- Selected Object Outlining ---
 	HandleObjectOutlining();
+
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
@@ -395,34 +397,69 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 	// --- Check data validity
 	if (transform.IsFinite() && mesh && mat)
 	{
-		// --- Add given instance to relevant vector ---
-		if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
-		{
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
-			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
-			rmesh.color = color;
 
-			//// --- Search for Character Controller Component ---
-			//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+		//if (mat->has_transparencies)
+		//{
+		//	// --- Add given instance to relevant vector ---
+		//	if (transparent_render_meshes.find(mesh->GetUID()) != transparent_render_meshes.end())
+		//	{
+		//		RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+		//		rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+		//		rmesh.color = color;
 
-			//// --- If Found, draw Character Controller shape ---
-			//if (cct && cct->IsEnabled())
-			//	cct->Draw();
+		//		//// --- Search for Character Controller Component ---
+		//		//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
 
-			render_meshes[mesh->GetUID()].push_back(rmesh);
-		}
-		else
-		{
-			// --- Build new vector to store mesh's instances ---
-			std::vector<RenderMesh> new_vec;
+		//		//// --- If Found, draw Character Controller shape ---
+		//		//if (cct && cct->IsEnabled())
+		//		//	cct->Draw();
 
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
-			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
-			rmesh.color = color;
+		//		transparent_render_meshes[mesh->GetUID()].push_back(rmesh);
+		//	}
+		//	else
+		//	{
+		//		// --- Build new vector to store mesh's instances ---
+		//		std::vector<RenderMesh> new_vec;
 
-			new_vec.push_back(rmesh);
-			render_meshes[mesh->GetUID()] = new_vec;
-		}
+		//		RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+		//		rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+		//		rmesh.color = color;
+
+		//		new_vec.push_back(rmesh);
+		//		transparent_render_meshes[mesh->GetUID()] = new_vec;
+		//	}
+		//}
+		//else
+		//{
+			// --- Add given instance to relevant vector ---
+			if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
+			{
+				RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+				rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+				rmesh.color = color;
+
+				//// --- Search for Character Controller Component ---
+				//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+
+				//// --- If Found, draw Character Controller shape ---
+				//if (cct && cct->IsEnabled())
+				//	cct->Draw();
+
+				render_meshes[mesh->GetUID()].push_back(rmesh);
+			}
+			else
+			{
+				// --- Build new vector to store mesh's instances ---
+				std::vector<RenderMesh> new_vec;
+
+				RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+				rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+				rmesh.color = color;
+
+				new_vec.push_back(rmesh);
+				render_meshes[mesh->GetUID()] = new_vec;
+			}
+		//}
 	}
 }
 
@@ -558,6 +595,7 @@ const std::string & ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObjec
 void ModuleRenderer3D::ClearRenderOrders()
 {
 	render_meshes.clear();
+	transparent_render_meshes.clear();
 	render_obbs.clear();
 	render_aabbs.clear();
 	render_frustums.clear();
@@ -584,6 +622,48 @@ void ModuleRenderer3D::DrawRenderMeshes()
 	if (wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+}
+
+void ModuleRenderer3D::DrawTransparentRenderMeshes()
+{
+	// --- Activate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	//// --- Sort meshes so we draw the most distant object to camera first and the closest last ---
+	//std::map<float, RenderMesh> sorted_meshes;
+	//std::vector<RenderMesh> to_draw;
+
+	//for (std::map<uint, std::vector<RenderMesh>>::const_iterator it = transparent_render_meshes.begin(); it != transparent_render_meshes.end(); ++it)
+	//{
+
+	//	for (uint i = 0; i < (*it).second.size(); ++i)
+	//	{
+	//		float distance = float3(active_camera->GetCameraPosition() - (*it).second[i].transform.TranslatePart()).Length();
+
+	//		if (sorted_meshes.find(distance) != sorted_meshes.end())
+	//		{
+	//			sorted_meshes[distance + 0.1f] = (*it).second[i];
+	//		}
+	//		else
+	//			sorted_meshes[distance] = (*it).second[i];
+	//	}
+	//}
+
+
+
+	//// --- Copy to vector ---
+	//for (std::map<float, RenderMesh>::reverse_iterator it = sorted_meshes.rbegin(); it != sorted_meshes.rend(); ++it)
+	//{
+	//	to_draw.push_back((*it).second);
+	//}
+
+	//// --- Draw transparent meshes in the correct order ---
+	//DrawRenderMesh(to_draw);
+
+	// --- DeActivate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
@@ -615,12 +695,16 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (zdrawer)
 			shader = ZDrawerShader->ID;
 
+
 		// --- Get Mesh Material ---
 		if (mesh->mat->shader && shader != OutlineShader->ID && !zdrawer)
 		{
 			shader = mesh->mat->shader->ID;
 			mesh->mat->UpdateUniforms();
 		}
+
+		if (mesh->mat->shader->GetUID() == TransparencyShader->GetUID())
+			glDisable(GL_CULL_FACE);
 
 		// --- Draw Wireframe if we must ---
 		if (mesh->flags & RenderMeshFlags_::wire)
@@ -744,6 +828,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 
 		if (mesh->flags & RenderMeshFlags_::selected)
 			glStencilMask(0x00);
+
+		if (mesh->mat->shader->GetUID() == TransparencyShader->GetUID())
+			glEnable(GL_CULL_FACE);
 
 		// --- Set color back to default ---
 		glUniform3f(glGetUniformLocation(shader, "u_Color"), 1.0f, 1.0f, 1.0f);
@@ -1360,6 +1447,65 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	screenShader->LoadToMemory();
 	screenShader->ReloadAndCompileShader();
 	IShader->Save(screenShader);
+
+	// ---Creating Transparency shader ---
+
+	const char* vertexTransparencyShader =
+		R"(#version 440 core
+		#define VERTEX_SHADER
+		#ifdef VERTEX_SHADER
+
+		layout (location = 0) in vec3 a_Position;
+		layout(location = 1) in vec3 a_Normal;
+		layout(location = 2) in vec3 a_Color;
+		layout (location = 3) in vec2 a_TexCoord;
+
+		uniform vec3 u_Color = vec3(1.0);
+		uniform mat4 u_Model;
+		uniform mat4 u_View;
+		uniform mat4 u_Proj;
+
+		out vec3 v_Color;
+		out vec2 v_TexCoord;
+
+		void main()
+		{
+			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0f);
+			v_Color = u_Color;
+			v_TexCoord = a_TexCoord;
+		}
+		#endif //VERTEX_SHADER)";
+
+	const char* fragmentTransparencyShader =
+		R"(#version 440 core
+		#define FRAGMENT_SHADER
+		#ifdef FRAGMENT_SHADER
+
+		out vec4 FragColor;
+
+		in vec2 v_TexCoord;
+
+		uniform sampler2D u_AlbedoTexture;
+
+		void main()
+		{
+			vec4 texColor = texture(u_AlbedoTexture, v_TexCoord);
+
+			if(texColor.a < 0.1)
+				discard;
+
+		    FragColor = texColor;
+		}
+		#endif //FRAGMENT_SHADER)";
+
+	TransparencyShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TransparencyShader.glsl", 14);
+	TransparencyShader->vShaderCode = vertexTransparencyShader;
+	TransparencyShader->fShaderCode = fragmentTransparencyShader;
+	TransparencyShader->ReloadAndCompileShader();
+	TransparencyShader->SetName("TransparencyShader");
+	TransparencyShader->LoadToMemory();
+	TransparencyShader->ReloadAndCompileShader();
+	IShader->Save(TransparencyShader);
 
 	defaultShader->use();
 }
