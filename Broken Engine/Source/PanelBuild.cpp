@@ -81,6 +81,9 @@ bool PanelBuild::Draw() {
 				ImGui::EndCombo();
 			}
 			ImGui::Separator();
+			ImGui::Text("Lua Debugging:");
+			ImGui::Checkbox("Make the game build debuggable (Scripting)", &Activate_Debug);
+			ImGui::Separator();
 			if (ImGui::BeginPopup("Build already exists!")) {
 				ImGui::Text("The build \"%s\" already exists!", buildName.c_str());
 				ImGui::Text("Should we delete it?");
@@ -105,10 +108,9 @@ bool PanelBuild::Draw() {
 		}
 		else
 			ImGui::Text("You have no cameras in the scene.");
+
 	}
 	ImGui::End();
-
-
 
 	return true;
 }
@@ -171,6 +173,9 @@ void PanelBuild::makeBuild() {
 	EngineApp->fs->CreateDirectoryA((buildFolder + LIBRARY_FOLDER).c_str());
 	EngineApp->fs->CreateDirectoryA((buildFolder + ASSETS_FOLDER).c_str());
 	EngineApp->fs->CreateDirectoryA((buildFolder + SETTINGS_FOLDER).c_str());
+	EngineApp->fs->CreateDirectoryA((buildFolder + LUA_GLOBALS).c_str());
+	if(Activate_Debug)
+	EngineApp->fs->CreateDirectoryA((buildFolder + LUA_DEBUG).c_str());
 
 	//We copy the executable
 	EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, GAME_EXE, buildFolder.c_str());
@@ -198,6 +203,9 @@ void PanelBuild::makeBuild() {
 	std::vector<std::string> filesToCopy;
 	createFoldersAndRetrieveFiles(ASSETS_FOLDER, (buildFolder + ASSETS_FOLDER).c_str(), filesToCopy);
 	createFoldersAndRetrieveFiles(LIBRARY_FOLDER, (buildFolder + LIBRARY_FOLDER).c_str(), filesToCopy);
+	createFoldersAndRetrieveFiles(LUA_GLOBALS, (buildFolder + LUA_GLOBALS).c_str(), filesToCopy);
+	if(Activate_Debug)
+	createFoldersAndRetrieveFiles(LUA_DEBUG, (buildFolder + LUA_DEBUG).c_str(), filesToCopy);
 
 	for (std::vector<std::string>::const_iterator it = filesToCopy.begin(); it != filesToCopy.end(); ++it)
 		EngineApp->threading->ADDTASK(this, PanelBuild::copyFile, (*it).c_str(), buildFolder.c_str());
@@ -217,9 +225,9 @@ void PanelBuild::makeBuild() {
 	gameSettings["Camera3D"]["MainCamera"] = selectedCamera->GetName();
 	gameSettings["Window"]["sceneX"] = EngineApp->gui->sceneWidth;
 	gameSettings["Window"]["sceneY"] = EngineApp->gui->sceneHeight;
+	gameSettings["Scripting"]["LUA_Debug_Game"] = Activate_Debug;
 
 	EngineApp->SaveForBuild(gameSettings, settingspath.c_str());
-
 	SetOnOff(false);
 }
 

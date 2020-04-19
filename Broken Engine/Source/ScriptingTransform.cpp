@@ -13,6 +13,9 @@
 #include "ScriptData.h"
 #include "ResourceScene.h"
 
+// -- Utilities --
+#include "TranslatorUtilities.h"
+
 using namespace Broken;
 ScriptingTransform::ScriptingTransform() {}
 
@@ -40,6 +43,15 @@ luabridge::LuaRef ScriptingTransform::GetPosition(uint gameobject_UUID, lua_Stat
 	table.append(pos.x);
 	table.append(pos.y);
 	table.append(pos.z);
+
+	//This is an example on how to use the new lua customizable tables
+	/*luabridge::LuaRef ScriptGetTable = luabridge::getGlobal(L, "NewVector3");
+	luabridge::LuaRef table(ScriptGetTable());
+
+	CppLuaTranslatorUtilities translator;
+	CppTable vec = translator.GetCppTableFromVec3(pos);
+
+	translator.PassCppTableValuesToLuaTable(vec, table);*/
 
 	return table;
 }
@@ -98,18 +110,25 @@ void ScriptingTransform::RotateObject(float x, float y, float z, uint gameobject
 			if (!rb->rigidBody)
 				return;
 
-			physx::PxTransform globalPos = rb->rigidBody->getGlobalPose();
-			Quat quaternion = Quat::FromEulerXYZ(DEGTORAD * x, DEGTORAD * y, DEGTORAD * z);
-			physx::PxQuat quat = physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-			globalPos = physx::PxTransform(globalPos.p, quat);
+			// We get current rotation in quaternions
+			float3 rot = transform->GetRotation();
+			Quat current_quat = Quat::FromEulerXYZ(DEGTORAD * rot.x, DEGTORAD * rot.y, DEGTORAD * rot.z);
 
+			// We calculate the quaternion of the new rotation and add them up
+			Quat quaternion = Quat::FromEulerXYZ(DEGTORAD * x, DEGTORAD * y, DEGTORAD * z);
+			quaternion = quaternion * current_quat;
+
+			physx::PxQuat quat = physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+		
+			physx::PxTransform globalPos = rb->rigidBody->getGlobalPose();
+			globalPos = physx::PxTransform(globalPos.p, quat);
 			collider->UpdateTransformByRigidBody(rb, transform, &globalPos);
 
 		}
 		else if (transform)
 		{
 			float3 rot = transform->GetRotation();
-			rot = float3(x, y, z);
+			rot += float3(x, y, z);
 			transform->SetRotation(rot);
 		}
 		else
