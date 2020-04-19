@@ -746,6 +746,11 @@ void ModuleScripting::DeployScriptingGlobals()
 }
 
 bool ModuleScripting::Init(json& file) {
+
+	//First, check if we are in a debuggable game build (managed inside the application)
+	//And decide wether we use the boolean or not
+	LoadStatus(file);
+
 	// Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);
@@ -796,7 +801,8 @@ update_status ModuleScripting::Update(float realDT) {
 	//MYTODO: Didac PLEAse didac look into this why did you do this?
 	/*if (App->scene_intro->selected_go != nullptr && App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 		GameObject* returned = GOFunctions::InstantiateGameObject(App->scene_intro->selected_go);*/
-	return UPDATE_CONTINUE;
+
+	return scripting_update;
 }
 
 update_status ModuleScripting::GameUpdate(float gameDT)
@@ -864,7 +870,7 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 
 	previous_AppState = (_AppState)App->GetAppState();
 
-	return game_update;
+	return UPDATE_CONTINUE;
 }
 
 //Return the base path of the folder where the .exe file is found
@@ -925,6 +931,23 @@ ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript*
 	}
 
 	return ret;
+}
+
+void ModuleScripting::LoadStatus(const json& file)
+{
+	if (App->isGame)
+	{
+		if (file.find(name) != file.end())
+		{
+			if (!file[name.c_str()]["LUA_Debug_Game"].is_null())
+			{
+				if (App->fs->Exists(LUA_DEBUG))
+					Debug_Build = file[name.c_str()]["LUA_Debug_Game"];
+				else
+					Debug_Build = false;
+			}
+		}
+	}
 }
 
 bool ModuleScripting::Stop() {

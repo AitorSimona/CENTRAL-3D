@@ -54,10 +54,15 @@ public:
 	bool Stop() override;
 	ScriptInstance* GetScriptInstanceFromComponent(ComponentScript* component_script);
 
+	//Load info from the settings json
+	void LoadStatus(const json& file) override;
+
 public:
 	ScriptInstance* current_script;
-	update_status game_update = UPDATE_CONTINUE;
+	update_status scripting_update = UPDATE_CONTINUE;
 	std::string debug_path = "null";
+
+	bool Debug_Build = false;
 
 private:
 	// L is our Lua Virtual Machine, it's called L because its the common name it receives, so all programers can understand what this var is

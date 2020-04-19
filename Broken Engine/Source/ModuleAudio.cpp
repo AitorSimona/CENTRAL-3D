@@ -53,15 +53,15 @@ bool ModuleAudio::Start()
 update_status ModuleAudio::PostUpdate(float dt)
 {
 	AK::SoundEngine::RenderAudio();
-	if (App->GetAppState() == Broken::AppState::TO_PAUSE)
+	if (App->GetAppState() == Broken::AppState::PAUSE)
 	{
 		PauseAllAudioEvents();
 	}
-	if (App->GetAppState() == Broken::AppState::TO_EDITOR)
+	if (App->GetAppState() == Broken::AppState::EDITOR)
 	{
 		StopAllAudioEvents();
 	}
-	if (App->GetAppState() == Broken::AppState::TO_PLAY)
+	if (App->GetAppState() == Broken::AppState::PLAY)
 	{
 		ResumeAllAudioEvents();
 	}
@@ -210,12 +210,12 @@ void ModuleAudio::Tests(AkGameObjectID id)
 	AK::SoundEngine::SetGameObjectAuxSendValues(id, NULL, 0);
 }
 
-WwiseGameObject::WwiseGameObject(uint64 id, const char* name)
+WwiseGameObject::WwiseGameObject(uint64 _id, const char* _name)
 {
-	this->id = id;
-	this->name = name;
+	name = std::string(_name);
+	id = _id;
 
-	AK::SoundEngine::RegisterGameObj(this->id, this->name);
+	AK::SoundEngine::RegisterGameObj(id, _name);
 }
 
 WwiseGameObject::~WwiseGameObject()

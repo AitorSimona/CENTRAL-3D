@@ -19,6 +19,7 @@ Select the type of bug with and "x" ([x])
 * [ ] Components
 * [ ] Game Objects
 * [ ] UI/UX 
+* [ ] Scripting
 * [ ] Other
 
 ## Severity
