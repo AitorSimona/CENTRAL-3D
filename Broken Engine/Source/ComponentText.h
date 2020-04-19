@@ -45,7 +45,7 @@ public:
 
 	float2 position2D = { 0,0 };
 	float rotation2D = 0.0f;
-	float2 size2D = { 0.04f,0.04f };	
+	float2 size2D = { 0.025f,0.025f };	
 
 	Color color = White;
 
