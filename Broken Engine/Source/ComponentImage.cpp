@@ -53,9 +53,11 @@ void ComponentImage::Update()
 
 void ComponentImage::Draw()
 {
-	// --- Update transform and rotation to face camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(size2D * 0.01f, 1.0f));
+	// --- Frame image with camera ---
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	float3 pos = { position2D.x, position2D.y, nearp + 0.026f };
+	float3 size = { size2D.x / App->gui->sceneWidth, size2D.y / App->gui->sceneHeight, 1.0f };
+	float4x4 transform = transform.FromTRS(pos, Quat::identity, size);
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
@@ -67,7 +69,6 @@ void ComponentImage::Draw()
 	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
 	
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -75,7 +76,7 @@ void ComponentImage::Draw()
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		0.0f, 0.0f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -163,7 +164,7 @@ void ComponentImage::CreateInspectorNode()
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f) && resize)
+	if (ImGui::DragFloat("x##imagesize", &size2D.x) && resize)
 	{
 		if (texture)
 		{
@@ -178,7 +179,7 @@ void ComponentImage::CreateInspectorNode()
 	}
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f) && resize)
+	if (ImGui::DragFloat("y##imagesize", &size2D.y) && resize)
 	{
 		if (texture)
 		{
@@ -196,10 +197,10 @@ void ComponentImage::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
+	ImGui::DragFloat("x##imageposition", &position2D.x, 0.001f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
+	ImGui::DragFloat("y##imageposition", &position2D.y, 0.001f);
 
 	// Rotation
 	//ImGui::Text("Rotation:");
