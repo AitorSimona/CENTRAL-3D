@@ -3,7 +3,6 @@
 
 #include "Component.h"
 #include "Math.h"
-#include "Wwise/AK/SoundEngine/Common/AkTypes.h"
 
 BE_BEGIN_NAMESPACE
 

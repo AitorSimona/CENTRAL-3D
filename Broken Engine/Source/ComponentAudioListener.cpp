@@ -8,6 +8,7 @@
 #include "ModuleSceneManager.h"
 #include "ModuleCamera3D.h"
 #include "Imgui/imgui.h"
+#include "Wwise/AK/SoundEngine/Common/AkTypes.h"
 
 
 using namespace Broken;
