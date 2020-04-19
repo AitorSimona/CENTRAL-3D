@@ -56,12 +56,18 @@ GameApplication::GameApplication() {
 
 	AddModule(resources);
 	AddModule(window);
+
+	//Audio
+	AddModule(audio);
+
+	//Main modules
 	AddModule(camera);
 	AddModule(gui);
 	AddModule(ui_system);
 
 	// Scenes
 	AddModule(scene_manager);
+
 	//Module to set up and manage the game
 	AddModule(game_manager);
 
