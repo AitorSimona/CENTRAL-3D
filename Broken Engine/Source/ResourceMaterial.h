@@ -26,6 +26,7 @@ public:
 	std::string previewTexPath;
 public:
 
+	bool has_transparencies = false;
 	float m_Shininess = 1.5f;
 	float3 m_AmbientColor = { 1.0f, 1.0f, 1.0f };
 	ResourceTexture* m_DiffuseResTexture = nullptr;

@@ -162,7 +162,6 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
 	ResourceShader* screenShader = nullptr;
-	ResourceShader* TransparencyShader = nullptr;
 
 
 	std::string VertexShaderTemplate;

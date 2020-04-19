@@ -703,15 +703,19 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			mesh->mat->UpdateUniforms();
 		}
 
-		if (mesh->mat->shader->GetUID() == TransparencyShader->GetUID())
-			glDisable(GL_CULL_FACE);
-
 		// --- Draw Wireframe if we must ---
 		if (mesh->flags & RenderMeshFlags_::wire)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		// ------------------------ Shader Stuff ------------------------
 		glUseProgram(shader);
+
+		// --- Discard fragments if alpha < 0.1 ---
+		if (mesh->mat->has_transparencies)
+		{
+			glUniform1i(glGetUniformLocation(shader, "HasTransparencies"), (int)mesh->mat->has_transparencies);
+			glDisable(GL_CULL_FACE);
+		}
 
 		// --- Set Normal Mapping Draw ---
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit"), (int)m_Draw_normalMapping_Lit);
@@ -829,7 +833,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (mesh->flags & RenderMeshFlags_::selected)
 			glStencilMask(0x00);
 
-		if (mesh->mat->shader->GetUID() == TransparencyShader->GetUID())
+		if (mesh->mat->has_transparencies)
 			glEnable(GL_CULL_FACE);
 
 		// --- Set color back to default ---
@@ -1448,64 +1452,6 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	screenShader->ReloadAndCompileShader();
 	IShader->Save(screenShader);
 
-	// ---Creating Transparency shader ---
-
-	const char* vertexTransparencyShader =
-		R"(#version 440 core
-		#define VERTEX_SHADER
-		#ifdef VERTEX_SHADER
-
-		layout (location = 0) in vec3 a_Position;
-		layout(location = 1) in vec3 a_Normal;
-		layout(location = 2) in vec3 a_Color;
-		layout (location = 3) in vec2 a_TexCoord;
-
-		uniform vec3 u_Color = vec3(1.0);
-		uniform mat4 u_Model;
-		uniform mat4 u_View;
-		uniform mat4 u_Proj;
-
-		out vec3 v_Color;
-		out vec2 v_TexCoord;
-
-		void main()
-		{
-			gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0f);
-			v_Color = u_Color;
-			v_TexCoord = a_TexCoord;
-		}
-		#endif //VERTEX_SHADER)";
-
-	const char* fragmentTransparencyShader =
-		R"(#version 440 core
-		#define FRAGMENT_SHADER
-		#ifdef FRAGMENT_SHADER
-
-		out vec4 FragColor;
-
-		in vec2 v_TexCoord;
-
-		uniform sampler2D u_AlbedoTexture;
-
-		void main()
-		{
-			vec4 texColor = texture(u_AlbedoTexture, v_TexCoord);
-
-			if(texColor.a < 0.1)
-				discard;
-
-		    FragColor = texColor;
-		}
-		#endif //FRAGMENT_SHADER)";
-
-	TransparencyShader = (ResourceShader*)App->resources->CreateResourceGivenUID(Resource::ResourceType::SHADER, "Assets/Shaders/TransparencyShader.glsl", 14);
-	TransparencyShader->vShaderCode = vertexTransparencyShader;
-	TransparencyShader->fShaderCode = fragmentTransparencyShader;
-	TransparencyShader->ReloadAndCompileShader();
-	TransparencyShader->SetName("TransparencyShader");
-	TransparencyShader->LoadToMemory();
-	TransparencyShader->ReloadAndCompileShader();
-	IShader->Save(TransparencyShader);
 
 	defaultShader->use();
 }

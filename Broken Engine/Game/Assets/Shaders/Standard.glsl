@@ -72,6 +72,7 @@ uniform int u_UseTextures = 0;
 uniform int u_HasDiffuseTexture = 0;
 uniform int u_HasSpecularTexture = 0;
 uniform int u_HasNormalMap = 0;
+uniform int HasTransparencies = 0;
 
 uniform int u_DrawNormalMapping = 0;
 uniform int u_DrawNormalMapping_Lit = 0;
@@ -178,6 +179,16 @@ vec3 CalculateSpotlight(BrokenLight light, vec3 normal, vec3 viewDir)
 //------------------------------------------------------------------------------------------------------------------
 void main()
 {
+	// Transparency
+
+	if(HasTransparencies == 1)
+	{
+		vec4 texColor = texture(u_AlbedoTexture, v_TexCoord);
+
+		if(texColor.a < 0.1)
+			discard;
+	}
+
 	int lights_iterator = (u_LightsNumber > MAX_SHADER_LIGHTS ? MAX_SHADER_LIGHTS : u_LightsNumber);
 
 	//Light Calculations
