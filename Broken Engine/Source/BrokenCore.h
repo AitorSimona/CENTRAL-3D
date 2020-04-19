@@ -9,6 +9,7 @@
 //#include <windows.h>
 #include "Errors.h"
 #include <stdio.h>
+#include <mutex>
 
 //Import/export define
 #ifdef BE_BUILD_DLL
@@ -39,8 +40,11 @@
 #define COMPILATIONLOGINFO Broken::LogCompilationFirstMessage()
 
 BE_BEGIN_NAMESPACE
-/// Log functions
+/// Logging mutexes
+std::mutex EngineLogMutex;
+std::mutex SystemLogMutex;
 
+/// Log functions
 void LogCompilationFirstMessage();
 void EngineConsoleLog(const char file[], int line, const char* format, ...);
 void SystemConsoleLog(const char file[], int line, const char* format, ...);
