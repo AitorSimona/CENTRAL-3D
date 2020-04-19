@@ -30,8 +30,9 @@ public:
 public:
 	float volume = 1.0f;
 	AkGameObjectID id = 0;
+	std::string name;
 private:
-	const char* name = nullptr;
+	
 
 	AkVector position = { 0,0,0 };
 	AkVector orientationFront = { 0,0,0 };
