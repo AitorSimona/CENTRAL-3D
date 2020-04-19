@@ -162,9 +162,11 @@ luabridge::LuaRef ScriptingGameobject::GetScript(uint gameobject_UUID, lua_State
 	if (go != nullptr)
 	{
 		ComponentScript* component_script = go->GetComponent<ComponentScript>();
-		ScriptInstance* script = App->scripting->GetScriptInstanceFromComponent(component_script);
+		if (component_script != nullptr) {
+			ScriptInstance* script = App->scripting->GetScriptInstanceFromComponent(component_script);
 
-		ret = script->my_table_class;
+			ret = script->my_table_class;
+		}
 	}
 	return ret;
 }
