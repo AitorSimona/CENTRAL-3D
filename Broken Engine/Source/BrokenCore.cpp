@@ -8,7 +8,6 @@
 BE_BEGIN_NAMESPACE
 // INFORMATION LOG ----------------------------------------------------------------------------
 void EngineConsoleLog(const char file[], int line, const char* format, ...) {
-	std::lock_guard<std::mutex> lk(EngineLogMutex);
 	static char tmp_string[MAX_BUF_SIZE];
 	static char tmp_string2[MAX_BUF_SIZE];
 	static va_list  ap;
@@ -21,15 +20,13 @@ void EngineConsoleLog(const char file[], int line, const char* format, ...) {
 	OutputDebugString(tmp_string2);
 
 	if (App) {
+		std::lock_guard<std::mutex> lk(EngineLogMutex);
 		sprintf_s(tmp_string2, MAX_BUF_SIZE, "\n%s", tmp_string);
 		App->Log(tmp_string2);
 	}
-
-	OutputDebugStringA(tmp_string2);
 }
 
 void SystemConsoleLog(const char file[], int line, const char* format, ...) {
-	std::lock_guard<std::mutex> lk(SystemLogMutex);
 	static char tmp_string[MAX_BUF_SIZE];
 	static char tmp_string2[MAX_BUF_SIZE];
 	static va_list  ap;
@@ -40,7 +37,6 @@ void SystemConsoleLog(const char file[], int line, const char* format, ...) {
 	va_end(ap);
 	sprintf_s(tmp_string2, MAX_BUF_SIZE, "\n%s(%d) : %s", file, line, tmp_string);
 	OutputDebugString(tmp_string2);
-	OutputDebugStringA(tmp_string2);
 
 	std::cout << tmp_string2 << std::endl;
 }
