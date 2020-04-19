@@ -40,10 +40,6 @@
 #define COMPILATIONLOGINFO Broken::LogCompilationFirstMessage()
 
 BE_BEGIN_NAMESPACE
-/// Logging mutexes
-std::mutex EngineLogMutex;
-std::mutex SystemLogMutex;
-
 /// Log functions
 void LogCompilationFirstMessage();
 void EngineConsoleLog(const char file[], int line, const char* format, ...);

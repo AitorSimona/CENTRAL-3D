@@ -20,7 +20,6 @@ void EngineConsoleLog(const char file[], int line, const char* format, ...) {
 	OutputDebugString(tmp_string2);
 
 	if (App) {
-		std::lock_guard<std::mutex> lk(EngineLogMutex);
 		sprintf_s(tmp_string2, MAX_BUF_SIZE, "\n%s", tmp_string);
 		App->Log(tmp_string2);
 	}

@@ -10,6 +10,7 @@
 #include "PerfTimer.h"
 #include "MathGeoLib/include/Algorithm/Random/LCG.h"
 #include "JSONLoader.h"
+#include <mutex>
 
 #define MAX_CONSOLE_LOGS 1000
 
@@ -101,6 +102,8 @@ protected:
 	std::string			appName;
 	std::string			orgName;
 	std::string			configpath;
+	/// Logging mutexes
+	std::mutex logMutex;
 
 private:
 	JSONLoader			JLoader;
