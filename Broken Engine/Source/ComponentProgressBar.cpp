@@ -223,7 +223,7 @@ void ComponentProgressBar::CreateInspectorNode()
 	ImGui::DragFloat("x##imagesize", &size2D.x, 1.0f, 0.0f, INFINITY);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imagesize", &size2D.y, 1.0f, INFINITY);
+	ImGui::DragFloat("y##imagesize", &size2D.y, 1.0f, 0.0f,INFINITY);
 
 	// Rotation
 	//ImGui::Text("Rotation:");
