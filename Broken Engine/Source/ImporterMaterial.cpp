@@ -109,7 +109,7 @@ Resource* ImporterMaterial::Load(const char* path) const
 	ResourceTexture* diffuse = nullptr;
 	ResourceTexture* specular = nullptr;
 	ResourceTexture* normalMap = nullptr;
-	float3 matColor = float3(1.0f);
+	float4 matColor = float4::one;
 	float matShine = 32.0f;
 
 	json file = App->GetJLoader()->Load(path);
@@ -145,10 +145,16 @@ Resource* ImporterMaterial::Load(const char* path) const
 		}
 
 		if (!file["AmbientColor"].is_null())
-			matColor = float3(file["AmbientColor"]["R"].get<float>(), file["AmbientColor"]["G"].get<float>(), file["AmbientColor"]["B"].get<float>());
+			matColor = float4(file["AmbientColor"]["R"].get<float>(), file["AmbientColor"]["G"].get<float>(), file["AmbientColor"]["B"].get<float>(), file["AmbientColor"]["A"].get<float>());
 
 		if (!file["MaterialShininess"].is_null())
 			matShine = file["MaterialShininess"].get<float>();
+
+		if (!file["Transparencies"].is_null())
+			mat->has_transparencies = file["Transparencies"].get<bool>();
+
+		if (!file["Culling"].is_null())
+			mat->has_culling = file["Culling"].get<bool>();
 
 		Importer::ImportData IDataDiff(diffuse_texture_path.c_str());
 
@@ -169,8 +175,15 @@ Resource* ImporterMaterial::Load(const char* path) const
 		std::string shader_path = file["shader"]["ResourceShader"].is_null() ? "NONE" : file["shader"]["ResourceShader"].get<std::string>();
 		Importer::ImportData IDataShader(shader_path.c_str());
 
-		if(shader_path != "NONE")
-			mat->shader = (ResourceShader*)App->resources->ImportAssets(IDataShader);
+		if (shader_path != "NONE")
+		{
+			ResourceShader* shader = (ResourceShader*)App->resources->ImportAssets(IDataShader);
+
+			if (shader)
+				mat->shader = shader;
+		}
+
+
 
 		json uniforms_node = file["shader"]["uniforms"];
 
@@ -310,6 +323,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	file["ResourceNormalTexture"];
 	file["AmbientColor"];
 
+
 	// --- Save Shader and Uniforms ---
 	file["shader"];
 	file["shader"]["ResourceShader"] = mat->shader ? std::string(mat->shader->GetOriginalFile()) : "0";
@@ -394,7 +408,10 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	file["AmbientColor"]["R"] = mat->m_AmbientColor.x;
 	file["AmbientColor"]["G"] = mat->m_AmbientColor.y;
 	file["AmbientColor"]["B"] = mat->m_AmbientColor.z;
+	file["AmbientColor"]["A"] = mat->m_AmbientColor.w;
 	file["MaterialShininess"] = mat->m_Shininess;
+	file["Transparencies"] = mat->has_transparencies;
+	file["Culling"] = mat->has_culling;
 
 	if (mat->m_DiffuseResTexture)
 		file["ResourceDiffuse"] = mat->m_DiffuseResTexture->GetOriginalFile();
