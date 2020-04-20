@@ -129,7 +129,6 @@ private:
 public:
 	// OSCAR TODO try to make it private
 	ResourceFont* DefaultFont = nullptr;
-
 private:
 
 	// --- Available importers ---

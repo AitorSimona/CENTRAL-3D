@@ -157,16 +157,23 @@ bool PanelHierarchy::Draw()
 					Broken::GameObject* button_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentText* button = (Broken::ComponentText*)button_go->AddComponent(Broken::Component::ComponentType::Button);
 				}
-				if (ImGui::MenuItem("Checkbox")) {
-
-				}
-				if (ImGui::MenuItem("Input Text")) {
-
-				}
-				if (ImGui::MenuItem("Progress Bar")) {
+				//if (ImGui::MenuItem("Checkbox")) {
+				//
+				//}
+				//if (ImGui::MenuItem("Input Text")) {
+				//
+				//}
+				if (ImGui::MenuItem("Progress Bar"))
+				{
 					Broken::GameObject* bar_go = EngineApp->scene_manager->CreateEmptyGameObject();
 					Broken::ComponentProgressBar* bar = (Broken::ComponentProgressBar*)bar_go->AddComponent(Broken::Component::ComponentType::ProgressBar);
 				}
+				if (ImGui::MenuItem("Circular Bar"))
+				{
+					Broken::GameObject* cbar_go = EngineApp->scene_manager->CreateEmptyGameObject();
+					Broken::ComponentProgressBar* cbar = (Broken::ComponentProgressBar*)cbar_go->AddComponent(Broken::Component::ComponentType::CircularBar);
+				}
+
 				ImGui::EndMenu();
 			}
 

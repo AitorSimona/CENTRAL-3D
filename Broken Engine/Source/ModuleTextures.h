@@ -2,6 +2,7 @@
 #define __MODULE_TEXTURES_H__
 
 #include "Module.h"
+#include <vector>
 
 #define CHECKERS_HEIGHT 32
 #define CHECKERS_WIDTH 32
@@ -21,6 +22,7 @@ public:
 	uint CreateTextureFromPixels(int internalFormat, uint width, uint height, uint format, const void* pixels, bool CheckersTexture = false) const;
 	void CreateTextureFromImage(uint& TextureID, uint& width, uint& height, std::string& path) const;
 
+	uint CreateCubemap(std::vector<uint>& cubemap_textures);
 	// @Warning: You need to deallocate this data yourself!
 	//void* GetTextureDataFromFile(const char* path) const;
 
