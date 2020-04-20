@@ -157,7 +157,7 @@ void ComponentCharacterController::Draw()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, aux.Transposed().ptr());
 
 		int vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
-		glUniform3f(vertexColorLocation, 125, 125, 125);
+		glUniform4f(vertexColorLocation, 125, 125, 125, 1.0f);
 
 		int TextureSupportLocation = glGetUniformLocation(shaderID, "u_UseTextures");
 		glUniform1i(TextureSupportLocation, 0);

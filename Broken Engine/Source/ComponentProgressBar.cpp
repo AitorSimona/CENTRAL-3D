@@ -61,9 +61,16 @@ void ComponentProgressBar::Draw()
 void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 {
 	// --- Frame image with camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), 
-		float3(float2((size2D.x * _percentage) / 100, size2D.y) * 0.01f, 1.0f));
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	float3 pos = { position2D.x, position2D.y, nearp + 0.026f };
+	
+	float size_x = ((size2D.x * _percentage) / 100);
+	float3 size = { size_x / App->gui->sceneWidth, size2D.y / App->gui->sceneHeight, 1.0f };
+
+	float4x4 transform = transform.FromTRS(pos, Quat::identity, size);
+
+	//float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), 
+	//	float3(float2((size2D.x * _percentage) / 100, size2D.y) * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
@@ -73,9 +80,7 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform.Transposed().ptr());
 
 	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
-
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());	
 
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -83,14 +88,14 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp - 0.05f, 0.0f);
+		0.0f, 0.01f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	// --- Draw plane with given texture ---
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+	glUniform4f(vertexColorLocation, color.r, color.g, color.b, color.a);
 
 	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
 	if (texture)
@@ -206,19 +211,19 @@ void ComponentProgressBar::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
+	ImGui::DragFloat("x##imageposition", &position2D.x, 0.01f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
+	ImGui::DragFloat("y##imageposition", &position2D.y, 0.01f);
 
 	// Size Planes
 	ImGui::Text("Bar Size:  ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
+	ImGui::DragFloat("x##imagesize", &size2D.x, 1.0f, 0.0f, INFINITY);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
+	ImGui::DragFloat("y##imagesize", &size2D.y, 1.0f, 0.0f,INFINITY);
 
 	// Rotation
 	//ImGui::Text("Rotation:");

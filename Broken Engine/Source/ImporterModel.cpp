@@ -619,7 +619,9 @@ GameObject* ImporterModel::InstanceOnCurrentScene(const char* model_path, Resour
 				if (!file[it.key()]["PrefabInstance"].is_null())
 				{
 					go->is_prefab_instance = file[it.key()]["PrefabInstance"];
-					parent = go;
+
+					if (go->is_prefab_instance)
+						parent = go;
 				}
 
 				if (!file[it.key()]["Model"].is_null())

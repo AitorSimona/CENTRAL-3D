@@ -68,6 +68,7 @@ bool ModuleScripting::DoHotReloading() {
 		// Create the new Virtual Machine
 		L = luaL_newstate();
 		luaL_openlibs(L);
+		DeployScriptingGlobals();
 
 		// Acquire all scripts to be compiled (we will compile even scripts which are currently not attached to any GameObject)
 		// to check if it still compiles after the change done in a given script which is unknown to us
@@ -714,10 +715,47 @@ void ModuleScripting::CallbackScriptFunctionParam(ComponentScript* script_compon
 	}
 }
 
+//This function runs the file Globals.lua under the folder Lua_Globals, in the same directory than the exe
+void ModuleScripting::DeployScriptingGlobals()
+{
+	ENGINE_CONSOLE_LOG("Attempting to compile and run Globals.lua!");
+	std::string path = "Lua_Globals/Globals.lua"; // This is the relative path were the file must be, we do this to ensure we won't have problems with Assets folder and people trying to add this file as a script to a gameobject
+	
+	if (App->fs->Exists(path.c_str())) //If the file exists compile if not sound the alarm
+	{
+		std::string abs_path = GetScriptingBasePath();
+		abs_path += path;
+
+		//Now, Compile&Run in LUA
+		bool compiled = luaL_dofile(L, abs_path.c_str());
+
+		if (compiled == LUA_OK) {
+			//We don't need to do nothing here, LOG something at most
+			ENGINE_CONSOLE_LOG("Compiled %s successfully!", path.c_str());
+		}
+		else {
+			std::string error = lua_tostring(L, -1);
+			ENGINE_CONSOLE_LOG("%s", error.data());
+		}
+	}
+	else
+	{
+		this->cannot_start = true;
+		ENGINE_CONSOLE_LOG("File %s doesn't exist! This file is essential for Scripting!",path.c_str());
+		ENGINE_CONSOLE_LOG("|[ERROR]Scripting won't start until %s can be properly found and compiles", path.c_str());
+	}
+}
+
 bool ModuleScripting::Init(json& file) {
+
+	//First, check if we are in a debuggable game build (managed inside the application)
+	//And decide wether we use the boolean or not
+	LoadStatus(file);
+
 	// Create the Virtual Machine
 	L = luaL_newstate();
 	luaL_openlibs(L);
+	DeployScriptingGlobals();
 
 	debug_instance = new ScriptInstance;
 
@@ -764,7 +802,8 @@ update_status ModuleScripting::Update(float realDT) {
 	//MYTODO: Didac PLEAse didac look into this why did you do this?
 	/*if (App->scene_intro->selected_go != nullptr && App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 		GameObject* returned = GOFunctions::InstantiateGameObject(App->scene_intro->selected_go);*/
-	return UPDATE_CONTINUE;
+
+	return scripting_update;
 }
 
 update_status ModuleScripting::GameUpdate(float gameDT)
@@ -832,7 +871,38 @@ update_status ModuleScripting::GameUpdate(float gameDT)
 
 	previous_AppState = (_AppState)App->GetAppState();
 
-	return game_update;
+	return UPDATE_CONTINUE;
+}
+
+//Return the base path of the folder where the .exe file is found
+std::string ModuleScripting::GetScriptingBasePath()
+{
+	std::string ret = "";
+
+	ret = App->fs->GetBasePath();
+	App->fs->NormalizePath(ret);
+
+	//If we are in the build of the game we will skip this process
+	if (App->isGame == false)
+	{
+		std::size_t d_pos = 0;
+		d_pos = ret.find("Debug");
+		std::size_t r_pos = 0;
+		r_pos = ret.find("Release");
+
+		if (d_pos != 4294967295)  // If we are in DEBUG
+		{
+			ret = ret.substr(0, d_pos);
+			ret += "Game/";
+		}
+		else if (r_pos != 4294967295) // If we are in RELEASE
+		{
+			ret = ret.substr(0, r_pos);
+			ret += "Game/";
+		}
+	}
+
+	return ret;
 }
 
 void ModuleScripting::CleanUpInstances() {
@@ -862,6 +932,23 @@ ScriptInstance* ModuleScripting::GetScriptInstanceFromComponent(ComponentScript*
 	}
 
 	return ret;
+}
+
+void ModuleScripting::LoadStatus(const json& file)
+{
+	if (App->isGame)
+	{
+		if (file.find(name) != file.end())
+		{
+			if (!file[name.c_str()]["LUA_Debug_Game"].is_null())
+			{
+				if (App->fs->Exists(LUA_DEBUG))
+					Debug_Build = file[name.c_str()]["LUA_Debug_Game"];
+				else
+					Debug_Build = false;
+			}
+		}
+	}
 }
 
 bool ModuleScripting::Stop() {

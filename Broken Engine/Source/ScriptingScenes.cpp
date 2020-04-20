@@ -25,7 +25,7 @@ void ScriptingScenes::LoadSceneFromScript(uint scene_UUID)
 void ScriptingScenes::QuitGame()
 {
 	if (App->isGame)
-		App->scripting->game_update = UPDATE_STOP;
+		App->scripting->scripting_update = UPDATE_STOP;
 	else 
 	{
 		App->GetAppState() = Broken::AppState::TO_EDITOR;

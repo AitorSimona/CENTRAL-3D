@@ -55,6 +55,11 @@ EngineApplication::EngineApplication() {
 	
 	AddModule(resources);
 	AddModule(window);
+
+	//Audio
+	AddModule(audio);
+
+	//Main Modules
 	AddModule(camera);
 	AddModule(editorui);
 	AddModule(gui);
@@ -71,9 +76,6 @@ EngineApplication::EngineApplication() {
 	//Physics and particles
 	AddModule(physics);
 	AddModule(particles);
-
-	//Audio
-	AddModule(audio);
 	
 	//Gameplay (Scripting)
 	AddModule(scripting);

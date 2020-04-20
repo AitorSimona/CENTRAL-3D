@@ -39,7 +39,7 @@ struct BROKEN_API RenderMesh
 	const ResourceMesh* resource_mesh = nullptr;
 	ResourceMaterial* mat = nullptr;
 	Color color; // force a color draw, useful if no texture is given
-	
+
 
 	// temporal!
 	const ResourceMesh* deformable_mesh = nullptr;
@@ -68,7 +68,7 @@ struct BROKEN_API RenderLine
 	Color color;
 };
 
-class BROKEN_API ModuleRenderer3D : public Module 
+class BROKEN_API ModuleRenderer3D : public Module
 {
 	friend class ModuleResourceManager;
 public:
@@ -120,11 +120,11 @@ private:
 	void UpdateGLCapabilities() const;
 	void HandleObjectOutlining();
 	void CreateGrid(float target_distance);
-	
+
 	// --- Buffers ---
 	uint CreateBufferFromData(uint Targetbuffer, uint size, void* data) const;
 	void CreateFramebuffer();
-	
+
 	// --- Shaders ---
 	void CreateDefaultShaders();
 
@@ -133,13 +133,15 @@ private:
 	// --- Draw Commands ---
 	void SendShaderUniforms(uint shader);
 	void DrawRenderMeshes();
+	void DrawTransparentRenderMeshes();
 	void DrawRenderMesh(std::vector<RenderMesh> meshInstances);
 	void DrawFramebuffer();
-	
+
 	// --- Draw Utilities ---
 	void DrawRenderLines();
 	void DrawRenderBoxes();
 	void DrawGrid();
+	void DrawSkybox();
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -161,6 +163,8 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
 	ResourceShader* screenShader = nullptr;
+
+	ResourceShader* SkyboxShader = nullptr;
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
@@ -195,6 +199,7 @@ public:
 private:
 
 	std::map<uint, std::vector<RenderMesh>> render_meshes;
+	std::map<uint, std::vector<RenderMesh>> transparent_render_meshes;
 
 	std::vector<RenderBox<AABB>> render_aabbs;
 	std::vector<RenderBox<OBB>> render_obbs;
@@ -206,6 +211,9 @@ private:
 	float m_GammaCorrection = 2.0f;
 
 	uint fbo = 0;
+	uint cubemapTexID = 0;
+	uint skyboxVAO = 0;
+	uint skyboxVBO = 0;
 	uint depthbufferFBO = 0;
 	uint depthbuffer = 0;
 	uint PointLineVAO = 0;

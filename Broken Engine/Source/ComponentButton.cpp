@@ -100,7 +100,7 @@ void ComponentButton::Draw()
 
 	// --- Color & Texturing ---
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+	glUniform4f(vertexColorLocation, color.r, color.g, color.b, color.a);
 
 	GameObject* gameObj = GetContainerGameObject();
 
@@ -321,7 +321,7 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Size:    ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	if (ImGui::DragFloat("x##buttonsize", &size2D.x, 1.0f) && resize)
+	if (ImGui::DragFloat("x##buttonsize", &size2D.x) && resize)
 	{
 		if (size2D.x < 0.0f)
 			size2D.x = 0;
@@ -366,10 +366,10 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::DragFloat("y##buttonposition", &position2D.y, 0.01f);
 
 	// Rotation
-	ImGui::Text("Rotation:");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("##buttonrotation", &rotation2D);
+	//ImGui::Text("Rotation:");
+	//ImGui::SameLine();
+	//ImGui::SetNextItemWidth(60);
+	//ImGui::DragFloat("##buttonrotation", &rotation2D);
 
 	// ------------------------------------------
 
@@ -383,10 +383,10 @@ void ComponentButton::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragInt("x##buttoncolliderposition", &collider.x);
+	ImGui::DragInt("x##buttoncolliderposition", &collider.x, 0.001f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragInt("y##buttoncolliderposition", &collider.y);
+	ImGui::DragInt("y##buttoncolliderposition", &collider.y, 0.001f);
 
 	// Size
 	ImGui::Text("Size:    ");

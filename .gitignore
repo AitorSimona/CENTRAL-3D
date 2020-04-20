@@ -348,6 +348,12 @@ Broken Engine/Game/Assets/*/*
 !Broken Engine/Game/Assets/Sounds/Init.*
 !Broken Engine/Game/Assets/Fonts/
 !Broken Engine/Game/Assets/Fonts/*.ttf
+!Broken Engine/Game/Assets/Images/
+!Broken Engine/Game/Assets/Images/*.jpg
+!Broken Engine/Game/Assets/Images/default_skybox/
+!Broken Engine/Game/Assets/Images/default_skybox/*.jpg
+!Broken Engine/Game/Assets/Images/rick_skybox/
+!Broken Engine/Game/Assets/Images/rick_skybox/*.jpg
 
 # Shaders
 !Broken Engine/Game/Assets/Shaders/*.glsl
