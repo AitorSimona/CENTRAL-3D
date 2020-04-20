@@ -48,7 +48,6 @@ public:
 private:
 
 	bool m_TemporalTextureTest = false;
-	bool save_material = false;
 };
 
 BE_END_NAMESPACE

@@ -190,6 +190,7 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	// --- Material node ---
 	if (material)
 	{
+		bool save_material = false;
 		bool is_default = material->GetUID() == App->resources->DefaultMaterial->GetUID();
 
 		// --- Mat preview
@@ -421,10 +422,16 @@ void ComponentMeshRenderer::CreateInspectorNode()
 			{
 				if (material && material->IsInMemory())
 				{
+					save_material = false;
 					material->Release();
 					material->RemoveUser(GO);
 					material = nullptr;
 				}
+			}
+
+			// --- Save material ---
+			if (save_material) {
+				App->resources->DeferSave(material);
 			}
 		}		
 	}
@@ -446,16 +453,6 @@ void ComponentMeshRenderer::CreateInspectorNode()
 	}
 	ImGui::SameLine();
 	ImGui::Text("Drop Material");
-
-	// --- Save material ---
-	if (save_material)
-	{
-		save_material = false;
-
-		ImporterMaterial* IMat = App->resources->GetImporter<ImporterMaterial>();
-		if (IMat)
-			IMat->Save(material);
-	}
 
 	ImGui::PopID();
 }
