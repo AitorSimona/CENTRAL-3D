@@ -140,6 +140,7 @@ private:
 	void DrawRenderLines();
 	void DrawRenderBoxes();
 	void DrawGrid();
+	void DrawSkybox();
 
 	// --- Draw Wireframe using given vertices ---
 	template <typename Box>
@@ -161,6 +162,8 @@ public:
 	ResourceShader* ZDrawerShader = nullptr;
 	ResourceShader* textShader = nullptr;
 	ResourceShader* screenShader = nullptr;
+
+	ResourceShader* SkyboxShader = nullptr;
 
 	std::string VertexShaderTemplate;
 	std::string FragmentShaderTemplate;
@@ -206,6 +209,9 @@ private:
 	float m_GammaCorrection = 2.0f;
 
 	uint fbo = 0;
+	uint cubemapTexID = 0;
+	uint skyboxVAO = 0;
+	uint skyboxVBO = 0;
 	uint depthbufferFBO = 0;
 	uint depthbuffer = 0;
 	uint PointLineVAO = 0;
