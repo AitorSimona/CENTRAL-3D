@@ -58,15 +58,26 @@ void ComponentCircularBar::Draw()
 void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 {
 	// --- Frame image with camera ---
-	float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
-	float2 new_size;
+	float nearp = App->renderer3D->active_camera->GetNearPlane();
+	float3 pos = { position2D.x, position2D.y, nearp + 0.026f };
+	
+	float size_x = size2D.x, size_y = size2D.y;
+	if (axis == 0)								//X Axis
+		size_x *= (_percentage /100);
+	else										// Y Axis
+		size_y *= (_percentage / 100);
 
-	if (axis == 0) //x axis
-		new_size = float2((size2D.x * _percentage) / 100, size2D.y);
-	else //y axis
-		new_size = float2(size2D.x, (size2D.y * _percentage) / 100);
+	float3 size = { size_x / App->gui->sceneWidth, size_y / App->gui->sceneHeight, 1.0f };
+	float4x4 transform = transform.FromTRS(pos, Quat::identity, size);
 
-	float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(new_size * 0.01f, 1.0f));
+	//float3 position = App->renderer3D->active_camera->frustum.NearPlanePos(-1, -1);
+	//float2 new_size;
+	//
+	//if (axis == 0) //x axis
+	//	new_size = float2((size2D.x * _percentage) / 100, size2D.y);
+	//else //y axis
+	//	new_size = float2(size2D.x, (size2D.y * _percentage) / 100);
+	//float4x4 transform = transform.FromTRS(position, App->renderer3D->active_camera->GetOpenGLViewMatrix().RotatePart(), float3(new_size * 0.01f, 1.0f));
 
 	// --- Set Uniforms ---
 	uint shaderID = App->renderer3D->defaultShader->ID;
@@ -78,7 +89,6 @@ void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 	GLint viewLoc = glGetUniformLocation(shaderID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
 
-	float nearp = App->renderer3D->active_camera->GetNearPlane();
 
 	// right handed projection matrix
 	float f = 1.0f / tan(App->renderer3D->active_camera->GetFOV() * DEGTORAD / 2.0f);
@@ -86,7 +96,7 @@ void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 		f / App->renderer3D->active_camera->GetAspectRatio(), 0.0f, 0.0f, 0.0f,
 		0.0f, f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, -1.0f,
-		position2D.x * 0.01f, position2D.y * 0.01f, nearp -0.05f, 0.0f);
+		0.0f, 0.0f, nearp, 0.0f);
 
 	GLint projectLoc = glGetUniformLocation(shaderID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
@@ -208,19 +218,19 @@ void ComponentCircularBar::CreateInspectorNode()
 	ImGui::Text("Position:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imageposition", &position2D.x, 0.1f);
+	ImGui::DragFloat("x##imageposition", &position2D.x, 0.01f);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imageposition", &position2D.y, 0.1f);
+	ImGui::DragFloat("y##imageposition", &position2D.y, 0.01f);
 
 	// Size Planes
 	ImGui::Text("Bar Size:  ");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("x##imagesize", &size2D.x, 0.01f, 0.0f, INFINITY);
+	ImGui::DragFloat("x##imagesize", &size2D.x, 1.0f, 0.0f, INFINITY);
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(60);
-	ImGui::DragFloat("y##imagesize", &size2D.y, 0.01f, 0.0f, INFINITY);
+	ImGui::DragFloat("y##imagesize", &size2D.y, 1.0f, 0.0f, INFINITY);
 
 	// Rotation
 	//ImGui::Text("Rotation:");

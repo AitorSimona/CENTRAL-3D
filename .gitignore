@@ -348,6 +348,8 @@ Broken Engine/Game/Assets/*/*
 !Broken Engine/Game/Assets/Sounds/Init.*
 !Broken Engine/Game/Assets/Fonts/
 !Broken Engine/Game/Assets/Fonts/*.ttf
+!Broken Engine/Game/Assets/Images/
+!Broken Engine/Game/Assets/Images/*.jpg
 
 # Shaders
 !Broken Engine/Game/Assets/Shaders/*.glsl
