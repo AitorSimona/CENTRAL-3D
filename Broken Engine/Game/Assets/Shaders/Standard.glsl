@@ -192,10 +192,14 @@ void main()
 	if(alpha < 0.004)
 		discard;
 
-	int lights_iterator = (u_LightsNumber > MAX_SHADER_LIGHTS ? MAX_SHADER_LIGHTS : u_LightsNumber);
-
-	//Light Calculations
-	vec3 normalVec = normalize(v_Normal);
+	//Normal Mapping Calculations
+	vec3 normalVec = normalize(v_Normal);	
+	if(u_DrawNormalMapping == 1)
+	{
+		out_color = vec4(normalVec, 1.0);
+		return;
+	}
+	
 	vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 	if(u_HasNormalMap == 1)
 	{
@@ -205,8 +209,9 @@ void main()
 		//viewDirection = v_TBN * normalize(v_CamPos - v_FragPos);
 	}
 
+	//Light Calculations
+	int lights_iterator = (u_LightsNumber > MAX_SHADER_LIGHTS ? MAX_SHADER_LIGHTS : u_LightsNumber);
 	vec3 colorResult = vec3(0.0);
-
 	for(int i = 0; i < lights_iterator; ++i)
 	{
 		if(u_DrawNormalMapping_Lit_Adv == 0)
@@ -229,13 +234,8 @@ void main()
 		}
 	}
 
-	if(u_DrawNormalMapping_Lit == 0 && u_DrawNormalMapping == 0 && u_DrawNormalMapping_Lit_Adv == 0)
+	if(u_DrawNormalMapping_Lit == 0 && u_DrawNormalMapping_Lit_Adv == 0)
 	{
-
-		//vec4 out1 = vec4(colorResult + v_Color.rgb, 1.0);
-		//vec4 out2 = vec4(colorResult + texture(u_AlbedoTexture, v_TexCoord).rgb, texture(u_AlbedoTexture, v_TexCoord).a);
-		//vec4 res = vec4(out1.rgb + out2.rgb, v_Color.a * out2.a);
-
 		//Resulting Color
 		if(u_UseTextures == 0 || (HasTransparencies == 0 && u_UseTextures == 1 && texture(u_AlbedoTexture, v_TexCoord).a < 0.1))
 			out_color = vec4(colorResult + v_Color.rgb, alpha);
@@ -246,11 +246,9 @@ void main()
 	}
 	else
 	{
-		//Draw Normal Mapping if we must
+		//Normal Mapping Debgug
 		if(u_DrawNormalMapping_Lit == 1)
 			out_color = vec4(colorResult * normalVec, 1.0);
-		else if(u_DrawNormalMapping == 1)
-			out_color = vec4(normalVec, 1.0);
 		else if(u_DrawNormalMapping_Lit_Adv == 1)
 			out_color = vec4(colorResult, 1.0);
 	}
