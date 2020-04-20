@@ -153,6 +153,9 @@ Resource* ImporterMaterial::Load(const char* path) const
 		if (!file["Transparencies"].is_null())
 			mat->has_transparencies = file["Transparencies"].get<bool>();
 
+		if (!file["Culling"].is_null())
+			mat->has_culling = file["Culling"].get<bool>();
+
 		Importer::ImportData IDataDiff(diffuse_texture_path.c_str());
 
 		if(diffuse_texture_path != "NaN.dds")
@@ -408,6 +411,7 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	file["AmbientColor"]["A"] = mat->m_AmbientColor.w;
 	file["MaterialShininess"] = mat->m_Shininess;
 	file["Transparencies"] = mat->has_transparencies;
+	file["Culling"] = mat->has_culling;
 
 	if (mat->m_DiffuseResTexture)
 		file["ResourceDiffuse"] = mat->m_DiffuseResTexture->GetOriginalFile();

@@ -245,6 +245,10 @@ void ComponentMeshRenderer::CreateInspectorNode()
 
 				if (ImGui::Checkbox("Transparencies", &material->has_transparencies)) save_material = true;
 
+				ImGui::SameLine();
+
+				if (ImGui::Checkbox("Culling", &material->has_culling)) save_material = true;
+
 				//Color
 				ImGui::Separator();
 				if(ImGui::ColorEdit4("##AmbientColor", (float*)&material->m_AmbientColor, ImGuiColorEditFlags_NoInputs)) save_material = true;

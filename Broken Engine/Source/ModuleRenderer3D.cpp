@@ -712,8 +712,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 
 		// --- Transparency Uniform ---
 		glUniform1i(glGetUniformLocation(shader, "HasTransparencies"), (int)mesh->mat->has_transparencies);
-		//if (mesh->mat->has_transparencies)
-		//	glDisable(GL_CULL_FACE);
+
+		if (!mesh->mat->has_culling)
+			glDisable(GL_CULL_FACE);
 
 		// --- Set Normal Mapping Draw ---
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit"), (int)m_Draw_normalMapping_Lit);
@@ -832,8 +833,8 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (mesh->flags & RenderMeshFlags_::selected)
 			glStencilMask(0x00);
 
-		//if (mesh->mat->has_transparencies)
-		//	glEnable(GL_CULL_FACE);
+		if (!mesh->mat->has_culling)
+			glEnable(GL_CULL_FACE);
 
 		// --- Set color back to default ---
 		glUniform4f(glGetUniformLocation(shader, "u_Color"), 1.0f, 1.0f, 1.0f, 1.0f);
