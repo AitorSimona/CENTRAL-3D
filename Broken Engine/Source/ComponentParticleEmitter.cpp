@@ -246,7 +246,7 @@ void ComponentParticleEmitter::DrawParticles()
 //	}
 //}
 
-void ComponentParticleEmitter::ChangeParticlesColor(float3 color)
+void ComponentParticleEmitter::ChangeParticlesColor(float4 color)
 {
 	color /= 255.0f;
 
@@ -288,6 +288,7 @@ json ComponentParticleEmitter::Save() const
 	node["ColorR"] = std::to_string(particlesColor.x);
 	node["ColorG"] = std::to_string(particlesColor.y);
 	node["ColorB"] = std::to_string(particlesColor.z);
+	node["ColorA"] = std::to_string(particlesColor.w);
 
 	node["Loop"] = loop;
 	node["Duration"] = std::to_string(duration);
@@ -340,6 +341,7 @@ void ComponentParticleEmitter::Load(json& node)
 	std::string LColorR = node["ColorR"].is_null() ? "0" : node["ColorR"];
 	std::string LColorG = node["ColorG"].is_null() ? "0" : node["ColorG"];
 	std::string LColorB = node["ColorB"].is_null() ? "0" : node["ColorB"];
+	std::string LColorA = node["ColorA"].is_null() ? "0" : node["ColorA"];
 
 	std::string LParticlesScaleX = node["particlesScaleX"].is_null() ? "1" : node["particlesScaleX"];
 	std::string LParticlesScaleY = node["particlesScaleY"].is_null() ? "1" : node["particlesScaleY"];
@@ -389,7 +391,7 @@ void ComponentParticleEmitter::Load(json& node)
 
 	particlesSize = std::stof(LParticlesSize);
 
-	particlesColor = float3(std::stof(LColorR), std::stof(LColorG), std::stof(LColorB));
+	particlesColor = float4(std::stof(LColorR), std::stof(LColorG), std::stof(LColorB), std::stof(LColorA));
 
 	duration = std::stoi(LDuration);
 

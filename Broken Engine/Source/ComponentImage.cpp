@@ -82,7 +82,7 @@ void ComponentImage::Draw()
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	// --- Color & Texturing ---
-	glUniform3f(glGetUniformLocation(shaderID, "u_Color"), 1.0f, 1.0f, 1.0f);
+	glUniform4f(glGetUniformLocation(shaderID, "u_Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
 	
 	if (texture)
