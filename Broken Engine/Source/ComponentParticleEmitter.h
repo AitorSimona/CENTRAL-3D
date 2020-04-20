@@ -27,7 +27,7 @@ public:
 	void UpdateParticles(float dt);
 	//void DrawComponent() override;
 	void DrawParticles();
-	void ChangeParticlesColor(float3 color);
+	void ChangeParticlesColor(float4 color);
 
 	static inline Component::ComponentType GetType() { return Component::ComponentType::ParticleEmitter; };
 
@@ -91,7 +91,7 @@ private:
 	float particlesScaleRandomFactor = 1;
 	ResourceTexture* texture = nullptr;
 
-	float3 particlesColor = {1.0f,1.0f, 1.0f };
+	float4 particlesColor = { 1.0f,1.0f, 1.0f, 1.0f };
 
 	float spawnClock=0.0f;
 };

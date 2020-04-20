@@ -95,7 +95,7 @@ void ComponentProgressBar::DrawPlane(Color color, float _percentage)
 
 	// --- Draw plane with given texture ---
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+	glUniform4f(vertexColorLocation, color.r, color.g, color.b, color.a);
 
 	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
 	if (texture)

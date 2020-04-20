@@ -100,6 +100,14 @@ void ResourceMaterial::CreateInspectorNode()
 	ImGui::SameLine();
 	if(ImGui::Checkbox("##CB", &m_UseTexture)) save_material = true;
 
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Transparencies", &has_transparencies)) save_material = true;
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Culling", &has_culling)) save_material = true;
+
 	// --- Color ---
 	ImGui::Separator();
 	if(ImGui::ColorEdit4("##AmbientColor", (float*)&m_AmbientColor, ImGuiColorEditFlags_NoInputs)) save_material = true;

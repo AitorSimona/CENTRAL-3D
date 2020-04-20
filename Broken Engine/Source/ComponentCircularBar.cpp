@@ -103,7 +103,7 @@ void ComponentCircularBar::DrawCircle(Color color, bool axis, float _percentage)
 
 	// --- Texturing & Coloring ---
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+	glUniform4f(vertexColorLocation, color.r, color.g, color.b, color.a);
 	
 	int TextureLocation = glGetUniformLocation(shaderID, "u_UseTextures");
 	if (texture)

@@ -99,6 +99,7 @@ bool ModuleRenderer3D::Init(json& file)
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
+
 	// --- Create screen quad ---
 	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 		// positions   // texCoords
@@ -151,7 +152,7 @@ bool ModuleRenderer3D::Init(json& file)
 	screenshot_camera->Look({ 0.0f, 0.0f, 0.0f });
 
 
-	// MYTODO: Currently creating twice the texture since res manager will import it from Images folder, 
+	// MYTODO: Currently creating twice the texture since res manager will import it from Images folder,
 	// i should make a default skybox that does not need textures and then let the user change it through a new panel (check Unity)
 	// --- Load skybox textures ---
 	uint width, height = 0;
@@ -179,7 +180,7 @@ bool ModuleRenderer3D::Init(json& file)
 
 
 	float skyboxVertices[] = {
-		// positions          
+		// positions
 		-1.0f,  1.0f, -1.0f,
 		-1.0f, -1.0f, -1.0f,
 		 1.0f, -1.0f, -1.0f,
@@ -326,6 +327,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	// --- Selected Object Outlining ---
 	HandleObjectOutlining();
+
 
 	// -- Draw particles ---
 	for (int i = 0; i < particleEmitters.size(); ++i)
@@ -483,34 +485,69 @@ void ModuleRenderer3D::DrawMesh(const float4x4 transform, const ResourceMesh* me
 	// --- Check data validity
 	if (transform.IsFinite() && mesh && mat)
 	{
-		// --- Add given instance to relevant vector ---
-		if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
-		{
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
-			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
-			rmesh.color = color;
 
-			//// --- Search for Character Controller Component ---
-			//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+		//if (mat->has_transparencies)
+		//{
+		//	// --- Add given instance to relevant vector ---
+		//	if (transparent_render_meshes.find(mesh->GetUID()) != transparent_render_meshes.end())
+		//	{
+		//		RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+		//		rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+		//		rmesh.color = color;
 
-			//// --- If Found, draw Character Controller shape ---
-			//if (cct && cct->IsEnabled())
-			//	cct->Draw();
+		//		//// --- Search for Character Controller Component ---
+		//		//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
 
-			render_meshes[mesh->GetUID()].push_back(rmesh);
-		}
-		else
-		{
-			// --- Build new vector to store mesh's instances ---
-			std::vector<RenderMesh> new_vec;
+		//		//// --- If Found, draw Character Controller shape ---
+		//		//if (cct && cct->IsEnabled())
+		//		//	cct->Draw();
 
-			RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
-			rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
-			rmesh.color = color;
+		//		transparent_render_meshes[mesh->GetUID()].push_back(rmesh);
+		//	}
+		//	else
+		//	{
+		//		// --- Build new vector to store mesh's instances ---
+		//		std::vector<RenderMesh> new_vec;
 
-			new_vec.push_back(rmesh);
-			render_meshes[mesh->GetUID()] = new_vec;
-		}
+		//		RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+		//		rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+		//		rmesh.color = color;
+
+		//		new_vec.push_back(rmesh);
+		//		transparent_render_meshes[mesh->GetUID()] = new_vec;
+		//	}
+		//}
+		//else
+		//{
+			// --- Add given instance to relevant vector ---
+			if (render_meshes.find(mesh->GetUID()) != render_meshes.end())
+			{
+				RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+				rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+				rmesh.color = color;
+
+				//// --- Search for Character Controller Component ---
+				//ComponentCharacterController* cct = App->scene_manager->GetSelectedGameObject()->GetComponent<ComponentCharacterController>();
+
+				//// --- If Found, draw Character Controller shape ---
+				//if (cct && cct->IsEnabled())
+				//	cct->Draw();
+
+				render_meshes[mesh->GetUID()].push_back(rmesh);
+			}
+			else
+			{
+				// --- Build new vector to store mesh's instances ---
+				std::vector<RenderMesh> new_vec;
+
+				RenderMesh rmesh = RenderMesh(transform, mesh, mat, flags/*, color*/);
+				rmesh.deformable_mesh = deformable_mesh; // TEMPORAL!
+				rmesh.color = color;
+
+				new_vec.push_back(rmesh);
+				render_meshes[mesh->GetUID()] = new_vec;
+			}
+		//}
 	}
 }
 
@@ -646,6 +683,7 @@ const std::string & ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObjec
 void ModuleRenderer3D::ClearRenderOrders()
 {
 	render_meshes.clear();
+	transparent_render_meshes.clear();
 	render_obbs.clear();
 	render_aabbs.clear();
 	render_frustums.clear();
@@ -672,6 +710,48 @@ void ModuleRenderer3D::DrawRenderMeshes()
 	if (wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+}
+
+void ModuleRenderer3D::DrawTransparentRenderMeshes()
+{
+	// --- Activate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	//// --- Sort meshes so we draw the most distant object to camera first and the closest last ---
+	//std::map<float, RenderMesh> sorted_meshes;
+	//std::vector<RenderMesh> to_draw;
+
+	//for (std::map<uint, std::vector<RenderMesh>>::const_iterator it = transparent_render_meshes.begin(); it != transparent_render_meshes.end(); ++it)
+	//{
+
+	//	for (uint i = 0; i < (*it).second.size(); ++i)
+	//	{
+	//		float distance = float3(active_camera->GetCameraPosition() - (*it).second[i].transform.TranslatePart()).Length();
+
+	//		if (sorted_meshes.find(distance) != sorted_meshes.end())
+	//		{
+	//			sorted_meshes[distance + 0.1f] = (*it).second[i];
+	//		}
+	//		else
+	//			sorted_meshes[distance] = (*it).second[i];
+	//	}
+	//}
+
+
+
+	//// --- Copy to vector ---
+	//for (std::map<float, RenderMesh>::reverse_iterator it = sorted_meshes.rbegin(); it != sorted_meshes.rend(); ++it)
+	//{
+	//	to_draw.push_back((*it).second);
+	//}
+
+	//// --- Draw transparent meshes in the correct order ---
+	//DrawRenderMesh(to_draw);
+
+	// --- DeActivate wireframe mode ---
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
@@ -703,6 +783,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (zdrawer)
 			shader = ZDrawerShader->ID;
 
+
 		// --- Get Mesh Material ---
 		if (mesh->mat->shader && shader != OutlineShader->ID && !zdrawer)
 		{
@@ -717,6 +798,12 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		// ------------------------ Shader Stuff ------------------------
 		glUseProgram(shader);
 
+		// --- Transparency Uniform ---
+		glUniform1i(glGetUniformLocation(shader, "HasTransparencies"), (int)mesh->mat->has_transparencies);
+
+		if (!mesh->mat->has_culling)
+			glDisable(GL_CULL_FACE);
+
 		// --- Set Normal Mapping Draw ---
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit"), (int)m_Draw_normalMapping_Lit);
 		glUniform1i(glGetUniformLocation(shader, "u_DrawNormalMapping_Lit_Adv"), (int)m_Draw_normalMapping_Lit_Adv);
@@ -730,7 +817,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		//glUniform1i(glGetUniformLocation(shader, "u_HasNormalMap"), 0);
 
 		// --- Send Color ---
-		glUniform3f(glGetUniformLocation(shader, "u_Color"), colorToDraw.x, colorToDraw.y, colorToDraw.z);
+		glUniform4f(glGetUniformLocation(shader, "u_Color"), colorToDraw.x, colorToDraw.y, colorToDraw.z, 1.0f);
 
 		// --- Set Model Matrix Uniform ---
 		glUniformMatrix4fv(glGetUniformLocation(shader, "u_Model"), 1, GL_FALSE, model.Transposed().ptr());
@@ -746,7 +833,7 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			if (mesh->mat)
 			{
 				glUniform1f(glGetUniformLocation(shader, "u_Shininess"), mesh->mat->m_Shininess);
-				glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z);
+				glUniform4f(glGetUniformLocation(shader, "u_Color"), mesh->mat->m_AmbientColor.x, mesh->mat->m_AmbientColor.y, mesh->mat->m_AmbientColor.z, mesh->mat->m_AmbientColor.w);
 
 				//Textures
 				glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)mesh->mat->m_UseTexture);
@@ -806,8 +893,9 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 						}
 					}
 				}
-				else if (mesh->flags & color) {
-					glUniform3f(glGetUniformLocation(shader, "u_Color"), mesh->color.r / 255, mesh->color.g / 255, mesh->color.b / 255);
+				else if (mesh->flags & color)
+				{
+					glUniform4f(glGetUniformLocation(shader, "u_Color"), mesh->color.r / 255, mesh->color.g / 255, mesh->color.b / 255, 1.0f);
 					glUniform1i(glGetUniformLocation(shader, "u_UseTextures"), (int)false);
 				}
 				else
@@ -833,8 +921,11 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 		if (mesh->flags & RenderMeshFlags_::selected)
 			glStencilMask(0x00);
 
+		if (!mesh->mat->has_culling)
+			glEnable(GL_CULL_FACE);
+
 		// --- Set color back to default ---
-		glUniform3f(glGetUniformLocation(shader, "u_Color"), 1.0f, 1.0f, 1.0f);
+		glUniform4f(glGetUniformLocation(shader, "u_Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	glUseProgram(0);
@@ -1125,14 +1216,14 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"layout(location = 1) in vec3 a_Normal; \n"
 		"layout(location = 2) in vec3 a_Color; \n"
 		"layout (location = 3) in vec2 a_TexCoord; \n"
-		"uniform vec3 u_Color; \n"
+		"uniform vec4 u_Color; \n"
 		"uniform mat4 u_Model; \n"
 		"uniform mat4 u_View; \n"
 		"uniform mat4 u_Proj; \n"
-		"out vec3 v_Color; \n"
+		"out vec4 v_Color; \n"
 		"out vec2 v_TexCoord; \n"
 		"void main(){ \n"
-		"gl_Position = u_Proj * u_View * u_Model * vec4 (a_Position, 1.0f); \n"
+		"gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0f); \n"
 		"v_Color = u_Color; \n"
 		"v_TexCoord = a_TexCoord; \n"
 		"}\n"
@@ -1143,15 +1234,15 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
-		"uniform int u_UseTextures;\n"
-		"in vec3 v_Color; \n"
+		"in vec4 v_Color; \n"
 		"in vec2 v_TexCoord; \n"
-		"out vec4 color; \n"
+		"uniform int u_UseTextures;\n"
 		"uniform sampler2D u_AlbedoTexture; \n"
+		"out vec4 color; \n"
 		"void main(){ \n"
+		"color = v_Color;\n"
+		"if(u_UseTextures == 1)\n"
 		"color = texture(u_AlbedoTexture, v_TexCoord); \n"
-		"if(u_UseTextures == -1)\n"
-		"color = vec4(v_Color, 1);\n"
 		"} \n"
 		"#endif //FRAGMENT_SHADER\n"
 		;
@@ -1201,8 +1292,8 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#define VERTEX_SHADER \n"
 		"#ifdef VERTEX_SHADER \n"
 		"layout (location = 0) in vec3 a_Position; \n"
-		"out vec3 v_Color; \n"
-		"uniform vec3 u_Color; \n"
+		"out vec4 v_Color; \n"
+		"uniform vec4 u_Color; \n"
 		"uniform mat4 u_Model; \n"
 		"uniform mat4 u_View; \n"
 		"uniform mat4 u_Proj; \n"
@@ -1217,10 +1308,10 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		"#version 440 core \n"
 		"#define FRAGMENT_SHADER \n"
 		"#ifdef FRAGMENT_SHADER \n"
-		"in vec3 v_Color; \n"
+		"in vec4 v_Color; \n"
 		"out vec4 color; \n"
 		"void main(){ \n"
-		"color = vec4(v_Color, 1.0); \n"
+		"color = v_Color; \n"
 		"} \n"
 		"#endif //FRAGMENT_SHADER\n"
 		;
@@ -1359,12 +1450,12 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		layout(location = 2) in vec3 a_Color;
 		layout (location = 3) in vec2 a_TexCoord;
 
-		uniform vec3 u_Color = vec3(1.0);
+		uniform vec4 u_Color = vec4(1.0);
 		uniform mat4 u_Model;
 		uniform mat4 u_View;
 		uniform mat4 u_Proj;
 
-		out vec3 v_Color;
+		out vec4 v_Color;
 		out vec2 v_TexCoord;
 
 		void main()
@@ -1383,15 +1474,15 @@ void ModuleRenderer3D::CreateDefaultShaders()
 		uniform int u_UseTextures;
 		uniform sampler2D u_AlbedoTexture;
 
-		in vec3 v_Color;
+		in vec4 v_Color;
 		in vec2 v_TexCoord;
 		out vec4 color;
 
 		void main()
 		{
-			color = texture(u_AlbedoTexture, v_TexCoord) * vec4(v_Color, 1);
+			color = v_Color;
 			if(u_UseTextures == -1)
-				color = vec4(v_Color, 1);
+				color = texture(u_AlbedoTexture, v_TexCoord) * v_Color;
 		}
 		#endif //FRAGMENT_SHADER)";
 
@@ -1532,7 +1623,7 @@ void ModuleRenderer3D::DrawRenderLines()
 	{
 		// --- Assign color and model matrix ---
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (*it).transform.Transposed().ptr());
-		glUniform3f(vertexColorLocation, (*it).color.r / 255.0f, (*it).color.g / 255.0f, (*it).color.b / 255.0f);
+		glUniform4f(vertexColorLocation, (*it).color.r / 255.0f, (*it).color.g / 255.0f, (*it).color.b / 255.0f, 1.0f);
 
 		// --- Assign line vertices, a and b ---
 		vertices[0] = (*it).a;
@@ -1590,7 +1681,7 @@ void ModuleRenderer3D::DrawGrid()
 
 	float gridColor = 0.8f;
 	GLint vertexColorLocation = glGetUniformLocation(shaderID, "u_Color");
-	glUniform3f(vertexColorLocation, gridColor, gridColor, gridColor);
+	glUniform4f(vertexColorLocation, gridColor, gridColor, gridColor, 1.0f);
 
 	glUniform1i(glGetUniformLocation(shaderID, "u_UseTextures"), 0);
 
@@ -1716,7 +1807,7 @@ void ModuleRenderer3D::DrawWireFromVertices(const float3* corners, Color color, 
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
 	int vertexColorLocation = glGetUniformLocation(App->renderer3D->linepointShader->ID, "u_Color");
-	glUniform3f(vertexColorLocation, color.r, color.g, color.b);
+	glUniform4f(vertexColorLocation, color.r, color.g, color.b, color.a);
 
 	// --- Create VAO, VBO ---
 	unsigned int VBO;
