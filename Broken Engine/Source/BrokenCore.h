@@ -9,7 +9,6 @@
 //#include <windows.h>
 #include "Errors.h"
 #include <stdio.h>
-#include <mutex>
 
 //Import/export define
 #ifdef BE_BUILD_DLL
