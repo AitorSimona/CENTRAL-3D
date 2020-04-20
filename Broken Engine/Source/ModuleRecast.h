@@ -4,7 +4,6 @@
 
 #include "Module.h"
 #include "Recast.h"
-#include <mutex>
 
 class InputGeom;
 namespace Broken
@@ -50,7 +49,6 @@ public:
 	bool filterLowHangingObstacles = true;
 	bool filterLedgeSpans = true;
 	bool filterWalkableLowHeightSpans = true;
-	std::mutex logMutex;
 
 private:
 	std::vector<Broken::GameObject*> NavigationGameObjects;

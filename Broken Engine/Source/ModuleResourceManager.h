@@ -4,11 +4,14 @@
 #include "Module.h"
 #include "Resource.h"
 #include "Importer.h"
+#include "PerfTimer.h"
 
 class PanelBuild;
 class PanelResources;
 
 BE_BEGIN_NAMESPACE
+
+#define RESOURCE_SAVE_TIME 1000
 
 class ResourceFolder;
 class ResourceScene;
@@ -88,7 +91,7 @@ public:
 
 	// For consistency, use this only on resource manager/importers 
 	template<typename TImporter>
-	TImporter* GetImporter() {
+	TImporter* GetImporter() const{
 		for (uint i = 0; i < importers.size(); ++i) {
 			if (importers[i]->GetType() == TImporter::GetType()) {
 				return ((TImporter*)(importers[i]));
@@ -109,6 +112,7 @@ public:
 	std::shared_ptr<std::string> GetNewUniqueName(Resource::ResourceType type);
 	void ONResourceDestroyed(Resource* resource);
 	void ForceDelete(Resource* resource); // to prevent problems with different heaps, related to exe - dll relationship
+	void DeferSave(Resource* resource);
 
 	//MYTODO For editor panel to set currentDirectory
 	void setCurrentDirectory(ResourceFolder* dir);
@@ -118,6 +122,9 @@ public:
 	ResourceFolder* GetAssetsFolder();
 	uint GetFileFormatVersion();
 	uint GetDefaultMaterialUID();
+
+private:
+	void SaveResource(Resource* resource) const;
 
 public:
 	// OSCAR TODO try to make it private
@@ -150,6 +157,10 @@ private:
 	std::map<uint, ResourceMeta*> metas;
 	std::map<uint, ResourceFont*> fonts;
 	std::map<uint, ResourceNavMesh*> navmeshes;
+
+	//Saving resources
+	std::map<Resource*, bool> resources_to_save;
+	PerfTimer save_timer;
 
 	//MYTODO Separate things needed for editor from things necessary (reading assets already imported)
 	ResourceFolder* currentDirectory;

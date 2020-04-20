@@ -7,6 +7,7 @@
 #include "ModuleTextures.h"
 #include "ModuleSceneManager.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleThreading.h"
 
 #include "Importers.h"
 #include "Resources.h"
@@ -1113,6 +1114,17 @@ uint ModuleResourceManager::GetDefaultMaterialUID()
 	return DefaultMaterial->GetUID();
 }
 
+void ModuleResourceManager::SaveResource(Resource* resource) const {
+	Resource::ResourceType type = resource->GetType();
+	switch (type) {
+	case Resource::ResourceType::MATERIAL:
+		GetImporter<ImporterMaterial>()->Save((ResourceMaterial*)resource);
+		break;
+	default:
+		ENGINE_CONSOLE_LOG("!Defer saving unsupported resource.");
+	}
+}
+
 void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 {
 	if (resource)
@@ -1424,6 +1436,10 @@ void ModuleResourceManager::ForceDelete(Resource* resource)
 		delete resource;
 }
 
+void ModuleResourceManager::DeferSave(Resource* resource) {
+	resources_to_save[resource] = true;
+}
+
 void ModuleResourceManager::setCurrentDirectory(ResourceFolder* dir) {
 	currentDirectory = dir;
 }
@@ -1436,6 +1452,22 @@ ResourceFolder* ModuleResourceManager::getCurrentDirectory() const {
 
 update_status ModuleResourceManager::Update(float dt)
 {
+	// --- We check defer saves and if they are not still being used (bool is false) we save them ---
+	if (save_timer.ReadMs() >= RESOURCE_SAVE_TIME) {
+		for (std::map<Resource*, bool>::iterator it = resources_to_save.begin(); it != resources_to_save.end();) {
+			if ((*it).second) {
+				(*it).second = false;
+				it++;
+			}
+			else {
+				App->threading->ADDTASK(this, ModuleResourceManager::SaveResource, (*it).first);
+				it = resources_to_save.erase(it);
+			}
+		}
+		App->threading->FinishProcessing();
+		save_timer.Start();
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -1443,138 +1475,130 @@ bool ModuleResourceManager::CleanUp()
 {
 	static_assert(static_cast<int>(Resource::ResourceType::UNKNOWN) == 15, "Resource Clean Up needs to be updated");
 
+	// --- We finish all defer saves ---
+	for (std::map<Resource*, bool>::iterator it = resources_to_save.begin(); it != resources_to_save.end(); ++it) 
+		App->threading->ADDTASK(this, ModuleResourceManager::SaveResource, (*it).first);
+
+	App->threading->FinishProcessing();
+	resources_to_save.clear();
+
 	// --- Delete resources ---
-	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end();)
+	for (std::map<uint, ResourceFolder*>::iterator it = folders.begin(); it != folders.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = folders.erase(it);
 	}
 
 	folders.clear();
 
-	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end();)
+	for (std::map<uint, ResourceScene*>::iterator it = scenes.begin(); it != scenes.end(); it++)
 	{
 		//it->second->FreeMemory();
 		// We do not call free memory since scene's game objects have already been deleted (we have dangling pointers in scene's maps now!)
 		delete it->second;
-		it = scenes.erase(it);
 	}
 
 	scenes.clear();
 
-	for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end();)
+	for (std::map<uint, ResourceModel*>::iterator it = models.begin(); it != models.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = models.erase(it);
 	}
 
 	models.clear();
 
-	for (std::map<uint, ResourcePrefab*>::iterator it = prefabs.begin(); it != prefabs.end();)
+	for (std::map<uint, ResourcePrefab*>::iterator it = prefabs.begin(); it != prefabs.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = prefabs.erase(it);
 	}
 
 	prefabs.clear();
 
-	for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end();)
+	for (std::map<uint, ResourceMaterial*>::iterator it = materials.begin(); it != materials.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = materials.erase(it);
 	}
 
 	materials.clear();
 
-	for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end();)
+	for (std::map<uint, ResourceShader*>::iterator it = shaders.begin(); it != shaders.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = shaders.erase(it);
 	}
 
 	shaders.clear();
 
-	for (std::map<uint, ResourceMesh*>::iterator it = meshes.begin(); it != meshes.end();)
+	for (std::map<uint, ResourceMesh*>::iterator it = meshes.begin(); it != meshes.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = meshes.erase(it);
 	}
 
 	meshes.clear();
 
-	for (std::map<uint, ResourceBone*>::iterator it = bones.begin(); it != bones.end();)
+	for (std::map<uint, ResourceBone*>::iterator it = bones.begin(); it != bones.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = bones.erase(it);
 	}
 
 	bones.clear();
 
-	for (std::map<uint, ResourceAnimation*>::iterator it = animations.begin(); it != animations.end();)
+	for (std::map<uint, ResourceAnimation*>::iterator it = animations.begin(); it != animations.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = animations.erase(it);
 	}
 
 	animations.clear();
 
-	for (std::map<uint, ResourceAnimator*>::iterator it = anim_info.begin(); it != anim_info.end();)
+	for (std::map<uint, ResourceAnimator*>::iterator it = anim_info.begin(); it != anim_info.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = anim_info.erase(it);
 	}
 
 	anim_info.clear();
 
-	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end();)
+	for (std::map<uint, ResourceTexture*>::iterator it = textures.begin(); it != textures.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = textures.erase(it);
 	}
 
 	textures.clear();
 
-	for (std::map<uint, ResourceScript*>::iterator it = scripts.begin(); it != scripts.end();)
+	for (std::map<uint, ResourceScript*>::iterator it = scripts.begin(); it != scripts.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = scripts.erase(it);
 	}
 
 	scripts.clear();
 
-	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end();)
+	for (std::map<uint, ResourceMeta*>::iterator it = metas.begin(); it != metas.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = metas.erase(it);
 	}
 
 	metas.clear();
 
-	for (std::map<uint, ResourceFont*>::iterator it = fonts.begin(); it != fonts.end();)
+	for (std::map<uint, ResourceFont*>::iterator it = fonts.begin(); it != fonts.end(); it++)
 	{
 		it->second->FreeMemory();
 		delete it->second;
-		it = fonts.erase(it);
 	}
 
 	fonts.clear();
 
-	for (std::map<uint, ResourceNavMesh*>::iterator it = navmeshes.begin(); it != navmeshes.end();) {
+	for (std::map<uint, ResourceNavMesh*>::iterator it = navmeshes.begin(); it != navmeshes.end(); it++) {
 		it->second->FreeMemory();
 		delete it->second;
-		it = navmeshes.erase(it);
 	}
 
 	navmeshes.clear();

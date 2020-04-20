@@ -40,7 +40,6 @@
 
 BE_BEGIN_NAMESPACE
 /// Log functions
-
 void LogCompilationFirstMessage();
 void EngineConsoleLog(const char file[], int line, const char* format, ...);
 void SystemConsoleLog(const char file[], int line, const char* format, ...);
@@ -152,7 +151,7 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define MODELS_FOLDER "Library/Models/"
 #define SHADERS_FOLDER "Library/Shaders/"
 #define SHADERS_ASSETS_FOLDER "Assets/Shaders/"
-#define IMAGES_ASSETS_FOLDER "Assets/Images"
+#define IMAGES_ASSETS_FOLDER "Assets/Images/"
 #define SCRIPTS_FOLDER "Library/Scripts/"
 #define SOUNDS_FOLDER "Assets/Sounds/"
 #define ANIMATIONS_FOLDER "Library/Animations/"
