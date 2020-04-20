@@ -269,6 +269,12 @@ void ImporterMaterial::Save(ResourceMaterial* mat) const
 	tmpgo->GetComponent<ComponentMeshRenderer>()->material->RemoveUser(tmpgo);
 	tmpgo->GetComponent<ComponentMeshRenderer>()->material = (ResourceMaterial*)App->resources->GetResource(mat->GetUID());
 
+	// --- Destroy texture first ---
+	uint prevTexID = mat->GetPreviewTexID();
+	glDeleteTextures(1, (GLuint*)&prevTexID);
+
+	App->fs->Remove(mat->previewTexPath.c_str());
+
 	mat->SetPreviewTexID(App->renderer3D->RenderSceneToTexture(gos, mat->previewTexPath));
 
 	App->scene_manager->DestroyGameObject(tmpgo);

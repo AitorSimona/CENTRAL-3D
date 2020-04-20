@@ -1,12 +1,12 @@
 {
-    "05 - Default.mat": null,
     "Color": {
         "B": 1.0,
         "G": 1.0,
         "R": 1.0
     },
-    "PreviewTexture": "Library/Textures/2015934182.dds",
-    "ResourceDiffuse": null,
+    "New material 4.mat": null,
+    "PreviewTexture": "Library/Textures/1775165621.dds",
+    "ResourceDiffuse": "Assets/207875.jpg",
     "shader": {
         "ResourceShader": "Assets/Shaders/Standard.glsl",
         "uniforms": null
