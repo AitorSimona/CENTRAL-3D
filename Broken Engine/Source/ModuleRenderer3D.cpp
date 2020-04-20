@@ -1631,12 +1631,13 @@ void ModuleRenderer3D::DrawSkybox()
 		0.0f, 0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, nearp, 0.0f);
 
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->SkyboxShader->ID, "view");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->SkyboxShader->ID, "u_View");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.ptr());
 
-	GLint projectLoc = glGetUniformLocation(App->renderer3D->SkyboxShader->ID, "projection");
+	GLint projectLoc = glGetUniformLocation(App->renderer3D->SkyboxShader->ID, "u_Proj");
 	glUniformMatrix4fv(projectLoc, 1, GL_FALSE, proj_RH.ptr());
 
+	glUniform1f(glGetUniformLocation(SkyboxShader->ID, "u_GammaCorrection"), m_GammaCorrection);
 
 	// skybox cube
 	glBindVertexArray(skyboxVAO);
