@@ -298,6 +298,7 @@ void Application::SetOrganizationName(const char* name) {
 }
 
 void Application::Log(const char* entry) {
+	std::lock_guard<std::mutex> lk(logMutex);
 	if (logs.size() > 1000)
 		logs.erase(logs.begin());
 
