@@ -158,8 +158,8 @@ void ModuleSceneManager::DrawScene()
 		}
 	}
 
-	//if(App->camera->last_ray.IsFinite())
-	//	App->renderer3D->DrawLine(float4x4::identity, App->camera->last_ray.a, App->camera->last_ray.b, Red);
+	if(App->camera->last_ray.IsFinite())
+		App->renderer3D->DrawLine(float4x4::identity, App->camera->last_ray.a, App->camera->last_ray.b, Red);
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const
@@ -234,9 +234,16 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 			{
 				float hit_near, hit_far;
 				if (ray.Intersects((*it).second->GetOBB(), hit_near, hit_far))
-					candidate_gos[hit_near] = (*it).second;
+				{
+					if(candidate_gos.find(hit_near) == candidate_gos.end())
+						candidate_gos[hit_near] = (*it).second;
+					else
+						candidate_gos[hit_near + 0.001] = (*it).second; // make sure we do not overwrite any object (later we will check triangles)
+				}
 			}
 		}
+
+		std::map<float, GameObject*> triangles_touched;
 
 		GameObject* toSelect = nullptr;
 		for (std::map<float, GameObject*>::iterator it = candidate_gos.begin(); it != candidate_gos.end() && toSelect == nullptr; it++)
@@ -257,13 +264,18 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 						float3 a = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[j * 3]].position);
 						float3 b = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 1]].position);
 						float3 c = float3(mesh->resource_mesh->vertices[mesh->resource_mesh->Indices[(j * 3) + 2]].position);
+
 						// --- Create Triangle given three vertices ---
 						Triangle triangle(a, b, c);
 
 						// --- Test ray/triangle intersection ---
 						if (local.Intersects(triangle, nullptr, nullptr))
 						{
-							toSelect = it->second;
+							// --- Check at what distance from ray origin is the triangle at ---
+							float3 pos = it->second->GetComponent<ComponentTransform>()->GetGlobalTransform().TranslatePart();
+							pos += triangle.CenterPoint();
+							triangles_touched[float3(math::Abs(pos - ray.a)).Length()] = it->second;
+
 							break;
 						}
 					}
@@ -271,8 +283,11 @@ void ModuleSceneManager::SelectFromRay(LineSegment & ray)
 			}
 		}
 
+		// --- Get the closest triangle's GO ---
+		if (triangles_touched.begin() != triangles_touched.end())
+			toSelect = triangles_touched.begin()->second;
+
 		// --- Set Selected ---
-		//if (toSelect)
 		SetSelectedGameObject(toSelect);
 	}
 }
