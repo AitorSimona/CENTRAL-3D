@@ -1035,12 +1035,6 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
 		}
 
-		// --- Display Z buffer ---
-		if (zdrawer)
-		{
-			shader = ZDrawerShader->ID;
-		}
-
 		// --- Get Mesh Material ---
 		if (mesh->mat->shader)
 		{
@@ -1052,6 +1046,12 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			shader = SkyboxReflectionShader->ID;
 		else if (mesh->mat->refractive)
 			shader = SkyboxRefractionShader->ID;
+
+		// --- Display Z buffer ---
+		if (zdrawer)
+		{
+			shader = ZDrawerShader->ID;
+		}
 
 		glUseProgram(shader);
 
