@@ -158,8 +158,8 @@ void ModuleSceneManager::DrawScene()
 		}
 	}
 
-	if(App->camera->last_ray.IsFinite())
-		App->renderer3D->DrawLine(float4x4::identity, App->camera->last_ray.a, App->camera->last_ray.b, Red);
+	//if(App->camera->last_ray.IsFinite())
+	//	App->renderer3D->DrawLine(float4x4::identity, App->camera->last_ray.a, App->camera->last_ray.b, Red);
 }
 
 GameObject * ModuleSceneManager::GetRootGO() const

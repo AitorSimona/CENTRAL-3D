@@ -59,7 +59,7 @@ void ComponentMeshRenderer::DrawComponent()
 		flags |= selected;
 
 	if (checkers)
-		flags |= checkers;
+		flags |= RenderMeshFlags_::checkers;
 
 	if (cmesh && cmesh->resource_mesh && material)
 	{
