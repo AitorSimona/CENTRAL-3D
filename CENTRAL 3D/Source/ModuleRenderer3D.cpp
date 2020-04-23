@@ -1184,6 +1184,7 @@ void ModuleRenderer3D::HandleObjectOutlining()
 
 void ModuleRenderer3D::DrawRenderLines()
 {
+	// MYTODO: performance wise this is unacceptable, change it
 	// --- Use linepoint shader ---
 	glUseProgram(App->renderer3D->linepointShader->ID);
 
@@ -1232,9 +1233,7 @@ void ModuleRenderer3D::DrawRenderLines()
 
 		// --- Draw lines ---
 		glLineWidth(3.0f);
-		glBindVertexArray(PointLineVAO);
 		glDrawArrays(GL_LINES, 0, 2);
-		glBindVertexArray(0);
 		glLineWidth(1.0f);
 	}
 
