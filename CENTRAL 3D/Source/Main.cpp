@@ -1,12 +1,20 @@
 #include <stdlib.h>
 #include "Application.h"
 #include "Globals.h"
+#include "Optick/include/optick.h"
 
 #include "mmgr/mmgr.h"
 
 #include "SDL/include/SDL.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
+
+
+#ifdef _DEBUG
+#pragma comment(lib, "Optick/libx86/debugx86/OptickCore.lib")
+#else
+#pragma comment(lib, "Optick/libx86/releasex86/OptickCore.lib")
+#endif
 
 enum main_states
 {
@@ -56,6 +64,8 @@ int main(int argc, char ** argv)
 
 		case MAIN_UPDATE:
 		{
+			OPTICK_FRAME("Main Thread");
+
 			int update_return = App->Update();
 
 			if (update_return == UPDATE_ERROR)

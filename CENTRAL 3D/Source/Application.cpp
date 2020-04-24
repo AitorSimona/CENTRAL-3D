@@ -12,6 +12,8 @@
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 
+#include "Optick/include/optick.h"
+
 #include "mmgr/mmgr.h"
 
 Application::Application()
@@ -184,12 +186,14 @@ void Application::LoadAllStatus(json & file)
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
+	OPTICK_EVENT();
 
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 	
 	std::list<Module*>::const_iterator item = list_modules.begin();
-	
+
+
 	while(item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
 		ret = (*item)->PreUpdate(time->GetRealTimeDt());

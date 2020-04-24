@@ -822,49 +822,10 @@
     <ClInclude Include="Imgui\imgui_stdlib.h">
       <Filter>Sources\3rd Party\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Optick\optick.config.h">
+    <ClInclude Include="Optick\include\optick.config.h">
       <Filter>Sources\3rd Party\Optick</Filter>
     </ClInclude>
-    <ClInclude Include="Optick\optick.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_common.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_core.freebsd.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_core.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_core.linux.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_core.macos.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_core.platform.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_core.win.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_gpu.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_memory.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_message.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_miniz.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_serialization.h">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="Optick\optick_server.h">
+    <ClInclude Include="Optick\include\optick.h">
       <Filter>Sources\3rd Party\Optick</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1201,30 +1162,6 @@
     </ClCompile>
     <ClCompile Include="Imgui\imgui_stdlib.cpp">
       <Filter>Sources\3rd Party\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_core.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_gpu.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_gpu.d3d12.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_gpu.vulkan.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_message.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_miniz.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_serialization.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="Optick\optick_server.cpp">
-      <Filter>Sources\3rd Party\Optick</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -27,11 +27,15 @@
 #include "Imgui/imgui.h"
 #include "OpenGL.h"
 
+#include "Optick/include/optick.h"
+
+#include "mmgr/mmgr.h"
+
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment(lib, "glew/libx86/glew32.lib")
 
-#include "mmgr/mmgr.h"
+
 // ------------------------------ Basic --------------------------------------------------------
 
 ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled) 
@@ -212,6 +216,8 @@ bool ModuleRenderer3D::Init(json file)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	OPTICK_CATEGORY("Renderer PreUpdate", Optick::Category::Rendering);
+
 	// --- Update OpenGL Capabilities ---
 	UpdateGLCapabilities();
 
@@ -237,6 +243,8 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt) 
 {
+	OPTICK_CATEGORY("Renderer PostUpdate", Optick::Category::Rendering);
+
 	// --- Set Shader Matrices ---
 	GLint viewLoc = glGetUniformLocation(defaultShader->ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->renderer3D->active_camera->GetOpenGLViewMatrix().ptr());
