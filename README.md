@@ -64,7 +64,6 @@ For the third assignment, the original OpenGL rendering pipeline was replaced by
 There is a Shader class, which is a resource and works the same way as other resources. 
 
 ### Shader management
-There are multiple ways to create a shader program:
 
 1. Create a shader in the panel project (Right Click - Create - Shader)
 
@@ -151,3 +150,4 @@ Editor camera only works when in AppState EDITOR mode.
 - DevIL 1.8.0
 - JSON for Modern C++
 - PhysFS 
+- Optick 1.3.0
