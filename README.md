@@ -15,6 +15,8 @@
 
 [NekoEngine](https://github.com/WickedNekomata/NekoEngine) by [Sandra](https://github.com/Sandruski) & [Guillem](https://github.com/DatBeQuiet) (Students 4rth - Terrassa)
 
+[LearnOpenGL](https://learnopengl.com/Introduction) by JoeyDeVries
+
 And all the 3rd party libraries too! Check them below!
 
 ## Expanding CENTRAL 3D
@@ -39,6 +41,7 @@ And all the 3rd party libraries too! Check them below!
 - DevIL 1.8.0
 - JSON for Modern C++
 - PhysFS 
+- Optick 1.3.0
 
 
 ## HOW TO USE
