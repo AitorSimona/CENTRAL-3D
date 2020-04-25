@@ -1,5 +1,5 @@
 # CENTRAL 3D
-- Version 0.3
+- Version 0.4
 - Initial steps into 3D game engine development
 - By Aitor Simona 
 * GitHub account: [AitorSimona](https://github.com/AitorSimona)
@@ -103,6 +103,45 @@ There are more options in Window - > Settings
 - Edit Menu (Undo, Redo...)
 
 ## CHANGELOG
+
+### 0.4
+
+- Resource Manager complete overhaul (2 much to define here, will explain on web)
+- Propject panel (Create/Delete/Previews)
+- New Resources: Prefab, Scene (support for multi-scenes)
+- Event manager
+ 
+- Renderer Revamp, now centralized
+- Shader revamp
+- Skybox, environment mapping
+
+- Optick
+
+- Improved Guizmo
+- Improved overall style and main windows
+- Improved selection, mouse picking
+- Drag and drop improvements: resource to inspector, go to inspector, resource to scene,
+go to project...
+- Time manager improvements
+- Camera improvements
+- Own window bar through SDL_HitTest, hid windows bar
+
+- Gos/components are now shaved/loaded in original order
+
+Updated:
+- Imgui
+- Imguizmo
+- Assimp
+
+Added:
+- Optick Profiler
+
+
+Eliminated:
+
+- Editor shader support (PanelShaderEditor). Now just double click a shader on project panel,
+open it with Visual Studio/Code with a glsl extension and save. Engine reimports automatically.
+
 
 ### 0.3
 

@@ -25,7 +25,7 @@ bool PanelAbout::Draw()
 		ImGui::Separator();
 		ImGui::Text("CENTRAL 3D");
 		ImGui::SameLine();
-		ImGui::Text("Version 0.3");
+		ImGui::Text("Version 0.4");
 		ImGui::SameLine();
 		if (ImGui::Button("GitHub")) { App->gui->RequestBrowser("https://github.com/AitorSimona/CENTRAL-3D"); }
 		ImGui::Text("Initial steps into game engine development");
