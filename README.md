@@ -73,6 +73,8 @@ Editor camera only works when in AppState EDITOR mode.
 - Rotate: E
 - Scale: R
 
+Select mode on toolbar, snap / bounds resize
+
 - Shaders:
 
 You can create new shaders through the project panel, right click - create - shader. Double click and edit them in the program you like (default program). I recommend Visual studio with glsl extension for autocomplete/syntax highlighting support. 
@@ -97,10 +99,6 @@ Head to Scene window and click DebugDraw to see available features:
 - ZDrawer
 
 There are more options in Window - > Settings
-
-## Features in beta
-
-- Edit Menu (Undo, Redo...)
 
 ## CHANGELOG
 
