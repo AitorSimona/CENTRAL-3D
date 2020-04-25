@@ -1,5 +1,5 @@
 # CENTRAL 3D
-- Version 0.3
+- Version 0.4
 - [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 - [Latest Release](https://github.com/AitorSimona/CENTRAL-3D/releases/tag/Assignment3)
 
