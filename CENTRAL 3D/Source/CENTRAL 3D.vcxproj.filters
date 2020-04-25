@@ -828,6 +828,39 @@
     <ClInclude Include="Optick\include\optick.h">
       <Filter>Sources\3rd Party\Optick</Filter>
     </ClInclude>
+    <ClInclude Include="Optick\include\optick_common.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_core.freebsd.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_core.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_core.platform.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_core.win.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_gpu.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_memory.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_message.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_miniz.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_serialization.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="Optick\include\optick_server.h">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -1162,6 +1195,24 @@
     </ClCompile>
     <ClCompile Include="Imgui\imgui_stdlib.cpp">
       <Filter>Sources\3rd Party\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Optick\include\optick_core.cpp">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="Optick\include\optick_gpu.cpp">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="Optick\include\optick_message.cpp">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="Optick\include\optick_miniz.cpp">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="Optick\include\optick_serialization.cpp">
+      <Filter>Sources\3rd Party\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="Optick\include\optick_server.cpp">
+      <Filter>Sources\3rd Party\Optick</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

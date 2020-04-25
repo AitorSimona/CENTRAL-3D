@@ -9,13 +9,6 @@
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 
-
-#ifdef _DEBUG
-#pragma comment(lib, "Optick/libx86/debugx86/OptickCore.lib")
-#else
-#pragma comment(lib, "Optick/libx86/releasex86/OptickCore.lib")
-#endif
-
 enum main_states
 {
 	MAIN_CREATION,
