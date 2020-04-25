@@ -5,8 +5,8 @@
         "R": 1.0
     },
     "Glass.mat": null,
-    "PreviewTexture": "Library/Textures/2091450610.dds",
-    "ResourceDiffuse": "Assets/207875.jpg",
+    "PreviewTexture": "Library/Textures/1009711703.dds",
+    "ResourceDiffuse": null,
     "shader": {
         "ResourceShader": "Assets/Shaders/Standard.glsl",
         "uniforms": null

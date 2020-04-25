@@ -321,6 +321,8 @@ void ComponentMeshRenderer::CreateInspectorNode()
 					material->resource_diffuse->RemoveUser(GetContainerGameObject());
 					material->resource_diffuse->Release();
 					material->resource_diffuse = nullptr;
+
+					App->resources->GetImporter<ImporterMaterial>()->Save(material);
 				}
 
 			}
