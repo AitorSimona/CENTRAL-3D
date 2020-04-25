@@ -334,6 +334,9 @@ inline void PanelSettings::LibrariesNode() const
 	if (ImGui::Button("MathGeoLib")) { App->gui->RequestBrowser("https://github.com/juj/MathGeoLib"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "1.5");
 
+	if (ImGui::Button("Optick")) { App->gui->RequestBrowser("https://optick.dev/"); }
+	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "1.3");
+
 	if (ImGui::Button("JSON For Modern C++")) { App->gui->RequestBrowser("https://github.com/nlohmann/json"); }
 	ImGui::SameLine(); ImGui::TextColored(ImVec4(255, 255, 0, 255), "3.7.0");
 
