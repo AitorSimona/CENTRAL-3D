@@ -22,6 +22,10 @@ ResourceMaterial::ResourceMaterial(uint UID, std::string source_file) : Resource
 	resource_file = source_file;
 	shader = App->renderer3D->defaultShader;
 	previewTexID = App->gui->materialTexID;
+
+	shader->GetAllUniforms(uniforms);
+
+	LoadToMemory();
 }
 
 ResourceMaterial::~ResourceMaterial()
@@ -31,7 +35,7 @@ ResourceMaterial::~ResourceMaterial()
 
 bool ResourceMaterial::LoadInMemory()
 {
-	shader->GetAllUniforms(uniforms);
+	//shader->GetAllUniforms(uniforms);
 
 	return true;
 }

@@ -1,0 +1,14 @@
+{
+    "Color": {
+        "B": 1.0,
+        "G": 1.0,
+        "R": 1.0
+    },
+    "New material 5.mat": null,
+    "PreviewTexture": "Library/Textures/1024076926.dds",
+    "ResourceDiffuse": null,
+    "shader": {
+        "ResourceShader": "Assets/Shaders/New shader7.glsl",
+        "uniforms": null
+    }
+}

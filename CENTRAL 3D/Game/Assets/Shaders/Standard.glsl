@@ -11,9 +11,10 @@ out vec2 TexCoord;
 uniform mat4 model_matrix; 
 uniform mat4 view; 
 uniform mat4 projection; 
+uniform int helloworld = 1;
 void main(){ 
 gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); 
-ourColor = Color; 
+ourColor = Color * helloworld; 
 TexCoord = texCoord; 
 }
 #endif //VERTEX_SHADER

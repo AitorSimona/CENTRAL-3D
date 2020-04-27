@@ -151,7 +151,10 @@ Resource* ImporterMaterial::Load(const char* path) const
 		Importer::ImportData IDataShader(shader_path.c_str());
 
 		if (shader_path != "NONE")
+		{
 			mat->shader = (ResourceShader*)App->resources->ImportAssets(IDataShader);
+			mat->shader->GetAllUniforms(mat->uniforms);
+		}
 
 		json uniforms_node = file["shader"]["uniforms"];
 
