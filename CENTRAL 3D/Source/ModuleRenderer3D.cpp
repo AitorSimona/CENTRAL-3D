@@ -80,6 +80,7 @@ bool ModuleRenderer3D::Init(json file)
 		}
 
 	}
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// --- z values from 0 to 1 and not -1 to 1, more precision in far ranges ---
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
