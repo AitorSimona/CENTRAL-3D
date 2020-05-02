@@ -981,6 +981,56 @@ bool ModuleResourceManager::IsFileImported(const char* file)
 	return ret;
 }
 
+void ModuleResourceManager::SaveResource(Resource* resource)
+{
+	/*if (resource)
+	{
+		switch (resource->GetType())
+		{
+		case Resource::ResourceType::FOLDER:
+			GetImporter<ImporterFolder>()->Save((ResourceFolder*)resource);
+			break;
+
+		case Resource::ResourceType::MODEL:
+			GetImporter<ImporterModel>()->Save((ResourceModel*)resource);
+			break;
+
+		case Resource::ResourceType::PREFAB:
+			GetImporter<ImporterPrefab>()->Save((ResourcePrefab*)resource);
+			break;
+
+		case Resource::ResourceType::MATERIAL:
+			GetImporter<ImporterFolder>()->Save((ResourceMaterial*)resource);
+			break;
+
+		case Resource::ResourceType::SHADER:
+			GetImporter<ImporterFolder>()->Save((ResourceShader*)resource);
+			break;
+
+		case Resource::ResourceType::MESH:
+			GetImporter<ImporterFolder>()->Save((ResourceMesh*)resource);
+			break;
+
+		case Resource::ResourceType::TEXTURE:
+			GetImporter<ImporterFolder>()->Save((ResourceTexture*)resource);
+			break;
+
+		case Resource::ResourceType::META:
+			GetImporter<ImporterFolder>()->Save((ResourceMeta*)resource);
+			break;
+
+		case Resource::ResourceType::UNKNOWN:
+			CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+			break;
+
+		default:
+			CONSOLE_LOG("![Warning]: Detected unsupported resource type");
+			break;
+		}
+	}*/
+}
+
+
 std::string ModuleResourceManager::GetNewUniqueName(Resource::ResourceType type)
 {
 	std::string unique_name;

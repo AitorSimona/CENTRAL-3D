@@ -289,6 +289,11 @@ void PanelProject::CreateResourceHandlingPopup()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::MenuItem("Rename"))
+		{
+			rename_selected = true;
+		}
+
 		if (selected && !selected->has_parent)
 		{
 			if (ImGui::MenuItem("Delete"))
@@ -322,6 +327,33 @@ void PanelProject::CreateResourceHandlingPopup()
 		if (ImGui::Button("Cancel", ImVec2(300, 0)))
 		{
 			delete_selected = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	// --- Handle resource deletion ---
+	if (rename_selected)
+		ImGui::OpenPopup("Rename Selected Asset?");
+
+	if (ImGui::BeginPopupModal("Rename Selected Asset?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("You are about to rename the selected asset.");
+
+		static char resName[100];
+		strcpy_s(resName, 100,GetSelected()->GetName());
+
+		if (ImGui::InputText("New name", resName, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+		{
+			GetSelected()->SetName(resName);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(300, 0)))
+		{
+			rename_selected = false;
 			ImGui::CloseCurrentPopup();
 		}
 

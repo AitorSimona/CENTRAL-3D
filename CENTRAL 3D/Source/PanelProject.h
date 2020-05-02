@@ -32,6 +32,7 @@ private:
 
 private:
 	bool delete_selected = false;
+	bool rename_selected = false;
 	bool wasclicked = false;
 	uint imageSize_px = 48;
 	uint item_spacingX_px = 20;

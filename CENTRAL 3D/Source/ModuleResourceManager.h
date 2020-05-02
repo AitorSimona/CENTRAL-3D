@@ -85,6 +85,7 @@ public:
 	Resource::ResourceType GetResourceTypeFromPath(const char* path);
 	std::string GetNewUniqueName(Resource::ResourceType type);
 	bool IsFileImported(const char* file);
+	void SaveResource(Resource* resource);
 
 	void ONResourceDestroyed(Resource* resource);
 
