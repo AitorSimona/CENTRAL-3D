@@ -568,6 +568,8 @@ uint ModuleRenderer3D::RenderSceneToTexture(std::vector<GameObject*>& scene_gos,
 
 	SetActiveCamera(previous_cam);
 
+	PreUpdate(0.0f);
+
 	return texID;
 }
 
