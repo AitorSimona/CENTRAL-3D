@@ -5,10 +5,15 @@
         "R": 1.0
     },
     "New material 6.mat": null,
-    "PreviewTexture": "Library/Textures/1495387669.dds",
-    "ResourceDiffuse": null,
+    "PreviewTexture": "Library/Textures/327384557.dds",
+    "ResourceDiffuse": "Assets/IntroBackground.png",
     "shader": {
         "ResourceShader": "Assets/Shaders/Standard.glsl",
-        "uniforms": null
+        "uniforms": {
+            "helloworld": {
+                "type": 5124,
+                "x": 0
+            }
+        }
     }
 }

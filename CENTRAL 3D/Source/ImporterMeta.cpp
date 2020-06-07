@@ -62,6 +62,7 @@ Resource* ImporterMeta::Load(const char* path) const
 	// --- Fill meta ---
 	if (resource)
 	{
+		resource->Date = Date.get<uint>();
 		resource->fileFormatVersion = fileFormatv;
 
 		// --- Retrieve Resource Data ---

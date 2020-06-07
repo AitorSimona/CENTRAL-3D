@@ -40,10 +40,12 @@ bool ResourceShader::LoadInMemory()
 {
 	bool ret = true;
 
-	// MYTODO: We must load the code as well!!!
+	// --- Retrieve data from meta ---
+	ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
+	ResourceMeta* meta = (ResourceMeta*)IMeta->Load(original_file.c_str());
 
 	// --- Load from binary file ---
-	if (!ret/*App->fs->Exists(resource_file.c_str())*/)
+	if (meta && meta->Date == App->fs->GetLastModificationTime(this->original_file.c_str()))
 	{
 		int success;
 		char infoLog[512];
@@ -66,25 +68,18 @@ bool ResourceShader::LoadInMemory()
 			}
 			else
 			{
+				uint format = meta->ResourceData["FORMAT"].is_null() ? 0 : meta->ResourceData["FORMAT"].get<uint>();
 
-				// --- Retrieve data from meta ---
-				ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-				ResourceMeta* meta = (ResourceMeta*)IMeta->Load(original_file.c_str());
+				char* buffer = nullptr;
 
-				if (meta)
-				{
-					uint format = meta->ResourceData["FORMAT"].is_null() ? 0 : meta->ResourceData["FORMAT"].get<uint>();
+				uint size = App->fs->Load(resource_file.c_str(), &buffer);
 
-					char* buffer = nullptr;
+				// --- Load binary program ---
+				glProgramBinary(ID, (GLenum)format, (void*)buffer, (GLint)size);
 
-					uint size = App->fs->Load(resource_file.c_str(), &buffer);
+				if (buffer)
+					delete[] buffer;
 
-					// --- Load binary program ---
-					glProgramBinary(ID, (GLenum)format, (void*)buffer, (GLint)size);
-
-					if (buffer)
-						delete[] buffer;
-				}
 
 
 				// --- Print linking errors if any ---
