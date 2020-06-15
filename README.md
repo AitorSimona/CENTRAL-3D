@@ -39,7 +39,7 @@ The available component as of 0.3 are: Transform(fixed), Material, Renderer, Mes
 Every game object has a parent, and a number n of childs. This turns into a tree structure (Unity).
 
 ### Resource Manager
-In charge of the resources, which are: Material, texture, shader, mesh.
+In charge of the resources, which are: Material, texture, shader, mesh, scene, prefab and folder.
 
 Handles reference counting, every resource is only in memory once and can be used by any number of game object components.
 
