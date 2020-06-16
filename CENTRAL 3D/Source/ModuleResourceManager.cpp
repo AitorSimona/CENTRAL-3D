@@ -900,7 +900,9 @@ void ModuleResourceManager::AddResourceToFolder(Resource* resource)
 		for (std::map<uint, ResourceFolder*>::const_iterator it = folders.begin(); it != folders.end(); ++it)
 		{
 			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
-			directory = App->fs->GetDirectoryFromPath(std::string(resource->GetOriginalFile()));
+			std::string dirPath = resource->GetOriginalFile();
+			// CAREFUL when comparing strings, not putting {} below the if resulted in erroneous behaviour
+			directory = App->fs->GetDirectoryFromPath(dirPath);
 
 			if (!directory.empty())
 				directory.pop_back();

@@ -48,6 +48,11 @@ private:
 	void LimitText(std::string& text);
 
 	void RecursiveDirectoryDraw(ResourceFolder* folder);
+
+	bool createMaterial = false;
+	bool createShader = false;
+	bool createFolder = false;
+	bool createScene = false;
 };
 
 #endif

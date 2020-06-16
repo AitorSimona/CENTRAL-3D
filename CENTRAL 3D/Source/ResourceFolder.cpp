@@ -139,10 +139,13 @@ void ResourceFolder::OnDelete()
 {
 	NotifyUsers(ResourceNotificationType::Deletion);
 
-	for (uint i = 0; i < resources.size(); ++i)
+	uint size = resources.size();
+
+	for (uint i = 0; i < size; ++i)
 	{
-		resources[i]->OnDelete();
-		delete resources[i];
+		Resource* resource = resources[0]; // resources are progressively erased from the vector, so we access the first one, which keeps changing
+		resource->OnDelete();
+		delete resource;
 	}
 
 	App->fs->Remove(resource_file.c_str());

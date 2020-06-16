@@ -947,6 +947,9 @@ void ModuleRenderer3D::CreateDefaultShaders()
 	defaultShader->ReloadAndCompileShader();
 	IShader->Save(defaultShader);
 
+	VertexShaderTemplate = vertexShaderSource;
+	FragmentShaderTemplate = fragmentShaderSource;
+
 	defaultShader->use();
 }
 

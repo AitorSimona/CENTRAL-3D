@@ -41,6 +41,7 @@ public:
 	void NormalizePath(std::string& full_path, bool lowercase = false) const;
 	uint GetLastModificationTime(const char* file);
 	void WatchDirectory(const char* directory);
+	const char* GetWorkingDirectory() const;
 
 	// Open for Read/Write
 	unsigned int Load(const char* path, const char* file, char** buffer) const;
@@ -66,6 +67,9 @@ private:
 	bool started_wait = false;
 	Timer wait_timer;
 	uint32 wait_time = 1000; // ms
+
+	// --- Working directory ---
+	std::string working_directory;
 
 	void CreateAssimpIO();
 
