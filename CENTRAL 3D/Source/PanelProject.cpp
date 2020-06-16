@@ -323,13 +323,17 @@ void PanelProject::CreateResourceHandlingPopup()
 			//EngineApp->resources->AddResourceToFolder(new_folder);
 
 			// --- Create meta ---
+			std::string meta_path = new_folder->GetResourceFile();
+			meta_path.pop_back();
 			ImporterMeta* IMeta = App->resources->GetImporter<ImporterMeta>();
-			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, new_folder->GetResourceFile(), new_folder->GetUID());
+			ResourceMeta* meta = (ResourceMeta*)App->resources->CreateResourceGivenUID(Resource::ResourceType::META, meta_path, new_folder->GetUID());
 
 			if (meta)
 				IMeta->Save(meta);
 
 			IFolder->Save((ResourceFolder*)new_folder);
+
+			App->resources->AddResourceToFolder(new_folder);
 
 			ImGui::CloseCurrentPopup();
 		}
