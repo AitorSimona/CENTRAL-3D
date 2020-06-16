@@ -1036,16 +1036,6 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			glStencilMask(0xFF);
 		}
 
-		if (mesh->flags & RenderMeshFlags_::outline)
-		{
-			shader = OutlineShader->ID;
-			color = { 1.0f, 0.65f, 0.0f };
-			// --- Draw selected, pass scaled-up matrix to shader ---
-			float3 scale = float3(1.05f, 1.05f, 1.05f);
-
-			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
-		}
-
 		// --- Get Mesh Material ---
 		if (mesh->mat->shader)
 		{
@@ -1057,6 +1047,16 @@ void ModuleRenderer3D::DrawRenderMesh(std::vector<RenderMesh> meshInstances)
 			shader = SkyboxReflectionShader->ID;
 		else if (mesh->mat->refractive)
 			shader = SkyboxRefractionShader->ID;
+
+		if (mesh->flags & RenderMeshFlags_::outline)
+		{
+			shader = OutlineShader->ID;
+			color = { 1.0f, 0.65f, 0.0f };
+			// --- Draw selected, pass scaled-up matrix to shader ---
+			float3 scale = float3(1.05f, 1.05f, 1.05f);
+
+			model = float4x4::FromTRS(model.TranslatePart(), model.RotatePart(), scale);
+		}
 
 		// --- Display Z buffer ---
 		if (zdrawer)

@@ -11,10 +11,20 @@ out vec2 TexCoord;
 uniform mat4 model_matrix; 
 uniform mat4 view; 
 uniform mat4 projection; 
-uniform int helloworld = 1;
+uniform int testint = 0;
+uniform float testfloat = 0.0f;
+uniform vec2 testvec2 = vec2(0,0);
+uniform vec3 testvec3 = vec3(0,0,0);
+uniform vec4 testvec4 = vec4(0,0,0,0);
+
 void main(){ 
 gl_Position = projection * view * model_matrix * vec4 (position, 1.0f); 
-ourColor = Color * helloworld; 
+ourColor = Color * testint * testfloat; 
+
+ourColor += vec3(testvec2, 0);
+ourColor += testvec4.xyz;
+ourColor += testvec3;
+
 TexCoord = texCoord; 
 }
 #endif //VERTEX_SHADER
@@ -27,7 +37,7 @@ in vec2 TexCoord;
 out vec4 color; 
 uniform sampler2D ourTexture; 
 void main(){ 
-color = texture(ourTexture, TexCoord) * vec4(ourColor, 1); 
+color = texture(ourTexture, TexCoord); 
 if(Texture == -1)
 color = vec4(ourColor, 1);
 } 
