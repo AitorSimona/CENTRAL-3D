@@ -51,7 +51,7 @@ Resource management flow:
 
 The user does not have to handle any library file, everything is done by the engine. For a user all there is are the files he/she dropped in assets, in the original format provided.
 
-## Resource Hot-Reloading
+### Resource Hot-Reloading
 
 All except model are reloaded if a change is detected in the original file, no need to reopen the engine!
 This is done through a Windows file system watch, that notifies the engine when a change is detected in the Assets folder.
