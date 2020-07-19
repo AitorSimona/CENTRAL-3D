@@ -51,6 +51,12 @@ Resource management flow:
 
 The user does not have to handle any library file, everything is done by the engine. For a user all there is are the files he/she dropped in assets, in the original format provided.
 
+## Resource Hot-Reloading
+
+All except model are reloaded if a change is detected in the original file, no need to reopen the engine!
+This is done through a Windows file system watch, that notifies the engine when a change is detected in the Assets folder.
+The engine then scans all folders inside assets and checks for new resources, overwrites, deletes. It eliminates any orphan metas automatically.
+
 ### Gui
 
 Courtesy of Dear Imgui, the gui has been worked on to be as modular and scalable as possible. All panels inherit from a base panel class and are handled by the GUI module. Adding/modifying panels is very straightforward. 
@@ -83,13 +89,15 @@ The engine will save the program in binary format. Once booting the engine again
 
 ## Overview
 
+<video src="docs/Overview.mp4" width="600" height="500" controls preload></video>
+
+[Background Music](https://www.youtube.com/watch?v=6CLsRP0W4Dk&list=PL11U4DRYvtkMLx20SRuY5IjUROu1MEK6d&index=3) 
+
 <video src="docs/ShadersOverview.mp4" width="600" height="500" controls preload></video>
 
 [Background Music](https://www.youtube.com/watch?v=E8HY7ypKshA) 
 
 ## Other Features
-Resource Hot-Reloading
-Windows FS Watch
 Time Management
 Octree and Frustum Culling
 Scene Serialization and de-Serialization
@@ -127,7 +135,7 @@ Editor camera only works when in AppState EDITOR mode.
 - Rotate: E
 - Scale: R
 
-## Innovation
+## Innovation (during engine's subject)
 
 - Shader binary program loading
 - Shader debug draw (normals, aabbs, octree, cameras)
