@@ -1,5 +1,5 @@
 # CENTRAL 3D
-- Version 0.4
+- Version 0.4.1
 - [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 - [Latest Release](https://github.com/AitorSimona/CENTRAL-3D/releases/tag/Assignment3)
 
@@ -15,6 +15,20 @@
 ## By [AitorSimona](https://github.com/AitorSimona)
 
 <img src="docs/Photo.jpg">
+
+## Overview
+
+### Latest version
+
+<video src="docs/Overview.mp4" width="600" height="500" controls preload></video>
+
+[Background Music](https://www.youtube.com/watch?v=6CLsRP0W4Dk&list=PL11U4DRYvtkMLx20SRuY5IjUROu1MEK6d&index=3) 
+
+### End of subject
+
+<video src="docs/ShadersOverview.mp4" width="600" height="500" controls preload></video>
+
+[Background Music](https://www.youtube.com/watch?v=E8HY7ypKshA) 
 
 ## SPECIAL THANKS / REFERENCES
 [Unity](https://unity.com/)
@@ -87,19 +101,6 @@ You can edit all int, float, and vec up to vec4 uniforms through the inspector! 
 ### Binary program
 The engine will save the program in binary format. Once booting the engine again it will try to load the binary, if unsuccessful it will recompile the shaders. 
 
-## Overview
-
-### Latest version
-
-<video src="docs/Overview.mp4" width="600" height="500" controls preload></video>
-
-[Background Music](https://www.youtube.com/watch?v=6CLsRP0W4Dk&list=PL11U4DRYvtkMLx20SRuY5IjUROu1MEK6d&index=3) 
-
-### End of subject
-
-<video src="docs/ShadersOverview.mp4" width="600" height="500" controls preload></video>
-
-[Background Music](https://www.youtube.com/watch?v=E8HY7ypKshA) 
 
 ## Other Features
 Time Management
