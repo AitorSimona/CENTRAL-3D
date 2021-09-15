@@ -11,11 +11,6 @@
 1. Having fun, learning.
 2. Preparing stuff for Project 3 subject in CITM Barcelona (2020).
 
-
-## By [AitorSimona](https://github.com/AitorSimona)
-
-<img src="docs/Photo.jpg">
-
 ## Overview
 
 ### Latest version
@@ -23,6 +18,10 @@
 <video src="docs/Overview.mp4" width="600" height="500" controls preload></video>
 
 [Background Music](https://www.youtube.com/watch?v=6CLsRP0W4Dk&list=PL11U4DRYvtkMLx20SRuY5IjUROu1MEK6d&index=3) 
+
+## By [AitorSimona](https://github.com/AitorSimona)
+
+<img src="docs/Photo.jpg">
 
 ### End of subject
 
