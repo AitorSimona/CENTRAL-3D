@@ -6,6 +6,8 @@
 * GitHub repository: [Repository](https://github.com/AitorSimona/CENTRAL-3D)
 * GitHub website: [Website](https://aitorsimona.github.io/CENTRAL-3D/)
 
+![Image](https://github.com/AitorSimona/CENTRAL-3D/blob/gh-pages/docs/WelcomeImage.PNG)
+
 ## SPECIAL THANKS / REFERENCES
 [Unity](https://unity.com/)
 
